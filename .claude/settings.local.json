@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:obsidian-community.github.io)",
+      "Bash(gh auth:*)",
+      "Bash(git init:*)",
+      "Bash(git branch:*)",
+      "Bash(gh repo create:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nInitial vault setup: NeuroSurveillance documentation\n\n- Folder structure: config, infrastructure, procedures, troubleshooting, journal, experiments, references, archive\n- Production values and golden configs \\(go2rtc, systemd, Frigate\\)\n- Troubleshooting symptom guides\n- Templates for daily journal, incidents, experiments\n- Command cheatsheet and video parameter reference\n- Notion import archived\n- CLAUDE.md for AI agent context\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")"
+    ]
+  }
+}
