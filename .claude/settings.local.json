@@ -8,7 +8,8 @@
       "Bash(git branch:*)",
       "Bash(gh repo create:*)",
       "Bash(git add:*)",
-      "Bash(git commit -m \"$\\(cat <<''EOF''\nInitial vault setup: NeuroSurveillance documentation\n\n- Folder structure: config, infrastructure, procedures, troubleshooting, journal, experiments, references, archive\n- Production values and golden configs \\(go2rtc, systemd, Frigate\\)\n- Troubleshooting symptom guides\n- Templates for daily journal, incidents, experiments\n- Command cheatsheet and video parameter reference\n- Notion import archived\n- CLAUDE.md for AI agent context\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")"
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nInitial vault setup: NeuroSurveillance documentation\n\n- Folder structure: config, infrastructure, procedures, troubleshooting, journal, experiments, references, archive\n- Production values and golden configs \\(go2rtc, systemd, Frigate\\)\n- Troubleshooting symptom guides\n- Templates for daily journal, incidents, experiments\n- Command cheatsheet and video parameter reference\n- Notion import archived\n- CLAUDE.md for AI agent context\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nInitial release: Raspberry Pi 5 dual-camera surveillance system\n\nComplete configuration templates and documentation for a 24/7\nneuroscience research video surveillance system using:\n- Raspberry Pi 5 with dual CSI cameras\n- go2rtc for RTSP streaming\n- Frigate NVR with Intel QSV hardware acceleration\n\nIncludes:\n- Parameterized configuration files \\(go2rtc, Frigate, systemd\\)\n- Monitoring and health check scripts\n- Comprehensive setup and troubleshooting documentation\n- Video parameter tuning guide\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")"
     ]
   }
 }
