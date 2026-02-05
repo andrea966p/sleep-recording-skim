@@ -1,0 +1,34 @@
+# 🔬 R&D Log Trials & Failures
+
+filters:
+  and:
+    - note["base"] == link("🔬 R&D Log Trials & Failures.base")
+properties:
+  file.name:
+    displayName: Experiment
+  Impact:
+    displayName: Impact
+  Hypothesis:
+    displayName: Hypothesis
+  Date:
+    displayName: Date
+  Outcome:
+    displayName: Outcome
+  Key Error Log:
+    displayName: Key Error Log
+  Conclusion & Learning:
+    displayName: Conclusion & Learning
+  Configuration Changes:
+    displayName: Configuration Changes
+views:
+  - type: table
+    name: Table View
+    order:
+      - file.name
+      - Impact
+      - Hypothesis
+      - Date
+      - Outcome
+      - Key Error Log
+      - Conclusion & Learning
+      - Configuration Changes

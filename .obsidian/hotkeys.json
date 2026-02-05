@@ -1,0 +1,28 @@
+{
+  "insert-template": [
+    {
+      "modifiers": [
+        "Alt"
+      ],
+      "key": "T"
+    }
+  ],
+  "omnisearch:show-modal": [
+    {
+      "modifiers": [
+        "Mod"
+      ],
+      "key": "O"
+    }
+  ],
+  "switcher:open": [],
+  "periodic-notes:open-daily-note": [
+    {
+      "modifiers": [
+        "Mod"
+      ],
+      "key": "D"
+    }
+  ],
+  "editor:delete-paragraph": []
+}

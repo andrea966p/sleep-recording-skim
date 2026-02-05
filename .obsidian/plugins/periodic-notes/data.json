@@ -1,0 +1,31 @@
+{
+  "showGettingStartedBanner": false,
+  "hasMigratedDailyNoteSettings": true,
+  "hasMigratedWeeklyNoteSettings": false,
+  "daily": {
+    "folder": "04-journal/2026-02",
+    "template": "_templates/Daily Journal.md",
+    "enabled": true
+  },
+  "weekly": {
+    "format": "",
+    "template": "",
+    "folder": ""
+  },
+  "monthly": {
+    "format": "",
+    "template": "",
+    "folder": "",
+    "enabled": false
+  },
+  "quarterly": {
+    "format": "",
+    "template": "",
+    "folder": ""
+  },
+  "yearly": {
+    "format": "",
+    "template": "",
+    "folder": ""
+  }
+}

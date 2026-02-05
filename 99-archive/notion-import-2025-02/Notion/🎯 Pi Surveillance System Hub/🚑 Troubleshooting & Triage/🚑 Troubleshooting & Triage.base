@@ -1,0 +1,28 @@
+# 🚑 Troubleshooting & Triage
+
+filters:
+  and:
+    - note["base"] == link("🚑 Troubleshooting & Triage.base")
+properties:
+  file.name:
+    displayName: Symptom
+  Solution Notes:
+    displayName: Solution Notes
+  Priority:
+    displayName: Priority
+  Last Seen:
+    displayName: Last Seen
+  System:
+    displayName: System
+  Status:
+    displayName: Status
+views:
+  - type: table
+    name: Table View
+    order:
+      - file.name
+      - Solution Notes
+      - Priority
+      - Last Seen
+      - System
+      - Status
