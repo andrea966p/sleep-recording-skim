@@ -3,7 +3,8 @@
   "hasMigratedDailyNoteSettings": true,
   "hasMigratedWeeklyNoteSettings": false,
   "daily": {
-    "folder": "04-journal/2026-02",
+    "format": "YYYY-MM/YYYY-MM-DD",
+    "folder": "04-journal",
     "template": "_templates/Daily Journal.md",
     "enabled": true
   },

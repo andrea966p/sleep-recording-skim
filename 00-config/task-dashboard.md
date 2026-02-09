@@ -17,6 +17,21 @@ not done
 due on today
 ```
 
+## Scheduled Today
+
+```tasks
+not done
+scheduled on today
+sort by priority
+```
+
+## In Progress
+
+```tasks
+status.name includes In Progress
+sort by due
+```
+
 ## Upcoming (Next 7 Days)
 
 ```tasks
@@ -31,5 +46,6 @@ sort by due
 ```tasks
 not done
 sort by due
-limit 20
+group by filename
+limit 30
 ```

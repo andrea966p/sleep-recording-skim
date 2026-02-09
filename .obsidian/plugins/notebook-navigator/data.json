@@ -383,7 +383,9 @@
   "folderBackgroundColors": {
     "04-journal": "#eab30880"
   },
-  "folderSortOverrides": {},
+  "folderSortOverrides": {
+    "04-journal": "created-desc"
+  },
   "folderTreeSortOverrides": {},
   "folderAppearances": {
     "04-journal": {

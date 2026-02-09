@@ -13,16 +13,18 @@
   "globalFilter": "",
   "removeGlobalFilter": false,
   "taskFormat": "tasksPluginEmoji",
-  "setCreatedDate": false,
+  "setCreatedDate": true,
   "setDoneDate": true,
   "setCancelledDate": true,
   "autoSuggestInEditor": true,
   "autoSuggestMinMatch": 0,
   "autoSuggestMaxItems": 20,
   "provideAccessKeys": true,
-  "useFilenameAsScheduledDate": false,
-  "filenameAsScheduledDateFormat": "",
-  "filenameAsDateFolders": [],
+  "useFilenameAsScheduledDate": true,
+  "filenameAsScheduledDateFormat": "YYYY-MM-DD",
+  "filenameAsDateFolders": [
+    "04-journal"
+  ],
   "recurrenceOnNextLine": false,
   "removeScheduledDateOnRecurrence": false,
   "statusSettings": {

@@ -1,5 +1,5 @@
 ---
-date: 2026-02-06
+date: 2026-02-05
 status: testing
 type: optimization
 components:
@@ -75,8 +75,8 @@ Record before deploying:
 
 ```bash
 # Backup current configs
-sudo cp /opt/go2rtc/go2rtc.yaml /opt/go2rtc/go2rtc.yaml.backup-2026-02-06
-cp ~/watchdog.sh ~/watchdog.sh.backup-2026-02-06
+sudo cp /opt/go2rtc/go2rtc.yaml /opt/go2rtc/go2rtc.yaml.backup-2026-02-05
+cp ~/watchdog.sh ~/watchdog.sh.backup-2026-02-05
 
 # Deploy new configs
 sudo cp /path/to/new/go2rtc.yaml /opt/go2rtc/go2rtc.yaml
@@ -93,7 +93,7 @@ curl http://localhost:1984/api/streams
 
 ```bash
 # Backup current config
-cp /srv/frigate/config/config.yml /srv/frigate/config/config.yml.backup-2026-02-06
+cp /srv/frigate/config/config.yml /srv/frigate/config/config.yml.backup-2026-02-05
 
 # Deploy new config
 cp /path/to/new/frigate-config.yml /srv/frigate/config/config.yml
@@ -161,12 +161,12 @@ Update these files:
 
 ```bash
 # On Pi
-sudo cp /opt/go2rtc/go2rtc.yaml.backup-2026-02-06 /opt/go2rtc/go2rtc.yaml
-cp ~/watchdog.sh.backup-2026-02-06 ~/watchdog.sh
+sudo cp /opt/go2rtc/go2rtc.yaml.backup-2026-02-05 /opt/go2rtc/go2rtc.yaml
+cp ~/watchdog.sh.backup-2026-02-05 ~/watchdog.sh
 sudo systemctl restart go2rtc
 
 # On NVR
-cp /srv/frigate/config/config.yml.backup-2026-02-06 /srv/frigate/config/config.yml
+cp /srv/frigate/config/config.yml.backup-2026-02-05 /srv/frigate/config/config.yml
 docker compose restart frigate
 ```
 
@@ -180,7 +180,7 @@ docker compose restart frigate
 - [[golden-systemd-service]]
 - [[docker-compose]]
 - [[config-yml]]
-- [[Daily Journal/2026-02/2026-02-06]]
+- [[Daily Journal/2026-02/2026-02-05]]
 - Public repo: https://github.com/andrea966p/neurosurveillance-system
 
 ## Tags

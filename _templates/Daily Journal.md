@@ -3,12 +3,15 @@ tags: [journal, daily]
 date: <% tp.date.now("YYYY-MM-DD") %>
 ---
 
-## Tasks Today
+## Due Today
+
+```tasks
+not done
+due on <% tp.date.now("YYYY-MM-DD") %>
+```
+
+## Tasks
 - [ ]
-
-## Future Tasks
-<!-- Format: - [ ] task description 📅 YYYY-MM-DD -->
-
 
 ## Focus
 -
@@ -16,8 +19,11 @@ date: <% tp.date.now("YYYY-MM-DD") %>
 ## Work Log
 
 
+
 ## Issues
 
 
+
 ## Notes
+
 

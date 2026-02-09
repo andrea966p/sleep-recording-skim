@@ -15,7 +15,11 @@
       "Bash(ls:*)",
       "Bash(ssh:*)",
       "Bash(git remote set-url:*)",
-      "Bash(gh ssh-key add:*)"
+      "Bash(gh ssh-key add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nApply AI-suggested optimizations for resource reduction\n\nChanges from Cursor/Antigravity analysis:\n- go2rtc.yaml: Remove intermediate ffmpeg process, direct stdout to go2rtc\n- frigate-config.yml: Add detailed buffer size documentation\n- watchdog.sh: Add ISO 8601 timestamps and 3-retry mechanism\n\nExpected: 5-10% CPU reduction on Pi, fewer false restarts\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(ping:*)",
+      "Bash(tailscale status:*)",
+      "Bash(ssh-copy-id:*)"
     ]
   }
 }
