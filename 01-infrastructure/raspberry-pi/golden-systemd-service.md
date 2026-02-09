@@ -34,8 +34,8 @@ ExecStart=/opt/go2rtc/go2rtc -config /opt/go2rtc/go2rtc.yaml
 Restart=always
 RestartSec=5
 
-# CRITICAL: Process termination
-KillMode=control-group    # MANDATORY - kills ALL child processes
+# CRITICAL: Kills ALL child processes (rpicam-vid) when service stops
+KillMode=control-group
 KillSignal=SIGTERM
 TimeoutStopSec=10
 

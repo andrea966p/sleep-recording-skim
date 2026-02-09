@@ -8,12 +8,12 @@ status: production
 
 ## Prerequisites Checklist
 
-- [ ] Raspberry Pi 5 with official power supply (5V/5A)
-- [ ] Raspberry Pi Camera Module(s) connected
-- [ ] Ethernet cable connected
-- [ ] Static IP assigned via DHCP reservation
-- [ ] Raspberry Pi OS Lite 64-bit flashed to SD card
-- [ ] SSH enabled (create empty `ssh` file in boot partition)
+- [x] Raspberry Pi 5 with official power supply (5V/5A) ✅ 2026-02-09
+- [x] Raspberry Pi Camera Module(s) connected ✅ 2026-02-09
+- [x] Ethernet cable connected ✅ 2026-02-09
+- [x] Static IP assigned via DHCP reservation ✅ 2026-02-09
+- [x] Raspberry Pi OS Lite 64-bit flashed to SD card ✅ 2026-02-09
+- [x] SSH enabled (create empty `ssh` file in boot partition) ✅ 2026-02-09
 
 ## Your Values (from [[00-config/production-values]])
 
@@ -49,7 +49,28 @@ sudo apt update && sudo apt full-upgrade -y
 sudo apt install -y git curl wget ffmpeg
 ```
 
-### 4. Download go2rtc
+### 4. Install Camera Software
+
+```bash
+# Install FULL rpicam-apps (not lite - lite lacks libav codec)
+sudo apt install -y rpicam-apps
+```
+
+**Validation:**
+```bash
+rpicam-vid --version
+# Must show: libav:1
+```
+
+**Expected output:**
+```
+rpicam-apps capabilites: egl:1 qt:1 drm:1 libav:1
+```
+
+> [!warning] Critical Prerequisite
+> The full `rpicam-apps` package is **required**. The `rpicam-apps-lite` package lacks libav codec support and will cause go2rtc to fail with "Unrecognised codec libav" error.
+
+### 5. Download go2rtc
 
 ```bash
 sudo mkdir -p /opt/go2rtc
@@ -65,7 +86,7 @@ sudo chown -R skimlab:video /opt/go2rtc
 /opt/go2rtc/go2rtc --version
 ```
 
-### 5. Create Configuration
+### 6. Create Configuration
 
 ```bash
 sudo nano /opt/go2rtc/go2rtc.yaml
@@ -73,7 +94,7 @@ sudo nano /opt/go2rtc/go2rtc.yaml
 
 Paste the configuration from [[01-infrastructure/raspberry-pi/golden-go2rtc-config]]
 
-### 6. Create systemd Service
+### 7. Create systemd Service
 
 ```bash
 sudo nano /etc/systemd/system/go2rtc.service
@@ -81,7 +102,7 @@ sudo nano /etc/systemd/system/go2rtc.service
 
 Paste the configuration from [[01-infrastructure/raspberry-pi/golden-systemd-service]]
 
-### 7. Enable and Start Service
+### 8. Enable and Start Service
 
 ```bash
 sudo systemctl daemon-reload
@@ -95,7 +116,7 @@ sudo systemctl status go2rtc.service
 # Expected: active (running) in green
 ```
 
-### 8. Harden Boot Configuration
+### 9. Harden Boot Configuration
 
 ```bash
 sudo cp /boot/firmware/config.txt /boot/firmware/config.txt.backup
@@ -104,13 +125,13 @@ sudo nano /boot/firmware/config.txt
 
 Add settings from [[01-infrastructure/raspberry-pi/golden-boot-config]]
 
-### 9. Reboot
+### 10. Reboot
 
 ```bash
 sudo reboot
 ```
 
-### 10. Post-Reboot Validation
+### 11. Post-Reboot Validation
 
 ```bash
 ssh skimlab@192.168.0.11
@@ -138,8 +159,8 @@ ps aux | grep rpicam-vid | grep -v grep | wc -l
 
 ## Completion Checklist
 
-- [ ] SSH access working
-- [ ] go2rtc service running
+- [x] SSH access working ✅ 2026-02-09
+- [x] go2rtc service running ✅ 2026-02-09
 - [ ] Both camera streams active
 - [ ] No throttling (0x0)
 - [ ] GPU memory correct (128M)

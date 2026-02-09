@@ -18,49 +18,9 @@ version: "5.0"
 ## Production Configuration (v5.0)
 
 ```yaml
-# GO2RTC v5.0 - Production Stable
-# Path: /opt/go2rtc/go2rtc.yaml
-
 streams:
-  pi_cam_0:
-    exec: >
-      rpicam-vid
-      --codec libav
-      --libav-format h264
-      --width 1024
-      --height 768
-      --framerate 15
-      --bitrate 1500000
-      --inline
-      --timeout 0
-      --camera 0
-      --level 4.1
-      --profile high
-      -o -
-      | ffmpeg -hide_banner -loglevel error
-        -f h264 -i -
-        -c copy
-        -f rtsp rtsp://127.0.0.1:8554/pi_cam_0
-
-  pi_cam_1:
-    exec: >
-      rpicam-vid
-      --codec libav
-      --libav-format h264
-      --width 1024
-      --height 768
-      --framerate 15
-      --bitrate 1500000
-      --inline
-      --timeout 0
-      --camera 1
-      --level 4.1
-      --profile high
-      -o -
-      | ffmpeg -hide_banner -loglevel error
-        -f h264 -i -
-        -c copy
-        -f rtsp rtsp://127.0.0.1:8554/pi_cam_1
+  pi_cam_0: "exec:rpicam-vid --codec libav --libav-format h264 --width 1024 --height 768 --framerate 15 --bitrate 1500000 --inline --timeout 0 --camera 0 --level 4.1 --profile high --output -"
+  pi_cam_1: "exec:rpicam-vid --codec libav --libav-format h264 --width 1024 --height 768 --framerate 15 --bitrate 1500000 --inline --timeout 0 --camera 1 --level 4.1 --profile high --output -"
 
 rtsp:
   listen: ":8554"
@@ -78,8 +38,9 @@ log:
 |------|--------|
 | **H.264 ONLY** | H.265 causes kernel panics |
 | **libav codec** | Direct hardware encoding |
-| **ffmpeg pipe** | Stable RTSP wrapping |
-| **No TCP localhost** | Proven unstable |
+| **Single-line exec strings** | YAML multi-line blocks break go2rtc parsing |
+| **No ffmpeg pipes** | Proven unstable for 24/7 operation |
+| **Direct rpicam-vid output** | Stream directly to go2rtc, no intermediaries |
 
 ## Related Files
 
