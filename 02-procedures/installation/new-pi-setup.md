@@ -161,7 +161,7 @@ ps aux | grep rpicam-vid | grep -v grep | wc -l
 
 - [x] SSH access working ✅ 2026-02-09
 - [x] go2rtc service running ✅ 2026-02-09
-- [ ] Both camera streams active
+- [x] Both camera streams active ✅ 2026-02-09
 - [ ] No throttling (0x0)
 - [ ] GPU memory correct (128M)
 - [ ] Temperature acceptable (<70C)
