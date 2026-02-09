@@ -37,7 +37,7 @@ _templates/            # Templater plugin templates
 
 - **`01-infrastructure/raspberry-pi/golden-go2rtc-config.md`**: Production go2rtc config
   - **CRITICAL**: H.264 only (H.265 causes kernel panics on Pi5)
-  - Uses `rpicam-vid` piped to `ffmpeg` for RTSP wrapping
+  - Uses `rpicam-vid` streaming directly to go2rtc (single-line exec strings, no ffmpeg pipes)
   - `KillMode=control-group` in systemd is mandatory (prevents zombie processes)
 
 - **`_INDEX.md`**: Vault home page with quick links and system status
