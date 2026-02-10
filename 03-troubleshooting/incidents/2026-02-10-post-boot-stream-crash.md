@@ -1,9 +1,14 @@
 ---
-tags: [troubleshooting, incident, go2rtc, raspberry-pi]
-date: 2026-02-09
+tags:
+  - troubleshooting
+  - incident
+  - go2rtc
+  - raspberry-pi
+date: 2026-02-10
 severity: high
 status: workaround
-affected: [raspberry-pi]
+affected:
+  - raspberry-pi
 ---
 
 ## Summary
