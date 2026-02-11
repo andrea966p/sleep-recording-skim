@@ -34,8 +34,11 @@ watchdog-timeout = 15
 Edit `/etc/systemd/system.conf`:
 ```ini
 RuntimeWatchdogSec=30s
-ShutdownWatchdogSec=10min
+RebootWatchdogSec=10min
 ```
+
+> [!tip] Parameter Name
+> Older systemd versions use `RebootWatchdogSec` (shown commented as `#RebootWatchdogSec=10min` in the default file). Newer versions renamed it to `ShutdownWatchdogSec`. Both work — use whichever matches your system's default file.
 
 ### Enable Service
 
