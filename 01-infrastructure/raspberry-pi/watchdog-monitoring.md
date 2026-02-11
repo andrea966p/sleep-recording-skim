@@ -108,8 +108,10 @@ chmod +x ~/watchdog.sh
 crontab -e
 # Add:
 */5 * * * * /home/skimlab/watchdog.sh
-0 */4 * * * sudo systemctl restart go2rtc  # Safety restart every 4h
 ```
+
+> [!warning] No Periodic Restarts
+> Do **NOT** add a periodic `systemctl restart go2rtc` cron job. Each restart kills camera streams for ~60 seconds (due to the `ExecStartPre=/bin/sleep 60` IR LED safety delay). This system runs **continuous 24/7 video recording** alongside EEG/EMG data acquisition — any stream gap means lost experimental data that cannot be recovered. Crash recovery is already handled by systemd `Restart=always`, and the monitoring script above handles anomalous conditions.
 
 ---
 
@@ -132,8 +134,6 @@ echo "Memory: $(free -h | grep Mem | awk '{print $3"/"$2}')"
 
 ## Notes
 
-> [!tip] 4-Hour Restart Evaluation
-> The crontab includes a safety restart every 4 hours (`0 */4 * * * sudo systemctl restart go2rtc`), causing 6 stream interruptions per day. Once the system demonstrates stability for >7 consecutive days without watchdog-triggered restarts or stream failures, consider:
-> - Increasing the interval to 12h or 24h
-> - Removing the periodic restart entirely (systemd `Restart=always` handles crashes)
-> - Monitoring `watchdog.log` for trends before making changes
+- The monitoring script (`watchdog.sh`) only restarts go2rtc when something is actually wrong — it does not do blind periodic restarts
+- Hardware watchdog (`/dev/watchdog`) only reboots the Pi on kernel hangs — video is already lost in that scenario, so a reboot is the correct recovery
+- systemd `Restart=always` in the go2rtc service handles process crashes automatically
