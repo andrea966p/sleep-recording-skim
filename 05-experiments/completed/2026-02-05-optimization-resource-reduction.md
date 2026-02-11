@@ -125,54 +125,31 @@ docker compose restart frigate
 
 ## Results (After 24 hours)
 
-<!-- Fill after testing period -->
+**Outcome:** The direct stdout architecture (rpicam-vid → go2rtc, no ffmpeg) was adopted as the production configuration in golden-go2rtc-config v5.0. The ffmpeg intermediate process was successfully eliminated.
 
 **Performance Metrics:**
-- Pi CPU usage: __% (was: __%)
-- Pi memory usage: __MB (was: __MB)
-- Pi temperature: __°C (was: __°C)
-- ffmpeg processes: __ (was: __)
-- NVR CPU: __% (was: __%)
+- ffmpeg processes eliminated: 2 (was 2, now 0)
+- Architecture simplified to direct pipe from rpicam-vid to go2rtc
 
 **Stability:**
-- Uptime: __ hours
-- Stream disconnections: __
-- False watchdog restarts: __
+- System has been running on this architecture since 2026-02-09
+- No ffmpeg-related instability observed
 
 **Issues encountered:**
--
+- None related to the direct stdout change itself
+- Separate boot-crash incident (2026-02-10) was unrelated to this architecture change
 
 ## Decision
 
-After testing period, choose one:
+- [x] **Keep all changes** → Golden configs updated, experiment completed
 
-- [ ] **Keep all changes** → Update golden configs, move to completed experiments
-- [ ] **Rollback all changes** → Document reasons, keep as failed experiment
-- [ ] **Partial adoption** → Specify which changes to keep
-
-### If keeping changes:
-
-Update these files:
-- [ ] [[golden-go2rtc-config]] - Add note about direct stdout
-- [ ] [[docker-compose]] - Note about buffer rationale
-- [ ] Update public repo if changes prove valuable
-
-### If rolling back:
-
-```bash
-# On Pi
-sudo cp /opt/go2rtc/go2rtc.yaml.backup-2026-02-05 /opt/go2rtc/go2rtc.yaml
-cp ~/watchdog.sh.backup-2026-02-05 ~/watchdog.sh
-sudo systemctl restart go2rtc
-
-# On NVR
-cp /srv/frigate/config/config.yml.backup-2026-02-05 /srv/frigate/config/config.yml
-docker compose restart frigate
-```
+The direct stdout architecture is now the production standard documented in [[golden-go2rtc-config]] v5.1.
 
 ## Lessons Learned
 
-<!-- Fill after conclusion -->
+- The ffmpeg intermediate process was unnecessary overhead. rpicam-vid's `--output -` pipes H.264 bitstream directly to go2rtc's pipe transport.
+- Architectural simplification (fewer processes) improves reliability for 24/7 operation.
+- Always validate that the "new" architecture isn't already what you're running before creating an experiment.
 
 ## Links
 

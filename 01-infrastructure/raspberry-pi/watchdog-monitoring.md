@@ -127,3 +127,13 @@ echo "Memory: $(free -h | grep Mem | awk '{print $3"/"$2}')"
 
 - [[golden-systemd-service]] - Service configuration
 - [[golden-boot-config]] - Boot hardening
+
+---
+
+## Notes
+
+> [!tip] 4-Hour Restart Evaluation
+> The crontab includes a safety restart every 4 hours (`0 */4 * * * sudo systemctl restart go2rtc`), causing 6 stream interruptions per day. Once the system demonstrates stability for >7 consecutive days without watchdog-triggered restarts or stream failures, consider:
+> - Increasing the interval to 12h or 24h
+> - Removing the periodic restart entirely (systemd `Restart=always` handles crashes)
+> - Monitoring `watchdog.log` for trends before making changes

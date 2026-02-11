@@ -30,6 +30,8 @@ dtoverlay=disable-wifi
 dtoverlay=disable-bt
 
 # GPU memory for dual camera operation
+# NOTE: Ignored on Pi 5 (uses dynamic allocation, vcgencmd shows gpu=4M).
+# Kept for Pi 4 compatibility. Harmless on Pi 5.
 gpu_mem=128
 
 # Enable hardware watchdog (auto-reboot on freeze)
@@ -42,7 +44,7 @@ dtparam=watchdog=on
 |---------|---------|
 | `disable-wifi` | Reduces interference, saves power, improves stability |
 | `disable-bt` | Removes unused service, frees resources |
-| `gpu_mem=128` | Required for dual camera operation |
+| `gpu_mem=128` | GPU memory allocation (Pi 4); **ignored on Pi 5** (dynamic allocation) |
 | `watchdog=on` | Pi auto-reboots if system freezes (critical for 24/7 operation) |
 
 ## Backup Before Editing
