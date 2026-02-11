@@ -127,6 +127,29 @@ echo "Memory: $(free -h | grep Mem | awk '{print $3"/"$2}')"
 
 ---
 
+## Known Issues
+
+### VSCode Remote CPU Exhaustion
+
+> [!danger] Critical Warning
+> **DO NOT use VSCode Remote on the Pi camera node.** VSCode Remote's background file indexing (`rg --files`) consumes 300%+ CPU, starving system services and causing complete unresponsiveness.
+
+**Symptoms:**
+- Pi responds to ping but sshd refuses new connections
+- All CPU cores at 100%
+- Existing SSH sessions remain alive but system is unusable
+
+**Cause:** VSCode Remote spawns recursive `rg` (ripgrep) processes for workspace indexing. Combined with dual camera software H.264 encoding, this exhausts all available CPU on the 4-core Pi 5.
+
+**Solution:** Use lightweight editors only:
+- Terminal editors: `nano`, `vim`
+- Remote editing via MCP filesystem server (from another machine)
+- Edit locally, deploy via `scp`/`rsync`
+
+Full incident: [[03-troubleshooting/incidents/2026-02-11-vscode-remote-cpu-exhaustion|VSCode Remote CPU Exhaustion]]
+
+---
+
 ## Notes
 
 - The monitoring script (`watchdog.sh`) only restarts go2rtc when something is actually wrong — it does not do blind periodic restarts
