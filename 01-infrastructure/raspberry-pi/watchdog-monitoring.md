@@ -4,7 +4,9 @@ created: 2026-02-05
 status: production
 ---
 
-## Hardware Watchdog
+## Hardware Watchdog (systemd)
+
+The hardware watchdog is managed by **systemd directly** — not the `watchdog` daemon package. systemd claims `/dev/watchdog` exclusively, so the two cannot run simultaneously.
 
 ### Enable in Boot Config
 
@@ -13,25 +15,9 @@ Already in [[golden-boot-config]]:
 dtparam=watchdog=on
 ```
 
-### Install Watchdog Package
-
-```bash
-sudo apt-get update
-sudo apt-get install -y watchdog
-```
-
-### Configure `/etc/watchdog.conf`
-
-```ini
-watchdog-device = /dev/watchdog
-max-load-1 = 24
-min-memory = 1
-watchdog-timeout = 15
-```
-
 ### Configure Systemd Watchdog
 
-Edit `/etc/systemd/system.conf`:
+Edit `/etc/systemd/system.conf`, uncomment and set:
 ```ini
 RuntimeWatchdogSec=30s
 RebootWatchdogSec=10min
@@ -40,12 +26,18 @@ RebootWatchdogSec=10min
 > [!tip] Parameter Name
 > Older systemd versions use `RebootWatchdogSec` (shown commented as `#RebootWatchdogSec=10min` in the default file). Newer versions renamed it to `ShutdownWatchdogSec`. Both work — use whichever matches your system's default file.
 
-### Enable Service
-
+Apply without reboot:
 ```bash
-sudo systemctl enable watchdog
-sudo systemctl start watchdog
+sudo systemctl daemon-reexec
 ```
+
+> [!warning] Do NOT use the `watchdog` daemon package
+> The `watchdog` apt package (`/usr/sbin/watchdog`) conflicts with systemd's built-in watchdog — both try to claim `/dev/watchdog`, resulting in `errno 16 (Device or resource busy)`. If installed, disable it:
+> ```bash
+> sudo systemctl stop watchdog
+> sudo systemctl disable watchdog
+> ```
+> systemd's `RuntimeWatchdogSec` provides the same kernel-hang protection without the conflict.
 
 ---
 
