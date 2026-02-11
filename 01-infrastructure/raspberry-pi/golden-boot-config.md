@@ -65,7 +65,7 @@ sudo reboot
 ```bash
 # Check GPU memory
 vcgencmd get_mem gpu
-# Expected: gpu=128M
+# Expected: gpu=4M (Pi 5 uses dynamic allocation, 4M is the minimum reserve)
 
 # Check watchdog is active
 cat /sys/class/watchdog/watchdog0/state
