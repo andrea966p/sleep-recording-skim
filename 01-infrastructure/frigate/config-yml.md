@@ -1,28 +1,29 @@
 ---
 tags: [infrastructure, frigate, config, golden-config]
 created: 2026-02-05
+updated: 2026-02-12
 status: production
-version: "5.0"
+version: "5.1"
 ---
 
 ## File Location
 
 **Path:** `/srv/frigate/config/config.yml`
 
-## Production Configuration (v5.0 - Recording Only)
+## Production Configuration (v5.1 - Recording Only)
 
 ```yaml
-# Frigate Recording-Only Config v5.0
 mqtt:
-  enabled: false
+  enabled: true
+  host: mosquitto
+  port: 1883
 
 database:
   path: /media/frigate/frigate.db
 
 detect:
-  enabled: false  # Detection disabled for stability
+  enabled: false
 
-# Intel QSV hardware acceleration
 ffmpeg:
   hwaccel_args: preset-intel-qsv-h264
 
@@ -39,12 +40,11 @@ snapshots:
 cameras:
   pi_cam_0:
     ffmpeg:
-      hwaccel_args: preset-intel-qsv-h264
       inputs:
         - path: rtsp://192.168.0.11:8554/pi_cam_0
           input_args:
             - -rtsp_transport
-            - tcp  # CRITICAL: TCP for reliability
+            - tcp
             - -buffer_size
             - "512000"
             - -max_delay
@@ -58,12 +58,11 @@ cameras:
 
   pi_cam_1:
     ffmpeg:
-      hwaccel_args: preset-intel-qsv-h264
       inputs:
         - path: rtsp://192.168.0.11:8554/pi_cam_1
           input_args:
             - -rtsp_transport
-            - tcp  # CRITICAL: TCP for reliability
+            - tcp
             - -buffer_size
             - "512000"
             - -max_delay
@@ -86,10 +85,18 @@ logger:
 
 | Setting | Value | Why |
 |---------|-------|-----|
-| `hwaccel_args` | `preset-intel-qsv-h264` | GPU decoding (9-12% CPU vs 100%) |
-| `-rtsp_transport tcp` | Required | Prevents frame drops |
-| `buffer_size: 512000` | Network jitter handling | |
+| `hwaccel_args` | `preset-intel-qsv-h264` | Global GPU decoding — inherited by all cameras (9-12% CPU vs 100%) |
+| `-rtsp_transport tcp` | Required | Prevents frame drops over network |
+| `buffer_size: 512000` | Network jitter handling | Large buffer for TCP transport |
 | `detect: false` | Stability | Recording-only mode |
+| `mqtt.host: mosquitto` | Docker service name | Resolves to Mosquitto container via Docker networking |
+
+## v5.0 → v5.1 Changes
+
+| Change | Why |
+|--------|-----|
+| MQTT enabled, pointed to Mosquitto | Frigate event system active |
+| Removed per-camera `hwaccel_args` | Global setting is inherited — no need to duplicate |
 
 ## Expected Performance
 
@@ -98,8 +105,9 @@ logger:
 | CPU Usage | 9-12% |
 | GPU Usage | 3-4% |
 | Memory | ~870MB |
+| Storage (7 days) | ~225 GB (1.5Mbps × 2 cameras) |
 
 ## Related
 
-- [[docker-compose]] - Docker setup
+- [[docker-compose]] - Docker setup + Mosquitto config
 - [[../../01-infrastructure/raspberry-pi/golden-go2rtc-config|go2rtc Config]]
