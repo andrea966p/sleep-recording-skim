@@ -1,7 +1,7 @@
 ---
 tags: [config, production, sensitive]
 created: 2026-02-04
-updated: 2026-02-04
+updated: 2026-02-12
 status: active
 ---
 
@@ -17,6 +17,7 @@ status: active
 |---------|-----|--------|
 | **Frigate NVR** | http://192.168.0.50:5000 | |
 | **go2rtc API** | http://192.168.0.11:1984 | |
+| **Mosquitto MQTT** | mqtt://192.168.0.50:1883 | |
 | **Camera 0 RTSP** | rtsp://192.168.0.11:8554/pi_cam_0 | |
 | **Camera 1 RTSP** | rtsp://192.168.0.11:8554/pi_cam_1 | |
 
@@ -29,7 +30,7 @@ status: active
 | `{PI_IP}`          | `192.168.0.11`   | Raspberry Pi 5 static IP      |
 | `{PI_HOSTNAME}`    | `skimlab`        | Pi5-1 hostname                |
 | `{NVR_IP}`         | `192.168.0.50`   | ASUS Mini PC (Frigate server) |
-| `{NVR_HOSTNAME}`   | `skimlab`        | Fill in actual hostname       |
+| `{NVR_HOSTNAME}`   | `e10ubuntu`      | ASUS NUC 14 Pro hostname      |
 | `{NETWORK_SUBNET}` | `192.168.0.0/24` | Lab network                   |
 
 ### Tailscale IPs (for remote access) bilab.kaist@gmail.com tailnet
@@ -60,6 +61,7 @@ status: active
 | `{FRIGATE_WEB_PORT}` | `5000` | Frigate web UI |
 | `{FRIGATE_RTSP_PORT}` | `8554` | Frigate RTSP restream |
 | `{FRIGATE_WEBRTC_PORT}` | `8555` | Frigate WebRTC |
+| `{MQTT_PORT}` | `1883` | Mosquitto MQTT broker |
 | `{DB_PORT}` | `5432` | PostgreSQL (planned) |
 
 ---
@@ -97,6 +99,21 @@ status: active
 
 ---
 
+## NVR Hardware (ASUS NUC 14 Pro — NUC14RVH-B)
+
+| Component | Detail |
+|-----------|--------|
+| CPU | Intel Core Ultra 5 125H (Meteor Lake, 14 cores) |
+| GPU | Intel Arc Graphics (integrated) — QSV H.264 decode confirmed |
+| RAM | 30.6 GB |
+| Storage | 1.9 TB NVMe |
+| OS | Ubuntu 24.04 LTS |
+| Kernel | `6.17.0-14-generic` (HWE) |
+| VA-API Driver | `iHD` (Intel Media Driver) |
+| Docker | Compose v2 |
+
+---
+
 ## Hardware Settings
 
 | Variable | Value | Notes |
@@ -130,6 +147,19 @@ status: active
 | `{DB_NAME}` | `neurosurveillance` | Database name |
 | `{DB_USER}` | `researcher` | Database username |
 | `{DB_PASSWORD}` | *use .env file* | NEVER store here |
+
+---
+
+## Frigate Authentication
+
+| Field | Value |
+|-------|-------|
+| Admin user | `admin` |
+| Admin password | *(changed from auto-generated default — check Frigate UI)* |
+
+> [!tip] Password Management
+> The admin password was changed from the auto-generated default on 2026-02-12.
+> If you need to reset it, delete the Frigate database and restart the container.
 
 ---
 
@@ -170,5 +200,5 @@ curl http://192.168.0.50:5000/api/stats
 
 ---
 
-**Last validated:** 2026-02-04
-**System status:** Operational
+**Last validated:** 2026-02-12
+**System status:** Operational (Pi streaming + Frigate recording + MQTT)
