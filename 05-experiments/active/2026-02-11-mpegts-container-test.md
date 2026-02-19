@@ -125,9 +125,34 @@ No changes to Frigate config needed -- Frigate receives RTSP from go2rtc regardl
 
 ### Phase 3 — 2h monitoring window (cam 0 mpegts, cam 1 h264)
 
-*Start: 2026-02-19 ~07:45 UTC — monitoring in progress*
+**Window: 2026-02-19 07:45 UTC → 09:28 UTC (~1h43m active recording)**
 
-<!-- Fill after 2h window -->
+**Frigate logs (relevant entries only):**
+- `16:47 KST` — `Turning on recordings for pi_cam_0` (user-initiated) ✓
+- `17:27 KST` — `Turning off recordings for pi_cam_0` (user-initiated) ✓
+- `17:28 KST` — Export error: `Invalid duration for option ss: 00:-43:27` — **Frigate bug with preview clip negative timestamp, unrelated to mpegts**
+- `17:28, 17:30 KST` — `No motion data found` — expected, detection is disabled
+- go2rtc journal: **zero errors, zero warnings** throughout
+
+**Recording files:** 245 × 10-second mp4 segments for pi_cam_0, clean
+- Path inside container: `/media/frigate/recordings/2026-02-19/HH/pi_cam_0/MM.SS.mp4`
+- Segment integrity (ffprobe): `duration=9.997982s`, `size=2186614 bytes`, `nb_streams=1` ✓
+- Export playback: **confirmed good** by user
+
+**End-of-Phase 3 Pi metrics:**
+
+| Metric | Baseline | Phase 3 end | Delta |
+|--------|----------|-------------|-------|
+| Pi temperature | 48.8°C | 48.8°C | 0 |
+| Pi throttled | `0x0` | `0x0` | none |
+| Pi memory used | 460 MB | 446 MB | -14 MB |
+| Pi load avg (1m) | 0.36 | 0.32 | -0.04 |
+| rpicam-vid cam 0 CPU | ~17% | ~16.6% | -0.4% |
+| rpicam-vid cam 1 CPU | ~17% | ~16.7% | -0.3% |
+| Frigate cam 0 fps | 5.1 fps | 5.1 fps | 0 |
+| Frigate ffmpeg CPU | 2.5–2.6% | 2.1–2.2% | -0.3–0.4% |
+
+**Phase 3 verdict: PASS** — proceeding to Phase 4 (both cameras mpegts)
 
 ## Decision
 
