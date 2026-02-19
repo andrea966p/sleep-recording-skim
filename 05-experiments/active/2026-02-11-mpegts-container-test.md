@@ -154,6 +154,32 @@ No changes to Frigate config needed -- Frigate receives RTSP from go2rtc regardl
 
 **Phase 3 verdict: PASS** — proceeding to Phase 4 (both cameras mpegts)
 
+### Phase 4 — both cameras mpegts (2026-02-19 08:38 UTC)
+
+**Config change:** `pi_cam_1` switched to `--libav-format mpegts`. Both cameras now mpegts.
+
+**go2rtc streams API:** Both streams show `format_name: mpegts`, Frigate consumers connected via RTSP+TCP ✓
+
+**Frigate logs:** `Connection refused` errors at 17:38:01–17:38:41 KST — expected, same pattern as Phase 2 (Frigate retrying every 10s during 60s ExecStartPre blackout). **Zero errors after 08:39 UTC.** Frigate reconnected cleanly.
+
+**Post-switch Pi metrics (both cameras mpegts):**
+
+| Metric | Baseline (h264) | Phase 4 (mpegts both) | Delta |
+|--------|-----------------|----------------------|-------|
+| Pi temperature | 48.8°C | 47.2°C | -1.6°C |
+| Pi throttled | `0x0` | `0x0` | none |
+| Pi memory used | 460 MB | 441 MB | -19 MB |
+| Pi load avg (1m) | 0.36 | 0.39 | +0.03 |
+| rpicam-vid cam 0 CPU | ~17% | ~16.6% | -0.4% |
+| rpicam-vid cam 1 CPU | ~17% | ~16.7% | -0.3% |
+| Frigate cam 0 fps | 5.1 fps | 5.1 fps | 0 |
+| Frigate cam 1 fps | 5.0 fps | 5.1 fps | +0.1 |
+| Frigate ffmpeg CPU | 2.5–2.6% | 2.3–2.6% | ≈0 |
+
+**24h monitoring window started: 2026-02-19 08:39 UTC**
+
+<!-- Fill after 24h window -->
+
 ## Decision
 
 - [ ] **Adopt mpegts** -- update golden config to v5.2
