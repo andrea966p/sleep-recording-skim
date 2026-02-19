@@ -2,7 +2,7 @@
 tags: [infrastructure, raspberry-pi, systemd, golden-config]
 created: 2026-02-04
 status: production
-version: "5.0"
+version: "5.1"
 ---
 
 # Golden systemd Service
@@ -15,7 +15,7 @@ version: "5.0"
 
 **Path:** `/etc/systemd/system/go2rtc.service`
 
-## Production Configuration (v5.0)
+## Production Configuration (v5.1)
 
 ```ini
 [Unit]
@@ -28,6 +28,8 @@ Wants=network-online.target
 User=skimlab
 Group=video
 WorkingDirectory=/opt/go2rtc
+# IR LED power spike prevention -- wait for boot power draw to settle
+ExecStartPre=/bin/sleep 60
 ExecStart=/opt/go2rtc/go2rtc -config /opt/go2rtc/go2rtc.yaml
 
 # Restart policy

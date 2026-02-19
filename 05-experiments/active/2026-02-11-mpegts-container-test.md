@@ -78,15 +78,56 @@ No changes to Frigate config needed -- Frigate receives RTSP from go2rtc regardl
 
 ## Baseline Metrics
 
-- [ ] Pi CPU usage: __%
-- [ ] Pi memory usage: __MB
-- [ ] Pi temperature: __C
-- [ ] Stream startup time: __s
-- [ ] Frigate recording playback: working/broken
+**Captured: 2026-02-19, h264 format, both cameras active**
+
+| Metric | Value |
+|--------|-------|
+| Pi temperature | 48.8°C |
+| Pi throttled | `0x0` (none) |
+| Pi memory used | 460 MB / 8062 MB |
+| Pi load avg (1/5/15m) | 0.36 / 0.55 / 0.50 |
+| rpicam-vid cam 0 CPU | ~17% |
+| rpicam-vid cam 1 CPU | ~17% |
+| Frigate cam 0 fps | 5.1 fps |
+| Frigate cam 1 fps | 5.0 fps |
+| Frigate ffmpeg CPU (QSV) | 2.5–2.6% per camera |
+| Stream startup time | (not yet measured) |
+| Frigate recording playback | working |
 
 ## Results
 
-<!-- Fill after testing -->
+### Phase 2 — cam 0 switched to mpegts (2026-02-19 07:43 UTC)
+
+**Config change:** `pi_cam_0` only: `--libav-format h264` → `--libav-format mpegts`
+**pi_cam_1** left on `h264` as comparison.
+
+**go2rtc streams API confirms:**
+- `pi_cam_0`: `format_name: mpegts`, producing `H264` video — Frigate connected via RTSP+TCP ✓
+- `pi_cam_1`: `format_name: h264`, producing `H264` video — Frigate connected via RTSP+TCP ✓
+
+**Post-switch metrics (07:45 UTC, ~2 min after go2rtc started serving streams):**
+
+| Metric | Baseline (h264 both) | Post-switch (cam0=mpegts, cam1=h264) | Delta |
+|--------|---------------------|--------------------------------------|-------|
+| Pi temperature | 48.8°C | 49.4°C | +0.6°C |
+| Pi throttled | `0x0` | `0x0` | none |
+| Pi memory used | 460 MB | 438 MB | -22 MB |
+| Pi load avg (1m) | 0.36 | 0.48 | +0.12 |
+| rpicam-vid cam 0 CPU | ~17% | ~16.6% | -0.4% |
+| rpicam-vid cam 1 CPU | ~17% | ~16.8% | -0.2% |
+| Frigate cam 0 fps | 5.1 fps | 5.1 fps | 0 |
+| Frigate cam 1 fps | 5.0 fps | 5.1 fps | +0.1 |
+| Frigate ffmpeg CPU | 2.5–2.6% | 2.2–2.3% | -0.2–0.3% |
+
+**Journal:** Zero errors, zero warnings after restart. Clean startup.
+
+**go2rtc startup time:** ExecStartPre 60s + ~1s startup = ~61s to serving streams.
+
+### Phase 3 — 2h monitoring window (cam 0 mpegts, cam 1 h264)
+
+*Start: 2026-02-19 ~07:45 UTC — monitoring in progress*
+
+<!-- Fill after 2h window -->
 
 ## Decision
 
