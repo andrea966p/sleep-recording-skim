@@ -1,7 +1,7 @@
 ---
 tags: [config, production, sensitive]
 created: 2026-02-04
-updated: 2026-02-12
+updated: 2026-02-20
 status: active
 ---
 
@@ -20,6 +20,7 @@ status: active
 | **Mosquitto MQTT** | mqtt://192.168.0.50:1883 | |
 | **Camera 0 RTSP** | rtsp://192.168.0.11:8554/pi_cam_0 | |
 | **Camera 1 RTSP** | rtsp://192.168.0.11:8554/pi_cam_1 | |
+| **Session Daemon** | http://127.0.0.1:8585 | |
 
 ---
 
@@ -62,6 +63,7 @@ status: active
 | `{FRIGATE_RTSP_PORT}` | `8554` | Frigate RTSP restream |
 | `{FRIGATE_WEBRTC_PORT}` | `8555` | Frigate WebRTC |
 | `{MQTT_PORT}` | `1883` | Mosquitto MQTT broker |
+| `{SESSION_DAEMON_PORT}` | `8585` | Session daemon REST API |
 | `{DB_PORT}` | `5432` | PostgreSQL (planned) |
 
 ---
@@ -96,6 +98,10 @@ status: active
 | `{FRIGATE_DIR}` | `/srv/frigate` |
 | `{FRIGATE_CONFIG_DIR}` | `/srv/frigate/config` |
 | `{FRIGATE_MEDIA_DIR}` | `/srv/frigate/storage` |
+| `{SESSION_DAEMON_DIR}` | `/opt/neurosurveillance` |
+| `{SESSION_LOG_DIR}` | `/opt/neurosurveillance/logs` |
+| `{SESSION_EXPORT_DIR}` | `/opt/neurosurveillance/exports` |
+| `{SESSION_DATA_DIR}` | `/opt/neurosurveillance/sessions` |
 
 ---
 
@@ -196,9 +202,12 @@ curl http://192.168.0.11:1984/api/streams
 
 # Test Frigate
 curl http://192.168.0.50:5000/api/stats
+
+# Test Session Daemon
+curl http://127.0.0.1:8585/api/health
 ```
 
 ---
 
-**Last validated:** 2026-02-12
-**System status:** Operational (Pi streaming + Frigate recording + MQTT)
+**Last validated:** 2026-02-20
+**System status:** Operational (Pi streaming + Frigate recording + MQTT + Session daemon designed)

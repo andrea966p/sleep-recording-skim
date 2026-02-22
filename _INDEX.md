@@ -9,6 +9,7 @@ tags: [index, navigation, home]
 > |---------|-----|
 > | **Frigate** | http://192.168.0.50:5000 |
 > | **go2rtc** | http://192.168.0.11:1984 |
+> | **Session Daemon** | http://127.0.0.1:8585 (NVR localhost) |
 > | **Config** | [[00-config/production-values]] |
 > | **Tasks** | [[00-config/task-dashboard]] |
 
@@ -31,8 +32,12 @@ Production IPs, usernames, paths, and settings.
 - [[01-infrastructure/frigate/docker-compose|Docker Compose]]
 - [[01-infrastructure/frigate/config-yml|config.yml]]
 
+**Session Daemon:**
+- [[01-infrastructure/session-daemon/architecture|Architecture & Design]]
+
 ### Procedures
 - [[02-procedures/installation/new-pi-setup|New Pi Setup]]
+- [[02-procedures/session-recording-workflow|Session Recording Workflow]]
 
 ### Troubleshooting
 
@@ -50,6 +55,7 @@ Production IPs, usernames, paths, and settings.
 
 ### Experiments
 - [[05-experiments/completed/h265-encoding-failure|H.265 Failure (DO NOT USE)]]
+- [[05-experiments/completed/2026-02-11-mpegts-container-test|MPEG-TS Container Test (adopted v5.2)]]
 - [[05-experiments/active/|Active Experiments]]
 
 ### References
@@ -68,6 +74,7 @@ Production IPs, usernames, paths, and settings.
 | **Pi5-1** | 192.168.0.11 | |
 | **go2rtc** | :1984 | |
 | **Frigate** | 192.168.0.50:5000 | |
+| **Session Daemon** | 127.0.0.1:8585 | |
 
 ---
 
@@ -94,4 +101,4 @@ ffprobe rtsp://192.168.0.11:8554/pi_cam_0
 
 ---
 
-*Last updated: 2026-02-05*
+*Last updated: 2026-02-20*

@@ -1,7 +1,7 @@
 ---
 tags: [experiment]
 date: 2026-02-11
-status: planned
+status: completed
 subjects:
 chambers:
 ---
@@ -59,11 +59,11 @@ pi_cam_0: "exec:rpicam-vid -n --codec libav --libav-format mpegts ... --output -
 
 ### Success Criteria
 
-- [ ] Both streams play correctly in Frigate UI
-- [ ] No increase in CPU usage (>5% delta)
-- [ ] No stream disconnections
-- [ ] Stream startup time equal or faster than `h264`
-- [ ] Recordings save correctly (verify playback of recorded segments)
+- [x] Both streams play correctly in Frigate UI
+- [x] No increase in CPU usage (>5% delta)
+- [x] No stream disconnections
+- [x] Stream startup time equal or faster than `h264`
+- [x] Recordings save correctly (verify playback of recorded segments)
 
 ### Failure Criteria
 
@@ -177,14 +177,25 @@ No changes to Frigate config needed -- Frigate receives RTSP from go2rtc regardl
 | Frigate ffmpeg CPU | 2.5–2.6% | 2.3–2.6% | ≈0 |
 
 **24h monitoring window started: 2026-02-19 08:39 UTC**
+**Recording started: 2026-02-19 17:44 KST (both cameras)**
+**Recording stopped: 2026-02-20 11:23 KST (~17h44m)**
 
-<!-- Fill after 24h window -->
+**Frigate logs:** Zero errors throughout. Only entries are the user-initiated recording on/off events.
+
+**go2rtc journal:** Zero entries after initial startup at 08:38:38 UTC. Service ran uninterrupted for the full window.
+
+**Recording segments:** ~6600 × 10s segments per camera (~17h coverage each). Export playback confirmed good by user.
+
+**24h window verdict: PASS**
 
 ## Decision
 
-- [ ] **Adopt mpegts** -- update golden config to v5.2
+- [x] **Adopt mpegts** -- update golden config to v5.2
 - [ ] **Keep h264** -- document why mpegts didn't improve things
 - [ ] **Needs more testing** -- specify what
+
+**Decision date:** 2026-02-20
+**Outcome:** mpegts adopted. All phases passed with no regressions. Metrics equal or marginally better than h264 baseline across all dimensions. Zero go2rtc errors throughout. Aligns with RPi camera documentation recommendation for streaming.
 
 ## Notes
 

@@ -2,7 +2,7 @@
 tags: [infrastructure, raspberry-pi, go2rtc, golden-config]
 created: 2026-02-04
 status: production
-version: "5.1"
+version: "5.2"
 ---
 
 # Golden go2rtc Configuration
@@ -15,12 +15,12 @@ version: "5.1"
 
 **Path:** `/opt/go2rtc/go2rtc.yaml`
 
-## Production Configuration (v5.1)
+## Production Configuration (v5.2)
 
 ```yaml
 streams:
-  pi_cam_0: "exec:rpicam-vid -n --codec libav --libav-format h264 --width 1024 --height 768 --framerate 15 --bitrate 1500000 --inline --intra 15 --timeout 0 --camera 0 --level 4.1 --profile high --low-latency --output -"
-  pi_cam_1: "exec:rpicam-vid -n --codec libav --libav-format h264 --width 1024 --height 768 --framerate 15 --bitrate 1500000 --inline --intra 15 --timeout 0 --camera 1 --level 4.1 --profile high --low-latency --output -"
+  pi_cam_0: "exec:rpicam-vid -n --codec libav --libav-format mpegts --width 1024 --height 768 --framerate 15 --bitrate 1500000 --inline --intra 15 --timeout 0 --camera 0 --level 4.1 --profile high --low-latency --output -"
+  pi_cam_1: "exec:rpicam-vid -n --codec libav --libav-format mpegts --width 1024 --height 768 --framerate 15 --bitrate 1500000 --inline --intra 15 --timeout 0 --camera 1 --level 4.1 --profile high --low-latency --output -"
 
 rtsp:
   listen: ":8554"
@@ -37,7 +37,7 @@ log:
 | Rule | Reason |
 |------|--------|
 | **H.264 ONLY** | H.265 causes kernel panics |
-| **libav codec** | Software H.264 encoding via libav/x264 (Pi 5 has no HW encoder) |
+| **`--libav-format mpegts`** | MPEG-TS container over raw H.264 bitstream — better framing, timestamps, stream recovery. Recommended by RPi camera docs for streaming. Tested stable 2026-02-19/20. |
 | **Single-line exec strings** | YAML multi-line blocks break go2rtc parsing |
 | **No ffmpeg pipes** | Proven unstable for 24/7 operation |
 | **Direct rpicam-vid output** | Stream directly to go2rtc, no intermediaries |
