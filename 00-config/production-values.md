@@ -1,7 +1,7 @@
 ---
 tags: [config, production, sensitive]
 created: 2026-02-04
-updated: 2026-02-20
+updated: 2026-02-23
 status: active
 ---
 
@@ -209,5 +209,5 @@ curl http://127.0.0.1:8585/api/health
 
 ---
 
-**Last validated:** 2026-02-20
-**System status:** Operational (Pi streaming + Frigate recording + MQTT + Session daemon designed)
+**Last validated:** 2026-02-23
+**System status:** Operational (Pi streaming + Frigate recording + MQTT + Session daemon deployed; daemon + MQTT + Radiens healthy)

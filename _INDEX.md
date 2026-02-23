@@ -34,6 +34,7 @@ Production IPs, usernames, paths, and settings.
 
 **Session Daemon:**
 - [[01-infrastructure/session-daemon/architecture|Architecture & Design]]
+- [[01-infrastructure/session-daemon/session-service|Systemd Service]]
 
 ### Procedures
 - [[02-procedures/installation/new-pi-setup|New Pi Setup]]
@@ -49,6 +50,7 @@ Production IPs, usernames, paths, and settings.
 
 **Incident Log:**
 - [[03-troubleshooting/incidents/|Incidents]]
+- [[03-troubleshooting/incidents/2026-02-23-session-daemon-radiens-auth-cors|2026-02-23 Session Daemon Auth + CORS]]
 
 ### Journal
 - [[04-journal/|Daily Notes]]
@@ -71,10 +73,10 @@ Production IPs, usernames, paths, and settings.
 
 | Component | IP | Status |
 |-----------|------|--------|
-| **Pi5-1** | 192.168.0.11 | |
-| **go2rtc** | :1984 | |
-| **Frigate** | 192.168.0.50:5000 | |
-| **Session Daemon** | 127.0.0.1:8585 | |
+| **Pi5-1** | 192.168.0.11 | Online |
+| **go2rtc** | :1984 | Online |
+| **Frigate** | 192.168.0.50:5000 | Online |
+| **Session Daemon** | 127.0.0.1:8585 | Healthy (daemon + MQTT + Radiens connected) |
 
 ---
 

@@ -70,17 +70,17 @@ Polls the NeuroNexus Radiens software every 1 second to detect recording state c
 
 | Detail | Value |
 |--------|-------|
-| **Library** | `radiens` Python package (pre-installed on ASUS PC) |
+| **Library** | `radiens` v4.0.0 Python package (PyPI, installed in daemon venv) |
 | **Class** | `AllegoClient` |
-| **Method** | `client.get_status()` -> `AllegoState` |
-| **Key field** | `.recording` -- values: `R_ON`, `R_OFF` |
+| **Method** | `client.get_status()` -> status object with `RecordingSpec` |
+| **Key field** | `.recording.mode` -- values: `R_ON`, `R_OFF` |
 | **Poll interval** | 1 second |
 | **Connection** | Local (Radiens runs on same machine) |
 
 **State machine:**
 
 ```
-                   get_status().recording
+                get_status().recording.mode
                          │
               ┌──────────┴──────────┐
               v                     v
@@ -206,7 +206,7 @@ Manages session metadata and logging.
 
 ### 4. HTTP API (`api.py`)
 
-Lightweight REST API on `127.0.0.1:{SESSION_DAEMON_PORT}` for the future UI to set session metadata.
+Lightweight REST API on `127.0.0.1:{SESSION_DAEMON_PORT}` for the UI to set session metadata.
 
 | Endpoint | Method | Purpose |
 |----------|--------|---------|
@@ -217,7 +217,10 @@ Lightweight REST API on `127.0.0.1:{SESSION_DAEMON_PORT}` for the future UI to s
 | `GET /api/health` | GET | Health check (for systemd watchdog) |
 
 > [!tip] Localhost Only
-> The API binds to `127.0.0.1` only -- not accessible from the network. This is intentional: the UI will run on the same machine. If remote access is needed in the future, a reverse proxy can be added.
+> The API binds to `127.0.0.1` only -- not accessible from the network. This is intentional: the UI runs on the same machine.
+>
+> [!tip] CORS Enabled
+> The API returns CORS headers (`Access-Control-Allow-Origin: *`) so Tauri webview/browser development can call the localhost API successfully.
 
 **Example: Set metadata before a session**
 
@@ -251,7 +254,7 @@ Orchestrates all components. Entry point for the systemd service.
 while running:
     try:
         status = radiens_client.get_status()
-        new_state = status.recording  # R_ON or R_OFF
+        new_state = status.recording.mode  # RecordingSpec.mode: R_ON or R_OFF
 
         if previous_state == "R_OFF" and new_state == "R_ON":
             start_session()
@@ -349,6 +352,7 @@ See [[session-service|Session Daemon Service]] for the full systemd unit file.
 - `After=docker.service` (Frigate and Mosquitto must be running)
 - Runs as `{NVR_USER}` (not root)
 - Working directory: `/opt/neurosurveillance`
+- Environment: `PYTHONUNBUFFERED=1`, `HOME=/home/skimlab` (required so `radiens` can read `~/.config/radiens/session.json`)
 
 ## Failure Modes
 
@@ -365,7 +369,7 @@ See [[session-service|Session Daemon Service]] for the full systemd unit file.
 
 | Package | Version | Purpose |
 |---------|---------|---------|
-| `radiens` | (installed) | NeuroNexus Radiens Python API |
+| `radiens` | 4.0.0 | NeuroNexus Radiens Python API (PyPI). Production auth mode uses Cognito session tokens from `~/.config/radiens/session.json`. |
 | `paho-mqtt` | >= 2.0 | MQTT client library |
 | `flask` | >= 3.0 | HTTP API framework |
 | `requests` | >= 2.31 | Frigate HTTP API calls |
