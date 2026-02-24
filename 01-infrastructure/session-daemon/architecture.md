@@ -2,7 +2,7 @@
 tags: [infrastructure, session-daemon, architecture]
 created: 2026-02-20
 status: draft
-version: "1.0"
+version: "1.1"
 ---
 
 # Session Daemon Architecture
@@ -106,12 +106,13 @@ Polls the NeuroNexus Radiens software every 1 second to detect recording state c
 
 ### 2. Frigate Controller (`frigate_controller.py`)
 
-Controls Frigate recording via MQTT and handles video export via HTTP API.
+Controls Frigate recording via MQTT and handles video export via HTTP API. Also detects **external** recording state changes (e.g. Record button clicks in Frigate's web UI).
 
 | Detail | Value |
 |--------|-------|
 | **MQTT broker** | `{NVR_IP}:1883` (Mosquitto, Docker) |
-| **MQTT topic** | `frigate/{CAMERA_ID}/recordings/set` |
+| **MQTT publish topic** | `frigate/{CAMERA_ID}/recordings/set` |
+| **MQTT subscribe topic** | `frigate/+/recordings/state` |
 | **MQTT payload** | `ON` or `OFF` |
 | **Export API** | `POST http://{NVR_IP}:5000/api/export/{camera}/start/{start}/end/{end}` |
 | **Frigate timezone** | Timestamps in UTC (system timezone `Asia/Seoul`, UTC+9) |
@@ -124,6 +125,12 @@ Controls Frigate recording via MQTT and handles video export via HTTP API.
 1. **On startup:** Publish `OFF` to all camera recording topics (clean slate)
 2. **On session start:** Publish `ON` to the active chamber's camera topic
 3. **On session end:** Publish `OFF`, then call the export API
+
+**External change detection:**
+
+The controller subscribes to `frigate/+/recordings/state` and maintains an `_expected_states` dict. Before publishing ON/OFF, it records the expected state. When a state message arrives:
+- If it matches an expected state → consumed as self-echo (ignored)
+- If no matching expected state → **external change** → fires callback to daemon
 
 **Export flow:**
 
@@ -187,6 +194,7 @@ Manages session metadata and logging.
 ```json
 {
   "session_id": "uuid-here",
+  "source": "radiens",
   "start_time_utc": 1771567800,
   "end_time_utc": 1771575000,
   "start_time_local": "2026-02-20T14:30:00+09:00",
@@ -204,16 +212,62 @@ Manages session metadata and logging.
 }
 ```
 
+### 3b. Manual Session Manager (`manual_session_manager.py`)
+
+Handles recordings triggered externally via Frigate's web UI (clicking the Record button on a camera). Each camera is tracked independently.
+
+**Detection flow:**
+
+```
+User clicks Record in Frigate UI on pi_cam_0
+  → Frigate publishes: frigate/pi_cam_0/recordings/state = ON
+  → FrigateController detects: external ON (not self-initiated)
+  → ManualSessionManager.start_recording("pi_cam_0")
+  → Records start timestamp
+
+User clicks Stop in Frigate UI
+  → Frigate publishes: frigate/pi_cam_0/recordings/state = OFF
+  → ManualSessionManager.stop_recording("pi_cam_0")
+  → Records end timestamp
+  → Background thread: calls Frigate export API → MP4 → JSON sidecar
+  → File appears in /opt/neurosurveillance/exports/
+```
+
+**Key behaviors:**
+- **Radiens priority:** If a Radiens session is active on a camera, external Record ON is ignored
+- **Min duration filter:** Recordings shorter than `min_duration` (default 5s) are discarded (accidental clicks)
+- **Per-camera:** cam_0 and cam_1 can have independent manual sessions
+- **Naming:** `YYMMDDHHMM_manual_pi_cam_0.mp4` (no mouse metadata for manual sessions)
+- **JSON sidecar:** Same as Radiens sessions but with `"source": "manual"`
+
+**Manual session sidecar example:**
+
+```json
+{
+  "session_id": "uuid-here",
+  "source": "manual",
+  "start_time_utc": 1771567800,
+  "end_time_utc": 1771575000,
+  "start_time_local": "2026-02-20T14:30:00+09:00",
+  "end_time_local": "2026-02-20T16:30:00+09:00",
+  "duration_seconds": 7200,
+  "camera": "pi_cam_0",
+  "video_filename": "2602201430_manual_pi_cam_0.mp4",
+  "export_status": "completed"
+}
+```
+
 ### 4. HTTP API (`api.py`)
 
 Lightweight REST API on `127.0.0.1:{SESSION_DAEMON_PORT}` for the UI to set session metadata.
 
 | Endpoint | Method | Purpose |
 |----------|--------|---------|
-| `GET /api/status` | GET | Daemon status, current session state, Radiens connection |
+| `GET /api/status` | GET | Daemon status, current session state, Radiens connection, active manual recordings |
 | `POST /api/session/metadata` | POST | Set metadata for next session (mouse_id, type, user, chamber) |
-| `GET /api/session/current` | GET | Current session info (if active) |
-| `GET /api/session/history` | GET | List of past sessions |
+| `GET /api/session/current` | GET | Current Radiens session info (if active) |
+| `GET /api/session/history` | GET | List of past sessions (`?source=radiens\|manual` filter, `?limit=N`) |
+| `GET /api/session/manual` | GET | Active and recent manual recording sessions |
 | `GET /api/health` | GET | Health check (for systemd watchdog) |
 
 > [!tip] Localhost Only
@@ -307,6 +361,11 @@ cameras:
   chamber_0: "{CAMERA_0_ID}"   # pi_cam_0
   chamber_1: "{CAMERA_1_ID}"   # pi_cam_1
 
+# Manual session auto-detection (Frigate UI Record button)
+manual_sessions:
+  enabled: true
+  min_duration: 5              # Ignore recordings shorter than 5s
+
 # NAS transfer (deferred -- not yet configured)
 nas:
   enabled: false
@@ -326,19 +385,22 @@ lab_members:
 
 ```
 /opt/neurosurveillance/
-├── config.yaml              # Daemon configuration
-├── session-daemon/          # Python source code
-│   ├── daemon.py            # Main entry point
-│   ├── radiens_poller.py    # Radiens state polling
-│   ├── frigate_controller.py # MQTT + export control
-│   ├── session_manager.py   # Session lifecycle + logging
-│   ├── api.py               # HTTP REST API
-│   └── requirements.txt     # Python dependencies
-├── logs/                    # Daemon logs
+├── config.yaml                # Daemon configuration
+├── session-daemon/            # Python source code
+│   ├── daemon.py              # Main entry point
+│   ├── radiens_poller.py      # Radiens state polling
+│   ├── frigate_controller.py  # MQTT + export control + external detection
+│   ├── session_manager.py     # Radiens session lifecycle + logging
+│   ├── manual_session_manager.py  # Manual (Frigate UI) session tracking
+│   ├── session_utils.py       # Shared utilities (filename gen, JSON write)
+│   ├── api.py                 # HTTP REST API
+│   └── requirements.txt       # Python dependencies
+├── logs/                      # Daemon logs
 │   └── session-daemon.log
-├── exports/                 # Exported MP4s (staging area)
-└── sessions/                # Session JSON logs
-    └── 2026-02-20_HETCF3R1_basal_session.json
+├── exports/                   # Exported MP4s (staging area)
+└── sessions/                  # Session JSON logs (both Radiens + manual)
+    ├── 2602201430_HETCF3R1_basal_session.json
+    └── 2602201430_manual_pi_cam_0_session.json
 ```
 
 ## Systemd Service

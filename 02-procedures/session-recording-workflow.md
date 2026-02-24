@@ -188,6 +188,44 @@ If the daemon crashes while recording is active:
 
 ---
 
+## Manual Recording (Without Radiens)
+
+If you need to record video **without** an active Radiens EEG session (e.g. setup verification, behavioral observation), you can use Frigate's built-in Record button. The daemon will auto-detect this and export the video.
+
+### Steps
+
+1. Open Frigate UI: `http://192.168.0.50:5000`
+2. Navigate to the camera you want to record (pi_cam_0 or pi_cam_1)
+3. Click the **Record** button on the camera
+4. When done, click **Stop** on the camera
+5. The daemon auto-detects the stop and exports the video
+
+**Output files:**
+- Video: `YYMMDDHHMM_manual_pi_cam_0.mp4` in `/opt/neurosurveillance/exports/`
+- Sidecar: `YYMMDDHHMM_manual_pi_cam_0_session.json` in `/opt/neurosurveillance/sessions/`
+
+### Check manual recording status
+
+```bash
+# See active manual recordings
+curl http://127.0.0.1:8585/api/session/manual | python3 -m json.tool
+
+# See all history (both Radiens and manual)
+curl http://127.0.0.1:8585/api/session/history | python3 -m json.tool
+
+# Filter to manual only
+curl "http://127.0.0.1:8585/api/session/history?source=manual" | python3 -m json.tool
+```
+
+### Important notes
+
+- **Radiens takes priority:** If a Radiens EEG session is active on a camera, clicking Record in Frigate UI is ignored by the daemon (the Radiens session controls that camera).
+- **Min duration:** Recordings shorter than 5 seconds are ignored (accidental clicks).
+- **Both cameras:** You can record cam_0 and cam_1 independently at the same time.
+- **No metadata:** Manual recordings don't use mouse ID metadata. The filename uses `manual` + camera name instead.
+
+---
+
 ## NAS Transfer (Future)
 
 When NAS connectivity is configured via Tailscale, the daemon will automatically transfer exports to:

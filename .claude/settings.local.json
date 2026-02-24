@@ -23,7 +23,9 @@
       "WebSearch",
       "WebFetch(domain:forum.obsidian.md)",
       "WebFetch(domain:playbooks.com)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(python3:*)",
+      "Bash(wc -l:*)"
     ]
   }
 }

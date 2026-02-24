@@ -143,6 +143,7 @@ status: active
 |----------|-------|-------|
 | `{RETENTION_DAYS}` | `7` | Video retention |
 | `{STORAGE_PER_CAM_DAY}` | `~45GB` | Estimated storage |
+| `{MANUAL_SESSION_MIN_DURATION}` | `5` | Min seconds for manual recording export (filters accidental clicks) |
 
 ---
 
