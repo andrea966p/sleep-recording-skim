@@ -165,7 +165,7 @@ ps aux | grep rpicam-vid | grep -v grep | wc -l
 - [x] No throttling (0x0) ✅ 2026-02-09
 - [x] GPU memory correct (128M) ✅ 2026-02-09
 - [x] Temperature acceptable (<70C) ✅ 2026-02-09
-- [ ] Added to Frigate config on NVR
+- [x] Added to Frigate config on NVR ✅ 2026-02-23
 
 ## Notes
 

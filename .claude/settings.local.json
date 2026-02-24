@@ -22,7 +22,8 @@
       "Bash(ssh-copy-id:*)",
       "WebSearch",
       "WebFetch(domain:forum.obsidian.md)",
-      "WebFetch(domain:playbooks.com)"
+      "WebFetch(domain:playbooks.com)",
+      "Bash(find:*)"
     ]
   }
 }
