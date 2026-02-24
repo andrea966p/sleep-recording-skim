@@ -1,16 +1,16 @@
 ---
 tags: [infrastructure, frigate, config, golden-config]
 created: 2026-02-05
-updated: 2026-02-12
+updated: 2026-02-24
 status: production
-version: "5.1"
+version: "5.2"
 ---
 
 ## File Location
 
 **Path:** `/srv/frigate/config/config.yml`
 
-## Production Configuration (v5.1 - Recording Only)
+## Production Configuration (v5.2 - Recording Only)
 
 ```yaml
 mqtt:
@@ -53,6 +53,8 @@ cameras:
             - record
     detect:
       enabled: false
+      width: 1024
+      height: 768
     record:
       enabled: true
 
@@ -71,6 +73,8 @@ cameras:
             - record
     detect:
       enabled: false
+      width: 1024
+      height: 768
     record:
       enabled: true
 
@@ -88,15 +92,15 @@ logger:
 | `hwaccel_args` | `preset-intel-qsv-h264` | Global GPU decoding — inherited by all cameras (9-12% CPU vs 100%) |
 | `-rtsp_transport tcp` | Required | Prevents frame drops over network |
 | `buffer_size: 512000` | Network jitter handling | Large buffer for TCP transport |
+| `detect.width/height` | `1024x768` on both cameras | Prevents aspect-ratio mismatch that can look zoomed in UI |
 | `detect: false` | Stability | Recording-only mode |
 | `mqtt.host: mosquitto` | Docker service name | Resolves to Mosquitto container via Docker networking |
 
-## v5.0 → v5.1 Changes
+## v5.1 → v5.2 Changes
 
 | Change | Why |
 |--------|-----|
-| MQTT enabled, pointed to Mosquitto | Frigate event system active |
-| Removed per-camera `hwaccel_args` | Global setting is inherited — no need to duplicate |
+| Added explicit `detect.width`/`detect.height` (`1024x768`) to `pi_cam_0` and `pi_cam_1` | Fixes occasional stream probe mismatch (`1280x720` on cam1) causing zoomed/cropped live view |
 
 ## Expected Performance
 
