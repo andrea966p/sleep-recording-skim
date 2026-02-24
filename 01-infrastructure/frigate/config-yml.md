@@ -3,14 +3,14 @@ tags: [infrastructure, frigate, config, golden-config]
 created: 2026-02-05
 updated: 2026-02-24
 status: production
-version: "5.4"
+version: "5.2"
 ---
 
 ## File Location
 
 **Path:** `/srv/frigate/config/config.yml`
 
-## Production Configuration (v5.4 - Recording Only)
+## Production Configuration (v5.2 - Recording Only)
 
 ```yaml
 mqtt:
@@ -55,9 +55,6 @@ cameras:
       enabled: false
       width: 1024
       height: 768
-    timestamp_style:
-      position: tl
-      format: "Chamber 0 %m/%d/%Y %H:%M:%S"
     record:
       enabled: true
 
@@ -78,22 +75,11 @@ cameras:
       enabled: false
       width: 1024
       height: 768
-    timestamp_style:
-      position: tl
-      format: "Chamber 1 %m/%d/%Y %H:%M:%S"
     record:
       enabled: true
 
 ui:
   timezone: Asia/Seoul
-
-camera_groups:
-  Chamber 0:
-    order: 1
-    cameras: pi_cam_0
-  Chamber 1:
-    order: 2
-    cameras: pi_cam_1
 
 logger:
   default: info
@@ -107,16 +93,14 @@ logger:
 | `-rtsp_transport tcp` | Required | Prevents frame drops over network |
 | `buffer_size: 512000` | Network jitter handling | Large buffer for TCP transport |
 | `detect.width/height` | `1024x768` on both cameras | Prevents aspect-ratio mismatch that can look zoomed in UI |
-| `camera_groups` | `Chamber 0`, `Chamber 1` | Shows human-readable chamber labels in Frigate UI |
-| `timestamp_style.format` | Prefixes `Chamber 0`/`Chamber 1` | Burns chamber label into each camera frame |
 | `detect: false` | Stability | Recording-only mode |
 | `mqtt.host: mosquitto` | Docker service name | Resolves to Mosquitto container via Docker networking |
 
-## v5.3 → v5.4 Changes
+## v5.1 → v5.2 Changes
 
 | Change | Why |
 |--------|-----|
-| Added per-camera `timestamp_style.format` with chamber prefix | Ensures chamber label is visible directly on each video tile/frame |
+| Added explicit `detect.width`/`detect.height` (`1024x768`) to `pi_cam_0` and `pi_cam_1` | Fixes occasional stream probe mismatch (`1280x720` on cam1) causing zoomed/cropped live view |
 
 ## Expected Performance
 
