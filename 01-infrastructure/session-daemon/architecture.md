@@ -2,7 +2,7 @@
 tags: [infrastructure, session-daemon, architecture]
 created: 2026-02-20
 status: draft
-version: "1.1"
+version: "1.2"
 ---
 
 # Session Daemon Architecture
@@ -44,7 +44,7 @@ The **NeuroSurveillance Session Daemon** synchronizes Frigate video recording wi
                            │  │  4. Detects R_ON -> R_OFF        │        │
                            │  │  5. Publishes OFF to MQTT        │        │
                            │  │  6. Calls Frigate export API     │        │
-                           │  │  7. Renames MP4, logs session    │        │
+                           │  │  7. Names MP4, logs session      │        │
                            │  │  8. (Future) Transfers to NAS    │        │
                            │  │                                  │        │
                            │  │  HTTP API on 127.0.0.1:8585      │        │
@@ -101,6 +101,7 @@ Polls the NeuroNexus Radiens software every 1 second to detect recording state c
 
 **Error handling:**
 - If `get_status()` raises an exception (Radiens not running, connection lost), the poller logs a warning and retries on the next poll cycle. It does NOT change Frigate recording state.
+- **Log spam suppression:** The first error is logged, then only every 5th consecutive failure. The counter resets when Radiens reconnects. This prevents log flooding during long outages.
 - If Radiens was in `R_ON` when connection was lost and reconnects still in `R_ON`, no duplicate start is triggered (state tracking prevents this).
 - If Radiens was in `R_ON` when connection was lost and reconnects in `R_OFF`, the daemon treats this as a session end and exports normally.
 
@@ -114,7 +115,7 @@ Controls Frigate recording via MQTT and handles video export via HTTP API. Also 
 | **MQTT publish topic** | `frigate/{CAMERA_ID}/recordings/set` |
 | **MQTT subscribe topic** | `frigate/+/recordings/state` |
 | **MQTT payload** | `ON` or `OFF` |
-| **Export API** | `POST http://{NVR_IP}:5000/api/export/{camera}/start/{start}/end/{end}` |
+| **Export API** | `POST http://{NVR_IP}:5000/api/export/{camera}/start/{start}/end/{end}` with JSON body `{"name": "<export_name>"}` (required by Frigate v0.16+) |
 | **Frigate timezone** | Timestamps in UTC (system timezone `Asia/Seoul`, UTC+9) |
 
 > [!warning] MQTT Recording Toggle Prerequisite
@@ -126,19 +127,23 @@ Controls Frigate recording via MQTT and handles video export via HTTP API. Also 
 2. **On session start:** Publish `ON` to the active chamber's camera topic
 3. **On session end:** Publish `OFF`, then call the export API
 
-**External change detection:**
+**External change detection (two-stage filter):**
 
-The controller subscribes to `frigate/+/recordings/state` and maintains an `_expected_states` dict. Before publishing ON/OFF, it records the expected state. When a state message arrives:
-- If it matches an expected state → consumed as self-echo (ignored)
-- If no matching expected state → **external change** → fires callback to daemon
+The controller subscribes to `frigate/+/recordings/state` and uses two guards to filter incoming state messages:
+
+1. **`_expected_states` check:** Before publishing ON/OFF, the daemon records the expected state. When a matching state message arrives, it is consumed as a self-echo and ignored.
+2. **`_last_known_state` check:** Even if Stage 1 passes, the message is ignored if it carries the **same state** as the previous one (no actual transition). This suppresses Frigate's periodic reassertion of `ON` from `config.yml record.enabled=true`, which would otherwise trigger false manual sessions.
+
+Only messages that pass both filters (not self-initiated AND an actual state transition) fire the external change callback to the daemon.
 
 **Export flow:**
 
 1. Daemon records `start_timestamp` (Unix epoch, UTC) when session begins
 2. On session end, records `end_timestamp`
-3. Calls Frigate export API: `POST /api/export/{camera}/start/{start_ts}/end/{end_ts}`
-4. Waits for export to complete (poll export status)
-5. Renames exported MP4 to session filename format
+3. Timestamps are padded ±2 seconds to ensure Frigate's segment boundaries are fully included
+4. Calls Frigate export API with `{"name": "<session_filename>"}` in the POST body — Frigate uses this name as the export label
+5. Waits for export to complete (polls `GET /api/exports` until the export ID appears)
+6. Export runs in a **background thread** so it does not block the main Radiens polling loop
 
 **Timestamp handling:**
 - All internal timestamps use UTC Unix epoch
@@ -168,13 +173,13 @@ Manages session metadata and logging.
   ┌─────────────────────────────────────────────────────────────┐
   │ 3. SESSION END (automatic, triggered by Radiens R_OFF)      │
   │    Daemon records: end_timestamp, duration                  │
-  │    Triggers: Frigate export, file rename, session log       │
+  │    Triggers: Frigate export (background), session log       │
   └─────────────────────────┬───────────────────────────────────┘
                             v
   ┌─────────────────────────────────────────────────────────────┐
-  │ 4. POST-SESSION (automatic)                                 │
-  │    - Export MP4 from Frigate                                │
-  │    - Rename to YYMMDDHHMM_mouseID_type.mp4                  │
+  │ 4. POST-SESSION (automatic, background thread)               │
+  │    - Export MP4 from Frigate (±2s buffer on timestamps)     │
+  │    - Frigate names export using session filename            │
   │    - Write _session.json sidecar                            │
   │    - (Future) Transfer to NAS                               │
   │    - Clear metadata for next session                        │
@@ -296,11 +301,12 @@ Orchestrates all components. Entry point for the systemd service.
 **Startup sequence:**
 
 1. Load `config.yaml`
-2. Connect to MQTT broker
-3. Publish `OFF` to all camera recording topics (reset state)
-4. Connect to Radiens (`AllegoClient`)
-5. Start HTTP API server (background thread)
-6. Enter main polling loop
+2. Connect to MQTT broker (subscribes to `frigate/+/recordings/state`)
+3. Publish `OFF` to all camera recording topics (clean slate)
+4. If `manual_sessions.enabled`: wait **10 seconds** for Frigate to finish reasserting `record.enabled=true` from its config, drain stale `_expected_states`, then register the external recording change callback. This grace period prevents false manual sessions on every startup.
+5. Connect to Radiens (`AllegoClient`) -- if unavailable, daemon continues and retries in the main loop
+6. Start HTTP API server (background thread)
+7. Enter main polling loop
 
 **Main loop (runs every 1 second):**
 

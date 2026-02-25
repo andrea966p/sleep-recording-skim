@@ -90,7 +90,7 @@ Start recording in the Radiens GUI as you normally would. The daemon polls Radie
 > ```bash
 > curl http://127.0.0.1:8585/api/session/current
 > ```
-> You should see `"state": "active"` with your metadata. In the future UI, this will show as a green "Recording" indicator.
+> You should see a `"session"` object (not `null`) containing your `mouse_id` and other metadata. In the future UI, this will show as a green "Recording" indicator.
 
 ### 3. Run the Experiment
 

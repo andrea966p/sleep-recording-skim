@@ -224,7 +224,8 @@ Returns full daemon status overview. **This is the primary polling endpoint.**
     "user_name": "unknown",
     "chamber": 0,
     "is_default": true
-  }
+  },
+  "manual_recordings": {}
 }
 ```
 
@@ -253,6 +254,13 @@ Returns full daemon status overview. **This is the primary polling endpoint.**
     "user_name": "andrea",
     "chamber": 0,
     "is_default": false
+  },
+  "manual_recordings": {
+    "pi_cam_0": {
+      "session_id": "...",
+      "camera": "pi_cam_0",
+      "start_time_local": "2026-02-20T14:30:00+09:00"
+    }
   }
 }
 ```
@@ -546,6 +554,11 @@ interface DaemonStatus {
   };
   session: ActiveSession | null;
   pending_metadata: PendingMetadata;
+  manual_recordings: Record<string, {
+    session_id: string;
+    camera: string;
+    start_time_local: string;
+  }>;
 }
 
 interface ActiveSession {
