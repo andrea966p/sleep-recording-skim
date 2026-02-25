@@ -2,7 +2,7 @@
 tags: [troubleshooting, incident, raspberry-pi, network, poe]
 date: 2026-02-24
 severity: high
-status: investigating
+status: workaround
 affected: [raspberry-pi, frigate, network]
 ---
 
@@ -48,6 +48,19 @@ affected: [raspberry-pi, frigate, network]
 - No TCP reachability to Pi go2rtc ports (`1984`, `8554`)
 - Neighbor table cannot resolve Pi MAC (`INCOMPLETE`)
 
+## Recovery Update (2026-02-25)
+
+- User power-cycled the Raspberry Pi on-site.
+- Connectivity from ASUS NVR host recovered:
+  - `ping 192.168.0.11` successful (`0%` packet loss, sub-ms RTT)
+  - `curl http://192.168.0.11:1984/api/streams` returned both streams with active RTSP consumers from `192.168.0.50`
+  - `ffprobe` on `rtsp://192.168.0.11:8554/pi_cam_0` and `pi_cam_1` returned `1024x768 @ 15fps` H.264
+  - Frigate `/api/stats` shows both cameras ingesting at `~5.1 fps`
+  - Latest Frigate snapshots for both cameras are `1024x768`
+- During early post-boot window, Frigate logs showed transient `Connection refused` to `192.168.0.11:8554`, consistent with Pi/go2rtc not fully ready immediately after reboot.
+
+Current state: system recovered after manual power cycle, but root cause of the Pi becoming unreachable remains unconfirmed.
+
 ## Working Hypotheses
 
 1. **PoE/power path failure** (Pi powered via Ethernet, link or power interruption)
@@ -70,6 +83,7 @@ affected: [raspberry-pi, frigate, network]
 - Add external ping alert from ASUS to detect Pi loss quickly
 - Consider managed PoE switch for remote port-cycle recovery
 - If recurrence continues, collect Pi bootloader/eeprom diagnostics after recovery and compare with Feb 19 PMIC incident
+- Add boot-time grace handling/alert suppression in monitoring to avoid false alarms during first minute after Pi reboot
 
 ## Related
 
