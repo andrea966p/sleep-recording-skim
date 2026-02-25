@@ -99,6 +99,8 @@ status: active
 | `{FRIGATE_CONFIG_DIR}` | `/srv/frigate/config` |
 | `{FRIGATE_MEDIA_DIR}` | `/srv/frigate/storage` |
 | `{SESSION_DAEMON_DIR}` | `/opt/neurosurveillance` |
+| `{SESSION_DAEMON_REPO}` | `/home/skimlab/Monitoring_project/neurosurveillance` |
+| `{SESSION_DAEMON_GITHUB}` | `git@github.com:andrea966p/neurosurveillance.git` (private) |
 | `{SESSION_LOG_DIR}` | `/opt/neurosurveillance/logs` |
 | `{SESSION_EXPORT_DIR}` | `/srv/frigate/storage/exports` |
 | `{SESSION_DATA_DIR}` | `/opt/neurosurveillance/sessions` |

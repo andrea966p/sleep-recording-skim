@@ -28,6 +28,11 @@ A Python daemon polls the Radiens EEG software every second. When the researcher
 
 **The daemon is already built and running. You are only building the UI.**
 
+> [!note] Repository
+> Both the backend daemon and frontend UI now live in a single monorepo:
+> `git@github.com:andrea966p/neurosurveillance.git` (private).
+> Backend code is in `backend/`, frontend in `frontend/`.
+
 ### Tech Stack
 
 | Layer | Technology |

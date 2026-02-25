@@ -397,27 +397,52 @@ lab_members:
 > [!warning] Replace Variables
 > Replace all `{VARIABLE}` placeholders with actual values from [[../../00-config/production-values|Production Values]] before deploying.
 
-## Directory Structure
+## Source Code Repository
+
+All source code (backend + frontend) lives in a single git repo:
+
+```
+GitHub:  git@github.com:andrea966p/neurosurveillance.git (private)
+Local:   /home/skimlab/Monitoring_project/neurosurveillance/
+```
+
+```
+neurosurveillance/
+├── backend/           # Python session daemon
+│   ├── daemon.py
+│   ├── api.py
+│   ├── frigate_controller.py
+│   ├── session_manager.py
+│   ├── manual_session_manager.py
+│   ├── session_utils.py
+│   ├── radiens_poller.py
+│   └── requirements.txt
+├── frontend/          # Tauri + React desktop UI
+│   ├── src/
+│   ├── src-tauri/
+│   └── package.json
+└── config/            # Reference copies (not used by daemon directly)
+    ├── config.yaml
+    └── neurosurveillance-session.service
+```
+
+## Deployment Directory
+
+The daemon runs from `/opt/neurosurveillance/`. The `session-daemon/` subdirectory is a **symlink** to the repo's `backend/` folder — edits to the repo are live on next restart.
 
 ```
 /opt/neurosurveillance/
-├── config.yaml                # Daemon configuration
-├── session-daemon/            # Python source code
-│   ├── daemon.py              # Main entry point
-│   ├── radiens_poller.py      # Radiens state polling
-│   ├── frigate_controller.py  # MQTT + export control + external detection
-│   ├── session_manager.py     # Radiens session lifecycle + logging
-│   ├── manual_session_manager.py  # Manual (Frigate UI) session tracking
-│   ├── session_utils.py       # Shared utilities (filename gen, JSON write)
-│   ├── api.py                 # HTTP REST API
-│   └── requirements.txt       # Python dependencies
+├── config.yaml                # Production config (edited directly, not from repo)
+├── session-daemon/ -> /home/skimlab/Monitoring_project/neurosurveillance/backend/
+├── venv/                      # Python virtual environment
 ├── logs/                      # Daemon logs
 │   └── session-daemon.log
-├── exports/                   # Exported MP4s (staging area)
-└── sessions/                  # Session JSON logs (both Radiens + manual)
+└── sessions/                  # Session JSON sidecars (both Radiens + manual)
     ├── 2602201430_HETCF3R1_basal_session.json
     └── 2602201430_manual_pi_cam_0_session.json
 ```
+
+Exported MP4s are written by Frigate to `/srv/frigate/storage/exports/` (see [[#Output file locations]]).
 
 ## Systemd Service
 

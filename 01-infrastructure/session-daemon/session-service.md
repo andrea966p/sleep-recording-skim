@@ -34,10 +34,16 @@ version: "1.1"
 >
 > `RADIENS_OFFLINE=1` is **not** enabled in production on this host.
 
+> [!note] Symlink Deployment
+> `/opt/neurosurveillance/session-daemon/` is a symlink to the repo at
+> `/home/skimlab/Monitoring_project/neurosurveillance/backend/`.
+> Edits to the repo's `backend/*.py` files take effect on next daemon restart.
+
 ## Install / Reload Commands
 
 ```bash
-sudo cp /opt/neurosurveillance/session-daemon/neurosurveillance-session.service /etc/systemd/system/
+# If updating the service file from the repo:
+sudo cp /home/skimlab/Monitoring_project/neurosurveillance/config/neurosurveillance-session.service /etc/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl enable neurosurveillance-session.service
 sudo systemctl restart neurosurveillance-session.service
