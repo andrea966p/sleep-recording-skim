@@ -36,7 +36,8 @@
       "Bash(echo === Starting 30s manual recording test on pi_cam_0 ===:*)",
       "Bash(cd:*)",
       "Bash(mv:*)",
-      "Bash(git config:*)"
+      "Bash(git config:*)",
+      "Bash(git remote:*)"
     ]
   }
 }
