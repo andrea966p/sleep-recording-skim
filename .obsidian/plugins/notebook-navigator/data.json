@@ -24,7 +24,8 @@
           "type": "note",
           "path": "00-config/task-dashboard.md"
         }
-      ]
+      ],
+      "propertyKeys": []
     }
   ],
   "vaultProfile": "default",
@@ -51,6 +52,7 @@
     "compactItemHeightScaleText": "synced",
     "uiScale": "synced"
   },
+  "createNewNotesInNewTab": false,
   "autoRevealActiveFile": true,
   "autoRevealShortestPath": true,
   "autoRevealIgnoreRightSidebar": true,
@@ -95,12 +97,14 @@
   "dateFormat": "MMM D, YYYY",
   "timeFormat": "h:mm a",
   "calendarTemplateFolder": "_templates",
+  "confirmBeforeDelete": true,
+  "deleteAttachments": "ask",
+  "moveFileConflicts": "ask",
   "externalIconProviders": {
     "simple-icons": true,
     "material-icons": true
   },
   "checkForUpdatesOnStart": true,
-  "confirmBeforeDelete": true,
   "pinNavigationBanner": true,
   "showNoteCount": true,
   "separateNoteCounts": true,
@@ -148,7 +152,6 @@
   "inheritPropertyColors": true,
   "propertySortOrder": "alpha-asc",
   "showAllPropertiesFolder": true,
-  "propertyFields": "",
   "defaultListMode": "standard",
   "includeDescendantNotes": true,
   "defaultFolderSort": "modified-desc",
@@ -442,8 +445,7 @@
     "#404040",
     "#404040"
   ],
-  "lastShownVersion": "2.4.1",
-  "lastAnnouncedRelease": "2.4.2",
+  "lastShownVersion": "2.4.2",
   "rootFolderOrder": [],
   "rootTagOrder": [],
   "rootPropertyOrder": []
