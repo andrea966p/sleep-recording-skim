@@ -127,7 +127,7 @@ curl http://127.0.0.1:8585/api/session/history | python3 -m json.tool
 
 | File | Location | Description |
 |------|----------|-------------|
-| `YYMMDDHHMM_mouseID_type.mp4` | `/opt/neurosurveillance/exports/` | Exported video clip |
+| `YYMMDDHHMM_mouseID_type.mp4` | `/srv/frigate/storage/exports/` | Exported video clip (Frigate writes here) |
 | `YYMMDDHHMM_mouseID_type_session.json` | `/opt/neurosurveillance/sessions/` | Session metadata sidecar |
 
 **Example filenames for a session started at 2:30 PM on Feb 20, 2026:**
@@ -201,7 +201,7 @@ If you need to record video **without** an active Radiens EEG session (e.g. setu
 5. The daemon auto-detects the stop and exports the video
 
 **Output files:**
-- Video: `YYMMDDHHMM_manual_pi_cam_0.mp4` in `/opt/neurosurveillance/exports/`
+- Video: `YYMMDDHHMM_manual_pi_cam_0.mp4` in `/srv/frigate/storage/exports/`
 - Sidecar: `YYMMDDHHMM_manual_pi_cam_0_session.json` in `/opt/neurosurveillance/sessions/`
 
 ### Check manual recording status
@@ -235,7 +235,7 @@ When NAS connectivity is configured via Tailscale, the daemon will automatically
 /volume1/neurosurveillance/{username}/{YYYY-MM-DD}/YYMMDDHHMM_mouseID_type_session.json
 ```
 
-Until then, exported files remain in `/opt/neurosurveillance/exports/` on the ASUS PC.
+Until then, exported files remain in `/srv/frigate/storage/exports/` on the ASUS PC (desktop shortcut: `~/Desktop/Frigate Exports`).
 
 ---
 

@@ -359,6 +359,7 @@ List past completed sessions, newest first.
 
 **Query parameters:**
 - `limit` (int, optional): Max sessions to return. Default 50, max 500.
+- `source` (string, optional): Filter by source — `"radiens"`, `"manual"`, or omit for all.
 
 **Response 200:**
 ```json
@@ -405,6 +406,27 @@ List past completed sessions, newest first.
   ]
 }
 ```
+
+### `GET /api/session/manual`
+
+List currently active manual recordings (started via Frigate UI Record button).
+
+**Response 200:**
+```json
+{
+  "active": {
+    "pi_cam_0": {
+      "session_id": "m1n2o3p4-...",
+      "camera": "pi_cam_0",
+      "start_time_utc": 1771567800.0,
+      "start_time_local": "2026-02-20T14:30:00+09:00"
+    }
+  },
+  "count": 1
+}
+```
+
+Returns `{"active": {}, "count": 0}` when no manual recordings are active.
 
 ### `GET /api/health`
 

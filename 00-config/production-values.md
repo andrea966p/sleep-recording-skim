@@ -100,7 +100,7 @@ status: active
 | `{FRIGATE_MEDIA_DIR}` | `/srv/frigate/storage` |
 | `{SESSION_DAEMON_DIR}` | `/opt/neurosurveillance` |
 | `{SESSION_LOG_DIR}` | `/opt/neurosurveillance/logs` |
-| `{SESSION_EXPORT_DIR}` | `/opt/neurosurveillance/exports` |
+| `{SESSION_EXPORT_DIR}` | `/srv/frigate/storage/exports` |
 | `{SESSION_DATA_DIR}` | `/opt/neurosurveillance/sessions` |
 
 ---

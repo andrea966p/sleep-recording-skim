@@ -217,6 +217,16 @@ Manages session metadata and logging.
 }
 ```
 
+**Output file locations:**
+
+| File | Location | Written by |
+|------|----------|------------|
+| Exported MP4 | `/srv/frigate/storage/exports/` | Frigate (via export API) |
+| Session JSON sidecar | `/opt/neurosurveillance/sessions/` | Session daemon |
+| Desktop shortcut | `~/Desktop/Frigate Exports` → `/srv/frigate/storage/exports/` | Symlink |
+
+> [!note] The daemon does NOT move MP4 files. Frigate writes exports directly to its Docker volume. The `export_dir` in config.yaml is used only for JSON sidecars.
+
 ### 3b. Manual Session Manager (`manual_session_manager.py`)
 
 Handles recordings triggered externally via Frigate's web UI (clicking the Record button on a camera). Each camera is tracked independently.
@@ -235,7 +245,7 @@ User clicks Stop in Frigate UI
   → ManualSessionManager.stop_recording("pi_cam_0")
   → Records end timestamp
   → Background thread: calls Frigate export API → MP4 → JSON sidecar
-  → File appears in /opt/neurosurveillance/exports/
+  → MP4 appears in /srv/frigate/storage/exports/
 ```
 
 **Key behaviors:**
@@ -361,7 +371,7 @@ mqtt:
 
 frigate:
   url: "http://localhost:{FRIGATE_WEB_PORT}"  # http://localhost:5000
-  export_dir: "{SESSION_EXPORT_DIR}"          # /opt/neurosurveillance/exports
+  export_dir: "{SESSION_EXPORT_DIR}"          # /srv/frigate/storage/exports
 
 cameras:
   chamber_0: "{CAMERA_0_ID}"   # pi_cam_0
