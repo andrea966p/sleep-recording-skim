@@ -33,7 +33,10 @@
       "Bash(journalctl:*)",
       "Bash(head:*)",
       "Bash(docker ps:*)",
-      "Bash(echo === Starting 30s manual recording test on pi_cam_0 ===:*)"
+      "Bash(echo === Starting 30s manual recording test on pi_cam_0 ===:*)",
+      "Bash(cd:*)",
+      "Bash(mv:*)",
+      "Bash(git config:*)"
     ]
   }
 }
