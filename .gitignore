@@ -1,0 +1,30 @@
+# === Frontend ===
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
+frontend/*.local
+frontend/src-tauri/target/
+frontend/src-tauri/gen/schemas/
+
+# === Backend ===
+backend/__pycache__/
+backend/*.pyc
+*.egg-info/
+
+# === Environment ===
+.env
+.env.*
+venv/
+
+# === Editors ===
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.sw?
+
+# === OS ===
+.DS_Store
+Thumbs.db
+
+# === Logs ===
+*.log
