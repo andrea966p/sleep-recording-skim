@@ -1,7 +1,7 @@
 ---
 tags: [procedure, session-daemon, experiment]
 created: 2026-02-20
-status: draft
+status: production
 ---
 
 # Session Recording Workflow
@@ -48,9 +48,9 @@ Synchronize Frigate video recording with NeuroNexus Radiens EEG/EMG recording fo
 
 Before starting the EEG recording, set the session metadata so the daemon knows how to name and organize the video files.
 
-**Using the UI (when available):**
+**Using the UI:**
 
-Open the session controller app and fill in:
+Open the NeuroSurveillance Session Controller app and fill in:
 
 | Field | Description | Example |
 |-------|-------------|---------|
@@ -59,7 +59,7 @@ Open the session controller app and fill in:
 | **Chamber** | `0` or `1` (maps to pi_cam_0 / pi_cam_1) | `0` |
 | **Your Name** | Select from lab member list | `andrea` |
 
-**Using the command line (temporary, until UI is built):**
+**Using the command line (alternative):**
 
 ```bash
 curl -X POST http://127.0.0.1:8585/api/session/metadata \
@@ -90,7 +90,7 @@ Start recording in the Radiens GUI as you normally would. The daemon polls Radie
 > ```bash
 > curl http://127.0.0.1:8585/api/session/current
 > ```
-> You should see a `"session"` object (not `null`) containing your `mouse_id` and other metadata. In the future UI, this will show as a green "Recording" indicator.
+> You should see a `"session"` object (not `null`) containing your `mouse_id` and other metadata. In the UI, this shows as a green "Recording" indicator.
 
 ### 3. Run the Experiment
 
