@@ -9,6 +9,13 @@ export interface DaemonStatus {
     };
     sessions: { [chamber: string]: ActiveSession | null };
     pending_metadata: { [chamber: string]: PendingMetadata | null };
+    manual_recordings: { [camera: string]: ManualRecording };
+}
+
+export interface ManualRecording {
+    session_id: string;
+    camera: string;
+    start_time_local: string;
 }
 
 export interface ActiveSession {
@@ -48,6 +55,7 @@ export interface SessionHistoryResponse {
 
 export interface SessionRecord {
     session_id: string;
+    source: "radiens" | "manual";
     start_time_utc: number;
     end_time_utc: number;
     start_time_local: string;

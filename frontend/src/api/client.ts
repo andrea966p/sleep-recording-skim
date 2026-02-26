@@ -19,20 +19,11 @@ export async function getStatus(): Promise<DaemonStatus> {
 }
 
 export async function setMetadata(chamberId: string, data: SetMetadataRequest): Promise<SetMetadataResponse> {
-    let res = await fetch(`${API_BASE}/api/metadata?chamber_id=${encodeURIComponent(chamberId)}`, {
+    const res = await fetch(`${API_BASE}/api/session/metadata?chamber_id=${encodeURIComponent(chamberId)}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
     });
-
-    // Backward compatibility with older daemon routes.
-    if (res.status === 404) {
-        res = await fetch(`${API_BASE}/api/session/metadata?chamber_id=${encodeURIComponent(chamberId)}`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data),
-        });
-    }
 
     if (!res.ok) {
         const err = await res.json().catch(() => ({}));
@@ -42,16 +33,9 @@ export async function setMetadata(chamberId: string, data: SetMetadataRequest): 
 }
 
 export async function clearMetadata(chamberId: string): Promise<void> {
-    let res = await fetch(`${API_BASE}/api/metadata?chamber_id=${encodeURIComponent(chamberId)}`, {
+    const res = await fetch(`${API_BASE}/api/session/metadata?chamber_id=${encodeURIComponent(chamberId)}`, {
         method: "DELETE",
     });
-
-    // Backward compatibility with older daemon routes.
-    if (res.status === 404) {
-        res = await fetch(`${API_BASE}/api/session/metadata?chamber_id=${encodeURIComponent(chamberId)}`, {
-            method: "DELETE",
-        });
-    }
 
     if (!res.ok) throw new Error("Failed to clear metadata");
 }
@@ -62,8 +46,10 @@ export async function getCurrentSession(): Promise<{ session: ActiveSession | nu
     return res.json();
 }
 
-export async function getSessionHistory(limit = 50): Promise<SessionHistoryResponse> {
-    const res = await fetch(`${API_BASE}/api/session/history?limit=${limit}`);
+export async function getSessionHistory(limit = 50, source?: string): Promise<SessionHistoryResponse> {
+    let url = `${API_BASE}/api/session/history?limit=${limit}`;
+    if (source) url += `&source=${encodeURIComponent(source)}`;
+    const res = await fetch(url);
     if (!res.ok) throw new Error("History fetch failed");
     return res.json();
 }

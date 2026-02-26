@@ -28,21 +28,21 @@ export function SystemHealth() {
                     </div>
                 )}
 
-                <div className="grid grid-cols-2 gap-2 text-sm mt-1">
-                    <div className="flex justify-between items-center border-b border-base-300 pb-1">
-                        <span className="font-medium">Daemon</span>
+                <div className="flex flex-col gap-3 text-sm mt-2">
+                    <div className="flex justify-between items-center border-b border-base-300 pb-2">
+                        <span className="font-medium text-base-content/80">Daemon</span>
                         <StatusBadge level={daemonStatus} text={daemonStatus === "ok" ? "Running" : "Offline"} />
                     </div>
-                    <div className="flex justify-between items-center border-b border-base-300 pb-1">
-                        <span className="font-medium">Radiens</span>
+                    <div className="flex justify-between items-center border-b border-base-300 pb-2">
+                        <span className="font-medium text-base-content/80">Radiens</span>
                         <StatusBadge level={radiensStatus} text={radiensStatus === "ok" ? "Conn" : "Disc"} />
                     </div>
-                    <div className="flex justify-between items-center border-b border-base-300 pb-1">
-                        <span className="font-medium">MQTT</span>
+                    <div className="flex justify-between items-center border-b border-base-300 pb-2">
+                        <span className="font-medium text-base-content/80">MQTT</span>
                         <StatusBadge level={mqttStatus} text={mqttStatus === "ok" ? "Conn" : "Disc"} />
                     </div>
-                    <div className="flex justify-between items-center border-b border-base-300 pb-1">
-                        <span className="font-medium">System</span>
+                    <div className="flex justify-between items-center border-b border-base-300 pb-2">
+                        <span className="font-medium text-base-content/80">System</span>
                         <StatusBadge
                             level={health?.healthy ? "ok" : (health ? "warn" : "error")}
                             text={health?.healthy ? "Healthy" : (health ? "Degraded" : "Down")}

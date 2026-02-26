@@ -12,13 +12,14 @@ export function SessionHistory({ refreshTick }: Props) {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
     const [expandedId, setExpandedId] = useState<string | null>(null);
+    const [sourceFilter, setSourceFilter] = useState<string>("");
 
     useEffect(() => {
         let mounted = true;
         const fetchHistory = async () => {
             try {
                 setIsLoading(true);
-                const data = await getSessionHistory(50);
+                const data = await getSessionHistory(50, sourceFilter || undefined);
                 if (mounted) {
                     setSessions(data.sessions || []);
                     setError(null);
@@ -33,7 +34,7 @@ export function SessionHistory({ refreshTick }: Props) {
         fetchHistory();
 
         return () => { mounted = false; };
-    }, [refreshTick]);
+    }, [refreshTick, sourceFilter]);
 
     if (error) {
         return (
@@ -49,9 +50,16 @@ export function SessionHistory({ refreshTick }: Props) {
     return (
         <div className="card bg-base-200 shadow-xl border border-base-300 h-full flex flex-col">
             <div className="card-body p-4 flex flex-col h-full overflow-hidden">
-                <h2 className="card-title text-sm text-base-content/70 flex-none font-bold uppercase tracking-widest mb-2 border-b border-base-300 pb-2">
-                    Session History
-                </h2>
+                <div className="flex flex-wrap items-center justify-between mb-2 border-b border-base-300 pb-2">
+                    <h2 className="card-title text-sm text-base-content/70 flex-none font-bold uppercase tracking-widest">
+                        Session History
+                    </h2>
+                    <div className="join">
+                        <button className={`join-item btn btn-xs min-w-[3rem] ${sourceFilter === "" ? "btn-active" : ""}`} onClick={() => setSourceFilter("")}>All</button>
+                        <button className={`join-item btn btn-xs min-w-[4rem] ${sourceFilter === "radiens" ? "btn-active" : ""}`} onClick={() => setSourceFilter("radiens")}>Radiens</button>
+                        <button className={`join-item btn btn-xs min-w-[4rem] ${sourceFilter === "manual" ? "btn-active" : ""}`} onClick={() => setSourceFilter("manual")}>Manual</button>
+                    </div>
+                </div>
 
                 <div className="flex-grow overflow-y-auto pr-2 -mr-2">
                     {isLoading && sessions.length === 0 ? (
@@ -80,14 +88,23 @@ export function SessionHistory({ refreshTick }: Props) {
                                             className="hover:bg-base-300 cursor-pointer border-t border-base-300 transition-colors"
                                             onClick={() => setExpandedId(expandedId === session.session_id ? null : session.session_id)}
                                         >
-                                            <td className="whitespace-nowrap tabular-nums">{formatShortDate(session.start_time_local)}</td>
+                                            <td className="whitespace-nowrap tabular-nums">
+                                                <div className="flex items-center gap-2">
+                                                    {session.source === "radiens" ? (
+                                                        <span className="badge badge-error badge-xs font-bold px-1.5 py-2.5 opacity-80" title="Radiens EEG Session">EEG</span>
+                                                    ) : (
+                                                        <span className="badge badge-warning badge-xs font-bold px-1.5 py-2.5 opacity-80" title="Manual Frigate UI Recording">MAN</span>
+                                                    )}
+                                                    {formatShortDate(session.start_time_local)}
+                                                </div>
+                                            </td>
                                             <td className="font-mono font-bold max-w-xs truncate" title={session.mouse_id}>{session.mouse_id}</td>
                                             <td>{session.recording_type}</td>
                                             <td className="tabular-nums whitespace-nowrap">{formatShortDuration(session.duration_seconds)}</td>
                                             <td>
                                                 <span className={`badge badge-sm badge-outline ${session.export_status === 'completed' ? 'badge-success text-success' :
-                                                        session.export_status === 'failed' ? 'badge-error text-error' :
-                                                            'badge-warning text-warning'
+                                                    session.export_status === 'failed' ? 'badge-error text-error' :
+                                                        'badge-warning text-warning'
                                                     }`}>
                                                     {session.export_status === 'completed' ? 'done' : session.export_status}
                                                 </span>

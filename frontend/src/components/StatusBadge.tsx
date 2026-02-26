@@ -8,23 +8,23 @@ interface Props {
 }
 
 export function StatusBadge({ level, text }: Props) {
-    let colorClass = 'badge-ghost';
-    let icon = '❓';
+    let dotClass = 'bg-base-content/20'; // Default ghost/unknown color
 
     if (level === 'ok') {
-        colorClass = 'badge-success text-success-content';
-        icon = '✓';
+        dotClass = 'bg-success';
     } else if (level === 'warn') {
-        colorClass = 'badge-warning text-warning-content';
-        icon = '⚠';
+        dotClass = 'bg-warning';
     } else if (level === 'error' || level === 'offline') {
-        colorClass = 'badge-error text-error-content';
-        icon = '✕';
+        dotClass = 'bg-error shadow-[0_0_8px_rgba(255,0,0,0.5)]'; // Add a subtle red glow when error
     }
 
+    // Add a pulsing effect to the error dot to draw attention if desired
+    const pulse = (level === 'error' || level === 'offline') ? 'animate-pulse' : '';
+
     return (
-        <div className={`badge ${colorClass} gap-1 font-semibold whitespace-nowrap`}>
-            <span>{icon}</span> {text}
+        <div className="flex items-center gap-2 font-semibold">
+            <span className={`w-2.5 h-2.5 rounded-full ${dotClass} ${pulse}`}></span>
+            <span className="text-base-content/90">{text}</span>
         </div>
     );
 }

@@ -26,6 +26,9 @@ export function ChamberSilo({ chamberId, cam, settings, status, error, onSetMeta
     const session = status?.sessions?.[chamberId];
     const mouseId = session?.mouse_id || status?.pending_metadata?.[chamberId]?.mouse_id || "No Mouse";
 
+    const cameraId = cam.id;
+    const manualRec = status?.manual_recordings?.[cameraId];
+
     return (
         <div className={`collapse bg-base-200/50 border shadow-sm transition-all duration-300 ease-in-out ${isExpanded ? "collapse-open border-base-content/20 rounded-3xl" : "collapse-close border-base-300 rounded-xl"
             }`}>
@@ -38,7 +41,14 @@ export function ChamberSilo({ chamberId, cam, settings, status, error, onSetMeta
                     <span className={`w-3.5 h-3.5 rounded-full ${recordingColor}`}></span>
                     <h2 className="text-lg font-bold tracking-wide">{cam.label.toUpperCase()}</h2>
 
-                    {!isExpanded && (
+                    {manualRec && (
+                        <div className="badge badge-warning gap-1 text-[10px] sm:text-xs">
+                            <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-current animate-pulse"></span>
+                            Manual Recording — {new Date(manualRec.start_time_local).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </div>
+                    )}
+
+                    {!isExpanded && !manualRec && (
                         <div className="badge badge-outline border-base-content/20 text-base-content/70 font-mono text-xs hidden sm:flex">
                             {mouseId}
                         </div>

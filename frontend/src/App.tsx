@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useStatusPoll } from './hooks/useStatusPoll';
 import { useSettings } from './hooks/useSettings';
 import { setMetadata, clearMetadata } from './api/client';
@@ -14,6 +14,20 @@ export default function App() {
   const { status, error, isOffline, sessionEndedTick } = useStatusPoll();
   const { settings, updateFrigateUrl, setCameras, setRecordingTypes, setLabMembers } = useSettings();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
+  // Theme state
+  const storedTheme = localStorage.getItem('theme');
+  const initialTheme = (storedTheme === 'dark' || storedTheme === 'light') ? storedTheme : 'dark';
+  const [theme, setTheme] = useState(initialTheme);
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(theme === 'dark' ? 'light' : 'dark');
+  };
 
   // Toast state simple wrapper
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -74,6 +88,15 @@ export default function App() {
           <div className="flex items-center gap-3">
             <LiveClock />
             <div className="divider divider-horizontal mx-0"></div>
+            <button
+              className="btn btn-circle btn-ghost text-base-content/70 hover:text-primary transition-colors"
+              onClick={toggleTheme}
+              title="Toggle Theme"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-2.227l-1.591 1.591M5.25 12H3m4.227-4.773l1.591 1.591M12 6.75a5.25 5.25 0 100 10.5 5.25 5.25 0 000-10.5v0z" />
+              </svg>
+            </button>
             <button
               className="btn btn-circle btn-ghost text-base-content/70 hover:text-primary transition-colors"
               onClick={() => setIsSettingsOpen(true)}
