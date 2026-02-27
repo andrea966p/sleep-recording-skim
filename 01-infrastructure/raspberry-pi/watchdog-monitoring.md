@@ -150,8 +150,114 @@ Full incident: [[03-troubleshooting/incidents/2026-02-11-vscode-remote-cpu-exhau
 
 ---
 
+## NVR-Side Pi Health Monitor
+
+**Location:** `/opt/neurosurveillance/pi-monitor.sh` (on ASUS NVR at `192.168.0.50`)
+**Added:** 2026-02-27
+
+A ping-based monitor that runs every 2 minutes via cron on the NVR. Detects Pi outages from the network side — critical since PoE power failures leave the Pi silently dead with no self-reporting capability.
+
+```bash
+#!/bin/bash
+# Pi health monitor — runs on NVR, pings Raspberry Pi every 2 minutes via cron
+# Cron entry: */2 * * * * /opt/neurosurveillance/pi-monitor.sh
+
+PI_IP="192.168.0.11"
+LOG="/opt/neurosurveillance/logs/pi-monitor.log"
+STATE_FILE="/opt/neurosurveillance/logs/.pi-monitor-state"
+MAX_LOG_SIZE=2097152  # 2MB
+
+# Rotate log if too large
+if [ -f "$LOG" ] && [ "$(stat -c%s "$LOG" 2>/dev/null)" -gt "$MAX_LOG_SIZE" ]; then
+    mv "$LOG" "$LOG.old"
+fi
+
+# Read previous state (up/down)
+PREV_STATE="up"
+if [ -f "$STATE_FILE" ]; then
+    PREV_STATE=$(cat "$STATE_FILE")
+fi
+
+# Ping check: 2 pings, 3 second timeout
+if ping -c 2 -W 3 "$PI_IP" > /dev/null 2>&1; then
+    CURR_STATE="up"
+else
+    CURR_STATE="down"
+fi
+
+TIMESTAMP="[$(date '+%Y-%m-%d %H:%M:%S')]"
+
+# Log on state transitions + periodic down reminders
+if [ "$CURR_STATE" = "down" ] && [ "$PREV_STATE" = "up" ]; then
+    echo "$TIMESTAMP ALERT: Pi ($PI_IP) is UNREACHABLE" >> "$LOG"
+elif [ "$CURR_STATE" = "down" ] && [ "$PREV_STATE" = "down" ]; then
+    echo "$TIMESTAMP STILL DOWN: Pi ($PI_IP) remains unreachable" >> "$LOG"
+elif [ "$CURR_STATE" = "up" ] && [ "$PREV_STATE" = "down" ]; then
+    echo "$TIMESTAMP RECOVERED: Pi ($PI_IP) is reachable again" >> "$LOG"
+fi
+
+echo "$CURR_STATE" > "$STATE_FILE"
+```
+
+**Behavior:**
+- Logs only on state transitions (up→down, down→up) and periodic down reminders
+- No log spam when Pi is healthy (up→up = silent)
+- State tracked in `/opt/neurosurveillance/logs/.pi-monitor-state`
+- Log rotation at 2MB
+
+**Cron entry** (NVR):
+```bash
+*/2 * * * * /opt/neurosurveillance/pi-monitor.sh
+```
+
+---
+
+## Crash Canary
+
+**Location:** `/home/skimlab/crash-canary.sh` (on Pi)
+
+Logs system vitals every 30 seconds to catch the pre-crash state. Uses `printf` with key=value format for parseable output.
+
+**Cron entries** (Pi):
+```bash
+* * * * * /home/skimlab/crash-canary.sh
+* * * * * sleep 30 && /home/skimlab/crash-canary.sh
+```
+
+**Log format** (single line):
+```
+[2026-02-27 07:08:01] temp=47.7'C throttle=0x0 load=0.54 0.42 0.43 mem_free=7253M mem_avail=7624M go2rtc=active rpicam=2 rpicam_cpu= 16.5% 16.4% go2rtc_mem=27632kB oom_kills=0 uptime="up 2 days, 5 hours, 17 minutes"
+```
+
+**Log location:** `/home/skimlab/crash-canary.log` (5MB max, auto-rotates)
+
+> [!info] Bug Fix (2026-02-27)
+> Fixed two issues: (1) `OOM_KILLS` variable produced duplicate values due to `grep -c` exit code 1 when count=0 triggering the `|| echo 0` fallback, splitting the log line. (2) `uptime` field had no label. Both fixed by switching to `printf` format and using `|| true` instead of `|| echo 0`.
+
+---
+
+## Eeprom Power Configuration
+
+**Applied:** 2026-02-19 (after 6-day PMIC latch-up incident)
+
+| Setting | Value | Purpose |
+|---------|-------|---------|
+| `PSU_MAX_CURRENT` | `5000` | Tells PMIC the PoE HAT can deliver 5A |
+| `POWER_OFF_ON_HALT` | `1` | On halt, cuts PMIC power — PoE auto-reboots |
+
+**Verify:**
+```bash
+vcgencmd bootloader_config | grep -E "PSU_MAX|POWER_OFF"
+```
+
+> [!warning] Double-crash limitation
+> The eeprom fix enables auto-reboot after a single power event. However, if the Pi crashes again during the reboot (e.g., PoE power still unstable), the PMIC enters latch-up and requires manual power cycle. See [[03-troubleshooting/incidents/2026-02-24-pi-unreachable-no-route|Feb 24 incident]].
+
+---
+
 ## Notes
 
 - The monitoring script (`watchdog.sh`) only restarts go2rtc when something is actually wrong — it does not do blind periodic restarts
 - Hardware watchdog (`/dev/watchdog`) only reboots the Pi on kernel hangs — video is already lost in that scenario, so a reboot is the correct recovery
 - systemd `Restart=always` in the go2rtc service handles process crashes automatically
+- NVR-side `pi-monitor.sh` catches outages that the Pi cannot self-report (PoE death, PMIC latch-up)
