@@ -40,7 +40,11 @@
       "Bash(git remote:*)",
       "Bash(snap list obsidian)",
       "Bash(flatpak list)",
-      "Bash(git:*)"
+      "Bash(git:*)",
+      "Bash(chmod +x:*)",
+      "Bash(cat:*)",
+      "Bash(PI_IP=\"192.168.0.199\" LOG=\"/opt/neurosurveillance/logs/pi-monitor-test.log\" STATE_FILE=\"/opt/neurosurveillance/logs/.pi-monitor-test-state\" bash:*)",
+      "Bash(crontab:*)"
     ]
   }
 }
