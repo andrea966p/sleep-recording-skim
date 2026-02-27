@@ -39,7 +39,8 @@
       "Bash(git config:*)",
       "Bash(git remote:*)",
       "Bash(snap list obsidian)",
-      "Bash(flatpak list)"
+      "Bash(flatpak list)",
+      "Bash(git:*)"
     ]
   }
 }
