@@ -37,7 +37,9 @@
       "Bash(cd:*)",
       "Bash(mv:*)",
       "Bash(git config:*)",
-      "Bash(git remote:*)"
+      "Bash(git remote:*)",
+      "Bash(snap list obsidian)",
+      "Bash(flatpak list)"
     ]
   }
 }
