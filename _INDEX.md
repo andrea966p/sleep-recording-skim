@@ -34,6 +34,7 @@ Production IPs, usernames, paths, and settings.
 
 **Session Daemon:**
 - [[01-infrastructure/session-daemon/architecture|Architecture & Design]]
+- [[01-infrastructure/session-daemon/frontend-reference|Frontend Reference]]
 - [[01-infrastructure/session-daemon/session-service|Systemd Service]]
 
 ### Procedures
@@ -103,4 +104,4 @@ ffprobe rtsp://192.168.0.11:8554/pi_cam_0
 
 ---
 
-*Last updated: 2026-02-20*
+*Last updated: 2026-03-05*

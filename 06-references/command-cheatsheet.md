@@ -1,7 +1,7 @@
 ---
 tags: [reference, commands, cheatsheet]
 created: 2026-02-05
-updated: 2026-02-10
+updated: 2026-03-05
 ---
 
 # Command Cheatsheet
@@ -194,6 +194,79 @@ cd /srv/frigate && docker compose restart frigate
 
 ---
 
+## Session Daemon (`127.0.0.1:8585`)
+
+### Service Control
+```bash
+# Status
+systemctl --user status neurosurveillance-session
+
+# Start / stop / restart
+systemctl --user start neurosurveillance-session
+systemctl --user stop neurosurveillance-session
+systemctl --user restart neurosurveillance-session
+
+# Enable at boot
+systemctl --user enable neurosurveillance-session
+```
+
+### Logs
+```bash
+# Live logs
+journalctl --user -u neurosurveillance-session -f
+
+# Last 100 lines
+journalctl --user -u neurosurveillance-session -n 100
+
+# Log file (rotating)
+tail -f /opt/neurosurveillance/logs/session-daemon.log
+```
+
+### API Commands
+```bash
+# Daemon status (full state snapshot)
+curl -s http://127.0.0.1:8585/api/status | python3 -m json.tool
+
+# Health check
+curl -s http://127.0.0.1:8585/api/health | python3 -m json.tool
+
+# Set metadata for chamber 0
+curl -X POST "http://127.0.0.1:8585/api/session/metadata?chamber_id=0" \
+  -H "Content-Type: application/json" \
+  -d '{"mouse_id": "HETCF3R1", "recording_type": "basal", "user_name": "andrea"}'
+
+# Clear metadata for chamber 0
+curl -X DELETE "http://127.0.0.1:8585/api/session/metadata?chamber_id=0"
+
+# Current active session
+curl -s http://127.0.0.1:8585/api/session/current | python3 -m json.tool
+
+# Session history (all sources)
+curl -s http://127.0.0.1:8585/api/session/history | python3 -m json.tool
+
+# Session history (manual only)
+curl -s "http://127.0.0.1:8585/api/session/history?source=manual" | python3 -m json.tool
+
+# Active manual recordings
+curl -s http://127.0.0.1:8585/api/session/manual | python3 -m json.tool
+```
+
+### Frontend Development
+```bash
+cd /home/skimlab/Monitoring_project/neurosurveillance/frontend
+
+# Dev mode (Tauri window + hot reload)
+npm run tauri dev
+
+# Production build
+npm run tauri build
+
+# Vite dev server only (browser)
+npm run dev
+```
+
+---
+
 ## Cross-System Validation
 
 ### Full System Check (run from NVR or any machine on `192.168.0.x`)
@@ -282,4 +355,7 @@ sudo reboot
 | Journal config | `/etc/systemd/journald.conf` | Pi |
 | Frigate config | `/srv/frigate/config/config.yml` | NVR |
 | Docker Compose | `/srv/frigate/docker-compose.yml` | NVR |
+| Session daemon config | `/opt/neurosurveillance/config.yaml` | NVR |
+| Session daemon service | `~/.config/systemd/user/neurosurveillance-session.service` | NVR |
+| Session daemon logs | `/opt/neurosurveillance/logs/session-daemon.log` | NVR |
 | RustDesk config | `~/.config/rustdesk/RustDesk2.toml` | PCs |

@@ -1,6 +1,7 @@
 ---
 tags: [procedure, session-daemon, experiment]
 created: 2026-02-20
+updated: 2026-03-05
 status: production
 ---
 
@@ -12,11 +13,12 @@ Synchronize Frigate video recording with NeuroNexus Radiens EEG/EMG recording fo
 
 ## Prerequisites Checklist
 
-- [ ] Session daemon running: `sudo systemctl status neurosurveillance-session`
+- [ ] Session daemon running: `systemctl --user status neurosurveillance-session`
 - [ ] Frigate NVR running: open `http://192.168.0.50:5000` in browser
 - [ ] Both camera streams visible in Frigate (pi_cam_0, pi_cam_1)
 - [ ] Radiens software open and connected to headstage
 - [ ] Mouse prepared and connected to EEG/EMG headstage in the correct chamber
+- [ ] NeuroSurveillance Session Controller app open (optional but recommended)
 
 ## Your Values (from [[00-config/production-values|Production Values]])
 
@@ -33,12 +35,12 @@ Synchronize Frigate video recording with NeuroNexus Radiens EEG/EMG recording fo
 
 | Step | Who | Action |
 |------|-----|--------|
-| 1 | Researcher | Set session metadata in the UI (mouse ID, type, chamber, name) |
+| 1 | Researcher | Set session metadata in the UI (mouse ID, type, user) per chamber |
 | 2 | Researcher | Start EEG recording in Radiens GUI |
-| 3 | **Daemon** | *Automatically* starts Frigate video recording |
+| 3 | **Daemon** | *Automatically* starts Frigate video recording on all cameras |
 | 4 | Researcher | Run experiment (daemon monitors silently) |
 | 5 | Researcher | Stop EEG recording in Radiens GUI |
-| 6 | **Daemon** | *Automatically* stops video, exports MP4, logs session |
+| 6 | **Daemon** | *Automatically* stops video, exports MP4s, organizes files |
 
 ---
 
@@ -46,23 +48,25 @@ Synchronize Frigate video recording with NeuroNexus Radiens EEG/EMG recording fo
 
 ### 1. Set Session Metadata
 
-Before starting the EEG recording, set the session metadata so the daemon knows how to name and organize the video files.
+Before starting the EEG recording, set the session metadata so the daemon knows how to name and organize the video files. **Each chamber has independent metadata** -- set metadata for each chamber you are using.
 
-**Using the UI:**
+**Using the UI (recommended):**
 
-Open the NeuroSurveillance Session Controller app and fill in:
+Open the **NeuroSurveillance Session Controller** app. Each camera has its own **ChamberSilo** card with a metadata form:
 
 | Field | Description | Example |
 |-------|-------------|---------|
 | **Mouse ID** | 6-8 character alphanumeric identifier | `HETCF3R1` |
-| **Recording Type** | `basal` or `recovery` | `basal` |
-| **Chamber** | `0` or `1` (maps to pi_cam_0 / pi_cam_1) | `0` |
+| **Recording Type** | `basal`, `recovery`, or `sd` (sleep deprivation) | `basal` |
 | **Your Name** | Select from lab member list | `andrea` |
+
+Click **"Set Metadata"** to submit. A toast notification confirms success. Repeat for each chamber in use.
 
 **Using the command line (alternative):**
 
 ```bash
-curl -X POST http://127.0.0.1:8585/api/session/metadata \
+# Set metadata for chamber 0
+curl -X POST "http://127.0.0.1:8585/api/session/metadata?chamber_id=0" \
   -H "Content-Type: application/json" \
   -d '{
     "mouse_id": "HETCF3R1",
@@ -70,10 +74,23 @@ curl -X POST http://127.0.0.1:8585/api/session/metadata \
     "user_name": "andrea",
     "chamber": 0
   }'
+
+# Set metadata for chamber 1 (if using both chambers)
+curl -X POST "http://127.0.0.1:8585/api/session/metadata?chamber_id=1" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "mouse_id": "HETCF7L2",
+    "recording_type": "recovery",
+    "user_name": "andrea",
+    "chamber": 1
+  }'
 ```
 
 > [!tip] Metadata is Optional
 > If you forget to set metadata, the daemon still records video. Files will be named with `unknown` placeholders (e.g., `2602201430_unknown_unknown.mp4`). You can rename them manually afterward.
+
+> [!tip] Partial Updates
+> You can update individual fields without resetting others. For example, send just `{"mouse_id": "HETCF3R1"}` to update only the mouse ID.
 
 ### 2. Start EEG Recording in Radiens
 
@@ -81,25 +98,29 @@ Start recording in the Radiens GUI as you normally would. The daemon polls Radie
 
 **What happens behind the scenes:**
 1. Daemon detects Radiens recording state changed to `R_ON`
-2. Daemon publishes `ON` to MQTT topic `frigate/pi_cam_X/recordings/set`
-3. Frigate starts recording the camera stream
-4. Daemon logs the session start timestamp
+2. Daemon starts a session for **each chamber** using its own pending metadata
+3. Daemon publishes `ON` to MQTT topic `frigate/{camera}/recordings/set` for all cameras
+4. Frigate starts recording all camera streams
+5. Daemon logs the session start timestamp per chamber
 
 > [!warning] Wait for Confirmation
-> After starting EEG recording, verify the daemon detected it by checking the session status:
+> After starting EEG recording, verify the daemon detected it:
+> - **In the UI:** Each ChamberSilo shows a pulsing red "Recording" indicator and a running timer
+> - **Via CLI:**
 > ```bash
-> curl http://127.0.0.1:8585/api/session/current
+> curl http://127.0.0.1:8585/api/status | python3 -m json.tool
 > ```
-> You should see a `"session"` object (not `null`) containing your `mouse_id` and other metadata. In the UI, this shows as a green "Recording" indicator.
+> You should see active sessions in the `"sessions"` object.
 
 ### 3. Run the Experiment
 
 Proceed with your experiment normally. The daemon monitors silently in the background. You do not need to interact with it.
 
 **During the session:**
-- Video is being recorded continuously by Frigate
+- Video is being recorded continuously by Frigate on all cameras
 - EEG/EMG data is being recorded by Radiens
-- The daemon is tracking timestamps for the export
+- The daemon is tracking timestamps for each chamber's export
+- The UI shows a live running timer per chamber
 
 ### 4. Stop EEG Recording in Radiens
 
@@ -107,16 +128,21 @@ Stop recording in the Radiens GUI when the experiment is complete. The daemon de
 
 **What happens behind the scenes:**
 1. Daemon detects Radiens recording state changed to `R_OFF`
-2. Daemon publishes `OFF` to MQTT topic `frigate/pi_cam_X/recordings/set`
-3. Daemon records the session end timestamp
-4. Daemon calls Frigate export API to create a named MP4
-5. MP4 is renamed to `YYMMDDHHMM_mouseID_type.mp4`
-6. Session sidecar JSON is written with full metadata
-7. (Future) Files are transferred to NAS
+2. Daemon ends **all** active sessions
+3. Daemon publishes `OFF` to all camera MQTT topics
+4. For each chamber, a background thread:
+   - Calls Frigate export API to create a named MP4 (+/-2s buffer)
+   - Moves the MP4 to the organized export directory
+   - Writes a session JSON sidecar
+   - Clears pending metadata for that chamber
 
 ### 5. Verify the Session
 
-After stopping, verify the session completed successfully:
+After stopping, verify the sessions completed successfully:
+
+**In the UI:** Check the **Session History** panel at the bottom. Completed sessions appear with green "completed" badges.
+
+**Via CLI:**
 
 ```bash
 # Check session history (most recent first)
@@ -127,25 +153,101 @@ curl http://127.0.0.1:8585/api/session/history | python3 -m json.tool
 
 | File | Location | Description |
 |------|----------|-------------|
-| `YYMMDDHHMM_mouseID_type.mp4` | `/srv/frigate/storage/exports/` | Exported video clip (Frigate writes here) |
-| `YYMMDDHHMM_mouseID_type_session.json` | `/opt/neurosurveillance/sessions/` | Session metadata sidecar |
+| Exported MP4 | `{EXPORT_DIR}/{user}/{mouse}/{YYYY-MM-DD}/` | Organized video clip |
+| Session JSON | `{SESSION_DATA_DIR}/` | Session metadata sidecar |
 
-**Example filenames for a session started at 2:30 PM on Feb 20, 2026:**
-- `2602201430_HETCF3R1_basal.mp4`
-- `2602201430_HETCF3R1_basal_session.json`
+**Export path example:**
+
+```
+/opt/neurosurveillance/exports/
+└── andrea/
+    └── HETCF3R1/
+        └── 2026-02-20/
+            ├── 2602201430_HETCF3R1_basal.mp4
+            └── 2602201430_HETCF3R1_basal_session.json
+```
 
 ---
 
-## Multiple Chambers
+## Multi-Chamber Recording
 
-To run experiments in both chambers simultaneously:
+Both chambers record simultaneously when Radiens starts. Each chamber maintains **independent metadata**, so you can record different mice in different chambers at the same time.
 
-1. Set metadata for **chamber 0** via the API
-2. Start EEG recording for chamber 0 in Radiens
-3. The daemon tracks each chamber independently
+**Setup workflow:**
 
-> [!warning] Current Limitation
-> The current design assumes one Radiens instance controlling one headstage. If two headstages are recorded simultaneously via separate Radiens instances, the daemon needs to be configured to poll both. This is a future enhancement.
+1. Set metadata for **chamber 0** (Mouse A, basal)
+2. Set metadata for **chamber 1** (Mouse B, recovery)
+3. Start EEG recording in Radiens
+4. Both cameras start recording automatically
+5. Stop EEG recording -- both exports run independently
+
+**In the UI:** Each ChamberSilo card has its own form, status indicator, and timer. Set metadata independently for each.
+
+**Via CLI:**
+
+```bash
+# Chamber 0
+curl -X POST "http://127.0.0.1:8585/api/session/metadata?chamber_id=0" \
+  -H "Content-Type: application/json" \
+  -d '{"mouse_id": "HETCF3R1", "recording_type": "basal", "user_name": "andrea"}'
+
+# Chamber 1
+curl -X POST "http://127.0.0.1:8585/api/session/metadata?chamber_id=1" \
+  -H "Content-Type: application/json" \
+  -d '{"mouse_id": "HETCF7L2", "recording_type": "recovery", "user_name": "andrea"}'
+```
+
+> [!info] Single Radiens Instance
+> The current design uses one Radiens instance controlling one headstage. Both chambers start/stop together when Radiens transitions. If two headstages need independent control, additional Radiens instances and daemon configuration would be required.
+
+---
+
+## Manual Recording (Without Radiens)
+
+If you need to record video **without** an active Radiens EEG session (e.g. setup verification, behavioral observation), you can use Frigate's built-in Record button. The daemon auto-detects this and exports the video.
+
+### Metadata Inheritance
+
+Manual recordings **inherit pending metadata** from the UI. If you set metadata (mouse ID, recording type, user name) before clicking Record in Frigate, the manual recording uses those values for naming and organization.
+
+If no metadata is set, the recording uses defaults (`manual` mouse ID, camera name in filename).
+
+### Steps
+
+1. **(Optional)** Set metadata in the NeuroSurveillance UI for the relevant chamber
+2. Open Frigate UI: `http://192.168.0.50:5000`
+3. Navigate to the camera you want to record (pi_cam_0 or pi_cam_1)
+4. Click the **Record** button on the camera
+5. When done, click **Stop** on the camera
+6. The daemon auto-detects the stop and exports the video
+
+**Output files (with metadata set):**
+- Video: `{EXPORT_DIR}/andrea/HETCF3R1/2026-02-20/2602201430_HETCF3R1_basal.mp4`
+- Sidecar: `{SESSION_DATA_DIR}/2602201430_HETCF3R1_basal_session.json`
+
+**Output files (without metadata):**
+- Video: `{EXPORT_DIR}/unknown/manual/2026-02-20/2602201430_manual_pi_cam_0.mp4`
+- Sidecar: `{SESSION_DATA_DIR}/2602201430_manual_pi_cam_0_session.json`
+
+### Check manual recording status
+
+```bash
+# See active manual recordings
+curl http://127.0.0.1:8585/api/session/manual | python3 -m json.tool
+
+# See all history (both Radiens and manual)
+curl http://127.0.0.1:8585/api/session/history | python3 -m json.tool
+
+# Filter to manual only
+curl "http://127.0.0.1:8585/api/session/history?source=manual" | python3 -m json.tool
+```
+
+### Important notes
+
+- **Radiens takes priority:** If a Radiens EEG session is active on a camera, clicking Record in Frigate UI is ignored by the daemon (the Radiens session controls that camera).
+- **Min duration:** Recordings shorter than 5 seconds are ignored (accidental clicks).
+- **Both cameras:** You can record cam_0 and cam_1 independently at the same time.
+- **JSON sidecar:** Same format as Radiens sessions but with `"source": "manual"`.
 
 ---
 
@@ -155,8 +257,8 @@ To run experiments in both chambers simultaneously:
 
 | Check | Command |
 |-------|---------|
-| Is daemon running? | `sudo systemctl status neurosurveillance-session` |
-| Daemon logs | `journalctl -u neurosurveillance-session -f` |
+| Is daemon running? | `systemctl --user status neurosurveillance-session` |
+| Daemon logs | `journalctl --user -u neurosurveillance-session -f` |
 | Is Radiens running? | Check Radiens GUI on desktop |
 | Daemon health | `curl http://127.0.0.1:8585/api/health` |
 
@@ -188,59 +290,15 @@ If the daemon crashes while recording is active:
 
 ---
 
-## Manual Recording (Without Radiens)
-
-If you need to record video **without** an active Radiens EEG session (e.g. setup verification, behavioral observation), you can use Frigate's built-in Record button. The daemon will auto-detect this and export the video.
-
-### Steps
-
-1. Open Frigate UI: `http://192.168.0.50:5000`
-2. Navigate to the camera you want to record (pi_cam_0 or pi_cam_1)
-3. Click the **Record** button on the camera
-4. When done, click **Stop** on the camera
-5. The daemon auto-detects the stop and exports the video
-
-**Output files:**
-- Video: `YYMMDDHHMM_manual_pi_cam_0.mp4` in `/srv/frigate/storage/exports/`
-- Sidecar: `YYMMDDHHMM_manual_pi_cam_0_session.json` in `/opt/neurosurveillance/sessions/`
-
-### Check manual recording status
-
-```bash
-# See active manual recordings
-curl http://127.0.0.1:8585/api/session/manual | python3 -m json.tool
-
-# See all history (both Radiens and manual)
-curl http://127.0.0.1:8585/api/session/history | python3 -m json.tool
-
-# Filter to manual only
-curl "http://127.0.0.1:8585/api/session/history?source=manual" | python3 -m json.tool
-```
-
-### Important notes
-
-- **Radiens takes priority:** If a Radiens EEG session is active on a camera, clicking Record in Frigate UI is ignored by the daemon (the Radiens session controls that camera).
-- **Min duration:** Recordings shorter than 5 seconds are ignored (accidental clicks).
-- **Both cameras:** You can record cam_0 and cam_1 independently at the same time.
-- **No metadata:** Manual recordings don't use mouse ID metadata. The filename uses `manual` + camera name instead.
-
----
-
 ## NAS Transfer (Future)
 
-When NAS connectivity is configured via Tailscale, the daemon will automatically transfer exports to:
-
-```
-/volume1/neurosurveillance/{username}/{YYYY-MM-DD}/YYMMDDHHMM_mouseID_type.mp4
-/volume1/neurosurveillance/{username}/{YYYY-MM-DD}/YYMMDDHHMM_mouseID_type_session.json
-```
-
-Until then, exported files remain in `/srv/frigate/storage/exports/` on the ASUS PC (desktop shortcut: `~/Desktop/Frigate Exports`).
+When NAS connectivity is configured via Tailscale, the daemon will automatically transfer exports to the Synology NAS. Until then, exported files remain in `{EXPORT_DIR}` on the ASUS PC.
 
 ---
 
 ## Related
 
 - [[01-infrastructure/session-daemon/architecture|Session Daemon Architecture]] -- technical details and failure modes
+- [[01-infrastructure/session-daemon/frontend-reference|Frontend Reference]] -- desktop UI component details
 - [[01-infrastructure/frigate/config-yml|Frigate Config]] -- recording settings
 - [[00-config/production-values|Production Values]] -- all IPs and ports

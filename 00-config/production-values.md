@@ -104,6 +104,8 @@ status: active
 | `{SESSION_LOG_DIR}` | `/opt/neurosurveillance/logs` |
 | `{SESSION_EXPORT_DIR}` | `/srv/frigate/storage/exports` |
 | `{SESSION_DATA_DIR}` | `/opt/neurosurveillance/sessions` |
+| `{EXPORT_DIR}` | `/opt/neurosurveillance/exports` |
+| `{SUDOERS_POLICY}` | `/etc/sudoers.d/neurosurveillance-fs` |
 
 ---
 
