@@ -653,7 +653,7 @@ cameras:
 Restart the daemon:
 
 ```bash
-systemctl --user restart neurosurveillance-session
+sudo systemctl restart neurosurveillance-session
 ```
 
 ### 20. Update Production Values

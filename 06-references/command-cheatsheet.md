@@ -199,24 +199,24 @@ cd /srv/frigate && docker compose restart frigate
 ### Service Control
 ```bash
 # Status
-systemctl --user status neurosurveillance-session
+sudo systemctl status neurosurveillance-session
 
 # Start / stop / restart
-systemctl --user start neurosurveillance-session
-systemctl --user stop neurosurveillance-session
-systemctl --user restart neurosurveillance-session
+sudo systemctl start neurosurveillance-session
+sudo systemctl stop neurosurveillance-session
+sudo systemctl restart neurosurveillance-session
 
 # Enable at boot
-systemctl --user enable neurosurveillance-session
+sudo systemctl enable neurosurveillance-session
 ```
 
 ### Logs
 ```bash
 # Live logs
-journalctl --user -u neurosurveillance-session -f
+sudo journalctl -u neurosurveillance-session -f
 
 # Last 100 lines
-journalctl --user -u neurosurveillance-session -n 100
+sudo journalctl -u neurosurveillance-session -n 100
 
 # Log file (rotating)
 tail -f /opt/neurosurveillance/logs/session-daemon.log

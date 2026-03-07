@@ -13,9 +13,9 @@ Synchronize Frigate video recording with NeuroNexus Radiens EEG/EMG recording fo
 
 ## Prerequisites Checklist
 
-- [ ] Session daemon running: `systemctl --user status neurosurveillance-session`
+- [ ] Session daemon running: `sudo systemctl status neurosurveillance-session`
 - [ ] Frigate NVR running: open `http://192.168.0.50:5000` in browser
-- [ ] Both camera streams visible in Frigate (pi_cam_0, pi_cam_1)
+- [ ] All camera streams visible in Frigate (pi_cam_0 through pi_cam_3)
 - [ ] Radiens software open and connected to headstage
 - [ ] Mouse prepared and connected to EEG/EMG headstage in the correct chamber
 - [ ] NeuroSurveillance Session Controller app open (optional but recommended)
@@ -257,8 +257,8 @@ curl "http://127.0.0.1:8585/api/session/history?source=manual" | python3 -m json
 
 | Check | Command |
 |-------|---------|
-| Is daemon running? | `systemctl --user status neurosurveillance-session` |
-| Daemon logs | `journalctl --user -u neurosurveillance-session -f` |
+| Is daemon running? | `sudo systemctl status neurosurveillance-session` |
+| Daemon logs | `sudo journalctl -u neurosurveillance-session -f` |
 | Is Radiens running? | Check Radiens GUI on desktop |
 | Daemon health | `curl http://127.0.0.1:8585/api/health` |
 
