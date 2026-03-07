@@ -152,7 +152,7 @@ Only messages that pass both filters (not self-initiated AND an actual state tra
 2. On session end, records `end_timestamp`
 3. Timestamps are padded +/-2 seconds to ensure Frigate's segment boundaries are fully included
 4. Calls Frigate export API with `{"name": "<session_filename>"}` in the POST body -- Frigate uses this name as the export label
-5. Waits for export to complete (polls `GET /api/exports` every 2s, timeout 5 min)
+5. Waits for export to complete (polls `GET /api/exports` every 2s, timeout 5 min). Each poll checks the `in_progress` flag -- the export is only considered done when `in_progress` is absent or `false`. This is critical because Frigate lists exports immediately while `ffmpeg` is still multiplexing; moving the file prematurely corrupts the MP4 (the `moov` header atom is written last).
 6. Export runs in a **background thread** so it does not block the main Radiens polling loop
 
 **Timestamp handling:**
@@ -346,6 +346,7 @@ Session ends (Radiens R_OFF or manual Stop)
   │
   ├─ 2. FrigateController.wait_for_export(export_id)
   │     Polls GET /api/exports every 2s (timeout: 5 min)
+  │     Skips if in_progress=true (ffmpeg still multiplexing)
   │     Waits up to 10s for file to appear on disk
   │     Returns: export metadata with video_path
   │
@@ -670,6 +671,7 @@ Both Radiens and manual sessions produce JSON sidecars in `{SESSION_DATA_DIR}`.
 | **Frigate unreachable** | Export fails. Daemon logs error, retains session metadata for manual recovery. | Video exists in Frigate but export must be done manually |
 | **No metadata set** | Daemon uses defaults: `unknown` mouse ID, `unknown` type. Session still runs and exports. | Researcher must rename files manually |
 | **Export file move fails** | `sudo mv` fails (permissions, disk full). Daemon logs error, sets `export_status: "failed"`. Original file remains in Frigate exports. | File safe in Frigate exports dir |
+| **Long export (large file)** | Frigate lists export immediately with `in_progress: true` while ffmpeg multiplexes. Daemon polls until `in_progress` clears before moving the file. | None -- daemon waits for completion |
 | **Power failure** | Everything stops. On reboot, systemd restarts daemon, which resets to OFF. | Partial session -- manual Frigate export needed for the gap |
 
 ## Dependencies
