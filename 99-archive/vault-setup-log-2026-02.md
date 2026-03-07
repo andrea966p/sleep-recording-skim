@@ -119,7 +119,7 @@ All templates use `2026-02-05` and `vault-setup-log-2026-02` syntax.
 
 ## Next Steps
 
-- [ ] Initialize Git repository
-- [ ] Configure Obsidian Git plugin for auto-commits
-- [ ] Fill in remaining placeholder values
-- [ ] Create procedures as system is deployed
+- [x] Initialize Git repository
+- [x] Configure Obsidian Git plugin for auto-commits
+- [x] Fill in remaining placeholder values
+- [x] Create procedures as system is deployed

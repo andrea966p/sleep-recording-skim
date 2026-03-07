@@ -75,9 +75,9 @@ Production IPs, usernames, paths, and settings.
 | Component | IP | Status |
 |-----------|------|--------|
 | **Pi 1** | 192.168.0.11 | Online |
-| **Pi 2** | 192.168.0.12 | Deploying |
+| **Pi 2** | 192.168.0.12 | Online |
 | **go2rtc (Pi 1)** | :1984 | Online |
-| **go2rtc (Pi 2)** | :1984 | Deploying |
+| **go2rtc (Pi 2)** | :1984 | Online |
 | **Frigate** | 192.168.0.50:5000 | Online |
 | **Session Daemon** | 127.0.0.1:8585 | Healthy (daemon + MQTT + Radiens connected) |
 
