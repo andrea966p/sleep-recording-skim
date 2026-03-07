@@ -1,7 +1,7 @@
 ---
 tags: [config, production, sensitive]
 created: 2026-02-04
-updated: 2026-02-23
+updated: 2026-03-07
 status: active
 ---
 
@@ -16,10 +16,13 @@ status: active
 | Service | URL | Status |
 |---------|-----|--------|
 | **Frigate NVR** | http://192.168.0.50:5000 | |
-| **go2rtc API** | http://192.168.0.11:1984 | |
+| **go2rtc API (Pi 1)** | http://192.168.0.11:1984 | |
+| **go2rtc API (Pi 2)** | http://192.168.0.12:1984 | |
 | **Mosquitto MQTT** | mqtt://192.168.0.50:1883 | |
 | **Camera 0 RTSP** | rtsp://192.168.0.11:8554/pi_cam_0 | |
 | **Camera 1 RTSP** | rtsp://192.168.0.11:8554/pi_cam_1 | |
+| **Camera 2 RTSP** | rtsp://192.168.0.12:8554/pi_cam_2 | |
+| **Camera 3 RTSP** | rtsp://192.168.0.12:8554/pi_cam_3 | |
 | **Session Daemon** | http://127.0.0.1:8585 | |
 
 ---
@@ -28,8 +31,10 @@ status: active
 
 | Variable           | Production Value | Notes                         |
 | ------------------ | ---------------- | ----------------------------- |
-| `{PI_IP}`          | `192.168.0.11`   | Raspberry Pi 5 static IP      |
-| `{PI_HOSTNAME}`    | `skimlab`        | Pi5-1 hostname                |
+| `{PI1_IP}`         | `192.168.0.11`   | Raspberry Pi 5 #1 static IP   |
+| `{PI1_HOSTNAME}`   | `skimlab`        | Pi 1 hostname                 |
+| `{PI2_IP}`         | `192.168.0.12`   | Raspberry Pi 5 #2 static IP   |
+| `{PI2_HOSTNAME}`   | `pi2`            | Pi 2 hostname                 |
 | `{NVR_IP}`         | `192.168.0.50`   | ASUS Mini PC (Frigate server) |
 | `{NVR_HOSTNAME}`   | `e10ubuntu`      | ASUS NUC 14 Pro hostname      |
 | `{NETWORK_SUBNET}` | `192.168.0.0/24` | Lab network                   |
@@ -72,8 +77,10 @@ status: active
 
 | Variable | Value | Notes |
 |----------|-------|-------|
-| `{CAMERA_0_ID}` | `pi_cam_0` | Primary camera stream |
-| `{CAMERA_1_ID}` | `pi_cam_1` | Secondary camera stream |
+| `{CAMERA_0_ID}` | `pi_cam_0` | Pi 1, camera 0 |
+| `{CAMERA_1_ID}` | `pi_cam_1` | Pi 1, camera 1 |
+| `{CAMERA_2_ID}` | `pi_cam_2` | Pi 2, camera 0 |
+| `{CAMERA_3_ID}` | `pi_cam_3` | Pi 2, camera 1 |
 | `{CAMERA_WIDTH}` | `1024` | Resolution width |
 | `{CAMERA_HEIGHT}` | `768` | Resolution height |
 | `{CAMERA_FPS}` | `15` | Framerate |
