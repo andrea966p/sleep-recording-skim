@@ -311,13 +311,13 @@ After successful deployment:
 
 ## Completion Checklist
 
-- [ ] SSH key-based access working
-- [ ] go2rtc service running
-- [ ] Both camera streams active (2 rpicam-vid processes)
-- [ ] No throttling (`0x0`)
-- [ ] Temperature acceptable (<70C)
-- [ ] Watchdog active
-- [ ] EEPROM PoE settings applied (if PoE-powered)
+- [x] SSH key-based access working ✅ 2026-03-07
+- [x] go2rtc service running ✅ 2026-03-07
+- [x] Both camera streams active (2 rpicam-vid processes) ✅ 2026-03-07
+- [x] No throttling (`0x0`) ✅ 2026-03-07
+- [x] Temperature acceptable (<70C) ✅ 2026-03-07
+- [x] Watchdog active ✅ 2026-03-07
+- [x] EEPROM PoE settings applied (if PoE-powered) ✅ 2026-03-07
 - [ ] Streams visible from NVR
 - [ ] Added to Frigate config on NVR
 - [ ] Added to production-values.md
