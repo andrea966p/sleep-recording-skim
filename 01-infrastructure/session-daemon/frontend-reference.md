@@ -115,7 +115,7 @@ Manages user-configurable settings persisted to `localStorage`. No server round-
 
 | Setting | Default | Description |
 |---------|---------|-------------|
-| Cameras | `[{id: "pi_cam_0", label: "Chamber 0"}, ...]` | Camera list with IDs and labels |
+| Cameras | `[{id: "pi_cam_0", label: "Chamber 0"}, ..., {id: "pi_cam_3", label: "Chamber 3"}]` | Camera list with IDs and labels (4 cameras) |
 | Recording types | `["basal", "recovery", "sd"]` | Dropdown options |
 | Lab members | `["andrea"]` | User name dropdown options |
 | Frigate URL | `http://192.168.0.50:5000` | Base URL for camera snapshots |

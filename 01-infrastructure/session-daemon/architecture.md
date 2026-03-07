@@ -1,7 +1,7 @@
 ---
 tags: [infrastructure, session-daemon, architecture]
 created: 2026-02-20
-updated: 2026-03-05
+updated: 2026-03-07
 status: production
 version: "2.0"
 ---
@@ -23,11 +23,15 @@ The **NeuroSurveillance Session Daemon** synchronizes Frigate video recording wi
 ```
                                     ASUS Mini PC (192.168.0.50)
   ┌─────────────┐          ┌──────────────────────────────────────────────┐
-  │  Raspberry   │  RTSP   │                                              │
-  │  Pi 5        │────────>│  Frigate NVR (Docker, port 5000)             │
-  │  go2rtc      │         │    - Records pi_cam_0, pi_cam_1              │
-  │  192.168.0.11│         │    - MQTT-controlled recording on/off        │
-  └─────────────┘         │    - Export API for named MP4 clips           │
+  │  Pi 1        │  RTSP   │                                              │
+  │  go2rtc      │────────>│  Frigate NVR (Docker, port 5000)             │
+  │  192.168.0.11│         │    - Records pi_cam_0..3 (4 cameras)         │
+  └─────────────┘         │    - MQTT-controlled recording on/off        │
+  ┌─────────────┐         │    - Export API for named MP4 clips           │
+  │  Pi 2        │  RTSP   │                                              │
+  │  go2rtc      │────────>│                                              │
+  │  192.168.0.12│         │                                              │
+  └─────────────┘         │                                              │
                            │                                              │
                            │  Mosquitto MQTT (Docker, port 1883)          │
                            │    - frigate/<camera>/recordings/set ON/OFF  │
@@ -163,7 +167,7 @@ Only messages that pass both filters (not self-initiated AND an actual state tra
 
 ### 3. Session Manager (`session_manager.py`)
 
-Manages per-chamber session metadata and logging. State is keyed by `chamber_id` (string: `"0"`, `"1"`).
+Manages per-chamber session metadata and logging. State is keyed by `chamber_id` (string: `"0"`, `"1"`, `"2"`, `"3"`).
 
 **Multi-chamber state model:**
 
@@ -295,7 +299,7 @@ REST API on `127.0.0.1:{SESSION_DAEMON_PORT}` for the UI to set session metadata
 | Endpoint | Method | Purpose |
 |----------|--------|---------|
 | `/api/status` | GET | Daemon status: per-chamber sessions, per-chamber pending metadata, Radiens connection, recording states, active manual recordings |
-| `/api/session/metadata?chamber_id=X` | POST | Set metadata for next session on a specific chamber (partial updates allowed) |
+| `/api/session/metadata?chamber_id=X` | POST | Set metadata for next session on a specific chamber (partial updates allowed, chamber validated against config) |
 | `/api/session/metadata?chamber_id=X` | DELETE | Clear pending metadata for a chamber, reset to defaults |
 | `/api/session/current` | GET | Current active session info (first active, for backward compatibility) |
 | `/api/session/history?source=X&limit=N` | GET | List of past sessions, merged Radiens + manual, newest first |
@@ -309,7 +313,7 @@ REST API on `127.0.0.1:{SESSION_DAEMON_PORT}` for the UI to set session metadata
   "daemon": "running",
   "radiens": {
     "connected": true,
-    "recording_states": {"0": "R_OFF", "1": "R_OFF"}
+    "recording_states": {"0": "R_OFF", "1": "R_OFF", "2": "R_OFF", "3": "R_OFF"}
   },
   "mqtt": {"connected": true},
   "sessions": {
@@ -524,6 +528,8 @@ frigate:
 cameras:
   chamber_0: "{CAMERA_0_ID}"   # pi_cam_0
   chamber_1: "{CAMERA_1_ID}"   # pi_cam_1
+  chamber_2: "{CAMERA_2_ID}"   # pi_cam_2
+  chamber_3: "{CAMERA_3_ID}"   # pi_cam_3
 
 sessions:
   data_dir: "{SESSION_DATA_DIR}"  # /opt/neurosurveillance/sessions
