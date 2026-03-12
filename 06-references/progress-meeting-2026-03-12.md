@@ -79,20 +79,20 @@ Compare: commercial lab video systems (Noldus EthoVision, Clever Sys) cost $5,00
 
 ## 2. Development Timeline
 
-| Date | Milestone |
-|------|-----------|
-| **Feb 4** | Project started — Obsidian vault setup, Notion migration |
-| **Feb 5** | First streaming config; H.265 failure discovered (kernel panics) |
-| **Feb 9** | go2rtc config stabilized; repo workflow established |
-| **Feb 11** | MPEG-TS container adopted (v5.2); watchdog monitoring deployed |
-| **Feb 12** | Frigate NVR deployed on ASUS NUC; first recording test successful |
+| Date       | Milestone                                                                 |
+| ---------- | ------------------------------------------------------------------------- |
+| **Feb 4**  | Obsidian vault setup, Notion migration                                    |
+| **Feb 5**  | First streaming config; H.265 failure discovered (kernel panics)          |
+| **Feb 9**  | go2rtc config stabilized; repo workflow established                       |
+| **Feb 11** | MPEG-TS container adopted (v5.2); watchdog monitoring deployed            |
+| **Feb 12** | Frigate NVR deployed on ASUS NUC; first recording test successful         |
 | **Feb 19** | Pi found dead after 6-day holiday — PMIC fault diagnosed, EEPROM hardened |
-| **Feb 20** | Session daemon architecture designed and coded |
-| **Feb 23** | Desktop UI built (Tauri + React); daemon deployed as systemd service |
-| **Mar 6** | Export corruption bug fixed (race condition in MP4 write) |
-| **Mar 7** | Second Pi deployed — system expanded to 4 cameras |
-| **Mar 8** | Full 4-camera support verified across all layers |
-| **Mar 9** | Docker packages pinned to prevent unintended Frigate restarts |
+| **Feb 20** | Session daemon architecture designed and coded                            |
+| **Feb 23** | Desktop UI built (Tauri + React); daemon deployed as systemd service      |
+| **Mar 6**  | Export corruption bug fixed (race condition in MP4 write)                 |
+| **Mar 7**  | Second Pi deployed — system expanded to 4 cameras                         |
+| **Mar 8**  | Full 4-camera support verified across all layers                          |
+| **Mar 9**  | Docker packages pinned to prevent unintended Frigate restarts             |
 
 **Total development time: ~5 weeks** (part-time, single developer)
 
@@ -158,15 +158,15 @@ System-wide `apt upgrade` updated Docker, which restarted Frigate, which immedia
 | Priority | Task | Rationale |
 |----------|------|-----------|
 | **High** | Post-export file integrity check (`ffprobe` validation) | Prevent silent corruption — learned from the Mar 6 incident |
-| **High** | NAS transfer via Tailscale | Export files currently stuck on NVR; need off-site backup to Synology NAS |
-| **Medium** | Pi PoE stability long-term monitoring | Track whether EEPROM fixes truly resolved the PMIC issue |
-| **Medium** | Add more lab members to the system | Currently only `andrea` in the user list |
+| **Done** | ~~NAS transfer via Tailscale~~ | Automated export transfer to Synology NAS configured and operational |
+| **Done** | ~~Add more lab members to the system~~ | Lab member list updated with additional users |
 
 ### Medium-term (1-3 Months)
 
 | Task | Detail |
 |------|--------|
-| **Automated sleep scoring from video** | Use pose estimation (e.g., SLEAP, DeepLabCut, or Lightning Pose) on exported video to classify sleep states visually |
+| **Automated sleep scoring (EEG/EMG)** | Collaboration with Prof. Kim Daewook's lab — automated sleep stage scoring model from EEG and EMG signals |
+| **Video-based sleep/wake classification** | Apply FERAL for simple binary awake/sleep classification from video alone — non-invasive, no surgery required; complements EEG-based scoring |
 | **Video-EEG temporal alignment validation** | Measure actual synchronization latency between Radiens R_ON and first Frigate frame |
 | **PostgreSQL session database** | Replace JSON sidecar files with structured database for querying across experiments |
 | **Multi-headstage support** | Enable independent Radiens instances per chamber for true independent recording control |
@@ -176,7 +176,7 @@ System-wide `apt upgrade` updated Docker, which restarted Frigate, which immedia
 | Task | Detail |
 |------|--------|
 | **NWB (Neurodata Without Borders) export** | Package video + EEG/EMG into NWB format for DANDI archive submission |
-| **Automated behavior analysis pipeline** | Integrate pose estimation → behavior classification → sleep state correlation |
+| **Dual-modality sleep scoring pipeline** | Combine EEG/EMG scoring (Kim lab collaboration) with FERAL video classification for cross-validated, surgery-free sleep staging |
 | **System replication guide** | Package the full setup as a reproducible methods paper |
 
 ---
@@ -186,6 +186,7 @@ System-wide `apt upgrade` updated Docker, which restarted Frigate, which immedia
 ### 6.1 Within the Lab
 
 - **Expanded sleep studies:** Scale to 8+ chambers by adding more Pi nodes (system architecture already supports dynamic camera counts)
+- **Surgery-free sleep screening:** FERAL video classification enables sleep/wake assessment without EEG implants — ideal for large-scale phenotyping or pre-screening cohorts
 - **Sleep deprivation monitoring:** Real-time video analysis could detect sleep onset for gentle handling protocols
 - **Circadian rhythm studies:** Continuous multi-day video + EEG with automated sleep/wake scoring
 - **Drug studies:** Before/after video behavioral analysis correlated with EEG biomarkers
@@ -200,7 +201,7 @@ System-wide `apt upgrade` updated Docker, which restarted Frigate, which immedia
 
 ### 6.3 Community Impact
 
-- **Cost democratization:** $1,200 vs. $15,000+ commercial systems
+- **Cost democratization:** ~$1,174 vs. $15,000+ commercial systems
 - **Reproducibility:** Fully documented, open-source, version-controlled
 - **Modularity:** Swap cameras, NVR software, or acquisition system independently
 
@@ -237,7 +238,7 @@ Current approaches to synchronized video-EEG in rodent sleep research fall into 
 | **MQTT-based recording orchestration** | Lightweight pub/sub control of multiple cameras without complex coupling |
 | **Fail-safe design** | Recording defaults to ON — if the daemon crashes, Frigate keeps recording (extra footage, never data loss) |
 | **Complete operational documentation** | 38-page Obsidian vault with incident reports, golden configs, and replication procedures — unusual level of transparency for methods papers |
-| **Cost reduction** | ~$1,200 total vs. $5K–$20K for comparable commercial systems |
+| **Cost reduction** | ~$1,174 total vs. $5K–$20K for comparable commercial systems |
 | **Reproducibility** | Fully version-controlled code + configs + documentation; designed for replication by other labs |
 
 ### 7.3 Suggested Publication Format
@@ -264,7 +265,7 @@ Current approaches to synchronized video-EEG in rodent sleep research fall into 
    - Long-term stability data (uptime logs, incident recovery)
    - Storage efficiency metrics (actual GB/camera/day)
 5. **Case Study:** Example sleep recording session with EEG + video correlation
-6. **Discussion:** Limitations (PoE instability, ~1s sync latency vs. OpenVEEG's ms-level), scalability, comparison to commercial systems
+6. **Discussion:** Limitations (~1s sync latency vs. OpenVEEG's ms-level, PoE EEPROM tuning required), scalability, comparison to commercial systems
 7. **Data & Code Availability:** GitHub repo, Obsidian documentation vault, NWB export (future)
 
 ### 7.5 Key References
@@ -283,6 +284,7 @@ Current approaches to synchronized video-EEG in rodent sleep research fall into 
 
 1. **Publication timing:** Should we publish the infrastructure paper now, or wait until we have validation data (sync latency, long-term stability metrics)?
 2. **Scope:** Methods paper (system description) vs. full research paper (system + sleep study results)?
-3. **PoE reliability:** Is the Pi PoE issue a blocker for recommending the system to other labs, or is it an acceptable documented limitation?
-4. **NWB integration priority:** Should we invest in Neurodata Without Borders export for data sharing before publishing?
-5. **Collaboration opportunities:** Other labs with similar needs who could validate/replicate the system?
+3. **Kim lab collaboration scope:** How tightly should the EEG/EMG sleep scoring model be integrated with our video infrastructure for the paper?
+4. **FERAL integration:** Video-based sleep/wake classification without surgery — should this be part of the methods paper or a separate follow-up study?
+5. **NWB integration priority:** Should we invest in Neurodata Without Borders export for data sharing before publishing?
+6. **Collaboration opportunities:** Other labs with similar needs who could validate/replicate the system?
