@@ -155,11 +155,11 @@ System-wide `apt upgrade` updated Docker, which restarted Frigate, which immedia
 
 ### Short-term (Next 2-4 Weeks)
 
-| Priority | Task | Rationale |
-|----------|------|-----------|
-| **High** | Post-export file integrity check (`ffprobe` validation) | Prevent silent corruption — learned from the Mar 6 incident |
-| **Done** | ~~NAS transfer via Tailscale~~ | Automated export transfer to Synology NAS configured and operational |
-| **Done** | ~~Add more lab members to the system~~ | Lab member list updated with additional users |
+| Priority | Task                                                    | Rationale                                                            |
+| -------- | ------------------------------------------------------- | -------------------------------------------------------------------- |
+| **High** | Post-export file integrity check (`ffprobe` validation) | Prevent silent corruption — learned from the Mar 6 incident          |
+| **Done** | ~~NAS transfer via Tailscale~~                          | Automated export transfer to Synology NAS configured and operational |
+| **Done** | ~~Add more lab members to the system~~                  | Lab member list updated with additional users                        |
 
 ### Medium-term (1-3 Months)
 
