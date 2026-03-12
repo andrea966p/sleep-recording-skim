@@ -34,7 +34,7 @@ An automated, multi-camera video surveillance system for neuroscience sleep rese
         │   192.168.0.50      │
         │                     │
         │  Frigate NVR 0.16.1 │ ← Intel QSV HW accel
-        │  Mosquitto MQTT     │
+        │  Mosquitto MQTT     │ ← Message broker for recording control
         │  Session Daemon     │ ← Python 3.12, Flask
         │  Desktop UI (Tauri) │ ← React 19, TypeScript
         └──────────┬──────────┘
@@ -63,14 +63,15 @@ An automated, multi-camera video surveillance system for neuroscience sleep rese
 
 ### Hardware Cost Estimate
 
-| Component | Approx. Cost |
-|-----------|-------------|
-| 2x Raspberry Pi 5 (8 GB) | ~$160 |
-| 4x Camera modules | ~$100 |
-| 2x PoE HAT + cables | ~$60 |
-| ASUS NUC 14 Pro (Intel Ultra 5, 32 GB, 2 TB) | ~$800 |
-| Network switch + cabling | ~$50 |
-| **Total** | **~$1,170** |
+| Component                                    | Unit Cost | Qty | Subtotal |
+| -------------------------------------------- | --------- | --- | -------- |
+| Raspberry Pi 5 (8 GB)                        | $100      | 2   | $200     |
+| Camera modules                               | $7        | 4   | $28      |
+| PoE HAT (Waveshare)                          | $18       | 2   | $36      |
+| Ethernet cables                              | $5        | 2   | $10      |
+| ASUS NUC 14 Pro (Intel Ultra 5, 32 GB, 2 TB) | $800      | 1   | $800     |
+| Network switch + cabling                     | $100      | 1   | $100     |
+| **Total**                                    |           |     | **~$1,174** |
 
 Compare: commercial lab video systems (Noldus EthoVision, Clever Sys) cost $5,000–$20,000+ per setup.
 
@@ -109,9 +110,9 @@ Compare: commercial lab video systems (Noldus EthoVision, Clever Sys) cost $5,00
 | Feb 19 | Pi found dead after 6 days (Lunar New Year) | PMIC latch-up fault — `PSU_MAX_CURRENT` at default 5000 mA too aggressive for Waveshare PoE HAT |
 | Feb 24 | Pi unreachable again, auto-reboot failed | Double-crash scenario — PMIC latched off, watchdog couldn't recover |
 
-**Resolution:** EEPROM boot config hardened (`PSU_MAX_CURRENT=5000`, `POWER_OFF_ON_HALT=1`), crash-canary monitoring scripts deployed, persistent journaling enabled for post-mortem analysis.
+**Resolution:** EEPROM boot config hardened (`PSU_MAX_CURRENT=5000`, `POWER_OFF_ON_HALT=1`), crash-canary monitoring scripts deployed, persistent journaling enabled for post-mortem analysis. **Since applying the EEPROM fix, no further PoE incidents have occurred (stable for 2+ weeks as of March 12).**
 
-**Lesson:** Consumer-grade PoE HATs for Pi 5 are not yet production-reliable. Future deployments may need industrial PoE injectors or direct barrel-jack power.
+**Lesson:** Consumer-grade PoE HATs for Pi 5 require EEPROM tuning for reliable operation. The default power negotiation settings are too aggressive for the Waveshare PoE HAT.
 
 ### 3.2 H.265 Encoding — Complete Failure on Pi 5
 
