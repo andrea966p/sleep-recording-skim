@@ -127,7 +127,9 @@ status: active
 | OS | Ubuntu 24.04 LTS |
 | Kernel | `6.17.0-14-generic` (HWE) |
 | VA-API Driver | `iHD` (Intel Media Driver) |
-| Docker | Compose v2 |
+| Docker CE | `29.3.0` (pinned — excluded from unattended-upgrades) |
+| Docker Compose | `v5.1.0` |
+| Frigate | `0.16.1` (pinned in docker-compose.yml) |
 
 ---
 
