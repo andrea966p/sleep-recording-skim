@@ -245,14 +245,18 @@ Current approaches to synchronized video-EEG in rodent sleep research fall into 
 
 **Methods/Technical Note paper** in one of:
 
-| Journal | Fit | Impact Factor |
-|---------|-----|---------------|
-| **Journal of Neuroscience Methods** | Primary target — methods papers for neuroscience | 2.7 |
-| **HardwareX** (Elsevier) | Open-source scientific hardware; includes build instructions | 2.8 |
-| **Scientific Reports** (Nature) | Broad audience; MouseVUER published here | 3.8 |
-| **Frontiers in Neuroscience** | Methods & tools section | 3.2 |
-| **eLife** (Tools & Resources) | High visibility; Spyglass framework published here | 6.4 |
-| **JOSS** (Journal of Open Source Software) | Software-focused; peer-reviewed, citable | — |
+| Journal                                    | Fit                                                          | Impact Factor |
+| ------------------------------------------ | ------------------------------------------------------------ | ------------- |
+| **Journal of Neuroscience Methods**        | Primary target — methods papers for neuroscience             | 2.7           |
+| **HardwareX** (Elsevier)                   | Open-source scientific hardware; includes build instructions | 2.8           |
+| **Scientific Reports** (Nature)            | Broad audience; MouseVUER published here                     | 3.8           |
+| **Frontiers in Neuroscience**              | Methods & tools section                                      | 3.2           |
+| **eLife** (Tools & Resources)              | High visibility; Spyglass framework published here           | 6.4           |
+| **JOSS** (Journal of Open Source Software) | Software-focused; peer-reviewed, citable                     | —             |
+| eng paper (IEEE)                           | ask seungjae                                                 | high          |
+| experimental neurobiology                  | korean journal, ask kw                                       |               |
+| genes brain and beh                        |                                                              |               |
+|                                            |                                                              |               |
 
 ### 7.4 Suggested Paper Structure
 
@@ -286,6 +290,6 @@ Current approaches to synchronized video-EEG in rodent sleep research fall into 
 1. **Publication timing:** Should we publish the infrastructure paper now, or wait until we have validation data (sync latency, long-term stability metrics)?
 2. **Scope:** Methods paper (system description) vs. full research paper (system + sleep study results)?
 3. **Kim lab collaboration scope:** How tightly should the EEG/EMG sleep scoring model be integrated with our video infrastructure for the paper?
-4. **FERAL integration:** Video-based sleep/wake classification without surgery — should this be part of the methods paper or a separate follow-up study?
+4. **F**ERAL integration: Video-based sleep/wake classification without surgery — should this be part of the methods paper or a separate follow-up study? ASK CH
 5. **NWB integration priority:** Should we invest in Neurodata Without Borders export for data sharing before publishing?
 
