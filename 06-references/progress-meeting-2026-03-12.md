@@ -166,7 +166,7 @@ System-wide `apt upgrade` updated Docker, which restarted Frigate, which immedia
 | Task | Detail |
 |------|--------|
 | **Automated sleep scoring (EEG/EMG)** | Collaboration with Prof. Kim Daewook's lab — automated sleep stage scoring model from EEG and EMG signals |
-| **Video-based sleep/wake classification** | Apply FERAL for simple binary awake/sleep classification from video alone — non-invasive, no surgery required; complements EEG-based scoring |
+| **Video-based sleep/wake classification** | Apply [FERAL](https://github.com/Skovorp/feral) (Skovorodnikov et al., 2025, bioRxiv) — a video-understanding system that maps raw video directly to behavioral labels without pose estimation. Train on labeled sleep/wake frames for simple binary classification from video alone — non-invasive, no surgery required; complements EEG-based scoring |
 | **Video-EEG temporal alignment validation** | Measure actual synchronization latency between Radiens R_ON and first Frigate frame |
 | **PostgreSQL session database** | Replace JSON sidecar files with structured database for querying across experiments |
 | **Multi-headstage support** | Enable independent Radiens instances per chamber for true independent recording control |
@@ -176,7 +176,7 @@ System-wide `apt upgrade` updated Docker, which restarted Frigate, which immedia
 | Task | Detail |
 |------|--------|
 | **NWB (Neurodata Without Borders) export** | Package video + EEG/EMG into NWB format for DANDI archive submission |
-| **Dual-modality sleep scoring pipeline** | Combine EEG/EMG scoring (Kim lab collaboration) with FERAL video classification for cross-validated, surgery-free sleep staging |
+| **Dual-modality sleep scoring pipeline** | Combine EEG/EMG scoring (Kim lab collaboration) with FERAL video classification for cross-validated sleep staging — ultimately enabling surgery-free sleep assessment for cohorts without EEG implants |
 | **System replication guide** | Package the full setup as a reproducible methods paper |
 
 ---
@@ -186,7 +186,7 @@ System-wide `apt upgrade` updated Docker, which restarted Frigate, which immedia
 ### 6.1 Within the Lab
 
 - **Expanded sleep studies:** Scale to 8+ chambers by adding more Pi nodes (system architecture already supports dynamic camera counts)
-- **Surgery-free sleep screening:** FERAL video classification enables sleep/wake assessment without EEG implants — ideal for large-scale phenotyping or pre-screening cohorts
+- **Surgery-free sleep screening:** Train FERAL on labeled sleep/wake video to classify directly from raw footage — no pose estimation, no EEG implants. Ideal for large-scale phenotyping or pre-screening cohorts before committing to surgery
 - **Sleep deprivation monitoring:** Real-time video analysis could detect sleep onset for gentle handling protocols
 - **Circadian rhythm studies:** Continuous multi-day video + EEG with automated sleep/wake scoring
 - **Drug studies:** Before/after video behavioral analysis correlated with EEG biomarkers
@@ -276,6 +276,7 @@ Current approaches to synchronized video-EEG in rodent sleep research fall into 
 - [SAGER (2025)](https://www.mdpi.com/1424-8220/25/3/921) — Single-channel EEG vigilance state classification
 - [Spyglass (2024, eLife)](https://pubmed.ncbi.nlm.nih.gov/38328074/) — Reproducible neuroscience data management framework
 - [Lightning Pose (2024, Nature Methods)](https://www.nature.com/articles/s41592-024-02319-1) — Semi-supervised animal pose estimation
+- [FERAL (2025, bioRxiv)](https://www.biorxiv.org/content/10.1101/2025.11.16.688666v1) — Video-understanding system for direct video-to-behavior mapping without pose estimation (Skovorodnikov et al., Rockefeller University)
 - [High-throughput visual sleep staging (2022)](https://pmc.ncbi.nlm.nih.gov/articles/PMC8842275/) — ML-based sleep scoring from video in mice
 
 ---
