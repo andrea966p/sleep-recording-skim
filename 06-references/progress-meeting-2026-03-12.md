@@ -288,4 +288,4 @@ Current approaches to synchronized video-EEG in rodent sleep research fall into 
 3. **Kim lab collaboration scope:** How tightly should the EEG/EMG sleep scoring model be integrated with our video infrastructure for the paper?
 4. **FERAL integration:** Video-based sleep/wake classification without surgery — should this be part of the methods paper or a separate follow-up study?
 5. **NWB integration priority:** Should we invest in Neurodata Without Borders export for data sharing before publishing?
-6. **Collaboration opportunities:** Other labs with similar needs who could validate/replicate the system?
+
