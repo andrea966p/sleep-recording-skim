@@ -21,6 +21,7 @@ import subprocess
 import sys
 import threading
 import time
+from datetime import datetime
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 
@@ -321,296 +322,191 @@ class SessionDaemon:
             export_thread.start()
 
     def _export_session(self, session):
-        """Export video from Frigate. Runs in a background thread.
+        """Export video from Frigate. Runs in a background thread."""
+        self._execute_export(
+            session=session,
+            manager=self.session_manager,
+            label="session",
+        )
+
+    def _execute_export(self, session, manager, label: str):
+        """Shared export logic for both Radiens and manual sessions.
 
         Args:
-            session: The completed SessionRecord.
+            session: The completed SessionRecord or ManualSessionRecord.
+            manager: The session manager that owns this session (for status updates).
+            label: Human-readable label for log messages ("session" or "manual session").
         """
+        sid = session.session_id[:8]
         try:
-            logger.info(
-                "Starting Frigate export for session %s...",
-                session.session_id[:8],
-            )
-
-            # Add a small buffer (2s) to start/end to ensure we capture
-            # the full session (Frigate records in segments)
-            start_time = session.start_time_utc - 2
-            end_time = session.end_time_utc + 2
+            logger.info("Starting Frigate export for %s %s...", label, sid)
 
             export_name = session.video_filename.rsplit(".", 1)[0] if session.video_filename else ""
             export_id = self.frigate.export_recording(
                 camera_id=session.camera,
-                start_time=start_time,
-                end_time=end_time,
+                start_time=session.start_time_utc - 2,
+                end_time=session.end_time_utc + 2,
                 name=export_name,
             )
 
             if export_id is None:
-                logger.error(
-                    "Frigate export request failed for session %s",
-                    session.session_id[:8],
-                )
-                self.session_manager.update_export_status(session.session_id, "failed: export request rejected")
+                logger.error("Frigate export request failed for %s %s", label, sid)
+                manager.update_export_status(session.session_id, "failed: export request rejected")
                 return
 
-            # Wait for export to complete
             result = self.frigate.wait_for_export(export_id)
             if result is None:
-                logger.error(
-                    "Frigate export timed out for session %s",
-                    session.session_id[:8],
-                )
-                self.session_manager.update_export_status(session.session_id, "failed: export timed out")
+                logger.error("Frigate export timed out for %s %s", label, sid)
+                manager.update_export_status(session.session_id, "failed: export timed out")
                 return
 
-            self.session_manager.update_export_status(session.session_id, "completed")
-            
-            # Frigate does not allow specifying the output filename on disk,
-            # so we must manually rename the file after export completes.
-            # Because Frigate runs in Docker, the files are typically owned by root.
-            # We use sudo mv to bypass permission denied errors.
+            manager.update_export_status(session.session_id, "completed")
+
             video_path = result.get("video_path")
             if video_path and session.video_filename:
-                frigate_filename = os.path.basename(video_path)
-                source_path = self.session_manager.export_dir / frigate_filename
-                
-                # Construct target directory: user_name/mouse_id/YYYY-MM-DD
-                from datetime import datetime
-                local_date = datetime.fromtimestamp(session.start_time_utc, tz=self.session_manager.tz).strftime("%Y-%m-%d")
-                user_dir = session.user_name.replace(" ", "_")
-                mouse_dir = session.mouse_id.replace(" ", "_")
-                target_dir = self.session_manager.export_dir / user_dir / mouse_dir / local_date
-                target_path = target_dir / session.video_filename
+                self._move_export_file(
+                    video_path, session, manager.export_dir, manager.tz
+                )
 
-                try:
-                    # Wait up to 10 seconds for the file to appear on disk
-                    file_found = False
-                    for _ in range(10):
-                        if source_path.exists():
-                            file_found = True
-                            break
-                        time.sleep(1.0)
-                        
-                    if file_found:
-                        logger.info("Attempting to move Frigate export (via sudo): %s -> %s", frigate_filename, target_path)
-                        
-                        # Ensure target directory exists
-                        subprocess.run(["sudo", "mkdir", "-p", str(target_dir)], check=True)
-                        # Fix permissions so the user can manage the files
-                        subprocess.run(["sudo", "chown", "-R", "skimlab:skimlab", str(self.session_manager.export_dir / user_dir)], check=False)
-                        
-                        cmd = ["sudo", "mv", str(source_path), str(target_path)]
-                        proc = subprocess.run(cmd, capture_output=True, text=True)
-                        
-                        if proc.returncode == 0:
-                            # Fix file permission too
-                            subprocess.run(["sudo", "chown", "skimlab:skimlab", str(target_path)], check=False)
-                            logger.info("Successfully moved Frigate export %s -> %s", frigate_filename, target_path)
-                        else:
-                            logger.error("Failed to move Frigate export: %s", proc.stderr)
-                    else:
-                        logger.warning("Export file not found on disk for renaming: %s", source_path)
-                except Exception as e:
-                    logger.error("Failed to execute rename command: %s", e)
-
-            logger.info(
-                "Export completed for session %s: %s",
-                session.session_id[:8],
-                session.video_filename,
-            )
-
-            # NAS transfer would go here (deferred)
-            # if self.config.get("nas", {}).get("enabled"):
-            #     self._transfer_to_nas(session)
+            logger.info("Export completed for %s %s: %s", label, sid, session.video_filename)
 
         except Exception as e:
-            logger.error(
-                "Export failed for session %s: %s",
-                session.session_id[:8],
-                e,
-                exc_info=True,
+            logger.error("Export failed for %s %s: %s", label, sid, e, exc_info=True)
+            manager.update_export_status(session.session_id, f"failed: {e}")
+
+    def _move_export_file(self, video_path: str, session, export_dir: Path, tz):
+        """Move a Frigate export to the organized user/mouse/date directory.
+
+        Frigate writes exports as root-owned files with its own naming.
+        This waits for the file to appear on disk, then uses sudo mv + chown.
+        """
+        frigate_filename = os.path.basename(video_path)
+        source_path = export_dir / frigate_filename
+
+        if not self._wait_for_file(source_path):
+            logger.warning("Export file not found on disk for renaming: %s", source_path)
+            return
+
+        local_date = datetime.fromtimestamp(session.start_time_utc, tz=tz).strftime("%Y-%m-%d")
+        user_dir = session.user_name.replace(" ", "_")
+        mouse_dir = session.mouse_id.replace(" ", "_")
+        target_dir = export_dir / user_dir / mouse_dir / local_date
+        target_path = target_dir / session.video_filename
+
+        try:
+            logger.info("Moving export (via sudo): %s -> %s", frigate_filename, target_path)
+            subprocess.run(["sudo", "mkdir", "-p", str(target_dir)], check=True)
+            subprocess.run(
+                ["sudo", "chown", "-R", "skimlab:skimlab", str(export_dir / user_dir)],
+                check=False,
             )
-            self.session_manager.update_export_status(session.session_id, f"failed: {e}")
+            proc = subprocess.run(
+                ["sudo", "mv", str(source_path), str(target_path)],
+                capture_output=True, text=True,
+            )
+            if proc.returncode == 0:
+                subprocess.run(["sudo", "chown", "skimlab:skimlab", str(target_path)], check=False)
+                logger.info("Successfully moved export %s -> %s", frigate_filename, target_path)
+            else:
+                logger.error("Failed to move export: %s", proc.stderr)
+        except Exception as e:
+            logger.error("Failed to execute move command: %s", e)
+
+    @staticmethod
+    def _wait_for_file(path: Path, timeout: int = 10) -> bool:
+        """Wait up to timeout seconds for a file to appear on disk."""
+        for _ in range(timeout):
+            if path.exists():
+                return True
+            time.sleep(1.0)
+        return False
 
     def _handle_external_recording_change(self, camera_id: str, state: str):
         """Handle an externally-triggered recording state change.
 
         Called by FrigateController when a recording state change is detected
         that was NOT initiated by this daemon (e.g. Frigate UI Record button).
-
-        Args:
-            camera_id: Frigate camera name (e.g. 'pi_cam_0').
-            state: "ON" or "OFF".
         """
         if state == "ON":
-            # Ignore if a Radiens session is active on this camera
-            if self.session_manager.has_active_sessions:
-                # check if any active session uses this camera
-                for chamber_id, active in self.session_manager.active_sessions.items():
-                    if active and active.camera == camera_id:
-                        logger.info(
-                            "Ignoring external Record ON for %s: "
-                            "Radiens session already active for chamber %s",
-                            camera_id, chamber_id
-                        )
-                        return
-
-            # Extract metadata if available in the UI queue for the mapped chamber
-            mouse_id = "manual"
-            recording_type = camera_id
-            user_name = "manual"
-            chamber_id_for_cam = None
-            for c_id, cam_str in self.config.get("cameras", {}).items():
-                if cam_str == camera_id:
-                    # Convert 'chamber_0' from yaml into '0' for the metadata lookup
-                    chamber_id_for_cam = str(c_id).replace("chamber_", "")
-                    break
-            
-            if chamber_id_for_cam:
-                pending = self.session_manager.pending_metadata.get(chamber_id_for_cam)
-                if pending:
-                    mouse_id = pending.mouse_id or "manual"
-                    recording_type = pending.recording_type or camera_id
-                    user_name = pending.user_name or "manual"
-                    logger.info("Bound UI metadata to manual recording on %s: mouse=%s", camera_id, mouse_id)
-                    # Clear it so it's not reused infinitely
-                    self.session_manager.clear_metadata(chamber_id_for_cam)
-
-            self.manual_session_manager.start_recording(
-                camera_id,
-                mouse_id=mouse_id,
-                recording_type=recording_type,
-                user_name=user_name
-            )
-
+            self._handle_external_recording_on(camera_id)
         elif state == "OFF":
-            session = self.manual_session_manager.stop_recording(camera_id)
-            if session is None:
-                return  # No active manual session or too short
+            self._handle_external_recording_off(camera_id)
 
-            # Export video in background thread
-            export_thread = threading.Thread(
-                target=self._export_manual_session,
-                args=(session,),
-                daemon=True,
-                name=f"manual-export-{session.session_id[:8]}",
-            )
-            export_thread.start()
+    def _handle_external_recording_on(self, camera_id: str):
+        """Start a manual recording session when Frigate UI triggers Record ON."""
+        if self._is_radiens_active_for(camera_id):
+            return
+
+        mouse_id, recording_type, user_name = self._resolve_manual_metadata(camera_id)
+        self.manual_session_manager.start_recording(
+            camera_id,
+            mouse_id=mouse_id,
+            recording_type=recording_type,
+            user_name=user_name,
+        )
+
+    def _handle_external_recording_off(self, camera_id: str):
+        """Stop a manual recording and kick off export when Frigate UI triggers Record OFF."""
+        session = self.manual_session_manager.stop_recording(camera_id)
+        if session is None:
+            return
+
+        export_thread = threading.Thread(
+            target=self._export_manual_session,
+            args=(session,),
+            daemon=True,
+            name=f"manual-export-{session.session_id[:8]}",
+        )
+        export_thread.start()
+
+    def _is_radiens_active_for(self, camera_id: str) -> bool:
+        """Check if a Radiens session is already active for this camera."""
+        if not self.session_manager.has_active_sessions:
+            return False
+        for chamber_id, active in self.session_manager.active_sessions.items():
+            if active and active.camera == camera_id:
+                logger.info(
+                    "Ignoring external Record ON for %s: "
+                    "Radiens session already active for chamber %s",
+                    camera_id, chamber_id,
+                )
+                return True
+        return False
+
+    def _resolve_manual_metadata(self, camera_id: str) -> tuple:
+        """Look up pending UI metadata for a camera, returning (mouse_id, recording_type, user_name).
+
+        Falls back to ("manual", camera_id, "manual") if no metadata is queued.
+        """
+        chamber_id = self._camera_to_chamber(camera_id)
+        if chamber_id is None:
+            return "manual", camera_id, "manual"
+
+        pending = self.session_manager.pending_metadata.get(chamber_id)
+        if pending is None:
+            return "manual", camera_id, "manual"
+
+        mouse_id = pending.mouse_id or "manual"
+        recording_type = pending.recording_type or camera_id
+        user_name = pending.user_name or "manual"
+        logger.info("Bound UI metadata to manual recording on %s: mouse=%s", camera_id, mouse_id)
+        self.session_manager.clear_metadata(chamber_id)
+        return mouse_id, recording_type, user_name
+
+    def _camera_to_chamber(self, camera_id: str) -> str | None:
+        """Map a camera ID (e.g. 'pi_cam_0') to its chamber number string (e.g. '0')."""
+        for c_id, cam_str in self.config.get("cameras", {}).items():
+            if cam_str == camera_id:
+                return str(c_id).replace("chamber_", "")
+        return None
 
     def _export_manual_session(self, session):
-        """Export a manual recording from Frigate. Runs in a background thread.
-
-        Args:
-            session: The completed ManualSessionRecord.
-        """
-        try:
-            logger.info(
-                "Starting Frigate export for manual session %s (camera=%s)...",
-                session.session_id[:8],
-                session.camera,
-            )
-
-            # Add buffer to capture full recording
-            start_time = session.start_time_utc - 2
-            end_time = session.end_time_utc + 2
-
-            export_name = session.video_filename.rsplit(".", 1)[0] if session.video_filename else ""
-            export_id = self.frigate.export_recording(
-                camera_id=session.camera,
-                start_time=start_time,
-                end_time=end_time,
-                name=export_name,
-            )
-
-            if export_id is None:
-                logger.error(
-                    "Frigate export request failed for manual session %s",
-                    session.session_id[:8],
-                )
-                self.manual_session_manager.update_export_status(
-                    session.session_id, "failed: export request rejected"
-                )
-                return
-
-            result = self.frigate.wait_for_export(export_id)
-            if result is None:
-                logger.error(
-                    "Frigate export timed out for manual session %s",
-                    session.session_id[:8],
-                )
-                self.manual_session_manager.update_export_status(
-                    session.session_id, "failed: export timed out"
-                )
-                return
-
-            self.manual_session_manager.update_export_status(
-                session.session_id, "completed"
-            )
-
-            # Frigate does not allow specifying the output filename on disk,
-            # so we must manually rename the file after export completes.
-            # Because Frigate runs in Docker, the files are typically owned by root.
-            # We use sudo mv to bypass permission denied errors.
-            video_path = result.get("video_path")
-            if video_path and session.video_filename:
-                frigate_filename = os.path.basename(video_path)
-                source_path = self.manual_session_manager.export_dir / frigate_filename
-                
-                # Construct target directory: user_name/mouse_id/YYYY-MM-DD
-                from datetime import datetime
-                local_date = datetime.fromtimestamp(session.start_time_utc, tz=self.manual_session_manager.tz).strftime("%Y-%m-%d")
-                user_dir = session.user_name.replace(" ", "_")
-                mouse_dir = session.mouse_id.replace(" ", "_")
-                target_dir = self.manual_session_manager.export_dir / user_dir / mouse_dir / local_date
-                target_path = target_dir / session.video_filename
-
-                try:
-                    # Wait up to 10 seconds for the file to appear on disk
-                    file_found = False
-                    for _ in range(10):
-                        if source_path.exists():
-                            file_found = True
-                            break
-                        time.sleep(1.0)
-                        
-                    if file_found:
-                        logger.info("Attempting to move manual export (via sudo): %s -> %s", frigate_filename, target_path)
-                        
-                        # Ensure target directory exists
-                        subprocess.run(["sudo", "mkdir", "-p", str(target_dir)], check=True)
-                        # Fix permissions so the user can manage the files
-                        subprocess.run(["sudo", "chown", "-R", "skimlab:skimlab", str(self.manual_session_manager.export_dir / user_dir)], check=False)
-
-                        cmd = ["sudo", "mv", str(source_path), str(target_path)]
-                        proc = subprocess.run(cmd, capture_output=True, text=True)
-                        
-                        if proc.returncode == 0:
-                            # Fix file permission too
-                            subprocess.run(["sudo", "chown", "skimlab:skimlab", str(target_path)], check=False)
-                            logger.info("Successfully moved Frigate manual export %s -> %s", frigate_filename, target_path)
-                        else:
-                            logger.error("Failed to move Frigate manual export: %s", proc.stderr)
-                    else:
-                        logger.warning("Manual export file not found on disk for renaming: %s", source_path)
-                except Exception as e:
-                    logger.error("Failed to execute rename command: %s", e)
-
-            logger.info(
-                "Manual export completed: %s -> %s",
-                session.session_id[:8],
-                session.video_filename,
-            )
-
-        except Exception as e:
-            logger.error(
-                "Manual export failed for session %s: %s",
-                session.session_id[:8],
-                e,
-                exc_info=True,
-            )
-            self.manual_session_manager.update_export_status(
-                session.session_id, f"failed: {e}"
-            )
+        """Export a manual recording from Frigate. Runs in a background thread."""
+        self._execute_export(
+            session=session,
+            manager=self.manual_session_manager,
+            label="manual session",
+        )
 
     def _run_api(self, host: str, port: int):
         """Run the Flask API server. Called in a background thread."""
