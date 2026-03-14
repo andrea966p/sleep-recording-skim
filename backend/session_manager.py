@@ -31,7 +31,7 @@ class SessionMetadata:
     mouse_id: str = "unknown"
     recording_type: str = "unknown"
     user_name: str = "unknown"
-    chamber: int = 0
+    chamber: Optional[int] = None
 
     def is_default(self) -> bool:
         """Returns True if no metadata was explicitly set."""
@@ -84,7 +84,10 @@ class SessionManager:
         self.sessions_dir = Path(sessions_dir)
         self.export_dir = Path(export_dir)
         self.tz = ZoneInfo(tz_name)
-        self.cameras = cameras or {"chamber_0": "pi_cam_0", "chamber_1": "pi_cam_1"}
+        self.cameras = cameras or {
+            "chamber_0": "pi_cam_0", "chamber_1": "pi_cam_1",
+            "chamber_2": "pi_cam_2", "chamber_3": "pi_cam_3",
+        }
 
         # Current pending metadata by chamber ID
         self._pending_metadata: dict[str, SessionMetadata] = {}
@@ -167,7 +170,7 @@ class SessionManager:
             mouse_id=meta.mouse_id,
             recording_type=meta.recording_type,
             user_name=meta.user_name,
-            chamber=meta.chamber if meta.chamber != 0 else (int(chamber_id) if chamber_id.isdigit() else 0),
+            chamber=meta.chamber if meta.chamber is not None else (int(chamber_id) if chamber_id.isdigit() else 0),
             camera=camera_id_str,
             radiens_xdat_filename=radiens_base_name,
             radiens_xdat_path=radiens_file_path,
@@ -246,12 +249,18 @@ class SessionManager:
 
         return session
 
-    def update_export_status(self, status: str):
-        """Update the export status of the most recent session."""
-        if self._history:
-            self._history[-1].export_status = status
-            # Re-write the session JSON with updated status
-            self._write_session_json(self._history[-1])
+    def update_export_status(self, session_id: str, status: str):
+        """Update the export status of a session by ID."""
+        for session in reversed(self._history):
+            if session.session_id == session_id:
+                session.export_status = status
+                # Re-write the session JSON with updated status
+                self._write_session_json(session)
+                return
+        logger.warning(
+            "Cannot update export status: session %s not found",
+            session_id[:8],
+        )
 
     def _generate_filename(self, session: SessionRecord) -> str:
         """Generate filename: YYMMDDHHMM_mouseID_type.mp4"""
@@ -274,6 +283,11 @@ class SessionManager:
                 try:
                     with open(json_file) as f:
                         data = json.load(f)
+                    
+                    # Skip manual sessions, they are loaded by ManualSessionManager
+                    if data.get("source") == "manual":
+                        continue
+
                     record = SessionRecord(**{
                         k: v for k, v in data.items()
                         if k in SessionRecord.__dataclass_fields__

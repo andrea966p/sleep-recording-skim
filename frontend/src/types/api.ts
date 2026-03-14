@@ -16,6 +16,9 @@ export interface ManualRecording {
     session_id: string;
     camera: string;
     start_time_local: string;
+    mouse_id?: string;
+    recording_type?: string;
+    user_name?: string;
 }
 
 export interface ActiveSession {

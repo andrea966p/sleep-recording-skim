@@ -5,6 +5,7 @@ frontend/dist-ssr/
 frontend/*.local
 frontend/src-tauri/target/
 frontend/src-tauri/gen/schemas/
+frontend/tailwind_build_test.css
 
 # === Backend ===
 backend/__pycache__/

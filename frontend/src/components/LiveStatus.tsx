@@ -1,27 +1,31 @@
-import { useEffect } from "react";
 import { DaemonStatus } from "../types/api";
 import { useSessionTimer } from "../hooks/useSessionTimer";
 import { formatDuration } from "../utils/format";
 
 interface Props {
     chamberId: string;
+    cameraId: string;
     status: DaemonStatus | null;
     error: Error | null;
 }
 
-export function LiveStatus({ chamberId, status, error }: Props) {
+export function LiveStatus({ chamberId, cameraId, status, error }: Props) {
     const chamberSession = status?.sessions?.[chamberId] || null;
+    const manualRec = status?.manual_recordings?.[cameraId] || null;
     const recordingState = status?.radiens.recording_states?.[chamberId] || "UNKNOWN";
     const pendingMeta = status?.pending_metadata?.[chamberId] || null;
 
-    // We use the timer hook even if offline, it will just return 0 if no session
-    const duration = useSessionTimer(chamberSession?.start_time_local);
+    const isRadiensRecording = recordingState === "R_ON" || recordingState === "ON";
+    const isManualRecording = !!manualRec;
+    const isRecording = isRadiensRecording || isManualRecording;
 
-    useEffect(() => {
-        // Show toast on state changes if needed
-    }, [recordingState]);
+    const activeSessionStartTime = chamberSession?.start_time_local || manualRec?.start_time_local;
+    const duration = useSessionTimer(activeSessionStartTime);
 
-    const isRecording = recordingState === "R_ON" || recordingState === "ON";
+    let displayState = "OFF";
+    if (isRadiensRecording) displayState = recordingState;
+    else if (isManualRecording) displayState = "MANUAL REC";
+
     const recordingColor = isRecording ? "bg-error animate-pulse shadow-[0_0_15px_rgba(255,0,0,0.5)]" : "bg-base-300";
 
     return (
@@ -32,7 +36,7 @@ export function LiveStatus({ chamberId, status, error }: Props) {
                     <div className="flex items-center gap-2 normal-case text-xs">
                         <span className={`w-3 h-3 rounded-full ${recordingColor}`}></span>
                         <span className={isRecording ? "text-error font-bold" : "text-base-content/50"}>
-                            {recordingState || "OFF"}
+                            {displayState}
                         </span>
                     </div>
                 </h2>
@@ -50,16 +54,18 @@ export function LiveStatus({ chamberId, status, error }: Props) {
                                 Active Session
                             </div>
 
-                            {chamberSession ? (
+                            {(chamberSession || manualRec) ? (
                                 <div className="grid grid-cols-2 gap-y-2 text-sm">
                                     <div className="text-base-content/70">Mouse ID:</div>
-                                    <div className="font-mono font-bold">{chamberSession.mouse_id}</div>
+                                    <div className="font-mono font-bold">{chamberSession?.mouse_id || manualRec?.mouse_id || "manual"}</div>
 
                                     <div className="text-base-content/70">Protocol:</div>
-                                    <div className="font-bold">{chamberSession.recording_type}</div>
+                                    <div className="font-bold">{chamberSession?.recording_type || manualRec?.recording_type || manualRec?.camera}</div>
 
-                                    <div className="text-base-content/70">Chamber:</div>
-                                    <div className="font-bold">{chamberSession.chamber}</div>
+                                    <div className="text-base-content/70">Source:</div>
+                                    <div className="font-bold">
+                                        {chamberSession ? `Chamber ${chamberSession.chamber}` : manualRec ? "Frigate UI" : ""}
+                                    </div>
 
                                     <div className="text-base-content/70">Duration:</div>
                                     <div className="font-mono text-xl font-bold bg-base-100/50 rounded px-1 -ml-1 text-center border border-base-content/10">
@@ -74,7 +80,7 @@ export function LiveStatus({ chamberId, status, error }: Props) {
                         </div>
 
                         {/* Pending Metadata Warning */}
-                        {pendingMeta?.is_default && !chamberSession && (
+                        {pendingMeta?.is_default && !(chamberSession || manualRec) && (
                             <div className="alert alert-warning py-2 text-xs shadow-sm">
                                 <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-4 w-4" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
                                 <span>No metadata set — defaults will be used if recording starts</span>

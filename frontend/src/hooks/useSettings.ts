@@ -16,7 +16,9 @@ const DEFAULT_SETTINGS: AppSettings = {
     frigateBaseUrl: "http://192.168.0.50:5000",
     cameras: [
         { id: "pi_cam_0", label: "Chamber 0" },
-        { id: "pi_cam_1", label: "Chamber 1" }
+        { id: "pi_cam_1", label: "Chamber 1" },
+        { id: "pi_cam_2", label: "Chamber 2" },
+        { id: "pi_cam_3", label: "Chamber 3" },
     ],
     recordingTypes: ["basal", "recovery", "sd"],
     labMembers: ["andrea"],

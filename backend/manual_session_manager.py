@@ -29,6 +29,9 @@ class ManualSessionRecord:
     """Record of a manual (UI-triggered) recording session."""
     session_id: str = ""
     source: str = "manual"
+    mouse_id: str = "manual"
+    recording_type: str = ""
+    user_name: str = ""
     start_time_utc: float = 0.0
     end_time_utc: float = 0.0
     start_time_local: str = ""
@@ -74,11 +77,20 @@ class ManualSessionManager:
         # Load existing manual session history from disk
         self._load_history()
 
-    def start_recording(self, camera_id: str) -> ManualSessionRecord:
+    def start_recording(
+        self,
+        camera_id: str,
+        mouse_id: str = "manual",
+        recording_type: str = "",
+        user_name: str = ""
+    ) -> ManualSessionRecord:
         """Start tracking a manual recording for a camera.
 
         Args:
             camera_id: Frigate camera name (e.g. 'pi_cam_0').
+            mouse_id: Mouse ID from pending metadata.
+            recording_type: Recording type from pending metadata.
+            user_name: User name from pending metadata.
 
         Returns:
             The new ManualSessionRecord.
@@ -91,6 +103,9 @@ class ManualSessionManager:
             start_time_utc=now_utc,
             start_time_local=now_local.isoformat(),
             camera=camera_id,
+            mouse_id=mouse_id,
+            recording_type=recording_type,
+            user_name=user_name,
         )
 
         self._active[camera_id] = session
@@ -140,11 +155,11 @@ class ManualSessionManager:
             )
             return None
 
-        # Generate filename: YYMMDDHHMM_manual_cameraID.mp4
+        # Generate filename: YYMMDDHHMM_mouseID_type.mp4
         session.video_filename = generate_filename(
             start_time_utc=session.start_time_utc,
-            mouse_id="manual",
-            recording_type=camera_id,
+            mouse_id=session.mouse_id,
+            recording_type=session.recording_type or session.camera,
             tz=self.tz,
         )
 

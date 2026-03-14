@@ -26,6 +26,8 @@ frigate:
 cameras:
   chamber_0: "pi_cam_0"
   chamber_1: "pi_cam_1"
+  chamber_2: "pi_cam_2"
+  chamber_3: "pi_cam_3"
 
 sessions:
   data_dir: "/opt/neurosurveillance/sessions"

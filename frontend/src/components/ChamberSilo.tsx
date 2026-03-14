@@ -98,6 +98,7 @@ export function ChamberSilo({ chamberId, cam, settings, status, error, onSetMeta
                         <div className="flex-none" style={{ minHeight: "180px" }}>
                             <LiveStatus
                                 chamberId={chamberId}
+                                cameraId={cam.id}
                                 status={status}
                                 error={error}
                             />

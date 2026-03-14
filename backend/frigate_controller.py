@@ -46,7 +46,10 @@ class FrigateController:
         self.mqtt_host = mqtt_host
         self.mqtt_port = mqtt_port
         self.frigate_url = frigate_url.rstrip("/")
-        self.cameras = cameras or {"chamber_0": "pi_cam_0", "chamber_1": "pi_cam_1"}
+        self.cameras = cameras or {
+            "chamber_0": "pi_cam_0", "chamber_1": "pi_cam_1",
+            "chamber_2": "pi_cam_2", "chamber_3": "pi_cam_3",
+        }
 
         self._mqtt_client: Optional[mqtt.Client] = None
         self._mqtt_connected = False
@@ -66,6 +69,11 @@ class FrigateController:
         self._on_external_recording_change: Optional[
             Callable[[str, str], None]
         ] = None
+
+    def clear_expected_states(self):
+        """Clear expected state transitions safely."""
+        with self._expected_lock:
+            self._expected_states.clear()
 
     def connect_mqtt(self) -> bool:
         """Connect to the MQTT broker. Returns True if successful."""
@@ -308,6 +316,10 @@ class FrigateController:
                 for export in exports:
                     eid = export.get("id") or export.get("name")
                     if eid == export_id:
+                        if export.get("in_progress", False):
+                            # Found it, but Frigate is still multiplexing the video.
+                            break
+                        
                         logger.info("Export %s completed", export_id)
                         return export
 

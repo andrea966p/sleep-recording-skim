@@ -11,6 +11,7 @@ It can also be used directly via curl for testing and scripting.
 """
 
 import logging
+import re
 from dataclasses import asdict
 from typing import TYPE_CHECKING
 
@@ -63,6 +64,15 @@ def init_api(
     _manual_session_manager = manual_session_manager
     _config = config
     logger.info("API initialized")
+
+
+def sanitize_input(value: str) -> str:
+    """Sanitize string input to prevent path traversal and shell injection.
+    Allows alphanumeric characters, dashes, and underscores.
+    """
+    if not isinstance(value, str):
+        return ""
+    return re.sub(r"[^a-zA-Z0-9\-_]", "", value)
 
 
 # ---------------------------------------------------------------------------
@@ -124,11 +134,11 @@ def get_status():
                 "start_time_local": rec.start_time_local,
             }
 
-    # Temporary: send the same recording state to both chambers until Neuropixels supports it
+    # Send the same recording state to all configured chambers
     radiens_recording_states = {
-        "0": radiens_state,
-        "1": radiens_state
-    }
+        str(c_id).replace("chamber_", ""): radiens_state
+        for c_id in _config.get("cameras", {})
+    } if _config else {"0": radiens_state}
 
     return jsonify({
         "daemon": "running",
@@ -181,14 +191,18 @@ def set_metadata():
     if "chamber" in data:
         try:
             chamber = int(data["chamber"])
-            if chamber not in (0, 1):
+            valid_chambers = [
+                int(c_id.replace("chamber_", ""))
+                for c_id in _config.get("cameras", {})
+            ] if _config else [0, 1, 2, 3]
+            if chamber not in valid_chambers:
                 return jsonify({
-                    "error": f"Invalid chamber: {chamber}. Must be 0 or 1."
+                    "error": f"Invalid chamber: {chamber}. Valid: {valid_chambers}"
                 }), 400
             data["chamber"] = chamber
         except (ValueError, TypeError):
             return jsonify({
-                "error": "chamber must be an integer (0 or 1)"
+                "error": "chamber must be an integer"
             }), 400
 
     # Validate lab member if user_name provided
@@ -202,11 +216,16 @@ def set_metadata():
             )
             # Warning only -- don't reject the request
 
+    # Sanitize string inputs to prevent path traversal
+    safe_mouse_id = sanitize_input(data.get("mouse_id", "")) if "mouse_id" in data else None
+    safe_recording_type = sanitize_input(data.get("recording_type", "")) if "recording_type" in data else None
+    safe_user_name = sanitize_input(data.get("user_name", "")) if "user_name" in data else None
+
     updated = _session_manager.set_metadata(
         chamber_id=chamber_id,
-        mouse_id=data.get("mouse_id"),
-        recording_type=data.get("recording_type"),
-        user_name=data.get("user_name"),
+        mouse_id=safe_mouse_id,
+        recording_type=safe_recording_type,
+        user_name=safe_user_name,
         chamber=data.get("chamber"),
     )
 
