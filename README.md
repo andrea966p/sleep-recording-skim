@@ -14,11 +14,11 @@ docs/             Development notes
 ## Backend (Session Daemon)
 
 Python service that:
-- Polls Radiens for EEG recording state (`R_ON`/`R_OFF`)
-- Controls Frigate recording via MQTT
-- Auto-detects manual recordings from Frigate UI
-- Exports video clips via Frigate HTTP API
-- Serves a REST API for the frontend (`127.0.0.1:8585`)
+- Supports multi-chamber, independent concurrent recording sessions.
+- Polls Radiens for EEG recording state (`R_ON`/`R_OFF`) to automate video capture.
+- Auto-detects manual recordings triggered directly from the Frigate UI.
+- Dynamically generates nested export folders (`exports/user/mouse/date/`) and moves Frigate MP4s.
+- Serves a REST API for the frontend (`127.0.0.1:8585`).
 
 ### Deployment
 
@@ -49,7 +49,9 @@ pip install -r backend/requirements.txt
 
 ## Frontend (Desktop UI)
 
-Tauri v2 + React + TypeScript + TailwindCSS + DaisyUI.
+Tauri v2 + React 19 + TypeScript + TailwindCSS + DaisyUI.
+
+Features a multi-chamber collapsible interface allowing researchers to set independent metadata (Mouse ID, User, Protocol) for concurrent recording chambers. Provides a unified dashboard for live telemetry and chronological session history.
 
 ```bash
 cd frontend
@@ -79,12 +81,10 @@ Requires the backend daemon running at `127.0.0.1:8585`.
 | `/opt/neurosurveillance/logs/` | Daemon logs |
 | `~/Desktop/Frigate Exports` | Desktop shortcut to exports |
 
-## API Quick Reference
+## Detailed Architecture Documentation
 
-```bash
-curl http://127.0.0.1:8585/api/status          # Daemon status
-curl http://127.0.0.1:8585/api/health           # Health check
-curl http://127.0.0.1:8585/api/session/current   # Active session
-curl http://127.0.0.1:8585/api/session/history    # Past sessions
-curl http://127.0.0.1:8585/api/session/manual     # Active manual recordings
-```
+For a deep dive into how specific subsystems work, please refer to the specific guides in the `docs/` folder:
+
+- [Frontend Architecture & UI Design](docs/frontend_architecture.md)
+- [Manual Recording & Frigate Export Intercept Logic](docs/manual_recording_and_exports.md)
+- [Backend Python Daemon Structure](docs/backend_architecture.md)

@@ -1,6 +1,8 @@
 # Python Backend Daemon Updates (Multi-Chamber)
 
-The NeuroSurveillance frontend UI now supports multiple independent recording sessions (Chambers) simultaneously. To make this work, the Python backend daemon (located at `/opt/neurosurveillance/session-daemon/daemon.py`) must be updated to track and return state dictionaries keyed by the `chamber_id` instead of a single global variable.
+> **Status: COMPLETED** — All changes described below have been implemented in the current backend code. This document is kept as a historical reference.
+
+The NeuroSurveillance frontend UI now supports multiple independent recording sessions (Chambers) simultaneously. The Python backend daemon (located at `/opt/neurosurveillance/session-daemon/daemon.py`) was updated to track and return state dictionaries keyed by the `chamber_id` instead of a single global variable.
 
 ## 1. Update State Variables
 In your `daemon.py` or state manager class, replace the global `session` and `pending_metadata` variables with dictionaries.
