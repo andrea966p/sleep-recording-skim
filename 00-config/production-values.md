@@ -24,6 +24,10 @@ status: active
 | **Camera 2 RTSP** | rtsp://192.168.0.12:8554/pi_cam_2 | |
 | **Camera 3 RTSP** | rtsp://192.168.0.12:8554/pi_cam_3 | |
 | **Session Daemon** | http://127.0.0.1:8585 | |
+| **Netdata (NVR)** | http://192.168.0.50:19999 | planned |
+| **Netdata (Pi 1)** | http://192.168.0.11:19999 | planned |
+| **Netdata (Pi 2)** | http://192.168.0.12:19999 | planned |
+| **Uptime Kuma** | http://192.168.0.50:3001 | planned |
 
 ---
 
@@ -69,6 +73,8 @@ status: active
 | `{FRIGATE_WEBRTC_PORT}` | `8555` | Frigate WebRTC |
 | `{MQTT_PORT}` | `1883` | Mosquitto MQTT broker |
 | `{SESSION_DAEMON_PORT}` | `8585` | Session daemon REST API |
+| `{NETDATA_PORT}` | `19999` | Netdata dashboard (planned) |
+| `{UPTIME_KUMA_PORT}` | `3001` | Uptime Kuma dashboard (planned) |
 | `{DB_PORT}` | `5432` | PostgreSQL (planned) |
 
 ---
