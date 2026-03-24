@@ -1,5 +1,5 @@
 ---
-tags: [troubleshooting, incident, tauri, webkit, gpu, frontend]
+tags: [troubleshooting, incident, tauri, webkit, frontend]
 date: 2026-03-24
 severity: medium
 status: resolved
@@ -9,36 +9,57 @@ affected: [neurosurveillance-ui]
 ## Summary
 - **Date/Time:** 2026-03-24
 - **Severity:** Medium — GUI completely fails to launch
-- **Status:** Resolved (software rendering workaround)
+- **Status:** Resolved (WebKitGTK downgrade + apt pin)
 
 ## Symptoms
-- Running `npm run tauri dev` shows "WebKit encountered an internal error"
-- Setting `WEBKIT_DISABLE_DMABUF_RENDERER=1` alone does not fix it
-- Setting `WEBKIT_DISABLE_COMPOSITING_MODE=1` alone does not fix it
+- Running `npm run tauri dev` shows:
+  ```
+  ERROR: WebKit encountered an internal error. This is a WebKit bug.
+  Source/WebKit/WebProcess/Network/WebLoaderStrategy.cpp(618) : void WebKit::WebLoaderStrategy::internallyFailedLoadTimerFired()
+  ```
+- Environment variable workarounds (`WEBKIT_DISABLE_DMABUF_RENDERER`, `WEBKIT_DISABLE_COMPOSITING_MODE`, `LIBGL_ALWAYS_SOFTWARE`, `WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS`) have **no effect**
 
 ## Root Cause
-WebKitGTK `2.50.4` attempts GPU-accelerated rendering via multiple paths (DMA-BUF, EGL compositing, hardware GL). On this system:
-- **Kernel:** `6.17.0-14-generic` (HWE)
-- **GPU:** Intel Meteor Lake-P (xe DRM driver)
-- **Display:** X11
+**WebKitGTK `2.50.4-0ubuntu0.24.04.1` has a bug** where the WebProcess crashes during page loading. The NetworkProcess successfully connects to the dev server (confirmed via debug logs), but the WebProcess fails with `internallyFailedLoadTimerFired()`.
 
-Each env var only closes **one** GPU path. WebKit falls through to other GPU paths that also fail with the bleeding-edge xe driver. All three vars must be set together:
-- `WEBKIT_DISABLE_DMABUF_RENDERER=1` — disables DMA-BUF renderer
-- `WEBKIT_DISABLE_COMPOSITING_MODE=1` — disables compositing
-- `LIBGL_ALWAYS_SOFTWARE=1` — forces Mesa llvmpipe software rasterizer (the critical one)
+This is a known upstream bug affecting multiple Tauri/WebKit apps (GitButler, Portmaster, RapidRAW). See: [gitbutler#12885](https://github.com/gitbutlerapp/gitbutler/issues/12885)
+
+The bug was introduced when Ubuntu pushed WebKitGTK from `2.44.0-2` to `2.50.4` as a security update.
 
 ## Fix Applied
-1. **Primary (Rust-level):** `src-tauri/src/main.rs` sets all three env vars before WebKit init, guarded by `#[cfg(target_os = "linux")]`
-2. **Convenience:** `package.json` has `tauri:dev` and `tauri:build` scripts with vars pre-set
 
-The Rust fix works regardless of launch method (dev, AppImage, deb, CLI). Each var is only set if not already present, allowing user override.
-
-## Performance Impact
-Software rendering via llvmpipe is slightly slower for complex CSS animations but negligible for a monitoring dashboard.
-
-## How to Test Removal
-After a kernel or WebKitGTK update:
+### 1. Downgraded WebKitGTK to `2.44.0-2`
 ```bash
-LIBGL_ALWAYS_SOFTWARE=0 WEBKIT_DISABLE_DMABUF_RENDERER=0 WEBKIT_DISABLE_COMPOSITING_MODE=0 npm run tauri dev
+sudo apt install --allow-downgrades -y \
+  libwebkit2gtk-4.1-0=2.44.0-2 \
+  libwebkit2gtk-4.1-dev=2.44.0-2 \
+  gir1.2-webkit2-4.1=2.44.0-2 \
+  libjavascriptcoregtk-4.1-0=2.44.0-2 \
+  gir1.2-javascriptcoregtk-4.1=2.44.0-2 \
+  libjavascriptcoregtk-4.1-dev=2.44.0-2
 ```
-If the window opens without error, the workaround can be removed from `main.rs`.
+
+### 2. Pinned packages to prevent auto-upgrade
+Created `/etc/apt/preferences.d/pin-webkitgtk`:
+```
+Package: libwebkit2gtk-4.1-0 libwebkit2gtk-4.1-dev gir1.2-webkit2-4.1 libjavascriptcoregtk-4.1-0 gir1.2-javascriptcoregtk-4.1 libjavascriptcoregtk-4.1-dev
+Pin: version 2.44.0-2
+Pin-Priority: 1001
+```
+
+## How to Test Upgrade Later
+When Ubuntu ships WebKitGTK `2.52+` (which has improved libsoup3 handling):
+1. Remove the pin: `sudo rm /etc/apt/preferences.d/pin-webkitgtk`
+2. Upgrade: `sudo apt upgrade`
+3. Test: `npm run tauri dev`
+4. If it breaks, re-apply the downgrade commands above
+
+## What Did NOT Work
+- `WEBKIT_DISABLE_DMABUF_RENDERER=1`
+- `WEBKIT_DISABLE_COMPOSITING_MODE=1`
+- `LIBGL_ALWAYS_SOFTWARE=1`
+- `WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS=1`
+- `WEBKIT_FORCE_SANDBOX=0`
+- All combinations of the above
+
+These address GPU rendering issues, not the WebProcess/NetworkProcess communication bug in 2.50.4.
