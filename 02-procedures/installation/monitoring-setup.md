@@ -142,25 +142,25 @@ curl -s http://localhost:19999/api/v1/info | head -5
 
 Open `http://192.168.0.11:19999` and confirm:
 
-- [ ] System Overview (CPU, RAM, disk, temperature)
-- [ ] Processes section (go2rtc, rpicam-vid should appear)
-- [ ] systemd services section (go2rtc.service should appear)
+- [x] System Overview (CPU, RAM, disk, temperature) ✅ 2026-03-27
+- [x] Processes section (go2rtc, rpicam-vid should appear) ✅ 2026-03-27
+- [x] systemd services section (go2rtc.service should appear) ✅ 2026-03-27
 
-### 2.3 Enable Temperature Monitoring
+### 2.3 Verify Temperature Monitoring
 
-Netdata should auto-detect Pi temperature sensors. Verify:
+Netdata auto-detects Pi temperature sensors. The Pi 5 uses these chart names:
 
 ```bash
-# Check temperature readings in Netdata
-curl -s "http://localhost:19999/api/v1/data?chart=sensors.thermal_thermal_zone0&points=1"
+# CPU temperature (main sensor)
+curl -s "http://localhost:19999/api/v1/data?chart=sensors.temperature_cpu_thermal-virtual-0_temp1_input&points=1"
+
+# RP1 ADC temperature (RP1 chip on Pi 5)
+curl -s "http://localhost:19999/api/v1/data?chart=sensors.temperature_rp1_adc-isa-0000_temp1_input&points=1"
 ```
 
-If no temperature data appears:
-
+To discover all sensor chart names on any machine:
 ```bash
-# Ensure the thermal_zone is accessible
-cat /sys/class/thermal/thermal_zone0/temp
-# Should show temperature in millidegrees (e.g., 45000 = 45°C)
+curl -s "http://localhost:19999/api/v1/charts" | grep -i "temp\|thermal" | grep '"id"'
 ```
 
 ---
