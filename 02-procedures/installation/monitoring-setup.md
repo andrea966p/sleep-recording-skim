@@ -45,11 +45,11 @@ This procedure deploys two monitoring tools across the NeuroSurveillance infrast
 
 ## Prerequisites Checklist
 
-- [ ] All 3 machines online and accessible via SSH
-- [ ] Internet access on all machines (for downloading packages)
-- [ ] `sudo` access on all machines
-- [ ] Docker running on NVR (`docker ps` works)
-- [ ] (Optional) Slack webhook URL for alerting
+- [x] All 3 machines online and accessible via SSH ✅ 2026-03-27
+- [x] Internet access on all machines (for downloading packages) ✅ 2026-03-27
+- [x] `sudo` access on all machines ✅ 2026-03-27
+- [x] Docker running on NVR (`docker ps` works) ✅ 2026-03-27
+- [x] (Optional) Slack webhook URL for alerting ✅ 2026-03-27
 
 ---
 

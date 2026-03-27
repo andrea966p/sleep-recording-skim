@@ -28,22 +28,30 @@
       "propertyKeys": [],
       "navRainbow": {
         "mode": "none",
+        "balanceHueLuminance": true,
+        "separateThemeColors": false,
         "shortcuts": {
           "enabled": false,
           "firstColor": "#ef4444",
           "lastColor": "#8b5cf6",
+          "darkFirstColor": "#ef4444",
+          "darkLastColor": "#8b5cf6",
           "transitionStyle": "rgb"
         },
         "recent": {
           "enabled": false,
           "firstColor": "#ef4444",
           "lastColor": "#8b5cf6",
+          "darkFirstColor": "#ef4444",
+          "darkLastColor": "#8b5cf6",
           "transitionStyle": "rgb"
         },
         "folders": {
           "enabled": true,
           "firstColor": "#ef4444",
           "lastColor": "#8b5cf6",
+          "darkFirstColor": "#fb7185",
+          "darkLastColor": "#c084fc",
           "transitionStyle": "hue",
           "scope": "root"
         },
@@ -51,6 +59,8 @@
           "enabled": false,
           "firstColor": "#ef4444",
           "lastColor": "#8b5cf6",
+          "darkFirstColor": "#fb7185",
+          "darkLastColor": "#c084fc",
           "transitionStyle": "hue",
           "scope": "root"
         },
@@ -58,6 +68,8 @@
           "enabled": false,
           "firstColor": "#ef4444",
           "lastColor": "#8b5cf6",
+          "darkFirstColor": "#fb7185",
+          "darkLastColor": "#c084fc",
           "transitionStyle": "hue",
           "scope": "root"
         }
@@ -235,6 +247,7 @@
   "stripLatexInPreview": true,
   "previewRows": 2,
   "previewProperties": [],
+  "previewPropertiesFallback": true,
   "showFeatureImage": true,
   "featureImageProperties": [],
   "featureImageExcludeProperties": [],
@@ -261,12 +274,15 @@
   "parentFolderClickRevealsFile": false,
   "showParentFolderColor": false,
   "showParentFolderIcon": false,
+  "calendarEnabled": true,
   "calendarPlacement": "left-sidebar",
   "calendarConfirmBeforeCreate": true,
   "calendarLocale": "system-default",
   "calendarWeekendDays": "sat-sun",
+  "calendarMonthHeadingFormat": "full",
   "calendarHighlightToday": true,
   "calendarShowFeatureImage": true,
+  "calendarMonthHighlights": {},
   "calendarShowWeekNumber": false,
   "calendarShowQuarter": false,
   "calendarShowYearCalendar": true,
@@ -496,7 +512,7 @@
     "#404040",
     "#404040"
   ],
-  "lastShownVersion": "2.5.0",
+  "lastShownVersion": "2.5.3",
   "rootFolderOrder": [],
   "rootTagOrder": [],
   "rootPropertyOrder": []
