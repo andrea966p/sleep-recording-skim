@@ -186,9 +186,9 @@ systemctl status netdata
 
 Open `http://192.168.0.12:19999` and confirm:
 
-- [ ] System Overview
-- [ ] go2rtc + rpicam-vid processes visible
-- [ ] Temperature monitoring working
+- [x] System Overview ✅ 2026-03-27
+- [x] go2rtc + rpicam-vid processes visible ✅ 2026-03-27
+- [x] Temperature monitoring working ✅ 2026-03-27
 
 ---
 
