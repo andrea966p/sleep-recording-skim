@@ -86,9 +86,9 @@ curl -s http://localhost:19999/api/v1/info | head -5
 
 Open `http://192.168.0.50:19999` in a browser. Confirm you can see:
 
-- [ ] System Overview (CPU, RAM, disk, network)
-- [ ] Docker containers section (Frigate, Mosquitto should appear)
-- [ ] systemd services section (neurosurveillance-session should appear)
+- [x] System Overview (CPU, RAM, disk, network) ✅ 2026-03-27
+- [x] Docker containers section (Frigate, Mosquitto should appear) ✅ 2026-03-27
+- [x] systemd services section (neurosurveillance-session should appear) ✅ 2026-03-27
 
 > [!tip] Docker Metrics
 > Netdata auto-discovers Docker containers via the Docker socket. If Docker containers don't appear, check that the `netdata` user has access to `/var/run/docker.sock`:
@@ -104,11 +104,11 @@ netdata -v
 # Record this in the table below
 ```
 
-| Machine | Netdata Version | Install Date |
-|---------|----------------|--------------|
-| NVR (`192.168.0.50`) | *(fill in)* | 2026-XX-XX |
-| Pi 1 (`192.168.0.11`) | *(fill in)* | 2026-XX-XX |
-| Pi 2 (`192.168.0.12`) | *(fill in)* | 2026-XX-XX |
+| Machine               | Netdata Version | Install Date |
+| --------------------- | --------------- | ------------ |
+| NVR (`192.168.0.50`)  | 2.9.0           | 2026-XX-XX   |
+| Pi 1 (`192.168.0.11`) | *(fill in)*     | 2026-XX-XX   |
+| Pi 2 (`192.168.0.12`) | *(fill in)*     | 2026-XX-XX   |
 
 ---
 
