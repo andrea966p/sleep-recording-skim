@@ -217,10 +217,12 @@ services:
     volumes:
       - ./data:/app/data
       - /var/run/docker.sock:/var/run/docker.sock:ro
-    ports:
-      - "3001:3001"
+    network_mode: host
     restart: unless-stopped
 ```
+
+> [!important] Use `network_mode: host`
+> Do NOT use `ports: "3001:3001"`. The session daemon binds to `127.0.0.1:8585` (localhost only). With bridge networking, Docker containers cannot reach host localhost services. `network_mode: host` gives Uptime Kuma full access to the host network so all localhost services are reachable. The dashboard remains at port 3001.
 
 > [!note] Separate from Frigate
 > Uptime Kuma gets its own compose file in `/opt/uptime-kuma/` rather than being added to the Frigate compose file in `/srv/frigate/`. This keeps monitoring independent — if Frigate's compose stack has issues, Uptime Kuma still runs and can detect the problem.
@@ -385,12 +387,18 @@ sudo systemctl restart netdata
 
 ### 5.3 Create Uptime Kuma Status Page
 
-In Uptime Kuma web UI:
-1. Go to **Status Pages** → Add
-2. Name: "NeuroSurveillance"
-3. Add all 7 monitors
-4. Organize into groups: "NVR Services", "Camera Nodes"
-5. This gives a single URL showing all service health
+In Uptime Kuma web UI (`http://192.168.0.50:3001`):
+
+1. Click **"Status Pages"** in the left sidebar
+2. Click **"New Status Page"**
+3. Name: `NeuroSurveillance`, Slug: `neurosurveillance` → click **Next**
+4. Click **"Add Group"** → name it `NVR Services`
+5. Click **"+"** inside the group → add: Session Daemon, Frigate NVR, Mosquitto MQTT
+6. Click **"Add Group"** again → name it `Camera Nodes`
+7. Click **"+"** → add: go2rtc Pi 1, go2rtc Pi 2, Pi 1 Network, Pi 2 Network
+8. Click **"Save"**
+
+Status page URL: `http://192.168.0.50:3001/status/neurosurveillance` ✅ 2026-03-30
 
 ---
 
@@ -398,10 +406,12 @@ In Uptime Kuma web UI:
 
 After completing all parts, verify everything works:
 
-- [ ] `http://192.168.0.50:19999` — NVR Netdata dashboard loads, Docker containers visible
-- [ ] `http://192.168.0.11:19999` — Pi 1 Netdata dashboard loads, go2rtc process visible
-- [ ] `http://192.168.0.12:19999` — Pi 2 Netdata dashboard loads, go2rtc process visible
-- [ ] `http://192.168.0.50:3001` — Uptime Kuma loads, all 7 monitors green
+- [x] `http://192.168.0.50:19999` — NVR Netdata dashboard loads, Docker containers visible ✅ 2026-03-30
+- [x] `http://192.168.0.11:19999` — Pi 1 Netdata dashboard loads, go2rtc process visible ✅ 2026-03-30
+- [x] `http://192.168.0.12:19999` — Pi 2 Netdata dashboard loads, go2rtc process visible ✅ 2026-03-30
+- [x] `http://192.168.0.50:3001` — Uptime Kuma loads, all 7 monitors green ✅ 2026-03-30
+- [x] Slack notifications configured ✅ 2026-03-30
+- [x] Status page at `http://192.168.0.50:3001/status/neurosurveillance` ✅ 2026-03-30
 - [ ] Stop go2rtc on Pi 1 (`sudo systemctl stop go2rtc`), confirm Uptime Kuma alert fires within ~3 minutes
 - [ ] Restart go2rtc (`sudo systemctl start go2rtc`), confirm Uptime Kuma shows recovery
 - [ ] Netdata survives machine reboot: `sudo reboot` on a Pi, confirm Netdata auto-starts

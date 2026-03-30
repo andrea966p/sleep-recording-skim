@@ -24,10 +24,11 @@ status: active
 | **Camera 2 RTSP** | rtsp://192.168.0.12:8554/pi_cam_2 | |
 | **Camera 3 RTSP** | rtsp://192.168.0.12:8554/pi_cam_3 | |
 | **Session Daemon** | http://127.0.0.1:8585 | |
-| **Netdata (NVR)** | http://192.168.0.50:19999 | planned |
-| **Netdata (Pi 1)** | http://192.168.0.11:19999 | planned |
-| **Netdata (Pi 2)** | http://192.168.0.12:19999 | planned |
-| **Uptime Kuma** | http://192.168.0.50:3001 | planned |
+| **Netdata (NVR)** | http://192.168.0.50:19999 | ✅ active |
+| **Netdata (Pi 1)** | http://192.168.0.11:19999 | ✅ active |
+| **Netdata (Pi 2)** | http://192.168.0.12:19999 | ✅ active |
+| **Uptime Kuma** | http://192.168.0.50:3001 | ✅ active |
+| **Status Page** | http://192.168.0.50:3001/status/neurosurveillance | ✅ active |
 
 ---
 
