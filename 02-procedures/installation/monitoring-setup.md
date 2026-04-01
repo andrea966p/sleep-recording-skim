@@ -1,8 +1,8 @@
 ---
 tags: [procedure, installation, monitoring, netdata, uptime-kuma]
 created: 2026-03-24
-updated: 2026-03-24
-status: planned
+updated: 2026-04-01
+status: production
 ---
 
 # Centralized Monitoring Setup (Netdata + Uptime Kuma)
@@ -494,3 +494,97 @@ Browser access:
   Netdata Pi2:  http://192.168.0.12:19999
   Uptime Kuma:  http://192.168.0.50:3001
 ```
+
+---
+
+## Part 8: NVR Netdata Alert Configuration
+
+> [!info] Why Custom Alerts?
+> Netdata ships with **227 default alerts** — most irrelevant for an NVR (Ceph, Kubernetes, Redis, etc.). Rather than receiving noise, we silence all defaults and define only what matters for video surveillance.
+
+See [[01-infrastructure/netdata/nvr-alerts-config|NVR Alerts Golden Config]] for the full configuration reference and management guide.
+
+### 8.1 Silence Default Alerts
+
+Edit `/etc/netdata/netdata.conf`:
+
+```ini
+[health]
+    enabled alarms = nvr_*
+```
+
+This single line filters all 227 defaults. Only alerts prefixed with `nvr_` are loaded.
+
+### 8.2 Create NVR-Specific Alerts
+
+Create `/etc/netdata/health.d/nvr-alerts.conf` with 9 alert definitions covering:
+
+| Category | Alerts | What it catches |
+|----------|--------|-----------------|
+| CPU | `nvr_cpu_high`, `nvr_cpu_iowait` | Frigate ffmpeg overload, disk I/O bottleneck |
+| Memory | `nvr_ram_usage`, `nvr_swap_usage` | OOM risk, memory pressure |
+| Disk | `nvr_disk_space`, `nvr_disk_inodes` | Recording storage filling up |
+| Docker | `nvr_container_unhealthy`, `nvr_container_down` | Frigate/Mosquitto/Uptime Kuma failures |
+| Temperature | `nvr_cpu_temperature` | NUC thermal throttling |
+
+These 9 definitions expand to **16 active alert instances** (disk alerts instantiate per mount point, Docker alerts per container).
+
+### 8.3 Configure Slack Notifications
+
+Create `/etc/netdata/health_alarm_notify.conf`:
+
+```bash
+SEND_EMAIL="NO"
+# ... (disable all other methods)
+
+SEND_SLACK="YES"
+SLACK_WEBHOOK_URL="https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
+DEFAULT_RECIPIENT_SLACK="#"
+role_recipients_slack[sysadmin]="#"
+```
+
+> [!tip] Same Webhook
+> Uses the same Slack webhook as Uptime Kuma. Both tools post to the same channel — Uptime Kuma for up/down events, Netdata for threshold alerts.
+
+### 8.4 Apply and Verify
+
+```bash
+sudo systemctl restart netdata
+```
+
+Wait 10-15 seconds, then verify 16 alerts are active:
+
+```bash
+curl -s http://localhost:19999/api/v1/alarms?all | python3 -c "
+import sys,json
+d=json.load(sys.stdin)
+alarms=d.get('alarms',{})
+print(f'Total alerts: {len(alarms)}')
+for k in sorted(alarms.keys()):
+    a=alarms[k]
+    print(f'  [{a[\"status\"]}] {k}')
+"
+```
+
+### 8.5 Test Slack Integration
+
+```bash
+sudo /usr/libexec/netdata/plugins.d/alarm-notify.sh test
+```
+
+Should send 2 test messages (WARNING + CRITICAL) to your Slack channel.
+
+### 8.6 Real-World Validation
+
+Stop a container to trigger an actual alert:
+
+```bash
+docker stop mosquitto
+# Wait ~30 seconds → Slack WARNING notification
+docker start mosquitto
+# Wait ~1 minute → Slack CLEAR (recovery) notification
+```
+
+- [x] Netdata alert config deployed (16 alerts, 227 silenced) ✅ 2026-04-01
+- [x] Slack notifications tested via `alarm-notify.sh test` ✅ 2026-04-01
+- [x] Real-world test: Mosquitto stop → Slack alert → restart → recovery ✅ 2026-04-01
