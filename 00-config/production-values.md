@@ -1,7 +1,7 @@
 ---
 tags: [config, production, sensitive]
 created: 2026-02-04
-updated: 2026-03-07
+updated: 2026-04-01
 status: active
 ---
 
@@ -74,8 +74,8 @@ status: active
 | `{FRIGATE_WEBRTC_PORT}` | `8555` | Frigate WebRTC |
 | `{MQTT_PORT}` | `1883` | Mosquitto MQTT broker |
 | `{SESSION_DAEMON_PORT}` | `8585` | Session daemon REST API |
-| `{NETDATA_PORT}` | `19999` | Netdata dashboard (planned) |
-| `{UPTIME_KUMA_PORT}` | `3001` | Uptime Kuma dashboard (planned) |
+| `{NETDATA_PORT}` | `19999` | Netdata dashboard |
+| `{UPTIME_KUMA_PORT}` | `3001` | Uptime Kuma dashboard |
 | `{DB_PORT}` | `5432` | PostgreSQL (planned) |
 
 ---
@@ -115,6 +115,10 @@ status: active
 | `{SESSION_DAEMON_DIR}` | `/opt/neurosurveillance` |
 | `{SESSION_DAEMON_REPO}` | `/home/skimlab/Monitoring_project/neurosurveillance` |
 | `{SESSION_DAEMON_GITHUB}` | `git@github.com:andrea966p/neurosurveillance.git` (private) |
+| `{UPTIME_KUMA_DIR}` | `/opt/uptime-kuma` |
+| `{NETDATA_CONFIG_DIR}` | `/etc/netdata` |
+| `{NETDATA_ALERTS_FILE}` | `/etc/netdata/health.d/nvr-alerts.conf` |
+| `{NETDATA_NOTIFY_FILE}` | `/etc/netdata/health_alarm_notify.conf` |
 | `{SESSION_LOG_DIR}` | `/opt/neurosurveillance/logs` |
 | `{SESSION_EXPORT_DIR}` | `/srv/frigate/storage/exports` |
 | `{SESSION_DATA_DIR}` | `/opt/neurosurveillance/sessions` |
@@ -134,9 +138,11 @@ status: active
 | OS | Ubuntu 24.04 LTS |
 | Kernel | `6.17.0-14-generic` (HWE) |
 | VA-API Driver | `iHD` (Intel Media Driver) |
-| Docker CE | `29.3.0` (pinned — excluded from unattended-upgrades) |
-| Docker Compose | `v5.1.0` |
+| Docker CE | `29.3.1` (needs `apt-mark hold` — see [[04-journal/2026-04/2026-04-01\|2026-04-01 journal]]) |
+| Docker Compose | `v5.1.1` |
 | Frigate | `0.16.1` (pinned in docker-compose.yml) |
+| Netdata | `2.9.0` (installed 2026-03-27, 16 custom NVR alerts) |
+| Uptime Kuma | `louislam/uptime-kuma:1` (Docker, 7 monitors) |
 
 ---
 
@@ -230,5 +236,5 @@ curl http://127.0.0.1:8585/api/health
 
 ---
 
-**Last validated:** 2026-02-23
-**System status:** Operational (Pi streaming + Frigate recording + MQTT + Session daemon deployed; daemon + MQTT + Radiens healthy)
+**Last validated:** 2026-04-01
+**System status:** Operational (Pi streaming + Frigate recording + MQTT + Session daemon + Netdata alerts + Uptime Kuma monitoring + Slack alerting)

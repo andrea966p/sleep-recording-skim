@@ -8,8 +8,12 @@ tags: [index, navigation, home]
 > | Service | URL |
 > |---------|-----|
 > | **Frigate** | http://192.168.0.50:5000 |
-> | **go2rtc** | http://192.168.0.11:1984 |
+> | **go2rtc (Pi 1)** | http://192.168.0.11:1984 |
+> | **go2rtc (Pi 2)** | http://192.168.0.12:1984 |
 > | **Session Daemon** | http://127.0.0.1:8585 (NVR localhost) |
+> | **Netdata (NVR)** | http://192.168.0.50:19999 |
+> | **Uptime Kuma** | http://192.168.0.50:3001 |
+> | **Status Page** | http://192.168.0.50:3001/status/neurosurveillance |
 > | **Config** | [[00-config/production-values]] |
 > | **Tasks** | [[00-config/task-dashboard]] |
 
@@ -36,6 +40,10 @@ Production IPs, usernames, paths, and settings.
 - [[01-infrastructure/session-daemon/architecture|Architecture & Design]]
 - [[01-infrastructure/session-daemon/frontend-reference|Frontend Reference]]
 - [[01-infrastructure/session-daemon/session-service|Systemd Service]]
+
+**Monitoring & Alerting:**
+- [[01-infrastructure/netdata/nvr-alerts-config|Netdata NVR Alerts (Golden Config)]]
+- [[02-procedures/installation/monitoring-setup|Monitoring Setup Procedure]]
 
 ### Procedures
 - [[02-procedures/installation/new-pi-setup|New Pi Setup]]
@@ -80,6 +88,10 @@ Production IPs, usernames, paths, and settings.
 | **go2rtc (Pi 2)** | :1984 | Online |
 | **Frigate** | 192.168.0.50:5000 | Online |
 | **Session Daemon** | 127.0.0.1:8585 | Healthy (daemon + MQTT + Radiens connected) |
+| **Netdata (NVR)** | 192.168.0.50:19999 | Active (16 NVR alerts, Slack notifications) |
+| **Netdata (Pi 1)** | 192.168.0.11:19999 | Active |
+| **Netdata (Pi 2)** | 192.168.0.12:19999 | Active |
+| **Uptime Kuma** | 192.168.0.50:3001 | Active (7 monitors, Slack alerting) |
 
 ---
 
@@ -106,4 +118,4 @@ ffprobe rtsp://192.168.0.11:8554/pi_cam_0
 
 ---
 
-*Last updated: 2026-03-07*
+*Last updated: 2026-04-01*
