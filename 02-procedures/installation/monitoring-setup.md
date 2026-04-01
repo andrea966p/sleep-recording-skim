@@ -412,9 +412,9 @@ After completing all parts, verify everything works:
 - [x] `http://192.168.0.50:3001` — Uptime Kuma loads, all 7 monitors green ✅ 2026-03-30
 - [x] Slack notifications configured ✅ 2026-03-30
 - [x] Status page at `http://192.168.0.50:3001/status/neurosurveillance` ✅ 2026-03-30
-- [ ] Stop go2rtc on Pi 1 (`sudo systemctl stop go2rtc`), confirm Uptime Kuma alert fires within ~3 minutes
-- [ ] Restart go2rtc (`sudo systemctl start go2rtc`), confirm Uptime Kuma shows recovery
-- [ ] Netdata survives machine reboot: `sudo reboot` on a Pi, confirm Netdata auto-starts
+- [x] Stop go2rtc on Pi 1 (`sudo systemctl stop go2rtc`), confirm Uptime Kuma alert fires within ~3 minutes ✅ 2026-04-01
+- [x] Restart go2rtc (`sudo systemctl start go2rtc`), confirm Uptime Kuma shows recovery ✅ 2026-04-01
+- [x] Netdata survives machine reboot: `sudo reboot` on a Pi, confirm Netdata auto-starts ✅ 2026-04-01
 
 ---
 
