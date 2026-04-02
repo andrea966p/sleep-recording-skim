@@ -79,13 +79,13 @@ storage:
 **Validation:**
 ```bash
 # Restart the session daemon
-sudo systemctl restart neurosurveillance
+sudo systemctl restart neurosurveillance-session
 
 # Check that it started without config errors
-sudo systemctl status neurosurveillance
+sudo systemctl status neurosurveillance-session
 
 # Tail the logs to verify config loaded cleanly (look for any KeyError or yaml errors)
-journalctl -u neurosurveillance --since "1 min ago" --no-pager
+journalctl -u neurosurveillance-session --since "1 min ago" --no-pager
 ```
 No errors related to the `storage` section should appear. The daemon won't *use* the storage config yet (that comes in Step 4), but it should parse the YAML without crashing.
 
@@ -635,13 +635,13 @@ Steps 2-4 together complete the backend storage monitor. Restart the daemon and 
 
 ```bash
 # Restart
-sudo systemctl restart neurosurveillance
+sudo systemctl restart neurosurveillance-session
 
 # Check it started cleanly
-sudo systemctl status neurosurveillance
+sudo systemctl status neurosurveillance-session
 
 # Look for the storage monitor startup log line
-journalctl -u neurosurveillance --since "1 min ago" --no-pager | grep -i "storage monitor"
+journalctl -u neurosurveillance-session --since "1 min ago" --no-pager | grep -i "storage monitor"
 # Expected: "Storage monitor started: poll=30s, reserve=200 GB, warn=75%, crit=90%"
 
 # Test the new API endpoints
@@ -744,8 +744,8 @@ In `_handle_external_recording_on()` (around line 435), add before `start_record
 ```bash
 # Test cap enforcement by temporarily setting a huge reserve:
 # In config.yaml, change eeg_reserve_gb to 1800 (nearly fills the disk)
-# Restart daemon, then trigger a recording — check logs:
-sudo journalctl -u neurosurveillance -f
+# Restart daemon (`sudo systemctl restart neurosurveillance-session`), then trigger a recording — check logs:
+journalctl -u neurosurveillance-session -f
 # You should see: "SESSION START BLOCKED — storage cap: Insufficient disk space..."
 # Reset eeg_reserve_gb to 200 and restart to restore normal operation
 ```
@@ -1292,7 +1292,7 @@ Verify in the browser:
 
 > [!tip] If the daemon is not running
 > The StoragePanel will show "Storage data unavailable" — that's correct behavior.
-> Start the daemon first (`sudo systemctl start neurosurveillance`) then the data will appear within 10 seconds.
+> Start the daemon first (`sudo systemctl start neurosurveillance-session`) then the data will appear within 10 seconds.
 
 ---
 
