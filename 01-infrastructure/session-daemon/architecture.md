@@ -308,7 +308,10 @@ REST API on `127.0.0.1:{SESSION_DAEMON_PORT}` for the UI to set session metadata
 | `/api/session/current` | GET | Current active session info (first active, for backward compatibility) |
 | `/api/session/history?source=X&limit=N` | GET | List of past sessions, merged Radiens + manual, newest first |
 | `/api/session/manual` | GET | Active and recent manual recording sessions |
-| `/api/health` | GET | Health check -- 200 if Radiens + MQTT connected, 503 otherwise |
+| `/api/health` | GET | Health check -- 200 if Radiens + MQTT connected, 503 otherwise. Includes `storage_level` (`ok`/`warn`/`critical`) and `storage_used_percent` fields. |
+| `/api/storage` | GET | Storage status snapshot (cached, instant). Returns disk usage, categories, EEG reserve, effective available, status level, can_record flag. |
+| `/api/storage/estimate?cameras=N&hours=H` | GET | Server-side recording calculator. Returns estimated bytes, whether it fits, remaining space after. |
+| `/api/storage/camera-bitrates` | GET | On-demand query to go2rtc APIs on each Pi. Returns per-camera bitrates parsed from `rpicam-vid` exec configs. |
 
 **Multi-chamber status response structure:**
 
@@ -460,12 +463,13 @@ Orchestrates all components. Entry point for the systemd service.
 **Startup sequence:**
 
 1. Load `config.yaml`
-2. Connect to MQTT broker (subscribes to `frigate/+/recordings/state`)
-3. Publish `OFF` to all camera recording topics (clean slate)
-4. If `manual_sessions.enabled`: wait **10 seconds** for Frigate to finish reasserting `record.enabled=true` from its config, drain stale `_expected_states`, then register the external recording change callback. This grace period prevents false manual sessions on every startup.
-5. Connect to Radiens (`AllegoClient`) -- if unavailable, daemon continues and retries in the main loop
-6. Start HTTP API server (background thread)
-7. Enter main polling loop
+2. Initialize `StorageMonitor(config)` and start its background thread
+3. Connect to MQTT broker (subscribes to `frigate/+/recordings/state`)
+4. Publish `OFF` to all camera recording topics (clean slate)
+5. If `manual_sessions.enabled`: wait **10 seconds** for Frigate to finish reasserting `record.enabled=true` from its config, drain stale `_expected_states`, then register the external recording change callback. This grace period prevents false manual sessions on every startup.
+6. Connect to Radiens (`AllegoClient`) -- if unavailable, daemon continues and retries in the main loop
+7. Start HTTP API server (background thread, passes `storage_monitor` to `init_api()`)
+8. Enter main polling loop
 
 **Threading model:**
 
@@ -476,6 +480,7 @@ The daemon uses Python threads (not asyncio):
 | **Main thread** | Radiens polling loop (1s interval) |
 | **API thread** | Flask HTTP server (background, daemon=True) |
 | **MQTT thread** | paho-mqtt `loop_start()` (background, daemon=True) |
+| **Storage thread** | StorageMonitor polling (30s interval, daemon=True) |
 | **Export threads** | One per export operation (background, short-lived) |
 
 **Main loop (runs every 1 second):**
@@ -503,9 +508,10 @@ while running:
 **Shutdown sequence:**
 
 1. Receive SIGTERM from systemd
-2. If sessions are active: log warning, abort sessions, publish `OFF` to MQTT
-3. Disconnect from MQTT
-4. Exit cleanly
+2. Stop StorageMonitor background thread
+3. If sessions are active: log warning, abort sessions, publish `OFF` to MQTT
+4. Disconnect from MQTT
+5. Exit cleanly
 
 ## Frontend Application
 
@@ -526,12 +532,17 @@ See [[frontend-reference|Frontend Reference]] for full component documentation, 
 
 ```
 App.tsx
-├── Header (title, LiveClock, theme toggle, SettingsModal)
-├── ChamberSilo (one per configured camera)
+├── Header
+│   ├── Title, LiveClock, theme toggle, SettingsModal
+│   ├── Storage badge (progress bar + %, color-coded from /api/health)
+│   └── Critical storage / Daemon offline badges
+├── ChamberSilo (one per configured camera, self-start grid items)
+│   ├── Header bar (recording dot, camera offline badge, mouse ID)
 │   ├── SessionSetup (metadata form)
 │   ├── LiveStatus (recording state, session timer)
-│   └── CameraPreview (Frigate snapshot embed)
+│   └── CameraPreview (Frigate snapshot embed, reports online/offline)
 ├── SystemHealth (MQTT, Radiens connection badges)
+├── StoragePanel (disk usage, EEG reserve, inline calculator, bitrate sync)
 └── SessionHistory (scrollable past sessions table)
 ```
 
@@ -540,8 +551,9 @@ App.tsx
 | Hook | Endpoint | Interval | Purpose |
 |------|----------|----------|---------|
 | `useStatusPoll` | `GET /api/status` | 1.5s | Recording state, active sessions, pending metadata |
-| `useHealthPoll` | `GET /api/health` | 5s | System health badges |
-| `CameraPreview` | Frigate snapshot URL | 1s | Camera feed refresh |
+| `useHealthPoll` | `GET /api/health` | 5s | System health badges + header storage badge |
+| `useStoragePoll` | `GET /api/storage` | 10s | StoragePanel disk usage, calculator data |
+| `CameraPreview` | Frigate snapshot URL | 1s | Camera feed refresh + online/offline detection |
 
 **Configuration:**
 
@@ -608,9 +620,23 @@ nas:
   # path: "/volume1/neurosurveillance"
   # method: "rsync"  # rsync or scp
 
+storage:
+  poll_interval: 30                    # Background disk check interval (seconds)
+  paths:
+    recordings: "/srv/frigate/storage/recordings"
+    exports: "/srv/frigate/storage/exports"
+    clips: "/srv/frigate/storage/clips"
+    sessions: "/opt/neurosurveillance/sessions"
+  eeg_reserve_gb: 200                  # Hard reserve for XDAQ EEG/EMG data
+  warn_percent: 75                     # UI turns yellow
+  critical_percent: 90                 # UI turns red, recordings may be blocked
+  camera_bitrate_mbps: 1.7             # Measured actual bitrate (1.5 target + VBR overhead)
+  go2rtc_apis:
+    - "http://192.168.0.11:1984"       # Pi 1 (pi_cam_0, pi_cam_1)
+    - "http://192.168.0.12:1984"       # Pi 2 (pi_cam_2, pi_cam_3)
+
 lab_members:
   - andrea
-  - add_more_here
 ```
 
 > [!warning] Replace Variables
@@ -630,6 +656,7 @@ neurosurveillance/
 ├── backend/           # Python session daemon
 │   ├── daemon.py
 │   ├── api.py
+│   ├── storage_monitor.py
 │   ├── frigate_controller.py
 │   ├── session_manager.py
 │   ├── manual_session_manager.py
@@ -740,6 +767,7 @@ Both Radiens and manual sessions produce JSON sidecars in `{SESSION_DATA_DIR}`.
 | **No metadata set** | Daemon uses defaults: `unknown` mouse ID, `unknown` type. Session still runs and exports. | Researcher must rename files manually |
 | **Export file move fails** | `sudo mv` fails (permissions, disk full). Daemon logs error, sets `export_status: "failed"`. Original file remains in Frigate exports. | File safe in Frigate exports dir |
 | **Long export (large file)** | Frigate lists export immediately with `in_progress: true` while ffmpeg multiplexes. Daemon polls until `in_progress` clears before moving the file. | None -- daemon waits for completion |
+| **Disk below EEG reserve** | New recordings blocked (cap enforcement). Existing recordings continue. EEG unaffected. Recovery automatic when space freed. | None -- fail-open design, EEG always protected |
 | **Power failure** | Everything stops. On reboot, systemd restarts daemon, which resets to OFF. | Partial session -- manual Frigate export needed for the gap |
 
 ## Dependencies

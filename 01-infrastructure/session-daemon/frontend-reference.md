@@ -2,7 +2,8 @@
 tags: [infrastructure, session-daemon, frontend, reference]
 created: 2026-03-05
 status: production
-version: "1.0"
+version: "2.0"
+updated: 2026-04-02
 ---
 
 # Frontend Reference
@@ -49,29 +50,47 @@ App.tsx
 │   ├── Title: "NeuroSurveillance Session Controller"
 │   ├── LiveClock (real-time clock display)
 │   ├── Theme toggle (dark/light, persisted to localStorage)
-│   └── SettingsModal (gear icon)
+│   ├── SettingsModal (gear icon)
+│   ├── Storage badge (progress bar + %, color-coded from /api/health)
+│   ├── "Disk Critical — Recording Blocked" badge (when critical)
+│   └── "Daemon Offline" badge (when daemon unreachable)
 │
-├── ChamberSilo (one per configured camera)
-│   ├── SessionSetup
+├── ChamberSilo (one per configured camera, self-start grid items)
+│   ├── Header bar (always visible)
+│   │   ├── Recording dot (pulsing red when active, gray idle)
+│   │   ├── Chamber label
+│   │   ├── Manual recording badge (yellow, when active)
+│   │   ├── Camera offline badge (red, when Pi unreachable)
+│   │   └── Mouse ID badge (shown when collapsed + online + no manual rec)
+│   ├── SessionSetup (expanded only)
 │   │   ├── Mouse ID text input
 │   │   ├── Recording Type dropdown
 │   │   ├── User Name dropdown
 │   │   ├── "Set Metadata" button → POST /api/session/metadata?chamber_id=X
 │   │   └── "Clear" button → DELETE /api/session/metadata?chamber_id=X
-│   ├── LiveStatus
+│   ├── LiveStatus (expanded only)
 │   │   ├── Recording state indicator (pulsing red / gray)
 │   │   ├── Session timer (HH:MM:SS, computed client-side)
 │   │   └── Active session details (mouse_id, type, camera)
-│   └── CameraPreview
-│       └── Frigate snapshot <img> (refreshed every 1s)
+│   └── CameraPreview (expanded only)
+│       ├── Frigate snapshot <img> (refreshed every 1s)
+│       └── Reports online/offline via onStatusChange callback
 │
-├── SystemHealth (footer, left column)
+├── SystemHealth (footer, column 1)
 │   ├── Daemon status badge
 │   ├── Radiens connection badge
 │   ├── MQTT connection badge
 │   └── Frigate reachability badge
 │
-└── SessionHistory (footer, right columns)
+├── StoragePanel (footer, column 2)
+│   ├── Progress bar (green/yellow/red by threshold)
+│   ├── Two-column summary: Used, Total, EEG Reserve, Free
+│   ├── "Recording blocked" alert (when can_record=false)
+│   ├── Calculator: cameras dropdown + hours input → estimated size + fits/won't fit
+│   ├── Sync button: fetches actual bitrates from go2rtc on each Pi
+│   └── Bitrate info (tiny line: synced vs default Mbps/cam)
+│
+└── SessionHistory (footer, columns 3-4)
     └── Scrollable table of past sessions (newest first)
         ├── Date, Mouse ID, Type, Chamber, Duration, Status
         └── Expandable row for full session details
@@ -93,13 +112,23 @@ Polls `GET /api/status` and returns the full daemon state. This is the primary d
 
 ### `useHealthPoll` (5s interval)
 
-Polls `GET /api/health` for system health badges.
+Polls `GET /api/health` for system health badges and header storage indicator.
 
 **Returns:** `{ health, error }`
 
 - `health.healthy` -- overall health (true if radiens + mqtt connected)
 - `health.radiens_connected` -- Radiens connection
 - `health.mqtt_connected` -- MQTT connection
+- `health.storage_level` -- `"ok"` / `"warn"` / `"critical"` (used for header badge color)
+- `health.storage_used_percent` -- disk usage percentage (used for header progress bar)
+
+### `useStoragePoll` (10s interval)
+
+Polls `GET /api/storage` for the StoragePanel footer card. Storage changes slowly so 10s is sufficient.
+
+**Returns:** `{ storage, error }`
+
+- Full `StorageStatus` object with disk usage, categories, EEG reserve, effective available, can_record flag, camera bitrate
 
 ### `useSessionTimer`
 
@@ -133,6 +162,8 @@ Manages user-configurable settings persisted to `localStorage`. No server round-
 | `getCurrentSession()` | GET | `/api/session/current` |
 | `getSessionHistory(limit?, source?)` | GET | `/api/session/history` |
 | `getHealth()` | GET | `/api/health` |
+| `getStorage()` | GET | `/api/storage` |
+| `getCameraBitrates()` | GET | `/api/storage/camera-bitrates` |
 
 All functions use the `fetch` API. Errors throw exceptions caught by calling components and displayed as toast notifications.
 
@@ -142,7 +173,9 @@ All functions use the `fetch` API. Errors throw exceptions caught by calling com
 |-------------|--------|
 | 0 | Alert: "Configure cameras in Settings" |
 | 1-3 | Single column of ChamberSilo cards |
-| 4+ | Two-column grid of ChamberSilo cards |
+| 4+ | Two-column grid of ChamberSilo cards (`self-start` items for independent expansion) |
+
+**Footer grid:** 4 columns — SystemHealth (1 col) + StoragePanel (1 col) + SessionHistory (2 cols)
 
 **Theme:** Dark mode default (DaisyUI `dark` theme). Toggle persisted to `localStorage`.
 
@@ -159,7 +192,12 @@ All functions use the `fetch` API. Errors throw exceptions caught by calling com
 | Recording active | Red pulsing dot, green session border, form locked |
 | Connection lost | Yellow/orange warning badges |
 | Daemon offline | Red "Offline" badge in header, panels show error state |
+| Camera offline | Red "Camera Offline" badge on ChamberSilo header (visible when collapsed) |
 | No metadata set | Subtle warning: "defaults will be used" |
+| Storage OK (<75%) | Green progress bar in header + StoragePanel |
+| Storage warn (75-90%) | Yellow progress bar, warning color on header badge |
+| Storage critical (>90%) | Red progress bar, "Disk Critical — Recording Blocked" badge in header |
+| Recording blocked | Red alert in StoragePanel: "Recording blocked — disk below EEG reserve" |
 
 ## File Structure
 
@@ -183,20 +221,22 @@ frontend/
     ├── hooks/
     │   ├── useStatusPoll.ts       # Status polling (1.5s)
     │   ├── useHealthPoll.ts       # Health polling (5s)
+    │   ├── useStoragePoll.ts      # Storage polling (10s)
     │   ├── useSessionTimer.ts     # Client-side timer
     │   └── useSettings.ts         # localStorage settings
     ├── components/
-    │   ├── ChamberSilo.tsx        # Per-chamber card
+    │   ├── ChamberSilo.tsx        # Per-chamber card (with camera offline detection)
     │   ├── SessionSetup.tsx       # Metadata form
     │   ├── LiveStatus.tsx         # Recording state display
-    │   ├── CameraPreview.tsx      # Frigate snapshot
+    │   ├── CameraPreview.tsx      # Frigate snapshot + online/offline reporting
+    │   ├── StoragePanel.tsx       # Disk usage + calculator + bitrate sync
     │   ├── SettingsModal.tsx      # Configuration modal
     │   ├── SystemHealth.tsx       # Connection badges
     │   ├── SessionHistory.tsx     # Session list table
     │   ├── StatusBadge.tsx        # Reusable badge
     │   └── LiveClock.tsx          # Real-time clock
     └── utils/
-        └── format.ts              # Date/duration formatting
+        └── format.ts              # Date/duration/byte formatting
 ```
 
 ## Related

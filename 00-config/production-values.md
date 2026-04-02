@@ -1,7 +1,7 @@
 ---
 tags: [config, production, sensitive]
 created: 2026-02-04
-updated: 2026-04-01
+updated: 2026-04-02
 status: active
 ---
 
@@ -91,7 +91,7 @@ status: active
 | `{CAMERA_WIDTH}` | `1024` | Resolution width |
 | `{CAMERA_HEIGHT}` | `768` | Resolution height |
 | `{CAMERA_FPS}` | `15` | Framerate |
-| `{CAMERA_BITRATE}` | `1500000` | 1.5 Mbps |
+| `{CAMERA_BITRATE}` | `1500000` | 1.5 Mbps target (actual measured: 1.7 Mbps due to VBR + container overhead) |
 
 ---
 
@@ -163,13 +163,17 @@ status: active
 
 ---
 
-## Recording Settings
+## Recording & Storage Settings
 
 | Variable | Value | Notes |
 |----------|-------|-------|
 | `{RETENTION_DAYS}` | `7` | Video retention |
-| `{STORAGE_PER_CAM_DAY}` | `~45GB` | Estimated storage |
+| `{STORAGE_PER_CAM_DAY}` | `~18GB` | Measured: 1.7 Mbps × 86400s / 8 ≈ 18.4 GB per camera per day |
 | `{MANUAL_SESSION_MIN_DURATION}` | `5` | Min seconds for manual recording export (filters accidental clicks) |
+| `{EEG_RESERVE_GB}` | `200` | Hard disk reserve for XDAQ EEG/EMG data — recording blocked below this |
+| `{STORAGE_WARN_PERCENT}` | `75` | UI turns yellow at this disk usage |
+| `{STORAGE_CRITICAL_PERCENT}` | `90` | UI turns red, recordings may be blocked |
+| `{CAMERA_ACTUAL_BITRATE_MBPS}` | `1.7` | Measured from actual recordings (configured 1.5 + VBR/container overhead) |
 
 ---
 
@@ -232,9 +236,12 @@ curl http://192.168.0.50:5000/api/stats
 
 # Test Session Daemon
 curl http://127.0.0.1:8585/api/health
+
+# Test Storage Monitor
+curl http://127.0.0.1:8585/api/storage
 ```
 
 ---
 
-**Last validated:** 2026-04-01
-**System status:** Operational (Pi streaming + Frigate recording + MQTT + Session daemon + Netdata alerts + Uptime Kuma monitoring + Slack alerting)
+**Last validated:** 2026-04-02
+**System status:** Operational (Pi streaming + Frigate recording + MQTT + Session daemon + Storage monitoring + Netdata alerts + Uptime Kuma monitoring + Slack alerting)
