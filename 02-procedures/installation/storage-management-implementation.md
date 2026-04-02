@@ -1330,7 +1330,7 @@ After implementing all steps, validate end-to-end:
 
 ### Frontend
 
-- [ ] Header shows storage percentage bar (green at current ~11% usage)
+- [x] Header shows storage percentage bar (green at current ~11% usage) ✅ 2026-04-02
 - [ ] Footer shows `StoragePanel` card between `SystemHealth` and `SessionHistory`
 - [ ] StoragePanel shows correct total, used, categories
 - [ ] EEG reserve shows 200 GB
