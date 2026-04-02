@@ -76,7 +76,18 @@ storage:
 > - `camera_bitrate_mbps: 1.5` is the **default fallback**; the calculator prefers live bitrates fetched from go2rtc when the user clicks the refresh button
 > - `go2rtc_apis` — the calculator queries these to read actual `--bitrate` values from the running stream configs
 
-**Validation:** Restart the daemon and check logs for config loading. No errors should appear.
+**Validation:**
+```bash
+# Restart the session daemon
+sudo systemctl restart neurosurveillance
+
+# Check that it started without config errors
+sudo systemctl status neurosurveillance
+
+# Tail the logs to verify config loaded cleanly (look for any KeyError or yaml errors)
+journalctl -u neurosurveillance --since "1 min ago" --no-pager
+```
+No errors related to the `storage` section should appear. The daemon won't *use* the storage config yet (that comes in Step 4), but it should parse the YAML without crashing.
 
 ---
 
@@ -618,6 +629,35 @@ In `_signal_handler()` (around line 519), add before the existing cleanup:
         self.storage_monitor.stop()
 ```
 
+**Validation:**
+
+Steps 2-4 together complete the backend storage monitor. Restart the daemon and verify:
+
+```bash
+# Restart
+sudo systemctl restart neurosurveillance
+
+# Check it started cleanly
+sudo systemctl status neurosurveillance
+
+# Look for the storage monitor startup log line
+journalctl -u neurosurveillance --since "1 min ago" --no-pager | grep -i "storage monitor"
+# Expected: "Storage monitor started: poll=30s, reserve=200 GB, warn=75%, crit=90%"
+
+# Test the new API endpoints
+curl -s http://127.0.0.1:8585/api/storage | python3 -m json.tool
+# Expected: JSON with total_bytes, used_bytes, categories, etc.
+
+curl -s "http://127.0.0.1:8585/api/storage/estimate?cameras=4&hours=24" | python3 -m json.tool
+# Expected: estimated_bytes ~64,800,000,000, fits: true
+
+curl -s http://127.0.0.1:8585/api/storage/camera-bitrates | python3 -m json.tool
+# Expected: per-camera bitrates from go2rtc (or defaults if Pis are off)
+
+curl -s http://127.0.0.1:8585/api/health | python3 -m json.tool
+# Expected: now includes "storage_level" and "storage_used_percent" fields
+```
+
 ---
 
 ## Step 5: Add Cap Enforcement
@@ -766,6 +806,13 @@ export interface HealthResponse {
 }
 ```
 
+**Validation:** TypeScript compilation check:
+```bash
+cd /home/skimlab/Monitoring_project/neurosurveillance/frontend
+npx tsc --noEmit 2>&1 | head -20
+# Should have no errors related to StorageStatus, StorageEstimate, CameraBitratesResponse, or HealthResponse
+```
+
 ---
 
 ## Step 7: Frontend — API Client
@@ -805,6 +852,13 @@ export async function getCameraBitrates(): Promise<CameraBitratesResponse> {
     if (!res.ok) throw new Error("Camera bitrates fetch failed");
     return res.json();
 }
+```
+
+**Validation:**
+```bash
+cd /home/skimlab/Monitoring_project/neurosurveillance/frontend
+npx tsc --noEmit 2>&1 | head -20
+# No errors related to getStorage or getCameraBitrates
 ```
 
 ---
@@ -856,6 +910,13 @@ export function useStoragePoll() {
 }
 ```
 
+**Validation:**
+```bash
+cd /home/skimlab/Monitoring_project/neurosurveillance/frontend
+npx tsc --noEmit 2>&1 | head -20
+# No errors related to useStoragePoll
+```
+
 ---
 
 ## Step 9: Frontend — `formatBytes` Utility
@@ -875,6 +936,13 @@ export function formatBytes(bytes: number): string {
     if (bytes < 1024 ** 4) return `${(bytes / 1024 ** 3).toFixed(1)} GB`;
     return `${(bytes / 1024 ** 4).toFixed(2)} TB`;
 }
+```
+
+**Validation:**
+```bash
+cd /home/skimlab/Monitoring_project/neurosurveillance/frontend
+npx tsc --noEmit 2>&1 | head -20
+# No errors related to formatBytes
 ```
 
 ---
@@ -1104,6 +1172,13 @@ export function StoragePanel() {
 > - Before sync (or if Pis unreachable): falls back to `camera_bitrate_mbps` default from config
 > - Bitrate state is local to the component — refreshed on demand, not polled
 
+**Validation:**
+```bash
+cd /home/skimlab/Monitoring_project/neurosurveillance/frontend
+npx tsc --noEmit 2>&1 | head -20
+# No errors related to StoragePanel
+```
+
 ---
 
 ## Step 11: Frontend — Update `App.tsx`
@@ -1192,6 +1267,32 @@ Change the footer grid from 1+3 columns to 1+1+2:
     </div>
 </div>
 ```
+
+**Validation:**
+
+This is the final frontend step. Run the full TypeScript check and start the dev server:
+
+```bash
+cd /home/skimlab/Monitoring_project/neurosurveillance/frontend
+
+# TypeScript compilation — should be zero errors
+npx tsc --noEmit
+
+# Start the Vite dev server
+npm run dev
+# Open the URL shown (usually http://localhost:1420 or http://localhost:5173)
+```
+
+Verify in the browser:
+- Header shows a storage percentage badge with a mini progress bar (green at current ~11% usage)
+- Footer now has 3 cards: SystemHealth | StoragePanel | SessionHistory
+- StoragePanel shows the progress bar, category breakdown, EEG reserve, and calculator
+- Calculator inputs (cameras, hours) update the estimate instantly
+- "Sync Bitrates" button appears next to the Calculator heading
+
+> [!tip] If the daemon is not running
+> The StoragePanel will show "Storage data unavailable" — that's correct behavior.
+> Start the daemon first (`sudo systemctl start neurosurveillance`) then the data will appear within 10 seconds.
 
 ---
 
