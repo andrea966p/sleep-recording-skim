@@ -46,7 +46,7 @@ Category directory scans (`os.scandir` walk) are the slow part — they run in t
 
 ## Step 1: Add Storage Config Section
 
-**File:** `neurosurveillance/config/config.yaml`
+**File:** `/home/skimlab/Monitoring_project/neurosurveillance/config/config.yaml`
 
 Add this new top-level section after the existing `nas` section:
 
@@ -93,7 +93,7 @@ No errors related to the `storage` section should appear. The daemon won't *use*
 
 ## Step 2: Create `storage_monitor.py`
 
-**New file:** `neurosurveillance/backend/storage_monitor.py`
+**New file:** `/home/skimlab/Monitoring_project/neurosurveillance/backend/storage_monitor.py`
 
 This is the core backend module. It has no external dependencies beyond Python stdlib.
 
@@ -423,7 +423,7 @@ import json; print(json.dumps(sm.get_status(), indent=2))
 
 ## Step 3: Add API Endpoints
 
-**File:** `neurosurveillance/backend/api.py`
+**File:** `/home/skimlab/Monitoring_project/neurosurveillance/backend/api.py`
 
 ### 3.1 Add module-level variable
 
@@ -583,7 +583,7 @@ curl -s http://127.0.0.1:8585/api/storage/camera-bitrates | python3 -m json.tool
 
 ## Step 4: Wire StorageMonitor into the Daemon
 
-**File:** `neurosurveillance/backend/daemon.py`
+**File:** `/home/skimlab/Monitoring_project/neurosurveillance/backend/daemon.py`
 
 ### 4.1 Import
 
@@ -667,7 +667,7 @@ curl -s http://127.0.0.1:8585/api/health | python3 -m json.tool
 
 ## Step 5: Add Cap Enforcement
 
-**File:** `neurosurveillance/backend/daemon.py`
+**File:** `/home/skimlab/Monitoring_project/neurosurveillance/backend/daemon.py`
 
 ### 5.1 Block Radiens-triggered sessions
 
@@ -759,7 +759,7 @@ journalctl -u neurosurveillance-session -f
 
 ## Step 6: Frontend — TypeScript Types
 
-**File:** `neurosurveillance/frontend/src/types/api.ts`
+**File:** `/home/skimlab/Monitoring_project/neurosurveillance/frontend/src/types/api.ts`
 
 ### 6.1 Add StorageStatus interface
 
@@ -822,7 +822,7 @@ npx tsc --noEmit 2>&1 | head -20
 
 ## Step 7: Frontend — API Client
 
-**File:** `neurosurveillance/frontend/src/api/client.ts`
+**File:** `/home/skimlab/Monitoring_project/neurosurveillance/frontend/src/api/client.ts`
 
 ### 7.1 Add imports
 
@@ -870,7 +870,7 @@ npx tsc --noEmit 2>&1 | head -20
 
 ## Step 8: Frontend — `useStoragePoll` Hook
 
-**New file:** `neurosurveillance/frontend/src/hooks/useStoragePoll.ts`
+**New file:** `/home/skimlab/Monitoring_project/neurosurveillance/frontend/src/hooks/useStoragePoll.ts`
 
 Follows the exact same pattern as `useHealthPoll.ts`:
 
@@ -926,7 +926,7 @@ npx tsc --noEmit 2>&1 | head -20
 
 ## Step 9: Frontend — `formatBytes` Utility
 
-**New file:** `neurosurveillance/frontend/src/utils/format.ts`
+**New file:** `/home/skimlab/Monitoring_project/neurosurveillance/frontend/src/utils/format.ts`
 
 ```typescript
 /**
@@ -954,7 +954,7 @@ npx tsc --noEmit 2>&1 | head -20
 
 ## Step 10: Frontend — `StoragePanel` Component
 
-**New file:** `neurosurveillance/frontend/src/components/StoragePanel.tsx`
+**New file:** `/home/skimlab/Monitoring_project/neurosurveillance/frontend/src/components/StoragePanel.tsx`
 
 This is the main footer card showing storage status and the inline calculator.
 
@@ -1188,7 +1188,7 @@ npx tsc --noEmit 2>&1 | head -20
 
 ## Step 11: Frontend — Update `App.tsx`
 
-**File:** `neurosurveillance/frontend/src/App.tsx`
+**File:** `/home/skimlab/Monitoring_project/neurosurveillance/frontend/src/App.tsx`
 
 ### 11.1 Add imports
 
