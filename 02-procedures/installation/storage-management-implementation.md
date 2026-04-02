@@ -13,10 +13,10 @@ Add real-time storage monitoring, a recording calculator, and EEG/EMG disk prote
 ## What Gets Built
 
 1. **Backend `StorageMonitor`** — background thread that samples disk usage every 30s
-2. **Two new API endpoints** — `GET /api/storage` and `GET /api/storage/estimate`
+2. **Three new API endpoints** — `GET /api/storage`, `GET /api/storage/estimate`, `GET /api/storage/camera-bitrates`
 3. **Recording cap enforcement** — blocks new video recordings when available space drops below 200 GB EEG reserve
 4. **Storage header badge** — compact percentage indicator in the Tauri app header (always visible)
-5. **StoragePanel footer card** — detailed breakdown + inline calculator in the footer grid
+5. **StoragePanel footer card** — detailed breakdown + inline calculator with **refresh button** that syncs bitrates from go2rtc
 6. **Health endpoint augmentation** — storage level piggybacked onto existing `/api/health`
 
 ## Architecture Overview
@@ -61,13 +61,20 @@ storage:
   eeg_reserve_gb: 200                  # Hard reserve for XDAQ EEG/EMG data
   warn_percent: 75                     # UI turns yellow at this threshold
   critical_percent: 90                 # UI turns red, recordings may be blocked
-  camera_bitrate_mbps: 1.5             # Used by the storage calculator
+  camera_bitrate_mbps: 1.5             # Default fallback for the calculator
+
+  # go2rtc API endpoints on each Pi — used by the "Refresh Bitrates" button
+  # to auto-detect actual camera bitrates from the running go2rtc config
+  go2rtc_apis:
+    - "http://192.168.0.11:1984"       # Pi 1 (pi_cam_0, pi_cam_1)
+    - "http://192.168.0.12:1984"       # Pi 2 (pi_cam_2, pi_cam_3)
 ```
 
 > [!tip] Config Values
 > - `eeg_reserve_gb: 200` — chosen because XDAQ sessions can generate large `.xdat` files
 > - `warn_percent` and `critical_percent` are for UI color coding only; the hard enforcement is `eeg_reserve_gb`
-> - `camera_bitrate_mbps` matches our go2rtc H.264 streams (1024x768 @ 15fps)
+> - `camera_bitrate_mbps: 1.5` is the **default fallback**; the calculator prefers live bitrates fetched from go2rtc when the user clicks the refresh button
+> - `go2rtc_apis` — the calculator queries these to read actual `--bitrate` values from the running stream configs
 
 **Validation:** Restart the daemon and check logs for config loading. No errors should appear.
 
@@ -102,6 +109,7 @@ class StorageMonitor:
     """Monitors disk usage and enforces EEG/EMG storage reservation."""
 
     def __init__(self, config: dict):
+        self._config = config  # Full config (needed by fetch_camera_bitrates)
         storage_cfg = config.get("storage", {})
 
         self.poll_interval = storage_cfg.get("poll_interval", 30)
@@ -270,7 +278,110 @@ class StorageMonitor:
         return True, ""
 ```
 
-### 2.2 Key Design Decisions
+### 2.2 Add `fetch_camera_bitrates()` Method
+
+This method is called on-demand (not in the background loop) when the user clicks "Refresh Bitrates" in the UI. It queries each Pi's go2rtc API and parses the actual bitrate from the stream exec commands.
+
+Add this to the `StorageMonitor` class:
+
+```python
+    def fetch_camera_bitrates(self) -> dict:
+        """Query go2rtc APIs on each Pi to get actual per-camera bitrates.
+
+        Called on-demand via the /api/storage/camera-bitrates endpoint
+        when the user clicks the "Refresh Bitrates" button.
+
+        Returns:
+            {
+                "camera_bitrates": {"pi_cam_0": 1.5, "pi_cam_1": 1.5, ...},
+                "default_mbps": 1.5,
+                "source": "go2rtc" | "default",
+                "errors": ["http://192.168.0.12:1984: Connection refused"]
+            }
+        """
+        import re
+        import urllib.request
+        import json as json_mod
+
+        go2rtc_apis = self._config.get("storage", {}).get("go2rtc_apis", [])
+        default_mbps = self.camera_bitrate_mbps
+
+        if not go2rtc_apis:
+            # No go2rtc APIs configured — return defaults for all cameras
+            cameras = self._config.get("cameras", {})
+            return {
+                "camera_bitrates": {
+                    cam_id: default_mbps
+                    for cam_id in cameras.values()
+                },
+                "default_mbps": default_mbps,
+                "source": "default",
+                "errors": [],
+            }
+
+        camera_bitrates = {}
+        errors = []
+        source = "go2rtc"
+
+        for api_url in go2rtc_apis:
+            try:
+                url = f"{api_url.rstrip('/')}/api/streams"
+                req = urllib.request.Request(url, method="GET")
+                with urllib.request.urlopen(req, timeout=5) as resp:
+                    streams = json_mod.loads(resp.read().decode())
+
+                # go2rtc /api/streams returns: {"stream_name": {"producers": [...]}}
+                # Each producer has a "url" field with the exec command
+                for stream_name, stream_info in streams.items():
+                    producers = stream_info.get("producers", [])
+                    if not producers:
+                        # No active producers — try to parse from config
+                        # Fallback: check if there's a "url" at stream level
+                        continue
+
+                    for producer in producers:
+                        cmd = producer.get("url", "")
+                        # Parse --bitrate NNNNNN from the rpicam-vid command
+                        match = re.search(r"--bitrate\s+(\d+)", cmd)
+                        if match:
+                            bitrate_bps = int(match.group(1))
+                            camera_bitrates[stream_name] = round(
+                                bitrate_bps / 1_000_000, 2
+                            )
+                            break
+                    else:
+                        # No bitrate found in any producer — use default
+                        camera_bitrates[stream_name] = default_mbps
+
+            except Exception as e:
+                errors.append(f"{api_url}: {e}")
+                logger.warning("Failed to fetch bitrates from %s: %s", api_url, e)
+
+        # Fill in any configured cameras not found in go2rtc responses
+        cameras = self._config.get("cameras", {})
+        for cam_id in cameras.values():
+            if cam_id not in camera_bitrates:
+                camera_bitrates[cam_id] = default_mbps
+
+        if not camera_bitrates:
+            source = "default"
+
+        return {
+            "camera_bitrates": camera_bitrates,
+            "default_mbps": default_mbps,
+            "source": source,
+            "errors": errors,
+        }
+```
+
+> [!tip] How go2rtc API works
+> `GET http://192.168.0.11:1984/api/streams` returns the configured streams.
+> Each stream's producer has a `url` field containing the exec command:
+> `exec:rpicam-vid ... --bitrate 1500000 ...`
+> We parse `--bitrate NNNNNN` with a regex and convert to Mbps.
+> If a Pi is unreachable (timeout 5s), we log the error and fall back to the default.
+
+### 2.3 Key Design Decisions
 
 | Decision | Rationale |
 |----------|-----------|
@@ -385,7 +496,31 @@ def estimate_storage():
     })
 ```
 
-### 3.5 Augment `GET /api/health`
+### 3.5 Add `GET /api/storage/camera-bitrates` endpoint
+
+This is called when the user clicks "Refresh Bitrates" in the StoragePanel calculator. It queries the go2rtc APIs on each Pi and returns actual per-camera bitrates.
+
+```python
+@app.route("/api/storage/camera-bitrates", methods=["GET"])
+def get_camera_bitrates():
+    """Fetch actual camera bitrates from go2rtc APIs on the Pis.
+
+    Called on-demand when the user clicks "Refresh Bitrates" in the UI.
+    Queries each Pi's go2rtc API, parses --bitrate from stream configs.
+    Falls back to the configured default if a Pi is unreachable.
+
+    Returns:
+        camera_bitrates: dict mapping camera_id to bitrate in Mbps
+        default_mbps: the configured fallback bitrate
+        source: "go2rtc" if any Pi was queried, "default" if none configured
+        errors: list of error messages for unreachable Pis
+    """
+    if not _storage_monitor:
+        return jsonify({"error": "Storage monitor not initialized"}), 503
+    return jsonify(_storage_monitor.fetch_camera_bitrates())
+```
+
+### 3.6 Augment `GET /api/health`
 
 Update the existing `health_check()` function to include storage level. This lets the header badge work without a separate fetch:
 
@@ -421,6 +556,11 @@ curl -s http://127.0.0.1:8585/api/storage | python3 -m json.tool
 curl -s "http://127.0.0.1:8585/api/storage/estimate?cameras=4&hours=24" | python3 -m json.tool
 curl -s http://127.0.0.1:8585/api/health | python3 -m json.tool
 # Health response should now include storage_level and storage_used_percent
+
+# Test bitrate refresh (queries go2rtc on both Pis):
+curl -s http://127.0.0.1:8585/api/storage/camera-bitrates | python3 -m json.tool
+# Expected: {"camera_bitrates": {"pi_cam_0": 1.5, "pi_cam_1": 1.5, ...}, "source": "go2rtc", ...}
+# If a Pi is off, "errors" will list the unreachable URL and that camera falls back to default_mbps
 ```
 
 ---
@@ -603,6 +743,13 @@ export interface StorageEstimate {
     fits: boolean;
     remaining_after_bytes: number;
 }
+
+export interface CameraBitratesResponse {
+    camera_bitrates: Record<string, number>;  // camera_id -> Mbps
+    default_mbps: number;
+    source: "go2rtc" | "default";
+    errors: string[];
+}
 ```
 
 ### 6.2 Update HealthResponse
@@ -637,11 +784,12 @@ import {
     SessionHistoryResponse,
     HealthResponse,
     ActiveSession,
-    StorageStatus,        // <-- ADD
+    StorageStatus,              // <-- ADD
+    CameraBitratesResponse,     // <-- ADD
 } from "../types/api";
 ```
 
-### 7.2 Add getStorage function
+### 7.2 Add getStorage and getCameraBitrates functions
 
 Add at the end of the file:
 
@@ -649,6 +797,12 @@ Add at the end of the file:
 export async function getStorage(): Promise<StorageStatus> {
     const res = await fetch(`${API_BASE}/api/storage`);
     if (!res.ok) throw new Error("Storage fetch failed");
+    return res.json();
+}
+
+export async function getCameraBitrates(): Promise<CameraBitratesResponse> {
+    const res = await fetch(`${API_BASE}/api/storage/camera-bitrates`);
+    if (!res.ok) throw new Error("Camera bitrates fetch failed");
     return res.json();
 }
 ```
@@ -734,6 +888,8 @@ This is the main footer card showing storage status and the inline calculator.
 ```tsx
 import { useState } from "react";
 import { useStoragePoll } from "../hooks/useStoragePoll";
+import { getCameraBitrates } from "../api/client";
+import { CameraBitratesResponse } from "../types/api";
 import { formatBytes } from "../utils/format";
 
 export function StoragePanel() {
@@ -743,6 +899,10 @@ export function StoragePanel() {
     const [calcCameras, setCalcCameras] = useState(4);
     const [calcHours, setCalcHours] = useState(24);
 
+    // Bitrate refresh state
+    const [cameraBitrates, setCameraBitrates] = useState<CameraBitratesResponse | null>(null);
+    const [bitrateLoading, setBitrateLoading] = useState(false);
+
     // Progress bar color based on status level
     const progressColor =
         !storage || storage.status_level === "ok"
@@ -751,11 +911,33 @@ export function StoragePanel() {
               ? "progress-warning"
               : "progress-error";
 
-    // Calculator: client-side estimation (instant, no API call)
-    const bitrateBytes = (storage?.camera_bitrate_mbps ?? 1.5) * 1_000_000 / 8;
+    // Calculator: use per-camera bitrates if available, else default
+    const getAvgBitrateMbps = (): number => {
+        if (cameraBitrates && Object.keys(cameraBitrates.camera_bitrates).length > 0) {
+            const values = Object.values(cameraBitrates.camera_bitrates);
+            return values.reduce((sum, v) => sum + v, 0) / values.length;
+        }
+        return storage?.camera_bitrate_mbps ?? 1.5;
+    };
+
+    const avgBitrateMbps = getAvgBitrateMbps();
+    const bitrateBytes = avgBitrateMbps * 1_000_000 / 8;
     const estimatedBytes = calcCameras * bitrateBytes * calcHours * 3600;
     const effectiveAvailable = storage?.effective_available_bytes ?? 0;
     const fits = estimatedBytes < effectiveAvailable;
+
+    // Refresh bitrates from go2rtc APIs on the Pis
+    const handleRefreshBitrates = async () => {
+        setBitrateLoading(true);
+        try {
+            const data = await getCameraBitrates();
+            setCameraBitrates(data);
+        } catch {
+            // Silently fail — keep using default or last known values
+        } finally {
+            setBitrateLoading(false);
+        }
+    };
 
     return (
         <div className="card bg-base-200 shadow-xl h-full border border-base-300">
@@ -820,9 +1002,56 @@ export function StoragePanel() {
 
                         {/* Inline Calculator */}
                         <div className="border-t border-base-300 pt-3">
-                            <h3 className="text-xs text-base-content/50 uppercase tracking-wider mb-2 font-semibold">
-                                Calculator
-                            </h3>
+                            <div className="flex justify-between items-center mb-2">
+                                <h3 className="text-xs text-base-content/50 uppercase tracking-wider font-semibold">
+                                    Calculator
+                                </h3>
+                                <button
+                                    className="btn btn-ghost btn-xs gap-1 text-base-content/50 hover:text-primary"
+                                    onClick={handleRefreshBitrates}
+                                    disabled={bitrateLoading}
+                                    title="Sync bitrates from go2rtc on each Pi"
+                                >
+                                    {bitrateLoading ? (
+                                        <span className="loading loading-spinner loading-xs" />
+                                    ) : (
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3.5 h-3.5">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182" />
+                                        </svg>
+                                    )}
+                                    <span className="text-[10px]">Sync Bitrates</span>
+                                </button>
+                            </div>
+
+                            {/* Bitrate source indicator */}
+                            <div className="text-[10px] text-base-content/40 mb-2">
+                                {cameraBitrates ? (
+                                    <>
+                                        <span className="text-success">Synced from go2rtc</span>
+                                        {cameraBitrates.errors.length > 0 && (
+                                            <span className="text-warning ml-1">
+                                                ({cameraBitrates.errors.length} Pi unreachable)
+                                            </span>
+                                        )}
+                                        <span className="ml-1">— avg {avgBitrateMbps.toFixed(1)} Mbps</span>
+                                    </>
+                                ) : (
+                                    <span>Default: {avgBitrateMbps.toFixed(1)} Mbps/cam</span>
+                                )}
+                            </div>
+
+                            {/* Per-camera bitrate breakdown (shown after refresh) */}
+                            {cameraBitrates && Object.keys(cameraBitrates.camera_bitrates).length > 0 && (
+                                <div className="text-[10px] space-y-0.5 mb-2 bg-base-300/50 rounded p-1.5">
+                                    {Object.entries(cameraBitrates.camera_bitrates).map(([camId, mbps]) => (
+                                        <div key={camId} className="flex justify-between">
+                                            <span className="text-base-content/50">{camId}</span>
+                                            <span className="font-mono">{mbps} Mbps</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
                             <div className="flex gap-2 mb-2">
                                 <label className="flex flex-col text-xs flex-1">
                                     <span className="text-base-content/60 mb-1">Cameras</span>
@@ -854,7 +1083,7 @@ export function StoragePanel() {
                                     Estimated: <span className="font-mono font-bold">{formatBytes(estimatedBytes)}</span>
                                 </span>
                                 <span className={fits ? "text-success font-bold" : "text-error font-bold"}>
-                                    {fits ? "✓ Fits" : "✗ Won't fit"}
+                                    {fits ? "Fits" : "Won't fit"}
                                 </span>
                             </div>
                         </div>
@@ -866,10 +1095,14 @@ export function StoragePanel() {
 }
 ```
 
-> [!tip] Styling Notes
+> [!tip] Styling & UX Notes
 > - The card uses the same `bg-base-200 shadow-xl border border-base-300` as `SystemHealth`
 > - The header uses the same `text-sm uppercase tracking-widest font-bold` pattern
 > - Calculator is inline (always visible) as requested — no modal or collapse
+> - **"Sync Bitrates" button** queries go2rtc on each Pi (takes ~1-2s). Shows a spinner while loading.
+> - After sync: per-camera bitrate breakdown appears and the calculator uses actual values
+> - Before sync (or if Pis unreachable): falls back to `camera_bitrate_mbps` default from config
+> - Bitrate state is local to the component — refreshed on demand, not polled
 
 ---
 
@@ -985,8 +1218,11 @@ After implementing all steps, validate end-to-end:
 - [ ] Footer shows `StoragePanel` card between `SystemHealth` and `SessionHistory`
 - [ ] StoragePanel shows correct total, used, categories
 - [ ] EEG reserve shows 200 GB
-- [ ] Calculator: 4 cameras × 24 hours = ~64.8 GB, "Fits" in green
-- [ ] Calculator: 4 cameras × 168 hours (1 week) = ~453.6 GB, should still "Fit" at current usage
+- [ ] Calculator: 4 cameras x 24 hours = ~64.8 GB, "Fits" in green
+- [ ] Calculator: 4 cameras x 168 hours (1 week) = ~453.6 GB, should still "Fit" at current usage
+- [ ] Click "Sync Bitrates" — spinner appears, then per-camera breakdown shows (e.g., `pi_cam_0: 1.5 Mbps`)
+- [ ] If a Pi is off, "1 Pi unreachable" warning appears, offline cameras fall back to default
+- [ ] Calculator estimate updates to use synced bitrate values
 
 ### Edge Cases
 
@@ -1000,16 +1236,16 @@ After implementing all steps, validate end-to-end:
 | File | Action | Lines Changed (approx) |
 |------|--------|----------------------|
 | `config/config.yaml` | Modify | +10 lines |
-| `backend/storage_monitor.py` | **Create** | ~170 lines |
-| `backend/api.py` | Modify | +50 lines (2 endpoints + health update + init) |
+| `backend/storage_monitor.py` | **Create** | ~230 lines (includes `fetch_camera_bitrates()`) |
+| `backend/api.py` | Modify | +60 lines (3 endpoints + health update + init) |
 | `backend/daemon.py` | Modify | +25 lines (init + cap enforcement + shutdown) |
 | `frontend/src/types/api.ts` | Modify | +20 lines |
 | `frontend/src/api/client.ts` | Modify | +7 lines |
 | `frontend/src/hooks/useStoragePoll.ts` | **Create** | ~40 lines |
 | `frontend/src/utils/format.ts` | **Create** | ~12 lines |
-| `frontend/src/components/StoragePanel.tsx` | **Create** | ~150 lines |
+| `frontend/src/components/StoragePanel.tsx` | **Create** | ~190 lines (includes bitrate refresh) |
 | `frontend/src/App.tsx` | Modify | +30 lines |
-| **Total** | 4 new + 6 modified | ~515 lines |
+| **Total** | 4 new + 6 modified | ~580 lines |
 
 ---
 
