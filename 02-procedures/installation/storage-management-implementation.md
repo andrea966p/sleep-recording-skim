@@ -1331,14 +1331,14 @@ After implementing all steps, validate end-to-end:
 ### Frontend
 
 - [x] Header shows storage percentage bar (green at current ~11% usage) ✅ 2026-04-02
-- [ ] Footer shows `StoragePanel` card between `SystemHealth` and `SessionHistory`
-- [ ] StoragePanel shows correct total, used, categories
-- [ ] EEG reserve shows 200 GB
-- [ ] Calculator: 4 cameras x 24 hours = ~64.8 GB, "Fits" in green
-- [ ] Calculator: 4 cameras x 168 hours (1 week) = ~453.6 GB, should still "Fit" at current usage
-- [ ] Click "Sync Bitrates" — spinner appears, then per-camera breakdown shows (e.g., `pi_cam_0: 1.5 Mbps`)
+- [x] Footer shows `StoragePanel` card between `SystemHealth` and `SessionHistory` ✅ 2026-04-02
+- [x] StoragePanel shows correct total, used, categories ✅ 2026-04-02
+- [x] EEG reserve shows 200 GB ✅ 2026-04-02
+- [x] Calculator: 4 cameras x 24 hours = ~64.8 GB, "Fits" in green ✅ 2026-04-02
+- [x] Calculator: 4 cameras x 168 hours (1 week) = ~453.6 GB, should still "Fit" at current usage ✅ 2026-04-02
+- [x] Click "Sync Bitrates" — spinner appears, then per-camera breakdown shows (e.g., `pi_cam_0: 1.5 Mbps`) ✅ 2026-04-02
 - [ ] If a Pi is off, "1 Pi unreachable" warning appears, offline cameras fall back to default
-- [ ] Calculator estimate updates to use synced bitrate values
+- [x] Calculator estimate updates to use synced bitrate values ✅ 2026-04-02
 
 ### Edge Cases
 
