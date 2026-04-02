@@ -587,10 +587,20 @@ curl -s http://127.0.0.1:8585/api/storage/camera-bitrates | python3 -m json.tool
 
 ### 4.1 Import
 
-Add at the top with the other imports:
+Add after the existing local imports (`from manual_session_manager ...`) and before `from api import ...`:
 
 ```python
 from storage_monitor import StorageMonitor
+```
+
+The import block should look like:
+```python
+from radiens_poller import RadiensPoller, RadiensStatus
+from frigate_controller import FrigateController
+from session_manager import SessionManager
+from manual_session_manager import ManualSessionManager
+from storage_monitor import StorageMonitor              # <-- NEW
+from api import app, init_api
 ```
 
 ### 4.2 Initialize in `__init__()`
