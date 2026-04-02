@@ -48,6 +48,7 @@ Production IPs, usernames, paths, and settings.
 ### Procedures
 - [[02-procedures/installation/new-pi-setup|New Pi Setup]]
 - [[02-procedures/session-recording-workflow|Session Recording Workflow]]
+- [[02-procedures/installation/storage-management-implementation|Storage Management System]] ✅
 
 ### Troubleshooting
 
@@ -118,4 +119,4 @@ ffprobe rtsp://192.168.0.11:8554/pi_cam_0
 
 ---
 
-*Last updated: 2026-04-01*
+*Last updated: 2026-04-02*

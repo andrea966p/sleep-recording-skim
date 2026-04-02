@@ -1,7 +1,8 @@
 ---
 tags: [procedure, implementation, storage, monitoring]
 created: 2026-04-01
-status: draft
+completed: 2026-04-02
+status: completed
 ---
 
 # Storage Management System — Implementation Guide
@@ -1337,7 +1338,7 @@ After implementing all steps, validate end-to-end:
 - [x] Calculator: 4 cameras x 24 hours = ~64.8 GB, "Fits" in green ✅ 2026-04-02
 - [x] Calculator: 4 cameras x 168 hours (1 week) = ~453.6 GB, should still "Fit" at current usage ✅ 2026-04-02
 - [x] Click "Sync Bitrates" — spinner appears, then per-camera breakdown shows (e.g., `pi_cam_0: 1.5 Mbps`) ✅ 2026-04-02
-- [ ] If a Pi is off, "1 Pi unreachable" warning appears, offline cameras fall back to default
+- [x] If a Pi is off, "1 Pi unreachable" warning appears, offline cameras fall back to default ✅ 2026-04-02
 - [x] Calculator estimate updates to use synced bitrate values ✅ 2026-04-02
 
 ### Edge Cases
