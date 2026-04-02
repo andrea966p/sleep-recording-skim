@@ -1,9 +1,9 @@
 ---
 tags: [infrastructure, session-daemon, architecture]
 created: 2026-02-20
-updated: 2026-03-07
+updated: 2026-04-02
 status: production
-version: "2.0"
+version: "3.0"
 ---
 
 # Session Daemon Architecture
@@ -51,6 +51,9 @@ The **NeuroSurveillance Session Daemon** synchronizes Frigate video recording wi
                            │  │  5. Publishes OFF to MQTT        │        │
                            │  │  6. Calls Frigate export API     │        │
                            │  │  7. Organizes MP4 + JSON sidecar │        │
+                           │  │  8. StorageMonitor (30s poll)    │        │
+                           │  │     - Blocks recordings if       │        │
+                           │  │       disk < 200 GB EEG reserve  │        │
                            │  │                                  │        │
                            │  │  HTTP API on 127.0.0.1:8585      │        │
                            │  │  (metadata input from UI)        │        │
@@ -60,6 +63,7 @@ The **NeuroSurveillance Session Daemon** synchronizes Frigate video recording wi
                            │  │  DESKTOP UI (Tauri + React)      │        │
                            │  │  Polls daemon API every 1.5s     │        │
                            │  │  Polls health every 5s           │        │
+                           │  │  Polls storage every 10s         │        │
                            │  │  Camera snapshots every 1s       │        │
                            │  └──────────────────────────────────┘        │
                            └──────────────────────────────────────────────┘
@@ -391,7 +395,65 @@ skimlab ALL=(ALL) NOPASSWD: /usr/bin/chown skimlab\:skimlab /opt/neurosurveillan
             └── 2602201430_HETCF3R1_basal_session.json
 ```
 
-### 7. Main Daemon (`daemon.py`)
+### 7. Storage Monitor (`storage_monitor.py`)
+
+Monitors disk usage in a background thread and enforces EEG/EMG disk reservation. The 1.9 TB NVMe SSD is shared between Frigate video (~64 GB/day at 4 cameras, 1.7 Mbps each) and XDAQ EEG/EMG data. Without protection, long recording sessions could fill the disk and corrupt EEG data.
+
+| Detail | Value |
+|--------|-------|
+| **Poll interval** | 30 seconds (configurable via `storage.poll_interval`) |
+| **Disk check** | `os.statvfs("/")` — instant syscall |
+| **Category scan** | `os.scandir` walk of configured paths, cached with 5-minute TTL |
+| **Cache update** | Atomic dict reference swap (no locks) |
+| **EEG reserve** | 200 GB (configurable via `storage.eeg_reserve_gb`) |
+| **Warn threshold** | 75% disk used |
+| **Critical threshold** | 90% disk used |
+
+**Cap enforcement (fail-open):**
+
+- Blocks **new** recordings only — never interrupts ongoing recordings
+- EEG/EMG recording continues regardless (Radiens is uncontrolled)
+- Recovery is automatic: when space is freed, the next session start succeeds
+- If no cached data exists yet (e.g. daemon just started), recording is **allowed** (fail-open)
+
+**Enforcement points in `daemon.py`:**
+
+1. `_handle_session_start()` — checks `can_start_recording(num_cameras)` before starting any Frigate recording. If denied, the entire session start is blocked.
+2. `_handle_external_recording_on()` — checks before allowing a manual recording. If denied, publishes `OFF` to cancel the Frigate-initiated recording.
+
+**Bitrate sync (`fetch_camera_bitrates`):**
+
+On-demand function (called via `GET /api/storage/camera-bitrates`) that queries go2rtc APIs on the Pis to detect actual camera bitrates:
+
+1. Fetches `GET http://{PI_IP}:1984/api/streams` from each Pi
+2. Parses `--bitrate` from `rpicam-vid` exec commands in stream configs
+3. Returns per-camera bitrate map + default fallback
+4. Used by the frontend calculator for accurate storage estimates
+
+**Status snapshot (`get_status()`):**
+
+```json
+{
+  "total_bytes": 1920383410176,
+  "used_bytes": 864172534579,
+  "available_bytes": 1056210875597,
+  "used_percent": 45.0,
+  "categories": {
+    "recordings": {"path": "/srv/frigate/storage/recordings", "bytes": 17179869184},
+    "exports": {"path": "/srv/frigate/storage/exports", "bytes": 91268055040},
+    "clips": {"path": "/srv/frigate/storage/clips", "bytes": 82837504},
+    "sessions": {"path": "/opt/neurosurveillance/sessions", "bytes": 524288}
+  },
+  "eeg_reserve_bytes": 214748364800,
+  "effective_available_bytes": 841462510797,
+  "status_level": "ok",
+  "camera_bitrate_mbps": 1.7,
+  "can_record": true,
+  "last_updated": 1743580800.0
+}
+```
+
+### 8. Main Daemon (`daemon.py`)
 
 Orchestrates all components. Entry point for the systemd service.
 
