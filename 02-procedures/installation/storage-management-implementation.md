@@ -38,9 +38,9 @@ Category directory scans (`os.scandir` walk) are the slow part — they run in t
 
 ## Prerequisites
 
-- [ ] Working NeuroSurveillance backend (`daemon.py` running)
-- [ ] Working frontend (`npm run dev` or Tauri build)
-- [ ] Access to `/srv/frigate/storage/` and `/opt/neurosurveillance/sessions/`
+- [x] Working NeuroSurveillance backend (`daemon.py` running) ✅ 2026-04-02
+- [x] Working frontend (`npm run dev` or Tauri build) ✅ 2026-04-02
+- [x] Access to `/srv/frigate/storage/` and `/opt/neurosurveillance/sessions/` ✅ 2026-04-02
 
 ---
 
