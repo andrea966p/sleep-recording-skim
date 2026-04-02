@@ -97,7 +97,7 @@ No errors related to the `storage` section should appear. The daemon won't *use*
 
 This is the core backend module. It has no external dependencies beyond Python stdlib.
 
-### 2.1 Class Structure
+Create the file and paste the **entire contents** below:
 
 ```python
 """
@@ -110,8 +110,11 @@ so the API thread never reads partial data.
 
 import logging
 import os
+import re
 import threading
 import time
+import urllib.request
+import json as json_mod
 
 logger = logging.getLogger(__name__)
 
@@ -139,6 +142,10 @@ class StorageMonitor:
         # Background thread
         self._thread: threading.Thread | None = None
         self._stop_event = threading.Event()
+
+    # ------------------------------------------------------------------
+    # Background polling (disk usage)
+    # ------------------------------------------------------------------
 
     def start(self):
         """Start the background polling thread."""
@@ -242,6 +249,10 @@ class StorageMonitor:
             pass
         return total
 
+    # ------------------------------------------------------------------
+    # API: storage status (called by GET /api/storage)
+    # ------------------------------------------------------------------
+
     def get_status(self) -> dict:
         """Return cached storage status for the API. Instant (no disk I/O)."""
         if self._cache is None:
@@ -260,6 +271,10 @@ class StorageMonitor:
             "can_record": True,
             "last_updated": 0,
         }
+
+    # ------------------------------------------------------------------
+    # Recording cap enforcement (called by daemon before starting sessions)
+    # ------------------------------------------------------------------
 
     def can_start_recording(self, num_cameras: int = 4) -> tuple[bool, str]:
         """Check if a new recording session is allowed.
@@ -287,20 +302,15 @@ class StorageMonitor:
             )
 
         return True, ""
-```
 
-### 2.2 Add `fetch_camera_bitrates()` Method
+    # ------------------------------------------------------------------
+    # On-demand: fetch actual bitrates from go2rtc on each Pi
+    # (called by GET /api/storage/camera-bitrates when user clicks
+    #  "Sync Bitrates" in the UI)
+    # ------------------------------------------------------------------
 
-This method is called on-demand (not in the background loop) when the user clicks "Refresh Bitrates" in the UI. It queries each Pi's go2rtc API and parses the actual bitrate from the stream exec commands.
-
-Add this to the `StorageMonitor` class:
-
-```python
     def fetch_camera_bitrates(self) -> dict:
         """Query go2rtc APIs on each Pi to get actual per-camera bitrates.
-
-        Called on-demand via the /api/storage/camera-bitrates endpoint
-        when the user clicks the "Refresh Bitrates" button.
 
         Returns:
             {
@@ -310,10 +320,6 @@ Add this to the `StorageMonitor` class:
                 "errors": ["http://192.168.0.12:1984: Connection refused"]
             }
         """
-        import re
-        import urllib.request
-        import json as json_mod
-
         go2rtc_apis = self._config.get("storage", {}).get("go2rtc_apis", [])
         default_mbps = self.camera_bitrate_mbps
 
@@ -346,8 +352,6 @@ Add this to the `StorageMonitor` class:
                 for stream_name, stream_info in streams.items():
                     producers = stream_info.get("producers", [])
                     if not producers:
-                        # No active producers — try to parse from config
-                        # Fallback: check if there's a "url" at stream level
                         continue
 
                     for producer in producers:
@@ -385,14 +389,14 @@ Add this to the `StorageMonitor` class:
         }
 ```
 
-> [!tip] How go2rtc API works
+> [!tip] How go2rtc bitrate sync works
 > `GET http://192.168.0.11:1984/api/streams` returns the configured streams.
 > Each stream's producer has a `url` field containing the exec command:
 > `exec:rpicam-vid ... --bitrate 1500000 ...`
 > We parse `--bitrate NNNNNN` with a regex and convert to Mbps.
 > If a Pi is unreachable (timeout 5s), we log the error and fall back to the default.
 
-### 2.3 Key Design Decisions
+### Key Design Decisions
 
 | Decision | Rationale |
 |----------|-----------|
@@ -405,9 +409,10 @@ Add this to the `StorageMonitor` class:
 **Validation:**
 ```bash
 # Quick test: import and run manually
-cd /opt/neurosurveillance
+# The daemon runs from session-daemon/ which is a symlink to backend/
+cd /opt/neurosurveillance/session-daemon
 python3 -c "
-from backend.storage_monitor import StorageMonitor
+from storage_monitor import StorageMonitor
 sm = StorageMonitor({'storage': {'paths': {'recordings': '/srv/frigate/storage/recordings'}, 'eeg_reserve_gb': 200}})
 sm.refresh()
 import json; print(json.dumps(sm.get_status(), indent=2))
