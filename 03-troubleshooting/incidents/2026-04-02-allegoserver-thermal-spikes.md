@@ -2,7 +2,7 @@
 tags: [troubleshooting, incident, nvr, thermal, cpu, allegoserver]
 date: 2026-04-02
 severity: high
-status: identified - fix pending
+status: resolved
 affected: [e10ubuntu, nvr-server]
 ---
 
@@ -10,7 +10,7 @@ affected: [e10ubuntu, nvr-server]
 - **Date/Time:** 2026-04-02 ~16:52–18:00 GMT
 - **Duration:** Recurring — spikes every ~35–40 minutes, each lasting ~2.5 minutes
 - **Severity:** High — CPU package reaching 87–92°C
-- **Status:** Root cause identified, fix pending application
+- **Status:** Resolved (2026-04-03)
 
 ## Symptoms
 
@@ -75,38 +75,38 @@ Combined with the NUC Pro 15's single small fan and the baseline load from Friga
 
 **Secondary factor:** The CPU RAPL power limit is set to 200W (uncapped), allowing unconstrained boost. Capping it to 20W would keep temperatures under 80°C.
 
-## Resolution (Pending)
+## Resolution
 
-**1. Cap CPU power via Intel RAPL (most effective):**
+### Applied 2026-04-03
+
+**1. CPU power cap via Intel RAPL (20W):**
+- Systemd service: `/etc/systemd/system/cpu-power-cap.service`
+- Caps CPU to 20W sustained (TDP spec is 28W, was uncapped at 200W)
+- Persists across reboots via `systemctl enable cpu-power-cap.service`
+- **Result:** CPU package dropped from 68–74°C baseline to ~58°C. Overnight Netdata alerts stopped.
+
+**Verify with:**
 ```bash
-echo 20000000 | sudo tee /sys/class/powercap/intel-rapl/intel-rapl:0/constraint_0_power_limit_uw
+cat /sys/class/powercap/intel-rapl/intel-rapl:0/constraint_0_power_limit_uw
+# Expected: 20000000
+systemctl status cpu-power-cap.service
+# Expected: active (exited)
 ```
 
-Make persistent at boot:
-```bash
-sudo tee /etc/systemd/system/cpu-power-cap.service << 'EOF'
-[Unit]
-Description=Intel RAPL CPU power cap
-After=multi-user.target
+### Not applied (not currently needed)
 
-[Service]
-Type=oneshot
-ExecStart=/bin/sh -c 'echo 20000000 > /sys/class/powercap/intel-rapl/intel-rapl:0/constraint_0_power_limit_uw'
-RemainAfterExit=yes
+**2. allegoserver cpulimit** — not needed while Allego is not running. The RAPL cap limits thermal impact even if allegoserver busy-polls again (~70°C instead of 90°C).
 
-[Install]
-WantedBy=multi-user.target
-EOF
-sudo systemctl enable --now cpu-power-cap.service
-```
+**3. Long-term:** Report busy-poll issue to NeuroNexus/Allego — idle hardware detection should use udev events, not a tight `/sys/bus/usb/devices` scanning loop.
 
-**2. Throttle allegoserver when idle:**
-```bash
-sudo apt-get install -y cpulimit
-cpulimit -p <PID> -l 20 &   # Limit to 20% CPU when not recording
-```
+### Follow-up: overnight alerts (2026-04-03 00:00–08:07)
 
-**3. Long-term:** Report busy-poll issue to Allego — idle hardware detection should use udev events, not a tight scanning loop.
+After allegoserver was killed on Apr 2, Netdata continued alerting overnight because:
+- RAPL cap had not yet been applied (still 200W)
+- Baseline temp was 68–74°C from normal load (4x FFmpeg QSV + Frigate + GNOME + RustDesk)
+- Brief transient spikes touched 75°C (the warning hysteresis threshold), keeping the alarm in WARNING state
+- Alarm finally cleared at 08:07 after a sustained dip below 75°C
+- No allegoserver involvement — purely a thermal baseline issue resolved by the RAPL cap
 
 ## Notes
 - ASUS NUC Pro 15 fan is fully BIOS-controlled — no `/sys/class/hwmon/hwmon*/fan*_max` available
