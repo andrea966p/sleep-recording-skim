@@ -1,5 +1,3 @@
-# 🔬 R&D Log Trials & Failures
-
 filters:
   and:
     - note["base"] == link("🔬 R&D Log Trials & Failures.base")
