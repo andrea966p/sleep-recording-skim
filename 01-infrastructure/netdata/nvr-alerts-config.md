@@ -451,3 +451,8 @@ Add `delay: up 10m` to the alert definition to require the condition to persist 
 | Date | Change | Notes |
 |------|--------|-------|
 | 2026-04-01 | Initial configuration | 227 defaults silenced, 16 NVR alerts, Slack notifications |
+
+## Related
+
+- [[06-references/monitoring-diagnostics|Monitoring Diagnostics Reference]] — API commands for querying alerts and metrics
+- [[02-procedures/installation/monitoring-setup|Monitoring Setup Procedure]]

@@ -71,6 +71,7 @@ Production IPs, usernames, paths, and settings.
 - [[05-experiments/active/|Active Experiments]]
 
 ### References
+- [[06-references/monitoring-diagnostics|Monitoring Diagnostics]] — Netdata/Uptime Kuma query commands for troubleshooting
 - [[06-references/command-cheatsheet|Command Cheatsheet]]
 - [[06-references/video-parameters|Video Parameters]]
 

@@ -24,7 +24,7 @@ Quick-reference for querying the NeuroSurveillance monitoring stack. For setup p
 - **NVR config**: `/etc/netdata/netdata.conf` (minimal — just `enabled alarms = nvr_*`)
 - **NVR alerts**: `/etc/netdata/health.d/nvr-alerts.conf`
 - **Uptime Kuma compose**: `/opt/uptime-kuma/docker-compose.yml`
-- **Uptime Kuma data**: `/opt/uptime-kuma/data/kuma.db`
+- **Uptime Kuma data**: `/app/data/kuma.db` inside container (host: `/opt/uptime-kuma/data/kuma.db`)
 
 ---
 
@@ -170,14 +170,14 @@ for k in sorted(charts):
 
 ## Uptime Kuma Commands
 
-Database: `/opt/uptime-kuma/data/kuma.db` (SQLite3). Uptime Kuma has no unauthenticated REST API — query the DB directly.
+Database: SQLite inside the container. Uptime Kuma has no unauthenticated REST API — query via `docker exec`.
 
 ```bash
 # List all monitors with type and URL
-sqlite3 /opt/uptime-kuma/data/kuma.db "SELECT id, name, type, url, interval FROM monitor WHERE active=1;"
+docker exec uptime-kuma sqlite3 /app/data/kuma.db "SELECT id, name, type, url, interval FROM monitor WHERE active=1;"
 
 # Current status of all monitors (1=UP, 0=DOWN, 2=PENDING, 3=MAINTENANCE)
-sqlite3 /opt/uptime-kuma/data/kuma.db "
+docker exec uptime-kuma sqlite3 /app/data/kuma.db "
 SELECT m.name, h.status, h.msg, h.time
 FROM monitor m
 JOIN heartbeat h ON h.monitor_id = m.id
@@ -186,7 +186,7 @@ ORDER BY m.id;
 "
 
 # Recent heartbeats for a specific monitor (last 10)
-sqlite3 /opt/uptime-kuma/data/kuma.db "
+docker exec uptime-kuma sqlite3 /app/data/kuma.db "
 SELECT time, status, msg, ping
 FROM heartbeat
 WHERE monitor_id = (SELECT id FROM monitor WHERE name LIKE '%Frigate%')
@@ -194,7 +194,7 @@ ORDER BY time DESC LIMIT 10;
 "
 
 # Last failure per monitor
-sqlite3 /opt/uptime-kuma/data/kuma.db "
+docker exec uptime-kuma sqlite3 /app/data/kuma.db "
 SELECT m.name, h.time, h.msg
 FROM monitor m
 JOIN heartbeat h ON h.monitor_id = m.id
@@ -204,7 +204,7 @@ ORDER BY m.id;
 "
 
 # Uptime percentage (last 24h)
-sqlite3 /opt/uptime-kuma/data/kuma.db "
+docker exec uptime-kuma sqlite3 /app/data/kuma.db "
 SELECT m.name,
   ROUND(100.0 * SUM(CASE WHEN h.status=1 THEN 1 ELSE 0 END) / COUNT(*), 2) AS uptime_pct,
   COUNT(*) AS checks
@@ -257,7 +257,7 @@ cat /sys/class/powercap/intel-rapl/intel-rapl:0/constraint_0_power_limit_uw
 
 ```bash
 # 1. Which service? Check Uptime Kuma
-sqlite3 /opt/uptime-kuma/data/kuma.db "
+docker exec uptime-kuma sqlite3 /app/data/kuma.db "
 SELECT m.name, h.status, h.msg, h.time FROM monitor m
 JOIN heartbeat h ON h.monitor_id=m.id
 WHERE h.time=(SELECT MAX(h2.time) FROM heartbeat h2 WHERE h2.monitor_id=m.id)
@@ -306,7 +306,7 @@ for row in d['data'][-5:]:
 
 ```bash
 # 1. Which camera? Check Uptime Kuma Pi monitors
-sqlite3 /opt/uptime-kuma/data/kuma.db "
+docker exec uptime-kuma sqlite3 /app/data/kuma.db "
 SELECT m.name, h.status, h.msg, h.time FROM monitor m
 JOIN heartbeat h ON h.monitor_id=m.id
 WHERE m.name LIKE '%Pi%'
@@ -323,11 +323,10 @@ curl -s http://192.168.0.12:1984/api/streams | python3 -m json.tool
 # 4. Check Frigate camera status
 curl -s http://localhost:5000/api/stats | python3 -c "
 import json,sys
-stats=json.load(sys.stdin)
-for cam,data in stats.items():
-    if cam not in ['detectors','service']:
-        fps=data.get('camera_fps',0)
-        print(f'{cam}: {fps} fps {\"OK\" if fps>0 else \"<<< NO FRAMES\"} ')
+cams=json.load(sys.stdin).get('cameras',{})
+for cam,data in cams.items():
+    fps=data.get('camera_fps',0)
+    print(f'{cam}: {fps} fps {\"OK\" if fps>0 else \"<<< NO FRAMES\"} ')
 "
 ```
 
