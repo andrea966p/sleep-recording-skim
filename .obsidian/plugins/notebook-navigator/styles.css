@@ -2611,10 +2611,6 @@ body {
     cursor: pointer;
     box-shadow: none !important;
     outline: none;
-    transition:
-        background-color 120ms ease,
-        filter 120ms ease,
-        box-shadow 120ms ease;
 }
 
 .nn-navigation-calendar-period-button {
@@ -2679,7 +2675,6 @@ body {
     color: var(--nn-theme-foreground-muted);
     z-index: 0;
     flex: 0 0 auto;
-    transition: opacity 120ms ease;
 }
 
 .nn-navigation-calendar-month-help {
@@ -3842,7 +3837,7 @@ body {
     top: 8px; /* Default: 8px for normal mode */
     inset-inline-end: 8px;
     height: 20px;
-    display: none;
+    display: flex;
     background: var(--nn-theme-quick-actions-bg);
     border: 1px solid var(--nn-theme-quick-actions-border);
     border-radius: min(12px, var(--nn-theme-quick-actions-border-radius));
@@ -3889,12 +3884,6 @@ body {
 .nn-quick-actions-panel.nn-compact-mode[data-title-rows='2'],
 .nn-quick-actions-panel.nn-compact-mode[data-has-tags='true'] {
     top: var(--nn-file-padding-vertical-compact);
-}
-
-/* Panel appears when hovering anywhere on file row */
-.nn-desktop .nn-file:hover .nn-quick-actions-panel,
-.nn-desktop.nn-single-pane .nn-file:hover .nn-quick-actions-panel {
-    display: flex;
 }
 
 /* Second line container - holds date and preview text */
@@ -6094,6 +6083,42 @@ body.nn-resizing {
 
 .is-mobile .modal.nn-property-keys-modal .nn-property-keys-footer {
     padding-top: var(--size-2-3);
+}
+/* Source: src/styles/sections/modal-settings-transfer.css */
+
+/* ========================================================================
+   Settings transfer modal
+   ======================================================================== */
+
+.modal.nn-settings-transfer-modal {
+    width: min(720px, calc(100vw - 80px));
+    max-width: min(720px, calc(100vw - 80px));
+}
+
+.modal.nn-settings-transfer-modal .modal-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.nn-settings-transfer-editor-setting {
+    margin-bottom: 0;
+}
+
+.nn-settings-transfer-editor {
+    min-height: 280px;
+    margin-top: 8px;
+    margin-bottom: 0;
+    resize: vertical;
+    font-family: var(--font-monospace);
+    line-height: 1.5;
+}
+
+.is-mobile .modal.nn-settings-transfer-modal {
+    max-width: calc(100vw - 24px);
+}
+
+.is-mobile .modal.nn-settings-transfer-modal .nn-settings-transfer-editor {
+    min-height: 220px;
 }
 /* Source: src/styles/sections/layout-virtual-list.css */
 
