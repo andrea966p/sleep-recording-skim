@@ -203,4 +203,3 @@ Keep these ready but don't show by default:
 - Check Uptime Kuma status page: `http://192.168.0.50:3001/status/neurosurveillance`.
 - `curl http://127.0.0.1:8585/api/health` on the NVR — 200 OK means daemon + Radiens + MQTT all connected.
 - Re-skim `06-references/progress-meeting-2026-03-12.md` the night before — most of slide 6 and 9 come from it verbatim.
-3e54r6ty7ert
