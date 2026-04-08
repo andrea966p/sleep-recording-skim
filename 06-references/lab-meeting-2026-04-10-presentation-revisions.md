@@ -260,5 +260,7 @@ You asked for the **axes of comparison** between this system and published ones,
 **Papers to start with:**
 - MouseVUER — https://www.nature.com/articles/s41598-024-52788-9
 - Salem et al. — https://www.sciencedirect.com/science/article/pii/S2468067220300699
-- OpenVEEG (2018)
+- OpenVEEG (2018) — https://www.sciencedirect.com/science/article/pii/S0920121118301244
 - SIESTA (2025), SAGER (2025), Spyglass (2024), FERAL (2025) — already referenced in `06-references/progress-meeting-2026-03-12.md`
+  https://journals.sagepub.com/doi/10.1177/07487304251336649?url_ver=Z39.88-2003&rfr_id=ori:rid:crossref.org&rfr_dat=cr_pub%20%200pubmed
+  
