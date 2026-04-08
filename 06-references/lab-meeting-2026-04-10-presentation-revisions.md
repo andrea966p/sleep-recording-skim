@@ -148,14 +148,31 @@ related: [[lab-meeting-2026-04-10-presentation-brief]]
   5. **EEG sync** (none / software / hardware)
   6. **Open source** (yes / partial / no)
 - Highlight the "ours" row in accent color
-- MouseVUER-specific notes to include **as a callout below the table** (Andrea's own observations, 2026-04-08):
-  > "MouseVUER uses USB cameras, which means a PC must physically sit next to the cage. USB bandwidth limits how many cameras one PC can drive — typically 2–3 before the motherboard's USB controller saturates. Scaling to 4+ chambers requires multiple PCs. Storage requirements are also high, installation documentation is minimal, and several software dependencies are outdated."
-- Placeholder for Andrea's own lit-research findings — leave empty rows for Salem et al. and OpenVEEG to be filled in after Andrea searches the literature.
+- **Data sourced from** `Comparative Analysis of Behavioral Research Acquisition Systems.md` (2026-04-08).
 
-**Papers to research (Andrea will do this, not the AI):**
-- **Salem et al.** — [https://www.sciencedirect.com/science/article/pii/S2468067220300699](https://www.sciencedirect.com/science/article/pii/S2468067220300699)
-- **OpenVEEG** (2018)
-- **MouseVUER** — [https://www.nature.com/articles/s41598-024-52788-9](https://www.nature.com/articles/s41598-024-52788-9)
+**Proposed expanded table:**
+
+| System | Camera architecture | Cost/chamber | Max chambers per host | EEG sync | Open source |
+|---|---|---|---|---|---|
+| **NeuroSurveillance (ours)** | **CSI → H.264 → RTSP, no intermediate ffmpeg** | **~$294** | **Unlimited (add Pi nodes)** | **Software ~1 s + ±2 s buffer; XDAQ hardware sync planned** | **Yes** |
+| Salem 2020 | Pi cameras, custom UDP/TCP master–slave protocol (not RTSP) | ~$86 (24-cam build, $2,073 total) | 24 on one master PC | Frame sync within 33 ms; ~170 ms preview latency; no EEG coupling | Yes (Python) |
+| OpenVEEG (2018) | USB webcams or analog SDI via BlackMagic PCIe cards | ~$400 for storage alone; "~1/5 of commercial" | Limited by DAQ + capture card inputs on one workstation | Sub-ms via LSL/NTP (≤33 ms video↔EEG); **hardcoded** to National Instruments DAQ | Yes (C++/Python) |
+| MouseVUER (2024) | USB 3.0 Intel RealSense D435 depth cameras | ~$200+ camera **+ dedicated mini-PC or custom SBC module per enclosure** | 1 camera per compression unit (hard ceiling) | NTP clock over RTSP aligns depth ↔ RGB only, no EEG | Yes (SDK + CAD) |
+| SIESTA (2025) | Post-hoc only — reads `.edf` files | N/A | N/A | No live acquisition | Yes (Python web app) |
+
+**Callouts to place below the table:**
+
+> **MouseVUER scales poorly.** Each camera needs its own USB 3.0 bus + dedicated SBC or mini-PC to handle compression before handing off to a server. Scaling to 4+ chambers = 4+ PCs. Our architecture runs 4 chambers off a single NUC at 9–12% CPU — the Pi nodes just stream, the NVR does the work.
+
+> **Salem 2020 is cheaper per chamber (~$86 vs our ~$294) but tightly coupled.** Custom Python master/slave protocol over raw sockets — no standard RTSP, no loose coupling, no EEG integration. Metadata is global to the whole rig, not per-chamber.
+
+> **OpenVEEG has tighter sync (sub-ms via LSL) but is hardcoded to National Instruments DAQs.** Our observer pattern is hardware-agnostic — swap one module to support any acquisition API.
+
+**Papers referenced** (source: `Comparative Analysis of Behavioral Research Acquisition Systems.md`):
+- **Salem et al. 2020** — https://www.sciencedirect.com/science/article/pii/S2468067220300699
+- **OpenVEEG** — https://www.sciencedirect.com/science/article/pii/S0920121118301244
+- **MouseVUER** — https://www.nature.com/articles/s41598-024-52788-9
+- **SIESTA** — https://journals.sagepub.com/doi/10.1177/07487304251336649
 
 ---
 
@@ -210,57 +227,104 @@ These are adjustments I'd recommend to keep the deck flowing naturally after the
 
 ---
 
-## Comparison points for literature research
+## Comparison axes — completed (2026-04-08)
 
-You asked for the **axes of comparison** between this system and published ones, so you can drive your own lit search efficiently. For each axis, the value this system delivers is listed; find papers and compare:
+Populated from `Comparative Analysis of Behavioral Research Acquisition Systems.md`. Each axis shows what our system delivers and what each published system does on the same axis.
 
-1. **Camera architecture** — CSI / IP streaming vs USB
-   - Ours: CSI cameras on Pi 5, RTSP over LAN, no PC required per cage
-   - Compare against: USB-based systems (MouseVUER), IP-camera systems, GigE Vision systems
-2. **Cost per chamber**
-   - Ours: ~$294/chamber (at 4 chambers; $1,174 total ÷ 4)
-   - Compare against: per-cage cost in each paper
-3. **Chambers per host PC** (scalability ceiling)
-   - Ours: 4 current, architecture scales to 8+ by adding Pi nodes; single NVR PC handles all of them
-   - Compare against: systems that need a PC per cage or per few cages
-4. **EEG acquisition coupling**
-   - Ours: API-based, observer pattern, acquisition-system agnostic (swap one module)
-   - Compare against: systems hardcoded to specific acquisition hardware or requiring EEG software modifications
-5. **Sync mechanism and tightness**
-   - Ours: software, ~1 s latency, ±2 s buffer (hardware sync via XDAQ planned)
-   - Compare against: none / software timestamps / hardware triggers / TTL sync / PTP
-6. **Multi-chamber independent metadata**
-   - Ours: 4 independent per-chamber state machines, metadata per chamber, parallel experiments supported
-   - Compare against: single-experiment-per-rig assumption in most tools
-7. **Fail-safe / failure-mode design**
-   - Ours: recording persists ON if daemon crashes; metadata optional; storage reserve guarantees EEG never starved
-   - Compare against: systems that abort on any subsystem failure
-8. **Long-term stability (multi-day / circadian)**
-   - Ours: 30+ day stress test passed; hardware watchdog + crash canary + ping-monitor; documented incidents
-   - Compare against: systems tested only for hours, or with no published uptime data
-9. **Monitoring and alerting**
-   - Ours: 16 Netdata alerts + 7 Uptime Kuma monitors + Slack integration + public status page
-   - Compare against: systems with no operational monitoring story
-10. **Documentation & reproducibility**
-    - Ours: 38+ vault pages including golden configs, incident reports, step-by-step procedures, variable system for production values
-    - Compare against: papers with minimal setup documentation, GitHub repos with only code
-11. **Orchestration pattern**
-    - Ours: MQTT pub/sub → loose coupling, components can be restarted independently
-    - Compare against: monolithic or tightly-coupled control software
-12. **Hardware sync upgrade path**
-    - Ours: planned XDAQ GPIO wiring → per-frame alignment; JSON sidecar schema already reserves the fields
-    - Compare against: systems with no upgrade path or requiring full rewrites
-13. **Open-source status and licensing**
-    - Ours: Python daemon + React frontend on GitHub (private now, public-ready)
-    - Compare against: closed-source commercial, partial-source research code, fully open
-14. **Storage management and retention policy**
-    - Ours: 7-day rolling retention, 200 GB hard reserve, automatic NAS offload (pending Tailscale)
-    - Compare against: manual cleanup, no retention logic, no offload
+### 1. Camera architecture
+- **Ours:** CSI cameras on headless Pi 5, H.264 bitstream piped over MPEG-TS through stdout to go2rtc, RTSP over LAN, no ffmpeg middleman.
+- **MouseVUER:** USB 3.0 Intel RealSense D435 depth cameras.
+- **Salem 2020:** Raspberry Pi cameras, but custom Python master/slave protocol over raw UDP/TCP sockets (not RTSP).
+- **OpenVEEG:** generic USB webcams or analog SDI cameras routed through BlackMagic PCIe capture cards.
 
-**Papers to start with:**
-- MouseVUER — https://www.nature.com/articles/s41598-024-52788-9
-- Salem et al. — https://www.sciencedirect.com/science/article/pii/S2468067220300699
-- OpenVEEG (2018) — https://www.sciencedirect.com/science/article/pii/S0920121118301244
-- SIESTA (2025), SAGER (2025), Spyglass (2024), FERAL (2025) — already referenced in `06-references/progress-meeting-2026-03-12.md`
-  https://journals.sagepub.com/doi/10.1177/07487304251336649?url_ver=Z39.88-2003&rfr_id=ori:rid:crossref.org&rfr_dat=cr_pub%20%200pubmed
-  
+### 2. Cost per chamber
+- **Ours:** ~$294/chamber ($1,174 ÷ 4).
+- **Salem 2020:** ~$86/chamber ($2,073.52 total for a 24-camera build) — **cheaper** than ours.
+- **OpenVEEG:** "~1/5 of commercial", ~$400 just for 8 TB of storage.
+- **MouseVUER:** >$200 for the RealSense alone, **plus** a dedicated HP EliteDesk mini-PC or a custom Power & Control Module housing multiple SBCs per enclosure.
+
+### 3. Chambers per host PC (scalability ceiling)
+- **Ours:** 4 chambers on a single NUC at 9–12% CPU (Intel QSV hardware decode). Scales by adding Pi nodes — the NVR handles them all.
+- **Salem 2020:** 24 cameras on one master PC.
+- **MouseVUER:** **one dedicated SBC or client PC per camera** for compression before the server — hard scalability ceiling.
+- **OpenVEEG:** limited by physical DAQ/capture card inputs on one workstation.
+
+### 4. EEG acquisition coupling
+- **Ours:** observer pattern — daemon polls Radiens via the AllegoClient API but **never controls it**; hardware-agnostic, swap `radiens_poller.py` to support any acquisition API.
+- **OpenVEEG:** **hardcoded** to National Instruments DAQ via specific Python/C++ bindings.
+- **SIESTA:** post-hoc only, reads `.edf` files — no live acquisition coupling at all.
+
+### 5. Sync mechanism and tightness
+- **Ours:** software sync ~1 s latency + ±2 s export buffer; **XDAQ hardware sync planned** (per-frame alignment).
+- **OpenVEEG:** sub-ms software sync via NTP + LabStreamingLayer (LSL); ≤33 ms video↔EEG alignment — **tightest** of the group.
+- **Salem 2020:** frame sync within 33 ms; ~170 ms preview latency; no EEG coupling.
+- **MouseVUER:** NTP clock over RTSP to align depth ↔ RGB frames; no EEG sync.
+- **None of the four papers** use hardware TTL / PTP / GPIO sync — same limitation we have today.
+
+### 6. Multi-chamber independent metadata
+- **Ours:** 4 independent per-chamber state machines; mouse ID, recording type, user set **per chamber** in the UI; truly parallel experiments.
+- **Salem 2020:** cameras can be bundled and named, but experiment start/end + metadata are **global** to the whole rig.
+- No other paper even addresses multi-chamber metadata per experiment.
+
+### 7. Fail-safe / failure-mode design
+- **Ours:** fail-open bias — recording persists if the daemon crashes; metadata is optional with fallbacks; 200 GB hard storage reserve for EEG.
+- **None of the papers** feature disk-reserve fail-safes for parallel data streams.
+- **Salem 2020** and **MouseVUER** rely on their respective client/server software staying up — no published evidence of camera-side fail-open behavior if the master software crashes.
+
+### 8. Long-term stability (multi-day / circadian)
+- **Ours:** Pi EEPROM hardening (PMIC latch protection), hardware watchdog, crash-canary every 30 s, documented 30+ day stress test.
+- **OpenVEEG:** claims continuous capability **up to 80 days** but documents no watchdogs or crash-recovery scripts.
+- **MouseVUER:** emphasizes 24-hour cycles; no uptime-focused hardening published.
+- **Salem 2020:** used for 24-hour fruit fly monitoring, but timing validation only explicitly tested "a 2-minute period".
+- **SIESTA:** designed for multiday/circadian data (e.g., 3-week jetlag experiments) but handles **post-acquisition** analysis only.
+
+### 9. Monitoring and alerting
+- **Ours:** 16 Netdata alerts (thermal, Docker, I/O), 7 Uptime Kuma monitors, Slack webhook, public status page.
+- **None of the four papers** describe any operational monitoring story. No thermal tracking, no heartbeats, no automated alerts. **This is a clean differentiation.**
+
+### 10. Documentation & reproducibility
+- **Ours:** 38+ page Obsidian vault — golden configs, variable deployment values, step-by-step install guides, **rigorous post-mortem incident reports**.
+- **Salem 2020:** BOM + standard install commands only.
+- **MouseVUER:** SolidWorks CAD files + GitHub assembly instructions.
+- **None offer** incident documentation or failure-mode analysis at the depth we maintain.
+
+### 11. Orchestration pattern
+- **Ours:** loose coupling via MQTT pub/sub (Mosquitto). Frigate, daemon, and cameras restart/update independently.
+- **Salem 2020:** tightly coupled custom Python master/slave over UDP/TCP — host PC is an active dictator.
+- **OpenVEEG:** monolithic application using LSL to actively tie video + DAQ streams together.
+
+### 12. Hardware sync upgrade path
+- **Ours:** JSON sidecar schema already reserves fields for hardware sync metadata; direct XDAQ GPIO wiring path exists.
+- **Neither OpenVEEG nor Salem 2020** has a documented GPIO/TTL/PTP upgrade path — both are locked to their respective software-clock approaches.
+
+### 13. Open-source status and licensing
+- **Ours:** Python daemon + React/Tauri frontend, built on open-source tools; currently private but public-ready.
+- **All four papers are fully open-source:** OpenVEEG (C++/Python), Salem 2020 (Python), MouseVUER (SDK + CAD), SIESTA (Python web app on Zenodo/GitHub).
+- **Honest framing:** the advantage isn't "ours is open, theirs isn't" — it's what's bundled *around* the open code (documentation, incident reports, operational monitoring).
+
+### 14. Storage management and retention policy
+- **Ours:** automated 7-day rolling retention, 200 GB hard reserve enforced every 30 s, NAS offload via Tailscale (pending).
+- **MouseVUER:** lossy/lossless split compression (9×–21× on depth files) — clever but no retention logic.
+- **Salem 2020:** chunks videos into time segments for manageability — no automated cleanup.
+- **OpenVEEG:** "just buy an 8 TB drive" — no retention logic at all.
+
+---
+
+## Slide-use summary — what to lead with
+
+After reading the full comparison, the sharpest differentiators to foreground in the presentation (in this order):
+
+1. **Monitoring & alerting** — *nobody else does this*. Unique position.
+2. **Documentation depth** — incident reports, post-mortems, golden configs. Unique position.
+3. **Fail-open design** — no other paper has storage reserve or crash-persistent recording.
+4. **Acquisition-agnostic observer pattern** — only OpenVEEG couples to EEG, and it's hardcoded to NI DAQs.
+5. **Loose-coupled MQTT orchestration** — everyone else is tightly coupled or monolithic.
+6. **Multi-chamber independent metadata** — only Salem even supports multi-camera, and it's global metadata.
+7. **Scalability without PC-per-camera** — MouseVUER's hard ceiling is a clean talking point.
+
+**Honest concessions to acknowledge in the talk** (don't hide them):
+- **Salem 2020 is cheaper per chamber** ($86 vs $294). Frame this as a design tradeoff — we chose standard RTSP over a custom protocol.
+- **OpenVEEG has tighter sync** (sub-ms via LSL). Frame this as the reason for the XDAQ hardware upgrade path.
+- **All four papers are already open-source.** Our edge is what's *around* the code, not the code itself.
+
+**Source file:** `/home/andrea/Downloads/Organized/Documents/Text/Comparative Analysis of Behavioral Research Acquisition Systems.md` (imported 2026-04-08)
