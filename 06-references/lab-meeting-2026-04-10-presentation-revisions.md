@@ -328,3 +328,57 @@ After reading the full comparison, the sharpest differentiators to foreground in
 - **All four papers are already open-source.** Our edge is what's *around* the code, not the code itself.
 
 **Source file:** `/home/andrea/Downloads/Organized/Documents/Text/Comparative Analysis of Behavioral Research Acquisition Systems.md` (imported 2026-04-08)
+
+---
+
+## Sharpest framing — use as transition into § 6
+
+Use this as the spoken transition when opening the comparisons section. It reframes the whole table from "are we better on every axis" (we're not) to "are we solving a problem they aren't" (clearly yes).
+
+> "Four published systems handle pieces of this problem. Salem is cheaper. OpenVEEG syncs tighter. MouseVUER captures depth. SIESTA scores sleep. **None of them is production-operational the way a neuroscience lab actually needs** — no monitoring, no incident response, no fail-open design, no documentation you can hand to a new lab member. That gap is where this system lives."
+
+**Where to put it:** add as a speaker-note on the § 6 section divider slide, OR as a quoted callout under the comparison table on the next slide. Either works.
+
+---
+
+## What we can learn from them — ideas to steal (footnote material)
+
+This is too much detail for the slides themselves. Recommend embedding as **speaker notes on Slide 33 (Novel Contributions)** or as a single backup appendix slide titled *"Ideas we can borrow from prior work"*. If presenting verbally, mention 2–3 of these during Q&A if anyone asks "what's still missing".
+
+| Idea | Source | Why it matters for us |
+|---|---|---|
+| **LabStreamingLayer (LSL)** for sub-ms software sync | OpenVEEG | Cheaper interim step toward ms-level sync **before** the XDAQ hardware path ships. Add an LSL outlet to the daemon and pull it in from Radiens/XDAQ without touching anything else. |
+| **Frame-level sync validation via a blinking LED in-frame** | Salem 2020 (common technique) | Cheap way to **measure** the actual Radiens→first-frame latency without waiting for XDAQ wiring. This is the concrete answer to the validation TODO in § 7. |
+| **Per-chamber video chunking into named segments** | Salem 2020 | Frigate already chunks at the segment level — could expose chunk boundaries to the export API for partial-session recovery. |
+| **Lossy/lossless split compression (9–21× on depth files)** | MouseVUER | If we ever add depth/IR cameras, their compression pipeline is state-of-the-art for cheap long-term storage. Worth citing as prior art in the methods paper. |
+| **Depth / 3D posture cameras (RealSense D435)** | MouseVUER | For the sleep-posture scoring goal with Prof. Kim Daewook's lab, a cheap depth module on one chamber could unlock posture-based vigilance classification on animals without EEG/EMG. |
+| **SIESTA-compatible `.edf` export** | SIESTA | Our NWB export plan gets us most of the way. Explicitly target SIESTA compatibility so the data is analyzable with their open sleep-scoring tool for free. |
+| **Public status page as a methods-paper figure** | (our own — none of them have one) | Worth a literal screenshot in the methods paper. "This is what operational reproducibility looks like." |
+
+---
+
+## What to put on slides vs. what to keep in speaker notes
+
+**On Slide 32 (Comparison Table):**
+- The 6-column table itself
+- The 3 callouts under the table (MouseVUER scaling, Salem cheaper-but-tightly-coupled, OpenVEEG hardcoded to NI)
+
+**On Slide 33 (Novel Contributions):**
+- The 6 contribution bullets (with the new acquisition-agnostic one prepended)
+- **In speaker notes:** the "Ideas we can borrow" table above + the sharp framing quote
+
+**On Slide 34 (References) or a new backup slide:**
+- The 4 papers as proper citations
+- Each paper with its **single most distinctive feature** in one line so the audience remembers what each one *does*:
+  - **Salem 2020** — cheapest per-chamber, custom UDP/TCP master/slave protocol
+  - **OpenVEEG (2018)** — sub-ms LSL/NTP sync, hardcoded to National Instruments DAQ
+  - **MouseVUER (2024)** — RGB-D depth cameras + 9–21× compression, one SBC per camera
+  - **SIESTA (2025)** — post-hoc EEG/EMG sleep scoring on `.edf` files (no acquisition)
+
+**Speaker notes on Slide 38 (Validation Plan, § 7):**
+- Add: "Salem 2020 used an in-frame blinking LED to measure their ~33 ms frame sync. We can do the same on one chamber: hook an LED to a Pi GPIO, blink it on a known Radiens trigger, count frames between Radiens R_ON and the first lit-LED frame in the export. Gives us a real latency number without waiting for XDAQ wiring."
+
+**Honest concessions — where to surface them:**
+- **Slide 32 callout:** "Salem 2020 reaches ~$86/chamber by amortizing one master PC across 24 cameras with a custom socket protocol. We chose standard RTSP and hardware QSV decode — different design tradeoff."
+- **Slide 36 (Software→Hardware Sync):** add to the "Current" card — "OpenVEEG already does sub-ms via LSL/NTP. Our XDAQ upgrade brings us to per-frame hardware alignment, one step beyond LSL." Reframes our roadmap as ambitious, not catching up.
+- **Slide 33 speaker note:** "All four papers are open-source. Our edge isn't openness — it's what's *bundled around* the code: monitoring, incident reports, golden configs, fail-open engineering."
