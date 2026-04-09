@@ -46,7 +46,10 @@
       "Bash(PI_IP=\"192.168.0.199\" LOG=\"/opt/neurosurveillance/logs/pi-monitor-test.log\" STATE_FILE=\"/opt/neurosurveillance/logs/.pi-monitor-test-state\" bash:*)",
       "Bash(crontab:*)",
       "Bash(sort:*)",
-      "Bash(~/.venvs/pptx/bin/python:*)"
+      "Bash(~/.venvs/pptx/bin/python:*)",
+      "WebFetch(domain:www.nature.com)",
+      "WebFetch(domain:www.sciencedirect.com)",
+      "WebFetch(domain:pmc.ncbi.nlm.nih.gov)"
     ]
   }
 }
