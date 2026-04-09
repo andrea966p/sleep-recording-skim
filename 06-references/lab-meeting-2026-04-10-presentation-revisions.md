@@ -382,3 +382,139 @@ This is too much detail for the slides themselves. Recommend embedding as **spea
 - **Slide 32 callout:** "Salem 2020 reaches ~$86/chamber by amortizing one master PC across 24 cameras with a custom socket protocol. We chose standard RTSP and hardware QSV decode — different design tradeoff."
 - **Slide 36 (Software→Hardware Sync):** add to the "Current" card — "OpenVEEG already does sub-ms via LSL/NTP. Our XDAQ upgrade brings us to per-frame hardware alignment, one step beyond LSL." Reframes our roadmap as ambitious, not catching up.
 - **Slide 33 speaker note:** "All four papers are open-source. Our edge isn't openness — it's what's *bundled around* the code: monitoring, incident reports, golden configs, fail-open engineering."
+
+
+
+MQTT & Mosquitto
+
+  MQTT is a messaging protocol built around one idea: components don't talk to each other directly, they post messages to a shared "board" and anyone who cares reads from it.
+
+  The "board" is called a broker — and Mosquitto is the software running that broker on your NVR.
+
+  Every message has a topic (an address) and a payload (the content). In your system the session daemon posts to the topic frigate/pi_cam_0/recordings/set with the payload ON or OFF.
+  Frigate is subscribed to that topic and reacts accordingly. The daemon and Frigate never talk directly — they just both agree on the topic name.
+
+  Why this matters: if the daemon crashes, Frigate doesn't care — it just stops receiving messages but keeps doing whatever it was last told. That's why recording persists ON if the
+  daemon dies. It's also why you can restart any single component without touching the others.
+
+  Analogy: a lab group chat. You post "start recording", everyone in the chat who cares acts on it. You don't need to call each person individually.
+
+  ---
+  REST API
+
+  API (Application Programming Interface) is a way for two programs to talk to each other through a defined set of requests and responses.
+
+  REST is the most common style for doing this over a network. It works like a website: you make a request to a URL and get data back — except instead of HTML for a browser, you get raw
+  data (usually JSON) for another program.
+
+  In your system, the session daemon exposes a REST API on 127.0.0.1:8585. The desktop UI constantly sends requests to it:
+  - GET /api/status → "what's the current state of all 4 chambers?"
+  - POST /api/session/metadata → "set mouse ID to HETCF3R1 for chamber 0"
+  - GET /api/storage → "how much disk space is left?"
+
+  GET = asking for information. POST = sending information.
+
+  Why this matters: the UI and the daemon are completely separate programs. The UI is just a client that reads and writes through this API. You could replace the UI with a command-line
+  tool tomorrow and the daemon wouldn't need to change at all.
+
+  Analogy: a waiter in a restaurant. The kitchen (daemon) doesn't need to know what the dining room (UI) looks like. The waiter (API) carries requests in and data out through a
+  standardized menu of options.
+
+  ---
+  JSON, Sidecars & Metadata
+
+  JSON (JavaScript Object Notation) is just a text format for storing structured data. It looks like this:
+  {
+    "mouse_id": "HETCF3R1",
+    "recording_type": "basal",
+    "user": "andrea",
+    "start_time": "2026-04-06T14:30:00"
+  }
+  It's human-readable and every programming language can read and write it natively. It's the standard format your daemon uses to pass data between components and to save session
+  records.
+
+  Metadata literally means "data about data." The video file is the data. The mouse ID, recording type, start time, which chamber — that's the metadata. It describes the context of the
+  recording without being in the recording itself.
+
+  A sidecar file is a companion file that lives next to the main file and carries its metadata. So for every .mp4 your system exports, there's a matching _session.json file right next to
+   it with all the experimental context. They travel together.
+
+  Why this matters: the video file alone tells you nothing scientifically useful. The sidecar is what connects that video to a specific mouse, experiment, and timepoint. When you
+  eventually build a database or run analysis, the sidecar is how the pipeline knows what it's looking at.
+
+  Analogy: a histology slide (the video) and the label on the slide (the sidecar JSON). The tissue alone is meaningless without knowing which animal, which brain region, which stain.
+
+  ---
+  RTSP, ffmpeg & MPEG-TS
+
+  These are three separate things that work together in your streaming pipeline.
+
+  RTSP (Real-Time Streaming Protocol) is the protocol used to send live video over a network. It's what your go2rtc server speaks — when Frigate wants to receive a camera feed, it
+  connects to an RTSP URL like rtsp://192.168.0.11:8554/pi_cam_0 and the video flows in. It's the same protocol IP cameras in security systems use, which is why any standard NVR software
+   can consume your streams.
+
+  ffmpeg is a command-line tool that can encode, decode, convert, cut, and manipulate virtually any video format. It's extraordinarily powerful but complex. You deliberately avoided
+  using it in the middle of your streaming pipeline — the camera feeds go straight from rpicam-vid into go2rtc without an ffmpeg process in between. The reason: ffmpeg pipes are fragile
+  under network jitter. If the pipe breaks, the whole chain fails.
+
+  MPEG-TS (MPEG Transport Stream) is a container format — a way of wrapping encoded video data for transmission. The key property of MPEG-TS is that it's resilient to interruptions: if
+  you lose a few seconds of stream, the receiver can re-sync and continue. The alternative (MP4-style containers) writes a table of contents at the very end of the file, so if the stream
+   drops mid-recording, the whole file can be unreadable (this is exactly what happened in the March 6th corruption incident). MPEG-TS is what broadcast television uses for exactly this
+  reason.
+
+  In plain terms: RTSP is the road, MPEG-TS is the packaging on the truck, ffmpeg is a tool you intentionally left out of the critical path.
+
+  ---
+  The Kernel
+
+  The kernel is the deepest layer of an operating system — the code that talks directly to hardware. It manages memory, CPU time, and devices (cameras, USB, network). All other software,
+   including Python, go2rtc, and Frigate, sits on top of it and makes requests to it.
+
+  When you say "H.265 caused kernel panics," it means the H.265 hardware encoder pushed the kernel itself into an unrecoverable error state — not a software crash you can restart, but a
+  full system freeze requiring a power cycle. It's the most severe class of failure because no software running on the system can fix it; the kernel is what everything else depends on.
+
+  Why this matters for your talk: when you say "kernel panic," your audience should understand this means the entire computer froze, not just a program crashed. It's the difference
+  between a browser tab crashing and the computer shutting off.
+
+  ---
+  Flask API
+
+  Flask is a Python library for building web servers. In your system, the session daemon uses Flask to expose the REST API described above.
+
+  When you write a Flask API, you define functions that respond to specific URLs:
+  @app.route('/api/status')
+  def get_status():
+      return current_state_of_all_chambers
+  Flask handles all the networking so you don't have to — you just write the logic of what to return.
+
+  The relationship to REST API: REST is the design style (how you structure requests), Flask is the tool that implements it in Python. Saying "Flask REST API" means "a REST API built
+  using the Flask library."
+
+  Why this matters: Flask is deliberately minimal. It does one thing (serve HTTP requests) and stays out of the way. The session daemon can run Flask in a background thread while the
+  main loop keeps polling Radiens — they don't interfere with each other.
+
+  ---
+  LSL & Per-Frame ms-Level Alignment
+
+  LSL (LabStreamingLayer) is an open-source system specifically designed for neuroscience data acquisition. Its purpose is to synchronize streams from different devices — EEG, video,
+  motion capture, eye tracking — using a shared network clock so that events in each stream can be aligned to a common timeline with millisecond precision.
+
+  Per-frame ms-level alignment means being able to say: "this specific video frame corresponds to this specific EEG sample, to within 1 millisecond." This is the gold standard for
+  EEG-video synchronization because it lets you ask questions like "what is the animal doing exactly when this neural event fires?"
+
+  Your current situation: you have software-level sync with ~1 second latency and a ±2 second export buffer. This is good enough to know "the animal was grooming during this 10-minute
+  EEG segment" but not good enough to correlate a single spike with a single video frame.
+
+  OpenVEEG achieves ~33ms using LSL over the local network — still software, but much tighter because LSL is purpose-built for this.
+
+  Your planned upgrade (XDAQ GPIO wiring) would go one step further: instead of relying on software clocks at all, a physical electrical signal from the XDAQ fires simultaneously into
+  the Pi's GPIO pin and into the EEG recording. Since the same electrical pulse triggers both, there's no clock-drift ambiguity. This is the hardware TTL sync approach and gets you to
+  true per-frame alignment.
+
+  The hierarchy, simplest to most precise:
+  1. Your current setup — software poll, ~1 s latency
+  2. LSL/NTP — software sync, ~33 ms (OpenVEEG)
+  3. XDAQ GPIO wiring — hardware sync, <1 ms (your roadmap)
+
+  Why it matters for your talk: when someone asks "is the sync good enough?", the answer is "good enough for behavioral analysis — we can say what the animal was doing during a
+  recording. For spike-to-frame alignment we have a hardware upgrade planned, and the architecture is already designed to accommodate it without rewriting anything."
