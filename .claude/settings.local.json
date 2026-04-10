@@ -49,7 +49,9 @@
       "Bash(~/.venvs/pptx/bin/python:*)",
       "WebFetch(domain:www.nature.com)",
       "WebFetch(domain:www.sciencedirect.com)",
-      "WebFetch(domain:pmc.ncbi.nlm.nih.gov)"
+      "WebFetch(domain:pmc.ncbi.nlm.nih.gov)",
+      "Bash(sensors)",
+      "Bash(docker stats:*)"
     ]
   }
 }
