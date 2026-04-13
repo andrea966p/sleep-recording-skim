@@ -361,12 +361,12 @@ Session ends (Radiens R_OFF or manual Stop)
   │     Waits up to 10s for file to appear on disk
   │     Returns: export metadata with video_path
   │
-  ├─ 3. File organization (daemon._export_session)
-  │     Source: /srv/frigate/storage/exports/<frigate_export_file>
-  │     Target: {EXPORT_DIR}/{user}/{mouse}/{YYYY-MM-DD}/{filename}.mp4
+  ├─ 3. File organization (daemon._move_export_file)
+  │     Source: {SESSION_EXPORT_DIR}/<frigate_export_file>  (Docker volume, root-owned)
+  │     Target: {EXPORT_DIR}/{user}/{mouse}/{YYYY-MM-DD}/{filename}.mp4  (skimlab-owned)
   │     Commands:
-  │       sudo mkdir -p <target_dir>
-  │       sudo mv <source> <target>
+  │       mkdir -p <target_dir>           (no sudo — EXPORT_DIR is skimlab-owned)
+  │       sudo mv <source> <target>       (sudo needed — source is root-owned)
   │       sudo chown {NVR_USER}:{NVR_USER} <target>
   │
   └─ 4. Update session record
@@ -381,10 +381,7 @@ Because Frigate runs in Docker (files owned by root), the daemon needs `sudo` to
 **File:** `{SUDOERS_POLICY}` (`/etc/sudoers.d/neurosurveillance-fs`)
 
 ```
-# Allow session daemon to organize exported files
-skimlab ALL=(ALL) NOPASSWD: /usr/bin/mkdir -p /opt/neurosurveillance/exports/*
-skimlab ALL=(ALL) NOPASSWD: /usr/bin/mv /srv/frigate/storage/exports/* /opt/neurosurveillance/exports/*
-skimlab ALL=(ALL) NOPASSWD: /usr/bin/chown skimlab\:skimlab /opt/neurosurveillance/exports/*
+skimlab ALL=(ALL) NOPASSWD: /usr/bin/mv, /usr/bin/chown
 ```
 
 **Export directory structure:**
@@ -597,7 +594,8 @@ mqtt:
 
 frigate:
   url: "http://localhost:{FRIGATE_WEB_PORT}"  # http://localhost:5000
-  export_dir: "{SESSION_EXPORT_DIR}"          # /srv/frigate/storage/exports
+  export_source_dir: "{SESSION_EXPORT_DIR}"   # /srv/frigate/storage/exports (Frigate Docker volume)
+  export_dir: "{EXPORT_DIR}"                  # /opt/neurosurveillance/exports (skimlab-owned)
 
 cameras:
   chamber_0: "{CAMERA_0_ID}"   # pi_cam_0

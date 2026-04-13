@@ -120,9 +120,9 @@ status: active
 | `{NETDATA_ALERTS_FILE}` | `/etc/netdata/health.d/nvr-alerts.conf` |
 | `{NETDATA_NOTIFY_FILE}` | `/etc/netdata/health_alarm_notify.conf` |
 | `{SESSION_LOG_DIR}` | `/opt/neurosurveillance/logs` |
-| `{SESSION_EXPORT_DIR}` | `/srv/frigate/storage/exports` |
+| `{SESSION_EXPORT_DIR}` | `/srv/frigate/storage/exports` | Frigate Docker volume — raw exports (root-owned) |
 | `{SESSION_DATA_DIR}` | `/opt/neurosurveillance/sessions` |
-| `{EXPORT_DIR}` | `/opt/neurosurveillance/exports` |
+| `{EXPORT_DIR}` | `/opt/neurosurveillance/exports` | Organized exports (skimlab-owned, user-deletable) |
 | `{SUDOERS_POLICY}` | `/etc/sudoers.d/neurosurveillance-fs` |
 
 ---
