@@ -1,7 +1,7 @@
 ---
 tags: [infrastructure, session-daemon, architecture]
 created: 2026-02-20
-updated: 2026-04-02
+updated: 2026-04-13
 status: production
 version: "3.0"
 ---

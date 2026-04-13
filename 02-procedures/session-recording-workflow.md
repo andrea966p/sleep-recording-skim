@@ -1,7 +1,7 @@
 ---
 tags: [procedure, session-daemon, experiment]
 created: 2026-02-20
-updated: 2026-03-05
+updated: 2026-04-13
 status: production
 ---
 
