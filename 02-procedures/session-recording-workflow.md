@@ -37,7 +37,7 @@ Synchronize Frigate video recording with NeuroNexus Radiens EEG/EMG recording fo
 |------|-----|--------|
 | 1 | Researcher | Set session metadata in the UI (mouse ID, type, user) per chamber |
 | 2 | Researcher | Start EEG recording in Radiens GUI |
-| 3 | **Daemon** | *Automatically* starts Frigate video recording on all cameras |
+| 3 | **Daemon** | *Automatically* starts Frigate video recording on chambers with metadata set |
 | 4 | Researcher | Run experiment (daemon monitors silently) |
 | 5 | Researcher | Stop EEG recording in Radiens GUI |
 | 6 | **Daemon** | *Automatically* stops video, exports MP4s, organizes files |
@@ -86,8 +86,8 @@ curl -X POST "http://127.0.0.1:8585/api/session/metadata?chamber_id=1" \
   }'
 ```
 
-> [!tip] Metadata is Optional
-> If you forget to set metadata, the daemon still records video. Files will be named with `unknown` placeholders (e.g., `2602201430_unknown_unknown.mp4`). You can rename them manually afterward.
+> [!warning] Metadata is Required
+> The daemon **only records chambers that have metadata set**. If you start Radiens without setting metadata for any chamber, no video will be recorded. Always set metadata before starting EEG recording.
 
 > [!tip] Partial Updates
 > You can update individual fields without resetting others. For example, send just `{"mouse_id": "HETCF3R1"}` to update only the mouse ID.
@@ -98,10 +98,11 @@ Start recording in the Radiens GUI as you normally would. The daemon polls Radie
 
 **What happens behind the scenes:**
 1. Daemon detects Radiens recording state changed to `R_ON`
-2. Daemon starts a session for **each chamber** using its own pending metadata
-3. Daemon publishes `ON` to MQTT topic `frigate/{camera}/recordings/set` for all cameras
-4. Frigate starts recording all camera streams
-5. Daemon logs the session start timestamp per chamber
+2. Daemon checks which chambers have pending metadata set
+3. For each chamber **with metadata**, daemon starts a session and publishes `ON` to `frigate/{camera}/recordings/set`
+4. Frigate starts recording only the cameras tied to chambers with metadata
+5. Chambers without metadata are skipped (not recorded)
+6. Daemon logs the session start timestamp per active chamber
 
 > [!warning] Wait for Confirmation
 > After starting EEG recording, verify the daemon detected it:
@@ -171,17 +172,23 @@ curl http://127.0.0.1:8585/api/session/history | python3 -m json.tool
 
 ## Multi-Chamber Recording
 
-Both chambers record simultaneously when Radiens starts. Each chamber maintains **independent metadata**, so you can record different mice in different chambers at the same time.
+Only chambers with metadata set will record when Radiens starts. Each chamber maintains **independent metadata**, so you can record different mice in different chambers at the same time -- or record only a subset of chambers.
 
-**Setup workflow:**
+**Setup workflow (2 mice):**
 
 1. Set metadata for **chamber 0** (Mouse A, basal)
 2. Set metadata for **chamber 1** (Mouse B, recovery)
 3. Start EEG recording in Radiens
-4. Both cameras start recording automatically
+4. Both cameras start recording automatically (chambers 2-3 are skipped)
 5. Stop EEG recording -- both exports run independently
 
-**In the UI:** Each ChamberSilo card has its own form, status indicator, and timer. Set metadata independently for each.
+**Setup workflow (1 mouse):**
+
+1. Set metadata for **chamber 0** only (Mouse A, basal)
+2. Start EEG recording in Radiens
+3. Only `pi_cam_0` records (all other chambers skipped)
+
+**In the UI:** Each ChamberSilo card has its own form, status indicator, and timer. Set metadata independently for each. Only chambers with a green "Metadata Set" indicator will record.
 
 **Via CLI:**
 
@@ -198,7 +205,7 @@ curl -X POST "http://127.0.0.1:8585/api/session/metadata?chamber_id=1" \
 ```
 
 > [!info] Single Radiens Instance
-> The current design uses one Radiens instance controlling one headstage. Both chambers start/stop together when Radiens transitions. If two headstages need independent control, additional Radiens instances and daemon configuration would be required.
+> The current design uses one Radiens instance controlling one headstage. Radiens provides a single global R_ON/R_OFF signal -- the daemon uses metadata presence to determine which chambers to include. If two headstages need independent control, additional Radiens instances and daemon configuration would be required.
 
 ---
 

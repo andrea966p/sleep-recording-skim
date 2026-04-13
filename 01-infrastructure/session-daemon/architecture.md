@@ -15,7 +15,7 @@ The **NeuroSurveillance Session Daemon** synchronizes Frigate video recording wi
 1. **Autonomous core** -- the recording sync loop (Radiens poll -> Frigate toggle) runs independently and does not depend on the UI or API. If no metadata is set, the daemon uses safe defaults (`unknown` mouse ID, timestamp-based filenames). No data is ever lost.
 2. **Fail-safe bias** -- if the daemon crashes mid-session with recording ON, that is safe (extra footage, not lost footage). On restart, the daemon resets recording to OFF.
 3. **No Radiens control** -- the daemon only *observes* Radiens state. It never starts/stops EEG recording. The researcher controls Radiens directly.
-4. **Metadata is optional** -- the HTTP API accepts session metadata (mouse ID, recording type, user) before a session. If not provided, the session still runs with fallback values.
+4. **Metadata gates recording** -- the daemon only starts recording for chambers that have metadata set via the GUI/API. Chambers without metadata are skipped. If no chambers have metadata when Radiens starts, no video is recorded and a warning is logged.
 5. **Multi-chamber independence** -- each chamber (camera) has its own pending metadata, active session state, and manual recording tracker. Chambers operate independently.
 
 ## System Overview
@@ -107,12 +107,13 @@ Polls the NeuroNexus Radiens software every 1 second to detect recording state c
               │                    │
               │  R_OFF -> R_ON     │  R_ON -> R_OFF
               │  = SESSION START   │  = SESSION END
-              │  (all chambers)    │  (all chambers)
+              │  (with metadata)   │  (active only)
               v                    v
          Start Frigate        Stop Frigate
          recording on         recording on
-         all cameras          all cameras
-         Log start_ts         Call export API
+         chambers with        active chambers
+         metadata set         Call export API
+         Log start_ts
 ```
 
 **Error handling:**
@@ -418,7 +419,7 @@ Monitors disk usage in a background thread and enforces EEG/EMG disk reservation
 
 **Enforcement points in `daemon.py`:**
 
-1. `_handle_session_start()` — checks `can_start_recording(num_cameras)` before starting any Frigate recording. If denied, the entire session start is blocked.
+1. `_handle_session_start()` — only starts chambers with pending metadata set, then checks `can_start_recording(num_cameras)` before starting any Frigate recording. If denied, the entire session start is blocked.
 2. `_handle_external_recording_on()` — checks before allowing a manual recording. If denied, publishes `OFF` to cancel the Frigate-initiated recording.
 
 **Bitrate sync (`fetch_camera_bitrates`):**
@@ -489,7 +490,7 @@ while running:
         new_state = status.recording.mode  # R_ON or R_OFF
 
         if previous_state == "R_OFF" and new_state == "R_ON":
-            _handle_session_start(status)  # starts sessions for ALL chambers
+            _handle_session_start(status)  # starts sessions for chambers with metadata
 
         elif previous_state == "R_ON" and new_state == "R_OFF":
             _handle_session_end(status)    # ends ALL active sessions
