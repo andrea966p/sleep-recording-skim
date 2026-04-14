@@ -122,6 +122,20 @@ Polls the NeuroNexus Radiens software every 1 second to detect recording state c
 - If Radiens was in `R_ON` when connection was lost and reconnects still in `R_ON`, no duplicate start is triggered (state tracking prevents this).
 - If Radiens was in `R_ON` when connection was lost and reconnects in `R_OFF`, the daemon treats this as a session end and exports normally.
 
+### Hardware Sync Path (Planned)
+
+The GPIO sync listener on each Pi monitors the XDAQ `DAQ_ON` hardware signal and publishes to `{MQTT_SYNC_TOPIC}`. The session daemon subscribes to this topic as the **primary** recording trigger, with the existing `radiens_poller.py` as a **fallback**.
+
+**Priority:** Hardware GPIO event (if available) > Software Radiens poll
+
+**JSON sidecar additions:**
+- `sync_source`: `"hardware_gpio"` or `"software_poll"`
+- `sync_latency_ms`: `"<1"` (hardware) or `"~1000"` (software)
+- `gpio_start_timestamp`: ISO 8601 UTC timestamp from GPIO edge event
+- `gpio_stop_timestamp`: ISO 8601 UTC timestamp from GPIO edge event
+
+See [[01-infrastructure/hardware-sync/overview|Hardware Sync Overview]] for full architecture.
+
 ### 2. Frigate Controller (`frigate_controller.py`)
 
 Controls Frigate recording via MQTT and handles video export via HTTP API. Also detects **external** recording state changes (e.g. Record button clicks in Frigate's web UI).

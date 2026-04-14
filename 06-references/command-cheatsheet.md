@@ -345,6 +345,35 @@ sudo reboot
 
 ---
 
+## GPIO Sync (Pi)
+
+### Service Status
+```bash
+sudo systemctl status gpio-sync.service
+journalctl -u gpio-sync.service -f
+journalctl -u gpio-sync.service -n 50
+```
+
+### GPIO Debug
+```bash
+# Check GPIO chip
+gpioinfo gpiochip4
+
+# Manually test DAQ_ON input (read current value)
+gpioget gpiochip4 {GPIO_DAQ_ON}
+# Expected: 0 (XDAQ not acquiring) or 1 (XDAQ acquiring)
+
+# Manually test frame sync output
+gpioset gpiochip4 {GPIO_FRAME}=1
+sleep 0.001
+gpioset gpiochip4 {GPIO_FRAME}=0
+
+# Listen for MQTT sync events (run on NVR)
+mosquitto_sub -h {NVR_IP} -t "{MQTT_SYNC_TOPIC}" -v
+```
+
+---
+
 ## Config File Locations
 
 | File | Path | Machine |

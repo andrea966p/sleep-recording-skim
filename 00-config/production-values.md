@@ -177,6 +177,21 @@ status: active
 
 ---
 
+## Hardware Sync Variables
+
+| Variable | Value | Notes |
+|----------|-------|-------|
+| `{GPIO_DAQ_ON}` | `17` | Pi GPIO pin receiving XDAQ DAQ_ON signal (physical pin 11) |
+| `{GPIO_FRAME}` | `27` | Pi GPIO pin sending frame sync pulses to XDAQ DIN (physical pin 13) |
+| `{XDAQ_DIN_CHANNEL}` | `DI 03` | XDAQ digital input channel (DB25 Pin 2) |
+| `{XDAQ_DAQ_ON_PIN}` | `13` | DB25 pin number for DAQ_ON signal |
+| `{XDAQ_GND_PIN}` | `14` | DB25 pin number for SYS GND |
+| `{MQTT_SYNC_TOPIC}` | `neurosurveillance/hardware_sync` | MQTT topic for GPIO sync events |
+| `{GPIO_SYNC_SERVICE}` | `gpio-sync.service` | systemd service name on Pi |
+| `{GPIO_SYNC_SCRIPT}` | `/opt/neurosurveillance/gpio_sync.py` | Script path on Pi |
+
+---
+
 ## Database Configuration (PLANNED - Not Yet Deployed)
 
 | Variable | Value | Notes |

@@ -36,6 +36,13 @@ Production IPs, usernames, paths, and settings.
 - [[01-infrastructure/frigate/docker-compose|Docker Compose]]
 - [[01-infrastructure/frigate/config-yml|config.yml]]
 
+**Hardware Sync (XDAQ GPIO):**
+- [[01-infrastructure/hardware-sync/overview|Overview & Architecture]]
+- [[01-infrastructure/hardware-sync/wiring-guide|Wiring Guide & BOM]]
+- [[01-infrastructure/hardware-sync/gpio-sync-service|GPIO Sync Service (Golden Config)]]
+- [[01-infrastructure/hardware-sync/radiens-api-reference|Radiens API — Digital I/O Reference]]
+- [[01-infrastructure/hardware-sync/literature-review|Literature Review]]
+
 **Session Daemon:**
 - [[01-infrastructure/session-daemon/architecture|Architecture & Design]]
 - [[01-infrastructure/session-daemon/frontend-reference|Frontend Reference]]
@@ -48,6 +55,7 @@ Production IPs, usernames, paths, and settings.
 ### Procedures
 - [[02-procedures/installation/new-pi-setup|New Pi Setup]]
 - [[02-procedures/session-recording-workflow|Session Recording Workflow]]
+- [[02-procedures/hardware-sync-setup|Hardware Sync Setup Procedure]]
 - [[02-procedures/installation/storage-management-implementation|Storage Management System]] ✅
 
 ### Troubleshooting
