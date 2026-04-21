@@ -1,6 +1,6 @@
 # Context-Aware File Organizer with Local OCR + Vision LLM
 
-**Status:** ✅ Deployed and verified — 2026-04-21
+**Status:** ✅ Production — last updated 2026-04-21
 **Host:** i7-11700, 62 GB RAM, RTX 3080 Ti 12 GB
 **Workflow:** `7NyfPW2rX0fsTEep` (File Organizer (Event-Driven))
 
@@ -10,69 +10,102 @@
 
 The previous n8n file organizer categorized by extension only. Goal was to drive categorization from file *content* — a PDF invoice lands in `Documents/Invoices/<vendor>/`, a research paper in `Documents/Research/`, a screenshot in `Images/Screenshots/`. Fully local.
 
-Environment pre-checks: `nvidia-container-toolkit 1.19.0`, Docker `nvidia` runtime, 138 GB free disk. Trigger: `/home/andrea/scripts/download-monitor.sh` (inotifywait → webhook).
-
-## Decisions (confirmed up-front)
-
-| Decision | Choice |
-|---|---|
-| LLM scope | All non-media files: PDFs, images, text, Office docs, code. Skip videos, audio, archives, installers, 3D printing. |
-| Folder scheme | Fixed top-level whitelist; LLM proposes free-form subfolder. |
-| Ollama install | Native on the host (systemd service). |
-| Office docs | Extract text via pandoc, then LLM. |
-| Model | `qwen2.5vl:7b` (vision + text in one). |
+Environment: `nvidia-container-toolkit 1.19.0`, Docker `nvidia` runtime. Trigger: `/home/andrea/scripts/download-monitor.sh` (inotifywait → webhook).
 
 ---
 
 ## Architecture (as built)
 
 ```
-download-monitor.sh (inotifywait)
-        │
+download-monitor.sh (inotifywait, systemd service)
+        │  close_write / moved_to on ~/Downloads/
         ▼
-  POST /webhook/file-added      ← n8n container (network_mode: host)
+  POST http://localhost:5678/webhook/file-added
         │
-        ▼
-  ┌─ Webhook ─┐
-  │ Classify File  (executeCommand) ──► node /home/andrea/scripts/classify.js "<filepath>" "<filename>"
-  │ Parse Classification (code)
-  │ Move File (executeCommand)
-  │ Log Action (executeCommand)
-  │ Respond to Webhook
-  └────────────┘
-        │
-        ▼
-  classify.js decides:
-   • FAST_MAP extension → direct category (media / archives / installers / 3D / HWP / SVG / spreadsheets / presentations)
-   • else → POST http://localhost:11434/api/generate (qwen2.5vl:7b, format=json)
-        ◦ images / PDFs: sent as base64 in `images[]`
-        ◦ text files: first 8 KB of content inlined
-        ◦ office docs: pandoc → plain text, first 8 KB inlined
-   • JSON { category, subfolder, confidence } — only accepted if whitelist ∧ confidence ≥ 0.6, else → Other
-```
+        ▼  n8n container (network_mode: host)
+  Webhook
+  → Classify File  (executeCommand)
+        stdin JSON | node /home/andrea/scripts/classify.js
+        stdout: { category, subfolder, sourcePath, targetPath, method, confidence }
+  → Parse Classification (code node)
+  → Move File (executeCommand)
+        mkdir -p "$(dirname targetPath)" && mv sourcePath targetPath
+  → Log Action (executeCommand)
+  → Respond to Webhook
 
-**Single-script design note:** Original plan had a multi-node n8n graph (Read Binary File → HTTP Request → Parse JSON, with IF branches). The final implementation collapses all of that into one Node.js script (`classify.js`) called from a single `executeCommand` node. Reasons: (1) n8n HTTP Request node + host-mode Ollama needed brittle URL handling, (2) branching logic and base64 encoding are trivial in Node, (3) fewer nodes = easier to reason about and version in plain files.
+  classify.js routing:
+    FAST_MAP[ext] → direct category, no LLM
+    pdf            → unpdf text extraction → LLM text prompt
+    image exts     → base64 → LLM vision prompt
+    text/code exts → first 8 KB → LLM text prompt
+    office exts    → pandoc → plain text → first 8 KB → LLM text prompt
+    unknown        → try UTF-8 read → LLM text prompt; if unreadable → extensionFallback()
+    LLM result     → accepted if whitelist ∧ confidence ≥ 0.6; else extensionFallback()
+```
 
 ---
 
-## Components — final state
+## Routing rules
 
-### 1. Ollama (native)
+### Fast path (extension only, instant)
 
-- Install: `curl -fsSL https://ollama.com/install.sh | sh`
-- Model: `ollama pull qwen2.5vl:7b` (5.9 GB on disk, ~6 GB VRAM warm)
-- Service: `/etc/systemd/system/ollama.service` (installer default).
-- **Drop-in override** `/etc/systemd/system/ollama.service.d/override.conf`:
+| Extension(s) | Destination |
+|---|---|
+| `stl 3mf obj step stp iges igs amf gcode f3d fcstd blend` | `3D Printing/` |
+| `xls xlsx csv ods fods` | `Spreadsheets/` |
+| `ppt pptx odp key` | `Presentations/` |
+| `mp4 mkv avi mov wmv flv webm m4v` | `Videos/` |
+| `mp3 wav flac aac m4a ogg wma` | `Audio/` |
+| `zip rar 7z tar gz bz2 xz tgz` | `Archives/` |
+| `deb rpm appimage exe msi flatpakref snap flatpak pkg dmg` | `Installers/` |
+| `hwp hwpx` | `Documents/HWP/` |
+| `svg` | `Images/` |
+
+### LLM path (content-driven)
+
+| Input | How sent to model |
+|---|---|
+| `jpg jpeg png webp heic tiff bmp gif` | base64 in `images[]` (vision) |
+| `pdf` | text extracted via `unpdf` → 8 KB text prompt |
+| `txt md markdown json yaml yml xml html css py js ts sh bash c cpp h go rs php java` | first 8 KB → text prompt |
+| `doc docx odt odf rtf fodt` | pandoc → plain text → first 8 KB → text prompt |
+
+**LLM whitelist** (accepted categories):
+`Documents/Invoices`, `Documents/Receipts`, `Documents/Contracts`, `Documents/Research`, `Documents/Manuals`, `Documents/Forms`, `Documents/Letters`, `Documents/Notes`, `Images/Screenshots`, `Images/Photos`, `Images/Scans`, `Images/Diagrams`, `Images/Memes`, `Code`
+
+**extensionFallback()** — used when LLM returns low-confidence / non-whitelist / error:
+
+| Extension | Fallback |
+|---|---|
+| `pdf` | `Documents/PDF/` |
+| `md markdown` | `Documents/Markdown/` |
+| `txt` | `Documents/Text/` |
+| `doc docx odt odf rtf fodt` | `Documents/Word/` |
+| image exts | `Images/` |
+| code exts | `Code/` |
+| anything else | `Other/` |
+
+Scanned PDFs (text extraction yields < 50 chars) skip the LLM entirely and go straight to `Documents/PDF/`.
+
+---
+
+## Components
+
+### 1. Ollama (native systemd)
+
+- Installed: `curl -fsSL https://ollama.com/install.sh | sh`
+- Model: `ollama pull qwen2.5vl:7b` (5.9 GB disk, ~6–12 GB VRAM warm)
+- Service: `/etc/systemd/system/ollama.service` — **enabled**, auto-restart
+- Override: `/etc/systemd/system/ollama.service.d/override.conf`
   ```ini
   [Service]
   Environment="OLLAMA_HOST=0.0.0.0"
   ```
-  (Originally needed so container could reach it. With final `network_mode: host` this is redundant but harmless — left in place.)
-- Auto-detected GPU, unloads after 5 min idle.
+- GPU auto-detected. Model unloads after 5 min idle (VRAM freed).
 
-### 2. Custom n8n image with pandoc
+### 2. n8n (Docker, custom image)
 
-`/home/andrea/Projects/n8n/Dockerfile`:
+**`/home/andrea/Projects/n8n/Dockerfile`:**
 ```dockerfile
 FROM n8nio/n8n:latest
 USER root
@@ -81,11 +114,9 @@ RUN wget -qO- "https://github.com/jgm/pandoc/releases/download/${PANDOC_VERSION}
     tar xz --strip-components=2 -C /usr/local/bin "pandoc-${PANDOC_VERSION}/bin/pandoc"
 USER node
 ```
+Note: `apk` and `apt-get` are not available in the Docker Hardened Alpine image — static binary is the only option.
 
-Why wget+tar instead of `apk add pandoc`: the upstream `n8nio/n8n:latest` is a Docker Hardened image — `apk` is not present, and `apt-get` is not applicable (Alpine-based). Static binary is the cleanest route.
-
-### 3. docker-compose.yml
-
+**`/home/andrea/Projects/n8n/docker-compose.yml`:**
 ```yaml
 version: '3.8'
 services:
@@ -111,124 +142,150 @@ services:
       - /home/andrea/scripts:/home/andrea/scripts
     user: "1000:1000"
 ```
+- `network_mode: host` — container shares host network namespace, `localhost:11434` reaches Ollama directly.
+- `NODES_EXCLUDE=[]` — required in n8n v2 to re-enable the `executeCommand` node.
+- `restart: unless-stopped` — Docker auto-restarts n8n when the Docker daemon starts.
 
-**Key divergence from plan:** Originally `extra_hosts: ["host.docker.internal:host-gateway"]` with bridge networking. That path failed because UFW's default DROP policy blocked Docker bridge traffic to the host, and Docker's iptables rules bypass UFW — adding UFW allow rules didn't help. Switched to `network_mode: host` so the container shares the host's network namespace, making `localhost:11434` trivially reachable. `NODES_EXCLUDE=[]` is needed to re-enable the `executeCommand` node in n8n v2.
+### 3. classify.js
 
-### 4. classify.js
+**`/home/andrea/scripts/classify.js`** — Node.js script, reads JSON from stdin, prints JSON to stdout.
 
-`/home/andrea/scripts/classify.js` — single-entry Node script (Node's built-in `fetch`). Invoked by the n8n `executeCommand` node with `(filepath, filename)`. Prints one line of JSON to stdout:
-```json
-{ "category": "...", "subfolder": "...", "sourcePath": "...", "targetPath": "...", "method": "...", "confidence": 0.xx }
+```
+Input (stdin):  {"filepath": "/path/to/file", "filename": "file.pdf"}
+Output (stdout): {"category":"Documents/Research","subfolder":"neuroscience","sourcePath":"...","targetPath":"...","method":"llm","confidence":0.95}
 ```
 
-Whitelist + confidence threshold are applied only when `method === 'llm'`. Extension-path results (`method: 'extension'`) bypass both, so `.stl` reaches `3D Printing` even though that category isn't in the LLM whitelist.
+Dependencies: `unpdf` npm package at `/home/andrea/scripts/node_modules/` (volume-mounted, visible to container).
+- Install: `cd /home/andrea/scripts && npm install unpdf`
 
-LLM prompt (JSON-forced via Ollama's `format: "json"`):
+**n8n Classify File command:**
 ```
-You are a file categorizer. Analyze the content and pick exactly ONE category from this list:
-Documents/Invoices, Documents/Receipts, Documents/Contracts, Documents/Research,
-Documents/Manuals, Documents/Forms, Documents/Letters, Documents/Notes,
-Documents/PDF, Documents/Markdown, Documents/Text, Documents/Word,
-Images/Screenshots, Images/Photos, Images/Scans, Images/Diagrams, Images/Memes,
-Code, Other
-
-Also propose an optional subfolder name (max 30 chars, kebab-case, empty string if
-none fits — prefer empty over weak groupings).
-
-Return ONLY valid JSON, no prose:
-{"category":"<from list>","subfolder":"<string or empty>","confidence":<0.0-1.0>}
+node /home/andrea/scripts/classify.js <<'__CLSFY_INPUT__' 2>>/tmp/classify-error.log
+{"filepath":{{ JSON.stringify($json.body?.filepath || $json.filepath) }},"filename":{{ JSON.stringify($json.body?.filename || $json.filename) }}}
+__CLSFY_INPUT__
 ```
+Using heredoc with single-quoted delimiter: n8n `{{ }}` expressions are resolved before shell sees the string, but shell does no further expansion inside the heredoc body — so `$`, backticks, quotes in filenames are safe.
 
-Subfolder sanitization: regex strips non-alphanumerics to `-`, collapses runs, trims, caps at 30 chars.
+### 4. download-monitor.service
 
-### 5. n8n workflow (DB patch)
+**`/etc/systemd/system/download-monitor.service`:**
+```ini
+[Unit]
+Description=Download Folder Monitor
+After=network.target docker.service
+Wants=docker.service
+
+[Service]
+Type=simple
+User=andrea
+ExecStartPre=/bin/sh -c 'until curl -sf http://localhost:5678/healthz >/dev/null 2>&1; do sleep 3; done'
+ExecStart=/home/andrea/scripts/download-monitor.sh
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+```
+`ExecStartPre` polls n8n's `/healthz` every 3 s before starting inotifywait — ensures no events are lost during the post-reboot boot window while n8n is still initialising.
+
+### 5. n8n workflow (DB)
 
 - Workflow ID: `7NyfPW2rX0fsTEep`
 - activeVersionId: `46802bae-9844-4f7e-b9f9-b9a1b1bcdbff`
-- Node graph in DB: `Webhook → Classify File → Parse Classification → Move File → Log Action → Respond to Webhook`
-- Patched both `workflow_entity.nodes` *and* the matching `workflow_history.nodes` row. **Important:** n8n must be stopped during the patch, otherwise the WAL file overwrites the change on next checkpoint.
+- Node graph: `Webhook → Classify File → Parse Classification → Move File → Log Action → Respond to Webhook`
+- **Patch procedure** (for future edits): `docker compose down` → edit sqlite → `docker compose up -d`. Must stop n8n first — WAL file overwrites changes on next checkpoint if n8n is running. Patch both `workflow_entity.nodes` AND `workflow_history.nodes` for the matching `versionId`.
 
 ---
 
-## Routing rules (final)
+## Reboot survival (all services enabled)
 
-**Fast path (extension, no LLM):**
-- 3D Printing: `stl 3mf obj step stp iges igs amf gcode f3d fcstd blend`
-- Spreadsheets: `xls xlsx csv ods fods`
-- Presentations: `ppt pptx odp key`
-- Videos: `mp4 mkv avi mov wmv flv webm m4v`
-- Audio: `mp3 wav flac aac m4a ogg wma`
-- Archives: `zip rar 7z tar gz bz2 xz tgz`
-- Installers: `deb rpm AppImage appimage exe msi flatpakref snap flatpak pkg dmg`
-- Korean docs: `hwp hwpx` → `Documents/HWP`
-- SVG → `Images` (vector assets usually, not photos)
-
-**LLM path:**
-- Images: `jpg jpeg png webp heic tiff bmp gif` (base64 → vision model)
-- PDFs: `pdf` (base64 → vision model)
-- Text-based: `txt md markdown json yaml yml xml py js ts html css sh bash c cpp h go rs php java` (8 KB head → text prompt)
-- Office: `doc docx odt odf rtf fodt` (pandoc → plain → 8 KB head → text prompt)
-- Unknown extension → try as UTF-8 text; if unreadable → `Other`
-
----
-
-## Files touched
-
-- ✅ **New** `/home/andrea/Projects/n8n/Dockerfile`
-- ✅ **Modified** `/home/andrea/Projects/n8n/docker-compose.yml`
-- ✅ **New** `/home/andrea/scripts/classify.js`
-- ✅ **Modified** `/home/andrea/Projects/n8n/data/database.sqlite` (workflow + history rows)
-- ✅ **New (installer)** `/etc/systemd/system/ollama.service`, `/usr/local/bin/ollama`
-- ✅ **New (manual)** `/etc/systemd/system/ollama.service.d/override.conf`
-- Unchanged: `/home/andrea/scripts/download-monitor.sh`
-
----
-
-## Verification (2026-04-21)
-
-| # | Check | Result |
+| Service | Enabled | Restart policy |
 |---|---|---|
-| 1 | `systemctl is-active ollama` | ✅ `active` |
-| 2 | `curl -s http://localhost:11434/api/tags` lists `qwen2.5vl:7b` | ✅ model present (5.9 GB) |
-| 3 | Container reaches Ollama (`docker exec n8n wget -qO- http://localhost:11434/api/tags`) | ✅ works via host network |
-| 4 | `docker exec n8n which pandoc` | ✅ `/usr/local/bin/pandoc` (3.6.4) |
-| 5 | `docker logs n8n` shows "Activated workflow" | ✅ `File Organizer (Event-Driven)` |
-| 6 | `.stl` end-to-end | ✅ `Organized/3D Printing/test_e2e.stl` (fast path) |
-| 7 | Fake invoice `.txt` end-to-end | ✅ `Organized/Documents/Invoices/test_invoice/test_invoice.txt` (LLM path, correct category + sensible subfolder) |
-| 8 | `Organized/` top-level categories present | ✅ 3D Printing, Archives, Audio, Code, Documents, Images, Installers, Other, Presentations, Spreadsheets, Videos |
-| 9 | `Organized/Documents/` subfolders present | ✅ HWP, Invoices, Markdown, PDF, Text, Word |
+| `ollama` | ✅ | `Restart=always` |
+| `docker` | ✅ | system service |
+| `n8n` (container) | ✅ via Docker | `restart: unless-stopped` |
+| `download-monitor` | ✅ | `Restart=always` + healthcheck wait |
+
+Boot order: Docker → n8n (auto via restart policy) → download-monitor (waits for n8n healthz).
 
 ---
 
-## Incidents & fixes (hit during deploy)
+## All incidents & fixes
 
 1. **n8n container not running** → `docker compose up -d`.
-2. **`executeCommand` disabled in n8n v2** → added `NODES_EXCLUDE=[]`.
-3. **SQLite WAL overwrote patch** → stop n8n → patch → start.
-4. **`activeVersionId` mismatch** → when updating `workflow_history`, keep `versionId` in sync with `workflow_entity.activeVersionId`.
-5. **Ollama "could not connect"** on first run → `sudo systemctl start ollama` (unit was installed but not started).
-6. **`apk add pandoc` failed** → hardened image, no apk. Switched to wget + static binary.
-7. **`apt-get install pandoc` failed** → image is Alpine, not Debian. Same fix.
-8. **Container could not reach host Ollama (bridge + extra_hosts)** → UFW DROP + Docker iptables bypass blocked it. Allow rule didn't help. Fix: `network_mode: host` and drop `extra_hosts`.
-9. **STL landed in `Other` instead of `3D Printing`** → `buildResult` applied CATEGORY_WHITELIST to extension-path results. Fix: gate whitelist/confidence checks on `method === 'llm'` only.
+2. **`executeCommand` disabled in n8n v2** → added `NODES_EXCLUDE=[]` to compose env.
+3. **SQLite WAL overwrote DB patch** → must stop n8n before patching.
+4. **`activeVersionId` mismatch** → must patch both `workflow_entity` and `workflow_history` with matching versionId.
+5. **Ollama "could not connect"** → service installed but not started; `sudo systemctl start ollama`.
+6. **`apk add pandoc` failed** → Docker Hardened image has no apk. Used wget + static binary.
+7. **Container couldn't reach Ollama** (bridge + extra_hosts) → UFW DROP + Docker iptables bypass blocked bridge traffic. Fix: `network_mode: host`.
+8. **STL → `Other` instead of `3D Printing`** → whitelist check applied to all paths. Fix: only apply when `method === 'llm'`.
+9. **PDFs all landing in `Other`** → `qwen2.5vl` vision endpoint rejects raw PDF bytes (`image: unknown format`). Fix: extract text with `unpdf` (Mozilla PDF.js), send as text prompt.
+10. **LLM using `Documents/Text` as lazy default** → `Documents/{PDF,Markdown,Text,Word}` were in LLM whitelist. Fix: remove them; LLM picks only meaningful categories; `extensionFallback()` handles the generic buckets.
+11. **Shell injection risk / filename special chars** → classify.js was invoked with shell-interpolated double-quoted args. Fix: pass via stdin heredoc with `JSON.stringify()` escaping in n8n expression.
+12. **Docker disabled on boot** → `sudo systemctl enable docker`; n8n wasn't starting after reboot.
+13. **download-monitor started before n8n ready** → added `ExecStartPre` healthcheck loop to service unit.
 
 ---
 
-## Budget (actual)
+## Known issues / future work
+
+- **Log Action node** references `$json.method`, `$json.category` etc. but at that point `$json` is the output of the preceding Move File `executeCommand` node (stdout/stderr), not Parse Classification. All log lines show `[]  →` empty. Fix: change references to `$('Parse Classification').item.json.method` etc.
+- **Subfolder names truncated at 30 chars** — can break mid-word (e.g., `Arducam-UVC-Camera-Adapter-Boa`). Could truncate at word boundary or reduce the cap.
+- **LLM biases toward `Documents/Research`** for any technical markdown. Borderline files (setup guides, homelab notes) often land there instead of `Notes` or `Manuals`. Prompt tuning or a second-pass re-classification could help.
+- **Scanned PDFs** (no embedded text) fall back to `Documents/PDF/` without content understanding. Would need page→image rendering + vision call for true OCR; currently skipped.
+
+---
+
+## Budget (actual, measured)
 
 | Resource | Cost |
 |---|---|
-| Disk | 5.9 GB model + pandoc ~200 MB in image layer |
-| VRAM | ~6 GB when warm, unloads after 5 min idle |
-| Latency | Fast path <1 s; LLM path ~3–6 s warm, ~15 s on cold load |
-| Idle CPU/GPU | Near zero |
+| Disk | 5.9 GB model + ~200 MB pandoc layer |
+| VRAM | 11–12 GB when warm (larger than expected — KV cache), unloads after 5 min idle |
+| GPU power | ~350 W during inference, ~37 W idle |
+| Latency | Fast path < 1 s; LLM path 3–6 s warm, ~15 s cold load |
+| Throughput | ~60 files / 10 min (mixed fast + LLM batch) |
 
 ---
 
-## Operational notes
+## Operational reference
 
-- **Logs:** `/tmp/n8n-file-organizer.log` (one line per processed file), `/tmp/classify-error.log` (classify.js stderr).
-- **Restart sequence** after future DB edits: `docker compose down` → patch sqlite → `docker compose up -d`.
-- **Changing the model:** edit `MODEL` in `classify.js`; no rebuild needed (script is volume-mounted).
-- **Adding a category:** update `CATEGORY_WHITELIST` *and* the `PROMPT` list in `classify.js` (LLM only). Fast-path categories go in `FAST_MAP`.
-- **Confidence threshold:** currently 0.6 in `buildResult`. Lower to admit more categorized results at the cost of occasional mis-routes.
+| Task | Command |
+|---|---|
+| Check all services | `systemctl is-active ollama docker download-monitor` |
+| Restart everything | `sudo systemctl restart ollama download-monitor && cd ~/Projects/n8n && docker compose restart` |
+| Live classify log | `docker exec n8n tail -f /tmp/n8n-file-organizer.log` |
+| classify.js errors | `docker exec n8n tail -f /tmp/classify-error.log` |
+| Rebuild n8n image | `cd ~/Projects/n8n && docker compose build && docker compose up -d` |
+| Patch workflow DB | `docker compose down` → edit sqlite → `docker compose up -d` |
+| Change model | Edit `MODEL` in `/home/andrea/scripts/classify.js` (no rebuild) |
+| Add LLM category | Add to `CATEGORY_WHITELIST` + `PROMPT` in `classify.js` |
+| Add fast-path category | Add to `FAST_MAP` in `classify.js` |
+| Re-trigger a file | `curl -X POST http://localhost:5678/webhook/file-added -H 'Content-Type: application/json' -d '{"filepath":"/path/to/file","filename":"file.ext"}'` |
+
+---
+
+## Live test results (2026-04-21, 385 files)
+
+| Category | Files |
+|---|---|
+| Images | 110 |
+| Other | 98 (binaries, unreadable, genuinely uncategorisable) |
+| 3D Printing | 57 |
+| Code | 22 |
+| Spreadsheets | 15 |
+| Documents/Research | 24 |
+| Documents/Manuals | 15 |
+| Documents/PDF | 8 |
+| Documents/Forms | 8 |
+| Documents/Text | 5 |
+| Documents/Invoices | 4 |
+| Documents/HWP | 3 |
+| Documents/Notes | 3 |
+| Documents/Receipts | 2 |
+| Documents/Letters | 1 |
+| Presentations | 5 |
+| Archives | 2 |
+| Installers | 2 |
+| Videos | 1 |
