@@ -97,12 +97,13 @@ Recovery quality:
 
 | File | Source | Status |
 |---|---|---|
-| `backend/api.py` | transcript full Read 2026-04-01 + Edits | identical to GitHub HEAD; any "M" in the prior `git status` was likely whitespace-only |
+| `backend/api.py` | transcript full Read 2026-04-01 + Edits | **Second-order gap found post-restart.** Transcript was from Apr 1; storage endpoints were added Apr 2 and not captured. Edits replayed by the recovery script were all to pre-existing code — no new endpoint additions. Gap detected when daemon crashed on restart with `TypeError: init_api() got an unexpected keyword argument 'storage_monitor'`. Recovered by reconstructing from StorageMonitor interface + captured live response shape (commit `423e8f5`). |
 | `backend/daemon.py` | transcript full Reads + Edits | 35-line WIP diff vs HEAD recovered |
-| `backend/session_manager.py` | transcript full Reads | identical to GitHub HEAD; same caveat as `api.py` |
-| `backend/storage_monitor.py` | partial transcript Read + pycdc + disassembly | ~75% clean, 3 methods marked `TODO` for manual review |
+| `backend/session_manager.py` | transcript full Reads | identical to GitHub HEAD |
+| `backend/storage_monitor.py` | partial transcript Read + pycdc + disassembly | ~75% clean, 3 methods marked `TODO` for manual review; `get_status` and `can_start_recording` confirmed correct by live polling; `fetch_camera_bitrates` parses go2rtc reachability only — bitrate extraction still returns `default_mbps` for all cameras (deferred) |
 | `config/config.yaml` | transcript full Read + Edits | recovered |
-| All frontend WIP files | transcript full Reads + Edits + one Write | recovered |
+| `frontend/src/utils/format.ts` | transcript replay | duplicate `formatBytes` (overlapping reads merged) — caught by `tsc --noEmit`, removed before commit |
+| All other frontend WIP files | transcript full Reads + Edits + one Write | recovered |
 
 ## Resolution
 
@@ -161,10 +162,11 @@ Production daemon `neurosurveillance-session.service` and Frigate / mosquitto / 
 
 ### Outstanding manual cleanup
 
-1. Review and patch the three TODO methods in `backend/storage_monitor.py` (`get_status`, `can_start_recording`, `fetch_camera_bitrates`). Disassembly at `/home/skimlab/storage_monitor.disassembly.txt` (also `/home/andrea/neurosurveillance-recovery/pyc_decompiled/storage_monitor.disassembly.txt`).
-2. Compare the recovered `backend/api.py` and `backend/session_manager.py` against the user's mental model — the prior `git status` reported them as modified, but reconstruction matched HEAD. Likely whitespace/CRLF only, but worth a sanity look.
-3. Add `.stignore` to `.gitignore` so it stops appearing as untracked: `echo .stignore >> .gitignore`.
-4. The recovery staging dir `/home/andrea/neurosurveillance-recovery/` (~5 MB) can be deleted after verifying `storage_monitor.py`. Contains the GitHub clone, Antigravity history, full Claude Code transcripts, pyc + disassemblies, and the from_transcripts replay output.
+1. ~~Review and patch the three TODO methods in `backend/storage_monitor.py`~~ — `get_status` and `can_start_recording` verified correct by live `_poll_loop` (confirmed advancing `last_updated`). `fetch_camera_bitrates` connects to go2rtc but returns `default_mbps` for all cameras (bitrate extraction not yet implemented — deferred, noted in commit `423e8f5`).
+2. ~~Compare recovered `backend/api.py` and `backend/session_manager.py`~~ — `api.py` had a second-order gap (see Recovery Quality table); restored in `423e8f5`. `session_manager.py` confirmed identical to HEAD.
+3. ~~Add `.stignore` to `.gitignore`~~ — done in commit `fd5e48b`.
+4. The recovery staging dir `/home/andrea/neurosurveillance-recovery/` (~5 MB) can be deleted. Contains GitHub clone, Antigravity history, full Claude Code transcripts, pyc + disassemblies, and from_transcripts replay output.
+5. Implement actual bitrate parsing in `fetch_camera_bitrates()`. The go2rtc `/api/streams` payload has no ready-made bitrate field — options: (a) two `bytes_recv` samples with 1s sleep (accurate, slow), or (b) parse `--bitrate <N>` from the `source` exec string (gives configured target, not measured).
 
 ## Prevention
 
@@ -190,9 +192,10 @@ Production daemon `neurosurveillance-session.service` and Frigate / mosquitto / 
 >
 > 1. **Don't reboot or write to disk on the affected machine.** Filesystem-level recovery via `extundelete`/`testdisk` requires the deleted blocks not to be reallocated.
 > 2. **Check `~/.claude/projects/<project>/...jsonl` for transcripts.** Every Read/Write/Edit captured the file contents. Subagent dirs under `<session-id>/subagents/` are gold — Explore-style agents do full Reads.
-> 3. **Editor history** (Antigravity, VS Code, JetBrains) under `~/.config/<editor>/User/History/`.
-> 4. **Production deploys / `/opt/`** if separate from working tree.
-> 5. **`__pycache__/*.pyc`** for Python files. `pycdc` works for most of 3.12 except a few opcodes; `pylingual` is pickier but better quality where it works.
+> 3. **Cross-check `.pyc` mtime against transcript baseline.** The transcript replay logic anchors on the most recent full Read of each file, then applies subsequent Edits — but it silently misses *new code added after the last transcript read*. For every recovered Python file, run `stat __pycache__/<file>.cpython-312.pyc` and compare the mtime to your transcript baseline date. If the `.pyc` is newer, the source was edited after the transcript captured it — decompile the `.pyc` to recover the delta. In this incident: `api.pyc` was Apr 2 but the transcript baseline was Apr 1 → storage endpoints (added Apr 2) were missed, only caught on daemon restart.
+> 4. **Editor history** (Antigravity, VS Code, JetBrains) under `~/.config/<editor>/User/History/`.
+> 5. **Production deploys / `/opt/`** if separate from working tree.
+> 6. **`__pycache__/*.pyc`** for Python files. `pycdc` works for most of 3.12 except a few opcodes; `pylingual` is pickier but better quality where it works.
 
 > [!warning] If you ever need to combine an existing project folder with Syncthing, follow this order:
 > 1. **First** decide which side is the source of truth. Delete the other side's local copy.
