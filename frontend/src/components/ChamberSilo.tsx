@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { CameraConfig, AppSettings } from "../hooks/useSettings";
 import { DaemonStatus, PendingMetadata } from "../types/api";
 
@@ -18,6 +18,11 @@ interface Props {
 
 export function ChamberSilo({ chamberId, cam, settings, status, error, onSetMetadata, onClearMetadata }: Props) {
     const [isExpanded, setIsExpanded] = useState(false);
+    const [cameraOnline, setCameraOnline] = useState(true);
+
+    const handleCameraStatus = useCallback((online: boolean) => {
+        setCameraOnline(online);
+    }, []);
 
     const recordingState = status?.radiens.recording_states?.[chamberId] || "UNKNOWN";
     const isRecording = recordingState === "R_ON" || recordingState === "ON";
@@ -48,7 +53,13 @@ export function ChamberSilo({ chamberId, cam, settings, status, error, onSetMeta
                         </div>
                     )}
 
-                    {!isExpanded && !manualRec && (
+                    {!cameraOnline && (
+                        <div className="badge badge-error gap-1 text-[10px] sm:text-xs">
+                            Camera Offline
+                        </div>
+                    )}
+
+                    {!isExpanded && !manualRec && cameraOnline && (
                         <div className="badge badge-outline border-base-content/20 text-base-content/70 font-mono text-xs hidden sm:flex">
                             {mouseId}
                         </div>
@@ -111,6 +122,7 @@ export function ChamberSilo({ chamberId, cam, settings, status, error, onSetMeta
                             cameraId={cam.id}
                             cameraLabel={cam.label}
                             frigateBaseUrl={settings.frigateBaseUrl}
+                            onStatusChange={handleCameraStatus}
                         />
                     </div>
                 </div>

@@ -31,6 +31,7 @@ from radiens_poller import RadiensPoller, RadiensStatus
 from frigate_controller import FrigateController
 from session_manager import SessionManager
 from manual_session_manager import ManualSessionManager
+from storage_monitor import StorageMonitor
 from api import app, init_api
 
 logger = logging.getLogger("neurosurveillance")
@@ -157,6 +158,9 @@ class SessionDaemon:
             on_session_end=self._handle_session_end,
         )
 
+        # Storage monitor
+        self.storage_monitor = StorageMonitor(config)
+
         # Initialize the Flask API with references to components
         init_api(
             session_manager=self.session_manager,
@@ -164,6 +168,7 @@ class SessionDaemon:
             frigate_controller=self.frigate,
             config=config,
             manual_session_manager=self.manual_session_manager,
+            storage_monitor=self.storage_monitor,
         )
 
     def start(self):
@@ -223,7 +228,10 @@ class SessionDaemon:
             )
             # Do NOT exit -- Radiens may start later
 
-        # 4. Start Flask API in background thread
+        # 4. Start storage monitoring
+        self.storage_monitor.start()
+
+        # 5. Start Flask API in background thread
         api_host = self.config["api"].get("host", "127.0.0.1")
         api_port = self.config["api"].get("port", 8585)
         api_thread = threading.Thread(
@@ -264,6 +272,15 @@ class SessionDaemon:
             str(c_id).replace("chamber_", "")
             for c_id in self.session_manager.cameras
         ]
+
+        # Storage cap enforcement
+        allowed, reason = self.storage_monitor.can_start_recording(
+            num_cameras=len(chambers_to_start)
+        )
+        if not allowed:
+            logger.error("SESSION START BLOCKED — storage cap: %s", reason)
+            return
+
         for chamber_id in chambers_to_start:
             if chamber_id not in self.session_manager.active_sessions:
                 # Start session in manager (uses pending metadata)
@@ -437,6 +454,16 @@ class SessionDaemon:
         if self._is_radiens_active_for(camera_id):
             return
 
+        # Storage cap enforcement
+        allowed, reason = self.storage_monitor.can_start_recording(num_cameras=1)
+        if not allowed:
+            logger.error(
+                "MANUAL RECORDING BLOCKED for %s — storage cap: %s",
+                camera_id, reason,
+            )
+            self.frigate.set_recording(camera_id, enabled=False)
+            return
+
         mouse_id, recording_type, user_name = self._resolve_manual_metadata(camera_id)
         self.manual_session_manager.start_recording(
             camera_id,
@@ -526,6 +553,12 @@ class SessionDaemon:
         """Graceful shutdown: abort active session, stop recording, disconnect."""
         self._running = False
         self._shutdown_event.set()
+
+        # Stop storage monitor
+        self.storage_monitor.stop()
+
+        # Stop storage monitor
+        self.storage_monitor.stop()
 
         # Abort active sessions if any
         if self.session_manager.has_active_sessions:

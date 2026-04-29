@@ -80,4 +80,36 @@ export interface HealthResponse {
     healthy: boolean;
     radiens_connected: boolean;
     mqtt_connected: boolean;
+    storage_level?: "ok" | "warn" | "critical";
+    storage_used_percent?: number;
+}
+
+export interface StorageStatus {
+    total_bytes: number;
+    used_bytes: number;
+    available_bytes: number;
+    used_percent: number;
+    categories: Record<string, { path: string; bytes: number }>;
+    eeg_reserve_bytes: number;
+    effective_available_bytes: number;
+    status_level: "ok" | "warn" | "critical";
+    camera_bitrate_mbps: number;
+    can_record: boolean;
+    last_updated: number;
+}
+
+export interface StorageEstimate {
+    cameras: number;
+    hours: number;
+    estimated_bytes: number;
+    effective_available_bytes: number;
+    fits: boolean;
+    remaining_after_bytes: number;
+}
+
+export interface CameraBitratesResponse {
+    camera_bitrates: Record<string, number>;  // camera_id -> Mbps
+    default_mbps: number;
+    source: "go2rtc" | "default";
+    errors: string[];
 }

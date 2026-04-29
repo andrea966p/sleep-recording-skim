@@ -44,5 +44,23 @@ nas:
   # path: "/volume1/neurosurveillance"
   # method: "rsync"           # rsync or scp
 
+storage:
+  poll_interval: 30                    # How often to re-check disk (seconds)
+  paths:
+    recordings: "/srv/frigate/storage/recordings"
+    exports: "/srv/frigate/storage/exports"
+    clips: "/srv/frigate/storage/clips"
+    sessions: "/opt/neurosurveillance/sessions"
+  eeg_reserve_gb: 200                  # Hard reserve for XDAQ EEG/EMG data
+  warn_percent: 75                     # UI turns yellow at this threshold
+  critical_percent: 90                 # UI turns red, recordings may be blocked
+  camera_bitrate_mbps: 1.7             # Measured from actual recordings (1.5 target + container/VBR overhead)
+
+  # go2rtc API endpoints on each Pi — used by the "Refresh Bitrates" button
+  # to auto-detect actual camera bitrates from the running go2rtc config
+  go2rtc_apis:
+    - "http://192.168.0.11:1984"       # Pi 1 (pi_cam_0, pi_cam_1)
+    - "http://192.168.0.12:1984"       # Pi 2 (pi_cam_2, pi_cam_3)
+
 lab_members:
   - andrea

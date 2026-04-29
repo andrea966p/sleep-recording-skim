@@ -9,11 +9,14 @@ import { SessionHistory } from './components/SessionHistory';
 import { LiveClock } from './components/LiveClock';
 import { SettingsModal } from './components/SettingsModal';
 import { ChamberSilo } from './components/ChamberSilo';
+import { StoragePanel } from './components/StoragePanel';
+import { useHealthPoll } from './hooks/useHealthPoll';
 
 export default function App() {
   const { status, error, isOffline, sessionEndedTick } = useStatusPoll();
   const { settings, updateFrigateUrl, setCameras, setRecordingTypes, setLabMembers } = useSettings();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const { health } = useHealthPoll();
 
   // Theme state
   const storedTheme = localStorage.getItem('theme');
@@ -109,6 +112,68 @@ export default function App() {
             </button>
           </div>
 
+          {/* Storage indicator */}
+          {health?.storage_level && (
+            <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-mono font-bold ${
+              health.storage_level === "critical"
+                ? "bg-error/20 text-error"
+                : health.storage_level === "warn"
+                  ? "bg-warning/20 text-warning"
+                  : "bg-success/10 text-success/70"
+            }`}>
+              <progress
+                className={`progress w-16 h-2 ${
+                  health.storage_level === "critical"
+                    ? "progress-error"
+                    : health.storage_level === "warn"
+                      ? "progress-warning"
+                      : "progress-success"
+                }`}
+                value={health.storage_used_percent ?? 0}
+                max={100}
+              />
+              <span>{health.storage_used_percent ?? 0}%</span>
+            </div>
+          )}
+
+          {/* Critical storage warning */}
+          {health?.storage_level === "critical" && (
+            <div className="badge badge-error gap-2 p-3 font-bold shadow-lg shadow-error/20">
+              Disk Critical — Recording Blocked
+            </div>
+          )}
+
+          {/* Storage indicator */}
+          {health?.storage_level && (
+            <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-mono font-bold ${
+              health.storage_level === "critical"
+                ? "bg-error/20 text-error"
+                : health.storage_level === "warn"
+                  ? "bg-warning/20 text-warning"
+                  : "bg-success/10 text-success/70"
+            }`}>
+              <progress
+                className={`progress w-16 h-2 ${
+                  health.storage_level === "critical"
+                    ? "progress-error"
+                    : health.storage_level === "warn"
+                      ? "progress-warning"
+                      : "progress-success"
+                }`}
+                value={health.storage_used_percent ?? 0}
+                max={100}
+              />
+              <span>{health.storage_used_percent ?? 0}%</span>
+            </div>
+          )}
+
+          {/* Critical storage warning */}
+          {health?.storage_level === "critical" && (
+            <div className="badge badge-error gap-2 p-3 font-bold shadow-lg shadow-error/20">
+              Disk Critical — Recording Blocked
+            </div>
+          )}
+
           {isOffline && (
             <div className="badge badge-error gap-2 p-3 font-bold shadow-lg shadow-error/20">
               <span className="loading loading-spinner loading-xs"></span>
@@ -135,28 +200,32 @@ export default function App() {
               const chamberId = String(idx);
 
               return (
-                <ChamberSilo
-                  key={cam.id}
-                  chamberId={chamberId}
-                  cam={cam}
-                  settings={settings}
-                  status={status}
-                  error={error}
-                  onSetMetadata={handleSetMetadata}
-                  onClearMetadata={handleClearMetadata}
-                />
+                <div key={cam.id} className="self-start">
+                  <ChamberSilo
+                    chamberId={chamberId}
+                    cam={cam}
+                    settings={settings}
+                    status={status}
+                    error={error}
+                    onSetMetadata={handleSetMetadata}
+                    onClearMetadata={handleClearMetadata}
+                  />
+                </div>
               );
             })}
 
           </div>
         )}
 
-        {/* Global Footer Row: Health & History */}
+        {/* Global Footer Row: Health, Storage & History */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mt-4 border-t border-base-300 pt-8">
           <div className="lg:col-span-1 min-h-[180px]">
             <SystemHealth />
           </div>
-          <div className="lg:col-span-3 min-h-[300px]">
+          <div className="lg:col-span-1 min-h-[180px]">
+            <StoragePanel />
+          </div>
+          <div className="lg:col-span-2 min-h-[300px]">
             <SessionHistory refreshTick={sessionEndedTick} />
           </div>
         </div>

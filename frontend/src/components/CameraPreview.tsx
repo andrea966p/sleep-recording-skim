@@ -1,13 +1,22 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 
 interface Props {
     cameraId: string;
     cameraLabel: string;
     frigateBaseUrl: string;
+    onStatusChange?: (online: boolean) => void;
 }
 
-export function CameraPreview({ cameraId, cameraLabel, frigateBaseUrl }: Props) {
+export function CameraPreview({ cameraId, cameraLabel, frigateBaseUrl, onStatusChange }: Props) {
     const [timestamp, setTimestamp] = useState(Date.now());
+    const lastStatusRef = useRef(true);
+
+    const updateStatus = useCallback((online: boolean) => {
+        if (lastStatusRef.current !== online) {
+            lastStatusRef.current = online;
+            onStatusChange?.(online);
+        }
+    }, [onStatusChange]);
 
     useEffect(() => {
         // Refresh snapshot every 1000ms
@@ -41,9 +50,11 @@ export function CameraPreview({ cameraId, cameraLabel, frigateBaseUrl }: Props) 
                             className="object-contain w-full h-full absolute inset-0 pt-7 pb-1 px-1 z-0"
                             onError={(e) => {
                                 (e.target as HTMLImageElement).style.visibility = 'hidden';
+                                updateStatus(false);
                             }}
                             onLoad={(e) => {
                                 (e.target as HTMLImageElement).style.visibility = 'visible';
+                                updateStatus(true);
                             }}
                         />
                         <div className="absolute inset-0 pt-7 flex items-center justify-center text-sm font-bold text-base-content/30 z-[-1]">

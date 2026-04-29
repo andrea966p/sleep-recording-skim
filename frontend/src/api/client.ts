@@ -5,6 +5,8 @@ import {
     SessionHistoryResponse,
     HealthResponse,
     ActiveSession,
+    StorageStatus,
+    CameraBitratesResponse,
 } from "../types/api";
 
 const API_BASE = "http://127.0.0.1:8585";
@@ -61,5 +63,17 @@ export async function getHealth(): Promise<HealthResponse> {
     if (res.status !== 200 && res.status !== 503) {
         throw new Error("Health check failed");
     }
+    return res.json();
+}
+
+export async function getStorage(): Promise<StorageStatus> {
+    const res = await fetch(`${API_BASE}/api/storage`);
+    if (!res.ok) throw new Error("Storage fetch failed");
+    return res.json();
+}
+
+export async function getCameraBitrates(): Promise<CameraBitratesResponse> {
+    const res = await fetch(`${API_BASE}/api/storage/camera-bitrates`);
+    if (!res.ok) throw new Error("Camera bitrates fetch failed");
     return res.json();
 }
