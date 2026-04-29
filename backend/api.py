@@ -22,6 +22,7 @@ if TYPE_CHECKING:
     from radiens_poller import RadiensPoller
     from frigate_controller import FrigateController
     from manual_session_manager import ManualSessionManager
+    from storage_monitor import StorageMonitor
 
 logger = logging.getLogger(__name__)
 
@@ -42,6 +43,7 @@ _session_manager: "SessionManager | None" = None
 _radiens_poller: "RadiensPoller | None" = None
 _frigate_controller: "FrigateController | None" = None
 _manual_session_manager: "ManualSessionManager | None" = None
+_storage_monitor: "StorageMonitor | None" = None
 _config: dict | None = None
 
 
@@ -51,17 +53,19 @@ def init_api(
     frigate_controller: "FrigateController",
     config: dict,
     manual_session_manager: "ManualSessionManager | None" = None,
+    storage_monitor: "StorageMonitor | None" = None,
 ):
     """Initialize the API with references to daemon components.
 
     Called once by daemon.py before starting the Flask server.
     """
     global _session_manager, _radiens_poller, _frigate_controller, _config
-    global _manual_session_manager
+    global _manual_session_manager, _storage_monitor
     _session_manager = session_manager
     _radiens_poller = radiens_poller
     _frigate_controller = frigate_controller
     _manual_session_manager = manual_session_manager
+    _storage_monitor = storage_monitor
     _config = config
     logger.info("API initialized")
 
@@ -359,8 +363,73 @@ def health_check():
     healthy = radiens_ok and mqtt_ok
     status_code = 200 if healthy else 503
 
+    storage_level = "ok"
+    storage_used_percent = 0.0
+    if _storage_monitor is not None:
+        s = _storage_monitor.get_status()
+        storage_level = s.get("status_level", "ok")
+        storage_used_percent = s.get("used_percent", 0.0)
+
     return jsonify({
         "healthy": healthy,
         "radiens_connected": radiens_ok,
         "mqtt_connected": mqtt_ok,
+        "storage_level": storage_level,
+        "storage_used_percent": storage_used_percent,
     }), status_code
+
+
+# ---------------------------------------------------------------------------
+# Storage endpoints
+# ---------------------------------------------------------------------------
+
+
+@app.route("/api/storage", methods=["GET"])
+def get_storage():
+    """Current disk usage and storage status."""
+    if _storage_monitor is None:
+        return jsonify({"error": "storage monitor not initialized"}), 503
+    return jsonify(_storage_monitor.get_status())
+
+
+@app.route("/api/storage/estimate", methods=["GET"])
+def get_storage_estimate():
+    """Estimate how long available storage will last at current bitrate.
+
+    Query params:
+        num_cameras: int (default: total configured cameras)
+    """
+    if _storage_monitor is None:
+        return jsonify({"error": "storage monitor not initialized"}), 503
+
+    s = _storage_monitor.get_status()
+    effective_bytes = s.get("effective_available_bytes", 0)
+    bitrate_mbps = s.get("camera_bitrate_mbps", 1.7)
+
+    try:
+        num_cameras = int(request.args.get("num_cameras", 4))
+    except (ValueError, TypeError):
+        num_cameras = 4
+
+    if num_cameras <= 0 or bitrate_mbps <= 0:
+        return jsonify({"hours": None, "reason": "invalid parameters"}), 400
+
+    bytes_per_sec = num_cameras * bitrate_mbps * 1_000_000 / 8
+    seconds = effective_bytes / bytes_per_sec if bytes_per_sec > 0 else 0
+    hours = seconds / 3600
+
+    return jsonify({
+        "num_cameras": num_cameras,
+        "camera_bitrate_mbps": bitrate_mbps,
+        "effective_available_bytes": effective_bytes,
+        "estimated_hours": round(hours, 1),
+        "estimated_days": round(hours / 24, 1),
+    })
+
+
+@app.route("/api/storage/camera-bitrates", methods=["GET"])
+def get_camera_bitrates():
+    """Query go2rtc APIs for actual per-camera bitrates."""
+    if _storage_monitor is None:
+        return jsonify({"error": "storage monitor not initialized"}), 503
+    return jsonify(_storage_monitor.fetch_camera_bitrates())
