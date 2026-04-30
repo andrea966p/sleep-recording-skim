@@ -52,7 +52,8 @@
       "WebFetch(domain:pmc.ncbi.nlm.nih.gov)",
       "Bash(sensors)",
       "Bash(docker stats:*)",
-      "Bash(claude mcp *)"
+      "Bash(claude mcp *)",
+      "mcp__obsidian-vault__get_vault_stats"
     ]
   }
 }
