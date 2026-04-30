@@ -145,6 +145,10 @@ class SessionDaemon:
             min_duration=manual_min_duration,
         )
 
+        self.export_source_dir = Path(
+            config["frigate"].get("export_source_dir", "/srv/frigate/storage/exports")
+        )
+
         self.frigate = FrigateController(
             mqtt_host=config["mqtt"].get("host", "127.0.0.1"),
             mqtt_port=config["mqtt"].get("port", 1883),
@@ -382,7 +386,7 @@ class SessionDaemon:
             video_path = result.get("video_path")
             if video_path and session.video_filename:
                 self._move_export_file(
-                    video_path, session, manager.export_dir, manager.tz
+                    video_path, session, self.export_source_dir, manager.export_dir, manager.tz
                 )
 
             logger.info("Export completed for %s %s: %s", label, sid, session.video_filename)
@@ -391,14 +395,15 @@ class SessionDaemon:
             logger.error("Export failed for %s %s: %s", label, sid, e, exc_info=True)
             manager.update_export_status(session.session_id, f"failed: {e}")
 
-    def _move_export_file(self, video_path: str, session, export_dir: Path, tz):
+    def _move_export_file(self, video_path: str, session, export_source_dir: Path, export_dir: Path, tz):
         """Move a Frigate export to the organized user/mouse/date directory.
 
-        Frigate writes exports as root-owned files with its own naming.
-        This waits for the file to appear on disk, then uses sudo mv + chown.
+        Frigate writes exports as root-owned files into export_source_dir.
+        This waits for the file to appear there, then moves it into the
+        organized export_dir tree (user/mouse/date) with the session filename.
         """
         frigate_filename = os.path.basename(video_path)
-        source_path = export_dir / frigate_filename
+        source_path = export_source_dir / frigate_filename
 
         if not self._wait_for_file(source_path):
             logger.warning("Export file not found on disk for renaming: %s", source_path)
