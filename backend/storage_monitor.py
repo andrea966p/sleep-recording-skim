@@ -237,42 +237,63 @@ class StorageMonitor:
     def fetch_camera_bitrates(self) -> dict:
         """Query go2rtc APIs on each Pi to get actual per-camera bitrates.
 
+        Takes two bytes_recv samples 1 second apart (per Pi, in parallel)
+        and converts the delta to Mbps. User-triggered endpoint — 1s latency
+        is acceptable.
+
         Returns:
             {
-                "camera_bitrates": {"pi_cam_0": 1.5, "pi_cam_1": 1.5, ...},
-                "default_mbps": 1.5,
+                "camera_bitrates": {"pi_cam_0": 1.73, "pi_cam_1": 1.71, ...},
+                "default_mbps": 1.7,
                 "source": "go2rtc" | "default",
                 "errors": ["http://192.168.0.12:1984: Connection refused"]
             }
         """
-        # TODO: pycdc decompile incomplete — reconstruct from disassembly.
-        # Reads config['storage']['go2rtc_apis'] (list of base URLs).
-        # For each base URL: GET <base>/api/streams, parse JSON, extract
-        # per-stream bitrates (Mbps). On any error, append to "errors"
-        # and fall back to self.camera_bitrate_mbps as default.
         go2rtc_apis = self._config.get("storage", {}).get("go2rtc_apis", [])
         default_mbps = self.camera_bitrate_mbps
         camera_bitrates: dict[str, float] = {}
         errors: list[str] = []
-        any_ok = False
 
-        for base in go2rtc_apis:
+        lock = threading.Lock()
+
+        def sample_pi(base: str) -> None:
+            url = f"{base.rstrip('/')}/api/streams"
             try:
-                req = urllib.request.Request(f"{base.rstrip('/')}/api/streams")
-                with urllib.request.urlopen(req, timeout=2) as resp:
-                    data = json_mod.loads(resp.read().decode("utf-8"))
-                # data shape: {"<stream_name>": {"producers": [...], ...}, ...}
-                # Bitrate extraction depends on go2rtc payload — reconstruct
-                # from the original implementation. Defaulting for now.
-                for name in data.keys():
-                    camera_bitrates[name] = default_mbps
-                any_ok = True
+                def fetch() -> dict:
+                    req = urllib.request.Request(url)
+                    with urllib.request.urlopen(req, timeout=2) as resp:
+                        return json_mod.loads(resp.read().decode("utf-8"))
+
+                s1 = fetch()
+                time.sleep(1)
+                s2 = fetch()
+
+                for name, stream in s1.items():
+                    if name not in s2:
+                        continue
+                    producers1 = stream.get("producers") or []
+                    producers2 = (s2[name].get("producers") or [])
+                    if not producers1 or not producers2:
+                        continue
+                    b1 = producers1[0].get("bytes_recv", 0)
+                    b2 = producers2[0].get("bytes_recv", 0)
+                    if b2 > b1:
+                        mbps = round((b2 - b1) * 8 / 1_000_000, 2)
+                        with lock:
+                            camera_bitrates[name] = mbps
             except Exception as e:
-                errors.append(f"{base}: {e}")
+                with lock:
+                    errors.append(f"{base}: {e}")
+
+        threads = [threading.Thread(target=sample_pi, args=(base,)) for base in go2rtc_apis]
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join(timeout=5)
 
         return {
             "camera_bitrates": camera_bitrates,
             "default_mbps": default_mbps,
-            "source": "go2rtc" if any_ok else "default",
+            "source": "go2rtc" if camera_bitrates else "default",
             "errors": errors,
         }
