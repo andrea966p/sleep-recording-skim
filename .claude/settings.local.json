@@ -53,7 +53,8 @@
       "Bash(sensors)",
       "Bash(docker stats:*)",
       "Bash(claude mcp *)",
-      "mcp__obsidian-vault__get_vault_stats"
+      "mcp__obsidian-vault__get_vault_stats",
+      "mcp__obsidian-vault__list_directory"
     ]
   }
 }
