@@ -51,7 +51,8 @@
       "WebFetch(domain:www.sciencedirect.com)",
       "WebFetch(domain:pmc.ncbi.nlm.nih.gov)",
       "Bash(sensors)",
-      "Bash(docker stats:*)"
+      "Bash(docker stats:*)",
+      "Bash(claude mcp *)"
     ]
   }
 }
