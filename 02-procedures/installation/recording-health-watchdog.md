@@ -1,7 +1,11 @@
 ---
 tags: [procedure, implementation, monitoring, session-daemon, frigate]
 created: 2026-05-18
-status: draft
+completed: 2026-05-18
+status: completed
+deferred:
+  - "MQTT-to-Netdata wiring (Step 5) — Slack alerts not yet routed"
+  - "UI lag badge — frontend not yet consuming /api/health.recording_lag"
 related-incident: 2026-05-11 export timeout
 ---
 
