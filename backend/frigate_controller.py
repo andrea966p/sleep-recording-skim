@@ -21,9 +21,14 @@ import requests
 
 logger = logging.getLogger(__name__)
 
-# Frigate export status polling
-EXPORT_POLL_INTERVAL = 2.0   # seconds between export status checks
-EXPORT_TIMEOUT = 300.0       # 5 minutes max wait for export
+# Frigate export status polling.
+# The wait is progress-driven: as long as Frigate reports the export as
+# in_progress=True, we keep waiting. STALL_TIMEOUT only kicks in if Frigate
+# stops responding or the export disappears from the list. MAX_TIMEOUT is
+# a safety ceiling to prevent indefinite hangs.
+EXPORT_POLL_INTERVAL = 5.0    # seconds between export status checks
+EXPORT_STALL_TIMEOUT = 600.0  # 10 min grace if Frigate unreachable / export vanishes
+EXPORT_MAX_TIMEOUT = 86400.0  # 24h hard ceiling (safety net)
 
 
 class FrigateController:
@@ -294,43 +299,79 @@ class FrigateController:
             return None
 
     def wait_for_export(self, export_id: str) -> Optional[dict]:
-        """Poll Frigate until the export is complete or times out.
+        """Poll Frigate until the export completes, stalls, or hits the ceiling.
+
+        Wait semantics:
+          - As long as Frigate reports the export with in_progress=True, keep
+            waiting. There is no per-recording timeout.
+          - If Frigate becomes unreachable OR the export disappears from the
+            list, allow EXPORT_STALL_TIMEOUT of grace before giving up.
+          - EXPORT_MAX_TIMEOUT is a hard ceiling (default 24h) that should
+            never be hit during normal operation.
 
         Args:
             export_id: The export ID returned by export_recording().
 
         Returns:
-            Export metadata dict if completed, None on timeout or error.
+            Export metadata dict if completed, None on stall/ceiling/error.
         """
         url = f"{self.frigate_url}/api/exports"
-        deadline = time.time() + EXPORT_TIMEOUT
+        started = time.time()
+        last_progress = started   # last time we confirmed in_progress=True
         logger.info("Waiting for export %s to complete...", export_id)
 
-        while time.time() < deadline:
+        while time.time() - started < EXPORT_MAX_TIMEOUT:
             try:
                 response = requests.get(url, timeout=10)
                 response.raise_for_status()
                 exports = response.json()
 
-                # Find our export in the list
+                found = False
                 for export in exports:
                     eid = export.get("id") or export.get("name")
-                    if eid == export_id:
-                        if export.get("in_progress", False):
-                            # Found it, but Frigate is still multiplexing the video.
-                            break
-                        
-                        logger.info("Export %s completed", export_id)
-                        return export
+                    if eid != export_id:
+                        continue
+                    found = True
+                    if export.get("in_progress", False):
+                        last_progress = time.time()
+                        break
+                    elapsed = time.time() - started
+                    logger.info(
+                        "Export %s completed after %.0fs", export_id, elapsed,
+                    )
+                    return export
 
-                # Export not in list yet -- still processing
+                if not found:
+                    # Export not (yet) in list — could be initializing, or
+                    # finished+cleaned. Allow stall grace before giving up.
+                    stalled_for = time.time() - last_progress
+                    if stalled_for > EXPORT_STALL_TIMEOUT:
+                        logger.error(
+                            "Export %s vanished from Frigate's list for %.0fs",
+                            export_id, stalled_for,
+                        )
+                        return None
+
                 time.sleep(EXPORT_POLL_INTERVAL)
 
             except Exception as e:
-                logger.warning("Error checking export status: %s", e)
+                stalled_for = time.time() - last_progress
+                logger.warning(
+                    "Error checking export status (%.0fs since progress): %s",
+                    stalled_for, e,
+                )
+                if stalled_for > EXPORT_STALL_TIMEOUT:
+                    logger.error(
+                        "Lost contact with Frigate for %.0fs while waiting for %s",
+                        stalled_for, export_id,
+                    )
+                    return None
                 time.sleep(EXPORT_POLL_INTERVAL)
 
-        logger.error("Export %s timed out after %ds", export_id, int(EXPORT_TIMEOUT))
+        logger.error(
+            "Export %s exceeded max wait of %.0fs",
+            export_id, EXPORT_MAX_TIMEOUT,
+        )
         return None
 
     def check_frigate_health(self) -> bool:
@@ -339,6 +380,17 @@ class FrigateController:
             response = requests.get(f"{self.frigate_url}/api/stats", timeout=5)
             return response.status_code == 200
         except Exception:
+            return False
+
+    def publish(self, topic: str, payload: str, qos: int = 1) -> bool:
+        """Publish an arbitrary message to MQTT. No-op if not connected."""
+        if not self._mqtt_connected or self._mqtt_client is None:
+            return False
+        try:
+            self._mqtt_client.publish(topic, payload, qos=qos)
+            return True
+        except Exception as e:
+            logger.warning("MQTT publish to %s failed: %s", topic, e)
             return False
 
     @property

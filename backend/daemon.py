@@ -31,6 +31,7 @@ from radiens_poller import RadiensPoller, RadiensStatus
 from frigate_controller import FrigateController
 from session_manager import SessionManager
 from manual_session_manager import ManualSessionManager
+from recording_watchdog import RecordingWatchdog
 from storage_monitor import StorageMonitor
 from api import app, init_api
 
@@ -165,6 +166,15 @@ class SessionDaemon:
         # Storage monitor
         self.storage_monitor = StorageMonitor(config)
 
+        # Recording watchdog — detects stalled Frigate recordings on active cameras.
+        self.watchdog = RecordingWatchdog(
+            frigate_db_path=config["frigate"].get(
+                "db_path", "/srv/frigate/storage/frigate.db"
+            ),
+            active_cameras_provider=self._active_recording_cameras,
+            mqtt_publish=self.frigate.publish,
+        )
+
         # Initialize the Flask API with references to components
         init_api(
             session_manager=self.session_manager,
@@ -173,7 +183,18 @@ class SessionDaemon:
             config=config,
             manual_session_manager=self.manual_session_manager,
             storage_monitor=self.storage_monitor,
+            recording_watchdog=self.watchdog,
         )
+
+    def _active_recording_cameras(self) -> dict[str, float]:
+        """Cameras the daemon currently considers actively recording, with start times."""
+        out: dict[str, float] = {}
+        for cam, rec in self.manual_session_manager.active_recordings.items():
+            out[cam] = rec.start_time_utc
+        for sess in self.session_manager.active_sessions.values():
+            if sess and sess.camera:
+                out[sess.camera] = sess.start_time_utc
+        return out
 
     def start(self):
         """Start the daemon: connect services, reset state, run main loop."""
@@ -234,6 +255,9 @@ class SessionDaemon:
 
         # 4. Start storage monitoring
         self.storage_monitor.start()
+
+        # 4b. Start recording watchdog
+        self.watchdog.start()
 
         # 5. Start Flask API in background thread
         api_host = self.config["api"].get("host", "127.0.0.1")
@@ -562,8 +586,8 @@ class SessionDaemon:
         # Stop storage monitor
         self.storage_monitor.stop()
 
-        # Stop storage monitor
-        self.storage_monitor.stop()
+        # Stop recording watchdog
+        self.watchdog.stop()
 
         # Abort active sessions if any
         if self.session_manager.has_active_sessions:

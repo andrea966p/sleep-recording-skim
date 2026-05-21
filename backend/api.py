@@ -44,6 +44,7 @@ _radiens_poller: "RadiensPoller | None" = None
 _frigate_controller: "FrigateController | None" = None
 _manual_session_manager: "ManualSessionManager | None" = None
 _storage_monitor: "StorageMonitor | None" = None
+_recording_watchdog: "RecordingWatchdog | None" = None
 _config: dict | None = None
 
 
@@ -54,18 +55,20 @@ def init_api(
     config: dict,
     manual_session_manager: "ManualSessionManager | None" = None,
     storage_monitor: "StorageMonitor | None" = None,
+    recording_watchdog: "RecordingWatchdog | None" = None,
 ):
     """Initialize the API with references to daemon components.
 
     Called once by daemon.py before starting the Flask server.
     """
     global _session_manager, _radiens_poller, _frigate_controller, _config
-    global _manual_session_manager, _storage_monitor
+    global _manual_session_manager, _storage_monitor, _recording_watchdog
     _session_manager = session_manager
     _radiens_poller = radiens_poller
     _frigate_controller = frigate_controller
     _manual_session_manager = manual_session_manager
     _storage_monitor = storage_monitor
+    _recording_watchdog = recording_watchdog
     _config = config
     logger.info("API initialized")
 
@@ -370,12 +373,17 @@ def health_check():
         storage_level = s.get("status_level", "ok")
         storage_used_percent = s.get("used_percent", 0.0)
 
+    recording_lag = (
+        _recording_watchdog.get_lag_snapshot() if _recording_watchdog else {}
+    )
+
     return jsonify({
         "healthy": healthy,
         "radiens_connected": radiens_ok,
         "mqtt_connected": mqtt_ok,
         "storage_level": storage_level,
         "storage_used_percent": storage_used_percent,
+        "recording_lag": recording_lag,
     }), status_code
 
 
