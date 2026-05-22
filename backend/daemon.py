@@ -155,6 +155,8 @@ class SessionDaemon:
             mqtt_port=config["mqtt"].get("port", 1883),
             frigate_url=config["frigate"].get("url", "http://127.0.0.1:5000"),
             cameras=cameras,
+            mqtt_user=config["mqtt"].get("user"),
+            mqtt_password=config["mqtt"].get("password"),
         )
 
         self.poller = RadiensPoller(

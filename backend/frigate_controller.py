@@ -47,9 +47,13 @@ class FrigateController:
         mqtt_port: int = 1883,
         frigate_url: str = "http://127.0.0.1:5000",
         cameras: Optional[dict] = None,
+        mqtt_user: Optional[str] = None,
+        mqtt_password: Optional[str] = None,
     ):
         self.mqtt_host = mqtt_host
         self.mqtt_port = mqtt_port
+        self.mqtt_user = mqtt_user
+        self.mqtt_password = mqtt_password
         self.frigate_url = frigate_url.rstrip("/")
         self.cameras = cameras or {
             "chamber_0": "pi_cam_0", "chamber_1": "pi_cam_1",
@@ -87,6 +91,10 @@ class FrigateController:
                 callback_api_version=mqtt.CallbackAPIVersion.VERSION2,
                 client_id="neurosurveillance-session-daemon",
             )
+            if self.mqtt_user:
+                self._mqtt_client.username_pw_set(
+                    self.mqtt_user, self.mqtt_password
+                )
             self._mqtt_client.on_connect = self._on_connect
             self._mqtt_client.on_disconnect = self._on_disconnect
             self._mqtt_client.on_message = self._on_message
