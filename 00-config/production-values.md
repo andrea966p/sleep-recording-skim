@@ -215,6 +215,26 @@ status: active
 
 ---
 
+## Mosquitto MQTT Authentication (since 2026-05-22)
+
+| Field | Value |
+|-------|-------|
+| Broker | `mqtt://192.168.0.50:1883` |
+| Username | `nvr` |
+| Password | `VBwzGOQSnUqHkMV9qEwksygU8KzZiQPU` |
+| `allow_anonymous` | `false` |
+| `password_file` | `/mosquitto/config/passwd` (inside container) = `/srv/frigate/mosquitto/passwd` (host) |
+
+Hash on disk is mosquitto's `$7$` format generated via `docker exec mosquitto mosquitto_passwd -c -b /tmp/passwd nvr <plaintext>`.
+
+**Consumers of these credentials:**
+- Frigate — `/srv/frigate/config/config.yml` → `mqtt.user` / `mqtt.password`
+- Session daemon — `/opt/neurosurveillance/config.yaml` → `mqtt.user` / `mqtt.password`
+
+**Rotating the password:** generate new value, update both consumer configs + `passwd` file, restart Mosquitto + Frigate + daemon in dependency order (see [[../03-troubleshooting/emergency-runbook|emergency-runbook]] Symptom D for the restart order).
+
+---
+
 ## How to Use This File
 
 1. **When Claude shows a template** with `{VARIABLE}`:
