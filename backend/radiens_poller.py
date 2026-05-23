@@ -15,6 +15,18 @@ from typing import Callable, Optional
 
 logger = logging.getLogger(__name__)
 
+# Exponential-backoff bounds for Radiens connection / poll failures.
+# The daemon's main loop calls poll() once per `poll_interval` (default 1s).
+# When Radiens is down (gRPC UNAVAILABLE), every call hits the wire and the
+# radiens client library writes ~2 lines to its own `radiens.log`. With the
+# default 1s loop that produced ~3 GB of log spam over a week and obscured
+# the 2026-05-22 incident analysis. Backoff caps Radiens attempts at
+# BACKOFF_MAX seconds while it's unreachable; the daemon's poll loop still
+# ticks for everything else.
+BACKOFF_BASE = 1.0      # first retry 1s after a failure
+BACKOFF_FACTOR = 2.0
+BACKOFF_MAX = 60.0      # cap at 60s between attempts when Radiens is down
+
 
 class RecordingState(Enum):
     """Radiens recording states."""
@@ -60,15 +72,38 @@ class RadiensPoller:
         self._consecutive_errors = 0
         self._max_silent_errors = 5  # Log every Nth consecutive error
 
+        # Exponential backoff state for connect/poll failures.
+        self._next_attempt_at = 0.0
+        self._backoff = BACKOFF_BASE
+
+    def _on_success(self) -> None:
+        """Reset backoff state after a successful Radiens call."""
+        self._consecutive_errors = 0
+        self._next_attempt_at = 0.0
+        self._backoff = BACKOFF_BASE
+
+    def _on_failure(self, now: float) -> None:
+        """Advance backoff state after a Radiens call failed."""
+        self._next_attempt_at = now + self._backoff
+        self._backoff = min(self._backoff * BACKOFF_FACTOR, BACKOFF_MAX)
+
     def connect(self) -> bool:
-        """Connect to Radiens. Returns True if successful."""
+        """Connect to Radiens. Returns True if successful.
+
+        Honors the exponential backoff window: if the previous attempt failed
+        recently, returns False without hitting the wire until
+        `_next_attempt_at` has elapsed.
+        """
+        now = time.time()
+        if now < self._next_attempt_at:
+            return False
         try:
             from radiens import AllegoClient
             self._client = AllegoClient()
             # Test the connection with a status poll
             status = self._client.get_status()
             self._connected = True
-            self._consecutive_errors = 0
+            self._on_success()
             logger.info("Connected to Radiens (recording: %s)", status.recording)
             return True
         except ImportError:
@@ -77,10 +112,23 @@ class RadiensPoller:
                 "Install it from NeuroNexus (not available on PyPI)."
             )
             self._connected = False
+            # No retry — module is structurally missing
+            self._next_attempt_at = float("inf")
             return False
         except Exception as e:
-            logger.error("Failed to connect to Radiens: %s", e)
+            self._consecutive_errors += 1
             self._connected = False
+            self._on_failure(now)
+            if (
+                self._consecutive_errors == 1
+                or self._consecutive_errors % self._max_silent_errors == 0
+            ):
+                logger.warning(
+                    "Radiens connect failed (%d consecutive, next attempt in %.0fs): %s",
+                    self._consecutive_errors,
+                    max(0.0, self._next_attempt_at - now),
+                    e,
+                )
             return False
 
     def poll(self) -> RadiensStatus:
@@ -89,6 +137,9 @@ class RadiensPoller:
         Detects state transitions and fires callbacks.
         If Radiens is unreachable, returns a status with connected=False
         and does NOT change internal state (fail-safe).
+
+        Honors the backoff window: while backing off, returns immediately
+        without calling get_status() (avoids gRPC log spam).
         """
         if self._client is None:
             return RadiensStatus(
@@ -96,10 +147,17 @@ class RadiensPoller:
                 error="Not connected (call connect() first)",
             )
 
+        now = time.time()
+        if now < self._next_attempt_at:
+            return RadiensStatus(
+                connected=False,
+                error="Radiens backoff in effect",
+            )
+
         try:
             allego_status = self._client.get_status()
             self._connected = True
-            self._consecutive_errors = 0
+            self._on_success()
 
             # Parse recording state
             rec = allego_status.recording
@@ -152,6 +210,7 @@ class RadiensPoller:
         except Exception as e:
             self._consecutive_errors += 1
             self._connected = False
+            self._on_failure(now)
 
             # Avoid log spam: log first error, then every Nth
             if (
@@ -159,8 +218,9 @@ class RadiensPoller:
                 or self._consecutive_errors % self._max_silent_errors == 0
             ):
                 logger.warning(
-                    "Radiens poll failed (%d consecutive): %s",
+                    "Radiens poll failed (%d consecutive, next attempt in %.0fs): %s",
                     self._consecutive_errors,
+                    max(0.0, self._next_attempt_at - now),
                     e,
                 )
 
