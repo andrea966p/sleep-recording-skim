@@ -15,6 +15,8 @@ import threading
 import time
 from typing import Callable, Optional
 
+from session_journal import EVENT_STALL, SessionJournal
+
 logger = logging.getLogger(__name__)
 
 POLL_INTERVAL = 30.0          # seconds between checks
@@ -40,10 +42,14 @@ class RecordingWatchdog:
         frigate_db_path: str,
         active_cameras_provider: Callable[[], dict[str, float]],
         mqtt_publish: Optional[Callable[[str, str], None]] = None,
+        active_sessions_provider: Optional[Callable[[], dict[str, str]]] = None,
+        journal: Optional[SessionJournal] = None,
     ):
         self.db_path = frigate_db_path
         self._active = active_cameras_provider
         self._publish = mqtt_publish
+        self._active_sessions = active_sessions_provider
+        self._journal = journal
         self._stop = threading.Event()
         self._thread: Optional[threading.Thread] = None
         self._alerted: set[str] = set()
@@ -141,12 +147,32 @@ class RecordingWatchdog:
             f"({'no segments since recording started' if last_ts is None else 'last segment present'})"
         )
         logger.error(msg)
+
+        session_id: Optional[str] = None
+        if self._active_sessions is not None:
+            try:
+                session_id = self._active_sessions().get(camera)
+            except Exception as e:
+                logger.warning("active_sessions_provider failed: %s", e)
+
+        if self._journal is not None:
+            self._journal.log_event(
+                EVENT_STALL,
+                session_id=session_id,
+                camera=camera,
+                payload={
+                    "lag_seconds": round(lag, 1),
+                    "last_segment_ts": last_ts,
+                },
+            )
+
         if self._publish is None:
             return
         payload = json.dumps({
             "camera": camera,
             "lag_seconds": round(lag, 1),
             "last_segment_ts": last_ts,
+            "session_id": session_id,
             "ts": time.time(),
         })
         try:

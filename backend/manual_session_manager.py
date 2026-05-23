@@ -19,6 +19,7 @@ from typing import Optional
 
 from zoneinfo import ZoneInfo
 
+from session_journal import EVENT_START, SessionJournal
 from session_utils import generate_filename, write_session_json
 
 logger = logging.getLogger(__name__)
@@ -58,11 +59,13 @@ class ManualSessionManager:
         export_dir: str = "/opt/neurosurveillance/exports",
         tz_name: str = "Asia/Seoul",
         min_duration: float = 5.0,
+        journal: Optional[SessionJournal] = None,
     ):
         self.sessions_dir = Path(sessions_dir)
         self.export_dir = Path(export_dir)
         self.tz = ZoneInfo(tz_name)
         self.min_duration = min_duration
+        self.journal = journal
 
         # Per-camera active manual sessions: camera_id -> ManualSessionRecord
         self._active: dict[str, ManualSessionRecord] = {}
@@ -83,8 +86,13 @@ class ManualSessionManager:
         mouse_id: str = "manual",
         recording_type: str = "",
         user_name: str = ""
-    ) -> ManualSessionRecord:
+    ) -> Optional[ManualSessionRecord]:
         """Start tracking a manual recording for a camera.
+
+        Atomic with the journal: if a journal is configured and the START
+        write fails, no in-memory session is created and None is returned.
+        Caller (daemon) is expected to undo any side effects (e.g. publish
+        OFF to Frigate) when this returns None.
 
         Args:
             camera_id: Frigate camera name (e.g. 'pi_cam_0').
@@ -93,7 +101,7 @@ class ManualSessionManager:
             user_name: User name from pending metadata.
 
         Returns:
-            The new ManualSessionRecord.
+            The new ManualSessionRecord, or None if journaling START failed.
         """
         now_utc = time.time()
         now_local = datetime.fromtimestamp(now_utc, tz=self.tz)
@@ -107,6 +115,26 @@ class ManualSessionManager:
             recording_type=recording_type,
             user_name=user_name,
         )
+
+        if self.journal is not None:
+            ok = self.journal.log_event(
+                EVENT_START,
+                session_id=session.session_id,
+                camera=camera_id,
+                mouse_id=mouse_id,
+                ts=now_utc,
+                payload={
+                    "source": "manual",
+                    "recording_type": recording_type,
+                    "user_name": user_name,
+                },
+            )
+            if not ok:
+                logger.error(
+                    "Manual recording REFUSED for %s: journal START write failed",
+                    camera_id,
+                )
+                return None
 
         self._active[camera_id] = session
 

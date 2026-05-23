@@ -20,6 +20,7 @@ from typing import Optional
 
 from zoneinfo import ZoneInfo
 
+from session_journal import EVENT_ABORT, EVENT_START, SessionJournal
 from session_utils import generate_filename, write_session_json
 
 logger = logging.getLogger(__name__)
@@ -80,10 +81,12 @@ class SessionManager:
         export_dir: str = "/opt/neurosurveillance/exports",
         tz_name: str = "Asia/Seoul",
         cameras: Optional[dict] = None,
+        journal: Optional[SessionJournal] = None,
     ):
         self.sessions_dir = Path(sessions_dir)
         self.export_dir = Path(export_dir)
         self.tz = ZoneInfo(tz_name)
+        self.journal = journal
         self.cameras = cameras or {
             "chamber_0": "pi_cam_0", "chamber_1": "pi_cam_1",
             "chamber_2": "pi_cam_2", "chamber_3": "pi_cam_3",
@@ -178,6 +181,24 @@ class SessionManager:
 
         self._active_sessions[chamber_id] = session
 
+        # Radiens sessions are fail-open: we can't refuse a recording that
+        # Radiens already started. Log the failure and continue.
+        if self.journal is not None:
+            self.journal.log_event(
+                EVENT_START,
+                session_id=session.session_id,
+                camera=session.camera,
+                mouse_id=session.mouse_id,
+                ts=now_utc,
+                payload={
+                    "source": "radiens",
+                    "chamber": chamber_id,
+                    "recording_type": session.recording_type,
+                    "user_name": session.user_name,
+                    "radiens_xdat_filename": radiens_base_name,
+                },
+            )
+
         if meta.is_default():
             logger.warning(
                 "Session started for chamber %s WITHOUT metadata (using defaults). "
@@ -242,6 +263,19 @@ class SessionManager:
             "Session ABORTED for chamber %s: reason=%s, duration=%.0fs",
             chamber_id, reason, session.duration_seconds,
         )
+
+        if self.journal is not None:
+            self.journal.log_event(
+                EVENT_ABORT,
+                session_id=session.session_id,
+                camera=session.camera,
+                mouse_id=session.mouse_id,
+                ts=now_utc,
+                payload={
+                    "reason": reason,
+                    "duration_seconds": session.duration_seconds,
+                },
+            )
 
         self._write_session_json(session)
         self._history.append(session)

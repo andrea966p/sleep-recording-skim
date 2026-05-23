@@ -24,11 +24,17 @@ import time
 from datetime import datetime
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
+from typing import Optional
 
 import yaml
 
 from radiens_poller import RadiensPoller, RadiensStatus
 from frigate_controller import FrigateController
+from session_journal import (
+    EVENT_EXPORT_BEGIN,
+    EVENT_EXPORT_COMPLETE,
+    SessionJournal,
+)
 from session_manager import SessionManager
 from manual_session_manager import ManualSessionManager
 from recording_watchdog import RecordingWatchdog
@@ -122,6 +128,13 @@ class SessionDaemon:
             "data_dir", "/opt/neurosurveillance/sessions"
         )
 
+        # Open the durable session journal up-front so every component can
+        # share the same connection.
+        journal_path = config.get("sessions", {}).get(
+            "journal_db", "/opt/neurosurveillance/session_wal.db"
+        )
+        self.journal = SessionJournal(db_path=journal_path)
+
         # Initialize components
         self.session_manager = SessionManager(
             sessions_dir=sessions_dir,
@@ -130,6 +143,7 @@ class SessionDaemon:
             ),
             tz_name=tz_name,
             cameras=cameras,
+            journal=self.journal,
         )
 
         # Manual session config
@@ -144,6 +158,7 @@ class SessionDaemon:
             ),
             tz_name=tz_name,
             min_duration=manual_min_duration,
+            journal=self.journal,
         )
 
         self.export_source_dir = Path(
@@ -175,6 +190,8 @@ class SessionDaemon:
             ),
             active_cameras_provider=self._active_recording_cameras,
             mqtt_publish=self.frigate.publish,
+            active_sessions_provider=self._active_session_ids,
+            journal=self.journal,
         )
 
         # Initialize the Flask API with references to components
@@ -186,6 +203,7 @@ class SessionDaemon:
             manual_session_manager=self.manual_session_manager,
             storage_monitor=self.storage_monitor,
             recording_watchdog=self.watchdog,
+            session_journal=self.journal,
         )
 
     def _active_recording_cameras(self) -> dict[str, float]:
@@ -196,6 +214,16 @@ class SessionDaemon:
         for sess in self.session_manager.active_sessions.values():
             if sess and sess.camera:
                 out[sess.camera] = sess.start_time_utc
+        return out
+
+    def _active_session_ids(self) -> dict[str, str]:
+        """Per-camera session_id for whichever session is currently active there."""
+        out: dict[str, str] = {}
+        for cam, rec in self.manual_session_manager.active_recordings.items():
+            out[cam] = rec.session_id
+        for sess in self.session_manager.active_sessions.values():
+            if sess and sess.camera:
+                out[sess.camera] = sess.session_id
         return out
 
     def start(self):
@@ -389,6 +417,21 @@ class SessionDaemon:
             logger.info("Starting Frigate export for %s %s...", label, sid)
 
             export_name = session.video_filename.rsplit(".", 1)[0] if session.video_filename else ""
+
+            self.journal.log_event(
+                EVENT_EXPORT_BEGIN,
+                session_id=session.session_id,
+                camera=session.camera,
+                mouse_id=session.mouse_id,
+                payload={
+                    "label": label,
+                    "export_name": export_name,
+                    "start_time_utc": session.start_time_utc,
+                    "end_time_utc": session.end_time_utc,
+                    "duration_seconds": getattr(session, "duration_seconds", 0.0),
+                },
+            )
+
             export_id = self.frigate.export_recording(
                 camera_id=session.camera,
                 start_time=session.start_time_utc - 2,
@@ -410,10 +453,25 @@ class SessionDaemon:
             manager.update_export_status(session.session_id, "completed")
 
             video_path = result.get("video_path")
+            moved_to: Optional[Path] = None
             if video_path and session.video_filename:
-                self._move_export_file(
+                moved_to = self._move_export_file(
                     video_path, session, self.export_source_dir, manager.export_dir, manager.tz
                 )
+
+            self.journal.log_event(
+                EVENT_EXPORT_COMPLETE,
+                session_id=session.session_id,
+                camera=session.camera,
+                mouse_id=session.mouse_id,
+                payload={
+                    "label": label,
+                    "export_id": export_id,
+                    "video_filename": session.video_filename,
+                    "moved_to": str(moved_to) if moved_to else None,
+                    "duration_seconds": getattr(session, "duration_seconds", 0.0),
+                },
+            )
 
             logger.info("Export completed for %s %s: %s", label, sid, session.video_filename)
 
@@ -421,19 +479,21 @@ class SessionDaemon:
             logger.error("Export failed for %s %s: %s", label, sid, e, exc_info=True)
             manager.update_export_status(session.session_id, f"failed: {e}")
 
-    def _move_export_file(self, video_path: str, session, export_source_dir: Path, export_dir: Path, tz):
+    def _move_export_file(self, video_path: str, session, export_source_dir: Path, export_dir: Path, tz) -> Optional[Path]:
         """Move a Frigate export to the organized user/mouse/date directory.
 
         Frigate writes exports as root-owned files into export_source_dir.
         This waits for the file to appear there, then moves it into the
         organized export_dir tree (user/mouse/date) with the session filename.
+
+        Returns the target Path on success, None on failure.
         """
         frigate_filename = os.path.basename(video_path)
         source_path = export_source_dir / frigate_filename
 
         if not self._wait_for_file(source_path):
             logger.warning("Export file not found on disk for renaming: %s", source_path)
-            return
+            return None
 
         local_date = datetime.fromtimestamp(session.start_time_utc, tz=tz).strftime("%Y-%m-%d")
         user_dir = session.user_name.replace(" ", "_")
@@ -455,10 +515,12 @@ class SessionDaemon:
             if proc.returncode == 0:
                 subprocess.run(["sudo", "chown", "skimlab:skimlab", str(target_path)], check=False)
                 logger.info("Successfully moved export %s -> %s", frigate_filename, target_path)
-            else:
-                logger.error("Failed to move export: %s", proc.stderr)
+                return target_path
+            logger.error("Failed to move export: %s", proc.stderr)
+            return None
         except Exception as e:
             logger.error("Failed to execute move command: %s", e)
+            return None
 
     @staticmethod
     def _wait_for_file(path: Path, timeout: int = 10) -> bool:
@@ -496,12 +558,20 @@ class SessionDaemon:
             return
 
         mouse_id, recording_type, user_name = self._resolve_manual_metadata(camera_id)
-        self.manual_session_manager.start_recording(
+        session = self.manual_session_manager.start_recording(
             camera_id,
             mouse_id=mouse_id,
             recording_type=recording_type,
             user_name=user_name,
         )
+        if session is None:
+            # Journal refused the START write — undo Frigate's recording so
+            # we don't end up with an untracked ON state on disk.
+            logger.error(
+                "Reverting Frigate recording for %s: journal refused START",
+                camera_id,
+            )
+            self.frigate.set_recording(camera_id, enabled=False)
 
     def _handle_external_recording_off(self, camera_id: str):
         """Stop a manual recording and kick off export when Frigate UI triggers Record OFF."""
@@ -608,6 +678,9 @@ class SessionDaemon:
         # Disconnect MQTT
         logger.info("Disconnecting MQTT...")
         self.frigate.disconnect_mqtt()
+
+        # Close the journal last so shutdown ABORT writes still land.
+        self.journal.close()
 
         logger.info("Session Daemon stopped")
 

@@ -23,6 +23,7 @@ if TYPE_CHECKING:
     from frigate_controller import FrigateController
     from manual_session_manager import ManualSessionManager
     from storage_monitor import StorageMonitor
+    from session_journal import SessionJournal
 
 logger = logging.getLogger(__name__)
 
@@ -45,6 +46,7 @@ _frigate_controller: "FrigateController | None" = None
 _manual_session_manager: "ManualSessionManager | None" = None
 _storage_monitor: "StorageMonitor | None" = None
 _recording_watchdog: "RecordingWatchdog | None" = None
+_session_journal: "SessionJournal | None" = None
 _config: dict | None = None
 
 
@@ -56,6 +58,7 @@ def init_api(
     manual_session_manager: "ManualSessionManager | None" = None,
     storage_monitor: "StorageMonitor | None" = None,
     recording_watchdog: "RecordingWatchdog | None" = None,
+    session_journal: "SessionJournal | None" = None,
 ):
     """Initialize the API with references to daemon components.
 
@@ -63,12 +66,14 @@ def init_api(
     """
     global _session_manager, _radiens_poller, _frigate_controller, _config
     global _manual_session_manager, _storage_monitor, _recording_watchdog
+    global _session_journal
     _session_manager = session_manager
     _radiens_poller = radiens_poller
     _frigate_controller = frigate_controller
     _manual_session_manager = manual_session_manager
     _storage_monitor = storage_monitor
     _recording_watchdog = recording_watchdog
+    _session_journal = session_journal
     _config = config
     logger.info("API initialized")
 
@@ -441,3 +446,63 @@ def get_camera_bitrates():
     if _storage_monitor is None:
         return jsonify({"error": "storage monitor not initialized"}), 503
     return jsonify(_storage_monitor.fetch_camera_bitrates())
+
+
+# ---------------------------------------------------------------------------
+# Session journal endpoint (council Stage 2.1)
+# ---------------------------------------------------------------------------
+
+
+@app.route("/api/journal", methods=["GET"])
+def get_journal():
+    """Read session-lifecycle events from the durable WAL journal.
+
+    Query parameters (all optional):
+        - since (float): Unix epoch seconds — only return events at or after this ts
+        - until (float): Unix epoch seconds — only return events at or before this ts
+        - event_type (str): One of START, EXPORT_BEGIN, EXPORT_COMPLETE, ABORT, STALL
+        - session_id (str): Filter by session UUID
+        - limit (int): Max rows (default 500, max 5000)
+
+    Returns:
+        {
+          "count": <int>,
+          "counts_by_type": {<event_type>: <int>, ...},
+          "events": [<event>, ...]   # newest first
+        }
+    """
+    if _session_journal is None:
+        return jsonify({"error": "session journal not initialized"}), 503
+
+    def _float_arg(name):
+        v = request.args.get(name)
+        if v is None:
+            return None
+        try:
+            return float(v)
+        except (ValueError, TypeError):
+            return None
+
+    since = _float_arg("since")
+    until = _float_arg("until")
+    event_type = request.args.get("event_type")
+    session_id = request.args.get("session_id")
+
+    try:
+        limit = int(request.args.get("limit", 500))
+    except (ValueError, TypeError):
+        limit = 500
+
+    events = _session_journal.query(
+        since=since,
+        until=until,
+        event_type=event_type,
+        session_id=session_id,
+        limit=limit,
+    )
+
+    return jsonify({
+        "count": len(events),
+        "counts_by_type": _session_journal.count_by_type(since=since),
+        "events": events,
+    })
