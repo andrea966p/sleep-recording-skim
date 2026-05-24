@@ -21,14 +21,14 @@ status: planned
 
 ## Bill of Materials
 
-| Item | Purpose | Approx. Cost | Source |
-|------|---------|-------------|--------|
-| DB25 male screw-terminal breakout board | Access XDAQ DB25 pins without soldering | ~$5–10 | Amazon / electronics supplier |
-| 1kΩ resistor (1/4W, through-hole) | Voltage divider upper leg | ~$0.10 | Any electronics supplier |
-| 2kΩ resistor (1/4W, through-hole) | Voltage divider lower leg | ~$0.10 | Any electronics supplier |
-| Dupont jumper wires (female-to-female, 20 cm) | Connect breakout board to Pi GPIO header | ~$3 | Amazon |
-| (Optional) BNC Breakout Board for XDAQ | Professional-grade DB25 access via BNC connectors | Contact NeuroNexus | NeuroNexus |
-| (Optional) Small breadboard | Mounting voltage divider | ~$2 | Any electronics supplier |
+| Item                                          | Purpose                                           | Approx. Cost       | Source                        |
+| --------------------------------------------- | ------------------------------------------------- | ------------------ | ----------------------------- |
+| DB25 male screw-terminal breakout board       | Access XDAQ DB25 pins without soldering           | ~$5–10             | Amazon / electronics supplier |
+| 1kΩ resistor (1/4W, through-hole)             | Voltage divider upper leg                         | ~$0.10             | Any electronics supplier      |
+| 2kΩ resistor (1/4W, through-hole)             | Voltage divider lower leg                         | ~$0.10             | Any electronics supplier      |
+| Dupont jumper wires (female-to-female, 20 cm) | Connect breakout board to Pi GPIO header          | ~$3                | Amazon                        |
+| (Optional) BNC Breakout Board for XDAQ        | Professional-grade DB25 access via BNC connectors | Contact NeuroNexus | NeuroNexus                    |
+| (Optional) Small breadboard                   | Mounting voltage divider                          | ~$2                | Any electronics supplier      |
 
 **Total cost: ~$10–15** (excluding optional BNC breakout)
 
