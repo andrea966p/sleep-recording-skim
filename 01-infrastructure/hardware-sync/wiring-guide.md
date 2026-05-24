@@ -64,8 +64,8 @@ Pin 13 (GPIO 27) ──────────── Pin 2 (DI 03)
   (SCL)   GPIO 3  5 │ ●  ●  │ 6   GND
           GPIO 4  7 │ ●  ●  │ 8   GPIO 14
              GND  9 │ ●  ●  │ 10  GPIO 15
-  ► DAQ_ON GPIO 17 11│ ●  ●  │ 12  GPIO 18
-  ► FRAME  GPIO 27 13│ ●  ●  │ 14  GND  ◄── Shared GND
+ ► DAQ_ON GPIO 17 11│ ●  ●  │ 12  GPIO 18
+ ► FRAME  GPIO 27 13│ ●  ●  │ 14  GND  ◄── Shared GND
           GPIO 22 15│ ●  ●  │ 16  GPIO 23
             3.3V  17│ ●  ●  │ 18  GPIO 24
                    ... (remaining pins not used)
