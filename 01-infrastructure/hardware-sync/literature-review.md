@@ -6,6 +6,16 @@ status: complete
 
 # Literature Review — Video-EEG Hardware Synchronization
 
+> [!abstract] TL;DR — for non-technical readers
+> **What this is.** A short review of how published neuroscience studies handle multi-modal (video + electrophysiology) synchronization.
+>
+> **Why it exists.** Useful background when writing the methods section of a paper. It also establishes that the chosen approach (TTL pulse on GPIO) is the field standard, not an unusual choice.
+>
+> **How to read this page.** Read the "Verdict" callout below for the take-home. Skim the citations if you need to write a literature paragraph.
+
+> [!quote] Paper-ready
+> TTL-based hardware synchronization via digital I/O is the standard methodology across neuroscience multi-modal recording; the present architecture extends the standard approach with a distributed listener pattern, enabling per-node timestamping in a multi-Pi camera array.
+
 > [!tip] Verdict
 > TTL-based hardware synchronization via digital I/O is the **standard methodology** across neuroscience multi-modal recording. Our XDAQ GPIO approach is robust, correct, and publishably distinct due to the distributed architecture.
 

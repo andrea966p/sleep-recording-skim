@@ -7,6 +7,16 @@ status: completed
 
 # Storage Management System — Implementation Guide
 
+> [!abstract] TL;DR — for non-technical readers
+> **What this is.** The implementation history of the storage monitoring + recording-cap system shipped 2026-04-02 — backend `StorageMonitor`, three new API endpoints, a UI panel, and a hard recording cap that protects 200 GB for EEG data.
+>
+> **Why it exists.** Without it, video recordings could fill the NVMe and break the XDAQ EEG capture mid-session. The cap reserves 200 GB and refuses new recordings before the disk falls below that threshold.
+>
+> **How to read this page.** This is the build log. The runtime behavior is documented at [[../../01-infrastructure/session-daemon/architecture#7. Storage Monitor (`storage_monitor.py`)|architecture §7]]. Use this page if you need to understand why a particular value was chosen.
+
+> [!quote] Paper-ready
+> Disk-space management is enforced by a background storage monitor that samples filesystem usage every 30 seconds and refuses to start new video recordings when available space falls below the configured 200 GB EEG reserve, protecting in-progress electrophysiology data from competing video writes.
+
 ## Purpose
 
 Add real-time storage monitoring, a recording calculator, and EEG/EMG disk protection to the NeuroSurveillance system. This prevents video recordings from filling the 1.9 TB NVMe and interrupting critical XDAQ EEG/EMG data.

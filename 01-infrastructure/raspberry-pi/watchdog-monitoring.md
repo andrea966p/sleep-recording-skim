@@ -4,6 +4,18 @@ created: 2026-02-05
 status: production
 ---
 
+# Pi Hardware Watchdog & Monitoring
+
+> [!abstract] TL;DR — for non-technical readers
+> **What this is.** How each Raspberry Pi 5 self-recovers from a kernel hang via the BCM2712 hardware watchdog, managed by systemd.
+>
+> **Why it exists.** The Pi 5 has a hardware watchdog timer. If systemd stops feeding it (e.g. kernel hang), the chip resets the board after ~15 seconds. Without this, a hung Pi requires a physical reset trip to the lab.
+>
+> **How to read this page.** Skim "Hardware Watchdog (systemd)" — the configuration is two lines, and the test is to forcibly hang the kernel and confirm reboot. The other sections explain when the watchdog has actually fired in production.
+
+> [!quote] Paper-ready
+> Each Raspberry Pi 5 camera node is monitored by the BCM2712 hardware watchdog (15-second timeout), driven by systemd's `RuntimeWatchdogSec=15` and enabled at boot via `dtparam=watchdog=on`. The Pi self-recovers from kernel hangs without operator intervention; observed recovery latency in production is ~12–18 seconds.
+
 ## Hardware Watchdog (systemd)
 
 The hardware watchdog is managed by **systemd directly** — not the `watchdog` daemon package. systemd claims `/dev/watchdog` exclusively, so the two cannot run simultaneously.

@@ -6,6 +6,16 @@ status: planned
 
 # GPIO Sync Listener — Service Configuration
 
+> [!abstract] TL;DR — for non-technical readers
+> **What this is.** The planned Python listener that runs on each Raspberry Pi, watches a GPIO pin for the XDAQ `DAQ_ON` TTL signal, and publishes MQTT sync events.
+>
+> **Why it exists.** The GPIO pulse comes in on the Pi side; something has to translate "pin went high" into "session began at timestamp T" and tell the rest of the system over MQTT.
+>
+> **How to read this page.** Skim the service unit + config to know what's planned. Cross-link: [[overview]] for context, [[wiring-guide]] for the physical side.
+
+> [!quote] Paper-ready
+> A dedicated Python systemd service on each Raspberry Pi monitors the XDAQ DAQ_ON GPIO pin via interrupt-driven `lgpio`, translating rising-edge events into MQTT messages timestamped to the rising edge with sub-millisecond accuracy.
+
 > [!tip] Role
 > A lightweight Python service on each Raspberry Pi that monitors the XDAQ `DAQ_ON` signal via GPIO and publishes MQTT sync events. Runs independently from go2rtc — does NOT interfere with camera streaming.
 

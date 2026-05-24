@@ -6,6 +6,16 @@ status: planned
 
 # Hardware Synchronization — XDAQ GPIO ↔ Raspberry Pi
 
+> [!abstract] TL;DR — for non-technical readers
+> **What this is.** A planned upgrade (not yet deployed) that replaces the current 1-second software polling of Radiens with a hardware TTL pulse from the XDAQ DB25 connector directly to a Raspberry Pi GPIO pin.
+>
+> **Why it exists.** The current polling can miss the exact start moment by up to ~1 s — fine for most sleep work but not for tight cross-modal synchronization. A hardware TTL pulse drops latency below 1 ms.
+>
+> **How to read this page.** This overview is the entry point. [[wiring-guide|Wiring]] tells you the physical hookup; [[gpio-sync-service|GPIO Sync Service]] tells you the software listener; [[literature-review|Literature Review]] tells you why this approach is the field standard.
+
+> [!quote] Paper-ready
+> Multi-modal synchronization between the NeuroNexus XDAQ electrophysiology system and the Raspberry Pi video nodes is provided by a TTL pulse on the XDAQ DB25 digital output, wired to a GPIO pin on each Raspberry Pi and read by a lightweight Python listener service.
+
 > [!tip] Upgrade Summary
 > Replace ~1 s software polling with <1 ms hardware-level TTL synchronization between the NeuroNexus XDAQ Core and the Raspberry Pi camera nodes via GPIO wiring.
 

@@ -7,6 +7,16 @@ status: production
 
 # Session Recording Workflow
 
+> [!abstract] TL;DR — for non-technical readers
+> **What this is.** The most-read procedure in the vault — what a researcher does, step by step, to record a synchronized video + EEG session.
+>
+> **Why it exists.** Recording is the system's core use case. This page is the canonical instructions for any lab member running an experiment.
+>
+> **How to read this page.** Skim Quick Reference for the 6-step overview. Then go to Steps 1-5 for the detail. If something goes wrong, the "How to ask the journal what happened" troubleshooting section (added 2026-05-24) tells you the two API calls that diagnose 90 % of issues.
+
+> [!quote] Paper-ready
+> The session recording workflow is fully automatic from the researcher's perspective: per-chamber metadata is set in the desktop UI; the session daemon detects the Radiens R_OFF→R_ON transition within ~1 s and starts Frigate recording on chambers with metadata; the R_ON→R_OFF transition triggers MP4 export and filing under `/opt/neurosurveillance/exports/<user>/<mouse>/<date>/`.
+
 ## Purpose
 
 Synchronize Frigate video recording with NeuroNexus Radiens EEG/EMG recording for mouse sleep experiments. The session daemon automates the video side -- the researcher only needs to set metadata and operate Radiens as normal.

@@ -8,6 +8,16 @@ updated: 2026-04-02
 
 # Frontend Reference
 
+> [!abstract] TL;DR — for non-technical readers
+> **What this is.** The reference for the desktop UI that researchers use to set metadata and watch recordings — the Tauri + React app.
+>
+> **Why it exists.** The UI is the only thing most researchers interact with. This page documents every component, every poll interval, and every API endpoint the UI calls so the next person editing the frontend doesn't have to reverse-engineer it.
+>
+> **How to read this page.** Component Map shows the on-screen layout. Key Hooks tells you what data each poll fetches. API Client lists every backend endpoint the UI uses (plus three new ones — `/api/journal`, `/api/reconciler/last`, `/api/reconciler/run` — that exist on the backend but don't yet have a UI surface).
+
+> [!quote] Paper-ready
+> A Tauri-based React 19 desktop application polls the session daemon's local HTTP API every 1.5 s for state, 5 s for health, and 10 s for storage; per-chamber metadata is set via POST, recording lifecycle is observed via MQTT-driven status updates, and three durability-side endpoints (WAL journal, reconciler last-run, reconciler trigger) are available on the backend for future UI integration.
+
 Operational reference for the **NeuroSurveillance Session Controller** desktop application. This is the primary interface researchers use to set session metadata and monitor recording status.
 
 ## Tech Stack

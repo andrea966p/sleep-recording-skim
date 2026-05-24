@@ -6,6 +6,18 @@ status: production
 version: "5.2"
 ---
 
+# Frigate Config (`config.yml`)
+
+> [!abstract] TL;DR — for non-technical readers
+> **What this is.** The `config.yml` file that tells Frigate which cameras to watch, where to record, and how to talk to Mosquitto.
+>
+> **Why it exists.** Frigate is configuration-driven — every camera, every recording rule, every authentication setting comes from this file. If you ever change cameras or move the recording disk, you change this file and restart Frigate.
+>
+> **How to read this page.** "Production Configuration" is the whole file as deployed today. The MQTT block requires the `nvr` credentials since 2026-05-22 (anonymous broker access was removed). Skim the camera section to see how RTSP streams from the Pis are pulled.
+
+> [!quote] Paper-ready
+> Frigate is configured for recording-only operation (no object detection) across four H.264 RTSP streams from two Raspberry Pi nodes, with per-camera 10-second segments retained for 7 days and MQTT integration authenticated against the Mosquitto broker.
+
 ## File Location
 
 **Path:** `/srv/frigate/config/config.yml`

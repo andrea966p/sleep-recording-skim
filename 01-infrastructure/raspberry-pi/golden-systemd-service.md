@@ -7,6 +7,16 @@ version: "5.1"
 
 # Golden systemd Service
 
+> [!abstract] TL;DR — for non-technical readers
+> **What this is.** The systemd unit file on each Raspberry Pi 5 that runs `go2rtc` as a managed service — auto-starts at boot, restarts on crash.
+>
+> **Why it exists.** Without it, `go2rtc` would have to be started manually after every Pi reboot. With it, the camera streams come back automatically after a power blip or kernel watchdog reset.
+>
+> **How to read this page.** The unit file is short. The one line that **must not** be changed is `KillMode=control-group` — it ensures `rpicam-vid` child processes are killed when go2rtc restarts. Without it, zombie processes pile up and eventually freeze the Pi.
+
+> [!quote] Paper-ready
+> The go2rtc service runs under systemd on each Raspberry Pi camera node with `KillMode=control-group` to ensure all child capture processes are terminated atomically with the parent, preventing zombie-process accumulation and the system freezes that follow.
+
 > [!warning] CRITICAL SETTING
 > `KillMode=control-group` is **MANDATORY**.
 > Without it, zombie rpicam-vid processes cause system freezes.

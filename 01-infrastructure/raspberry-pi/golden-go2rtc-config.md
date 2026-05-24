@@ -7,6 +7,16 @@ version: "5.2"
 
 # Golden go2rtc Configuration
 
+> [!abstract] TL;DR — for non-technical readers
+> **What this is.** The `go2rtc.yaml` config on each Raspberry Pi 5. It tells `go2rtc` how to capture the Pi camera with `rpicam-vid` and republish the H.264 stream as RTSP for Frigate to consume.
+>
+> **Why it exists.** Frigate doesn't talk to Pi cameras directly. `go2rtc` is the bridge: it spawns a `rpicam-vid` process per camera, takes the H.264 output, and serves it on port 8554. **H.264 only** — H.265 causes Pi kernel panics; do not change the codec.
+>
+> **How to read this page.** The config file itself is the reference; the warnings explain the load-bearing settings. The `KillMode=control-group` rule in the [[golden-systemd-service|companion systemd unit]] is what prevents zombie `rpicam-vid` processes; do not separate the two.
+
+> [!quote] Paper-ready
+> Each Raspberry Pi 5 camera node runs go2rtc as a thin H.264-only RTSP republisher; `rpicam-vid` is invoked directly with a single-line exec string (no ffmpeg pipe), and the systemd unit's `KillMode=control-group` directive ensures clean termination without zombie capture processes.
+
 > [!tip] Golden Configuration
 > This is the battle-tested, production-stable configuration.
 > **DO NOT MODIFY** without extensive testing.

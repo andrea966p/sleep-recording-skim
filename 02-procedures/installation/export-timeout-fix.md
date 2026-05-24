@@ -8,6 +8,16 @@ related-incident: 2026-05-11 export timeout
 
 # Export Timeout Fix — Implementation Guide
 
+> [!abstract] TL;DR — for non-technical readers
+> **What this is.** A historical record of the 2026-05-18 fix that replaced the fixed 60-second export timeout with a progress-driven wait. If Frigate keeps reporting "in progress," the daemon keeps waiting; only if Frigate goes silent for 10 minutes does the daemon give up.
+>
+> **Why it exists.** Long sessions (multi-hour Diane recordings) take many minutes to export. The old timeout would kill the export before it finished, corrupting the result. This fix made the export resilient.
+>
+> **How to read this page.** This is a completed-and-shipped record. If you're debugging an export hang now, jump to [[../session-recording-workflow#How to ask the journal what happened|the workflow troubleshooting section]] — the WAL journal will tell you whether `EXPORT_BEGIN` was ever written.
+
+> [!quote] Paper-ready
+> The Frigate export polling loop was redesigned in 2026-05-18 to use progress-driven waiting: the daemon polls the Frigate export status every 5 seconds and only times out after 10 minutes of no progress signal, with a 24-hour hard safety ceiling, accommodating multi-hour exports without false timeouts.
+
 ## Purpose
 
 Replace the session daemon's fixed 5-minute export-completion timeout with a progress-aware wait, so multi-day recordings can finish multiplexing in Frigate before the daemon gives up.

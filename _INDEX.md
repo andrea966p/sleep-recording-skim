@@ -4,6 +4,11 @@ tags: [index, navigation, home]
 
 # NeuroSurveillance System Documentation
 
+> [!abstract] Start here
+> New to this vault? Read [[SYSTEM-OVERVIEW|the one-page system overview]] first — it explains what NeuroSurveillance is, what changed in the recent stabilization sprint, and where to read more.
+> For a deeper Q&A walkthrough with durability guarantees and a glossary: [[01-infrastructure/system-overview|the deeper overview]].
+> Onboarding a new lab member: [[02-procedures/new-researcher-onboarding|new-researcher-onboarding]].
+
 > [!info] Quick Access
 > | Service | URL |
 > |---------|-----|
@@ -44,6 +49,7 @@ Production IPs, usernames, paths, and settings.
 - [[01-infrastructure/hardware-sync/literature-review|Literature Review]]
 
 **Session Daemon:**
+- [[01-infrastructure/system-overview|System Overview — Q&A and glossary]]
 - [[01-infrastructure/session-daemon/architecture|Architecture & Design]]
 - [[01-infrastructure/session-daemon/session-journal|Session Journal — WAL (added 2026-05-23)]]
 - [[01-infrastructure/session-daemon/reconciler|Reconciler — nightly WAL ↔ Frigate cross-check (added 2026-05-24)]]
@@ -130,4 +136,4 @@ ffprobe rtsp://192.168.0.11:8554/pi_cam_0
 
 ---
 
-*Last updated: 2026-05-24*
+*Last updated: 2026-05-24 (vault rehaul — TL;DR + paper-ready callouts added vault-wide; SYSTEM-OVERVIEW + 01-infrastructure/system-overview created; new-researcher-onboarding rewritten; 4 archive files in 99-archive/2026-05-rehaul/)*

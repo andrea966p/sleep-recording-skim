@@ -6,6 +6,16 @@ status: production
 
 # Frigate NVR + Mosquitto MQTT Setup
 
+> [!abstract] TL;DR — for non-technical readers
+> **What this is.** The step-by-step deployment procedure for Frigate + Mosquitto on the NVR machine. Used when bringing up a fresh NVR or rebuilding after a hardware swap.
+>
+> **Why it exists.** Reproducibility. If the NVR fails, this procedure restores the recording stack in ~1 hour.
+>
+> **How to read this page.** Top to bottom, ticking each prerequisite first. Step 4 (Mosquitto auth) requires the password from [[../../00-config/production-values|production-values.md]] — fetch it before you start. The Validation section confirms everything works end-to-end.
+
+> [!quote] Paper-ready
+> The Frigate NVR and Mosquitto MQTT broker are deployed as Docker Compose services on the NVR machine via a reproducible 8-step procedure covering prerequisites, directory structure, authenticated MQTT configuration, Frigate config, container deployment, hardware-acceleration verification, recording test, and MQTT integration verification.
+
 ## Purpose
 
 Deploy Frigate NVR with Mosquitto MQTT broker on the NUC for recording RTSP camera streams from Raspberry Pi nodes. This procedure was validated on `e10ubuntu` (`192.168.0.50`) on 2026-02-12.

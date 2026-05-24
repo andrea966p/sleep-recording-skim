@@ -7,6 +7,16 @@ status: production
 
 # Centralized Monitoring Setup (Netdata + Uptime Kuma)
 
+> [!abstract] TL;DR — for non-technical readers
+> **What this is.** A procedure for installing Netdata on all 3 machines (NVR + 2 Pis) and Uptime Kuma on the NVR for service-level health checks with Slack alerts.
+>
+> **Why it exists.** Without it, the first sign of a problem is usually a researcher reporting failed recordings hours later. With it, the right people get a Slack ping within ~3 minutes of anything going down.
+>
+> **How to read this page.** Parts 1-3 install Netdata on each machine; Part 4 installs Uptime Kuma; Part 8 configures the 16 NVR-specific Netdata alerts. The "Persistent Frigate Python Logs" section (added 2026-05-22) explains how to read the persistent log file under `/srv/frigate/logs/frigate/`.
+
+> [!quote] Paper-ready
+> Centralized monitoring is provided by Netdata (real-time system and Docker metrics on all 3 machines) and Uptime Kuma (HTTP/TCP/ping checks for 7 service endpoints), with all alerts routed to a shared Slack webhook for ~3-minute incident detection.
+
 This procedure deploys two monitoring tools across the NeuroSurveillance infrastructure:
 
 - **Netdata** — real-time system & service metrics on all 3 machines (CPU, RAM, disk, Docker, systemd, processes)

@@ -6,6 +6,16 @@ status: production
 
 # Raspberry Pi Boot Configuration
 
+> [!abstract] TL;DR — for non-technical readers
+> **What this is.** The boot-time settings on each Raspberry Pi 5 camera node — enables the hardware watchdog, disables unused features, sets the minimum reliable config for 24/7 camera streaming.
+>
+> **Why it exists.** Without the hardware watchdog enabled at boot, a kernel hang would require a physical reset. With it enabled the Pi self-recovers after ~15 seconds. The other knobs trade unused features (Bluetooth, audio, etc.) for a more deterministic system.
+>
+> **How to read this page.** Most readers only need to know the file exists (`/boot/firmware/config.txt`) and that the watchdog line must stay. Look up specific settings here only if you're rebuilding a Pi from scratch or debugging boot.
+
+> [!quote] Paper-ready
+> Each Raspberry Pi 5 camera node is boot-hardened with the BCM2712 hardware watchdog enabled, so the system self-recovers from a kernel hang within ~15 seconds without operator intervention.
+
 > [!tip] Stability Hardening
 > These settings disable unused features and enable hardware watchdog for auto-recovery.
 

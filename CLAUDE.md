@@ -113,3 +113,17 @@ curl http://192.168.0.50:5000/api/stats
 ## Claude Skill Integration
 
 User has a `neurosurveillance-expert` skill on claude.ai containing parameterized configurations. This vault contains the **production values** that fill those parameters.
+
+## Vault conventions (added 2026-05-24)
+
+The 2026-05-24 rehaul introduced three reusable Obsidian callout patterns. When editing or creating new docs under `01-infrastructure/` or `02-procedures/`, preserve them.
+
+- **`> [!abstract] TL;DR — for non-technical readers`** at the top of every major doc, after the frontmatter and H1. Three short paragraphs: "What this is," "Why it exists," "How to read this page." Always include a cross-link to [[01-infrastructure/system-overview]] for the big picture.
+- **`> [!quote] Paper-ready`** at load-bearing technical claims. Present-tense active voice, 1-2 sentences, written so a user can paste it directly into a paper's methods section. Aim for 1-3 per major doc.
+- **`> [!history] Historical note (pre-YYYY-MM-DD)`** inline where the doc replaces older behavior. Links forward to a verbatim pre-change archive in `99-archive/2026-05-rehaul/` (or a date-stamped sub-folder for future sprints). The archive file's `superseded-by` frontmatter links back. Bidirectional.
+
+Two new entry-point files exist:
+- `SYSTEM-OVERVIEW.md` (vault root) — ~250-word elevator pitch.
+- `01-infrastructure/system-overview.md` — full Q&A overview + durability matrix + glossary.
+
+Files under `03-troubleshooting/`, `04-journal/`, `05-experiments/`, and `06-references/` are the historical work log and are intentionally not rehauled. Do not retrofit TL;DR blocks into journal entries or incident reports; those represent the state of knowledge at the time of writing.

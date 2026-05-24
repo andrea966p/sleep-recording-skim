@@ -11,6 +11,16 @@ related-incident: 2026-05-11 export timeout
 
 # Per-Camera Recording Health Watchdog — Implementation Guide
 
+> [!abstract] TL;DR — for non-technical readers
+> **What this is.** The implementation history of the recording watchdog (`recording_watchdog.py`) shipped 2026-05-18 — a background thread that watches Frigate's database and raises an alert when an active recording stops getting new video segments.
+>
+> **Why it exists.** Frigate can silently stop writing segments (go2rtc disconnects, ffmpeg crashes, disk goes weird). Without the watchdog, the daemon would still think the recording is live and you'd lose hours before noticing. The watchdog catches it in ~60 seconds.
+>
+> **How to read this page.** Read "Purpose" for context. The implementation steps are historical record — the code is shipped and lives at `backend/recording_watchdog.py`. The reference architecture entry is at [[../../01-infrastructure/session-daemon/architecture#11. Recording Watchdog (`recording_watchdog.py`)|architecture §11]].
+
+> [!quote] Paper-ready
+> A background recording-health watchdog polls Frigate's recordings SQLite every 30 seconds for cameras with active sessions, raising an MQTT alert and a journal STALL event when the most recent segment is more than 60 seconds old; recovery is detected automatically when new segments resume.
+
 ## Purpose
 
 Detect within ~30 seconds when Frigate's recording subsystem silently stalls on an actively-recording camera, so the operator can intervene before hours of experiment data are lost.

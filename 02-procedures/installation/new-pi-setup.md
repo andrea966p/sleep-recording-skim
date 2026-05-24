@@ -7,6 +7,16 @@ status: production
 
 # New Raspberry Pi Camera Node Setup
 
+> [!abstract] TL;DR — for non-technical readers
+> **What this is.** Step-by-step procedure for turning a fresh Raspberry Pi 5 into a dual-camera streaming node — go2rtc + the hardened boot config + the systemd unit + monitoring scripts.
+>
+> **Why it exists.** If a Pi fails or you add chambers, this is the recipe. Each Pi takes ~30 minutes from blank SD card to streaming.
+>
+> **How to read this page.** Top to bottom. The prerequisites checklist at the top is mandatory; the post-deployment validation section confirms cameras are reachable from the NVR.
+
+> [!quote] Paper-ready
+> Each Raspberry Pi 5 camera node is provisioned from a Raspberry Pi OS Bookworm image via a reproducible 8-step procedure covering boot hardening, hardware watchdog enablement, go2rtc deployment, and integration with the centralized monitoring stack.
+
 This procedure sets up a Raspberry Pi 5 as a dual-camera streaming node for the NeuroSurveillance system. It covers system hardening, go2rtc installation, PoE EEPROM configuration, monitoring scripts, and Frigate integration.
 
 > [!tip] Template Procedure

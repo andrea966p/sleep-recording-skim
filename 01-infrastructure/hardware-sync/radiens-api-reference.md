@@ -6,6 +6,16 @@ status: complete
 
 # Radiens AllegoClient API — Digital I/O Reference
 
+> [!abstract] TL;DR — for non-technical readers
+> **What this is.** A reference for the parts of the NeuroNexus Radiens Python SDK that the daemon talks to — `AllegoClient`, digital I/O, recording state.
+>
+> **Why it exists.** Radiens is the electrophysiology recorder; everything the daemon does flows from polling this client. This page is the map.
+>
+> **How to read this page.** Look up the specific call you need (start recording, read DIO, get status). The package name + import path are at the top.
+
+> [!quote] Paper-ready
+> The session daemon interacts with the NeuroNexus Radiens acquisition system via the `radiens-core` Python SDK's `AllegoClient` interface, polling recording state once per second over gRPC and consuming digital-I/O channel state for hardware synchronization events.
+
 > [!tip] Package Info
 > Package: `radiens-core` (PyPI, replaces older `radiens` package)
 > Requires: Python 3.12+

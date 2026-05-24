@@ -7,6 +7,16 @@ version: "1.0"
 
 # NVR Netdata Alert Configuration
 
+> [!abstract] TL;DR — for non-technical readers
+> **What this is.** The Netdata alert configuration for the NVR — 16 custom alerts that fire to Slack when something goes wrong on the recording machine.
+>
+> **Why it exists.** Netdata ships with 227 default alerts, most irrelevant for an NVR (Ceph, Kubernetes, Redis...). We silence them all and define only what matters for video surveillance.
+>
+> **How to read this page.** Skim the alert categories (CPU, memory, disk, Docker, temperature). Each one says what it catches in plain English. The Slack webhook is shared with Uptime Kuma.
+
+> [!quote] Paper-ready
+> Real-time monitoring of the NVR system is provided by Netdata with 16 NVR-specific alerts (227 defaults silenced), notifying via Slack on CPU, memory, disk, Docker container, and thermal anomalies; the alert configuration is version-controlled in `/etc/netdata/health.d/nvr-alerts.conf`.
+
 > [!tip] Golden Configuration
 > This is the production-stable Netdata alert configuration for the NVR server.
 > **DO NOT MODIFY** without testing. Changes require `sudo systemctl restart netdata`.

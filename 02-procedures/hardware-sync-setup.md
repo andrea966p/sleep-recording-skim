@@ -6,6 +6,16 @@ status: planned
 
 # Hardware Sync Setup Procedure
 
+> [!abstract] TL;DR — for non-technical readers
+> **What this is.** The deployment procedure for the planned hardware-sync upgrade — wiring the XDAQ DB25 to a Raspberry Pi GPIO pin and installing the listener service.
+>
+> **Why it exists.** When the lab moves to the TTL pulse sync (replacing 1-second software polling), this is the recipe. Not yet deployed.
+>
+> **How to read this page.** Prerequisites first — power off everything before touching wires. Then follow each phase in order. Cross-link: [[../01-infrastructure/hardware-sync/wiring-guide|wiring details]], [[../01-infrastructure/hardware-sync/gpio-sync-service|listener service]], [[../01-infrastructure/hardware-sync/overview|why and how]].
+
+> [!quote] Paper-ready
+> The XDAQ-to-Raspberry-Pi hardware synchronization is deployed via a staged procedure covering physical wiring (with safety power-off requirements), GPIO listener service installation on each Pi, daemon-side MQTT subscription, and end-to-end TTL pulse validation.
+
 > [!warning] Prerequisites
 > - XDAQ Core powered off
 > - Raspberry Pi powered off
