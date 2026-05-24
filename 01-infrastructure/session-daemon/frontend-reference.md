@@ -154,18 +154,24 @@ Manages user-configurable settings persisted to `localStorage`. No server round-
 **File:** `src/api/client.ts`
 **Base URL:** `http://127.0.0.1:8585`
 
-| Function | Method | Endpoint |
-|----------|--------|----------|
-| `getStatus()` | GET | `/api/status` |
-| `setMetadata(chamberId, data)` | POST | `/api/session/metadata?chamber_id={id}` |
-| `clearMetadata(chamberId)` | DELETE | `/api/session/metadata?chamber_id={id}` |
-| `getCurrentSession()` | GET | `/api/session/current` |
-| `getSessionHistory(limit?, source?)` | GET | `/api/session/history` |
-| `getHealth()` | GET | `/api/health` |
-| `getStorage()` | GET | `/api/storage` |
-| `getCameraBitrates()` | GET | `/api/storage/camera-bitrates` |
+| Function | Method | Endpoint | Purpose |
+|----------|--------|----------|---------|
+| `getStatus()` | GET | `/api/status` | Full daemon state poll (1.5 s interval) |
+| `setMetadata(chamberId, data)` | POST | `/api/session/metadata?chamber_id={id}` | Set pending metadata for a chamber |
+| `clearMetadata(chamberId)` | DELETE | `/api/session/metadata?chamber_id={id}` | Drop pending metadata for a chamber |
+| `getCurrentSession()` | GET | `/api/session/current` | Convenience: first active session if any |
+| `getSessionHistory(limit?, source?)` | GET | `/api/session/history` | Recent sessions from sidecar JSONs |
+| `getHealth()` | GET | `/api/health` | System health summary (5 s interval) |
+| `getStorage()` | GET | `/api/storage` | Disk usage, EEG reserve, can_record flag (10 s interval) |
+| `getCameraBitrates()` | GET | `/api/storage/camera-bitrates` | Live bitrates fetched from go2rtc per Pi |
+| *(no client wrapper yet)* | GET | `/api/journal` | **WAL session journal** — every START / EXPORT_BEGIN / EXPORT_COMPLETE / ABORT / STALL event. Filterable by `since`, `until`, `event_type`, `session_id`, `limit`. Added 2026-05-23. |
+| *(no client wrapper yet)* | GET | `/api/reconciler/last` | **Last nightly reconciler run's findings** (ORPHAN / PARTIAL / STUCK / DEGRADED). 404 if the reconciler hasn't run yet. Added 2026-05-24. |
+| *(no client wrapper yet)* | POST | `/api/reconciler/run?window_hours=N` | **Trigger a synchronous reconciler pass** and return its findings. Optional `window_hours` overrides the configured 24 h window. Added 2026-05-24. |
 
-All functions use the `fetch` API. Errors throw exceptions caught by calling components and displayed as toast notifications.
+All client-wrapped functions use the `fetch` API. Errors throw exceptions caught by calling components and displayed as toast notifications.
+
+> [!info] Three endpoints have no frontend client wrapper yet
+> `/api/journal`, `/api/reconciler/last`, and `/api/reconciler/run` are backend-only as of 2026-05-24. They are reachable via `curl` for operators (see [[../../02-procedures/session-recording-workflow#How to ask the journal what happened|the recording workflow's troubleshooting section]]). The next frontend sprint will add `getJournal()`, `getReconcilerLast()`, and `runReconciler()` wrappers plus a small reconciler badge in the header. Until then, the UI does not surface these endpoints. Full references: [[session-journal]] and [[reconciler]].
 
 ## Layout Behavior
 

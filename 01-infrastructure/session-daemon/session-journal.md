@@ -10,6 +10,16 @@ related-plan: 2026-05-20
 
 # Session Journal — Append-Only WAL
 
+> [!abstract] TL;DR — for non-technical readers
+> **What this is.** A small SQLite database (`/opt/neurosurveillance/session_wal.db`) where the daemon records every step of every recording — when it started, when the video export began, when it finished, if it was aborted, if it stalled.
+>
+> **Why it exists.** Before 2026-05-23, all of that lived only in the daemon's RAM. A daemon crash or power loss would lose the session's metadata even though Frigate had already written the video segments to disk. Now the journal is the durable record; the daemon's RAM is just a cache.
+>
+> **How to read this page.** Skim the Schema and Event types tables to know what a row looks like. Read "Failure semantics" if you're debugging. Read [[reconciler]] to see what consumes the journal nightly.
+
+> [!quote] Paper-ready
+> Every session state transition (START, EXPORT_BEGIN, EXPORT_COMPLETE, ABORT, STALL) is appended to a SQLite write-ahead-log database with `synchronous=FULL`, fsyncing each event before the recording path proceeds; the manual-recording path is fail-closed, refusing the recording if the journal write fails.
+
 The **session journal** is the daemon's crash-safe record of session lifecycle events. Every session state transition is appended to a SQLite WAL-mode database; the in-memory session managers are still the runtime truth, but the journal is the durable truth.
 
 Shipped 2026-05-23 as council Stage 2.1 (see [[../../04-journal/2026-05/2026-05-23|2026-05-23 journal]]).

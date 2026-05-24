@@ -276,7 +276,23 @@ curl "http://127.0.0.1:8585/api/session/history?source=manual" | python3 -m json
 | MQTT broker running? | `docker ps \| grep mosquitto` |
 | Frigate running? | `docker ps \| grep frigate` |
 | Camera streams active? | Check Frigate UI at `http://192.168.0.50:5000` |
-| MQTT messages flowing? | `docker exec mosquitto mosquitto_sub -t 'frigate/#' -v` |
+| MQTT messages flowing? | `docker exec mosquitto mosquitto_sub -u nvr -P "$NVR_MQTT_PASSWORD" -t 'frigate/#' -v` |
+
+> [!history] Historical note — pre-2026-05-22
+> Before 2026-05-22 the same `mosquitto_sub` command worked without `-u nvr -P …`. Authentication is now required on the broker; any unauthenticated subscriber gets `Connection error: Bad user name or password`. Pre-change examples: [[../99-archive/2026-05-rehaul/session-recording-workflow-unauth-mosquitto-2026-05-22|archived workflow]].
+
+### How to ask the journal what happened
+
+Since 2026-05-23 every session lifecycle event (`START`, `EXPORT_BEGIN`, `EXPORT_COMPLETE`, `ABORT`, `STALL`) is written to a crash-safe SQLite WAL at `/opt/neurosurveillance/session_wal.db`. When a researcher reports "the recording didn't work," check the journal first — it tells you whether the daemon ever knew about the session and where it got stuck.
+
+| Question | One-line answer |
+|---|---|
+| "Did the session even start?" | `curl 'http://127.0.0.1:8585/api/journal?event_type=START&limit=20' \| python3 -m json.tool` |
+| "Did the export ever complete?" | `curl 'http://127.0.0.1:8585/api/journal?event_type=EXPORT_COMPLETE&limit=20' \| python3 -m json.tool` |
+| "Is anything stuck right now?" | `curl 'http://127.0.0.1:8585/api/reconciler/last' \| python3 -m json.tool` (returns the most recent nightly run's findings) |
+| "Force a reconciler check now" | `curl -X POST 'http://127.0.0.1:8585/api/reconciler/run?window_hours=24' \| python3 -m json.tool` |
+
+If `/api/journal` shows a `START` but no `EXPORT_COMPLETE`, the export hung or the daemon crashed mid-export. The nightly reconciler will flag the session as `STUCK` after 24 h. To unstick it manually, follow the "Export failed" recipe below. Full reference: [[../01-infrastructure/session-daemon/session-journal|session-journal]] and [[../01-infrastructure/session-daemon/reconciler|reconciler]].
 
 ### Export failed
 

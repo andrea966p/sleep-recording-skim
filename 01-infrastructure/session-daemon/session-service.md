@@ -7,6 +7,16 @@ version: "1.1"
 
 # Session Daemon Service
 
+> [!abstract] TL;DR — for non-technical readers
+> **What this is.** The systemd unit file that makes the daemon start automatically and keeps it alive across reboots and crashes.
+>
+> **Why it exists.** Without systemd, the daemon would not survive an NVR reboot — and would not restart if it crashed mid-day. This is the "supervisor" that keeps the daemon up.
+>
+> **How to read this page.** Skim "Key Configuration" to see the install commands. The two notes (Radiens auth, symlink deployment, and the WAL journal) explain what's safe to touch and what isn't.
+
+> [!quote] Paper-ready
+> The session daemon runs as a systemd-managed service under the unprivileged user `skimlab`, restarted automatically on failure with a 10-second backoff and capped at 256 MB resident memory; deployment is via a symlink so repository edits take effect on `systemctl restart`.
+
 ## Unit File
 
 - **Path:** `/etc/systemd/system/neurosurveillance-session.service`
@@ -38,6 +48,9 @@ version: "1.1"
 > `/opt/neurosurveillance/session-daemon/` is a symlink to the repo at
 > `/home/skimlab/Monitoring_project/neurosurveillance/backend/`.
 > Edits to the repo's `backend/*.py` files take effect on next daemon restart.
+
+> [!note] WAL Journal at `/opt/neurosurveillance/session_wal.db` (since 2026-05-23)
+> The daemon owns a SQLite write-ahead-log database at `/opt/neurosurveillance/session_wal.db` (plus `-wal` and `-shm` companion files). Every session lifecycle event (`START / EXPORT_BEGIN / EXPORT_COMPLETE / ABORT / STALL`) is appended with `synchronous=FULL`, so a `systemctl restart` mid-write loses at most the very last in-flight statement. The file is in WAL mode — leave the three files in place across restarts; do not delete the `-wal`/`-shm` files manually or you risk truncating recent events. Backups: read-only access via `sqlite3 file:/opt/neurosurveillance/session_wal.db?mode=ro` is safe to take while the daemon is running. Full reference: [[session-journal]].
 
 ## Install / Reload Commands
 

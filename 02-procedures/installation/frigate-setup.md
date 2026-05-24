@@ -83,14 +83,28 @@ Paste the following:
 
 ```ini
 listener 1883
-allow_anonymous true
-persistence true
-persistence_location /mosquitto/data/
+allow_anonymous false
+password_file /mosquitto/config/passwd
+persistence false
 log_dest stdout
 ```
 
-> [!tip] Security Note
-> `allow_anonymous true` is acceptable for an isolated lab LAN with no internet exposure. For networks with external access, configure authentication.
+Then create the password file. The plaintext password is in [[../../00-config/production-values#Mosquitto MQTT Authentication (since 2026-05-22)|production-values.md]]; never put it into a public repo.
+
+```bash
+# Start mosquitto once so we can use mosquitto_passwd from inside the container.
+cd /srv/frigate && docker compose up -d mosquitto
+
+# Create the passwd file (replace <PLAINTEXT> with the value from production-values.md).
+docker exec mosquitto mosquitto_passwd -c -b /tmp/passwd nvr <PLAINTEXT>
+docker exec mosquitto cat /tmp/passwd | sudo tee /srv/frigate/mosquitto/passwd > /dev/null
+
+# Restart mosquitto so it picks up the new auth config + password file.
+docker compose restart mosquitto
+```
+
+> [!history] Historical note — pre-2026-05-22
+> Before 2026-05-22 this step used `allow_anonymous true` and no `password_file`; the rationale was "acceptable for an isolated lab LAN with no internet exposure." The current step requires auth so a compromised LAN device cannot inject Frigate state changes (which would create phantom sessions or stop recordings). Full pre-change text: [[../../99-archive/2026-05-rehaul/frigate-setup-mosquitto-2026-05-22|archived setup step]].
 
 ### 5. Deploy Frigate Configuration
 
@@ -195,10 +209,15 @@ ls -la /srv/frigate/storage/exports/
 docker compose logs mosquitto | tail -5
 # Expected: "mosquitto version X.X.X running" with no errors
 
-# Verify Frigate is connected
-docker exec mosquitto mosquitto_sub -t 'frigate/#' -C 1 -W 5
+# Verify Frigate is connected. NVR_MQTT_PASSWORD is in production-values.md.
+docker exec mosquitto mosquitto_sub \
+    -u nvr -P "$NVR_MQTT_PASSWORD" \
+    -t 'frigate/#' -C 1 -W 5
 # Expected: receives at least one message within 5 seconds
 ```
+
+> [!warning] Auth required since 2026-05-22
+> `mosquitto_sub` and `mosquitto_pub` without `-u nvr -P …` will fail with `Connection error: Bad user name or password`. If you see that error, you forgot the credentials, not a bug.
 
 ---
 

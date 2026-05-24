@@ -8,6 +8,16 @@ related-commit: 3830dba
 
 # Reconciler — golden config
 
+> [!abstract] TL;DR — for non-technical readers
+> **What this is.** A nightly self-audit. At 00:01 KST every night, the daemon compares what it thinks happened (the WAL journal) against what's actually on disk (Frigate's recordings database) and reports any disagreement.
+>
+> **Why it exists.** Without it, drift accumulates silently — an export hangs, a session is half-recorded, nobody notices for weeks. The reconciler flags four kinds of problems by name: ORPHAN (video without a session), PARTIAL (session with poor video coverage), STUCK (export that never finished), DEGRADED (session that stalled mid-recording).
+>
+> **How to read this page.** Read "Finding categories" first — that's the menu of what the reconciler can tell you. Skip to "MIN_ORPHAN_DURATION_S = 6h" if you wonder why ORPHANs seem noisy (Frigate records 24/7 — it's by design).
+
+> [!quote] Paper-ready
+> A background reconciler thread runs at 00:01 KST nightly, joining the durable session WAL against Frigate's recordings database to flag four categories of drift — ORPHAN, PARTIAL, STUCK, DEGRADED — and publishing a compact summary over MQTT to `neurosurveillance/reconciler/findings` for downstream alerting.
+
 Nightly cross-check of the [[session-journal|session WAL journal]] against Frigate's `recordings` SQLite. Surfaces drift between **intent** (sessions the daemon started) and **reality** (segments on disk + exports completed).
 
 > [!important] Read-only on both ends

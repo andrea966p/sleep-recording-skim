@@ -444,6 +444,25 @@ If you need to remove it from a machine:
 sudo /usr/libexec/netdata/netdata-uninstaller.sh --yes --env /etc/netdata/.environment
 ```
 
+### Persistent Frigate Python Logs (since 2026-05-22)
+
+Frigate's Python-side process logs were previously tmpfs-only inside the container — every `docker restart` wiped them, so post-mortem debugging required catching the logs live with `docker compose logs -f frigate`. Since 2026-05-22 a host volume mount makes them persistent:
+
+```bash
+# Tail the current Frigate log (host path, persistent across container restarts)
+sudo tail -f /srv/frigate/logs/frigate/current
+
+# Find the most recent stall or error
+sudo grep -iE "error|stall|exception" /srv/frigate/logs/frigate/current | tail -20
+
+# Disk usage of the persistent log dir (rotates roughly daily)
+sudo du -sh /srv/frigate/logs/frigate/
+```
+
+The mount is declared in `/srv/frigate/docker-compose.yml` as `./logs/frigate:/dev/shm/logs/frigate`. The container's internal tmpfs at `/dev/shm/logs/frigate` is now backed by the host directory, so the rotation pattern stays the same — just the location is durable.
+
+No `docker compose` action required after a fresh checkout: the volume is part of the compose file. If you ever rebuild from scratch, follow [[frigate-setup|the Frigate setup procedure]] and the `./logs/frigate` directory is created on first `docker compose up -d`.
+
 ### Removing the Apt Pin on WebKitGTK
 
 > [!note] Related Issue

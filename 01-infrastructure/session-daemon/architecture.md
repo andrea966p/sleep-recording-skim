@@ -8,6 +8,16 @@ version: "3.0"
 
 # Session Daemon Architecture
 
+> [!abstract] TL;DR — for non-technical readers
+> **What this is.** The full architectural reference for the Python session daemon that runs on the NVR.
+>
+> **Why it exists.** Eleven components work together to do one job: when Radiens starts recording, the right video appears on disk under the right name. This page is what someone reading the codebase opens first.
+>
+> **How to read this page.** Scan the numbered component sections (1–11) — each one is one Python module. Skip to "Failure Modes" if you're debugging. Use [[../system-overview|the plain-language overview]] if you want the big picture before diving in.
+
+> [!quote] Paper-ready
+> The session daemon is a Python orchestrator running as a systemd service, polling NeuroNexus Radiens once per second over gRPC and controlling Frigate NVR over MQTT; eleven independent components — Radiens poller, Frigate controller, session manager, manual session manager, session utilities, HTTP API, export pipeline, storage monitor, main daemon, session journal (WAL), nightly reconciler, and recording watchdog — together provide autonomous video-and-electrophysiology synchronization with durable session metadata.
+
 The **NeuroSurveillance Session Daemon** synchronizes Frigate video recording with NeuroNexus Radiens EEG/EMG data acquisition. When a researcher starts or stops EEG recording in Radiens, the daemon automatically starts/stops video recording in Frigate, then exports and organizes the video files. A companion desktop UI (Tauri + React) provides metadata entry and live monitoring.
 
 ## Design Principles
@@ -568,6 +578,23 @@ Nightly cross-check of the [[session-journal|WAL journal]] against Frigate's `re
 - Every external `recordings/state` callback is deferred by `STATE_DEFER_SECONDS = 1.5` via `threading.Timer`. An `availability=online` arriving in the defer window cancels pending timers — fixes the ordering bug where Frigate republishes retained state ON *before* the LWT online payload.
 - Council Stage 2.3 fold-in: `_last_known_state` now uses an explicit `threading.Lock`.
 - Validated 2026-05-24: 3× consecutive `docker restart frigate` produced 0 phantom `Manual recording started` log lines.
+
+### 11. Recording Watchdog (`recording_watchdog.py`)
+
+Background thread that detects stalled Frigate recordings on active cameras. Shipped 2026-05-18 as part of the recording-health work that preceded the stabilization sprint. **Full reference:** [[../../02-procedures/installation/recording-health-watchdog|recording-health-watchdog]].
+
+| Detail | Value |
+|---|---|
+| **Poll interval** | 30 s |
+| **Stall threshold** | 60 s (no new segment from Frigate for an actively-recording camera) |
+| **Start grace** | 30 s after a recording begins (Frigate needs at least one segment) |
+| **Input** | `/srv/frigate/storage/frigate.db` `recordings.MAX(end_time)` per camera; daemon-side active-sessions map |
+| **MQTT publish** | `neurosurveillance/watchdog/<camera>/stall` — includes `lag_seconds`, `last_segment_ts`, `session_id` |
+| **Journal emission** | `STALL` event (`recording_watchdog._emit_alert` → `session_journal.log_event`) with the same payload — gives the reconciler the data it needs to flag the session `DEGRADED` post-hoc |
+
+**Why it exists:** Frigate sometimes silently stops writing segments — go2rtc disconnects on the Pi side, an ffmpeg child crashes, the disk goes unreachable. Without the watchdog, the daemon would happily continue thinking the recording is live while no video is actually being captured. The watchdog raises a single MQTT alert per stall (de-duped) and the operator can decide whether to abort or wait.
+
+**Recovery:** The watchdog clears the alert (`Recording recovered on <camera>`) the next time `MAX(end_time)` advances within the threshold. No daemon-side auto-recovery action is taken — that decision is held until at least one organic stall has been observed in production (council guidance from 2026-05-01).
 
 ## Frontend Application
 
