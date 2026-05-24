@@ -45,6 +45,8 @@ Production IPs, usernames, paths, and settings.
 
 **Session Daemon:**
 - [[01-infrastructure/session-daemon/architecture|Architecture & Design]]
+- [[01-infrastructure/session-daemon/session-journal|Session Journal — WAL (added 2026-05-23)]]
+- [[01-infrastructure/session-daemon/reconciler|Reconciler — nightly WAL ↔ Frigate cross-check (added 2026-05-24)]]
 - [[01-infrastructure/session-daemon/frontend-reference|Frontend Reference]]
 - [[01-infrastructure/session-daemon/session-service|Systemd Service]]
 
@@ -128,4 +130,4 @@ ffprobe rtsp://192.168.0.11:8554/pi_cam_0
 
 ---
 
-*Last updated: 2026-04-02*
+*Last updated: 2026-05-24*

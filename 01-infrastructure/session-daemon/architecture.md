@@ -1,7 +1,7 @@
 ---
 tags: [infrastructure, session-daemon, architecture]
 created: 2026-02-20
-updated: 2026-04-13
+updated: 2026-05-24
 status: production
 version: "3.0"
 ---
@@ -119,6 +119,7 @@ Polls the NeuroNexus Radiens software every 1 second to detect recording state c
 **Error handling:**
 - If `get_status()` raises an exception (Radiens not running, connection lost), the poller logs a warning and retries on the next poll cycle. It does NOT change Frigate recording state.
 - **Log spam suppression:** The first error is logged, then only every 5th consecutive failure. The counter resets when Radiens reconnects. This prevents log flooding during long outages.
+- **Exponential backoff (since 2026-05-23):** consecutive failures double the wait between wire calls — 1 s → 2 s → 4 s → … capped at **60 s**. `connect()` and `poll()` both honour `_next_attempt_at`; while backing off, both return a `connected=False` status without calling `_client.get_status()`. The daemon's main loop and all other components keep ticking on their own cadence. Without this, the radiens client library writes ~2 lines per second to `/opt/neurosurveillance/radiens.log` while Radiens is down (3.2 GB accumulated by the time backoff shipped). `ImportError` (missing `radiens` package) sets `_next_attempt_at = inf` — permanent suppression for a structural problem.
 - If Radiens was in `R_ON` when connection was lost and reconnects still in `R_ON`, no duplicate start is triggered (state tracking prevents this).
 - If Radiens was in `R_ON` when connection was lost and reconnects in `R_OFF`, the daemon treats this as a session end and exports normally.
 
@@ -525,6 +526,49 @@ while running:
 4. Disconnect from MQTT
 5. Exit cleanly
 
+### 9. Session Journal (`session_journal.py`)
+
+Append-only SQLite WAL database that records every session lifecycle event. Shipped 2026-05-23 as council Stage 2.1. **Full reference:** [[session-journal|Session Journal — golden config]].
+
+| Detail | Value |
+|---|---|
+| **DB path** | `/opt/neurosurveillance/session_wal.db` (+ `-wal`, `-shm` companions) |
+| **Mode** | `journal_mode=WAL`, `synchronous=FULL` (`fsync` per commit) |
+| **Schema** | `events(id, ts, event_type, session_id, camera, mouse_id, payload_json)` |
+| **Indexes** | `ts`, `session_id`, `(event_type, ts)` |
+| **Event types** | `START`, `EXPORT_BEGIN`, `EXPORT_COMPLETE`, `ABORT`, `STALL` |
+| **Concurrency** | One `sqlite3.Connection` guarded by `threading.Lock` |
+| **HTTP surface** | `GET /api/journal` — filters `since`/`until`/`event_type`/`session_id`/`limit` |
+
+**Failure policy:** `log_event()` never raises and returns `bool`. The manual-recording path is **fail-closed** (a `False` return from `START` refuses the recording and publishes `OFF` to Frigate); every other path is fail-open.
+
+**Producers:** `manual_session_manager.start_recording()` (START fail-closed), `session_manager.start_session()` (START fail-open), `session_manager.abort_session()` (ABORT), `daemon._execute_export()` (EXPORT_BEGIN + EXPORT_COMPLETE wrapping the existing export pipeline), `recording_watchdog._emit_alert()` (STALL with `session_id` from `active_sessions_provider`).
+
+**Backfill:** `backend/scripts/backfill_journal.py` replays historical `_session.json` sidecars into the WAL (idempotent — skips any `session_id` already present). Backfilled rows carry `payload.backfilled: true` so the reconciler can apply looser thresholds.
+
+### 10. Reconciler (`reconciler.py`)
+
+Nightly cross-check of the [[session-journal|WAL journal]] against Frigate's `recordings` SQLite. Shipped 2026-05-24 as council Stage 2.2. **Full reference:** [[reconciler|Reconciler — golden config]].
+
+| Detail | Value |
+|---|---|
+| **Schedule** | Background thread, runs at `00:01 Asia/Seoul` nightly (configurable via `reconciler.scheduled_hour`/`minute`) |
+| **Inputs** | `/opt/neurosurveillance/session_wal.db` + `/srv/frigate/storage/frigate.db` — both **read-only** (`sqlite3 file:?mode=ro`) |
+| **Window** | Default last 24 h (override per-run via `window_hours` arg or `?window_hours=N` query) |
+| **Findings** | `ORPHAN` (uncovered Frigate runs ≥ 6 h), `PARTIAL` (segment coverage < 50 %), `STUCK` (`EXPORT_BEGIN` > 24 h with no end), `DEGRADED` (`START + STALL + EXPORT_COMPLETE`) |
+| **MQTT publish** | `neurosurveillance/reconciler/findings` — compact scalar summary only |
+| **HTTP surface** | `GET /api/reconciler/last` (cached findings), `POST /api/reconciler/run?window_hours=N` (synchronous ad-hoc run) |
+| **CLI** | `reconciler.py --since 7d --json` — share-class with the daemon thread, no MQTT publish |
+
+**Why MIN_ORPHAN_DURATION_S = 6 h:** Frigate's `record.enabled: true` means it records 24/7 regardless of sessions, so per-minute ORPHAN reporting would flood the report. The 6 h floor surfaces only outsized anomalies. Slack alerts intentionally suppress ORPHAN counts. See [[reconciler#Why MIN_ORPHAN_DURATION_S is 6h|the golden config]] for the full rationale and future-direction notes.
+
+**Frigate restart safety** — added the same day as the reconciler:
+
+- `FrigateController` subscribes to `frigate/available` (LWT) and exposes `register_frigate_availability_callback`. On any non-initial `online`, the daemon re-arms the 10 s startup grace.
+- Every external `recordings/state` callback is deferred by `STATE_DEFER_SECONDS = 1.5` via `threading.Timer`. An `availability=online` arriving in the defer window cancels pending timers — fixes the ordering bug where Frigate republishes retained state ON *before* the LWT online payload.
+- Council Stage 2.3 fold-in: `_last_known_state` now uses an explicit `threading.Lock`.
+- Validated 2026-05-24: 3× consecutive `docker restart frigate` produced 0 phantom `Manual recording started` log lines.
+
 ## Frontend Application
 
 The desktop UI is a **Tauri v2** application with a **React 19** frontend, providing researchers with a visual interface for setting session metadata and monitoring recording status.
@@ -674,7 +718,12 @@ neurosurveillance/
 │   ├── session_manager.py
 │   ├── manual_session_manager.py
 │   ├── session_utils.py
+│   ├── session_journal.py        # WAL journal (added 2026-05-23)
+│   ├── reconciler.py             # Nightly WAL ↔ Frigate cross-check (added 2026-05-24)
+│   ├── recording_watchdog.py     # Stall detector (added 2026-05-18)
 │   ├── radiens_poller.py
+│   ├── scripts/
+│   │   └── backfill_journal.py   # Replay session JSONs into the WAL
 │   └── requirements.txt
 ├── frontend/          # Tauri + React desktop UI
 │   ├── src/
@@ -696,6 +745,9 @@ The daemon runs from `/opt/neurosurveillance/`. The `session-daemon/` subdirecto
 ├── venv/                      # Python virtual environment
 ├── logs/                      # Daemon logs (rotating: 10MB x 5 files)
 │   └── session-daemon.log
+├── session_wal.db             # Append-only journal (added 2026-05-23)
+├── session_wal.db-wal         # SQLite WAL companion file
+├── session_wal.db-shm         # SQLite shared-memory coordination file
 ├── sessions/                  # Session JSON sidecars (both Radiens + manual)
 │   ├── 2602201430_HETCF3R1_basal_session.json
 │   └── 2602201430_manual_pi_cam_0_session.json
