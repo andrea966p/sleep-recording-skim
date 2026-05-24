@@ -30,6 +30,15 @@ EXPORT_POLL_INTERVAL = 5.0    # seconds between export status checks
 EXPORT_STALL_TIMEOUT = 600.0  # 10 min grace if Frigate unreachable / export vanishes
 EXPORT_MAX_TIMEOUT = 86400.0  # 24h hard ceiling (safety net)
 
+# External recording state callback defer.
+# On Frigate restart, Mosquitto republishes retained recordings/state topics
+# BEFORE the frigate/available=online message arrives. If the daemon acted on
+# state immediately, retained ON values would fire phantom ManualSessions
+# before the availability handler could re-arm the grace window. We defer
+# every external state callback by STATE_DEFER_SECONDS so an availability
+# online arriving in that window can cancel the pending callbacks.
+STATE_DEFER_SECONDS = 1.5
+
 
 class FrigateController:
     """Controls Frigate recording via MQTT and exports via HTTP API.
@@ -72,17 +81,66 @@ class FrigateController:
         # Last known recording state per camera — used to detect actual
         # transitions (ON->OFF, OFF->ON) and ignore repeated state messages
         # (e.g. Frigate reasserting ON from config.yml record.enabled=true).
+        # _last_known_state_lock guards reads/writes — MQTT thread mutates;
+        # availability-grace path may also drain via clear_last_known_state().
         self._last_known_state: dict[str, str] = {}  # camera_id -> "ON"/"OFF"
+        self._last_known_state_lock = threading.Lock()
+
+        # Frigate availability tracking (frigate/available LWT topic).
+        # The first retained "online" we receive on (re)subscribe is NOT a
+        # restart event — _initial_available_seen guards against spurious grace.
+        self._frigate_online_state: Optional[str] = None
+        self._initial_available_seen: bool = False
+        self._frigate_online_lock = threading.Lock()
+
+        # Pending state-callback Timers keyed by camera_id. Adding to or
+        # cancelling from this dict is guarded by _pending_state_lock.
+        self._pending_state_actions: dict[str, threading.Timer] = {}
+        self._pending_state_lock = threading.Lock()
 
         # Callback for external recording state changes: fn(camera_id, state_str)
         self._on_external_recording_change: Optional[
             Callable[[str, str], None]
         ] = None
 
+        # Callback for Frigate availability transitions:
+        #   fn(current_payload: str, previous_payload: Optional[str])
+        # Fired on any "online" payload received AFTER the initial retained
+        # message on subscribe (i.e. genuine Frigate restart / reconnect).
+        self._on_frigate_available: Optional[
+            Callable[[str, Optional[str]], None]
+        ] = None
+
     def clear_expected_states(self):
         """Clear expected state transitions safely."""
         with self._expected_lock:
             self._expected_states.clear()
+
+    def clear_last_known_state(self):
+        """Clear cached last-known state for all cameras safely."""
+        with self._last_known_state_lock:
+            self._last_known_state.clear()
+
+    def cancel_pending_state_actions(self) -> list[str]:
+        """Cancel every deferred external-state callback in flight.
+
+        Called from the availability handler and from the daemon's restart
+        grace path so a Frigate-restart retained ``ON`` republish cannot
+        graduate into a phantom ManualSession.
+
+        Returns the camera IDs whose pending callbacks were cancelled.
+        """
+        with self._pending_state_lock:
+            cancelled = list(self._pending_state_actions.keys())
+            for timer in self._pending_state_actions.values():
+                timer.cancel()
+            self._pending_state_actions.clear()
+        if cancelled:
+            logger.info(
+                "Cancelled deferred state callbacks for cameras: %s",
+                ", ".join(cancelled),
+            )
+        return cancelled
 
     def connect_mqtt(self) -> bool:
         """Connect to the MQTT broker. Returns True if successful."""
@@ -128,7 +186,7 @@ class FrigateController:
                 self._mqtt_connected = False
 
     def register_external_recording_callback(
-        self, callback: Callable[[str, str], None]
+        self, callback: Optional[Callable[[str, str], None]]
     ):
         """Register a callback for external recording state changes.
 
@@ -136,26 +194,69 @@ class FrigateController:
         "ON" or "OFF". It is called when a recording state change is detected
         that was NOT initiated by this daemon's set_recording() method.
 
+        Pass ``None`` to suppress external-change notifications (e.g. during
+        a startup or restart grace period).
+
         Args:
-            callback: Function to call on external state changes.
+            callback: Function to call on external state changes, or None.
         """
         self._on_external_recording_change = callback
-        logger.info("External recording change callback registered")
+        if callback is None:
+            logger.info("External recording change callback cleared")
+        else:
+            logger.info("External recording change callback registered")
+
+    def register_frigate_availability_callback(
+        self, callback: Optional[Callable[[str, Optional[str]], None]]
+    ):
+        """Register a callback for Frigate availability transitions.
+
+        The callback receives (current_payload: str, previous_payload: Optional[str])
+        whenever a non-initial message arrives on ``frigate/available``. The
+        primary use is to re-arm the startup grace period when Frigate restarts
+        while the daemon stays up — Frigate then republishes its retained
+        ``state`` topic, which would otherwise look like an external user
+        click and spawn a phantom ManualSession.
+
+        Args:
+            callback: Function to call on availability messages, or None to
+                clear an existing registration.
+        """
+        self._on_frigate_available = callback
+        if callback is None:
+            logger.info("Frigate availability callback cleared")
+        else:
+            logger.info("Frigate availability callback registered")
 
     def _on_connect(self, client, userdata, flags, reason_code, properties=None):
         if reason_code == 0:
             self._mqtt_connected = True
             logger.info("Connected to MQTT broker at %s:%d", self.mqtt_host, self.mqtt_port)
-            # Subscribe to recording state topics for external change detection
+            # Reset initial-availability guard on every (re)subscribe so that
+            # the first retained value Mosquitto delivers is treated as a
+            # baseline read, not a Frigate restart event.
+            with self._frigate_online_lock:
+                self._initial_available_seen = False
+            # Subscribe to recording state topics for external change detection.
             client.subscribe("frigate/+/recordings/state", qos=1)
-            logger.info("Subscribed to frigate/+/recordings/state")
+            # Subscribe to Frigate availability (LWT) so we can detect a
+            # Frigate-only restart and re-arm the recording-state grace window.
+            client.subscribe("frigate/available", qos=1)
+            logger.info(
+                "Subscribed to frigate/+/recordings/state and frigate/available",
+            )
         else:
             logger.error("MQTT connection failed with code: %s", reason_code)
 
     def _on_message(self, client, userdata, msg):
-        """Handle incoming MQTT messages (recording state updates)."""
+        """Handle incoming MQTT messages (recording state + availability)."""
         topic = msg.topic
         payload = msg.payload.decode("utf-8", errors="replace").strip()
+
+        # Branch on topic: availability LWT vs per-camera recording state.
+        if topic == "frigate/available":
+            self._handle_availability_message(payload)
+            return
 
         # Parse camera ID from topic: frigate/{camera_id}/recordings/state
         match = re.match(r"^frigate/([^/]+)/recordings/state$", topic)
@@ -170,17 +271,22 @@ class FrigateController:
 
         if expected is not None and expected == payload:
             # This is the echo of our own set_recording() call — consume it
-            self._last_known_state[camera_id] = payload
+            with self._last_known_state_lock:
+                self._last_known_state[camera_id] = payload
             logger.debug(
                 "Consumed self-initiated state echo: %s -> %s",
                 camera_id, payload,
             )
             return
 
+        # Atomically read the previous value and write the new one so that
+        # two near-simultaneous messages can't both observe the same `prev`.
+        with self._last_known_state_lock:
+            prev = self._last_known_state.get(camera_id)
+            self._last_known_state[camera_id] = payload
+
         # Ignore if this is NOT an actual transition (same state repeated).
         # This filters out Frigate reasserting ON from config record.enabled=true.
-        prev = self._last_known_state.get(camera_id)
-        self._last_known_state[camera_id] = payload
         if prev == payload:
             logger.debug(
                 "Ignoring repeated state (no transition): %s -> %s",
@@ -188,18 +294,99 @@ class FrigateController:
             )
             return
 
-        # External state transition detected (Frigate UI or other client)
+        # External state transition detected (Frigate UI or other client).
+        # Defer the callback by STATE_DEFER_SECONDS so a near-simultaneous
+        # frigate/available message (Frigate restart republishing retained
+        # state) has a chance to cancel us before we spawn a phantom session.
         logger.info(
-            "External recording state change: %s -> %s (was %s)",
-            camera_id, payload, prev,
+            "External recording state change: %s -> %s (was %s) — deferring %.1fs",
+            camera_id, payload, prev, STATE_DEFER_SECONDS,
         )
+        self._schedule_state_callback(camera_id, payload)
 
-        if self._on_external_recording_change:
+    def _schedule_state_callback(self, camera_id: str, payload: str):
+        """Schedule the external-state callback to fire after STATE_DEFER_SECONDS.
+
+        Replaces any previously-pending callback for the same camera, so a
+        rapid ON→OFF→ON sequence only acts on the most recent payload.
+        """
+        def fire():
+            # Remove ourselves from the pending dict so a future state change
+            # is not falsely "already pending".
+            with self._pending_state_lock:
+                self._pending_state_actions.pop(camera_id, None)
+
+            callback = self._on_external_recording_change
+            if callback is None:
+                logger.debug(
+                    "Deferred state callback for %s (%s) suppressed — "
+                    "callback cleared (likely Frigate restart grace)",
+                    camera_id, payload,
+                )
+                return
             try:
-                self._on_external_recording_change(camera_id, payload)
+                callback(camera_id, payload)
             except Exception as e:
                 logger.error(
-                    "Error in external recording callback: %s", e,
+                    "Error in deferred external recording callback: %s", e,
+                    exc_info=True,
+                )
+
+        with self._pending_state_lock:
+            existing = self._pending_state_actions.pop(camera_id, None)
+            if existing is not None:
+                existing.cancel()
+            timer = threading.Timer(STATE_DEFER_SECONDS, fire)
+            timer.daemon = True
+            self._pending_state_actions[camera_id] = timer
+            timer.start()
+
+    def _handle_availability_message(self, payload: str):
+        """Process a message on ``frigate/available``.
+
+        Frigate publishes ``online`` on connect and Mosquitto publishes the
+        retained ``offline`` LWT when Frigate's MQTT session dies. The first
+        retained payload we receive after subscribing is a baseline read,
+        not a real transition — we record it but do not fire the callback.
+        Every subsequent ``online`` payload indicates Frigate has (re)connected
+        and any retained recording-state messages it republishes need to be
+        absorbed by a grace window, not treated as external user clicks.
+        """
+        with self._frigate_online_lock:
+            prev = self._frigate_online_state
+            self._frigate_online_state = payload
+            is_initial = not self._initial_available_seen
+            self._initial_available_seen = True
+
+        logger.info(
+            "Frigate availability: %s (prev=%s, initial=%s)",
+            payload, prev, is_initial,
+        )
+
+        if is_initial:
+            # First message after subscribe — retained value, not a transition.
+            return
+
+        # Only fire on "online". An "offline" payload by itself is not
+        # actionable (we cannot pre-emptively do anything); the grace window
+        # is what matters and that runs when Frigate comes back.
+        if payload != "online":
+            return
+
+        # Cancel any pending state-change callbacks RIGHT NOW. The retained
+        # recordings/state messages from the (re)connecting Frigate are
+        # already in flight via _schedule_state_callback — letting them fire
+        # would create phantom ManualSessions before the daemon's grace
+        # handler can clear the callback. Belt-and-suspenders with the
+        # grace handler's own cancel.
+        self.cancel_pending_state_actions()
+
+        if self._on_frigate_available:
+            try:
+                self._on_frigate_available(payload, prev)
+            except Exception as e:
+                logger.error(
+                    "Error in Frigate availability callback: %s", e,
                     exc_info=True,
                 )
 

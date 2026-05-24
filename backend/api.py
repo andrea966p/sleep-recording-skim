@@ -24,6 +24,7 @@ if TYPE_CHECKING:
     from manual_session_manager import ManualSessionManager
     from storage_monitor import StorageMonitor
     from session_journal import SessionJournal
+    from reconciler import Reconciler
 
 logger = logging.getLogger(__name__)
 
@@ -47,6 +48,7 @@ _manual_session_manager: "ManualSessionManager | None" = None
 _storage_monitor: "StorageMonitor | None" = None
 _recording_watchdog: "RecordingWatchdog | None" = None
 _session_journal: "SessionJournal | None" = None
+_reconciler: "Reconciler | None" = None
 _config: dict | None = None
 
 
@@ -59,6 +61,7 @@ def init_api(
     storage_monitor: "StorageMonitor | None" = None,
     recording_watchdog: "RecordingWatchdog | None" = None,
     session_journal: "SessionJournal | None" = None,
+    reconciler: "Reconciler | None" = None,
 ):
     """Initialize the API with references to daemon components.
 
@@ -66,7 +69,7 @@ def init_api(
     """
     global _session_manager, _radiens_poller, _frigate_controller, _config
     global _manual_session_manager, _storage_monitor, _recording_watchdog
-    global _session_journal
+    global _session_journal, _reconciler
     _session_manager = session_manager
     _radiens_poller = radiens_poller
     _frigate_controller = frigate_controller
@@ -74,6 +77,7 @@ def init_api(
     _storage_monitor = storage_monitor
     _recording_watchdog = recording_watchdog
     _session_journal = session_journal
+    _reconciler = reconciler
     _config = config
     logger.info("API initialized")
 
@@ -506,3 +510,44 @@ def get_journal():
         "counts_by_type": _session_journal.count_by_type(since=since),
         "events": events,
     })
+
+
+@app.route("/api/reconciler/last", methods=["GET"])
+def get_reconciler_last():
+    """Return the findings dict from the most recent reconciler run.
+
+    Returns 404 if the reconciler has not yet run.
+    """
+    if _reconciler is None:
+        return jsonify({"error": "reconciler not initialized"}), 503
+    findings = _reconciler.get_last_findings()
+    if findings is None:
+        return jsonify({"error": "reconciler has not run yet"}), 404
+    return jsonify(findings)
+
+
+@app.route("/api/reconciler/run", methods=["POST"])
+def run_reconciler():
+    """Trigger an ad-hoc reconciler pass and return the findings dict.
+
+    Query parameter (optional):
+        - window_hours (int): Override the scheduled window for this run.
+          Default uses the reconciler's configured window.
+
+    The run is synchronous (this endpoint blocks until findings are ready).
+    """
+    if _reconciler is None:
+        return jsonify({"error": "reconciler not initialized"}), 503
+
+    window_hours = None
+    raw = request.args.get("window_hours")
+    if raw is not None:
+        try:
+            window_hours = int(raw)
+            if window_hours <= 0:
+                raise ValueError("must be > 0")
+        except ValueError:
+            return jsonify({"error": "window_hours must be a positive int"}), 400
+
+    findings = _reconciler.run_once(window_hours=window_hours)
+    return jsonify(findings)

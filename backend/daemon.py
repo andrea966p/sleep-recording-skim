@@ -25,11 +25,13 @@ from datetime import datetime
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 from typing import Optional
+from zoneinfo import ZoneInfo
 
 import yaml
 
 from radiens_poller import RadiensPoller, RadiensStatus
 from frigate_controller import FrigateController
+from reconciler import Reconciler
 from session_journal import (
     EVENT_EXPORT_BEGIN,
     EVENT_EXPORT_COMPLETE,
@@ -48,6 +50,12 @@ logger = logging.getLogger("neurosurveillance")
 # ---------------------------------------------------------------------------
 
 DEFAULT_CONFIG_PATH = "/opt/neurosurveillance/config.yaml"
+
+# Grace window after a Frigate-only restart. Frigate republishes its retained
+# recordings/state topic on (re)connect; without this window the daemon would
+# treat that as an external user click and spawn a phantom ManualSession.
+# Mirrors the 10s startup grace below — same logic, different trigger.
+FRIGATE_RESTART_GRACE_SECONDS = 10
 
 
 def load_config(config_path: str) -> dict:
@@ -118,6 +126,12 @@ class SessionDaemon:
         self.config = config
         self._running = False
         self._shutdown_event = threading.Event()
+
+        # Restart-grace coordination: ensures only one grace thread runs at a
+        # time even if availability flaps. Set True while the grace window is
+        # active; future "online" events become no-ops until the window ends.
+        self._restart_grace_active: bool = False
+        self._restart_grace_lock = threading.Lock()
 
         daemon_cfg = config.get("daemon", {})
         self.poll_interval = daemon_cfg.get("poll_interval", 1.0)
@@ -194,6 +208,21 @@ class SessionDaemon:
             journal=self.journal,
         )
 
+        # Nightly reconciler — joins WAL events with Frigate recordings DB to
+        # surface drift (ORPHAN / PARTIAL / STUCK / DEGRADED findings).
+        rec_cfg = config.get("reconciler", {}) or {}
+        self.reconciler = Reconciler(
+            journal_db_path=journal_path,
+            frigate_db_path=config["frigate"].get(
+                "db_path", "/srv/frigate/storage/frigate.db"
+            ),
+            tz=ZoneInfo(tz_name),
+            mqtt_publish=self.frigate.publish,
+            scheduled_hour=int(rec_cfg.get("scheduled_hour", 0)),
+            scheduled_minute=int(rec_cfg.get("scheduled_minute", 1)),
+            window_hours=int(rec_cfg.get("window_hours", 24)),
+        )
+
         # Initialize the Flask API with references to components
         init_api(
             session_manager=self.session_manager,
@@ -204,6 +233,7 @@ class SessionDaemon:
             storage_monitor=self.storage_monitor,
             recording_watchdog=self.watchdog,
             session_journal=self.journal,
+            reconciler=self.reconciler,
         )
 
     def _active_recording_cameras(self) -> dict[str, float]:
@@ -271,6 +301,12 @@ class SessionDaemon:
             self.frigate.register_external_recording_callback(
                 self._handle_external_recording_change
             )
+            # Detect Frigate-only restarts so the same grace logic re-arms
+            # without needing a full daemon restart (regression captured
+            # 2026-05-22 19:29 — see vault note 2026-05-20).
+            self.frigate.register_frigate_availability_callback(
+                self._handle_frigate_availability_change
+            )
             logger.info("Manual session detection enabled")
 
         # 3. Connect to Radiens
@@ -288,6 +324,9 @@ class SessionDaemon:
 
         # 4b. Start recording watchdog
         self.watchdog.start()
+
+        # 4c. Start nightly reconciler
+        self.reconciler.start()
 
         # 5. Start Flask API in background thread
         api_host = self.config["api"].get("host", "127.0.0.1")
@@ -531,6 +570,74 @@ class SessionDaemon:
             time.sleep(1.0)
         return False
 
+    def _handle_frigate_availability_change(
+        self, current: str, previous: Optional[str]
+    ):
+        """React to a Frigate availability transition (frigate/available).
+
+        Fired from the MQTT callback thread on any non-initial ``online``
+        payload. We treat that as a Frigate (re)connect and spin off a
+        background grace thread so the MQTT loop can return immediately.
+        """
+        if not self.manual_sessions_enabled:
+            return
+        if current != "online":
+            return
+
+        # Avoid stacking parallel grace threads if availability flaps.
+        with self._restart_grace_lock:
+            if self._restart_grace_active:
+                logger.info(
+                    "Frigate availability fired during active restart grace "
+                    "(prev=%s) — extending existing window, not starting a new one",
+                    previous,
+                )
+                return
+            self._restart_grace_active = True
+
+        threading.Thread(
+            target=self._frigate_restart_grace,
+            args=(previous,),
+            name="frigate-restart-grace",
+            daemon=True,
+        ).start()
+
+    def _frigate_restart_grace(self, previous: Optional[str]):
+        """Run a restart grace window: suppress callback, sleep, drain, re-arm."""
+        try:
+            logger.warning(
+                "Frigate availability online (prev=%s) — running %ds restart "
+                "grace; external recording callback suppressed",
+                previous, FRIGATE_RESTART_GRACE_SECONDS,
+            )
+
+            # Suppress so retained ON/OFF republishes don't fire phantom sessions.
+            self.frigate.register_external_recording_callback(None)
+            # Belt-and-suspenders with the FrigateController's own cancel:
+            # if any deferred state callbacks were scheduled before the
+            # callback was cleared, kill them here too.
+            self.frigate.cancel_pending_state_actions()
+
+            self._shutdown_event.wait(timeout=FRIGATE_RESTART_GRACE_SECONDS)
+            if not self._running or self._shutdown_event.is_set():
+                return
+
+            # Drain any self-initiated expectations that were stranded by the
+            # restart, plus the cached last-known state — Frigate's freshly
+            # republished retained `state` topics now define ground truth.
+            self.frigate.clear_expected_states()
+            self.frigate.clear_last_known_state()
+
+            self.frigate.register_external_recording_callback(
+                self._handle_external_recording_change
+            )
+            logger.info(
+                "Frigate restart grace complete; external recording callback re-armed",
+            )
+        finally:
+            with self._restart_grace_lock:
+                self._restart_grace_active = False
+
     def _handle_external_recording_change(self, camera_id: str, state: str):
         """Handle an externally-triggered recording state change.
 
@@ -660,6 +767,9 @@ class SessionDaemon:
 
         # Stop recording watchdog
         self.watchdog.stop()
+
+        # Stop reconciler
+        self.reconciler.stop()
 
         # Abort active sessions if any
         if self.session_manager.has_active_sessions:
