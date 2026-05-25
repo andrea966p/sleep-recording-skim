@@ -4,9 +4,10 @@ tags:
   - troubleshooting
   - storage
 created: '2026-05-21'
-status: draft
+updated: '2026-05-25'
+status: active
 ---
-Quick reference for disk-space issues on the NVR. Skeleton — fleshed out in Phase 4.4.
+Quick reference for disk-space issues on the NVR.
 
 ## Storage layout
 

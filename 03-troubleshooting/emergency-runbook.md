@@ -4,7 +4,8 @@ tags:
   - runbook
   - emergency
 created: '2026-05-21'
-status: draft
+updated: '2026-05-25'
+status: active
 ---
 First 10 minutes when something is wrong on the NVR. Each section: how to confirm the symptom, the safest immediate action, where to look next. **Do not restart Frigate or the daemon while a recording is active unless the recording is already broken.**
 
@@ -33,7 +34,7 @@ systemctl status neurosurveillance-session
 curl -s http://127.0.0.1:8585/api/status     # connection refused?
 journalctl -u neurosurveillance-session -n 50 --no-pager
 ```
-**Safe immediate action:** if no active recording, `sudo systemctl restart neurosurveillance-session`. If a recording IS active, the recording continues in Frigate but the session metadata for that camera is lost on restart (this is the gap the [[../04-journal/2026-05/2026-05-01#Stage 2.1|append-only WAL]] in the stabilization sprint addresses). Coordinate with the researcher first.
+**Safe immediate action:** if no active recording, `sudo systemctl restart neurosurveillance-session`. If a recording IS active, the recording continues in Frigate but the daemon's *in-memory* session metadata for that camera is lost on restart. Since 2026-05-23 the [[../01-infrastructure/session-daemon/session-journal|append-only WAL]] persists every session's lifecycle events (`START`, `EXPORT_BEGIN`, `EXPORT_COMPLETE`, `ABORT`, `STALL`) to `/opt/neurosurveillance/session_wal.db`, so the session can be reconstructed after the restart and the [[../01-infrastructure/session-daemon/reconciler|nightly reconciler]] will flag anything orphaned. Coordinate with the researcher first.
 
 **Common causes:**
 - Radiens disconnected → daemon logs `ERROR:radiens_poller: ... 446110 consecutive` but should NOT crash the daemon. If it did, it's a regression.
@@ -48,7 +49,11 @@ docker ps --filter name=frigate
 docker logs --tail 100 frigate
 curl -s http://127.0.0.1:5000/api/stats | jq .service.uptime
 ```
-**Safe immediate action:** if no active recording, `cd /srv/frigate && docker compose restart frigate`. **The 2026-05-20 startup-guard regression means any Frigate restart triggers spurious manual sessions** until Phase 3 fix ships — watch `journalctl -u neurosurveillance-session` for "Manual recording started" lines and immediately stop any unwanted session via Frigate UI.
+**Safe immediate action:** if no active recording, `cd /srv/frigate && docker compose restart frigate`. Since 2026-05-24 (Phase 3.1) the daemon subscribes to `frigate/available` and defers every external recording-state callback by `STATE_DEFER_SECONDS = 1.5`, so a Frigate restart **no longer spawns phantom manual sessions** — the retained `recordings/state=ON` that Frigate republishes on reconnect is cancelled before it can fire. A restart still interrupts any live recording while Frigate boots, so coordinate first. Sanity-check after restart:
+```bash
+journalctl -u neurosurveillance-session --since "2 min ago" | grep -c "Manual recording started"   # expect 0
+```
+If that count is **not** 0, the LWT/defer guard regressed — treat it as the [[../04-journal/2026-05/2026-05-20|2026-05-20]] pattern (Symptom F) and stop the spurious sessions via the Frigate UI.
 
 **Common causes:**
 - Pi unreachable → Frigate's ffmpeg can't pull RTSP → eventual stall. See Symptom E.
@@ -65,6 +70,20 @@ mosquitto_sub -h 127.0.0.1 -t 'frigate/#' -C 1 -W 5     # post-Phase 1.3: needs 
 **Effect:** Frigate can't publish recording state, daemon can't toggle recording, no MQTT-driven alerts.
 
 **Safe immediate action:** `cd /srv/frigate && docker compose restart mosquitto`. Frigate auto-reconnects within ~10s, daemon auto-reconnects (see `frigate_controller: Unexpected MQTT disconnect ... will auto-reconnect` log).
+
+**If the broker is up but every client is rejected** (`Connection Refused: not authorised`): this is the 2026-05-22 auth layer, not an outage. Since then `mosquitto.conf` has `allow_anonymous false` + `password_file /mosquitto/config/passwd`, and Frigate + the daemon both authenticate as user `nvr`. Check, in order:
+```bash
+docker exec mosquitto ls -l /mosquitto/config/passwd          # exists, owned 1883:1883, mode 0700
+docker exec mosquitto cat /mosquitto/config/mosquitto.conf | grep -E "allow_anonymous|password_file"
+```
+If `passwd` is missing or empty (e.g. wiped by a bad redeploy), recreate it and restart only Mosquitto — credentials are in [[../00-config/production-values#Mosquitto MQTT Authentication (since 2026-05-22)|production-values]]:
+```bash
+mosquitto_passwd -c /srv/frigate/mosquitto/passwd nvr        # prompts for the password
+sudo chown 1883:1883 /srv/frigate/mosquitto/passwd
+sudo chmod 0700 /srv/frigate/mosquitto/passwd
+docker compose restart mosquitto
+```
+**Emergency fallback only** (recording is blocked and you cannot find the password): set `allow_anonymous true` in `mosquitto.conf`, restart Mosquitto, restore auth as soon as the password is recovered. Never leave the broker anonymous — anything on the LAN can then toggle recordings.
 
 ## Symptom E — Pi unreachable / camera offline
 
@@ -87,6 +106,27 @@ docker ps --filter name=frigate --format "{{.Names}}\t{{.Status}}"   # restarted
 tail -50 /var/log/apt/history.log    # docker upgrade?
 ```
 **Safe immediate action:** stop recordings via Frigate UI (one click per camera). Then investigate the trigger using [[incidents/2026-05-20-docker-upgrade-and-startup-guard-regression|the 2026-05-20 incident note]] as a template — check apt history, docker logs, host uptime to distinguish power-blip vs upgrade vs manual restart.
+
+## Symptom G — Watchdog STALL alert fired
+
+You got a Slack `#nvr-alerts` message about a recording stall (or you see a `STALL` event in the journal). The recording-health watchdog (2026-05-18) polls Frigate's segment timestamps for cameras that *should* be recording; if a camera's newest segment stops advancing for longer than the threshold it publishes `neurosurveillance/watchdog/{camera}/stall`. Since 2026-05-25 (Phase 4.1) the Netdata MQTT collector forwards that to Slack within ~90s.
+
+**What a STALL means:** Frigate itself is alive and the daemon thinks that camera is in an active session, but no new video is hitting disk for it. Almost always the cause is **upstream of Frigate** — the Pi or its go2rtc stream died, or the network dropped. It is *not* a daemon bug.
+
+**Confirm + locate:**
+```bash
+# What the watchdog is publishing right now
+docker exec mosquitto mosquitto_sub -u nvr -P "$NVR_MQTT_PASSWORD" -t 'neurosurveillance/watchdog/+/stall' -v -W 5
+
+# Is the camera's newest segment actually stale? (epoch seconds; compare to `date +%s`)
+sqlite3 /srv/frigate/storage/frigate.db \
+  "SELECT camera, MAX(end_time) FROM recordings GROUP BY camera"
+
+# Recent STALL events in the WAL
+curl -s 'http://127.0.0.1:8585/api/journal?event_type=STALL&limit=5' | python3 -m json.tool
+```
+
+**Safe immediate action:** treat it as Symptom E for the affected camera — check the Pi (`192.168.0.11` = pi_cam_0/1, `192.168.0.12` = pi_cam_2/3), restart go2rtc if the Pi is up, power-cycle if it's down. The watchdog **does not auto-restart anything** (auto-recovery was deferred by council until ≥1 organic stall is observed), so the camera will stay stalled until you act. Once the upstream stream returns, Frigate resumes writing segments on its own; no daemon restart needed.
 
 ## Where to look next
 
