@@ -57,6 +57,12 @@ DEFAULT_CONFIG_PATH = "/opt/neurosurveillance/config.yaml"
 # Mirrors the 10s startup grace below — same logic, different trigger.
 FRIGATE_RESTART_GRACE_SECONDS = 10
 
+# A finished export whose ffprobe'd duration is below this fraction of the
+# requested session duration is flagged partial (Frigate dropped segments,
+# stream stalled, etc.). Surfaces silent data loss that EXPORT_COMPLETE alone
+# would hide. 0.95 leaves headroom for the ±2s export padding and rounding.
+EXPORT_DURATION_TOLERANCE = 0.95
+
 
 def load_config(config_path: str) -> dict:
     """Load and validate config.yaml."""
@@ -489,14 +495,42 @@ class SessionDaemon:
                 manager.update_export_status(session.session_id, "failed: export timed out")
                 return
 
-            manager.update_export_status(session.session_id, "completed")
-
             video_path = result.get("video_path")
             moved_to: Optional[Path] = None
             if video_path and session.video_filename:
                 moved_to = self._move_export_file(
                     video_path, session, self.export_source_dir, manager.export_dir, manager.tz
                 )
+
+            # Sanity-check the exported file's real duration against what we
+            # asked Frigate to export. A short file means dropped/stalled
+            # segments — flag it partial so the gap is visible instead of
+            # silently recorded as a clean "completed".
+            expected_s = getattr(session, "duration_seconds", 0.0) or 0.0
+            probe_s: Optional[float] = None
+            duration_ok = True
+            if moved_to is not None:
+                probe_s = self._probe_duration_seconds(moved_to)
+                if (
+                    probe_s is not None
+                    and expected_s > 0
+                    and probe_s < EXPORT_DURATION_TOLERANCE * expected_s
+                ):
+                    duration_ok = False
+
+            if duration_ok:
+                status = "completed"
+            else:
+                status = (
+                    f"completed (partial: {self._fmt_duration(probe_s)} "
+                    f"of {self._fmt_duration(expected_s)})"
+                )
+                logger.warning(
+                    "Export %s %s is short: probed %.1fs of expected %.1fs (%.0f%%)",
+                    label, sid, probe_s, expected_s,
+                    100.0 * probe_s / expected_s,
+                )
+            manager.update_export_status(session.session_id, status)
 
             self.journal.log_event(
                 EVENT_EXPORT_COMPLETE,
@@ -508,7 +542,9 @@ class SessionDaemon:
                     "export_id": export_id,
                     "video_filename": session.video_filename,
                     "moved_to": str(moved_to) if moved_to else None,
-                    "duration_seconds": getattr(session, "duration_seconds", 0.0),
+                    "duration_seconds": expected_s,
+                    "probe_duration_seconds": probe_s,
+                    "duration_ok": duration_ok,
                 },
             )
 
@@ -569,6 +605,49 @@ class SessionDaemon:
                 return True
             time.sleep(1.0)
         return False
+
+    @staticmethod
+    def _probe_duration_seconds(path: Path) -> Optional[float]:
+        """Return the container duration (seconds) of a media file via ffprobe.
+
+        Returns None if ffprobe is missing, errors, or emits an unparseable
+        value — callers treat None as "could not verify" (no partial flag).
+        """
+        try:
+            proc = subprocess.run(
+                [
+                    "ffprobe", "-v", "error",
+                    "-show_entries", "format=duration",
+                    "-of", "default=noprint_wrappers=1:nokey=1",
+                    str(path),
+                ],
+                capture_output=True, text=True, timeout=30,
+            )
+        except (FileNotFoundError, subprocess.SubprocessError) as e:
+            logger.warning("ffprobe unavailable for %s: %s", path, e)
+            return None
+        if proc.returncode != 0:
+            logger.warning("ffprobe failed for %s: %s", path, proc.stderr.strip())
+            return None
+        try:
+            return float(proc.stdout.strip())
+        except ValueError:
+            logger.warning(
+                "ffprobe returned unparseable duration for %s: %r",
+                path, proc.stdout,
+            )
+            return None
+
+    @staticmethod
+    def _fmt_duration(seconds: Optional[float]) -> str:
+        """Compact human-readable duration: '1.5h', '45m', '30s', or '?'."""
+        if seconds is None:
+            return "?"
+        if seconds >= 3600:
+            return f"{seconds / 3600:.1f}h"
+        if seconds >= 60:
+            return f"{seconds / 60:.0f}m"
+        return f"{seconds:.0f}s"
 
     def _handle_frigate_availability_change(
         self, current: str, previous: Optional[str]

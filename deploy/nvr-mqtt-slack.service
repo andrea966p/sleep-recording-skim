@@ -1,0 +1,22 @@
+[Unit]
+Description=NVR MQTT -> Slack alert bridge (watchdog stalls; reconciler findings in 4.6)
+Documentation=https://github.com/andrea966p/neurosurveillance
+# Needs the mosquitto container up to exec mosquitto_sub into it.
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=simple
+# Runs as skimlab (member of the docker group) so `docker exec` works without sudo.
+User=skimlab
+Group=skimlab
+# Secrets (broker password + Slack webhook) live here, mode 0600, NOT in git.
+EnvironmentFile=/etc/nvr-mqtt-slack.env
+# session-daemon is a symlink to the repo backend, so this tracks the repo copy.
+ExecStart=/usr/bin/python3 /opt/neurosurveillance/session-daemon/scripts/nvr-mqtt-slack.py
+# Reconnect if the broker container restarts (kills the exec'd subscriber).
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
