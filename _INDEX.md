@@ -59,6 +59,8 @@ Production IPs, usernames, paths, and settings.
 **Monitoring & Alerting:**
 - [[01-infrastructure/netdata/nvr-alerts-config|Netdata NVR Alerts (Golden Config)]]
 - [[02-procedures/installation/monitoring-setup|Monitoring Setup Procedure]]
+- [[02-procedures/installation/watchdog-slack-bridge|Watchdog → Slack Bridge (added 2026-05-25)]]
+- [[03-troubleshooting/emergency-runbook|Emergency Runbook — first 10 min]]
 
 ### Procedures
 - [[02-procedures/installation/new-pi-setup|New Pi Setup]]
@@ -110,6 +112,7 @@ Production IPs, usernames, paths, and settings.
 | **Netdata (Pi 1)** | 192.168.0.11:19999 | Active |
 | **Netdata (Pi 2)** | 192.168.0.12:19999 | Active |
 | **Uptime Kuma** | 192.168.0.50:3001 | Active (7 monitors, Slack alerting) |
+| **nvr-mqtt-slack** | systemd (NVR) | Active (watchdog stalls → Slack; added 2026-05-25) |
 
 ---
 
@@ -136,4 +139,4 @@ ffprobe rtsp://192.168.0.11:8554/pi_cam_0
 
 ---
 
-*Last updated: 2026-05-24 (vault rehaul — TL;DR + paper-ready callouts added vault-wide; SYSTEM-OVERVIEW + 01-infrastructure/system-overview created; new-researcher-onboarding rewritten; 4 archive files in 99-archive/2026-05-rehaul/)*
+*Last updated: 2026-05-25 (Phase 4 sprint close — `nvr-mqtt-slack.service` watchdog→Slack bridge; ffprobe export sanity check; emergency-runbook Symptom G + Mosquitto recovery; mosquitto passwd lockdown; tag `stabilization-week-1`)*

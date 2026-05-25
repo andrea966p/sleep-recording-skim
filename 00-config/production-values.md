@@ -124,6 +124,7 @@ status: active
 | `{SESSION_DATA_DIR}` | `/opt/neurosurveillance/sessions` |
 | `{EXPORT_DIR}` | `/opt/neurosurveillance/exports` | Organized exports (skimlab-owned, user-deletable) |
 | `{SUDOERS_POLICY}` | `/etc/sudoers.d/neurosurveillance-fs` |
+| `{MQTT_SLACK_ENV}` | `/etc/nvr-mqtt-slack.env` (mode 0600 — secrets for `nvr-mqtt-slack.service`: `NVR_MQTT_PASSWORD` + `SLACK_WEBHOOK_URL`) |
 
 ---
 
@@ -224,12 +225,14 @@ status: active
 | Password | `VBwzGOQSnUqHkMV9qEwksygU8KzZiQPU` |
 | `allow_anonymous` | `false` |
 | `password_file` | `/mosquitto/config/passwd` (inside container) = `/srv/frigate/mosquitto/passwd` (host) |
+| passwd perms | `0600`, owned `1883:1883` (mosquitto's UID; locked down 2026-05-25) |
 
 Hash on disk is mosquitto's `$7$` format generated via `docker exec mosquitto mosquitto_passwd -c -b /tmp/passwd nvr <plaintext>`.
 
 **Consumers of these credentials:**
 - Frigate — `/srv/frigate/config/config.yml` → `mqtt.user` / `mqtt.password`
 - Session daemon — `/opt/neurosurveillance/config.yaml` → `mqtt.user` / `mqtt.password`
+- `nvr-mqtt-slack.service` — `/etc/nvr-mqtt-slack.env` → `NVR_MQTT_PASSWORD` (subscribes to alert topics via `docker exec mosquitto mosquitto_sub`)
 
 **Rotating the password:** generate new value, update both consumer configs + `passwd` file, restart Mosquitto + Frigate + daemon in dependency order (see [[../03-troubleshooting/emergency-runbook|emergency-runbook]] Symptom D for the restart order).
 

@@ -396,7 +396,11 @@ Session ends (Radiens R_OFF or manual Stop)
   │       sudo chown {NVR_USER}:{NVR_USER} <target>
   │
   └─ 4. Update session record
-        Sets export_status = "completed" (or "failed")
+        ffprobe the moved file (since 2026-05-25): if its muxed duration is
+          < 0.95 × requested session duration, set export_status =
+          "completed (partial: Xh of Yh)" instead of plain "completed"
+          and record probe_duration_seconds + duration_ok in the
+          EXPORT_COMPLETE journal payload. Otherwise "completed" (or "failed").
         JSON sidecar already written at session end
 ```
 
@@ -591,6 +595,7 @@ Background thread that detects stalled Frigate recordings on active cameras. Shi
 | **Input** | `/srv/frigate/storage/frigate.db` `recordings.MAX(end_time)` per camera; daemon-side active-sessions map |
 | **MQTT publish** | `neurosurveillance/watchdog/<camera>/stall` — includes `lag_seconds`, `last_segment_ts`, `session_id` |
 | **Journal emission** | `STALL` event (`recording_watchdog._emit_alert` → `session_journal.log_event`) with the same payload — gives the reconciler the data it needs to flag the session `DEGRADED` post-hoc |
+| **Slack alerting (since 2026-05-25)** | The stall topic is forwarded to Slack by `nvr-mqtt-slack.service` — a standalone bridge, **not** a daemon component (Netdata has no MQTT collector). E2E-validated. See [[../../02-procedures/installation/watchdog-slack-bridge\|watchdog-slack-bridge]]. |
 
 **Why it exists:** Frigate sometimes silently stops writing segments — go2rtc disconnects on the Pi side, an ffmpeg child crashes, the disk goes unreachable. Without the watchdog, the daemon would happily continue thinking the recording is live while no video is actually being captured. The watchdog raises a single MQTT alert per stall (de-duped) and the operator can decide whether to abort or wait.
 
