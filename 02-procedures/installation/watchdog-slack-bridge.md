@@ -36,7 +36,7 @@ The same service is the chosen path for reconciler → Slack (sprint task 4.6), 
 | `deploy/nvr-mqtt-slack.env.example` | Template for the secrets env file. |
 | `deploy/nvr-mqtt-slack-setup-env.py` | Generates `/etc/nvr-mqtt-slack.env` from existing configs (no hand-typed secrets). |
 
-`/opt/neurosurveillance/session-daemon` is a symlink to the repo `backend/`, so the deployed paths below track the repo automatically.
+`/opt/neurosurveillance/session-daemon` is a symlink to the repo `backend/`, so the running bridge's `ExecStart` path (`session-daemon/scripts/nvr-mqtt-slack.py`) tracks the repo automatically. The one-time install files live in the repo's `deploy/` (a sibling of `backend/`, **not** under the symlink), so the install commands below reference them by full repo path.
 
 ## Install
 
@@ -44,13 +44,13 @@ Run in order. Stop if any step errors.
 
 **1. Create the secrets env file** (reads MQTT password from `config.yaml` + webhook from Netdata; prints only a success line):
 ```bash
-sudo python3 /opt/neurosurveillance/session-daemon/deploy/nvr-mqtt-slack-setup-env.py
+sudo python3 /home/skimlab/Monitoring_project/neurosurveillance/deploy/nvr-mqtt-slack-setup-env.py
 ```
 Expect: `wrote /etc/nvr-mqtt-slack.env (mode 0600)`
 
 **2. Install the unit:**
 ```bash
-sudo cp /opt/neurosurveillance/session-daemon/deploy/nvr-mqtt-slack.service /etc/systemd/system/
+sudo cp /home/skimlab/Monitoring_project/neurosurveillance/deploy/nvr-mqtt-slack.service /etc/systemd/system/
 ```
 
 **3. Reload systemd:**
