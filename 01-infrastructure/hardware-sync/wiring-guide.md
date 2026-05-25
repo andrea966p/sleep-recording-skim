@@ -111,5 +111,6 @@ With Pi powered on:
 ## Related
 
 - [[01-infrastructure/hardware-sync/overview|Hardware Sync Overview]]
+- [[01-infrastructure/hardware-sync/references-and-justification|Design Justification & References]] — datasheet sources for this BOM and pinout
 - [[01-infrastructure/hardware-sync/gpio-sync-service|GPIO Sync Service]]
 - [[02-procedures/hardware-sync-setup|Hardware Sync Setup Procedure]]

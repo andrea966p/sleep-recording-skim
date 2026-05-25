@@ -128,6 +128,7 @@ Session Daemon (NVR) subscribes
 ## Related
 
 - [[01-infrastructure/hardware-sync/wiring-guide|Wiring Guide]]
+- [[01-infrastructure/hardware-sync/references-and-justification|Design Justification & References]]
 - [[01-infrastructure/hardware-sync/gpio-sync-service|GPIO Sync Service]]
 - [[01-infrastructure/hardware-sync/literature-review|Literature Review]]
 - [[02-procedures/hardware-sync-setup|Hardware Sync Setup Procedure]]
