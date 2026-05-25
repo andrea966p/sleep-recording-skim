@@ -16,7 +16,7 @@ status: complete
 > [!quote] Paper-ready
 > Component selection and wiring for the XDAQ-to-Raspberry-Pi synchronization link were derived directly from the NeuroNexus XDAQ digital-I/O electrical specification (logic-high 3.6 V output, 2.2–5.5 V input) and the Raspberry Pi RP1 GPIO 3.3 V logic specification; a 1 kΩ/2 kΩ resistive divider reconciles the 3.6 V source with the 3.3 V-maximum GPIO input.
 
-> [!warning] Two items must be confirmed before purchasing — see [Open Items](#open-items-confirm-before-purchase)
+> [!warning] Two items must be confirmed before purchasing — see [[#Open Items — confirm before purchase|Open Items]] below
 > 1. The exact **DB25 pin numbers** are not printed in the XDAQ User Manual (only signal *labels* are). Confirm against the KONTEX DB25 breakout pinout.
 > 2. Decide whether to keep the **DIY resistor divider** or buy a logic-level-shifter board.
 

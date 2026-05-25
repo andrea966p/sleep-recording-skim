@@ -48,11 +48,11 @@ On a small breadboard or directly with resistors:
 
 ### 4. Pre-Power Multimeter Checks
 
-See [[01-infrastructure/hardware-sync/wiring-guide#Pre-Power Validation|Wiring Guide — Pre-Power Validation]].
+See [[01-infrastructure/hardware-sync/wiring-guide#Pre-Power Validation (Multimeter)|Wiring Guide — Pre-Power Validation]].
 
 ### 5. Power On and Validate Voltages
 
-See [[01-infrastructure/hardware-sync/wiring-guide#Post-Power Validation|Wiring Guide — Post-Power Validation]].
+See [[01-infrastructure/hardware-sync/wiring-guide#Post-Power Validation (Multimeter)|Wiring Guide — Post-Power Validation]].
 
 ## Phase 1: GPIO Listener Software
 
