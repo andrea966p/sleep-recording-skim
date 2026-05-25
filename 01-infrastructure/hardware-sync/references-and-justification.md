@@ -11,7 +11,7 @@ status: complete
 >
 > **Why it exists.** So the plan can be presented to the professor (and later a methods section) without any "trust me" choices. Every decision has a citation.
 >
-> **How to read this page.** Three reference layers: (A) *why* hardware TTL sync at all — peer-reviewed papers; (B) *why each part* in the bill of materials — datasheets; (C) *why each pin and resistor value* — manufacturer electrical specs. The "Open items" section lists the two things that must be confirmed before money is spent. Big-picture context: [[01-infrastructure/system-overview]].
+> **How to read this page.** Two reference layers: (B) *why each part* in the bill of materials — datasheets; (C) *why each pin and resistor value* — manufacturer electrical specs. The *scientific* "why TTL at all" case lives in its own page — see (A) below. The "Open items" section lists the two things that must be confirmed before money is spent. Big-picture context: [[01-infrastructure/system-overview|System Overview]].
 
 > [!quote] Paper-ready
 > Component selection and wiring for the XDAQ-to-Raspberry-Pi synchronization link were derived directly from the NeuroNexus XDAQ digital-I/O electrical specification (logic-high 3.6 V output, 2.2–5.5 V input) and the Raspberry Pi RP1 GPIO 3.3 V logic specification; a 1 kΩ/2 kΩ resistive divider reconciles the 3.6 V source with the 3.3 V-maximum GPIO input.
@@ -24,19 +24,9 @@ status: complete
 
 ## A. Why hardware TTL sync at all (scientific literature)
 
-These establish that a TTL pulse over digital I/O — not software polling — is the field-standard method for video↔electrophysiology synchronization. Full annotations live in [[01-infrastructure/hardware-sync/literature-review|Literature Review]]; summarized here for the methods discussion.
+The scientific case — that a TTL pulse over digital I/O, **not** software polling, is the field-standard method for video↔electrophysiology sync — is made in full in **[[01-infrastructure/hardware-sync/literature-review|Literature Review]]** (7 annotated papers: Syntalos, SyncGenie, Nakamura, Hasegawa, LSL review, OpenVEEG, Rodriguez-Santiago). **That page is the single source for the paper citations.** This page covers only the *engineering* references (parts and electrical values) in §B and §C below.
 
-| # | Reference | Supports |
-|---|-----------|----------|
-| 1 | **Klumpp et al. 2025**, *Syntalos*, Nat. Commun. 16:708 | TTL into Intan digital input (same chip family as XDAQ); <1 ms, validated 24 h+ |
-| 2 | **Alkhoury et al. 2024**, *SyncGenie*, HardwareX, DOI 10.1016/j.ohx.2024.e00619 | Software-only sync had 227 ms latency+jitter; argues for hardware TTL |
-| 3 | **Nakamura et al. 2023**, STAR Protocols 4(2):102337 | Step-by-step TTL sync of ephys+video+audio |
-| 4 | **Hasegawa et al. 2024**, Neurosci. Res., DOI 10.1016/j.neures.2023.12.009 | Hardware TTL achieves <1 ms; jitter degrades SNR |
-| 5 | **Kothe et al. 2025**, *LSL review*, Imaging Neurosci., DOI 10.1162/IMAG.a.136 | Even LSL's own review concedes hardware sync is more precise |
-| 6 | **Raghavan et al. 2018**, *OpenVEEG*, Epilepsy Res. | The system we beat: LSL software sync ≤33 ms vs our <1 ms |
-| 7 | **Rodriguez-Santiago et al. 2022**, eNeuro 9(5) | Intan + digital-input sync for multi-animal video-EEG |
-
-> [!note] DOIs above are transcribed from the existing [[01-infrastructure/hardware-sync/literature-review|Literature Review]]. Re-verify each DOI resolves before it goes into a manuscript bibliography.
+> [!note] Before any of those papers go into a manuscript bibliography, re-verify each DOI resolves — they were transcribed, not fetched.
 
 ---
 
