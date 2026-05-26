@@ -112,8 +112,8 @@ ssh -p 53 Andrea@100.120.86.10 'ls -lh e10_setup_backups'
 
 ### Restore
 ```bash
-# pull a snapshot back
-scp -P 53 Andrea@100.120.86.10:e10_setup_backups/e10_backup_YYYY-MM-DD.tar.gz /tmp/
+# pull a snapshot back — use the ssh pipe, NOT scp/rsync (Synology SFTP/rsync quirks)
+ssh -p 53 Andrea@100.120.86.10 'cat e10_setup_backups/e10_backup_YYYY-MM-DD.tar.gz' > /tmp/e10_backup_YYYY-MM-DD.tar.gz
 # inspect without extracting
 tar tzf /tmp/e10_backup_YYYY-MM-DD.tar.gz | less
 # extract (paths are relative to /, so extract from a staging dir and copy back deliberately)
