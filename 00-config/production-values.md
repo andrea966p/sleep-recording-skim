@@ -54,6 +54,23 @@ status: active
 
 ---
 
+## NAS Backup (daily project snapshot, since 2026-05-26)
+
+| Variable | Production Value | Notes |
+|----------|------------------|-------|
+| `{NAS_HOST}` | `100.120.86.10` | Synology NAS, Tailscale |
+| `{NAS_SSH_PORT}` | `53` | non-default SSH port |
+| `{NAS_USER}` | `Andrea` | NAS account (≠ NVR user `skimlab`) |
+| `{NAS_BACKUP_DIR}` | `e10_setup_backups` | relative to NAS user home |
+| Auth | key-based | `skimlab`'s `~/.ssh/id_ed25519` → NAS `Andrea` |
+| Schedule | `00:00` daily | `nas-backup.timer` |
+| Retention | 3 snapshots | rolling, oldest deleted each run |
+| Excludes | videos / build artifacts / `radiens.log` | see procedure |
+
+Setup + ops: [[02-procedures/installation/nas-backup|NAS Backup procedure]].
+
+---
+
 ## User Accounts
 
 | Variable | Production Value | Notes |
