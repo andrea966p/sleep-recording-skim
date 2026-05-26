@@ -37,7 +37,7 @@ status: active
 | `/srv/frigate/{docker-compose.yml,config,mosquitto}` | Frigate + broker config |
 
 ### Excluded (bulk / regenerable)
-`*.mp4` (132 GB of exports) · `/srv/frigate/storage` (137 GB Frigate cache) · `radiens.log` (3.2 GB) · `frontend/node_modules` + `src-tauri/target` + `venv` (build artifacts) · `__pycache__`/`*.pyc` · SQLite `-wal`/`-shm` sidecars (replaced by the consistent snapshot).
+`*.mp4` (132 GB of exports) · `/srv/frigate/storage` (137 GB Frigate cache) · `radiens.log` (3.2 GB) · `frontend/node_modules` + `src-tauri/target` + `venv` (build artifacts) · `__pycache__`/`*.pyc` · SQLite `-wal`/`-shm` sidecars (replaced by the consistent snapshot) · `mosquitto/passwd` (`0600 1883:1883`, unreadable as `skimlab`; the MQTT secret is recoverable from `production-values.md` via `mosquitto_passwd`).
 
 > [!note] Why not `/etc` configs?
 > Netdata alert rules and the systemd unit files live under `/etc` (root-owned, not readable as `skimlab`). They are already captured as **golden configs in this vault** (`01-infrastructure/netdata/nvr-alerts-config.md`, the various `deploy/` units), which *are* in the backup. If a future need arises to snapshot raw `/etc`, switch the service to `User=root` and add those paths.
