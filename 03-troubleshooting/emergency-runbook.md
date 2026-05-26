@@ -128,6 +128,26 @@ curl -s 'http://127.0.0.1:8585/api/journal?event_type=STALL&limit=5' | python3 -
 
 **Safe immediate action:** treat it as Symptom E for the affected camera — check the Pi (`192.168.0.11` = pi_cam_0/1, `192.168.0.12` = pi_cam_2/3), restart go2rtc if the Pi is up, power-cycle if it's down. The watchdog **does not auto-restart anything** (auto-recovery was deferred by council until ≥1 organic stall is observed), so the camera will stay stalled until you act. Once the upstream stream returns, Frigate resumes writing segments on its own; no daemon restart needed.
 
+## Symptom H — Disk died / data lost / config wiped → restore from NAS
+
+The nightly NAS backup ([[../02-procedures/installation/nas-backup|NAS Backup procedure]]) holds the last **3 days** of the vault, daemon code, daemon config + session WAL, and Frigate config. **Recorded videos are NOT in it** (too large — they live on the NVMe/Frigate cache only).
+
+```bash
+# 1. See what snapshots exist on the NAS
+ssh -p 53 Andrea@100.120.86.10 'ls -lh e10_setup_backups'
+
+# 2. Pull the newest snapshot back (ssh pipe — NOT scp/rsync; this NAS rejects both)
+ssh -p 53 Andrea@100.120.86.10 'cat e10_setup_backups/e10_backup_YYYY-MM-DD.tar.gz' > /tmp/restore.tar.gz
+
+# 3. Inspect before extracting (archive paths are relative to /)
+tar tzf /tmp/restore.tar.gz | less
+
+# 4. Extract to a staging dir, then copy back deliberately (do NOT blind-extract to /)
+mkdir -p /tmp/restore && tar xzf /tmp/restore.tar.gz -C /tmp/restore
+```
+
+After restore, **regenerate** what was deliberately excluded: `npm install` (frontend), `cargo build` (Tauri), `python -m venv venv && pip install -r requirements.txt` (daemon), and `mosquitto_passwd` to rebuild `/srv/frigate/mosquitto/passwd` from the secret in [[../00-config/production-values#Mosquitto MQTT Authentication (since 2026-05-22)|production-values]]. Full step-by-step + what-is/isn't-included: [[../02-procedures/installation/nas-backup|NAS Backup procedure]].
+
 ## Where to look next
 
 - `journalctl -u neurosurveillance-session -f` — live daemon log
