@@ -24,6 +24,9 @@ status: active
 - **Retention:** newest **3** kept; the 4th-oldest is deleted each run.
 - **Runs as:** user `skimlab` (every backed-up path is `skimlab`-owned, so no root is needed), key-based SSH with `~/.ssh/id_ed25519`.
 
+> [!note] Transfer uses an ssh pipe, not rsync/scp
+> Upload is `ssh … 'cat > file.part && mv …' < tarball` with a byte-count verify. This NAS rejects **rsync** (forced-command/`-e` parsing → password fallback) and OpenSSH-9 **scp** (SFTP backend → `No such file or directory`). The plain ssh pipe is the only reliable primitive here — don't "modernise" it back to rsync/scp.
+
 ### Included
 | Path | Why |
 |------|-----|
