@@ -556,7 +556,9 @@
     "WreakHavoc": null,
     "WroughtIron": null
   },
-  "userDictionary": [],
+  "userDictionary": [
+    "electrophysiology"
+  ],
   "dialect": 1,
   "delay": -1,
   "lintEnabled": true
