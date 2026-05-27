@@ -82,20 +82,23 @@ andrea96p@kaist.ac.kr
 
 ## Reply received — 2026-05-27
 
-> [!info] Vendor replied by interleaving answers into the original email. Logged verbatim-summary below. Status: **3 confirmed, 2 deferred.**
+> [!info] Vendor replied by interleaving answers into the original email. Logged verbatim-summary below.
+> **Update 2026-05-27 (later):** cross-checked against the KONTEX Core2 manual — see [[xdaq-core2-manual-reference|XDAQ Core2 Manual Reference]] (authoritative pinout + specs, with figures archived). The manual **corrects the vendor email on Q2** (DI 03 = Pin 2, not 22) and resolves Q3/Q4 below.
 
 | # | Question | Status | Vendor answer |
 |---|----------|--------|---------------|
 | 1 | Connector access / adapter | ✅ confirmed | DB25 directly accessible (no mandatory adapter); OR use Kontex breakout boards. DB25 = **6 DI + 6 DO**. More channels → breakout via **EXP1/EXP2 µHDMI** ports on rear. Analog GPIO → **XDAQ GPIO Expander**. Pinout: <https://docs.kontex.io/XDAQ/CORE2/#xdaqtm-db25-io-connector-pinout> |
-| 2 | DB25 pin numbers | ✅ confirmed | Jeffrey @ NeuroNexus confirmed: `DAQ_ON`=**Pin 13**, `GND`=**Pin 14**, `SAMPLE CLK OUT`=**Pin 25**, `DI 03`=**Pin 22**. ⚠️ `DI 03 = Pin 22` (NOT Pin 2) — corrects vault. (Also "first & last pin numbers printed on connector/housing"; full pinout at the Core2 docs link.) |
-| 3 | Output 3.6 V vs configurable 3.3/5 V | ⏳ deferred | "I do not believe Radiens has support for this … at least not within the UI. Possible it's configurable through the CLI." Following up with dev team. |
-| 4 | `DAQ_ON` behavior | ⏳ deferred | Checking with Kontex. May behave like Radiens **DO1/DO2** (DO1 HIGH = streaming, DO2 HIGH = recording — most common sync method) — **but DO1/DO2 are on the FRONT panel, NOT accessible via DB25.** |
+| 2 | DB25 pin numbers | ✅ resolved via manual | Jeffrey gave `DAQ_ON`=13, `GND`=14, `SAMPLE CLK`=25 (all correct), and `DI 03`=22 — **but 22 is `DO 03`; he transposed DI/DO.** [[xdaq-core2-manual-reference\|Manual]] is authoritative: **`DI 03` = Pin 2.** Vault was already correct. |
+| 3 | Output 3.6 V vs configurable 3.3/5 V | ⚠️ resolved via manual (await dev team on CLI) | Vendor: not in Radiens UI; maybe CLI. **Manual:** DB25 outputs (DO-03…08) = **3.3 V fixed**; the configurable 3.3/5 V applies to the **BNC** DO-01/DO-02, not DB25. So "3.6 V" was wrong for Core2 → divider likely unneeded (measure pin 13 first). See [[xdaq-core2-manual-reference\|Manual]]. |
+| 4 | `DAQ_ON` behavior | ⚠️ resolved via manual (confirm level/scope) | Vendor deferred to Kontex (suspected front-panel DO1/DO2). **Manual:** `DAQ ON` is on the **DB25 (pin 13)** — "logic high at onset of a recording session" — directly accessible, so the Pin-13 design holds. Confirm level-vs-pulse + exact voltage on a scope at validation. |
 | 5 | DIN logic-high range / 3.3 V valid | ✅ confirmed | "I can register a pulse on the DIs with a voltage as low as **1.7 V** with no level shifts." → Pi 3.3 V → DIN is fine, no shifter. |
 
 ### Action items from this reply
 
-- [ ] **Q2 — CONFIRMED, correct the pin in all docs.** Jeffrey confirmed `DI 03 = Pin 22` (NOT Pin 2). Fix [[wiring-guide|Wiring Guide]], [[overview|Overview]], [[radiens-api-reference|API ref]], [[02-procedures/hardware-sync-setup|Setup Procedure]]: Wire 2 (Pi GPIO 27 → DI 03 frame-sync) lands on **DB25 Pin 22**, not Pin 2. `DAQ_ON`=13, `GND`=14, `SAMPLE CLK OUT`=25 already correct. Cross-check the Pin 22 = DI-vs-DO swap against <https://docs.kontex.io/XDAQ/CORE2/#xdaqtm-db25-io-connector-pinout> (vault had Pin 22 = DO 03).
-- [ ] **Q4 — confirm gate signal** (await Kontex). If the acquisition gate is front-panel **DO1/DO2** and DB25 `DAQ_ON` does NOT track recording, the whole Pin-13 design in [[overview|Overview]] needs rethinking (front-panel access, not DB25). [[overview|Overview]] currently states "KONTEX confirms DAQ_ON high whenever acquisition running" — downgrade to *unconfirmed* until Kontex replies.
-- [ ] **Q3 — output voltage** (await dev team). Until confirmed configurable, keep the 1k/2k divider; assume 3.6 V fixed. Radiens UI does NOT expose it; CLI maybe.
-- [ ] **Q1 correction** — update [[radiens-api-reference|API ref]] "7 channels" DI/DO → DB25 exposes **6 DI + 6 DO**; EXP ports are **µHDMI**.
-- [ ] Update [[references-and-justification|Design Justification]] Open Items: #1 (pins) **CLOSED** — confirmed (note the Pin 2 → Pin 22 fix for DI 03); #2 (divider) — output not UI-configurable, divider stays. Replace citation link `[^kontex-docs]` with the working Core2 link.
+> Pinout + specs now captured authoritatively in [[xdaq-core2-manual-reference|XDAQ Core2 Manual Reference]] (figures archived). Remaining items:
+
+- [x] **Q2 — pins verified against manual.** `DI 03 = Pin 2` (vendor's "Pin 22" was the `DO 03` pin — transposed). `DAQ_ON`=13, `GND`=14, `SAMPLE CLK`=25 all correct. Vault pin values already match — **no pin change needed** in [[wiring-guide|Wiring Guide]] / [[overview|Overview]] / [[radiens-api-reference|API ref]] / [[02-procedures/hardware-sync-setup|Setup Procedure]].
+- [ ] **Q3 + divider decision** — manual says DB25 output = **3.3 V** (not 3.6 V). Divider likely unnecessary. Before dropping it: measure `DAQ_ON` (pin 13) voltage during acquisition (DAQ_ON's own level isn't tabulated). Then update [[references-and-justification|Design Justification]] §C + BOM. Still awaiting dev team on whether the BNC voltage is CLI-settable (not relevant to DB25).
+- [ ] **Q4 — confirm `DAQ_ON` is level (not a pulse)** on a scope at wiring validation. Manual confirms it's on DB25 pin 13 ("logic high at onset of a recording session"), so the Pin-13 design stands — but verify it stays HIGH for the whole session and drops at stop.
+- [ ] **Q1 correction** — update [[radiens-api-reference|API ref]] "7 channels" DI/DO → DB25 exposes **6 DI + 6 DO** (onboard total = 7 DI incl. BNC); EXP ports = **MicroHDMI**.
+- [ ] Update [[references-and-justification|Design Justification]] Open Items: #1 (pins) **CLOSED** (verified, DI 03 = Pin 2); #2 (divider) — reframed around the 3.3 V finding above. Replace citation link `[^kontex-docs]` with [[xdaq-core2-manual-reference|the Core2 reference]].

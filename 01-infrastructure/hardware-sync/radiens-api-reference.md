@@ -72,7 +72,10 @@ with AllegoClient() as client:
 
 ## XDAQ Core Hardware I/O Specifications
 
-| Feature | XDAQ Core |
+> [!info] Authoritative source — read this for the Core2
+> Pin numbers and Core2-specific voltages are confirmed in [[xdaq-core2-manual-reference|XDAQ Core2 Manual Reference]] (manual figures archived). Core2 specifics that differ from the generic table below: the **DB25** exposes **6 DI (DI-03…08) + 6 DO (DO-03…08)** (onboard total = 7 DI incl. the BNC DI-01), and **DB25 digital outputs are 3.3 V** (the "3.6 V" below is the manual's generic/IO-Expander figure; the BNC DO-01/DO-02 are 3.3/5 V software-configurable). The DB25 pinout table further down matches the manual.
+
+| Feature | XDAQ Core (generic — see Core2 note above) |
 |---------|-----------|
 | Digital IN | 7 channels, 2.2–5.5V logic |
 | Digital OUT | 7 channels, 3.6V logic |

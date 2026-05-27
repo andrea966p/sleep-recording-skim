@@ -34,6 +34,9 @@ status: planned
 
 ## Wiring Diagram
 
+> [!info] Pin numbers verified against the manual
+> The DB25 pins below are confirmed in [[xdaq-core2-manual-reference|XDAQ Core2 Manual Reference]]: `DAQ_ON`=Pin 13, `DI 03`=**Pin 2** (Pin 22 is `DO 03` — do not wire there), `GND`=Pin 14, `SAMPLE CLK`=Pin 25. ⚠️ The voltage divider here assumes a 3.6 V output; the Core2 manual states **DB25 outputs are 3.3 V** — if `DAQ_ON` measures 3.3 V at pin 13, the divider can be dropped (direct wire). Measure before finalizing. See manual reference + [[references-and-justification#Open Items — confirm before purchase|Design Justification → Open Items]].
+
 ### Wire 1: DAQ_ON → Pi GPIO (with voltage divider)
 
 ```

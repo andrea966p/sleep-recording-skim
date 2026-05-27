@@ -79,6 +79,9 @@ Pi max input: 3.3V ✓
 
 ## XDAQ Core DB25 Pinout (Relevant Pins)
 
+> [!info] Authoritative pinout + specs → [[xdaq-core2-manual-reference|XDAQ Core2 Manual Reference]]
+> Pins below match the KONTEX Core2 manual (figures archived there). `DI 03`=Pin 2 (Pin 22 is `DO 03`), `DAQ_ON`=Pin 13, `GND`=Pin 14, `Sample_CLK`=Pin 25. The manual confirms `DAQ_ON` is on the DB25 ("logic high at onset of a recording session"). See the voltage note below — Core2 DB25 outputs are **3.3 V**, not 3.6 V.
+
 | DB25 Pin | Signal | Direction | Use in Our System |
 |----------|--------|-----------|-------------------|
 | 2 | DI 03 | Input to XDAQ | Frame sync markers from Pi |
@@ -88,6 +91,7 @@ Pi max input: 3.3V ✓
 
 > [!warning] Voltage Compatibility
 > XDAQ DOUT is 3.6V. Pi 5 GPIO (RP1 chip) is 3.3V. The DAQ_ON → Pi direction **requires** a voltage divider or level shifter. The Pi → XDAQ DIN direction is safe (3.3V is within 2.2–5.5V input range).
+> **⚠️ Correction (2026-05-27):** the KONTEX Core2 manual states **DB25 digital outputs are 3.3 V** (not 3.6 V — that was the generic/IO-Expander figure). If `DAQ_ON` (pin 13) measures 3.3 V, the divider is **unnecessary** and a direct wire is safe. Verify pin 13 with a DMM during acquisition before dropping it. See [[xdaq-core2-manual-reference|Manual Reference]].
 
 ## XDAQ LED Indicators for Debugging
 

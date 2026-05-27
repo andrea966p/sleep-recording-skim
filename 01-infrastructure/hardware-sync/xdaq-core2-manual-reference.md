@@ -1,0 +1,109 @@
+---
+tags:
+  - infrastructure
+  - hardware-sync
+  - reference
+  - manual
+  - xdaq
+  - pinout
+created: 2026-05-27T00:00:00.000Z
+status: complete
+source: https://docs.kontex.io/XDAQ/CORE2/#xdaqtm-db25-io-connector-pinout
+---
+
+# XDAQ™ Core2 — Digital I/O Manual Reference (authoritative)
+
+> [!abstract] TL;DR — for non-technical readers
+> **What this is.** The single authoritative source for the XDAQ Core2 DB25 connector — exact pin numbers, signal labels, and the electrical specs (input/output voltages) — transcribed verbatim from the KONTEX Core2 online manual on 2026-05-27, with the original manual figures embedded so this note survives even if the website goes down.
+>
+> **Why it exists.** Every other hardware-sync note (wiring, overview, design justification) needs *one* correct pinout to point at. Earlier docs cited only signal labels (manual prints labels, not always pin numbers) and a vendor email got one pin wrong. This page is the ground truth; the others link here.
+>
+> **How to read this page.** The pinout table is the part you wire from. The electrical-specs table tells you the voltages. The "Discrepancies this resolves" section records what was previously wrong and why. Big picture: [[overview|Hardware Sync Overview]].
+
+> [!quote] Paper-ready
+> Digital I/O pin assignments and logic levels for the synchronization link were taken from the KONTEX XDAQ Core2 manual: the DB25 connector exposes six digital inputs (DI-03…DI-08, 2.2–5.5 V logic-high) and six digital outputs (DO-03…DO-08, 3.3 V logic-high), with a DAQ_ON system signal (pin 13) asserted logic-high at the onset of a recording session and a SAMPLE CLK output (pin 25) at the headstage sampling rate.
+
+> [!info] Source
+> KONTEX, **XDAQ™ Core2 documentation**, "XDAQ™ DB25 IO Connector Pinout" + "Technical Specifications" + "I/O Ports", retrieved 2026-05-27.
+> <https://docs.kontex.io/XDAQ/CORE2/#xdaqtm-db25-io-connector-pinout>
+> Manual figures archived locally (in case the site changes): `attachments/xdaq-core2-db25-pinout.png`, `attachments/xdaq-core2-tech-specs.png`.
+
+---
+
+## DB25 IO Connector Pinout
+
+![[xdaq-core2-db25-pinout.png]]
+
+Transcribed from the manual figure above (DB25 front view; pin 1 bottom-left, pin 25 top-right):
+
+| Pin | Signal | Pin | Signal |
+|-----|--------|-----|--------|
+| 1 | — (unused) | 14 | **GND** (Sys GND) |
+| 2 | **DI 03** | 15 | DI 04 |
+| 3 | DI 05 | 16 | DI 06 |
+| 4 | DI 07 | 17 | DI 08 |
+| 5 | — | 18 | — |
+| 6 | — | 19 | — |
+| 7 | — | 20 | — |
+| 8 | — | 21 | — |
+| 9 | — | 22 | **DO 03** |
+| 10 | DO 04 | 23 | DO 05 |
+| 11 | DO 06 | 24 | DO 07 |
+| 12 | DO 08 | 25 | **SAMPLE CLK** |
+| 13 | **DAQ ON** | | |
+
+**Digital inputs (6):** DI 03=pin 2, DI 04=15, DI 05=3, DI 06=16, DI 07=4, DI 08=17.
+**Digital outputs (6):** DO 03=pin 22, DO 04=10, DO 05=23, DO 06=11, DO 07=24, DO 08=12.
+**System signals:** DAQ ON=pin 13, SAMPLE CLK=pin 25, GND=pin 14.
+
+> [!tip] Signals used by our sync link
+> - **`DAQ_ON` → pin 13** — recording gate into the Pi (Wire 1).
+> - **`DI 03` → pin 2** — frame-sync marker from the Pi (Wire 2). ⚠️ **Pin 2, not Pin 22.** Pin 22 is `DO 03` (an output) — do not wire the Pi's output into it.
+> - **`GND` → pin 14** — shared ground.
+> - **`SAMPLE CLK` → pin 25** — headstage sampling clock (future per-sample alignment).
+
+---
+
+## Electrical Specifications (Synchronized GPIO)
+
+![[xdaq-core2-tech-specs.png]]
+
+Verbatim from the Core2 spec table + I/O-ports text:
+
+| Spec | Value (Core2) |
+|------|---------------|
+| **Digital In** | **2.2 – 5.5 V logic high**; 7 ch onboard (DI-01 BNC + DI-03…08 DB25), 31 ch expandable. Compatible with both 3.3 V and 5 V signals. |
+| **Digital Out** | **BNC (DO-01, DO-02): 3.3 V or 5 V, software-configurable.** **DB25 (DO-03…DO-08): 3.3 V logic high (fixed).** 7 ch onboard, 31 ch expandable. |
+| **ADC** | 1 ch onboard (AI-01, BNC), ±10 V, 16-bit; 7 ch expandable |
+| **DAC** | 1 ch onboard (AO-01, BNC), ±10 V, 16-bit; 7 ch expandable |
+| **GPIO connectors** | 4× BNC + 1× D-Sub25 |
+| **IO Expansion** | **2× MicroHDMI ports** (EXP1, EXP2 — for I/O Expander accessory) |
+| **Ground terminals** | 1× Chassis GND, 1× Digital GND |
+
+### Signal behavior (from manual text)
+- **DAQ ON:** "Logic high at onset of a recording session." → asserted on the DB25 (pin 13), directly accessible; goes HIGH when a recording session starts. (Confirm level-vs-pulse and exact voltage on a scope/DMM at wiring validation.)
+- **SAMPLE CLK:** "the sampling clock used to drive the X-Headstage™" (pulse train at headstage rate).
+- **Sys GND:** digital ground shared by internal circuitry. **Chassis GND:** enclosure / HDMI shield / earth via PSU.
+- **More than 6 DI / 6 DO:** requires breakout via the EXP1/EXP2 MicroHDMI ports (I/O Expander). Additional analog GPIO requires the XDAQ GPIO Expander.
+
+---
+
+## Discrepancies this resolves
+
+> [!danger] 1. `DI 03` is Pin 2, not Pin 22
+> The NeuroNexus email reply (2026-05-27, [[neuronexus-inquiry-email|inquiry note]]) gave `DI 03 = Pin 22`. The manual figure shows **Pin 2 = DI 03** and **Pin 22 = DO 03** — the reply transposed a digital input with an output. The original vault pinout ([[radiens-api-reference|API ref]], [[wiring-guide|Wiring Guide]]) was **correct**: DI 03 = Pin 2. Wire 2 lands on **Pin 2**. (DAQ_ON=13, GND=14, SAMPLE CLK=25 in the reply were correct.)
+
+> [!warning] 2. DB25 digital output is 3.3 V, not 3.6 V
+> The XDAQ User Manual §3.4.2 (IO Expander) states "Digital Outputs: Logic high 3.6 V", and [[references-and-justification|Design Justification]] §C built the 1 kΩ/2 kΩ voltage divider on that 3.6 V figure. The Core2 spec says **DB25 digital outputs (DO-03…08) are 3.3 V**, and the "configurable 3.3 / 5 V" the website mentions applies only to the **BNC** ports DO-01/DO-02. If `DAQ_ON` (pin 13) is likewise 3.3 V, **the divider is unnecessary** — 3.3 V drives the Pi GPIO directly (at-ceiling, acceptable). DAQ_ON's own voltage is not tabulated separately, so **measure pin 13 during acquisition before deciding** to drop the divider. See open decision in [[references-and-justification#Open Items — confirm before purchase|Design Justification → Open Items]].
+
+> [!note] 3. DB25 = 6 DI + 6 DO (onboard total = 7 DI)
+> The DB25 exposes six DI (DI-03…08) and six DO (DO-03…08). The spec's "7 ch onboard" digital-in count includes the BNC DI-01. [[radiens-api-reference|API ref]] previously said "7 channels" without the DB25-vs-onboard distinction.
+
+---
+
+## Related
+- [[overview|Hardware Sync Overview]] — wiring architecture (pins should match this reference)
+- [[wiring-guide|Wiring Guide]] — physical hookup (pin numbers sourced here)
+- [[radiens-api-reference|Radiens API Reference]] — DB25 pinout table (sourced here)
+- [[references-and-justification|Design Justification & References]] — divider rationale (3.6 V → 3.3 V correction above)
+- [[neuronexus-inquiry-email|NeuroNexus Inquiry & Reply]] — vendor Q&A (pin-22 error noted here)

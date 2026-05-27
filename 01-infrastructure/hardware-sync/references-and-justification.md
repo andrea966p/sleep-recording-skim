@@ -73,7 +73,7 @@ V_out = V_in × R2 / (R1 + R2) = 3.6 V × 2kΩ / (1kΩ + 2kΩ) = 2.4 V
 XDAQ digital input logic-high range is **2.2–5.5 V** (§C.1). The Pi outputs 3.3 V, which sits inside that range → direct wire, no divider. [^xdaq] [^rpi-gpio]
 
 ### C.5 Signals used (DAQ_ON, DI/DO, SAMPLE CLK, GND) — **confirmed present**
-The XDAQ DB Adapter / BNC breakout panel (User Manual p.18) is labelled with `DI 3…DI 8`, `DO 3…DO 8`, `SAMPLE CLK OUT`, `MARK OUT`, and `GND`. KONTEX confirms `DAQ_ON` is "high whenever XDAQ acquisition is running." [^xdaq] [^kontex]
+The XDAQ DB Adapter / BNC breakout panel (User Manual p.18) is labelled with `DI 3…DI 8`, `DO 3…DO 8`, `SAMPLE CLK OUT`, `MARK OUT`, and `GND`. The Core2 manual states `DAQ_ON` is "logic high at onset of a recording session" and places it on the DB25 (pin 13). [^xdaq] [^kontex] See the full numbered pinout in [[xdaq-core2-manual-reference|XDAQ Core2 Manual Reference]].
 
 ### C.6 Software: `gpiod` edge detection on `gpiochip4`
 - Edge-interrupt reads (not polling) via **libgpiod** — the modern Linux GPIO userspace API that replaced sysfs. [^libgpiod]
@@ -83,11 +83,16 @@ The XDAQ DB Adapter / BNC breakout panel (User Manual p.18) is labelled with `DI
 
 ## Open Items — confirm before purchase
 
-> [!danger] 1. Exact DB25 pin numbers are NOT verified
-> The [[01-infrastructure/hardware-sync/wiring-guide|Wiring Guide]] assigns specific pins — **Pin 13 = DAQ_ON, Pin 2 = DI 03, Pin 14 = GND, Pin 25 = Sample_CLK**. The XDAQ User Manual confirms these *signals exist* but prints only BNC **labels**, not DB25 **pin numbers (1–25)**. Confirm the numbering against the KONTEX DB25 pinout (`docs.kontex.io/System-Adpt/SAdpt-XDAQ-BNC/` [^kontex-docs]) or by emailing NeuroNexus support before wiring. A wrong pin number = no signal or possible damage.
+> [!success] Both items resolved against the manual — 2026-05-27
+> Pinout + electrical specs are now confirmed in [[xdaq-core2-manual-reference|XDAQ Core2 Manual Reference]] (manual figures archived). The original concerns and their resolutions are kept below for the record.
 
-> [!warning] 2. DIY divider vs. level-shifter board
-> The manual states DOUT = 3.6 V (fixed). The KONTEX website separately claims the output is "configurable to 3.3 or 5 V." [^kontex] If it can be set to **3.3 V**, the divider becomes unnecessary (direct wire). Confirm the firmware/config option. If unsure, the divider is the safe default and works either way (3.3 V → 2.2 V, still a valid HIGH).
+> [!danger]- 1. Exact DB25 pin numbers — **RESOLVED (verified)**
+> The [[01-infrastructure/hardware-sync/wiring-guide|Wiring Guide]] assigns specific pins — **Pin 13 = DAQ_ON, Pin 2 = DI 03, Pin 14 = GND, Pin 25 = Sample_CLK**. The XDAQ User Manual confirms these *signals exist* but prints only BNC **labels**, not DB25 **pin numbers (1–25)**.
+> **Resolution:** the [[xdaq-core2-manual-reference|Core2 manual figure]] gives the full numbered pinout — these assignments are **correct** (`DI 03 = Pin 2`; note Pin 22 = `DO 03`). A NeuroNexus email reply mistakenly gave `DI 03 = Pin 22` (transposed with the output); the manual overrides it.
+
+> [!warning]- 2. DIY divider vs. level-shifter board — **RESOLVED (manual: DB25 = 3.3 V)**
+> The manual §3.4.2 states DOUT = 3.6 V (fixed). The KONTEX website separately claims the output is "configurable to 3.3 or 5 V."
+> **Resolution:** the [[xdaq-core2-manual-reference|Core2 spec]] says **DB25 digital outputs (DO-03…08) are 3.3 V fixed**; the configurable 3.3/5 V applies only to the **BNC** ports DO-01/DO-02. So the 3.6 V premise (and the §C.3 divider) is wrong for the Core2 DB25 — **the divider is most likely unnecessary** (3.3 V → Pi GPIO direct, at-ceiling-OK). `DAQ_ON`'s own voltage is not tabulated separately, so **measure pin 13 during acquisition before dropping the divider.** Until measured, the divider remains the zero-risk fallback (3.3 V → 2.2 V, still a valid HIGH).
 
 ---
 
