@@ -73,7 +73,7 @@ Verbatim from the Core2 spec table + I/O-ports text:
 | Spec | Value (Core2) |
 |------|---------------|
 | **Digital In** | **2.2 – 5.5 V logic high**; 7 ch onboard (DI-01 BNC + DI-03…08 DB25), 31 ch expandable. Compatible with both 3.3 V and 5 V signals. |
-| **Digital Out** | **BNC (DO-01, DO-02): 3.3 V or 5 V, software-configurable.** **DB25 (DO-03…DO-08): 3.3 V logic high (fixed).** 7 ch onboard, 31 ch expandable. |
+| **Digital Out** | **Core2 BNC: DO-01 only — 3.3 V or 5 V, software-configurable** (the dual DO-01/DO-02 BNCs are an XDAQ **ONE+** feature, not Core2). **DB25 (DO-03…DO-08): 3.3 V logic high (fixed).** 7 ch onboard, 31 ch expandable. |
 | **ADC** | 1 ch onboard (AI-01, BNC), ±10 V, 16-bit; 7 ch expandable |
 | **DAC** | 1 ch onboard (AO-01, BNC), ±10 V, 16-bit; 7 ch expandable |
 | **GPIO connectors** | 4× BNC + 1× D-Sub25 |
@@ -104,8 +104,8 @@ Verbatim from the Core2 spec table + I/O-ports text:
 - **IO SPEC printed on the chassis** (authoritative): `D IN` High = **3.3–5 V**, `D OUT` High = **3.3/5 V**, `A IN`/`A OUT` ±10 V; all Low = 0 V (digital) / −10 V (analog).
 - `EXP 1` + `EXP 2` (micro-HDMI). `Audio` (3.5 mm). `Peripheral` + `Computer` (Thunderbolt-style; `Computer` → host, `Peripheral` → daisy-chain). `USB PD 20 V⎓3 A` (power). `SYS GND` + `Chassis GND` (banana jacks).
 
-> [!danger] DO1/DO2 sync caveat — only ONE front digital-out BNC on the Core2
-> NeuroNexus suggested syncing via front-panel **DO1 (streaming HIGH) / DO2 (recording HIGH)**. But the Core2 front has only **`DIGITAL OUT 1` = DO-01** — there is **no second digital-out BNC**. (The spec's "BNC DO-01, DO-02" is inconsistent with the panel's "4× BNC" = AI-01 + AO-01 + DI-01 + DO-01.) So on the Core2 the most likely split is: front `DIGITAL OUT 1` (DO-01) = one state, and DB25 `DAQ_ON` (pin 13) = recording-onset. **Where DO-02 lives, and the exact streaming-vs-recording mapping, is an open question for the vendor** ([[neuronexus-inquiry-email|round-2 email]] item 2).
+> [!warning] DO1/DO2 sync = XDAQ ONE+, not Core2
+> NeuroNexus described syncing via **DO1 (streaming HIGH) / DO2 (recording HIGH)** front BNCs. Those **dual digital-output BNCs (DO-01 + DO-02) belong to the XDAQ ONE+** (`docs.kontex.io/XDAQ/ONE/`: "two pairs of digital input (DI-01, DI-02) and output (DO-01, DO-02)"). The **Core2 has only one digital-out BNC, `DIGITAL OUT 1` = DO-01** — the panel confirms it (4× BNC = AI-01 + AO-01 + DI-01 + DO-01). The "BNC DO-01, DO-02" line on the Core2 page is boilerplate shared with the ONE+ doc. **On the Core2, the recording gate we can reach is DB25 `DAQ_ON` (pin 13)** ("logic high at onset of a recording session"); a DO1-style *streaming* indicator may be available via front DO-01 — open vendor Q ([[neuronexus-inquiry-email|round-2 email]] item 2).
 
 ---
 
