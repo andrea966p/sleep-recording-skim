@@ -111,7 +111,38 @@ With Pi powered on:
 > [!tip] GPIO Chip on Pi 5
 > The Pi 5 uses `gpiochip4` for the main 40-pin GPIO header (RP1 chip). Older Pis use `gpiochip0`. Verify with `gpioinfo gpiochip4`.
 
+## ⭐ Pin 13 (DAQ_ON) Voltage Check — run this BEFORE building/buying the divider
+
+> [!abstract] Why this step exists
+> The [[xdaq-core2-manual-reference|Core2 manual]] says DB25 digital **outputs are 3.3 V** (not the 3.6 V the divider was designed around) — but it does **not** tabulate `DAQ_ON`'s own voltage. So measure pin 13 directly. The result decides the wiring:
+> - **≤ 3.3 V** → no divider needed; wire `DAQ_ON` (pin 13) **straight** to the Pi GPIO (with shared GND).
+> - **> 3.3 V** (e.g. 3.6 V) → keep the 1 kΩ/2 kΩ divider from the BOM.
+
+> [!danger] Do NOT connect the Raspberry Pi until this measurement is done
+> The Pi 5 GPIO has **no over-voltage protection** and a hard 3.3 V ceiling. Confirm the actual `DAQ_ON` voltage first, with the Pi disconnected.
+
+**You need:** a digital multimeter (DC volts) and access to DB25 pins 13 + 14 (via the screw-terminal breakout, or careful probing on the connector). The XDAQ host running Radiens.
+
+1. **Identify the pins.** On the DB25, locate pin **13** (`DAQ_ON`) and pin **14** (`GND`). The connector/housing prints pin 1 and pin 25 — count from there; cross-check against the [[xdaq-core2-manual-reference#DB25 IO Connector Pinout|pinout figure]]. (Bottom row left→right = 1…13; top row = 14…25.)
+2. **Set the meter** to DC voltage, 20 V range (or autorange).
+3. **Baseline (idle).** XDAQ powered on, Radiens **not recording**. Black probe → pin 14 (GND), red probe → pin 13. Expect **~0 V**.
+4. **Start a RECORDING session in Radiens** (not just streaming — `DAQ_ON` = "logic high at onset of a *recording* session"). If unsure whether streaming alone asserts it, test both: note the reading while *streaming-only*, then while *recording*.
+5. **Read and record the voltage** while recording. **Write the exact number down** (this is the deciding value, and it goes in the methods record). Expect a logic-high in the 3.3–3.6 V range.
+6. **Stop recording.** Voltage should fall back to **~0 V**. Note whether it stays high for the whole session (level) or only pulses at the start (one-shot) — a level signal is what the design assumes.
+7. **Decide:**
+   - Measured **≤ 3.3 V** → update [[references-and-justification#Open Items — confirm before purchase|Open Item #2]]: drop the divider, wire pin 13 → Pi GPIO 17 directly. Skip the 1 kΩ/2 kΩ resistors from the BOM.
+   - Measured **> 3.3 V** → keep the divider as drawn in [Wire 1](#wire-1-daq_on-→-pi-gpio-with-voltage-divider).
+
+> [!note] Record for publication
+> Log the measured `DAQ_ON` voltage, whether it is level or pulsed, and whether it tracks *streaming* vs *recording*, in the session journal / methods notes. These three facts close the last open hardware questions ([[neuronexus-inquiry-email|inquiry note]] Q3/Q4).
+
 ## Related
+
+- [[01-infrastructure/hardware-sync/overview|Hardware Sync Overview]]
+- [[01-infrastructure/hardware-sync/xdaq-core2-manual-reference|XDAQ Core2 Manual Reference]] — authoritative pinout + the 3.3 V finding behind this check
+- [[01-infrastructure/hardware-sync/references-and-justification|Design Justification & References]] — datasheet sources for this BOM and pinout
+- [[01-infrastructure/hardware-sync/gpio-sync-service|GPIO Sync Service]]
+- [[02-procedures/hardware-sync-setup|Hardware Sync Setup Procedure]]
 
 - [[01-infrastructure/hardware-sync/overview|Hardware Sync Overview]]
 - [[01-infrastructure/hardware-sync/references-and-justification|Design Justification & References]] — datasheet sources for this BOM and pinout

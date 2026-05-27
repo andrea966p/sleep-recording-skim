@@ -46,6 +46,8 @@ Production IPs, usernames, paths, and settings.
 - [[01-infrastructure/hardware-sync/wiring-guide|Wiring Guide & BOM]]
 - [[01-infrastructure/hardware-sync/gpio-sync-service|GPIO Sync Service (Golden Config)]]
 - [[01-infrastructure/hardware-sync/radiens-api-reference|Radiens API — Digital I/O Reference]]
+- [[01-infrastructure/hardware-sync/xdaq-core2-manual-reference|XDAQ Core2 Manual Reference (authoritative pinout + specs)]]
+- [[01-infrastructure/hardware-sync/neuronexus-inquiry-email|NeuroNexus Inquiry & Reply]]
 - [[01-infrastructure/hardware-sync/literature-review|Literature Review]]
 
 **Session Daemon:**
