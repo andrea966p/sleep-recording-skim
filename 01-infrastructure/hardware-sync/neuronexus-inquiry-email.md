@@ -102,3 +102,52 @@ andrea96p@kaist.ac.kr
 - [ ] **Q4 — confirm `DAQ_ON` is level (not a pulse)** on a scope at wiring validation. Manual confirms it's on DB25 pin 13 ("logic high at onset of a recording session"), so the Pin-13 design stands — but verify it stays HIGH for the whole session and drops at stop.
 - [ ] **Q1 correction** — update [[radiens-api-reference|API ref]] "7 channels" DI/DO → DB25 exposes **6 DI + 6 DO** (onboard total = 7 DI incl. BNC); EXP ports = **MicroHDMI**.
 - [ ] Update [[references-and-justification|Design Justification]] Open Items: #1 (pins) **CLOSED** (verified, DI 03 = Pin 2); #2 (divider) — reframed around the 3.3 V finding above. Replace citation link `[^kontex-docs]` with [[xdaq-core2-manual-reference|the Core2 reference]].
+
+---
+
+## Reply draft — round 2 (2026-05-27)
+
+> [!abstract] What this round must assess
+> After Jeffrey's reply + reading the [[xdaq-core2-manual-reference|Core2 manual]], three things still need vendor confirmation, plus a new ask:
+> 1. **Pin correction** — manual figure shows `DI 03 = Pin 2` (Jeffrey's reply said Pin 22, which is `DO 03`). Confirm.
+> 2. **`DAQ_ON` voltage** — manual gives DB25 outputs as 3.3 V but does not list `DAQ_ON`'s own level. Confirm pin-13 voltage (decides level-shift). *We will also measure it — see [[wiring-guide#⭐ Pin 13 (DAQ_ON) Voltage Check — run this BEFORE building/buying the divider|Pin 13 Voltage Check]].*
+> 3. **`DAQ_ON` timing** — level for the whole recording session vs one-shot pulse; tracks *recording* vs *streaming*.
+> 4. **NEW: XDAQ Core2 hardware drivers on Ubuntu 24.04 LTS.** Radiens suite (Allego+Curate+Videre) + `radiens` Python pkg already installed on the Ubuntu 24.04 acquisition host; remaining gap is the *device-level* connectivity (USB/Thunderbolt drivers, udev rules, kernel) for the Core2 itself.
+
+> **To:** Jeffrey @ NeuroNexus / KONTEX support
+> **From:** andrea96p@kaist.ac.kr
+> **Subject:** Re: XDAQ Core2 — digital I/O DB25 pinout & output voltage confirmation
+
+Hi Jeffrey,
+
+Thank you for the detailed reply and the Core2 documentation link — the DB25 pinout figure there was exactly what we needed. It confirms `DAQ_ON` = pin 13, `GND` = pin 14, and `SAMPLE CLK` = pin 25, matching your answer.
+
+A few follow-ups to fully close this out:
+
+1. **DI 03 pin number.** Your reply listed `DI 03` at pin 22, but the Core2 pinout figure shows pin 22 as `DO 03` and `DI 03` at **pin 2**. Could you confirm `DI 03` = **pin 2** on the Core2? This is the input we'll drive from the Raspberry Pi, so we want to be certain before wiring.
+
+2. **`DAQ_ON` output voltage (pin 13).** The Core2 spec lists the DB25 digital outputs (DO-03…DO-08) as 3.3 V logic-high, with the software-configurable 3.3/5 V option applying only to the BNC outputs (DO-01/DO-02). The spec doesn't separately state the `DAQ_ON` pin's logic-high voltage. Is `DAQ_ON` (pin 13) also 3.3 V? We need this to decide whether any level adjustment is required driving a 3.3 V Raspberry Pi GPIO input. (We also plan to measure pin 13 directly with a multimeter during a recording session to confirm.)
+
+3. **`DAQ_ON` timing/behavior.** The manual states `DAQ_ON` is "logic high at onset of a recording session." Could you confirm whether it stays **HIGH for the entire duration of the recording** (one rising edge at start, one falling edge at stop), or is a brief pulse at onset only? And does it track **recording** specifically, as opposed to streaming/acquisition? (You mentioned Radiens commonly uses front-panel DO1/DO2 for streaming/recording sync — we'd like to understand how the DB25 `DAQ_ON` relates to those.)
+
+4. **XDAQ Core2 hardware drivers on Ubuntu 24.04 LTS.** Our acquisition host runs **Ubuntu 24.04 LTS**, and we already have the Radiens suite (Allego + Curate + Videre) and the `radiens` Python package installed and running there. What remains is the device-level connection to the Core2 hardware on Linux. Could you confirm, for Ubuntu 24.04:
+   - any required device drivers or kernel modules to connect the Core2 (over USB and/or Thunderbolt), and the supported kernel versions;
+   - any `udev` rules, group membership, or Thunderbolt-authorization steps needed for Allego to detect and stream from the Core2 without running as root;
+   - any known Linux-specific limitations vs. Windows for the Core2 (e.g. Thunderbolt throughput, NP-mode support).
+
+A Core2 datasheet PDF, if available, would also be appreciated.
+
+Thanks again for the help.
+
+Best regards,
+Andrea
+andrea96p@kaist.ac.kr
+
+---
+
+> [!todo] Before sending
+> - Confirmed 2026-05-27: Radiens runs on the Ubuntu 24.04 box; suite + Python pkg already installed. Item 4 reframed to device-level driver/connectivity only.
+> - Fill the Core2 serial / order ref in the first round's draft if the vendor asks to identify the unit.
+
+> [!note] Package-name discrepancy to verify
+> The Radiens brochure shows `pip install radiens` / `from radiens import AllegoClient`, but [[radiens-api-reference|Radiens API Reference]] says the PyPI package is `radiens-core` (claimed to replace `radiens`). Verify what's actually installed on the Ubuntu host (`pip show radiens` / `pip show radiens-core`) and correct whichever is wrong. Brochure docs: <https://neuronexus.github.io/intro.html>, <https://nnx.mcoutput.com/1376106/Content/Home-Radiens.htm>.
