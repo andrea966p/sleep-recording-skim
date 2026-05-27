@@ -77,3 +77,25 @@ andrea96p@kaist.ac.kr
 - [[01-infrastructure/hardware-sync/references-and-justification|Design Justification & References]] (source of these open items)
 - [[01-infrastructure/hardware-sync/wiring-guide|Wiring Guide]]
 - [[01-infrastructure/hardware-sync/overview|Hardware Sync Overview]]
+
+---
+
+## Reply received — 2026-05-27
+
+> [!info] Vendor replied by interleaving answers into the original email. Logged verbatim-summary below. Status: **3 confirmed, 2 deferred.**
+
+| # | Question | Status | Vendor answer |
+|---|----------|--------|---------------|
+| 1 | Connector access / adapter | ✅ confirmed | DB25 directly accessible (no mandatory adapter); OR use Kontex breakout boards. DB25 = **6 DI + 6 DO**. More channels → breakout via **EXP1/EXP2 µHDMI** ports on rear. Analog GPIO → **XDAQ GPIO Expander**. Pinout: <https://docs.kontex.io/XDAQ/CORE2/#xdaqtm-db25-io-connector-pinout> |
+| 2 | DB25 pin numbers | ✅ confirmed | Jeffrey @ NeuroNexus confirmed: `DAQ_ON`=**Pin 13**, `GND`=**Pin 14**, `SAMPLE CLK OUT`=**Pin 25**, `DI 03`=**Pin 22**. ⚠️ `DI 03 = Pin 22` (NOT Pin 2) — corrects vault. (Also "first & last pin numbers printed on connector/housing"; full pinout at the Core2 docs link.) |
+| 3 | Output 3.6 V vs configurable 3.3/5 V | ⏳ deferred | "I do not believe Radiens has support for this … at least not within the UI. Possible it's configurable through the CLI." Following up with dev team. |
+| 4 | `DAQ_ON` behavior | ⏳ deferred | Checking with Kontex. May behave like Radiens **DO1/DO2** (DO1 HIGH = streaming, DO2 HIGH = recording — most common sync method) — **but DO1/DO2 are on the FRONT panel, NOT accessible via DB25.** |
+| 5 | DIN logic-high range / 3.3 V valid | ✅ confirmed | "I can register a pulse on the DIs with a voltage as low as **1.7 V** with no level shifts." → Pi 3.3 V → DIN is fine, no shifter. |
+
+### Action items from this reply
+
+- [ ] **Q2 — CONFIRMED, correct the pin in all docs.** Jeffrey confirmed `DI 03 = Pin 22` (NOT Pin 2). Fix [[wiring-guide|Wiring Guide]], [[overview|Overview]], [[radiens-api-reference|API ref]], [[02-procedures/hardware-sync-setup|Setup Procedure]]: Wire 2 (Pi GPIO 27 → DI 03 frame-sync) lands on **DB25 Pin 22**, not Pin 2. `DAQ_ON`=13, `GND`=14, `SAMPLE CLK OUT`=25 already correct. Cross-check the Pin 22 = DI-vs-DO swap against <https://docs.kontex.io/XDAQ/CORE2/#xdaqtm-db25-io-connector-pinout> (vault had Pin 22 = DO 03).
+- [ ] **Q4 — confirm gate signal** (await Kontex). If the acquisition gate is front-panel **DO1/DO2** and DB25 `DAQ_ON` does NOT track recording, the whole Pin-13 design in [[overview|Overview]] needs rethinking (front-panel access, not DB25). [[overview|Overview]] currently states "KONTEX confirms DAQ_ON high whenever acquisition running" — downgrade to *unconfirmed* until Kontex replies.
+- [ ] **Q3 — output voltage** (await dev team). Until confirmed configurable, keep the 1k/2k divider; assume 3.6 V fixed. Radiens UI does NOT expose it; CLI maybe.
+- [ ] **Q1 correction** — update [[radiens-api-reference|API ref]] "7 channels" DI/DO → DB25 exposes **6 DI + 6 DO**; EXP ports are **µHDMI**.
+- [ ] Update [[references-and-justification|Design Justification]] Open Items: #1 (pins) still open; #2 (divider) — output not UI-configurable, divider stays. Replace citation link `[^kontex-docs]` with the working Core2 link.
