@@ -105,7 +105,9 @@ andrea96p@kaist.ac.kr
 
 ---
 
-## Reply draft — round 2 (2026-05-27)
+## Reply — round 2 (finalized by Andrea, 2026-05-27)
+
+> [!check] This is Andrea's final wording (greeting, "I clearly missed it", and the closing note are hers). Spelling normalized (equivalent, suite, your). Ready to send.
 
 > [!abstract] What this round must assess
 > After Jeffrey's reply + reading the [[xdaq-core2-manual-reference|Core2 manual]] + the [[xdaq-core2-manual-reference#Front & Rear Panel Layout|front/rear panel figure]]:
@@ -119,9 +121,9 @@ andrea96p@kaist.ac.kr
 > **From:** andrea96p@kaist.ac.kr
 > **Subject:** Re: XDAQ Core2 — digital I/O DB25 pinout & output voltage confirmation
 
-Hi Jeffrey,
+Dear Jeffrey,
 
-Thank you for the detailed reply and the Core2 documentation link — the DB25 pinout figure there was exactly what we needed. It confirms `DAQ_ON` = pin 13, `GND` = pin 14, and `SAMPLE CLK` = pin 25, matching your answer.
+Thank you for the detailed reply and the Core2 documentation link (I clearly missed it) — the DB25 pinout figure there was exactly what we needed. It confirms `DAQ_ON` = pin 13, `GND` = pin 14, and `SAMPLE CLK` = pin 25, matching your answer.
 
 A few follow-ups to fully close this out:
 
@@ -140,12 +142,14 @@ A few follow-ups to fully close this out:
    - For the return direction, we'd assign **four separate DB25 digital inputs** (e.g. `DI 03`–`DI 06`, pins 2/15/3/16) — one per Pi. Is that the right approach, and are all six DB25 DIs (DI-03…08) independently usable as Radiens trigger/marker channels at the headstage sample rate?
    - Any grounding guidance for tying four external devices to the XDAQ `SYS GND` (pin 14) without ground loops?
 
-5. **XDAQ Core2 hardware drivers on Ubuntu 24.04 LTS.** Our acquisition host runs **Ubuntu 24.04 LTS**, and we already have the Radiens suite (Allego + Curate + Videre) and the `radiens` Python package installed and running there. What remains is the device-level connection to the Core2 hardware on Linux. Could you confirm, for Ubuntu 24.04:
+5. **XDAQ Core2 hardware drivers on Ubuntu 24.04 LTS.** Our acquisition host runs **Ubuntu 24.04 LTS**, and we already have the Radiens suite and the `radiens` Python package installed and running there. What remains is the device-level connection to the Core2 hardware on Linux. Could you confirm, for Ubuntu 24.04:
    - any required device drivers or kernel modules to connect the Core2 (over USB and/or Thunderbolt), and the supported kernel versions;
    - any `udev` rules, group membership, or Thunderbolt-authorization steps needed for Allego to detect and stream from the Core2 without running as root;
    - any known Linux-specific limitations vs. Windows for the Core2 (e.g. Thunderbolt throughput, NP-mode support).
 
 A Core2 datasheet PDF, if available, would also be appreciated.
+
+As a PhD student working alone on this project approaching graduation, I found myself with many questions, therefore I appreciate your care and patience.
 
 Thanks again for the help.
 
