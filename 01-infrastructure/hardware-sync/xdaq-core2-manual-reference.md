@@ -88,6 +88,27 @@ Verbatim from the Core2 spec table + I/O-ports text:
 
 ---
 
+## Front & Rear Panel Layout
+
+![[xdaq-core2-panels.png]]
+
+**Front panel (left → right):**
+- **Mode LEDs:** XR, XSR, NP, S1. **Port LEDs:** P1–P4 (per-headstage status).
+- **REC & STIM HEADSTAGES:** 4× micro-HDMI (ports 1–4 = P1–P4).
+- **Neuropixels:** 2× USB-C (1, 2).
+- **ANALOG:** `IN 1` + `OUT 1` (2× BNC) = AI-01, AO-01.
+- **DIGITAL:** `IN 1` + `OUT 1` (2× BNC) = **DI-01 and DO-01 only — one digital-in BNC and one digital-out BNC.**
+
+**Rear panel:**
+- **`IO Port` = the DB25** — this is where `DAQ_ON` (13), `DI 03` (2), `DO 03…08`, `SAMPLE CLK` (25), `GND` (14) are. (Confirms DB25 is on the rear.)
+- **IO SPEC printed on the chassis** (authoritative): `D IN` High = **3.3–5 V**, `D OUT` High = **3.3/5 V**, `A IN`/`A OUT` ±10 V; all Low = 0 V (digital) / −10 V (analog).
+- `EXP 1` + `EXP 2` (micro-HDMI). `Audio` (3.5 mm). `Peripheral` + `Computer` (Thunderbolt-style; `Computer` → host, `Peripheral` → daisy-chain). `USB PD 20 V⎓3 A` (power). `SYS GND` + `Chassis GND` (banana jacks).
+
+> [!danger] DO1/DO2 sync caveat — only ONE front digital-out BNC on the Core2
+> NeuroNexus suggested syncing via front-panel **DO1 (streaming HIGH) / DO2 (recording HIGH)**. But the Core2 front has only **`DIGITAL OUT 1` = DO-01** — there is **no second digital-out BNC**. (The spec's "BNC DO-01, DO-02" is inconsistent with the panel's "4× BNC" = AI-01 + AO-01 + DI-01 + DO-01.) So on the Core2 the most likely split is: front `DIGITAL OUT 1` (DO-01) = one state, and DB25 `DAQ_ON` (pin 13) = recording-onset. **Where DO-02 lives, and the exact streaming-vs-recording mapping, is an open question for the vendor** ([[neuronexus-inquiry-email|round-2 email]] item 2).
+
+---
+
 ## Discrepancies this resolves
 
 > [!danger] 1. `DI 03` is Pin 2, not Pin 22

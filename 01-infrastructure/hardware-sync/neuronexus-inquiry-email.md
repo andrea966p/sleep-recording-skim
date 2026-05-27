@@ -108,11 +108,12 @@ andrea96p@kaist.ac.kr
 ## Reply draft — round 2 (2026-05-27)
 
 > [!abstract] What this round must assess
-> After Jeffrey's reply + reading the [[xdaq-core2-manual-reference|Core2 manual]]:
+> After Jeffrey's reply + reading the [[xdaq-core2-manual-reference|Core2 manual]] + the [[xdaq-core2-manual-reference#Front & Rear Panel Layout|front/rear panel figure]]:
 > 1. **Pin correction** — manual figure shows `DI 03 = Pin 2` (Jeffrey's reply said Pin 22, which is `DO 03`). Confirm.
-> 2. **Engage Jeffrey's DO1/DO2 recommendation.** He said the most common sync method is front-panel **DO1 (streaming HIGH) / DO2 (recording HIGH)**, NOT on the DB25 — and that DB25 `DAQ_ON` "may operate the same way." So ask: is DB25 `DAQ_ON` (pin 13) the same as DO2 (recording)? Is it level for the whole session? And how are DO1/DO2 accessed (BNC) + their voltage — since DO1+DO2 would actually give us *both* streaming and recording states, which we want.
-> 3. **Output voltage** — acknowledge his dev-team follow-up (CLI config). For wiring we only need the logic-high voltage of pin-13 `DAQ_ON` and of the DO1/DO2 BNCs (decides level-shift into 3.3 V Pi GPIO). *We'll also measure pin 13 — see [[wiring-guide#⭐ Pin 13 (DAQ_ON) Voltage Check — run this BEFORE building/buying the divider|Pin 13 Voltage Check]].*
-> 4. **XDAQ Core2 hardware drivers on Ubuntu 24.04 LTS.** Radiens suite (Allego+Curate+Videre) + `radiens` Python pkg already installed on the Ubuntu 24.04 acquisition host; remaining gap is *device-level* connectivity (USB/Thunderbolt drivers, udev rules, kernel) for the Core2 itself.
+> 2. **Recording-gate signal + the DO2 problem.** Jeffrey recommended front-panel **DO1 (streaming) / DO2 (recording)**, but the **Core2 front has only ONE digital-out BNC (`DIGITAL OUT 1` = DO-01)** — no second DO2 BNC. Ask where streaming vs recording are exposed on the Core2, whether DB25 `DAQ_ON` (pin 13) = the recording indicator (and is level, not a pulse), and how to capture *both* states.
+> 3. **Output voltage** — rear IO-SPEC label = D OUT 3.3/5 V. Acknowledge his dev-team CLI follow-up. Need logic-high of pin-13 `DAQ_ON` + front `DIGITAL OUT 1` (decides level-shift into 3.3 V Pi GPIO). *We'll also measure pin 13 — see [[wiring-guide#⭐ Pin 13 (DAQ_ON) Voltage Check — run this BEFORE building/buying the divider|Pin 13 Voltage Check]].*
+> 4. **Scale: 4× Pi 5 / 8 cameras.** Fan-out of one gate signal to 4 Pi GPIO inputs (buffer?), 4 separate DB25 DIs (`DI 03`–`06`) for the 4 return lines, grounding for 4 devices on `SYS GND`. **The current vault wiring/overview/gpio-sync docs are single-Pi — this scale is not yet designed in.**
+> 5. **XDAQ Core2 hardware drivers on Ubuntu 24.04 LTS.** Radiens suite (Allego+Curate+Videre) + `radiens` Python pkg already installed on the Ubuntu 24.04 acquisition host; remaining gap is *device-level* connectivity (USB/Thunderbolt drivers, udev rules, kernel) for the Core2 itself.
 
 > **To:** Jeffrey @ NeuroNexus / KONTEX support
 > **From:** andrea96p@kaist.ac.kr
@@ -126,15 +127,21 @@ A few follow-ups to fully close this out:
 
 1. **DI 03 pin number.** Your reply listed `DI 03` at pin 22, but the Core2 pinout figure shows pin 22 as `DO 03` and `DI 03` at **pin 2**. Could you confirm `DI 03` = **pin 2** on the Core2? This is the input we'll drive from the Raspberry Pi, so we want to be certain before wiring.
 
-2. **DO1/DO2 vs. DB25 `DAQ_ON` — which is the right recording-gate signal?** This is the most useful part of your reply for us: you noted that Radiens drives **DO1 high while streaming** and **DO2 high while recording**, that this is the most common way users synchronize external devices, and that DO1/DO2 are on the **front panel**, not the DB25. For our use we'd actually like *both* states — DO1 to know acquisition is live, DO2 to gate video recording. So:
-   - Is the DB25 `DAQ_ON` (pin 13) the **same signal as DO2** (recording), or something different? The manual describes it as "logic high at onset of a recording session." Does it stay HIGH for the **entire recording** (one rising edge at start, one falling edge at stop), or is it only a brief pulse at onset?
-   - For the front-panel **DO1/DO2**: how are they exposed (BNC connectors), and would you recommend driving our Raspberry Pi from DO1/DO2 rather than from DB25 `DAQ_ON`? If DO1/DO2 are the proven route, we're glad to wire from the front panel instead.
+2. **Recording-gate signal — DO1/DO2 vs. DB25 `DAQ_ON`, and where DO2 lives on the Core2.** You noted Radiens drives **DO1 high while streaming** and **DO2 high while recording**, that this is the most common sync method, and that DO1/DO2 are on the front panel. On our **Core2**, though, the front panel has only a single `DIGITAL OUT 1` BNC (one digital output), not two — so we can't see where a separate DO2 would be exposed. Could you clarify, for the Core2:
+   - On the Core2, which physical connector carries the **streaming** indicator and which carries the **recording** indicator? Is front-panel `DIGITAL OUT 1` one of them, and is the DB25 `DAQ_ON` (pin 13) the recording indicator?
+   - Is DB25 `DAQ_ON` (pin 13) the **same signal as DO2** (recording)? The manual calls it "logic high at onset of a recording session" — does it stay HIGH for the **entire recording** (one rising edge at start, one falling at stop), or only pulse at onset?
+   - Ideally we'd capture **both** states (acquisition live + recording active). On the Core2, what's the recommended way to get both — e.g. front `DIGITAL OUT 1` for one and DB25 `DAQ_ON` for the other?
 
-3. **Output logic-high voltage.** Thanks for checking with your dev team on whether the output voltage is CLI-configurable. To finalize the wiring we mainly need the logic-high voltage of the specific signals we'll use, so we can decide on any level adjustment for a 3.3 V Raspberry Pi GPIO input:
-   - **DB25 `DAQ_ON` (pin 13)** — the Core2 spec lists DB25 outputs (DO-03…08) as 3.3 V but doesn't separately state `DAQ_ON`'s level. Is it 3.3 V? (We'll also measure pin 13 directly during a recording session.)
-   - **Front-panel DO1/DO2 (BNC)** — the spec notes the BNC outputs are software-configurable to 3.3 V or 5 V. If we use DO1/DO2, how do we set them to 3.3 V?
+3. **Output logic-high voltage.** Thanks for checking with your dev team on whether the output voltage is CLI-configurable. The Core2 rear-panel IO SPEC label shows digital outputs as 3.3/5 V. To finalize wiring we just need the logic-high voltage of the specific signals we'll use, to decide on any level adjustment for a 3.3 V Raspberry Pi GPIO input:
+   - **DB25 `DAQ_ON` (pin 13)** — is it 3.3 V (the DB25 outputs DO-03…08 are listed as 3.3 V, but `DAQ_ON`'s level isn't stated separately)? We'll also measure pin 13 during a recording session.
+   - **Front-panel `DIGITAL OUT 1` (BNC)** — if we use it, how do we set it to 3.3 V vs 5 V?
 
-4. **XDAQ Core2 hardware drivers on Ubuntu 24.04 LTS.** Our acquisition host runs **Ubuntu 24.04 LTS**, and we already have the Radiens suite (Allego + Curate + Videre) and the `radiens` Python package installed and running there. What remains is the device-level connection to the Core2 hardware on Linux. Could you confirm, for Ubuntu 24.04:
+4. **Driving multiple Raspberry Pis (scale).** Our setup will use **at least four Raspberry Pi 5 nodes** (eight cameras total), each needing the recording-gate signal and each returning a frame-sync pulse to the XDAQ. Could you advise:
+   - Can a single XDAQ digital output (e.g. DB25 `DAQ_ON`) safely **fan out to four Pi GPIO inputs** in parallel, or do you recommend a buffer/driver between the XDAQ and the Pis?
+   - For the return direction, we'd assign **four separate DB25 digital inputs** (e.g. `DI 03`–`DI 06`, pins 2/15/3/16) — one per Pi. Is that the right approach, and are all six DB25 DIs (DI-03…08) independently usable as Radiens trigger/marker channels at the headstage sample rate?
+   - Any grounding guidance for tying four external devices to the XDAQ `SYS GND` (pin 14) without ground loops?
+
+5. **XDAQ Core2 hardware drivers on Ubuntu 24.04 LTS.** Our acquisition host runs **Ubuntu 24.04 LTS**, and we already have the Radiens suite (Allego + Curate + Videre) and the `radiens` Python package installed and running there. What remains is the device-level connection to the Core2 hardware on Linux. Could you confirm, for Ubuntu 24.04:
    - any required device drivers or kernel modules to connect the Core2 (over USB and/or Thunderbolt), and the supported kernel versions;
    - any `udev` rules, group membership, or Thunderbolt-authorization steps needed for Allego to detect and stream from the Core2 without running as root;
    - any known Linux-specific limitations vs. Windows for the Core2 (e.g. Thunderbolt throughput, NP-mode support).
