@@ -14,12 +14,13 @@ status: complete
 > **How to read this page.** Look up the specific call you need (start recording, read DIO, get status). The package name + import path are at the top.
 
 > [!quote] Paper-ready
-> The session daemon interacts with the NeuroNexus Radiens acquisition system via the `radiens-core` Python SDK's `AllegoClient` interface, polling recording state once per second over gRPC and consuming digital-I/O channel state for hardware synchronization events.
+> The session daemon interacts with the NeuroNexus Radiens acquisition system via the `radiens` Python SDK's `AllegoClient` interface, polling recording state once per second over gRPC and consuming digital-I/O channel state for hardware synchronization events.
 
 > [!tip] Package Info
-> Package: `radiens-core` (PyPI, replaces older `radiens` package)
-> Requires: Python 3.12+
-> Docs: https://neuronexus.github.io/radiens-core-python/latest/
+> Package: **`radiens`** (PyPI) — **v4.0.0** installed in `/opt/neurosurveillance/venv` (verified 2026-05-27). Import: `from radiens import AllegoClient`.
+> Requires: Python 3.12+; an active Radiens license + the Radiens system (Allego) running alongside.
+> Docs: <https://neuronexus.github.io/intro.html> · <https://nnx.mcoutput.com/1376106/Content/Home-Radiens.htm>
+> (Earlier vault revisions called this `radiens-core` / `from radiens_core import …` — that was wrong; the package is `radiens`.)
 
 ## Key Methods for Hardware Sync
 
@@ -53,7 +54,7 @@ status: complete
 ### Status Check
 
 ```python
-from radiens_core import AllegoClient
+from radiens import AllegoClient
 
 with AllegoClient() as client:
     # Check DIO state

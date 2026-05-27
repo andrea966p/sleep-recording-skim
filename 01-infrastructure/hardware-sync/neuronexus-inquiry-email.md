@@ -149,5 +149,5 @@ andrea96p@kaist.ac.kr
 > - Confirmed 2026-05-27: Radiens runs on the Ubuntu 24.04 box; suite + Python pkg already installed. Item 4 reframed to device-level driver/connectivity only.
 > - Fill the Core2 serial / order ref in the first round's draft if the vendor asks to identify the unit.
 
-> [!note] Package-name discrepancy to verify
-> The Radiens brochure shows `pip install radiens` / `from radiens import AllegoClient`, but [[radiens-api-reference|Radiens API Reference]] says the PyPI package is `radiens-core` (claimed to replace `radiens`). Verify what's actually installed on the Ubuntu host (`pip show radiens` / `pip show radiens-core`) and correct whichever is wrong. Brochure docs: <https://neuronexus.github.io/intro.html>, <https://nnx.mcoutput.com/1376106/Content/Home-Radiens.htm>.
+> [!check] Package name — verified 2026-05-27
+> Installed package is **`radiens` v4.0.0** in `/opt/neurosurveillance/venv` (`from radiens import AllegoClient` works). The brochure was right; [[radiens-api-reference|Radiens API Reference]] had it wrong as `radiens-core` — now corrected. Docs: <https://neuronexus.github.io/intro.html>, <https://nnx.mcoutput.com/1376106/Content/Home-Radiens.htm>.
