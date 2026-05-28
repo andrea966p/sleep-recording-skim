@@ -165,3 +165,117 @@ andrea96p@kaist.ac.kr
 
 > [!check] Package name — verified 2026-05-27
 > Installed package is **`radiens` v4.0.0** in `/opt/neurosurveillance/venv` (`from radiens import AllegoClient` works). The brochure was right; [[radiens-api-reference|Radiens API Reference]] had it wrong as `radiens-core` — now corrected. Docs: <https://neuronexus.github.io/intro.html>, <https://nnx.mcoutput.com/1376106/Content/Home-Radiens.htm>.
+
+---
+
+## Reply — round 2 received 2026-05-28 (Jeffrey)
+
+> [!info] Jeffrey's reply to the round-2 follow-up. Logged verbatim-summary below.
+> **Headline:** `DAQ_ON` (pin 13) tracks **streaming, not recording**, and is **dirty when idle** — the true recording gate is **`DO 03` (pin 22) in "Gated" mode** with the "BNC Breakout Board" slider toggled on. This changes Wire 1. See [[wiring-guide|Wiring Guide]] / [[overview|Overview]] 2026-05-28 callouts.
+
+| # | Question | Status | Jeffrey's answer |
+|---|----------|--------|-------------------|
+| 1 | `DI 03` = pin 2? | ✅ **confirmed** | "Yes — DI 03 is 2, whereas DO 03 is 22." Vault was right all along. |
+| 2a | Does `DAQ_ON` (pin 13) track recording (level HIGH whole session)? | ⚠️ **No — tracks STREAMING** | Tested pin 13: goes logic-HIGH when DAQ is **streaming** data (both Allego and XDAQ-RHX) — behaves "almost the same as DO 01" (both HIGH while streaming). **Caveat:** in Allego, `DAQ_ON` shows **short pulses every ~0.5s when streaming is OFF** (Allego constantly scans headstage ports/GPIOs while idle). DAQ_ON "wasn't on the development radar" — Andrea may be first customer to ask. |
+| 2b | Core2 streaming/recording indicator? | ✅ **recording gate found = DO 03** | No DO 02 on Core2 (only AIO + ONE+ have it — confirmed Jeffrey's earlier mistake). **But** the DO 02 "recording status" function **falls to `DO 03` (pin 22)** when you toggle the **"BNC Breakout Board"** slider (top of System tab) **and** set Digital Out Control to **"Gated"** mode → DO 03 then reports **"Recording status"** (~15–20s to populate). Lets you sync recording status to any device on that pin. |
+| 3 | Output logic-high voltage (DAQ_ON / front DO-01) | ⏳ **pending manufacturer** | DAQ_ON voltage: unknown, **asking manufacturer** — assumes in line with the other DOs (i.e. 3.3 V) per the doc wording; will report back. Allego currently has **no option** to change DO voltage 3.3 V → 5 V. |
+| 4a | Multiple Pis on discrete DB25 DIs? | ✅ **yes (with toggle)** | Radiens can record + synchronize pulses received on **multiple inputs** alongside recorded neural data. To **show the extra GPIOs** in Allego you must toggle the **"BNC Breakout Board"** option (same slider as 2b). Channels appear in both **System** and **Monitor** tabs, synced + stored alongside neural channels. |
+| 4b | Fan-out buffer + grounding for 4 Pis | ➡️ **referred to Kontex** | Deferred to **KC Kong `KC@kontex.io`** (Kontex design/dev). |
+| 5 | Ubuntu 24.04 Core2 drivers / udev / Thunderbolt | ➡️ **referred to Kontex** | Deferred to **KC Kong `KC@kontex.io`**. |
+
+### Action items from round-2 reply
+
+- [x] **Q1 — `DI 03` = pin 2 confirmed by vendor** (matches manual + vault). Wire 2 lands on pin 2. No change.
+- [ ] **⭐ Wire 1 redesign — recording gate moves to `DO 03` (pin 22), Gated mode.** `DAQ_ON` (pin 13) only indicates *streaming* and emits ~0.5s idle pulses in Allego → unsuitable as a clean recording gate (false edges). Use **`DO 03` pin 22** with "BNC Breakout Board" toggle ON + Digital Out Control = "Gated". Update [[wiring-guide|Wiring Guide]] Wire 1 + diagrams + [[overview|Overview]] DB25 pinout/architecture. **Re-check: does this collide with the multi-Pi return-DI plan? No — returns use DIs (pin 2/15/3/16); DO 03 is an output.**
+- [ ] **Allego config dependency now baked in:** the multi-Pi DI returns **and** the DO 03 recording gate both require the **"BNC Breakout Board"** slider ON in Allego's System tab. Document in [[02-procedures/hardware-sync-setup|Setup Procedure]] + [[gpio-sync-service|GPIO Sync Service]].
+- [ ] **Optional streaming indicator:** keep `DAQ_ON` (pin 13) or front `DIGITAL OUT 1` (DO-01) as a *streaming* flag if both states wanted (recording is the must-have). Note pin-13 idle-pulse noise if used.
+- [ ] **Q3 voltage — still open.** Await Jeffrey's manufacturer answer for DAQ_ON / DO 03 logic-high. Likely 3.3 V (Allego can't set 5 V) → divider unneeded, but **measure pin 22 (and pin 13) during a recording session** before finalizing. Feeds [[wiring-guide#⭐ Pin 13 (DAQ_ON) Voltage Check — run this BEFORE building/buying the divider|voltage check]] (extend to pin 22).
+- [ ] **Q4b + Q5 — email KC Kong (`KC@kontex.io`)** for: (a) fan-out of one gate to 4 Pi GPIO inputs (buffer/driver?), (b) grounding 4 devices on SYS GND without ground loops, (c) Ubuntu 24.04 Core2 drivers/kernel/udev/Thunderbolt-authorization. New round-3 inquiry, different recipient.
+
+### Reply verbatim (archived)
+
+> Dear Andrea,
+>
+> Yes, you are correct – DI 03 is 2, whereas DO 03 is 22.
+>
+> This is also true, my mistake – only the XDAQ AIO and One+ have a DO 02. I just tested pin #13 DAQ_ON and can confirm that it switches to logic high when the DAQ is streaming data in both Allego and XDAQ-RHX. In this regard and when using the Core2 system, it behaves almost the same as DO 01. They both send a high signal when data is streaming.
+> That said, the behavior of DO 01 and DAQ_ON are slightly different when compared while using Allego. They both will show a high signal while streaming is active, however DAQ_ON will show short pulses every 0.5s or so when streaming is off. This is because Allego is constantly scanning headstage ports and GPIOs for changes when streaming is off, and also because the DAQ_ON pin wasn't on the development radar and I think you may have been our first customer to inquire on it.
+> Even though the Core2 does not have a DO 02 connector, I found that this function will fall to DO 03 when you toggle on the "BNC Breakout Board" slider at the top of the System tab. When the Digital Out Control section is set to "Gated" mode and the BNC Breakout Board option is toggled on, it will show DO 03 as indicating "Recording status". It took about 15-20 seconds for it to populate, but it did appear and that should allow you to sync recording status with any device connected to that pin which can receive a pulse.
+>
+> Voltage of DAQ_ON: I don't know, but I'm asking the manufacturer. Considering the wording of the doc, I'd assume that the voltage would be in line with the rest of the DOs, but I'll let you know what I find. Allego does not currently have an option to change the DO voltage from 3.3 V to 5 V.
+>
+> For question 4 regarding using four Raspberry Pi units with discrete DI pins in the DB25, yes, Radiens can record and synchronize pulses received on multiple inputs with recorded neural data. In order to show the extra GPIOs in Allego, you'll need to toggle the option "BNC Breakout Board" on that I mentioned above. These channels will all appear in both the System and Monitor tabs and will be synced and stored in recorded data alongside the neural channels.
+>
+> For the remaining questions in 4 & 5, I'll refer you to my contact at Kontex, KC Kong (KC@kontex.io). He is directly involved in the design and development of the XDAQ systems and can answer those parts better than I can with the materials I've been provided.
+>
+> Best regards,
+> Jeff
+
+---
+
+## Reply to Jeffrey — round 3 (draft 2026-05-28)
+
+> [!note] Quick acknowledgement closing out Jeffrey's thread. Scale + driver questions go to KC Kong in the separate inquiry below.
+
+> **To:** Jeffrey @ NeuroNexus
+> **From:** andrea96p@kaist.ac.kr
+> **Subject:** Re: XDAQ Core2 — digital I/O DB25 pinout & output voltage confirmation
+
+Dear Jeffrey,
+
+This is really helpful — thank you for actually testing pin 13 and digging into the Gated-mode behavior.
+
+To confirm I've understood the plan for our Core2:
+
+- I'll use **DB25 `DO 03` (pin 22)** as the recording gate — toggling on "BNC Breakout Board" in the System tab and setting Digital Out Control to "Gated" so DO 03 reports recording status.
+- I'll treat **`DAQ_ON` (pin 13)** as a streaming indicator only, and not rely on it as a clean gate, given the ~0.5 s idle pulses you saw while streaming is off.
+- **`DI 03` = pin 2** confirmed — the Pi's frame-sync return will land there.
+
+I'll scope `DO 03` (pin 22) logic-high during a recording session before finalizing the wiring, but your note that Allego can't switch the DOs to 5 V already tells me to expect 3.3 V. I'd still appreciate the manufacturer's confirmation of the DO logic-high voltage whenever you hear back.
+
+I'll follow up with KC Kong on the multi-Pi fan-out, grounding, and the Ubuntu driver questions.
+
+Thanks again for the patient, detailed help.
+
+Best regards,
+Andrea
+andrea96p@kaist.ac.kr
+
+---
+
+## New inquiry — KC Kong @ Kontex (draft 2026-05-28)
+
+> [!abstract] Why this email
+> Jeffrey referred the hardware/Linux questions to **KC Kong (`KC@kontex.io`)**, Kontex design/dev. Covers the deferred round-2 items: gate fan-out to 4 Pis (buffer?), grounding 4 devices on SYS GND, DB25 DO logic-high voltage, DI independence, and Ubuntu 24.04 Core2 device drivers/udev/Thunderbolt. Fill `[lab / affiliation]` before sending.
+
+> **To:** KC Kong <KC@kontex.io>
+> **From:** andrea96p@kaist.ac.kr
+> **Subject:** XDAQ Core2 — multi-device digital sync wiring & Ubuntu 24.04 driver setup
+
+Dear KC,
+
+Jeffrey at NeuroNexus kindly referred me to you for the hardware and Linux side of an XDAQ Core2 setup. I'm a neuroscience PhD student building a synchronized video + electrophysiology rig: a Core2 for neural data, and several Raspberry Pi 5 camera nodes that I want to hardware-sync to the Core2's recording state over the DB25 digital I/O.
+
+The plan so far (confirmed with Jeffrey): use DB25 `DO 03` (pin 22) in "Gated" mode as a recording-status gate out to the Pis, and dedicate separate DB25 digital inputs (`DI 03`–`DI 06`, pins 2/15/3/16) for a frame-sync pulse returning from each Pi, all referenced to `SYS GND` (pin 14). I'd value your guidance on the parts Jeffrey said you'd know best:
+
+1. **Gate fan-out.** We'll have at least four Raspberry Pi 5 nodes (scaling toward eight), each needing the `DO 03` recording-gate signal on a GPIO input. Can a single Core2 DB25 digital output safely drive four Pi GPIO inputs in parallel (star wiring), or do you recommend a buffer / line driver (e.g. 74HCT244) between the Core2 and the Pis? What is the output drive current / fan-out limit on the DB25 DOs?
+
+2. **Logic levels.** Can you confirm the logic-high voltage of the DB25 digital outputs (`DO 03` in particular) on the Core2? The rear IO-SPEC label reads "D OUT 3.3/5 V" and Allego has no setting to change it, so I'm assuming 3.3 V fixed on the DB25 — I want to be certain before wiring into the Pi's 3.3 V GPIO, which has no over-voltage tolerance.
+
+3. **Grounding for multiple devices.** Any guidance on tying four (or more) external devices to the Core2 `SYS GND` (pin 14) without creating ground loops between the Core2, the Pis, and their PoE supplies? Single-point/star ground, series resistors per line — whatever you'd recommend.
+
+4. **DI independence.** Are all six DB25 digital inputs (`DI 03`–`DI 08`) independently usable as Radiens trigger/marker channels, sampled at the headstage rate, when "BNC Breakout Board" is enabled? We'd assign one DI per Pi.
+
+5. **Ubuntu 24.04 LTS driver / connectivity.** Our acquisition host runs Ubuntu 24.04 LTS with the Radiens suite and the `radiens` Python package already installed and working; what remains is the device-level link to the Core2 hardware. Could you confirm, for Ubuntu 24.04:
+   - required drivers / kernel modules to connect the Core2 (USB and/or Thunderbolt) and the supported kernel versions;
+   - any `udev` rules, group membership, or Thunderbolt-authorization steps so Allego can detect and stream from the Core2 without running as root;
+   - any known Linux-specific limitations vs. Windows (Thunderbolt throughput, NP-mode support, etc.).
+
+A Core2 datasheet/PDF and any reference wiring for multi-device digital sync would be very welcome.
+
+Thank you for your time.
+
+Best regards,
+Andrea
+[lab / affiliation]
+andrea96p@kaist.ac.kr

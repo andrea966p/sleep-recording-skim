@@ -34,6 +34,10 @@ status: planned
 
 ## Wiring Diagram
 
+> [!danger] 2026-05-28 — Wire 1 recording gate changes from pin 13 to pin 22 (diagrams below not yet redrawn)
+> NeuroNexus tested `DAQ_ON` ([[neuronexus-inquiry-email#Reply — round 2 received 2026-05-28 (Jeffrey)|round-2 reply]]): **pin 13 `DAQ_ON` indicates STREAMING, not recording**, and emits **~0.5s idle pulses in Allego** (false edges). The real recording gate is **`DO 03` = DB25 pin 22**, exposed by toggling the **"BNC Breakout Board"** slider (System tab) + Digital Out Control = **"Gated"** mode.
+> **Wire 1 should land on pin 22 (`DO 03`), not pin 13.** Optionally keep `DAQ_ON` (pin 13) / front `DIGITAL OUT 1` (DO-01) as a *streaming* flag. Pin-22 logic-high voltage is pending the vendor (likely 3.3 V — Allego can't set 5 V; divider likely unneeded). The Wire 1 diagram + validation steps below still show the old pin-13 plan; finalize once pin-22 voltage is measured. Extend the [[#⭐ Pin 13 (DAQ_ON) Voltage Check — run this BEFORE building/buying the divider|voltage check]] below to pin 22.
+
 > [!info] Pin numbers verified against the manual
 > The DB25 pins below are confirmed in [[xdaq-core2-manual-reference|XDAQ Core2 Manual Reference]]: `DAQ_ON`=Pin 13, `DI 03`=**Pin 2** (Pin 22 is `DO 03` — do not wire there), `GND`=Pin 14, `SAMPLE CLK`=Pin 25. ⚠️ The voltage divider here assumes a 3.6 V output; the Core2 manual states **DB25 outputs are 3.3 V** — if `DAQ_ON` measures 3.3 V at pin 13, the divider can be dropped (direct wire). Measure before finalizing. See manual reference + [[references-and-justification#Open Items — confirm before purchase|Design Justification → Open Items]].
 

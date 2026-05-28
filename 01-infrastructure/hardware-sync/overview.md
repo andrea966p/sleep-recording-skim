@@ -49,11 +49,19 @@ Two-wire bidirectional sync between the XDAQ Core and each Raspberry Pi node:
 └────────────────────┘                        └──────────────────────┘
 ```
 
-### Wire 1: XDAQ `DAQ_ON` → Pi GPIO (Recording Gate)
+### Wire 1: XDAQ recording gate → Pi GPIO
 
-- **Signal:** `DAQ_ON` on DB25 Pin 13 goes HIGH (3.6V) whenever XDAQ acquisition is running.
-- **Purpose:** Replaces software polling for start/stop detection.
-- **Voltage:** Requires a voltage divider (3.6V → ~2.4V) because Pi 5 GPIO max is 3.3V.
+> [!danger] 2026-05-28 — recording gate moves OFF `DAQ_ON` (pin 13) → use `DO 03` (pin 22, "Gated" mode)
+> Jeffrey (NeuroNexus) tested pin 13 ([[neuronexus-inquiry-email#Reply — round 2 received 2026-05-28 (Jeffrey)|round-2 reply]]):
+> - **`DAQ_ON` (pin 13) tracks STREAMING, not recording** — HIGH whenever the DAQ streams data (Allego + XDAQ-RHX), like DO 01. It is **not** a recording gate.
+> - **It is dirty when idle:** in Allego, `DAQ_ON` emits **short pulses every ~0.5s while streaming is OFF** (Allego scans GPIOs when idle). That would throw false edges at the Pi.
+> - **True recording gate = `DO 03` (DB25 pin 22)**: toggle the **"BNC Breakout Board"** slider (System tab) + set Digital Out Control to **"Gated"** mode → DO 03 reports **"Recording status"** (~15–20s to populate).
+>
+> **So Wire 1 should land on DB25 pin 22 (`DO 03`), not pin 13.** `DAQ_ON` (pin 13) / front `DIGITAL OUT 1` (DO-01) can be kept as an optional *streaming* indicator. The DB25 pinout table + diagram below still show the old pin-13 plan and need updating once the redesign is finalized (voltage of pin 22 pending — see below).
+
+- **Signal (planned):** `DO 03` on DB25 **Pin 22** goes HIGH for the whole recording session ("Gated" mode + BNC Breakout Board toggle). *(Old plan: `DAQ_ON` pin 13 — streaming only, idle-noisy.)*
+- **Purpose:** Replaces software polling for recording start/stop detection.
+- **Voltage:** DB25 DOs are **3.3 V** (Core2 manual; Allego can't switch to 5 V) → divider likely **unneeded**; measure pin 22 during recording before deciding. *(Old plan assumed 3.6 V → divider.)*
 - **Result:** Pi detects recording start/stop within <1 ms via `gpiod` edge interrupt.
 
 ### Wire 2: Pi GPIO → XDAQ `DIN 03` (Frame Sync Markers)
@@ -84,10 +92,14 @@ Pi max input: 3.3V ✓
 
 | DB25 Pin | Signal | Direction | Use in Our System |
 |----------|--------|-----------|-------------------|
-| 2 | DI 03 | Input to XDAQ | Frame sync markers from Pi |
-| 13 | DAQ_ON | Output from XDAQ | HIGH when acquisition running |
+| 2 | DI 03 | Input to XDAQ | Frame sync marker from Pi (Pi 1); DI 04–06 = pins 15/3/16 for Pis 2–4 at scale |
+| 13 | DAQ_ON | Output from XDAQ | **STREAMING** indicator (HIGH while streaming; ~0.5s idle pulses in Allego). Optional streaming flag only — NOT the recording gate. |
+| 22 | **DO 03** | Output from XDAQ | **★ Recording gate** — reports "Recording status" in "Gated" mode w/ BNC Breakout Board toggle (per 2026-05-28 reply). HIGH for whole recording session. |
 | 14 | SYS GND | Ground | Shared ground reference |
 | 25 | Sample_CLK | Output from XDAQ | Pulse train at headstage sampling rate (future use) |
+
+> [!warning] Allego "BNC Breakout Board" toggle is now a hard dependency
+> Both the recording gate (`DO 03`, pin 22) and the multi-Pi return inputs (`DI 03`–`DI 06`) only appear/function in Allego when the **"BNC Breakout Board"** slider (System tab) is toggled ON. The DI/DO channels then show in the System + Monitor tabs and are synced + stored alongside neural data. Document this in the [[02-procedures/hardware-sync-setup|Setup Procedure]].
 
 > [!warning] Voltage Compatibility
 > XDAQ DOUT is 3.6V. Pi 5 GPIO (RP1 chip) is 3.3V. The DAQ_ON → Pi direction **requires** a voltage divider or level shifter. The Pi → XDAQ DIN direction is safe (3.3V is within 2.2–5.5V input range).
