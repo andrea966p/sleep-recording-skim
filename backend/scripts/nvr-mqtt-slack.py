@@ -18,26 +18,25 @@ installed at /etc/nvr-mqtt-slack.env, mode 0600):
 
 Currently forwarded:
     neurosurveillance/watchdog/+/stall    -> always alert (4.1)
-
-Reserved for 4.6 (enable only after the 3-night reconciler dry-run, ~2026-05-27):
     neurosurveillance/reconciler/findings -> alert only when
-        partial_count + stuck_count + degraded_count > 0  (orphan_count suppressed,
+        partial_count + stuck_count + degraded_count > 0 (orphan_count suppressed,
         per the reconciler design rationale — Frigate's record.enabled:true makes
-        ORPHAN structurally noisy).
+        ORPHAN structurally noisy). Enabled 2026-05-28 after 3-night dry-run.
 """
 import json
 import os
 import subprocess
 import sys
 import urllib.request
+from typing import Optional
 
 MQTT_USER = "nvr"
 MOSQUITTO_CONTAINER = "mosquitto"
 
-# Topics this bridge subscribes to. Add the reconciler topic here for 4.6.
+# Topics this bridge subscribes to.
 TOPICS = [
     "neurosurveillance/watchdog/+/stall",
-    # "neurosurveillance/reconciler/findings",  # TODO(4.6): enable after dry-run
+    "neurosurveillance/reconciler/findings",
 ]
 
 
@@ -73,6 +72,28 @@ def format_stall(topic: str, payload: dict) -> str:
     )
 
 
+def format_reconciler(payload: dict) -> Optional[str]:
+    # Suppress orphan: Frigate record.enabled=true makes ORPHAN structurally noisy.
+    partial = int(payload.get("partial_count", 0) or 0)
+    stuck = int(payload.get("stuck_count", 0) or 0)
+    degraded = int(payload.get("degraded_count", 0) or 0)
+    if partial + stuck + degraded == 0:
+        return None
+    window = payload.get("window_hours", "?")
+    bits = []
+    if partial:
+        bits.append(f"partial={partial}")
+    if stuck:
+        bits.append(f"stuck={stuck}")
+    if degraded:
+        bits.append(f"degraded={degraded}")
+    detail = " ".join(bits)
+    return (
+        f":warning: *NVR reconciler findings* (last {window}h) — {detail}. "
+        f"Check `/api/reconciler/last` for session IDs."
+    )
+
+
 def handle(topic: str, payload_raw: str) -> None:
     try:
         payload = json.loads(payload_raw)
@@ -80,7 +101,10 @@ def handle(topic: str, payload_raw: str) -> None:
         payload = {}
     if "/watchdog/" in topic and topic.endswith("/stall"):
         post_slack(format_stall(topic, payload))
-    # TODO(4.6): elif topic == "neurosurveillance/reconciler/findings": ...
+    elif topic == "neurosurveillance/reconciler/findings":
+        msg = format_reconciler(payload)
+        if msg is not None:
+            post_slack(msg)
 
 
 def main() -> int:
