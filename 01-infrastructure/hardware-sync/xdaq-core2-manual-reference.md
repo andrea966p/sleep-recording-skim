@@ -104,6 +104,9 @@ Verbatim from the Core2 spec table + I/O-ports text:
 - **IO SPEC printed on the chassis** (authoritative): `D IN` High = **3.3–5 V**, `D OUT` High = **3.3/5 V**, `A IN`/`A OUT` ±10 V; all Low = 0 V (digital) / −10 V (analog).
 - `EXP 1` + `EXP 2` (micro-HDMI). `Audio` (3.5 mm). `Peripheral` + `Computer` (Thunderbolt-style; `Computer` → host, `Peripheral` → daisy-chain). `USB PD 20 V⎓3 A` (power). `SYS GND` + `Chassis GND` (banana jacks).
 
+> [!info] Host interface — Core2 is Thunderbolt-only
+> Confirmed by the libxdaq Introduction page (`developer.kontex.io/libxdaq-docs/introduction.html`): **Core Gen 2 → Thunderbolt** (Kontex's custom solution); only Gen-1 Core/One use Opal Kelly USB. On Linux the Core2 driver is the standard `thunderbolt` kernel module + `boltd` authorization (`boltctl enroll <uuid>`) — **no Opal Kelly USB udev rules needed.** Per Kontex, Thunderbolt latency is `<0.5 ms` with `~GB/s` throughput. libxdaq's `thor` device manager (`libthor_device_manager.so`) is the Linux library; sits underneath Allego/Radiens. Full notes on the Linux/libxdaq/pylibxdaq side in [[kontex-developer-portal-notes|Kontex Developer Portal Notes]].
+
 > [!warning] DO1/DO2 sync = XDAQ ONE+, not Core2
 > NeuroNexus described syncing via **DO1 (streaming HIGH) / DO2 (recording HIGH)** front BNCs. Those **dual digital-output BNCs (DO-01 + DO-02) belong to the XDAQ ONE+** (`docs.kontex.io/XDAQ/ONE/`: "two pairs of digital input (DI-01, DI-02) and output (DO-01, DO-02)"). The **Core2 has only one digital-out BNC, `DIGITAL OUT 1` = DO-01** — the panel confirms it (4× BNC = AI-01 + AO-01 + DI-01 + DO-01). The "BNC DO-01, DO-02" line on the Core2 page is boilerplate shared with the ONE+ doc. **On the Core2, the recording gate we can reach is DB25 `DAQ_ON` (pin 13)** ("logic high at onset of a recording session"); a DO1-style *streaming* indicator may be available via front DO-01 — open vendor Q ([[neuronexus-inquiry-email|round-2 email]] item 2).
 
@@ -128,3 +131,4 @@ Verbatim from the Core2 spec table + I/O-ports text:
 - [[radiens-api-reference|Radiens API Reference]] — DB25 pinout table (sourced here)
 - [[references-and-justification|Design Justification & References]] — divider rationale (3.6 V → 3.3 V correction above)
 - [[neuronexus-inquiry-email|NeuroNexus Inquiry & Reply]] — vendor Q&A (pin-22 error noted here)
+- [[kontex-developer-portal-notes|Kontex Developer Portal Notes]] — libxdaq / pylibxdaq / Linux Thunderbolt driver path

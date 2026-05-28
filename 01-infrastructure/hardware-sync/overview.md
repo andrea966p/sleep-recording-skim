@@ -147,6 +147,8 @@ Session Daemon (NVR) subscribes
 - [[01-infrastructure/hardware-sync/references-and-justification|Design Justification & References]]
 - [[01-infrastructure/hardware-sync/gpio-sync-service|GPIO Sync Service]]
 - [[01-infrastructure/hardware-sync/literature-review|Literature Review]]
+- [[01-infrastructure/hardware-sync/xdaq-core2-manual-reference|XDAQ Core2 Manual Reference]]
+- [[01-infrastructure/hardware-sync/kontex-developer-portal-notes|Kontex Developer Portal Notes]] — libxdaq / pylibxdaq / Linux Thunderbolt
 - [[02-procedures/hardware-sync-setup|Hardware Sync Setup Procedure]]
 - [[01-infrastructure/session-daemon/architecture|Session Daemon Architecture]]
 - [[00-config/production-values|Production Values]]
