@@ -1,0 +1,14 @@
+[Unit]
+Description=Run NeuroSurveillance NAS backup daily at midnight
+Documentation=file:///home/skimlab/Monitoring_project/Monitoring_project_obsidian_vault/02-procedures/installation/nas-backup.md
+
+[Timer]
+OnCalendar=*-*-* 00:00:00
+# If the machine was off at midnight, run as soon as it's back up
+Persistent=true
+# Spread load slightly so it never collides exactly with the nightly reconciler (00:01 KST)
+RandomizedDelaySec=30
+Unit=nas-backup.service
+
+[Install]
+WantedBy=timers.target
