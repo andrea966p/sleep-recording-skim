@@ -29,19 +29,19 @@ status: planned
 
 ### Order-now set ("safe to buy ahead of KC Kong's reply")
 
-| Item | Qty | Purpose | ~Cost |
-|------|-----|---------|-------|
-| DB25 **male** screw-terminal breakout board | 1 | Plugs into the Core2 rear DB25 (chassis = female receptacle — eyeball before ordering) | $5–10 |
-| Dupont jumper wires **F–F**, 20 cm, 40-pack | 1 | DB25 breakout ↔ Pi GPIO header | ~$5 |
-| Dupont jumper wires **M–F**, 20 cm, 40-pack | 1 | Breadboard ↔ Pi GPIO or breakout | ~$5 |
-| Mini solderless breadboard (400-tie) | 2 | Mount divider and/or buffer near Core2 (or one near each Pi) | ~$4 |
-| Resistor assortment kit (incl. 220 Ω, 1 kΩ, 2 kΩ, 10 kΩ) | 1 | Covers divider (1 k + 2 k), direct-wire safety series resistor (220 Ω), and pull-downs (10 k) — answers both divider Y/N forks | $6–8 |
-| **74HCT244** octal buffer/line driver (DIP-20) | 2 | Drives `DO 03` fan-out to ≥4 Pi GPIO inputs if KC recommends a buffer; one spare. Powered from 3.3 V on the Pi side (HCT input is 5 V-tolerant, output is rail-to-rail) | ~$2 ea |
-| DIP-20 IC socket | 2 | Hot-swap the 74HCT244 without resoldering | ~$0.50 ea |
-| Small perfboard / stripboard | 2 | Permanent mount for the divider + optional buffer once design is final | ~$3 |
-| Heat-shrink tubing assortment | 1 | Insulate Dupont → solder joints if going beyond pure breadboard | ~$5 |
-| **USB logic analyzer** (Saleae clone, Cypress FX2 8-ch) | 1 | **Mandatory** for the "level vs idle-pulse" check on `DO 03` (pin 22) in Gated mode — a DMM averages can hide ~0.5 s idle pulses. Also useful for capturing Pi → DI 03 frame markers | $10–15 |
-| (Lab-supplied) Digital multimeter, DC volts | 1 | Continuity + pin-22 voltage check before powering the Pi | $0 if available, ~$20 if not |
+| Item                                                     | Qty | Purpose                                                                                                                                                                              | ~Cost                        |
+| -------------------------------------------------------- | --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------- |
+| DB25 **male** screw-terminal breakout board              | 1   | Plugs into the Core2 rear DB25 (chassis = female receptacle — eyeball before ordering)                                                                                               | $5–10                        |
+| Dupont jumper wires **F–F**, 20 cm, 40-pack              | 1   | DB25 breakout ↔ Pi GPIO header                                                                                                                                                       | ~$5                          |
+| Dupont jumper wires **M–F**, 20 cm, 40-pack              | 1   | Breadboard ↔ Pi GPIO or breakout                                                                                                                                                     | ~$5                          |
+| Mini solderless breadboard (400-tie)                     | 2   | Mount divider and/or buffer near Core2 (or one near each Pi)                                                                                                                         | ~$4                          |
+| Resistor assortment kit (incl. 220 Ω, 1 kΩ, 2 kΩ, 10 kΩ) | 1   | Covers divider (1 k + 2 k), direct-wire safety series resistor (220 Ω), and pull-downs (10 k) — answers both divider Y/N forks                                                       | $6–8                         |
+| **74HCT244** octal buffer/line driver (DIP-20)           | 2   | Drives `DO 03` fan-out to ≥4 Pi GPIO inputs if KC recommends a buffer; one spare. Powered from 3.3 V on the Pi side (HCT input is 5 V-tolerant, output is rail-to-rail)              | ~$2 ea                       |
+| DIP-20 IC socket                                         | 2   | Hot-swap the 74HCT244 without resoldering                                                                                                                                            | ~$0.50 ea                    |
+| Small perfboard / stripboard                             | 2   | Permanent mount for the divider + optional buffer once design is final                                                                                                               | ~$3                          |
+| Heat-shrink tubing assortment                            | 1   | Insulate Dupont → solder joints if going beyond pure breadboard                                                                                                                      | ~$5                          |
+| **USB logic analyzer** (Saleae clone, Cypress FX2 8-ch)  | 1   | **Mandatory** for the "level vs idle-pulse" check on `DO 03` (pin 22) in Gated mode — a DMM averages can hide ~0.5 s idle pulses. Also useful for capturing Pi → DI 03 frame markers | $10–15                       |
+| (Lab-supplied) Digital multimeter, DC volts              | 1   | Continuity + pin-22 voltage check before powering the Pi                                                                                                                             | $0 if available, ~$20 if not |
 
 **Sub-total (without DMM):** ~$40–55.
 
