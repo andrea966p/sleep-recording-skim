@@ -70,6 +70,8 @@ Production IPs, usernames, paths, and settings.
 - [[02-procedures/session-recording-workflow|Session Recording Workflow]]
 - [[02-procedures/hardware-sync-setup|Hardware Sync Setup Procedure]]
 - [[02-procedures/installation/storage-management-implementation|Storage Management System]] ✅
+- [[02-procedures/new-researcher-onboarding|New Researcher Onboarding]] — day-0 access + first-recording walkthrough
+- [[02-procedures/bus-factor-runbook|Bus-Factor Runbook]] — "Andrea is unreachable" emergency operator guide (added 2026-05-28)
 
 ### Troubleshooting
 
@@ -146,4 +148,4 @@ ffprobe rtsp://192.168.0.11:8554/pi_cam_0
 
 ---
 
-*Last updated: 2026-05-28 (Phase 4.6 reconciler→Slack enabled in bridge; vault restructure — `07-decisions/` section added; council + sprint plan extracted out of `04-journal/2026-05-01.md` and `2026-05-20.md` into their own decision docs; daily journals get `created:` frontmatter for stable sort)*
+*Last updated: 2026-05-28 (Phase 4.6 reconciler→Slack enabled in bridge; vault restructure — `07-decisions/` section added; council + sprint plan extracted out of `04-journal/2026-05-01.md` and `2026-05-20.md` into their own decision docs; daily journals get `created:` frontmatter for stable sort; bus-factor runbook shipped — Phase 6 council Stage 3.4 closed)*

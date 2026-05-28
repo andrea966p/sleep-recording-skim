@@ -185,7 +185,7 @@ Per council: "stabilise integrity before changing the sync primitive."
 - Parallel-run protocol (poll + TTL ≥1 full cohort)
 - `sync_method` field per session record
 - Numeric rollback criterion ("rollback if pulse-count delta >5% in any session")
-- One-page "If Andrea is unreachable" bus-factor runbook *(doable now — no hardware dependency)*
+- ✅ Done 2026-05-28 — One-page "If Andrea is unreachable" bus-factor runbook — [[../02-procedures/bus-factor-runbook|bus-factor-runbook]]
 - Auto-recovery on watchdog stall (only after ≥1 organic stall through watchdog)
 - WAL too-short-stop nit: write `ABORT`/`TOO_SHORT` terminal event from `manual_session_manager.stop_recording()` "too short, ignoring" path so the WAL lifecycle is always closed
 

@@ -159,4 +159,4 @@ After restore, **regenerate** what was deliberately excluded: `npm install` (fro
 
 ## Escalation
 
-If symptom doesn't match the above and you can't reach Andrea, the **bus-factor runbook** (currently TBD per [[../07-decisions/2026-05-01-llm-council-review#Stage 3 — Before TTL cutover (council's emergent insight)|council Stage 3]]) should go here.
+If symptom doesn't match the above and you can't reach Andrea, see [[../02-procedures/bus-factor-runbook|bus-factor-runbook]] — written specifically for non-Andrea operators (where data lives, how to start/stop a session, what NOT to touch, escalation contacts, glossary of insider terms).
