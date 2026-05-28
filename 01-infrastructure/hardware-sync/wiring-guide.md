@@ -21,16 +21,43 @@ status: planned
 
 ## Bill of Materials
 
-| Item                                          | Purpose                                           | Approx. Cost       | Source                        |
-| --------------------------------------------- | ------------------------------------------------- | ------------------ | ----------------------------- |
-| DB25 male screw-terminal breakout board       | Access XDAQ DB25 pins without soldering           | ~$5–10             | Amazon / electronics supplier |
-| 1kΩ resistor (1/4W, through-hole)             | Voltage divider upper leg                         | ~$0.10             | Any electronics supplier      |
-| 2kΩ resistor (1/4W, through-hole)             | Voltage divider lower leg                         | ~$0.10             | Any electronics supplier      |
-| Dupont jumper wires (female-to-female, 20 cm) | Connect breakout board to Pi GPIO header          | ~$3                | Amazon                        |
-| (Optional) BNC Breakout Board for XDAQ        | Professional-grade DB25 access via BNC connectors | Contact NeuroNexus | NeuroNexus                    |
-| (Optional) Small breadboard                   | Mounting voltage divider                          | ~$2                | Any electronics supplier      |
+> [!info] BOM revised 2026-05-28 — scaled for 2 Pi 5 (now) → 4-Pi headroom; covers both KC Kong answer forks
+> The revised list assumes:
+> - **2 Raspberry Pi 5 nodes currently** (Pi1 + Pi2), wiring designed to extend to **4 Pi 5** without re-purchase.
+> - **KC Kong's reply is still pending** on (a) divider vs direct wire (depends on `DO 03` pin 22 voltage measurement) and (b) buffer vs star fan-out (depends on DB25 DO drive current). The BOM includes both contingencies — the 74HCT244 buffer + resistor assortment stay in the drawer if KC says "not needed", at trivial cost.
+> - **BNC Breakout Board from NeuroNexus is no longer in the BOM.** Allego's software "BNC Breakout Board" toggle exposes `DO 03` + extra DIs directly on the DB25; no physical breakout from the vendor is required ([[neuronexus-inquiry-email#Reply — round 2 received 2026-05-28 (Jeffrey)|round-2 reply]]).
 
-**Total cost: ~$10–15** (excluding optional BNC breakout)
+### Order-now set ("safe to buy ahead of KC Kong's reply")
+
+| Item | Qty | Purpose | ~Cost |
+|------|-----|---------|-------|
+| DB25 **male** screw-terminal breakout board | 1 | Plugs into the Core2 rear DB25 (chassis = female receptacle — eyeball before ordering) | $5–10 |
+| Dupont jumper wires **F–F**, 20 cm, 40-pack | 1 | DB25 breakout ↔ Pi GPIO header | ~$5 |
+| Dupont jumper wires **M–F**, 20 cm, 40-pack | 1 | Breadboard ↔ Pi GPIO or breakout | ~$5 |
+| Mini solderless breadboard (400-tie) | 2 | Mount divider and/or buffer near Core2 (or one near each Pi) | ~$4 |
+| Resistor assortment kit (incl. 220 Ω, 1 kΩ, 2 kΩ, 10 kΩ) | 1 | Covers divider (1 k + 2 k), direct-wire safety series resistor (220 Ω), and pull-downs (10 k) — answers both divider Y/N forks | $6–8 |
+| **74HCT244** octal buffer/line driver (DIP-20) | 2 | Drives `DO 03` fan-out to ≥4 Pi GPIO inputs if KC recommends a buffer; one spare. Powered from 3.3 V on the Pi side (HCT input is 5 V-tolerant, output is rail-to-rail) | ~$2 ea |
+| DIP-20 IC socket | 2 | Hot-swap the 74HCT244 without resoldering | ~$0.50 ea |
+| Small perfboard / stripboard | 2 | Permanent mount for the divider + optional buffer once design is final | ~$3 |
+| Heat-shrink tubing assortment | 1 | Insulate Dupont → solder joints if going beyond pure breadboard | ~$5 |
+| **USB logic analyzer** (Saleae clone, Cypress FX2 8-ch) | 1 | **Mandatory** for the "level vs idle-pulse" check on `DO 03` (pin 22) in Gated mode — a DMM averages can hide ~0.5 s idle pulses. Also useful for capturing Pi → DI 03 frame markers | $10–15 |
+| (Lab-supplied) Digital multimeter, DC volts | 1 | Continuity + pin-22 voltage check before powering the Pi | $0 if available, ~$20 if not |
+
+**Sub-total (without DMM):** ~$40–55.
+
+### Hold-until-answers
+
+| Item | Trigger to buy |
+|------|----------------|
+| Additional 74HCT244 buffer(s) at scale | KC confirms buffer needed for 4-Pi fan-out + lab decides to keep more spares |
+| Fixed-value 1 % divider resistor pair | Pin-22 voltage measurement exceeds 3.3 V — upgrade from assortment-kit 5 % to a 1 % matched pair |
+| DB25 **M–F extension cable** (1–2 m) | Core2 not colocated with the Pi rack — extend reach without dangling the breakout off the connector |
+| Pi 5 + PoE HAT (nodes 3–4) | Separate scale-up purchase, not in this wiring BOM |
+
+### Removed / not needed
+
+- ~~BNC Breakout Board from NeuroNexus~~ — Allego software toggle exposes the DB25 DIs / `DO 03` directly; no physical breakout required.
+- ~~Single 1 kΩ + single 2 kΩ resistor~~ — replaced by the assortment kit so both answer-forks are covered with one purchase.
 
 ## Wiring Diagram
 
