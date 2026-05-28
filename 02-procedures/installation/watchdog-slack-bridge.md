@@ -105,5 +105,5 @@ Watchdog timing: polls every 30s, fires when a camera's last segment is >60s sta
 
 - [[../../03-troubleshooting/emergency-runbook#Symptom G — Watchdog STALL alert fired|emergency-runbook — Symptom G]] — how to act on a stall alert
 - [[../../01-infrastructure/session-daemon/architecture|Session daemon architecture]]
-- [[../../04-journal/2026-05/2026-05-20#Phase 4 — Monday: code quality + remaining ops|sprint plan — Phase 4.1]]
+- [[../../07-decisions/2026-05-stabilization-sprint-week-1-plan#Phase 4 — Monday: code quality + remaining ops|sprint plan — Phase 4.1]]
 - [[../../00-config/production-values|production-values.md]] — MQTT credentials, Slack webhook (do not commit publicly)

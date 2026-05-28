@@ -69,9 +69,9 @@ Frigate generates ~360 small `MM.SS.mp4` files per camera per hour. 4 cameras ×
 
 Frigate writes export MP4s as root. The daemon then `_move_export_file()` moves them to `/opt/neurosurveillance/exports/`. If exports pile up here, the daemon's move path is failing — check `journalctl -u neurosurveillance-session | grep -i 'move\\|export'`.
 
-## Off-machine backup (status: NOT WIRED)
+## Off-machine backup (status: WIRED via NAS over Tailscale)
 
-Per the [[../04-journal/2026-05/2026-05-01#Stage 2.4|council Stage 2.4]], a USB backup via systemd timer + rsync is planned but not implemented. Tailscale NAS path was stubbed out (NAS not connected). **Single NVR is currently the single point of failure for all recorded data.**
+Originally [[../07-decisions/2026-05-01-llm-council-review#Stage 2 — One free afternoon (~3–4 h, the chain-of-custody fix)|council Stage 2.4]] specced a USB backup via systemd timer + rsync. Superseded 2026-05-26 once the Tailscale NAS became reachable — see [[../02-procedures/installation/nas-backup|nas-backup]]. Daily 00:00 snapshot, 3-day rolling retention. **Single NVR is still the SPOF for recordings between snapshots**; daily snapshots cover only config + vault + daemon state, not MP4s.
 
 Workaround: manually rsync to a local external drive after each cohort:
 ```bash

@@ -24,9 +24,18 @@ This is an **Obsidian vault** for documenting a neuroscience surveillance system
 03-troubleshooting/     # Incident reports and symptom lookup
 04-journal/            # Daily work logs (organized by month)
 05-experiments/        # Research experiment documentation
+06-references/          # Cross-cutting patterns + cheatsheets
+07-decisions/           # Architectural reviews, council outputs, sprint plans (live status)
 _templates/            # Templater plugin templates
 99-archive/            # Old content (Notion import)
 ```
+
+**`07-decisions/`** holds long-lived strategic artifacts that should not rot in daily journals:
+- LLM council reviews (full advisor responses, peer reviews, chairman synthesis)
+- Sprint plans with rolling status tables (single source of truth for "what's done vs open")
+- Architectural decision records
+
+Daily journals link forward to these; the decision docs link back. When the user asks "what was the council verdict" or "what's left from the sprint", the answer is in `07-decisions/`, not scattered across `04-journal/`.
 
 ### Critical Files
 

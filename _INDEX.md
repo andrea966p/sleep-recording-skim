@@ -96,6 +96,10 @@ Production IPs, usernames, paths, and settings.
 - [[06-references/command-cheatsheet|Command Cheatsheet]]
 - [[06-references/video-parameters|Video Parameters]]
 
+### Decisions & Reviews
+- [[07-decisions/2026-05-01-llm-council-review|2026-05-01 LLM Council Review]] — full advisor responses, peer reviews, chairman synthesis, staged plan
+- [[07-decisions/2026-05-stabilization-sprint-week-1-plan|2026-05 Stabilization Sprint Week 1 — Plan + live status]] — single source of truth for sprint-item status
+
 ### Archive
 - [[99-archive/notion-import-2025-02/|Notion Import]]
 
@@ -142,4 +146,4 @@ ffprobe rtsp://192.168.0.11:8554/pi_cam_0
 
 ---
 
-*Last updated: 2026-05-25 (Phase 4 sprint close — `nvr-mqtt-slack.service` watchdog→Slack bridge; ffprobe export sanity check; emergency-runbook Symptom G + Mosquitto recovery; mosquitto passwd lockdown; tag `stabilization-week-1`)*
+*Last updated: 2026-05-28 (Phase 4.6 reconciler→Slack enabled in bridge; vault restructure — `07-decisions/` section added; council + sprint plan extracted out of `04-journal/2026-05-01.md` and `2026-05-20.md` into their own decision docs; daily journals get `created:` frontmatter for stable sort)*

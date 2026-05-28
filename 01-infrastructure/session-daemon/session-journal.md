@@ -255,7 +255,7 @@ The following modules are journal-aware (touched 2026-05-23):
 
 - [[architecture|Session Daemon Architecture]] — overall component map
 - [[../../04-journal/2026-05/2026-05-23|2026-05-23 daily journal]] — Phase 2 implementation log
-- [[../../04-journal/2026-05/2026-05-20|2026-05-20 sprint plan]] — council Stage 2.1 spec
-- [[../../04-journal/2026-05/2026-05-01|2026-05-01 council assessment]] — original WAL recommendation
+- [[../../07-decisions/2026-05-stabilization-sprint-week-1-plan|stabilization sprint plan]] — council Stage 2.1 spec (sprint execution)
+- [[../../07-decisions/2026-05-01-llm-council-review|2026-05-01 LLM council review]] — original WAL recommendation
 - [[../../04-journal/2026-05/2026-05-22|2026-05-22 journal]] — the regression that motivated the urgency
 - Repo: `backend/session_journal.py`, `backend/scripts/backfill_journal.py` on `andrea966p/neurosurveillance` `main` after `7db66d2`

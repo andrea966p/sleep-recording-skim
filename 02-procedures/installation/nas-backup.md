@@ -130,5 +130,6 @@ mkdir -p /tmp/restore && tar xzf /tmp/e10_backup_YYYY-MM-DD.tar.gz -C /tmp/resto
 ## Related
 - [[01-infrastructure/system-overview|System Overview]]
 - [[00-config/production-values|Production Values]] — NAS host/port/user
-- [[04-journal/2026-05/2026-05-01|2026-05-01 council]] — origin of backup item 2.4
+- [[07-decisions/2026-05-01-llm-council-review|2026-05-01 LLM council review]] — origin of backup item 2.4
+- [[07-decisions/2026-05-stabilization-sprint-week-1-plan|stabilization sprint plan]] — sprint that delivered it
 - [[02-procedures/installation/watchdog-slack-bridge|watchdog-slack-bridge]] — sibling systemd-bridge deploy pattern

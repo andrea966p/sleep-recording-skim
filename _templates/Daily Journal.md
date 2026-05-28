@@ -1,6 +1,7 @@
 ---
 tags: [journal, daily]
 date: <% tp.date.now("YYYY-MM-DD") %>
+created: <% tp.date.now("YYYY-MM-DD") %>
 ---
 
 ## Due Today

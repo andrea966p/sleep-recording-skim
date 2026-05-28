@@ -1,0 +1,273 @@
+---
+tags: [decision, sprint, stabilization, plan, status]
+date: 2026-05-20
+created: 2026-05-20
+type: sprint-plan
+status: closed (week 1 burn-in clean 2026-05-26; 4.6 reconciler→Slack enabled 2026-05-28)
+sourced-from: 04-journal/2026-05/2026-05-20.md
+derived-from: 2026-05-01-llm-council-review.md
+---
+
+# Stabilization Sprint — Week 1 Plan (2026-05-22 → 2026-05-28)
+
+> [!abstract] TL;DR — for non-technical readers
+> **What this is.** The executable plan for the first stabilization sprint, derived from the [[2026-05-01-llm-council-review|2026-05-01 LLM Council review]]. It picks up the council's open Stage 1 + Stage 2 items, injects the new findings from the 2026-05-20 Docker-upgrade incident and the 2026-05-18 watchdog work, and groups them into 6 phases (Pre-Friday → Burn-in).
+>
+> **Why it exists.** The status of every council-recommended fix lives here. When someone asks "what's left from the council?" or "what shipped this week?", the answer is the [[#Status snapshot]] table. Each daily journal links here instead of duplicating it.
+>
+> **How to read this page.** [[#Status snapshot]] = current state of every item. [[#Phase 0 — Pre-Friday safe work (Wed evening → Fri morning)|Phases 0–6]] = original plan with execution dates and pointers to the dailies where each phase was carried out. [[#Phase 6 — Deferred (later sprint, before TTL pulse cutover)|Phase 6]] = the open items the sprint deliberately did *not* take on.
+
+> [!quote] Paper-ready
+> "The stabilization sprint of 2026-05-22 to 2026-05-28 closed the chain-of-custody and operational items from the 2026-05-01 LLM Council review. By sprint end, all Stage 1 (stop-the-bleeding) and Stage 2 (append-only WAL + nightly reconciler + concurrency + off-machine backup) items shipped; Stage 3 (TTL pulse pre-cutover) was deliberately deferred per council guidance."
+
+> [!history] Historical note (extracted 2026-05-28)
+> The plan + status table + verification recipes originally lived inside `04-journal/2026-05/2026-05-20.md` as the second half of the daily entry for the Docker-upgrade incident. They were extracted on 2026-05-28 so the plan stops being entangled with that day's incident narrative and becomes a single live status doc. The original journal entry now keeps only the incident report and points here.
+
+## Sprint origin
+
+This plan picks up [[2026-05-01-llm-council-review#The Staged Plan|May 1 council Stage 1]] items still open, then continues to Stage 2.1/2.2, with two new findings from the 2026-05-20 Docker-upgrade incident injected at appropriate phases. Stage 3 (TTL cutover prep) remains deferred per council guidance.
+
+### Hard constraint until Friday 2026-05-22 lunchtime
+
+Diane was recording on pi_cam_0/1/2 until Friday lunch. No touches to Frigate, the session daemon, Mosquitto, Docker, or the host until then. Only documentation, git, and Netdata config reloads were safe.
+
+### Touch-risk legend
+
+| Class | Meaning | Safe pre-Friday? |
+|---|---|---|
+| **NONE** | Vault, git, plans only | ✅ |
+| **LOW** | Netdata reload (`netdata -W reload-health`), Syncthing config | ✅ |
+| **MED** | Daemon restart needed (`systemctl restart neurosurveillance-session`) | ❌ |
+| **HIGH** | Frigate / Mosquitto / Docker restart | ❌ |
+
+## Status snapshot
+
+Updated 2026-05-28 after reconciler→Slack enable.
+
+| Council item | Status | Where |
+|---|---|---|
+| 1.1 — Docker `apt-mark hold` | ✅ Done 2026-05-20 | `apt-mark showhold` |
+| 1.2 — Syncthing exclude backend artifacts | 🟡 `__pycache__`/`*.pyc`/`venv` already excluded; `*.py` synced (flag for review) | `neurosurveillance/.stignore` |
+| 1.3 — Pin Frigate image tag | ✅ 0.16.1 pinned | `/srv/frigate/docker-compose.yml:12` |
+| 1.3b — Pin Mosquitto / Netdata | ✅ Done 2026-05-22 (SHA-pinned, no per-patch tag exists upstream) | `/srv/frigate/docker-compose.yml:4` |
+| 1.4 — Mosquitto auth | ✅ Done 2026-05-22 — `allow_anonymous false`, daemon + Frigate auth as `nvr` | [[../00-config/production-values#Mosquitto MQTT Authentication (since 2026-05-22)\|production-values]] |
+| 1.5 — Dedupe `storage_monitor.stop()` | ✅ Done May 18 | `daemon.py` |
+| 1.6 — Push repo to GitHub | ✅ Done 2026-05-21 + 2026-05-22 (commits `43ebdbd`, `791dc18`, `2f7365d`) | `andrea966p/neurosurveillance` |
+| 2.1 — Append-only SQLite session WAL | ✅ Done 2026-05-23 (commit `7db66d2`) | [[../01-infrastructure/session-daemon/session-journal\|session-journal]] / `backend/session_journal.py` |
+| 2.2 — Nightly reconciler | ✅ Done 2026-05-24 (commit `3830dba`) | `backend/reconciler.py` + `/api/reconciler/*` + MQTT `neurosurveillance/reconciler/findings` |
+| 2.2b — Reconciler → Slack enable (Phase 4.6, post-dry-run) | ✅ Done 2026-05-28 — bridge subscribes to `neurosurveillance/reconciler/findings`; suppresses `orphan` ([[../06-references/pattern_frigate_record_enabled_orphan_noise\|orphan-noise pattern]]); alerts when `partial+stuck+degraded > 0`. E2E via `/api/reconciler/run` — 0 spurious Slack | `backend/scripts/nvr-mqtt-slack.py` |
+| 2.3 — Concurrency: lock on `_last_known_state` | ✅ Done 2026-05-24 (commit `3830dba`, folded into Phase 3.1 as planned) | `frigate_controller.py` |
+| 2.3b — **Promoted** Exponential Radiens backoff | ✅ Done 2026-05-23 (commit `7545980`) — 1 s → 60 s cap, verified locally | `radiens_poller.py` |
+| 2.4 — Off-machine backup (originally USB; superseded by NAS over Tailscale) | ✅ Done 2026-05-26 — `nas-backup.{service,timer}` daily 00:00; ssh-pipe to Synology NAS; 3-day rolling retention; first-run verified 53,957,039 B | [[../02-procedures/installation/nas-backup\|nas-backup]] |
+| Stage 3 | ❌ Open / hardware-gated | TTL cutover prep — [[#Phase 6 — Deferred (later sprint, before TTL pulse cutover)\|see Phase 6]] |
+| **NEW 2026-05-20** — Daemon startup guard (Frigate restart case) | ✅ Done 2026-05-24 (commit `3830dba`) — LWT + STATE_DEFER_SECONDS defer + cancel; 3× regression PASSED, 0 phantoms | `frigate_controller.py` + `daemon.py` grace handler |
+| **NEW 2026-05-20** — Netdata alert on `docker.service` restart | ✅ Done 2026-05-21 (`nvr_dockerd_restart`) | `/etc/netdata/health.d/nvr-docker.conf` |
+| **NEW 2026-05-18** — Watchdog → Slack wiring incomplete | ✅ Done 2026-05-25 (commit `b5485ee`) — Netdata has no MQTT collector; built `nvr-mqtt-slack.service` bridge instead. E2E PASSED | `backend/scripts/nvr-mqtt-slack.py` + `deploy/` + [[../02-procedures/installation/watchdog-slack-bridge\|bridge doc]] |
+| **NEW 2026-05-18** — Persist Frigate Python logs (tmpfs → disk) | ✅ Done 2026-05-22 — `/srv/frigate/logs/frigate/current` | `/srv/frigate/docker-compose.yml:31` |
+| **NEW 2026-05-18** — ffprobe duration sanity check post-export | ✅ Done 2026-05-25 (commit `b5485ee`) — in `daemon._execute_export` (not frigate_controller); `<0.95×` ⇒ `completed (partial: …)` | `daemon.py` |
+| **NEW 2026-05-20** — Clean ~430 MB May 18 residue | ✅ Done 2026-05-22 | — |
+| **NEW 2026-05-22** — Mosquitto `passwd` file `chmod 0700` + `chown 1883:1883` | ✅ Done 2026-05-25 — used `0600` (data file, no exec bit) + `1883:1883`; broker reloaded clean | `/srv/frigate/mosquitto/passwd` |
+| **NEW 2026-05-22** — Log "suppressed (was None)" in `_handle_external_recording_change` so future regression diagnosis is faster | ✅ Already covered by Phase 3.1b — `frigate_controller.py:321` logs the suppressed deferred-callback case | `frigate_controller.py` |
+| **NEW 2026-05-26 (Phase 6 nit)** — too-short manual stops leave dangling WAL `START` | ❌ Open / non-urgent | `manual_session_manager.stop_recording()` "too short, ignoring" path |
+
+---
+
+## Phase 0 — Pre-Friday safe work (Wed evening → Fri morning)
+
+**Executed:** 2026-05-20 → 2026-05-22.
+**Goal:** zero-risk preparation while Diane records. ~90 min spread over two days.
+
+| # | Task | Risk | Time |
+|---|---|---|---|
+| 0.1 | Commit + push backend changes to `andrea966p/neurosurveillance` (3 modified + `recording_watchdog.py` untracked). Message: "May 18 watchdog + export-timeout fixes; May 20 incident notes". | NONE | 15 min |
+| 0.2 | Today's journal entry referencing incident note. | NONE | 20 min |
+| 0.3 | Add Netdata alert rule for `docker.service` restarts in `/etc/netdata/health.d/nvr-alerts.conf`. Reload via `sudo netdata -W reload-health`. Verify in `http://localhost:19999/api/v1/alarms`. | LOW | 25 min |
+| 0.4 | Draft 3 vault runbooks (council "Outsider" gap): `03-troubleshooting/emergency-runbook.md` ("first 10 min": disk full, daemon down, Frigate down, Pi unreachable), `02-procedures/new-researcher-onboarding.md`, `06-references/storage-troubleshooting.md`. Skeletons; flesh out post-Friday. | NONE | 30 min |
+| 0.5 | Refresh stale memories. The "double @dataclass" note in MEMORY.md is wrong (verified — only one `@dataclass` at `manual_session_manager.py:27`). Update `requirements.txt` comment ref. | NONE | 10 min |
+
+**Gate to leave Phase 0:** Diane's recording still healthy; uncommitted backend changes pushed to GitHub.
+
+---
+
+## Phase 1 — Friday afternoon stop-the-bleeding (post-lunchtime)
+
+**Executed:** 2026-05-22 (see [[../04-journal/2026-05/2026-05-22|2026-05-22 journal]]).
+**Goal:** finish council Stage 1 + highest-leverage 2026-05-18/20 items in one maintenance window. ~90 min.
+
+**Pre-flight (mandatory):**
+- [x] Diane confirms recording stopped from Frigate UI
+- [x] `curl -s http://127.0.0.1:8585/api/status | jq .manual_recordings` returns `{}`
+- [x] All her exports completed in `/opt/neurosurveillance/exports/manual/manual/2026-05-2{0,1,2}/`, session JSONs marked `"export_status": "completed"`
+- [x] No `in_progress` exports: `curl -s http://127.0.0.1:5000/api/exports | jq '.[] | select(.in_progress==true)'` returns nothing
+
+| # | Task | Risk | Time |
+|---|---|---|---|
+| 1.1 | Clean May 18 residue (~430 MB): `sudo rm -rf /srv/frigate/storage/recordings/2026-05-18/`. | LOW | 5 min |
+| 1.2 | Edit `/srv/frigate/docker-compose.yml`: (a) pin Mosquitto to specific minor (`eclipse-mosquitto:2.0.21` — check current `docker inspect mosquitto`); (b) mount `/dev/shm/logs/frigate` → `/srv/frigate/logs/` for persistent Frigate Python logs. Don't restart yet. | NONE (edit) | 10 min |
+| 1.3 | Mosquitto password auth: `mosquitto_passwd -c /srv/frigate/mosquitto/passwd nvr <secret>`. Update `mosquitto.conf` (`allow_anonymous false`, `password_file /mosquitto/config/passwd`). Update Frigate `config.yml` `mqtt: user/password`. Update daemon's `config.yaml` MQTT creds. Save secret to `00-config/production-values.md`. | NONE (edit) | 25 min |
+| 1.4 | Coordinated restart cycle (single window, dependency order): `sudo systemctl stop neurosurveillance-session` → `cd /srv/frigate && docker compose down && docker compose up -d` → `sudo systemctl start neurosurveillance-session`. Watch logs ~2 min. The startup guard regression is still present — be alert for unwanted recordings; should be zero since both ends restart. | HIGH | 10 min |
+| 1.5 | Post-restart smoke test: 30s recording on pi_cam_3 via Frigate UI. Verify session JSON written, MP4 exported, MQTT auth in `docker logs mosquitto`, `journalctl -u neurosurveillance-session` clean. | NONE (read) | 10 min |
+| 1.6 | Verify all 6 Docker holds survived: `apt-mark showhold \| grep -E "docker\|containerd"`. Dry-run: `sudo unattended-upgrade --dry-run -v 2>&1 \| grep -iE "docker\|hold"`. | NONE | 5 min |
+
+**Rollback:** if 1.4 fails, revert `mosquitto.conf` to `allow_anonymous true`, restart Mosquitto only, debug offline. Diane has no scheduled work until Monday — no recording pressure.
+
+---
+
+## Phase 2 — Saturday: append-only session WAL (council Stage 2.1)
+
+**Executed:** 2026-05-23 (see [[../04-journal/2026-05/2026-05-23|2026-05-23 journal]]).
+**Goal:** the highest-leverage data-integrity fix per council. ~3–4 hours.
+
+**Why (council Contrarian, 5/5 reviewer consensus):** every session state transition exists in memory only today. Daemon crash mid-recording → metadata gone, MP4 chunks orphaned. Already seen in [[../04-journal/2026-05/2026-05-18|May 18 incident]] (pi_cam_2 unrecoverable).
+
+| #   | Task | Risk | Time |
+| --- | ---- | ---- | ---- |
+| 2.1 | New module `backend/session_journal.py` — SQLite WAL-mode DB at `/opt/neurosurveillance/session_wal.db`. Schema: `events(ts, event_type, session_id, camera, mouse_id, payload_json)`. Events: `START`, `EXPORT_BEGIN`, `EXPORT_COMPLETE`, `ABORT`, `STALL`. `fsync` after each write. | MED | 90 min |
+| 2.2 | Wire journal into `manual_session_manager.start_recording()`: `START` event BEFORE returning. Atomic — journal write failure → session creation fails. ("Before acting" per council.) | MED | 30 min |
+| 2.3 | Wire into `frigate_controller.wait_for_export()` and `_move_export_file()`: `EXPORT_BEGIN` pre-POST, `EXPORT_COMPLETE` post-move. | MED | 30 min |
+| 2.4 | Wire into `recording_watchdog`: emit `STALL` event. | MED | 15 min |
+| 2.5 | New endpoint `GET /api/journal?since=…`. | MED | 20 min |
+| 2.6 | Deploy: `systemctl restart neurosurveillance-session`. Smoke test 30s recording, verify 4+ WAL rows + JSON sidecar. | MED | 15 min |
+| 2.7 | Backfill last 30 days of session JSONs into WAL via `backend/scripts/backfill_journal.py`. Emits `START` + `EXPORT_COMPLETE` (or `ABORT`) with original timestamps. Gives reconciler historical reference. | NONE | 30 min |
+
+---
+
+## Phase 3 — Sunday: startup guard fix + nightly reconciler (council Stage 2.2)
+
+**Executed:** 2026-05-24 (see [[../04-journal/2026-05/2026-05-24|2026-05-24 journal]]).
+**Goal:** close 2026-05-20 regression + finish council Stage 2.2. ~4 hours.
+
+| # | Task | Risk | Time |
+|---|---|---|---|
+| 3.1 | Frigate availability LWT subscription in `frigate_controller.py`: subscribe to `frigate/available`. On `offline→online`, re-arm the same 10s grace + drain `_expected_states` that runs on daemon startup. Catches Frigate-only restarts. | MED | 90 min |
+| 3.2 | Test: `docker restart frigate` × 3. Watch `journalctl -u neurosurveillance-session` for 30s post-restart — must show ZERO "Manual recording started" lines. | HIGH (intentional) | 15 min |
+| 3.3 | New `backend/reconciler.py` — background thread, runs 00:01 KST nightly. Queries Frigate `recordings` SQLite (`/srv/frigate/storage/frigate.db`) + session WAL. Findings: (i) MP4 without `START` → ORPHAN; (ii) `START` without enough segments → PARTIAL; (iii) `EXPORT_BEGIN` without `EXPORT_COMPLETE` >24h → STUCK. | MED | 90 min |
+| 3.4 | Slack alert path: reconciler publishes to `neurosurveillance/reconciler/findings`; Netdata MQTT collector subscribes; forward to Slack via existing webhook. Dry-run first 3 nights to see noise floor. | LOW | 30 min |
+| 3.5 | Dry-run reconciler against backfilled 30-day WAL. Tune thresholds. | NONE | 30 min |
+
+---
+
+## Phase 4 — Monday: code quality + remaining ops
+
+**Executed:** 2026-05-25 (see [[../04-journal/2026-05/2026-05-25|2026-05-25 journal]]). Item 4.6 added during execution, enabled 2026-05-28 (see [[../04-journal/2026-05/2026-05-28|2026-05-28 journal]]).
+**Goal:** small items. ~2 hours.
+
+| # | Task | Risk | Time |
+|---|---|---|---|
+| 4.1 | Wire 2026-05-18 watchdog → Slack: built standalone `nvr-mqtt-slack.service` bridge (Netdata has no MQTT collector — see [[../06-references/pattern_netdata_no_mqtt_collector\|pattern]]). E2E test: `ssh skimlab@192.168.0.11 'sudo systemctl stop go2rtc'` during a test recording. | LOW | 45 min |
+| 4.2 | ffprobe duration sanity check in `daemon._execute_export()`: if `duration < 0.95 * session.duration_seconds`, set `export_status` to `"completed (partial: Xh of Yh)"`. | MED | 45 min |
+| 4.3 | Update `requirements.txt` outdated radiens comment (it IS on PyPI v4.0.0). | NONE | 5 min |
+| 4.4 | Flesh out 3 runbooks from Phase 0.4 with discovered procedures (Mosquitto recovery, Frigate restart safety, watchdog interpretation). | NONE | 30 min |
+| 4.5 | Final commit + push. Tag `stabilization-week-1`. | NONE | 5 min |
+| 4.6 | **Added during sprint** — Reconciler → Slack enable in the bridge (handler + topic + orphan-suppression filter). Gated on 3-night reconciler dry-run; enabled 2026-05-28 (commit `2b3f6fa`). | LOW | 20 min |
+
+---
+
+## Phase 5 — Tuesday: burn-in / validation
+
+**Executed:** 2026-05-26 (see [[../04-journal/2026-05/2026-05-26|2026-05-26 journal]]).
+
+- [x] Synthetic stall (stop go2rtc) → Slack alert ≤90s + journal STALL event — ✅ by-prior-test (E2E 2026-05-25, `lag=70.5s`); not re-run to avoid Pi1 stream disruption
+- [x] `docker restart frigate` → ZERO spurious sessions — ✅ verified 2026-05-26 (manual_recordings `{}`, 0 new WAL START)
+- [x] Manual reconciler run → findings match known state — ✅ night-1 dry-run = only `teststall` `554cd949`
+- [x] Diane's Monday recordings (if any) export cleanly through new journal + ffprobe path — ✅ no organic Mon session; `teststall` export exercised the path correctly (partial flagged)
+- [x] Netdata alerts dashboard — no false positives — ✅ zero `nvr_*` raised
+
+**Result: CLEAN → stabilization sprint week 1 CLOSED** (see [[../04-journal/2026-05/2026-05-26|2026-05-26]]). Only carry-over was 4.6 reconciler→Slack enable (gated on 3-night dry-run) — now done 2026-05-28.
+
+---
+
+## Phase 6 — Deferred (later sprint, before TTL pulse cutover)
+
+Per council: "stabilise integrity before changing the sync primitive."
+
+- Pulse-count reconciliation (Pi-side + Radiens-side per session)
+- Parallel-run protocol (poll + TTL ≥1 full cohort)
+- `sync_method` field per session record
+- Numeric rollback criterion ("rollback if pulse-count delta >5% in any session")
+- One-page "If Andrea is unreachable" bus-factor runbook *(doable now — no hardware dependency)*
+- Auto-recovery on watchdog stall (only after ≥1 organic stall through watchdog)
+- WAL too-short-stop nit: write `ABORT`/`TOO_SHORT` terminal event from `manual_session_manager.stop_recording()` "too short, ignoring" path so the WAL lifecycle is always closed
+
+**Explicitly skipped per council:** detection / DeepLabCut / JOSS packaging, Frigate replacement, retrofit unit tests onto daemon, [[../06-references/project_settings_sync|localStorage ↔ config.yaml settings sync]].
+
+---
+
+## Critical files referenced
+
+| Path                                                  | Purpose in sprint                                         |
+| ----------------------------------------------------- | --------------------------------------------------------- |
+| `neurosurveillance/backend/manual_session_manager.py` | session start/stop — WAL hooks                            |
+| `neurosurveillance/backend/frigate_controller.py`     | MQTT + export — LWT subscription + WAL hooks + ffprobe    |
+| `neurosurveillance/backend/recording_watchdog.py`     | stall detection — WAL hook + Slack wiring                 |
+| `neurosurveillance/backend/daemon.py`                 | orchestrator                                              |
+| `neurosurveillance/backend/api.py`                    | `/api/journal` endpoint                                   |
+| `neurosurveillance/backend/scripts/nvr-mqtt-slack.py` | MQTT → Slack bridge (watchdog + reconciler topics)        |
+| `/srv/frigate/docker-compose.yml`                     | Mosquitto pin + log mount                                 |
+| `/srv/frigate/config/config.yml`                      | MQTT creds                                                |
+| `/srv/frigate/mosquitto/{mosquitto.conf,passwd}`      | auth                                                      |
+| `/opt/neurosurveillance/config.yaml`                  | daemon MQTT creds                                         |
+| `/etc/netdata/health.d/nvr-alerts.conf`               | docker-restart, watchdog-stall, reconciler-findings rules |
+
+## Functions to reuse (don't recreate)
+
+| Function | Location | Reuse for |
+|---|---|---|
+| `write_session_json()` | `backend/session_utils.py` | atomic write pattern for WAL fsync |
+| `_handle_external_recording_change()` | `backend/daemon.py:441` | already takes MQTT state changes — extend with LWT, don't fork |
+| `wait_for_export()` (rewritten 2026-05-18) | `backend/frigate_controller.py` | progress-driven loop fits ffprobe sanity check |
+| Netdata Slack `notify` config | `/etc/netdata/health_alarm_notify.conf` | already wired; just add alert rules |
+| `/api/health` endpoint | `backend/api.py` | exposes `recording_lag`; add `journal_last_event_age` |
+
+## End-to-end verification (post-Phase 5)
+
+```bash
+# Docker pins survive an advisory cycle
+sudo unattended-upgrade --dry-run -v 2>&1 | grep -iE "docker|hold"   # all 6 held
+
+# Frigate restart produces zero false sessions
+docker restart frigate && sleep 30
+journalctl -u neurosurveillance-session --since "1 minute ago" | grep "Manual recording started"   # EMPTY
+
+# Watchdog → Slack path
+ssh skimlab@192.168.0.11 'sudo systemctl stop go2rtc' &
+# Start a recording on a Pi1 camera; expect Slack notification ≤90s
+ssh skimlab@192.168.0.11 'sudo systemctl start go2rtc'
+
+# WAL captures full lifecycle
+sqlite3 /opt/neurosurveillance/session_wal.db \
+  "SELECT event_type, COUNT(*) FROM events WHERE ts > strftime('%s','now','-1 day') GROUP BY event_type"
+
+# Reconciler clean on a clean week
+python3 /opt/neurosurveillance/backend/reconciler.py --dry-run --since 7d   # 0 ORPHAN/STUCK/PARTIAL
+
+# Mosquitto auth blocks anonymous
+mosquitto_pub -h 127.0.0.1 -t test/anon -m hi   # "not authorised"
+mosquitto_pub -h 127.0.0.1 -u nvr -P <secret> -t test/auth -m hi   # ok
+
+# Frigate logs persist
+docker restart frigate && sleep 15 && ls -la /srv/frigate/logs/frigate/   # content from before restart
+```
+
+## Out of scope this sprint
+
+- Frontend changes beyond `/api/journal` and `recording_lag` consumption
+- TTL pulse upgrade + Stage 3 prep
+- Detection / DeepLabCut / JOSS
+- Frigate replacement
+- ~~NAS off-machine backup~~ — was out of scope; deployed during sprint anyway after Tailscale NAS became reachable (2026-05-26)
+
+## Open questions (not blockers)
+
+- Does WAL need cross-machine durability (Syncthing-replicated to PC 2)? Decide after a few days of single-machine operation.
+- `recording_watchdog` auto-restart Frigate ffmpeg on stall? Council: wait for ≥1 organic stall through watchdog first.
+- [[../06-references/project_settings_sync|Settings sync]] — council deferred. Re-evaluate after lab > 1 active user.
+
+## Related
+
+- [[2026-05-01-llm-council-review|2026-05-01 LLM Council review]] — the original assessment + staged plan this sprint derives from
+- [[../04-journal/2026-05/2026-05-20|2026-05-20 journal]] — the Docker-upgrade incident that triggered the sprint
+- [[../04-journal/2026-05/2026-05-18|2026-05-18 journal]] — May 18 watchdog + export-timeout work that fed Phase 4
+- [[../04-journal/2026-04/2026-04-01|2026-04-01]] — first occurrence of Docker-upgrade pattern
+- Daily execution logs: [[../04-journal/2026-05/2026-05-21|2026-05-21]] · [[../04-journal/2026-05/2026-05-22|22]] · [[../04-journal/2026-05/2026-05-23|23]] · [[../04-journal/2026-05/2026-05-24|24]] · [[../04-journal/2026-05/2026-05-25|25]] · [[../04-journal/2026-05/2026-05-26|26]] · [[../04-journal/2026-05/2026-05-28|28]]
+- Plan file (Claude Code mirror): `~/.claude/plans/now-time-to-do-cheerful-wigderson.md`
