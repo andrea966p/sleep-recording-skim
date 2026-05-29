@@ -308,3 +308,81 @@ andrea96p@kaist.ac.kr
 > Yes, these are all correct.
 >
 > Upon reviewing the verbiage in the manual about the DB25 again, I see that it actually states that only DO 1 and DO 2 can be switched between 3.3 V and 5 V (and again, not something Radiens can do). DO 3 – DO 8 are designed only for 3.3 V logic. KC confirmed this and also that DAQ_ON is designed only to send a 3.3 V signal.
+
+---
+
+## ⚠️ Model correction — unit is an "XDAQ Core" (Gen-1?), NOT a Core2 (discovered 2026-05-29)
+
+> [!danger] The whole thread above assumed a Core2. The physical unit on the bench does not match.
+> On inspecting the hardware (2026-05-29), the chassis badge reads **"KONTEX XDAQ Core"**, serial **`0C006218`** — *not* "Core2 / Gen2". The rear panel disagrees with the [[xdaq-core2-manual-reference|Core2 manual reference]] on multiple points:
+>
+> | Feature | Core2 docs (what we assumed) | This unit (observed) |
+> |---|---|---|
+> | Power input | `USB PD 20 V ⎓ 3 A` | **`USB PD 12 V ⎓ 3 A`** |
+> | Host link | Thunderbolt (`Computer` / `Peripheral`) | a **USB-C port labelled "USB data"** |
+> | EXP1 / EXP2 | micro-HDMI | **USB-C** |
+> | Ground terminals | 2× banana (SYS GND + Chassis GND) | **single GND pin** |
+> | IO Port | female DB25 | female DB25 (matches) |
+>
+> Power brick that shipped: KONTEX USB-C **PD/PPS, 65 W** (5/9/12/15/20 V fixed + PPS 3.3–21 V). PD auto-negotiates → the `12 V` port pulls 12 V; **safe, no fixed-voltage risk.**
+
+> [!warning] What this potentially invalidates (all Core2-specific answers)
+> If this is the **Gen-1 XDAQ Core (Opal Kelly USB)** rather than the Thunderbolt Core2, the following from the thread above may NOT transfer and must be re-confirmed for this model:
+> - **Driver path.** Core2 = Thunderbolt (`boltctl enroll`, `thor` manager). Gen-1 Core = **Opal Kelly USB → FrontPanel API + `60-opalkelly.rules` udev + `ok` manager** ([[kontex-developer-portal-notes|portal notes §1]]). This is the biggest unknown.
+> - **DB25 pinout** (`DAQ_ON`=13, `DI 03`=2, `DO 03`=22, `GND`=14, `SAMPLE CLK`=25) — transcribed from the Core2 manual; may differ on Gen-1.
+> - **`DO 03` (pin 22) "Gated" recording-status gate + "BNC Breakout Board" toggle** — Jeffrey verified this on a Core2; existence on Gen-1 unconfirmed.
+> - **DB25 DO logic-high = 3.3 V fixed** — Core2 spec; re-confirm for this unit.
+> - EXP-port type, channel counts.
+
+> [!todo] Before sending the email below
+> 1. Plug the unit's **"USB data"** USB-C port into the NVR + power on, then on the host run `lsusb` (and `boltctl list`). **Opal Kelly VID `0x151f`** present ⇒ Gen-1 USB confirmed. A Thunderbolt entry in `boltctl` ⇒ it is a TB unit after all. Fold the result into ¶2 of the email (bracketed line).
+> 2. As of 2026-05-29 the device is **not** on the NVR USB bus (`lsusb` clean, `boltctl` empty) — cable not yet connected.
+
+### Correction email to KC — round 3b (draft 2026-05-29)
+
+> [!note] Sends into the same (still-unanswered) KC Kong round-3 thread as a correction, so KC answers for the right model. The fan-out / grounding / Ubuntu-driver questions are re-asked against this unit.
+
+> **To:** KC Kong <KC@kontex.io>
+> **From:** andrea96p@kaist.ac.kr
+> **Subject:** Re: XDAQ Core2 — important correction: our unit is an "XDAQ Core" (serial 0C006218), not a Core2
+
+Dear KC,
+
+Before you spend time on my earlier questions, an important correction. My previous emails — and Jeffrey's answers — assumed our unit is an XDAQ **Core2**. On inspecting the hardware, the chassis is labelled **"XDAQ Core"** (serial **0C006218**), and the rear panel does not match the Core2 documentation:
+
+- **Power input:** USB-C PD, **12 V / 3 A** (Core2 docs show 20 V)
+- **Host/data link:** a USB-C port labelled **"USB data"** — no Thunderbolt "Computer"/"Peripheral" ports
+- **EXP1 / EXP2:** USB-C (Core2 docs show micro-HDMI)
+- **Single GND terminal** (Core2 docs show separate SYS GND + Chassis GND)
+- **IO Port:** female DB25
+
+This looks like a first-generation XDAQ Core (Opal Kelly USB interface) rather than the Thunderbolt Core2. *[If `lsusb` confirms before sending: "On our Ubuntu host, `lsusb` reports the device as Opal Kelly (VID 0x151f), consistent with the Gen-1 USB interface."]*
+
+Because almost every detail we settled so far was Core2-specific, could you confirm the following for **this specific unit (serial 0C006218)**:
+
+1. **Exact model / generation**, and its host interface — USB (Opal Kelly) or Thunderbolt?
+
+2. **Ubuntu 24.04 LTS driver path.** Our acquisition host runs Ubuntu 24.04 LTS with the Radiens suite and the `radiens` Python package already installed and working; what remains is the device-level link to the hardware. For this unit specifically:
+   - required drivers / kernel modules to connect it — if Opal Kelly USB, which FrontPanel version and does it need the `60-opalkelly.rules` udev file? If Thunderbolt, the `boltctl` enrollment steps?
+   - any `udev` rules or group membership so Allego detects and streams from it **without running as root**;
+   - supported kernel versions and any known Linux-specific limitations vs. Windows.
+
+3. **DB25 digital-I/O pinout for this model.** Are the assignments the same as the Core2 — `DAQ_ON` = 13, `DI 03` = 2, `DO 03` = 22, `GND` = 14, `SAMPLE CLK` = 25 — or do they differ on the Gen-1 Core?
+
+4. **Recording-gate signal on this model.** Jeffrey confirmed that on the Core2 the recording status appears on `DO 03` (pin 22) in "Gated" mode with the "BNC Breakout Board" slider enabled in Allego. Does the same mechanism exist on this unit, and is `DO 03` the correct recording gate here? If not, which signal tracks recording (HIGH for the whole session)?
+
+5. **DB25 digital-output logic-high voltage** on this model — the Core2's `DO 03`–`DO 08` are 3.3 V fixed; is that the same here? I need to wire safely into a 3.3 V Raspberry Pi GPIO (no over-voltage tolerance).
+
+The multi-device questions from my earlier email still stand for this unit:
+
+6. **Gate fan-out.** We'll have at least four Raspberry Pi 5 nodes (scaling toward eight), each needing the recording-gate signal on a GPIO input. Can a single DB25 digital output safely drive four Pi GPIO inputs in parallel (star wiring), or do you recommend a buffer / line driver (e.g. 74HCT244)? What is the DB25 output drive-current / fan-out limit?
+
+7. **Grounding for multiple devices.** Any guidance on tying four (or more) external devices to the unit's GND without creating ground loops between it, the Pis, and their PoE supplies?
+
+Apologies for the moving target — I'd taken "Core2" from our paperwork. A datasheet for this specific model, and any reference wiring for multi-device digital sync, would be very welcome.
+
+Thank you for your patience.
+
+Best regards,
+Andrea
+andrea96p@kaist.ac.kr
