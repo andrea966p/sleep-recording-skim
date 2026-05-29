@@ -334,9 +334,8 @@ andrea96p@kaist.ac.kr
 > - **DB25 DO logic-high = 3.3 V fixed** — Core2 spec; re-confirm for this unit.
 > - EXP-port type, channel counts.
 
-> [!todo] Before sending the email below
-> 1. Plug the unit's **"USB data"** USB-C port into the NVR + power on, then on the host run `lsusb` (and `boltctl list`). **Opal Kelly VID `0x151f`** present ⇒ Gen-1 USB confirmed. A Thunderbolt entry in `boltctl` ⇒ it is a TB unit after all. Fold the result into ¶2 of the email (bracketed line).
-> 2. As of 2026-05-29 the device is **not** on the NVR USB bus (`lsusb` clean, `boltctl` empty) — cable not yet connected.
+> [!check] Model confirmed 2026-05-29 — Gen-1 XDAQ Core, Opal Kelly USB
+> Plugged the **"USB data"** USB-C port into the NVR. `lsusb` reports **`ID 151f:0130 Opal Kelly Incorporated XEM7310-A75`** (VID `0x151f` = Opal Kelly); `boltctl list` empty (no Thunderbolt). → **Gen-1 USB, not Core2/Thunderbolt, confirmed.** Email ¶2 updated with this evidence; ready to send (fill `[lab / affiliation]`). Note: device enumerated on the USB **2.0** bus — check cable/port if streaming bandwidth ever looks short.
 
 ### Correction email to KC — round 3b (draft 2026-05-29)
 
@@ -356,7 +355,7 @@ Before you spend time on my earlier questions, an important correction. My previ
 - **Single GND terminal** (Core2 docs show separate SYS GND + Chassis GND)
 - **IO Port:** female DB25
 
-This looks like a first-generation XDAQ Core (Opal Kelly USB interface) rather than the Thunderbolt Core2. *[If `lsusb` confirms before sending: "On our Ubuntu host, `lsusb` reports the device as Opal Kelly (VID 0x151f), consistent with the Gen-1 USB interface."]*
+This is a first-generation XDAQ Core with an Opal Kelly USB interface, not the Thunderbolt Core2. On our Ubuntu 24.04 host, `lsusb` reports the device as **`ID 151f:0130 Opal Kelly Incorporated XEM7310-A75`** (and `boltctl list` is empty, i.e. no Thunderbolt device), which confirms the Gen-1 USB interface.
 
 Because almost every detail we settled so far was Core2-specific, could you confirm the following for **this specific unit (serial 0C006218)**:
 
