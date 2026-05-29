@@ -7,6 +7,8 @@ source: https://developer.kontex.io/libxdaq-docs/index.html
 
 # Kontex Developer Portal — XDAQ Core2 Notes (libxdaq + pylibxdaq + Linux)
 
+> [!danger] 2026-05-29 — this whole page (Thunderbolt-only, `boltd`/`thor`, libxdaq) describes the **Core2** and **does NOT apply to our unit**, which is a **Gen-1 XDAQ Core = Opal Kelly USB**. Our verified driver path is FrontPanel (bundled in Allego) + a `plugdev` udev rule — see [[xdaq-core-gen1-ubuntu-driver]]. Keep this page only as Core2/Thunderbolt background.
+
 > [!abstract] TL;DR — for non-technical readers
 > **What this is.** A digest of the public Kontex developer-portal documentation (`developer.kontex.io/libxdaq-docs/`) and the related GitHub repos under `github.com/kontex-neuro`, captured 2026-05-28. It records the facts that change how we install and verify the XDAQ Core2 on the Ubuntu acquisition host.
 >

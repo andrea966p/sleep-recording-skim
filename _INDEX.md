@@ -42,7 +42,8 @@ Production IPs, usernames, paths, and settings.
 - [[01-infrastructure/frigate/config-yml|config.yml]]
 
 **Hardware Sync (XDAQ GPIO):**
-- [[01-infrastructure/hardware-sync/overview|Overview & Architecture]]
+- [[01-infrastructure/hardware-sync/xdaq-core-gen1-ubuntu-driver|⭐ XDAQ Core (Gen-1) — Ubuntu Driver Setup + Verified State (2026-05-29)]] — **current source of truth; supersedes Core2 assumptions below**
+- [[01-infrastructure/hardware-sync/overview|Overview & Architecture]] ⚠️ Core2-era
 - [[01-infrastructure/hardware-sync/wiring-guide|Wiring Guide & BOM]]
 - [[01-infrastructure/hardware-sync/gpio-sync-service|GPIO Sync Service (Golden Config)]]
 - [[01-infrastructure/hardware-sync/radiens-api-reference|Radiens API — Digital I/O Reference]]
@@ -148,4 +149,4 @@ ffprobe rtsp://192.168.0.11:8554/pi_cam_0
 
 ---
 
-*Last updated: 2026-05-28 (Phase 4.6 reconciler→Slack enabled in bridge; vault restructure — `07-decisions/` section added; council + sprint plan extracted out of `04-journal/2026-05-01.md` and `2026-05-20.md` into their own decision docs; daily journals get `created:` frontmatter for stable sort; bus-factor runbook shipped — Phase 6 council Stage 3.4 closed)*
+*Last updated: 2026-05-29 (XDAQ unit identified as Gen-1 Core / Opal Kelly USB — NOT Core2; Ubuntu driver solved via plugdev udev rule, Allego detects device; new authoritative doc `xdaq-core-gen1-ubuntu-driver`, Core2 docs banner-flagged, KC email trimmed). Prev 2026-05-28 (Phase 4.6 reconciler→Slack enabled in bridge; vault restructure — `07-decisions/` section added; council + sprint plan extracted out of `04-journal/2026-05-01.md` and `2026-05-20.md` into their own decision docs; daily journals get `created:` frontmatter for stable sort; bus-factor runbook shipped — Phase 6 council Stage 3.4 closed)*

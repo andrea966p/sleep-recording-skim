@@ -359,12 +359,9 @@ This is a first-generation XDAQ Core with an Opal Kelly USB interface, not the T
 
 Because almost every detail we settled so far was Core2-specific, could you confirm the following for **this specific unit (serial 0C006218)**:
 
-1. **Exact model / generation**, and its host interface — USB (Opal Kelly) or Thunderbolt?
+1. **Confirm the model + whether the DB25 details transfer.** We've now confirmed our unit is a **first-generation XDAQ Core** (Opal Kelly USB, `lsusb` ID `151f:0130`, XEM7310-A75) — not a Core2. Jeffrey's earlier answers were given for a Core2: DB25 `DAQ_ON` = pin 13, `DI 03` = pin 2, `DO 03` = pin 22 as the recording gate in "Gated" mode (with the "BNC Breakout Board" slider), and DB25 outputs at 3.3 V fixed. **Do those same pin assignments, the Gated / BNC-Breakout-Board recording-gate mechanism, and the 3.3 V output level all apply to the Gen-1 Core — or are there differences I should wire to?** A Gen-1 Core DB25 pinout / datasheet would be ideal.
 
-2. **Ubuntu 24.04 LTS driver path.** Our acquisition host runs Ubuntu 24.04 LTS with the Radiens suite and the `radiens` Python package already installed and working; what remains is the device-level link to the hardware. For this unit specifically:
-   - required drivers / kernel modules to connect it — if Opal Kelly USB, which FrontPanel version and does it need the `60-opalkelly.rules` udev file? If Thunderbolt, the `boltctl` enrollment steps?
-   - any `udev` rules or group membership so Allego detects and streams from it **without running as root**;
-   - supported kernel versions and any known Linux-specific limitations vs. Windows.
+2. **Ubuntu 24.04 driver path — already resolved on our end, just a sanity check.** We got it working: Allego bundles the Opal Kelly FrontPanel runtime (`libokFrontPanel.so`), and adding a udev rule — `SUBSYSTEM=="usb", ATTR{idVendor}=="151f", MODE="0664", GROUP="plugdev"` — lets `allegoserver` open the device without root. Allego now detects it (system mode `SMARTBOX_PRO`, 30 kHz, USB-3 SuperSpeed). Is that the approach you'd recommend, or is there an official rules file / extra step we should use instead?
 
 3. **DB25 digital-I/O pinout for this model.** Are the assignments the same as the Core2 — `DAQ_ON` = 13, `DI 03` = 2, `DO 03` = 22, `GND` = 14, `SAMPLE CLK` = 25 — or do they differ on the Gen-1 Core?
 

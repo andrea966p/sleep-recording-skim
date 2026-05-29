@@ -6,6 +6,8 @@ status: planned
 
 # XDAQ ↔ Raspberry Pi Wiring Guide
 
+> [!danger] 2026-05-29 — our actual unit is a **Gen-1 XDAQ Core (Opal Kelly USB)**, NOT the Core2 this guide was written for. The DB25 pin numbers, voltage, and "BNC Breakout Board / Gated DO 03" recording-gate mechanism below are **Core2-derived and UNVERIFIED for our unit** — do not wire from these diagrams until KC confirms them for the Gen-1 Core. Driver/connectivity is solved: [[xdaq-core-gen1-ubuntu-driver]].
+
 > [!abstract] TL;DR — for non-technical readers
 > **What this is.** Physical wiring instructions for connecting the XDAQ DB25 digital-output connector to a Raspberry Pi 5 GPIO pin.
 >

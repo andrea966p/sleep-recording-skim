@@ -6,6 +6,8 @@ status: planned
 
 # Hardware Synchronization — XDAQ GPIO ↔ Raspberry Pi
 
+> [!danger] 2026-05-29 — our actual unit is a **Gen-1 XDAQ Core (Opal Kelly USB)**, NOT the Core2 this page assumes. Linux/driver + host-interface content here is **superseded by [[xdaq-core-gen1-ubuntu-driver]]** (verified working). DB25 pinout / voltage / recording-gate details below are **Core2-derived and UNVERIFIED for our unit** — do not wire from them until confirmed for the Gen-1 Core.
+
 > [!abstract] TL;DR — for non-technical readers
 > **What this is.** A planned upgrade (not yet deployed) that replaces the current 1-second software polling of Radiens with a hardware TTL pulse from the XDAQ DB25 connector directly to a Raspberry Pi GPIO pin.
 >
