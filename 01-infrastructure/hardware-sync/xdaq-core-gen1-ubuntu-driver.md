@@ -130,6 +130,19 @@ s = AllegoClient().get_status()
 
 ---
 
+## 5. Operational gotcha — restart the daemon after (re)launching Allego
+
+The session daemon (`neurosurveillance-session.service`) holds a long-lived `radiens.AllegoClient`. If Allego (allegoserver) is (re)started — or a different/new XDAQ is connected — **after** the daemon, the daemon's cached client keeps a stale `deviceUUID` and fails every poll with:
+```
+code: 16 (StatusCode.UNAUTHENTICATED): attempted verification via offline deviceUUID
+   but client UUID did not match backend UUID
+```
+`/api/health` shows `radiens_connected: false`, `healthy: false`. A **fresh** client (e.g. an interactive `AllegoClient()` probe) authenticates fine — proof it's staleness, not a config/permission fault.
+
+**Fix:** `sudo systemctl restart neurosurveillance-session.service`, then confirm `/api/health` → `radiens_connected: true`. (Observed + fixed 2026-05-29 after first connecting this Gen-1 XDAQ: 6090 consecutive failures cleared on restart, ports 0–3 → R_OFF.)
+
+**Implication:** after any Allego restart / host reboot, the daemon needs this restart to re-pair. Candidate hardening (future): have `radiens_poller` rebuild the `AllegoClient` on `UNAUTHENTICATED`, not just retry the stale one.
+
 ## Related
 - [[overview|Hardware Sync Overview]] — ⚠️ Core2-era; host interface section superseded by this page
 - [[wiring-guide|Wiring Guide]] — ⚠️ DB25/voltage = Core2-derived, unconfirmed for Gen-1
