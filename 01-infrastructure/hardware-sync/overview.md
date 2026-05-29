@@ -61,7 +61,7 @@ Two-wire bidirectional sync between the XDAQ Core and each Raspberry Pi node:
 
 - **Signal (planned):** `DO 03` on DB25 **Pin 22** goes HIGH for the whole recording session ("Gated" mode + BNC Breakout Board toggle). *(Old plan: `DAQ_ON` pin 13 — streaming only, idle-noisy.)*
 - **Purpose:** Replaces software polling for recording start/stop detection.
-- **Voltage:** DB25 DOs are **3.3 V** (Core2 manual; Allego can't switch to 5 V) → divider likely **unneeded**; measure pin 22 during recording before deciding. *(Old plan assumed 3.6 V → divider.)*
+- **Voltage:** **3.3 V fixed** — confirmed by KC + Jeffrey 2026-05-28 ([[neuronexus-inquiry-email#Reply — round 3 received 2026-05-28 (Jeffrey)|round-3 reply]]): DB25 `DO 03`–`DO 08` and `DAQ_ON` are 3.3 V logic only; only `DO 01`/`DO 02` (BNC) switch 3.3 ↔ 5 V (and Radiens can't toggle that). **Voltage divider NOT needed** — direct wire into Pi GPIO. DMM check at first wiring is sanity only.
 - **Result:** Pi detects recording start/stop within <1 ms via `gpiod` edge interrupt.
 
 ### Wire 2: Pi GPIO → XDAQ `DIN 03` (Frame Sync Markers)
@@ -71,24 +71,15 @@ Two-wire bidirectional sync between the XDAQ Core and each Raspberry Pi node:
 - **Voltage:** Pi outputs 3.3V, XDAQ DIN accepts 2.2–5.5V — direct connection, no level shifting.
 - **Result:** Each pulse is recorded at the headstage sampling rate (e.g., 20 kHz = 50 μs precision).
 
-## Voltage Divider Design
+## Voltage — no divider needed
 
-```
-XDAQ DAQ_ON (3.6V) ────┬──── 1kΩ ──── Pi GPIO {GPIO_DAQ_ON}
-                        │
-                       2kΩ
-                        │
-                       GND (shared)
-
-Output voltage: 3.6V × 2kΩ / (1kΩ + 2kΩ) ≈ 2.4V
-Pi HIGH threshold: ~1.8V ✓
-Pi max input: 3.3V ✓
-```
+> [!check] Resolved 2026-05-28 (KC + Jeffrey)
+> All Core2 DB25 digital outputs `DO 03`–`DO 08` and `DAQ_ON` (pin 13) are **3.3 V fixed**. Only the BNC `DO 01`/`DO 02` outputs are 3.3/5 V switchable, and Radiens can't toggle that anyway. **Wire `DO 03` (pin 22) directly to the Pi GPIO** — no level shifter, no resistive divider. Pin 22 sits at 3.3 V = Pi GPIO ceiling exactly. Sanity DMM check at first plug-in only.
 
 ## XDAQ Core DB25 Pinout (Relevant Pins)
 
 > [!info] Authoritative pinout + specs → [[xdaq-core2-manual-reference|XDAQ Core2 Manual Reference]]
-> Pins below match the KONTEX Core2 manual (figures archived there). `DI 03`=Pin 2 (Pin 22 is `DO 03`), `DAQ_ON`=Pin 13, `GND`=Pin 14, `Sample_CLK`=Pin 25. The manual confirms `DAQ_ON` is on the DB25 ("logic high at onset of a recording session"). See the voltage note below — Core2 DB25 outputs are **3.3 V**, not 3.6 V.
+> Pins below match the KONTEX Core2 manual (figures archived there). `DI 03`=Pin 2 (Pin 22 is `DO 03`), `DAQ_ON`=Pin 13, `GND`=Pin 14, `Sample_CLK`=Pin 25. The manual confirms `DAQ_ON` is on the DB25 ("logic high at onset of a recording session"). **Voltage: 3.3 V on all DB25 DOs + `DAQ_ON`** (KC + Jeffrey, 2026-05-28).
 
 | DB25 Pin | Signal | Direction | Use in Our System |
 |----------|--------|-----------|-------------------|
@@ -101,9 +92,10 @@ Pi max input: 3.3V ✓
 > [!warning] Allego "BNC Breakout Board" toggle is now a hard dependency
 > Both the recording gate (`DO 03`, pin 22) and the multi-Pi return inputs (`DI 03`–`DI 06`) only appear/function in Allego when the **"BNC Breakout Board"** slider (System tab) is toggled ON. The DI/DO channels then show in the System + Monitor tabs and are synced + stored alongside neural data. Document this in the [[02-procedures/hardware-sync-setup|Setup Procedure]].
 
-> [!warning] Voltage Compatibility
-> XDAQ DOUT is 3.6V. Pi 5 GPIO (RP1 chip) is 3.3V. The DAQ_ON → Pi direction **requires** a voltage divider or level shifter. The Pi → XDAQ DIN direction is safe (3.3V is within 2.2–5.5V input range).
-> **⚠️ Correction (2026-05-27):** the KONTEX Core2 manual states **DB25 digital outputs are 3.3 V** (not 3.6 V — that was the generic/IO-Expander figure). If `DAQ_ON` (pin 13) measures 3.3 V, the divider is **unnecessary** and a direct wire is safe. Verify pin 13 with a DMM during acquisition before dropping it. See [[xdaq-core2-manual-reference|Manual Reference]].
+> [!check] Voltage Compatibility — resolved (2026-05-28)
+> Core2 DB25 digital outputs `DO 03`–`DO 08` and `DAQ_ON` (pin 13) are **3.3 V fixed** — confirmed by KC + Jeffrey ([[neuronexus-inquiry-email#Reply — round 3 received 2026-05-28 (Jeffrey)|round-3 reply]]). Only the BNC `DO 01`/`DO 02` outputs are 3.3/5 V switchable, and Radiens can't toggle that. **Wire DB25 outputs directly to Pi 5 GPIO** — no divider, no level shifter. 3.3 V sits at Pi GPIO ceiling exactly (within spec, zero headroom — fine for clean digital signals). DMM sanity check at first wiring only. See [[xdaq-core2-manual-reference|Manual Reference]].
+>
+> Pi → XDAQ DIN direction: safe (Pi 3.3 V within 2.2–5.5 V input range; vendor empirically registers DIs down to 1.7 V).
 
 ## XDAQ LED Indicators for Debugging
 

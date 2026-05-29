@@ -279,3 +279,32 @@ Best regards,
 Andrea
 [lab / affiliation]
 andrea96p@kaist.ac.kr
+
+---
+
+## Reply — round 3 received 2026-05-28 (Jeffrey)
+
+> [!info] Jeffrey's quick reply to the round-3 acknowledgement. **Closes Q3 voltage:** Core2 DB25 `DO 03`–`DO 08` and `DAQ_ON` (pin 13) are **3.3 V fixed** (confirmed with KC). Only `DO 01`/`DO 02` (BNC) can switch 3.3 ↔ 5 V, and Radiens can't toggle that anyway.
+
+| # | Item | Status | Jeffrey's answer |
+|---|------|--------|------------------|
+| 0 | Plan confirmation (`DO 03` pin 22 = recording gate, `DAQ_ON` = streaming only, `DI 03` = pin 2) | ✅ **all correct** | "Yes, these are all correct." |
+| 3 | DO logic-high voltage | ✅ **resolved — 3.3 V fixed** | Re-read the manual: **only `DO 01` + `DO 02` can switch between 3.3 V and 5 V** (and Radiens can't do it anyway). **`DO 03` – `DO 08` are 3.3 V logic only.** KC confirmed this. **KC also confirmed `DAQ_ON` is 3.3 V only.** |
+
+### Action items from round-3 reply
+
+- [x] **Q3 CLOSED — voltage divider definitively NOT needed.** `DO 03` (pin 22) = 3.3 V fixed → direct wire to Pi GPIO is safe (at-ceiling, no headroom but Pi 5 GPIO tolerates 3.3 V exactly).
+- [x] **`DAQ_ON` (pin 13) = 3.3 V** confirmed (if ever used as optional streaming flag, no divider needed there either).
+- [ ] Update [[wiring-guide|Wiring Guide]] BOM — move fixed-value resistors out of "Hold-until-answers" (no longer needed); resistor assortment kit can be downgraded from "order-now" to optional (still useful for pull-downs / generic lab stock).
+- [ ] Update [[overview|Overview]] — drop the "Voltage Divider Design" section + the ⚠️ Voltage Compatibility callout (resolved).
+- [ ] Update [[xdaq-core2-manual-reference|Manual Reference]] — note that **KC + Jeffrey (2026-05-28) confirm DB25 DO-03…08 + DAQ_ON = 3.3 V fixed** (resolves the earlier `DAQ_ON` "not tabulated" caveat).
+- [ ] Still pending pin-22 scope/DMM check at first plug-in (sanity verification, not gating any purchase).
+- [ ] KC round-3 (fan-out / grounding / Ubuntu drivers) still **awaiting reply** — sent 2026-05-28.
+
+### Reply verbatim (archived)
+
+> Dear Andrea,
+>
+> Yes, these are all correct.
+>
+> Upon reviewing the verbiage in the manual about the DB25 again, I see that it actually states that only DO 1 and DO 2 can be switched between 3.3 V and 5 V (and again, not something Radiens can do). DO 3 – DO 8 are designed only for 3.3 V logic. KC confirmed this and also that DAQ_ON is designed only to send a 3.3 V signal.
