@@ -335,7 +335,7 @@ andrea96p@kaist.ac.kr
 > - EXP-port type, channel counts.
 
 > [!check] Model confirmed 2026-05-29 — Gen-1 XDAQ Core, Opal Kelly USB
-> Plugged the **"USB data"** USB-C port into the NVR. `lsusb` reports **`ID 151f:0130 Opal Kelly Incorporated XEM7310-A75`** (VID `0x151f` = Opal Kelly); `boltctl list` empty (no Thunderbolt). → **Gen-1 USB, not Core2/Thunderbolt, confirmed.** Email ¶2 updated with this evidence; ready to send (fill `[lab / affiliation]`). Note: device enumerated on the USB **2.0** bus — check cable/port if streaming bandwidth ever looks short.
+> Plugged the **"USB data"** USB-C port into the NVR. `lsusb` reports **`ID 151f:0130 Opal Kelly Incorporated XEM7310-A75`** (VID `0x151f` = Opal Kelly); `boltctl list` empty (no Thunderbolt). → **Gen-1 USB, not Core2/Thunderbolt, confirmed.** Email ¶2 updated with this evidence; ready to send (fill `[lab / affiliation]`). Cabling: with a good USB-C cable the device enumerates at **USB 3.0 SuperSpeed (5 Gbps)** on Bus 002 — full streaming bandwidth confirmed. (An earlier poor cable enumerated at USB 2.0; swapped 2026-05-29.) `Driver=[none]` is normal — FrontPanel is a userspace libusb driver.
 
 ### Correction email to KC — round 3b (draft 2026-05-29)
 
