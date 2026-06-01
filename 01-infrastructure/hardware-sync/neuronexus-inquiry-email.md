@@ -337,43 +337,27 @@ andrea96p@kaist.ac.kr
 > [!check] Model confirmed 2026-05-29 — Gen-1 XDAQ Core, Opal Kelly USB
 > Plugged the **"USB data"** USB-C port into the NVR. `lsusb` reports **`ID 151f:0130 Opal Kelly Incorporated XEM7310-A75`** (VID `0x151f` = Opal Kelly); `boltctl list` empty (no Thunderbolt). → **Gen-1 USB, not Core2/Thunderbolt, confirmed.** Email ¶2 updated with this evidence; ready to send (fill `[lab / affiliation]`). Cabling: with a good USB-C cable the device enumerates at **USB 3.0 SuperSpeed (5 Gbps)** on Bus 002 — full streaming bandwidth confirmed. (An earlier poor cable enumerated at USB 2.0; swapped 2026-05-29.) `Driver=[none]` is normal — FrontPanel is a userspace libusb driver.
 
-### Correction email to KC — round 3b (draft 2026-05-29)
+### Correction email to KC — round 3b (draft 2026-05-29; reframed as follow-up 2026-06-01)
 
-> [!note] Sends into the same (still-unanswered) KC Kong round-3 thread as a correction, so KC answers for the right model. The fan-out / grounding / Ubuntu-driver questions are re-asked against this unit.
+> [!note] Sends into the same (still-unanswered) KC Kong round-3 thread. KC has not replied since the round-3 send on 2026-05-28, so this now doubles as a gentle follow-up **and** a model correction (Gen-1 XDAQ Core, not Core2) so any answer targets the right unit. Driver question is now a one-line sanity check — we resolved it ourselves. Fan-out + grounding + Gen-1 DB25 re-confirm remain the genuinely-open asks.
 
 > **To:** KC Kong <KC@kontex.io>
 > **From:** andrea96p@kaist.ac.kr
-> **Subject:** Re: XDAQ Core2 — important correction: our unit is an "XDAQ Core" (serial 0C006218), not a Core2
+> **Subject:** Re: XDAQ Core2 — correction: our unit is a Gen-1 "XDAQ Core" (serial 0C006218), not a Core2
 
 Dear KC,
 
-Before you spend time on my earlier questions, an important correction. My previous emails — and Jeffrey's answers — assumed our unit is an XDAQ **Core2**. On inspecting the hardware, the chassis is labelled **"XDAQ Core"** (serial **0C006218**), and the rear panel does not match the Core2 documentation:
+Following up on my earlier note, and with one important correction before you spend time on it: my previous emails — and Jeffrey's answers — assumed our unit is an XDAQ **Core2**. On inspecting the hardware, it is actually a **first-generation XDAQ Core** with an Opal Kelly USB interface (chassis labelled **"XDAQ Core"**, serial **0C006218**). On our Ubuntu 24.04 host `lsusb` reports it as **`ID 151f:0130 Opal Kelly Incorporated XEM7310-A75`** and `boltctl list` is empty (no Thunderbolt), confirming the Gen-1 USB interface. The rear panel also differs from the Core2 docs (12 V USB-C PD not 20 V; a "USB data" port not Thunderbolt; USB-C EXP ports not micro-HDMI; a single GND terminal).
 
-- **Power input:** USB-C PD, **12 V / 3 A** (Core2 docs show 20 V)
-- **Host/data link:** a USB-C port labelled **"USB data"** — no Thunderbolt "Computer"/"Peripheral" ports
-- **EXP1 / EXP2:** USB-C (Core2 docs show micro-HDMI)
-- **Single GND terminal** (Core2 docs show separate SYS GND + Chassis GND)
-- **IO Port:** female DB25
+**On drivers — resolved, no action needed.** Allego already detects and streams from the unit on Ubuntu 24.04 (`SMARTBOX_PRO`, 30 kHz, USB-3 SuperSpeed). Allego bundles the Opal Kelly FrontPanel runtime and we added a `plugdev` udev rule for VID `151f` so `allegoserver` opens it without root. I mention it only in case you'd flag a different recommended approach.
 
-This is a first-generation XDAQ Core with an Opal Kelly USB interface, not the Thunderbolt Core2. On our Ubuntu 24.04 host, `lsusb` reports the device as **`ID 151f:0130 Opal Kelly Incorporated XEM7310-A75`** (and `boltctl list` is empty, i.e. no Thunderbolt device), which confirms the Gen-1 USB interface.
+Because the rest of what we settled was Core2-specific, could you confirm the following for **this Gen-1 unit (serial 0C006218)**:
 
-Because almost every detail we settled so far was Core2-specific, could you confirm the following for **this specific unit (serial 0C006218)**:
+1. **DB25 pinout + recording gate.** On the Core2, Jeffrey confirmed `DAQ_ON` = pin 13, `DI 03` = pin 2, `DO 03` = pin 22 (used as the recording gate in "Gated" mode with the "BNC Breakout Board" slider), `GND` = 14, `SAMPLE CLK` = 25, and DB25 outputs at **3.3 V fixed**. **Do those same pin assignments, the Gated / BNC-Breakout-Board recording-gate mechanism, and the 3.3 V output level all apply to the Gen-1 Core?** If anything differs, which signal tracks recording (HIGH for the whole session), and at what logic-high voltage? I'm wiring into a 3.3 V Raspberry Pi GPIO with no over-voltage tolerance, so the output level matters. A Gen-1 Core DB25 pinout / datasheet would be ideal.
 
-1. **Confirm the model + whether the DB25 details transfer.** We've now confirmed our unit is a **first-generation XDAQ Core** (Opal Kelly USB, `lsusb` ID `151f:0130`, XEM7310-A75) — not a Core2. Jeffrey's earlier answers were given for a Core2: DB25 `DAQ_ON` = pin 13, `DI 03` = pin 2, `DO 03` = pin 22 as the recording gate in "Gated" mode (with the "BNC Breakout Board" slider), and DB25 outputs at 3.3 V fixed. **Do those same pin assignments, the Gated / BNC-Breakout-Board recording-gate mechanism, and the 3.3 V output level all apply to the Gen-1 Core — or are there differences I should wire to?** A Gen-1 Core DB25 pinout / datasheet would be ideal.
+2. **Gate fan-out.** We'll have at least four Raspberry Pi 5 nodes (scaling toward eight), each needing the recording-gate signal on a GPIO input. Can a single DB25 digital output safely drive four Pi GPIO inputs in parallel (star wiring), or do you recommend a buffer / line driver (e.g. 74HCT244)? What is the DB25 output drive-current / fan-out limit?
 
-2. **Ubuntu 24.04 driver path — already resolved on our end, just a sanity check.** We got it working: Allego bundles the Opal Kelly FrontPanel runtime (`libokFrontPanel.so`), and adding a udev rule — `SUBSYSTEM=="usb", ATTR{idVendor}=="151f", MODE="0664", GROUP="plugdev"` — lets `allegoserver` open the device without root. Allego now detects it (system mode `SMARTBOX_PRO`, 30 kHz, USB-3 SuperSpeed). Is that the approach you'd recommend, or is there an official rules file / extra step we should use instead?
-
-3. **DB25 digital-I/O pinout for this model.** Are the assignments the same as the Core2 — `DAQ_ON` = 13, `DI 03` = 2, `DO 03` = 22, `GND` = 14, `SAMPLE CLK` = 25 — or do they differ on the Gen-1 Core?
-
-4. **Recording-gate signal on this model.** Jeffrey confirmed that on the Core2 the recording status appears on `DO 03` (pin 22) in "Gated" mode with the "BNC Breakout Board" slider enabled in Allego. Does the same mechanism exist on this unit, and is `DO 03` the correct recording gate here? If not, which signal tracks recording (HIGH for the whole session)?
-
-5. **DB25 digital-output logic-high voltage** on this model — the Core2's `DO 03`–`DO 08` are 3.3 V fixed; is that the same here? I need to wire safely into a 3.3 V Raspberry Pi GPIO (no over-voltage tolerance).
-
-The multi-device questions from my earlier email still stand for this unit:
-
-6. **Gate fan-out.** We'll have at least four Raspberry Pi 5 nodes (scaling toward eight), each needing the recording-gate signal on a GPIO input. Can a single DB25 digital output safely drive four Pi GPIO inputs in parallel (star wiring), or do you recommend a buffer / line driver (e.g. 74HCT244)? What is the DB25 output drive-current / fan-out limit?
-
-7. **Grounding for multiple devices.** Any guidance on tying four (or more) external devices to the unit's GND without creating ground loops between it, the Pis, and their PoE supplies?
+3. **Grounding for multiple devices.** Any guidance on tying four (or more) external devices to the unit's GND without creating ground loops between it, the Pis, and their PoE supplies?
 
 Apologies for the moving target — I'd taken "Core2" from our paperwork. A datasheet for this specific model, and any reference wiring for multi-device digital sync, would be very welcome.
 
