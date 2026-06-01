@@ -337,9 +337,9 @@ andrea96p@kaist.ac.kr
 > [!check] Model confirmed 2026-05-29 — Gen-1 XDAQ Core, Opal Kelly USB
 > Plugged the **"USB data"** USB-C port into the NVR. `lsusb` reports **`ID 151f:0130 Opal Kelly Incorporated XEM7310-A75`** (VID `0x151f` = Opal Kelly); `boltctl list` empty (no Thunderbolt). → **Gen-1 USB, not Core2/Thunderbolt, confirmed.** Email ¶2 updated with this evidence; ready to send (fill `[lab / affiliation]`). Cabling: with a good USB-C cable the device enumerates at **USB 3.0 SuperSpeed (5 Gbps)** on Bus 002 — full streaming bandwidth confirmed. (An earlier poor cable enumerated at USB 2.0; swapped 2026-05-29.) `Driver=[none]` is normal — FrontPanel is a userspace libusb driver.
 
-### Correction email to KC — round 3b (draft 2026-05-29; reframed as follow-up 2026-06-01)
+### Correction email to KC — round 3b (✅ SENT 2026-06-01)
 
-> [!note] Sends into the same (still-unanswered) KC Kong round-3 thread. KC has not replied since the round-3 send on 2026-05-28, so this now doubles as a gentle follow-up **and** a model correction (Gen-1 XDAQ Core, not Core2) so any answer targets the right unit. Driver question is now a one-line sanity check — we resolved it ourselves. Fan-out + grounding + Gen-1 DB25 re-confirm remain the genuinely-open asks.
+> [!check] **Sent 2026-06-01** into the same KC Kong round-3 thread (KC silent since round-3 send 2026-05-28). Doubles as a follow-up **and** a model correction (Gen-1 XDAQ Core, not Core2). Driver question downgraded to a one-line sanity check (resolved ourselves). Open asks awaiting KC: Gen-1 DB25 pinout/gate/voltage re-confirm + fan-out buffer + grounding.
 
 > **To:** KC Kong <KC@kontex.io>
 > **From:** andrea96p@kaist.ac.kr
