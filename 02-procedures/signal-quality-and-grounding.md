@@ -96,6 +96,52 @@ This is the whole reason the professor said "look first." Because both animals s
 
 ---
 
+## 3b. The quality standard — good vs bad, with numbers
+
+Two fixed anchors never change (they're set by the hardware), and everything is judged between them:
+
+- **The noise floor ≈ 2–5 µV.** The RHD amplifier's own noise is about **2.4 µV RMS**. Nothing can be quieter than that. A dead-quiet, well-grounded channel reads a few µV.
+- **The ceiling (rail) = ±5 mV = 5000 µV.** The amplifier physically cannot see past this. **Peak-to-peak ≈ 10 000 µV (10 mV) means the channel is pegged = saturated = useless.**
+
+Real mouse signals live comfortably between those:
+- **EEG** (brain): roughly **20–300 µV** amplitude; slow waves in sleep can reach several hundred µV.
+- **EMG** (muscle): **~10–50 µV at rest**, jumping to hundreds of µV–~1 mV during movement.
+
+### The cheat-sheet table
+
+| What you measure | ✅ Good | 🟡 Marginal | 🔴 Bad |
+|---|---|---|---|
+| **Peak-to-peak** (Monitor, or `MAX_MIN_DIFF_ABS`) | < ~1–2 mV and **not clipping** | 2–5 mV | **≥ ~10 mV = saturated/railed** |
+| **RMS / noise** (Signal Metrics, µV) | tens of µV (≈10–150) | few hundred µV | **> ~1000 µV (1 mV) = floating / hum** |
+| **The trace looks like** (Monitor) | centered in its lane, wiggling | wiggling + visible hum | **flat line pinned at top/bottom** (saturated), or **dead-flat** (no connection), or a **fat 50 Hz sine** (hum) |
+| **50 Hz wall hum** | small next to the signal | about the same size | **buries the signal** — toggling the 50 Hz notch changes the whole trace |
+| **Does it react?** | EMG jumps when the animal moves; EEG changes with sleep/wake | weak/slow reaction | **no reaction to anything** |
+| **Subtract the pair** (Paired Reference) | pair gets noticeably **cleaner** | small change | **can't recover** — one side is railed |
+| **Two-mice cross-talk** | nudge Mouse 1 → Mouse 2 **doesn't move** | tiny echo | **Mouse 2 mirrors Mouse 1** |
+
+> [!tip] The 3 numbers to memorize
+> **~3 µV** = the quietest possible (noise floor). **tens–hundreds of µV** = healthy biological signal. **~10 000 µV (10 mV) peak-to-peak** = railed/dead. If a channel is reading thousands of µV RMS, it is **not** signal — it's a floating ground or hum.
+
+### Where each number lives in Allego
+- **Monitor tab** → the live picture. Watch for clipping (flat top/bottom) and set the µV/division scale so you can see the wiggle.
+- **Signal Metrics tab** → the **numbers**: RMS and noise (µV) per channel. This is your quantitative judge. Set the bandpass first.
+- **Signal Processing tab** → apply the right **bandpass** (EEG ≈ 0.5–30 Hz, EMG ≈ 10–300 Hz), the **50 Hz notch**, and **Paired Reference** for the +/− pairs.
+- **HD Snapshot** → save a still image of a good (or bad) trace for your records.
+
+---
+
+## 3c. Your every-session 5-minute check (do this each time)
+
+1. **Bandpass + notch on.** Signal Processing: EEG band on the EEG channels, EMG band on the EMG channels, 50 Hz notch on.
+2. **Glance at Monitor.** Any channel flat-pinned at top/bottom? → saturated, stop and fix grounding. Any dead-flat line? → broken connection.
+3. **Read Signal Metrics.** Background RMS in **tens of µV** = good. **Thousands of µV** = floating/hum, fix before recording.
+4. **Pair-subtract (Paired Reference)** the EEG and EMG pairs — they should get cleaner.
+5. **Nudge test.** Move the animal → EMG jumps (proves it's alive and correctly mapped). For two mice: nudge one, confirm the **other doesn't move** (no cross-talk).
+
+If all five pass → record. If any fails → fix that first (usually grounding or a loose wire).
+
+---
+
 ## 4. The decision
 
 Do it in this order — each step unblocks the next:
