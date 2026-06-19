@@ -366,3 +366,40 @@ Thank you for your patience.
 Best regards,
 Andrea
 andrea96p@kaist.ac.kr
+
+---
+
+## Reply — round 3b received 2026-06-05 (KC Kong)
+
+> [!success] **KC's reply closes the last vendor open items.** Gen-1 DB25 pinout = Gen-2 (Core2) → all transcribed pins valid for our unit (serial 0C006218). Output 3.3 V fixed, driver TI SN74LVC2G17 (~20 mA). Star-grounding scheme given (XDAQ Core = hub). **Nothing left to ask the vendor — remaining work is bench/wiring only.**
+
+| # | Question | Status | KC's answer |
+|---|----------|--------|-------------|
+| 1 | Gen-1 DB25 pinout + recording gate + 3.3 V | ✅ **pinout confirmed (Gen1 = Gen2)** | "DB25 pinout for Gen1 and Gen2 are the same." → `DAQ_ON`=13, `DI 03`=2, `DO 03`=22, `GND`=14, `SAMPLE CLK`=25 all valid for our Gen-1 unit. Pinout fig: <https://docs.kontex.io/XDAQ/CORE2/#xdaqtm-db25-io-connector-pinout>. *(Allego Gated-mode / BNC-Breakout-Board → DO 03 = recording-status mechanism is software, Jeffrey-verified, gen-independent — validate at bench.)* |
+| 2 | Gate fan-out / drive limit | ✅ **resolved → star wiring, no buffer** | "For Gen1 CORE, the output is set at 3.3 V. The output driver is TI **SN74LVC2G17**, which can supply about **20 mA**." → 20 mA ≫ load of 4–8 high-Z Pi GPIO inputs (≈2.6 mA worst-case w/ 10 kΩ pull-downs). **74HCT244 buffer NOT needed** — single `DO 03` star-wires to all Pis. |
+| 3 | Grounding 4+ devices, no ground loops | ✅ **resolved → star ground** | "Use the XDAQ CORE as the center of the Ground and fanning in the other devices' GND following the **star grounding** scheme." → each Pi GND home-runs to Core `GND` (pin 14); no daisy-chain, no Pi-to-Pi GND ties. |
+
+### Action items from round-3b reply
+
+- [x] **Pinout — Gen-1 = Gen-2 confirmed by KC.** Cleared all "UNVERIFIED for Gen-1" danger callouts in [[wiring-guide|Wiring Guide]] + [[overview|Overview]].
+- [x] **Fan-out decision — star wiring, no buffer.** SN74LVC2G17 ~20 mA ≫ Pi high-Z input load. 74HCT244 moved from BOM "order-now"/"hold" → **removed** (star-wiring confirmed sufficient).
+- [x] **Grounding — star ground (Core = hub).** Star-grounding section + diagram added to [[wiring-guide|Wiring Guide]] (was single-Pi only).
+- [ ] **Bench validation (only remaining work):** scope/DMM `DO 03` (pin 22) → expect clean 0 ↔ 3.3 V in Gated mode w/ BNC Breakout Board ON; logic-analyzer idle check (no stray pulses); then star-wire DB25 → 4× Pi GPIO 17 direct (no divider), each Pi GND home-run to pin 14.
+- [ ] Order the BOM "order-now" set (~$40) — safe to buy; no contingency items left pending.
+
+### Reply verbatim (archived)
+
+> Hi Andrea,
+>
+> Regarding your questions:
+>
+> 1. DB25 pinout for Gen1 and Gen2 are the same. You may find the detail at: https://docs.kontex.io/XDAQ/CORE2/#xdaqtm-db25-io-connector-pinout.
+>
+> 2. For Gen1 CORE, the output is set at 3.3V. The output driver used is TI SN74LVC2G17 which can supply about 20mA.
+>
+> 3. We recommend using the XDAQ CORE as the center of the Ground and fanning in the other devices' GND following the star grounding scheme.
+>
+> Please let me know if you have any questions. Have a great weekend!
+>
+> Best,
+> KC

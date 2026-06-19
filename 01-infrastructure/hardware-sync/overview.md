@@ -6,7 +6,7 @@ status: planned
 
 # Hardware Synchronization — XDAQ GPIO ↔ Raspberry Pi
 
-> [!danger] 2026-05-29 — our actual unit is a **Gen-1 XDAQ Core (Opal Kelly USB)**, NOT the Core2 this page assumes. Linux/driver + host-interface content here is **superseded by [[xdaq-core-gen1-ubuntu-driver]]** (verified working). DB25 pinout / voltage / recording-gate details below are **Core2-derived and UNVERIFIED for our unit** — do not wire from them until confirmed for the Gen-1 Core.
+> [!check] 2026-06-05 — Gen-1 confirmed by KC Kong: **DB25 pinout Gen1 = Gen2** ([[neuronexus-inquiry-email#Reply — round 3b received 2026-06-05 (KC Kong)|round-3b reply]]). All DB25 pinout / 3.3 V output / `DO 03` Gated recording-gate details below apply to our Gen-1 XDAQ Core (Opal Kelly USB, serial 0C006218) — prior "UNVERIFIED for Gen-1" hold cleared. Linux/driver + host-interface content here is **superseded by [[xdaq-core-gen1-ubuntu-driver]]** (verified working). Fan-out: single `DO 03` star-wires to ≥4 Pi GPIO (driver SN74LVC2G17, ~20 mA, no buffer). Grounding: **star ground, Core = hub**. See [[wiring-guide#Multi-Pi fan-out and star grounding|Wiring Guide]].
 
 > [!abstract] TL;DR — for non-technical readers
 > **What this is.** A planned upgrade (not yet deployed) that replaces the current 1-second software polling of Radiens with a hardware TTL pulse from the XDAQ DB25 connector directly to a Raspberry Pi GPIO pin.
@@ -33,33 +33,38 @@ status: planned
 
 ## Architecture
 
-Two-wire bidirectional sync between the XDAQ Core and each Raspberry Pi node:
+Two-wire bidirectional sync per Pi, **one gate fanned out to all Pis**; everything referenced to a single star-ground at the Core (DB25 pin 14). All voltages 3.3 V — no level shift, no divider.
 
 ```
-┌────────────────────┐                        ┌──────────────────────┐
-│  XDAQ Core (DB25)  │                        │  Raspberry Pi 5      │
-│                    │                        │  GPIO Header          │
-│                    │                        │                      │
-│  Pin 13: DAQ_ON ───┼──► Voltage Divider ──► │  GPIO {GPIO_DAQ_ON}  │
-│  (3.6V when ON)    │    (3.6V → 3.3V)       │  (Input)              │
-│                    │                        │                      │
-│  Pin 2: DIN 03  ◄──┼──── Direct wire ◄───── │  GPIO {GPIO_FRAME}   │
-│  (accepts 2.2-5.5V)│    (3.3V is fine)      │  (Output)             │
-│                    │                        │                      │
-│  Pin 14: SYS GND ──┼──── Shared ground ──── │  GND (Pin 14)        │
-│                    │                        │                      │
-└────────────────────┘                        └──────────────────────┘
+        XDAQ Core (Gen-1, DB25)                              Raspberry Pi 5 nodes
+┌──────────────────────────────────┐
+│ Pin 22  DO 03 (recording gate) ───┼──●──220Ω──► Pi1 GPIO 17 (in)  [+10kΩ pulldown]
+│  3.3V, "Gated" mode,              │  ●──220Ω──► Pi2 GPIO 17 (in)  [+10kΩ pulldown]
+│  BNC Breakout Board ON            │  ●──220Ω──► Pi3 GPIO 17 (in)  [+10kΩ pulldown]
+│  driver SN74LVC2G17 ~20mA         │  ●──220Ω──► Pi4 GPIO 17 (in)  [+10kΩ pulldown]
+│                                   │  (star node — fan-out, no buffer)
+│                                   │
+│ Pin 2   DI 03 (frame ret. Pi1) ◄──┼──────────── Pi1 GPIO 27 (out)   direct, 3.3V
+│ Pin 15  DI 04 (frame ret. Pi2) ◄──┼──────────── Pi2 GPIO 27 (out)
+│ Pin 3   DI 05 (frame ret. Pi3) ◄──┼──────────── Pi3 GPIO 27 (out)
+│ Pin 16  DI 06 (frame ret. Pi4) ◄──┼──────────── Pi4 GPIO 27 (out)
+│                                   │
+│ Pin 14  GND (star-ground hub) ────┼──┬───────── Pi1 GND   (home-run)
+│                                   │  ├───────── Pi2 GND   (home-run)
+│                                   │  ├───────── Pi3 GND   (home-run)
+│                                   │  └───────── Pi4 GND   (home-run)
+└──────────────────────────────────┘   no Pi-to-Pi GND ties (star, not daisy-chain)
 ```
 
 ### Wire 1: XDAQ recording gate → Pi GPIO
 
-> [!danger] 2026-05-28 — recording gate moves OFF `DAQ_ON` (pin 13) → use `DO 03` (pin 22, "Gated" mode)
-> Jeffrey (NeuroNexus) tested pin 13 ([[neuronexus-inquiry-email#Reply — round 2 received 2026-05-28 (Jeffrey)|round-2 reply]]):
-> - **`DAQ_ON` (pin 13) tracks STREAMING, not recording** — HIGH whenever the DAQ streams data (Allego + XDAQ-RHX), like DO 01. It is **not** a recording gate.
-> - **It is dirty when idle:** in Allego, `DAQ_ON` emits **short pulses every ~0.5s while streaming is OFF** (Allego scans GPIOs when idle). That would throw false edges at the Pi.
-> - **True recording gate = `DO 03` (DB25 pin 22)**: toggle the **"BNC Breakout Board"** slider (System tab) + set Digital Out Control to **"Gated"** mode → DO 03 reports **"Recording status"** (~15–20s to populate).
+> [!check] Gate = `DO 03` (DB25 pin 22), "Gated" mode — diagram above redrawn 2026-06-05
+> Resolved across the vendor thread ([[neuronexus-inquiry-email#Reply — round 2 received 2026-05-28 (Jeffrey)|round-2]] + [[neuronexus-inquiry-email#Reply — round 3b received 2026-06-05 (KC Kong)|round-3b]]):
+> - **`DAQ_ON` (pin 13) tracks STREAMING, not recording** — HIGH whenever the DAQ streams (Allego + XDAQ-RHX), like DO 01; **not** a recording gate.
+> - **Dirty when idle:** in Allego, `DAQ_ON` emits **short pulses every ~0.5s while streaming is OFF** (Allego scans GPIOs idle) → false edges at the Pi.
+> - **Recording gate = `DO 03` (DB25 pin 22)**: toggle **"BNC Breakout Board"** slider (System tab) + Digital Out Control = **"Gated"** → DO 03 reports **"Recording status"** (~15–20s to populate). 3.3 V fixed, driver SN74LVC2G17 ~20 mA.
 >
-> **So Wire 1 should land on DB25 pin 22 (`DO 03`), not pin 13.** `DAQ_ON` (pin 13) / front `DIGITAL OUT 1` (DO-01) can be kept as an optional *streaming* indicator. The DB25 pinout table + diagram below still show the old pin-13 plan and need updating once the redesign is finalized (voltage of pin 22 pending — see below).
+> Wire 1 lands on **pin 22 (`DO 03`)**, direct to Pi GPIO (no divider), star-fanned to all Pis. `DAQ_ON` (pin 13) / front `DIGITAL OUT 1` (DO-01) optional *streaming* flag. Architecture diagram above + DB25 table below reflect this.
 
 - **Signal (planned):** `DO 03` on DB25 **Pin 22** goes HIGH for the whole recording session ("Gated" mode + BNC Breakout Board toggle). *(Old plan: `DAQ_ON` pin 13 — streaming only, idle-noisy.)*
 - **Purpose:** Replaces software polling for recording start/stop detection.
