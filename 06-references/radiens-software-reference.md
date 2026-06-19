@@ -54,6 +54,24 @@ source: NeuroNexus — Radiens Technical Documentation (©2025, 177 pp)
 
 ---
 
+## Custom sensor maps — `csv2sensor` (our 2-mice map)
+
+Allego can't rename channels, but you **can** load a **custom sensor** so the 8 used channels map to logical **site numbers + grouped geometry** (closest thing to labels). NeuroNexus's **`csv2sensor`** CLI builds the `.hstg` + `.prb` files from CSV.
+
+- **Tool + source CSVs** stored in `06-references/neuronexus/sensor-maps/` (`csv2sensor-linux-x86_64`, `csv2sensor-README.md`, `2mice_headstage.csv`, `2mice_probe.csv`, plus the `mouse1_*` single-mouse test pair).
+- **Output dir** (where Allego reads devices): `/home/skimlab/radix/devices/`. Generated: `hstg__usrdef_2mice.hstg`, `probe__usrdef_2mice_probe.prb`.
+- **CSV format:** headstage = `ntv_chan, site_num` (native amp channel → site); probe = `site_num, center_x, center_y, radius, shape` (+ optional `wfx/wfy` wireframe outline). No name/label column exists — identity is site number + position. csv2sensor scales positions ~÷10 (25 µm → 2.5); relative layout preserved.
+
+**Regenerate:**
+
+    cd 06-references/neuronexus/sensor-maps
+    ./csv2sensor-linux-x86_64 -type headstage 2mice_headstage.csv   # -> /home/skimlab/radix/devices/hstg__usrdef_2mice.hstg
+    ./csv2sensor-linux-x86_64 -type probe    2mice_probe.csv        # -> .../probe__usrdef_2mice_probe.prb
+
+**Load in Allego:** Electrodes tab -> Port D -> **check "Use local devices"** -> Headstage = `usrdef_2mice`, Probe = `usrdef_2mice_probe` -> **Apply**. Then System -> Signals -> Port D -> select the 8 channels.
+
+**Our 2-mice map** (validated 2026-06-19 — first M1-only, then both): native `0-3` -> sites `1-4` (M1 EEG±/EMG±), native `8-11` -> sites `5-8` (M2 EEG±/EMG±); M2 is the same 4-site pattern offset into a second group. Full site/signal table: [[first-headstage-connection]] §8.1.
+
 ## Section map (jump into the embedded PDF by page)
 
 | Topic | Page | Topic | Page |

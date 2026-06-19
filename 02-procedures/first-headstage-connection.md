@@ -177,7 +177,10 @@ LED note: `SYS S1 S2 S3` + `P1–P4` reported **all dark** through testing — b
 **Bipolar pairing is logical, not hardware** — on the 32-ch headstage ch0/ch1 are *separate single-ended* channels. EEG = `EEG+ − EEG−`, EMG = `EMG+ − EMG−`, computed in analysis (or a live Allego referencing/montage). Keep **CAR OFF**. Green/ground wires (`pri_5`, `pri_13`) tie to headstage GND/REF.
 
 > [!warning] No in-Allego channel rename (per manual, 2026-06-19)
-> Allego's **Signal Map is read-only** and XDAT files sort by preamp channel (`pri_N`) — you **cannot rename channels to `M1_EEGp` etc. in the GUI**. Apply these labels in **offline analysis by channel index** (this table is the source of truth), or request a custom probe map from NeuroNexus. Full detail + manual page refs: [[radiens-software-reference]].
+> Allego's **Signal Map is read-only** and XDAT files sort by preamp channel (`pri_N`) — you **cannot rename channels to `M1_EEGp` etc. in the GUI**. Apply those labels in **offline analysis by channel index** (this table is the source of truth).
+
+> [!success] Custom sensor loaded (csv2sensor, 2026-06-19)
+> Built `hstg__usrdef_2mice` + `probe__usrdef_2mice_probe` via NeuroNexus **`csv2sensor`** so the 8 used channels map to logical **site numbers** + grouped geometry (M1 = sites 1–4, M2 = sites 5–8). No text labels (the tool has no name field), but the Signal Map + wireframe now reflect our real 2-mice layout. Workflow, CSVs, and load steps: [[radiens-software-reference]] → "Custom sensor maps". Site mapping: native 0,1,2,3 → sites 1,2,3,4 (M1 EEG+,EEG−,EMG+,EMG−); native 8,9,10,11 → sites 5,6,7,8 (M2 EEG+,EEG−,EMG+,EMG−).
 
 **3rd pair resolved (2026-06-19):** the 3rd pair is **wired but unused** — `pri_4`/`pri_12` (white, `2+`) carry no recorded signal; `pri_5`/`pri_13` (green, `2−`) are the animal ground. So **2 recorded signals per mouse: EEG + EMG** (4 amp channels each, 8 total).
 
