@@ -17,9 +17,9 @@ system: XDAQ Core Gen-1 (XDAQ_ONE_REC mode) + 32-ch RHD XR headstage + SAdpt-XDA
 > [!abstract] TL;DR — for non-technical readers
 > **What this is.** The record of the first-ever attempt to connect a live recording headstage to our XDAQ and see signal in Allego.
 >
-> **Why it exists.** It's our bring-up log and troubleshooting trail. Right now it is **BLOCKED** — Allego does not detect the headstage; every port reports **0 channels**. We have systematically eliminated the cabling, the mouse wiring, the software, and the XDAQ core itself. The fault is narrowed to the **SPI bus power / the SAdpt adapter / the headstage**.
+> **Why it exists.** It's our bring-up log and troubleshooting trail. **RESOLVED 2026-06-19** — the headstage is detected and streaming signal. Root cause was a **wrong Allego system mode** (`SMARTBOX_PRO` instead of "XDAQ One (G1) with XR Headstage"), **not** a hardware fault. The long teardown below (cabling, headstages, DMM, ports) was a false trail — but it proved the hardware healthy.
 >
-> **How to read this page.** §0–§2 = what we built and what's failing. §3–§7 = the evidence and what's been ruled out. §9 = the **multimeter (DMM) test plan** that settles it next. See the big picture in [[01-infrastructure/system-overview]].
+> **How to read this page.** Status banner = the answer. §0–§2 = what we built. §3–§7 = the (false-trail) hardware evidence. §8 = the **working Allego config + channel map**. §9–§11 = the DMM plan + unsent escalation emails, kept for the record. Software how-to: [[radiens-software-reference]]. Big picture: [[01-infrastructure/system-overview]].
 
 > [!success] STATUS: RESOLVED — headstage detected (2026-06-19) — root cause = wrong Allego system mode
 > **Headstage enumerates: `port_num_channels = {<Port.D: 3>: 32}`, `priSigs=32`, `mode=XDAQ_ONE_REC`, streaming shows signal.** Root cause was NOT hardware — Allego was in the wrong **system mode** (`SMARTBOX_PRO`). Correct mode = **"XDAQ One (G1) with XR Headstage"** (`XDAQ_ONE_REC`). Hardware was healthy the whole time (DMM 3.56 V, both headstages, both SAdpt, all ports). **Escalation emails (§11) NOT sent — no RMA needed.** The "SPI signaling fault" hypothesis was wrong: `priSigs=0` meant wrong instrument profile, not a signaling fault.
@@ -32,7 +32,7 @@ system: XDAQ Core Gen-1 (XDAQ_ONE_REC mode) + 32-ch RHD XR headstage + SAdpt-XDA
 |---|---|
 | DAQ | **XDAQ Core (Gen-1)**, "NeuroNexus X series / Powered by KONTEX", Opal Kelly USB `151f:0130` (XEM7310-A75), serial `0C006218` — see [[xdaq-core-gen1-ubuntu-driver]] |
 | Front panel | **REC & STIM HEADSTAGE**: Port 1 (HDMI, in use) + Port 3 / Port 4 (HDMI). BNC: ANALOG IN 1 / OUT 1, DIGITAL IN 1 / OUT 1. LEDs: `SYS S1 S2 S3` + `P1 P2 P3 P4`. Rear: EXP1/EXP2 (micro-HDMI), Audio Out, USB DMA, USB-PD (12 V⎓3 A, amber lit) |
-| Allego | v3.11.3, mode **SmartBox Pro Hardware**, 30 kHz |
+| Allego | v3.11.3, mode **"XDAQ One (G1) with XR Headstage"** (`XDAQ_ONE_REC`), 30 kHz — *(was wrongly set to SmartBox Pro during the block)* |
 | Headstage | Intan **C3313** RHD 16-ch bipolar — chip **`intan RHD2216 V0S22`** (confirmed genuine in photos) |
 | Electrode adapter | Intan **C3410** 36-pin electrode adapter board |
 | Splitter | Intan **C3442** RHD dual headstage adapter (1 SPI → 2 headstages; removed during isolation) |
@@ -175,6 +175,9 @@ LED note: `SYS S1 S2 S3` + `P1–P4` reported **all dark** through testing — b
 **Selection — record only the 4 signal channels per mouse:** enable `pri_0,1,2,3` (M1 EEG±/EMG±) and `pri_8,9,10,11` (M2 EEG±/EMG±). **Deselect** the 3rd pair (`pri_4,5,12,13` — wired but unused / ground) and all unwired (`pri_6,7,14…31`). The green/ground wires (`pri_5,13`) stay physically connected as the headstage GND/REF — they're functional ground, just not recorded channels.
 
 **Bipolar pairing is logical, not hardware** — on the 32-ch headstage ch0/ch1 are *separate single-ended* channels. EEG = `EEG+ − EEG−`, EMG = `EMG+ − EMG−`, computed in analysis (or a live Allego referencing/montage). Keep **CAR OFF**. Green/ground wires (`pri_5`, `pri_13`) tie to headstage GND/REF.
+
+> [!warning] No in-Allego channel rename (per manual, 2026-06-19)
+> Allego's **Signal Map is read-only** and XDAT files sort by preamp channel (`pri_N`) — you **cannot rename channels to `M1_EEGp` etc. in the GUI**. Apply these labels in **offline analysis by channel index** (this table is the source of truth), or request a custom probe map from NeuroNexus. Full detail + manual page refs: [[radiens-software-reference]].
 
 **3rd pair resolved (2026-06-19):** the 3rd pair is **wired but unused** — `pri_4`/`pri_12` (white, `2+`) carry no recorded signal; `pri_5`/`pri_13` (green, `2−`) are the animal ground. So **2 recorded signals per mouse: EEG + EMG** (4 amp channels each, 8 total).
 

@@ -41,6 +41,10 @@ Production IPs, usernames, paths, and settings.
 - [[01-infrastructure/frigate/docker-compose|Docker Compose]]
 - [[01-infrastructure/frigate/config-yml|config.yml]]
 
+**Radiens / Allego software:**
+- [[06-references/radiens-software-reference|⭐ Radiens Software — PRIMARY Reference (Allego + Videre)]] — **main software reference; embeds the full 177-page NeuroNexus manual + our load-bearing facts (mode, channel select, no in-GUI rename)**
+- [[02-procedures/first-headstage-connection|First Headstage Connection — bring-up + channel map]] ✅ resolved 2026-06-19
+
 **Hardware Sync (XDAQ GPIO):**
 - [[01-infrastructure/hardware-sync/xdaq-core-gen1-ubuntu-driver|⭐ XDAQ Core (Gen-1) — Ubuntu Driver Setup + Verified State (2026-05-29)]] — **current source of truth; supersedes Core2 assumptions below**
 - [[01-infrastructure/hardware-sync/overview|Overview & Architecture]] ⚠️ Core2-era

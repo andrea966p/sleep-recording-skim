@@ -16,6 +16,8 @@ status: complete
 > [!quote] Paper-ready
 > The session daemon interacts with the NeuroNexus Radiens acquisition system via the `radiens` Python SDK's `AllegoClient` interface, polling recording state once per second over gRPC and consuming digital-I/O channel state for hardware synchronization events.
 
+> [!info] This page = the **Python SDK**. For the **software/GUI** (Allego + Videre), the primary reference is [[radiens-software-reference]] (embeds the full 177-page NeuroNexus manual).
+
 > [!tip] Package Info
 > Package: **`radiens`** (PyPI) — **v4.0.0** installed in `/opt/neurosurveillance/venv` (verified 2026-05-27). Import: `from radiens import AllegoClient`.
 > Requires: Python 3.12+; an active Radiens license + the Radiens system (Allego) running alongside.
