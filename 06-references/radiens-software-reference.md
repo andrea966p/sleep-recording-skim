@@ -58,19 +58,22 @@ source: NeuroNexus — Radiens Technical Documentation (©2025, 177 pp)
 
 Allego can't rename channels, but you **can** load a **custom sensor** so the 8 used channels map to logical **site numbers + grouped geometry** (closest thing to labels). NeuroNexus's **`csv2sensor`** CLI builds the `.hstg` + `.prb` files from CSV.
 
-- **Tool + source CSVs** stored in `06-references/neuronexus/sensor-maps/` (`csv2sensor-linux-x86_64`, `csv2sensor-README.md`, `2mice_headstage.csv`, `2mice_probe.csv`, plus the `mouse1_*` single-mouse test pair).
-- **Output dir** (where Allego reads devices): `/home/skimlab/radix/devices/`. Generated: `hstg__usrdef_2mice.hstg`, `probe__usrdef_2mice_probe.prb`.
-- **CSV format:** headstage = `ntv_chan, site_num` (native amp channel → site); probe = `site_num, center_x, center_y, radius, shape` (+ optional `wfx/wfy` wireframe outline). No name/label column exists — identity is site number + position. csv2sensor scales positions ~÷10 (25 µm → 2.5); relative layout preserved.
+- **Tool + source CSVs** stored in `06-references/neuronexus/sensor-maps/` (`csv2sensor-linux-x86_64`, `csv2sensor-README.md`, `2mice32.csv`, `2mice32_probe.csv`, plus the `mouse1_*` single-mouse test pair).
+- **Output dir** (where Allego reads devices): `/home/skimlab/radix/devices/`. Generated: `hstg__usrdef_2mice32.hstg`, `probe__usrdef_2mice32_probe.prb`.
+- **CSV format:** headstage = `ntv_chan, site_num` (native amp channel → site); probe = `site_num, center_x, center_y, radius, shape` (+ optional `wfx/wfy` wireframe outline). No name/label column exists — identity is site number + position. csv2sensor scales positions ~÷10 (25 µm → 2.5); relative layout preserved. Output filename = `usrdef_<input-csv-name>`, so name the CSV what you want the device called.
+
+> [!warning] Gotcha — map ALL native channels of the headstage
+> csv2sensor sets headstage **size = number of CSV rows**, and native indices must be **0…(size−1)**. A partial file listing non-contiguous natives (e.g. only `0–3, 8–11` in an 8-row file) makes Allego treat `8–11` as out-of-range → every channel shows `Site Number -23` / `no-site`. **Fix:** map **all 32** native channels (used → sites 1–8, the rest → sites 9–32 parked off-grid); the probe must define all 32 sites too. Our `2mice32` files do this. (The `mouse1` 4-row file worked only because its natives `0–3` happened to be contiguous from 0.)
 
 **Regenerate:**
 
     cd 06-references/neuronexus/sensor-maps
-    ./csv2sensor-linux-x86_64 -type headstage 2mice_headstage.csv   # -> /home/skimlab/radix/devices/hstg__usrdef_2mice.hstg
-    ./csv2sensor-linux-x86_64 -type probe    2mice_probe.csv        # -> .../probe__usrdef_2mice_probe.prb
+    ./csv2sensor-linux-x86_64 -type headstage 2mice32.csv        # -> /home/skimlab/radix/devices/hstg__usrdef_2mice32.hstg
+    ./csv2sensor-linux-x86_64 -type probe    2mice32_probe.csv    # -> .../probe__usrdef_2mice32_probe.prb
 
-**Load in Allego:** Electrodes tab -> Port D -> **check "Use local devices"** -> Headstage = `usrdef_2mice`, Probe = `usrdef_2mice_probe` -> **Apply**. Then System -> Signals -> Port D -> select the 8 channels.
+**Load in Allego:** Electrodes tab -> Port D -> **check "Use local devices"** (toggle off/on to force a re-scan if a just-generated device is missing from the dropdown) -> Headstage = `Usrdef 2mice32`, Probe = `Usrdef-2mice32-Probe` -> **Apply**. Then System -> Signals -> Port D -> select **D/1,2,3,4,9,10,11,12** (= native 0–3 + 8–11).
 
-**Our 2-mice map** (validated 2026-06-19 — first M1-only, then both): native `0-3` -> sites `1-4` (M1 EEG±/EMG±), native `8-11` -> sites `5-8` (M2 EEG±/EMG±); M2 is the same 4-site pattern offset into a second group. Full site/signal table: [[first-headstage-connection]] §8.1.
+**Our 2-mice map** (built 2026-06-19; M1-only test first, then full-32): native `0-3` -> sites `1-4` (M1 EEG±/EMG±), native `8-11` -> sites `5-8` (M2 EEG±/EMG±), other 24 natives parked at sites `9-32`. Full site/signal table: [[first-headstage-connection]] §8.1.
 
 ## Section map (jump into the embedded PDF by page)
 
