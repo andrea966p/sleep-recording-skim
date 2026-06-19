@@ -163,20 +163,20 @@ LED note: `SYS S1 S2 S3` + `P1–P4` reported **all dark** through testing — b
 | `pri_1` | `M1_EEG−` | EEG − | Black | Black |
 | `pri_2` | `M1_EMG+` | EMG + | Yellow | Yellow |
 | `pri_3` | `M1_EMG−` | EMG − | Blue | Orange |
-| `pri_4` | `M1_AUX+` | 3rd pair + | White | Brown |
-| `pri_5` | `M1_GND` | ground (3rd −) | green | green |
+| `pri_4` | `M1_unused` | 3rd pair + — **wired but unused** | White | Brown |
+| `pri_5` | `M1_GND` | ground (3rd −), wired | green | green |
 | `pri_8` | `M2_EEG+` | EEG + | Red | Red |
 | `pri_9` | `M2_EEG−` | EEG − | Black | Black |
 | `pri_10` | `M2_EMG+` | EMG + | Yellow | Yellow |
 | `pri_11` | `M2_EMG−` | EMG − | Blue | Orange |
-| `pri_12` | `M2_AUX+` | 3rd pair + | White | Brown |
-| `pri_13` | `M2_GND` | ground (3rd −) | green | green |
+| `pri_12` | `M2_unused` | 3rd pair + — **wired but unused** | White | Brown |
+| `pri_13` | `M2_GND` | ground (3rd −), wired | green | green |
 
-**Selection:** enable only `pri_0–5` (M1) and `pri_8–13` (M2); **deselect** `pri_6, pri_7, pri_14…pri_31` (not wired).
+**Selection — record only the 4 signal channels per mouse:** enable `pri_0,1,2,3` (M1 EEG±/EMG±) and `pri_8,9,10,11` (M2 EEG±/EMG±). **Deselect** the 3rd pair (`pri_4,5,12,13` — wired but unused / ground) and all unwired (`pri_6,7,14…31`). The green/ground wires (`pri_5,13`) stay physically connected as the headstage GND/REF — they're functional ground, just not recorded channels.
 
 **Bipolar pairing is logical, not hardware** — on the 32-ch headstage ch0/ch1 are *separate single-ended* channels. EEG = `EEG+ − EEG−`, EMG = `EMG+ − EMG−`, computed in analysis (or a live Allego referencing/montage). Keep **CAR OFF**. Green/ground wires (`pri_5`, `pri_13`) tie to headstage GND/REF.
 
-> [!todo] Open: 3rd pair (`pri_4`/`pri_5`, white/green). PDF labels `2+`/`2−` with `2−` = ground; `pri_4` (`2+`, white) has no signal label. Confirm at the rig whether `pri_4` carries a real signal (e.g. a 2nd EEG/reference lead) or is unused before finalizing labels.
+**3rd pair resolved (2026-06-19):** the 3rd pair is **wired but unused** — `pri_4`/`pri_12` (white, `2+`) carry no recorded signal; `pri_5`/`pri_13` (green, `2−`) are the animal ground. So **2 recorded signals per mouse: EEG + EMG** (4 amp channels each, 8 total).
 
 ---
 
