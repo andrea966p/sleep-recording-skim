@@ -95,6 +95,7 @@ Allego can't rename channels, but you **can** load a **custom sensor** so the 8 
 ---
 
 ## Related
+- [[signal-mapping-guide]] — ⭐ step-by-step signal-mapping guide for any operator (real-world ↔ Allego, EEG/EMG, csv2sensor)
 - [[first-headstage-connection]] — bring-up + §8.1 channel map (the rename workaround)
 - [[radiens-api-reference]] — the Python `AllegoClient` SDK (sits on top of this software)
 - [[xdaq-core-gen1-ubuntu-driver]] — device/driver layer beneath Allego

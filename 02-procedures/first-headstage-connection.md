@@ -152,6 +152,9 @@ LED note: `SYS S1 S2 S3` + `P1–P4` reported **all dark** through testing — b
 3. **Signal Processing** tab → **Common Average Reference / software referencing OFF** (bipolar montage; CAR would cross-contaminate the +/− pairs). *(Confirm exact toggle label on screen — record in run log.)*
 4. **Monitor** view → watch channels. Expect saturation/hum this round (GND skipped) — that's fine.
 
+> [!tip] Doing your own mapping? Follow the step-by-step
+> For a plain-language, operator-friendly walkthrough of signal mapping (real-world ↔ Allego, EEG/EMG, csv2sensor, verification), use [[signal-mapping-guide]]. The table below is this rig's specific result.
+
 ### 8.1 Channel map (2 mice on one 32-ch headstage) — per `~/Downloads/wiring 2 mice.pdf`
 
 > [!info] Physical map is fixed by the solder; this is the **Allego label/select** step
