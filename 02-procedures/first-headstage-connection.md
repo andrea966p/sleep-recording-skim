@@ -8,8 +8,8 @@ tags:
   - intan
   - first-light
 created: 2026-06-18
-status: blocked
-system: XDAQ Core Gen-1 + RHD2216 (C3313) + SAdpt-XDAQ-OM12 + C3026
+status: resolved
+system: XDAQ Core Gen-1 (XDAQ_ONE_REC mode) + 32-ch RHD XR headstage + SAdpt-XDAQ-OM12 + C3026
 ---
 
 # First Headstage Connection — Mouse → Intan/XDAQ → Allego (Bring-up & Troubleshooting)
@@ -147,10 +147,36 @@ LED note: `SYS S1 S2 S3` + `P1–P4` reported **all dark** through testing — b
 > [!danger] Use `Stream`, not `Record`, for checks
 > Allego **`Record` drives our session daemon** → starts a Frigate video session (same path as a real Radiens R_ON). For a connection check use **`Stream` only**.
 
-1. **Dashboard → System** view. Mode = **SmartBox Pro Hardware**, **30000** sample rate (1 k–30 kHz range). Port-status (bottom bar) green = port in use.
-2. **Probe/electrode mapping** → **Passthrough** / generic `default_…` wireframe — **NOT** a geometric probe layout (our wiring is a custom 1:1 solder map).
-3. **Signal Processing** tab → **Common Average Reference / software referencing OFF** (RHD2216 is bipolar; CAR would cross-contaminate channels). *(Confirm exact toggle label on screen — record in run log.)*
+1. **Dashboard → System** view. Mode = **"XDAQ One (G1) with XR Headstage"** (`XDAQ_ONE_REC`) — **NOT** SmartBox Pro (that reports `priSigs=0`). **30000** sample rate (mode-switch resets it to 1000 — restore 30 kHz). Port-status (bottom bar) green = port in use.
+2. **Probe/electrode mapping** → **Passthrough** (`hstg__passthrough_32`, identity 1:1) — **NOT** a geometric probe layout (our wiring is a custom 1:1 solder map). Verified loaded: `headstage_id='hstg__passthrough_32'`, native names `pri_0…pri_31`.
+3. **Signal Processing** tab → **Common Average Reference / software referencing OFF** (bipolar montage; CAR would cross-contaminate the +/− pairs). *(Confirm exact toggle label on screen — record in run log.)*
 4. **Monitor** view → watch channels. Expect saturation/hum this round (GND skipped) — that's fine.
+
+### 8.1 Channel map (2 mice on one 32-ch headstage) — per `~/Downloads/wiring 2 mice.pdf`
+
+> [!info] Physical map is fixed by the solder; this is the **Allego label/select** step
+> The detected headstage is the **32-channel** type (`passthrough_32` → 32 ch on Port D). Each mouse uses **6 single-ended channels = three bipolar pairs**. Allego native channel `pri_N` = headstage labeled channel **N** (passthrough is identity). Channel **naming is GUI-only** — the Radiens SDK `ChannelMetadata.table` exposes `chan_name` read-only, no setter; do it in the Allego channel table.
+
+| Native | Suggested label | Signal | Tether wire | Slip-ring wire |
+|---|---|---|---|---|
+| `pri_0` | `M1_EEG+` | EEG + | Red | Red |
+| `pri_1` | `M1_EEG−` | EEG − | Black | Black |
+| `pri_2` | `M1_EMG+` | EMG + | Yellow | Yellow |
+| `pri_3` | `M1_EMG−` | EMG − | Blue | Orange |
+| `pri_4` | `M1_AUX+` | 3rd pair + | White | Brown |
+| `pri_5` | `M1_GND` | ground (3rd −) | green | green |
+| `pri_8` | `M2_EEG+` | EEG + | Red | Red |
+| `pri_9` | `M2_EEG−` | EEG − | Black | Black |
+| `pri_10` | `M2_EMG+` | EMG + | Yellow | Yellow |
+| `pri_11` | `M2_EMG−` | EMG − | Blue | Orange |
+| `pri_12` | `M2_AUX+` | 3rd pair + | White | Brown |
+| `pri_13` | `M2_GND` | ground (3rd −) | green | green |
+
+**Selection:** enable only `pri_0–5` (M1) and `pri_8–13` (M2); **deselect** `pri_6, pri_7, pri_14…pri_31` (not wired).
+
+**Bipolar pairing is logical, not hardware** — on the 32-ch headstage ch0/ch1 are *separate single-ended* channels. EEG = `EEG+ − EEG−`, EMG = `EMG+ − EMG−`, computed in analysis (or a live Allego referencing/montage). Keep **CAR OFF**. Green/ground wires (`pri_5`, `pri_13`) tie to headstage GND/REF.
+
+> [!todo] Open: 3rd pair (`pri_4`/`pri_5`, white/green). PDF labels `2+`/`2−` with `2−` = ground; `pri_4` (`2+`, white) has no signal label. Confirm at the rig whether `pri_4` carries a real signal (e.g. a 2nd EEG/reference lead) or is unused before finalizing labels.
 
 ---
 
