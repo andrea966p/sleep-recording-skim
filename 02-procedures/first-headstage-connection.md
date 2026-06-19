@@ -21,8 +21,8 @@ system: XDAQ Core Gen-1 + RHD2216 (C3313) + SAdpt-XDAQ-OM12 + C3026
 >
 > **How to read this page.** §0–§2 = what we built and what's failing. §3–§7 = the evidence and what's been ruled out. §9 = the **multimeter (DMM) test plan** that settles it next. See the big picture in [[01-infrastructure/system-overview]].
 
-> [!danger] STATUS: BLOCKED — SPI signaling fault, escalate vendor (2026-06-19)
-> `port_num_channels = {}`; `priSigs=0` on all ports. **DMM = 3.56 V at headstage VDD↔GND (validated, on-pad) → bus power GOOD, fault is SPI signaling.** Eliminated: 2 headstages, 2 C3026, old+new SAdpt, Ports 1+3, power rail. Remaining = **XDAQ core SPI subsystem** OR **SAdpt-XDAQ-OM12 pinout mismatch for Gen-1**. Bench isolation exhausted → **escalate Kontex/KC** (evidence §10). Optional last retry: Port 4 + 3-min firmware-boot wait.
+> [!success] STATUS: RESOLVED — headstage detected (2026-06-19) — root cause = wrong Allego system mode
+> **Headstage enumerates: `port_num_channels = {<Port.D: 3>: 32}`, `priSigs=32`, `mode=XDAQ_ONE_REC`, streaming shows signal.** Root cause was NOT hardware — Allego was in the wrong **system mode** (`SMARTBOX_PRO`). Correct mode = **"XDAQ One (G1) with XR Headstage"** (`XDAQ_ONE_REC`). Hardware was healthy the whole time (DMM 3.56 V, both headstages, both SAdpt, all ports). **Escalation emails (§11) NOT sent — no RMA needed.** The "SPI signaling fault" hypothesis was wrong: `priSigs=0` meant wrong instrument profile, not a signaling fault.
 
 ---
 
@@ -118,7 +118,7 @@ LED note: `SYS S1 S2 S3` + `P1–P4` reported **all dark** through testing — b
 - **SPI connector self-aligning/polarized** (Omnetics PZN-12), signals pass straight through to an inverted connector → cable is symmetric, **cannot be mis-mated**. Orientation ruled out. (Same doc, p4–5.)
 - **Dual-adapter (C3442) termination:** two headstages' R1/R2/R3 parallel to 50 Ω → only **corrupts data on >6 ft** cables; 6 ft with both headstages tested fine by Intan. Our single bare headstage = correct 100 Ω. **Ruled out.** (Intan *RHD Dual Headstage Adapter*, p3.)
 - **Kontex CORE2:** "**Always use Port 1**, as other ports may be unavailable depending on the license." Firmware mode **boots when prompted by software — "may take a few minutes"**, then the mode LED lights; **P1–P4 light only after the headstage is detected.** Troubleshooting: "verify an XR-type headstage is connected; restart the app or rescan ports." (docs.kontex.io/XDAQ/CORE2)
-- **Radiens SDK:** `AllegoClient` exposes `get_status, get_available_sensors, set_sensor, set_sampling_freq, set_streaming, set_recording, restart, signal_metrics, …` — **no system-mode switch or rescan**; mode is fixed at Allego launch. Log shows `IntanUSB3Instrument`+`SMARTBOX_PRO` scanning RHD ports ⇒ **SmartBox Pro is the correct mode** (USB3 backend driving the XDAQ). **Intan RHD USB2** mode = legacy USB2 eval board (not our hardware) — do not use.
+- **Radiens SDK:** `AllegoClient` exposes `get_status, get_available_sensors, set_sensor, set_sampling_freq, set_streaming, set_recording, restart, signal_metrics, …` — **no system-mode switch or rescan**; mode is fixed at Allego launch. Log shows `IntanUSB3Instrument`+`SMARTBOX_PRO` scanning RHD ports. **⚠️ CORRECTION 2026-06-19: SmartBox Pro was the WRONG mode** — it shares the `IntanUSB3Instrument` USB3 backend (so it connects + scans + enumerates GPIO), but the headstage profile is wrong, so it reports `priSigs=0`. **Correct mode for this unit = "XDAQ One (G1) with XR Headstage" (`XDAQ_ONE_REC`)** — selecting it gave instant detection (32 ch on Port D). The mode list visible in early logs (SMARTBOX_PRO / INTAN_USB2 / KPI) was incomplete — it only showed modes that had *ever been selected*; `XDAQ_ONE_REC` wasn't there until first chosen. **Intan RHD USB2** mode = legacy USB2 eval board (not our hardware) — confirmed wrong (`raklib::cmd1 API error: Device not connected`).
 
 ---
 
@@ -196,7 +196,11 @@ If DMM/spare confirm a hardware fault, send to KC Kong / Kontex:
 
 ---
 
-## 11. Escalation emails — ready to send (2026-06-19)
+## 11. Escalation emails — ⛔ NOT SENT (issue resolved 2026-06-19)
+
+> [!success] DO NOT SEND — root cause was wrong Allego mode, not hardware. Kept for the record only. Headstage detected fine in `XDAQ_ONE_REC` mode. No RMA, no vendor escalation needed.
+
+
 
 > [!note] Two emails, split by ownership. **NeuroNexus** = Allego/Radiens software, license, SAdpt-XDAQ-OM12 adapter, RHD2216 headstage. **Kontex** (`KC@kontex.io`) = XDAQ Core hardware + SPI-over-HDMI subsystem + Linux RHX build. Q2 (SAdpt Gen-1 compatibility) is in **both** on purpose — whoever owns the adapter answers fastest.
 
@@ -287,7 +291,8 @@ Andrea
 - **2026-06-19** — Moved SAdpt to **front-panel Port 3**, streaming → `{}`, `priSigs=0`. Not Port-1-specific.
 - **2026-06-19 — DMM (HARDEN 661002, V⎓ 20 range) at headstage VDD↔GND, streaming = `3.56 V` (validated).** Probe rests at 0, jumps to 3.56 on pad contact — real reading, top of Intan 3.2–3.6 V spec. *(First attempt misread an air-float phantom 3.33 V with probes open; the cheap DMM drifts near 3.3 V on open DC leads — disregard that, 3.56 on-pad is the real datum.)* Bus power PRESENT → "no power" hypothesis dead; fault is **SPI signaling**, not the rail.
 - **2026-06-19** — **Port 4** + 3-min firmware-boot wait + **Allego restart** → `{}`, `priSigs=0`. Patience + all 3 HDMI ports (1/3/4) exhausted.
-- **2026-06-19 CONCLUSION:** power good + 2 headstages + 2 C3026 + 2 SAdpt + 2 ports all `priSigs=0`, plus Port 4 + 3-min wait + Allego restart also `0` ⇒ fault is **XDAQ core SPI signaling subsystem** OR **SAdpt-XDAQ-OM12 pinout mismatch for Gen-1 core**. Bench isolation FULLY exhausted (all 3 HDMI ports + patience + restart) → escalate Kontex/KC. Email drafted, ready to send.
+- **2026-06-19 ✅ RESOLVED** — switched Allego system mode from `SMARTBOX_PRO` → **"XDAQ One (G1) with XR Headstage"** (`XDAQ_ONE_REC`). Headstage immediately detected: `port_num_channels={<Port.D:3>:32}`, `priSigs=32`, `portD=32`, streaming shows signal. **Root cause = wrong instrument profile, NOT hardware.** All prior hardware suspicion (SPI fault, SAdpt, XDAQ port) was a false trail — `priSigs=0` is what SMARTBOX_PRO reports when the actual hardware is an XDAQ One G1 + XR headstage. Lesson: SMARTBOX_PRO *connects* (IntanUSB3Instrument backend shared) and scans, but reports 0 because the headstage profile is wrong — controller-connects ≠ correct-mode. Kontex's "verify an XR-type headstage" hint pointed here.
+- ~~**2026-06-19 CONCLUSION (SUPERSEDED — was wrong, see RESOLVED above):**~~ power good + 2 headstages + 2 C3026 + 2 SAdpt + 2 ports all `priSigs=0`, plus Port 4 + 3-min wait + Allego restart also `0` ⇒ fault is **XDAQ core SPI signaling subsystem** OR **SAdpt-XDAQ-OM12 pinout mismatch for Gen-1 core**. Bench isolation FULLY exhausted (all 3 HDMI ports + patience + restart) → escalate Kontex/KC. Email drafted, ready to send.
 - _<exact CAR/referencing toggle label, once a headstage enumerates>_ —
 
 ---

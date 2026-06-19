@@ -22,6 +22,17 @@ status: complete
 > Docs: <https://neuronexus.github.io/intro.html> · <https://nnx.mcoutput.com/1376106/Content/Home-Radiens.htm>
 > (Earlier vault revisions called this `radiens-core` / `from radiens_core import …` — that was wrong; the package is `radiens`.)
 
+> [!important] Verified live against the installed SDK (2026-06-19) — supersedes stale names below
+> Introspected `AllegoClient` on the running system. **Correct system mode for our hardware** (XDAQ Core Gen-1 + Intan RHD2216 **XR-type** headstage) = **`SystemMode.XDAQ_ONE_REC`** — the Allego UI label is **"XDAQ One (G1) with XR Headstage"**. Using `SMARTBOX_PRO` reports `priSigs=0` (wrong headstage profile, even though it connects + scans); `INTAN_USB2` = legacy eval board, errors `raklib::cmd1 API error: Device not connected`. See [[first-headstage-connection]] for the full bring-up.
+>
+> **Actual method names** (the tables further down use older/aspirational names — these are what v4.0.0 exposes): `get_status`, `get_signals`, `signal_metrics`, `get_channel_metadata`, `get_available_sensors`, `set_sensor`, `set_sampling_freq`, `set_streaming`, `set_recording`, `set_recording_config`, `get_digital_out_states`, `set_digital_out_manual`, `set_analog_out_high_pass`, `set_stim_params`, `restart`, `spikes`, `spike_sorter`, `workspace`.
+>
+> **Status object** = `AllegoState`: `.system_mode` (→ `SystemMode.XDAQ_ONE_REC`), `.port_num_channels` (`{<Port.D:3>:32}`), `.connected`, `.recording` (`RecordingSpec(mode='R_OFF'|'R_ON', …)`), `.stream` (`StreamSpec(mode='S_ON'|'S_OFF', time_range, hw_mem_level)`), `.sample_freq`, `.cable_delay_spec` (per-port auto cable-delay; a non-zero `delay` with `is_auto=True` confirms a real headstage SPI handshake).
+>
+> **Detection probe (headless):** `python -c "from radiens import AllegoClient; print(AllegoClient().get_status().port_num_channels)"` → `{<Port.D:3>:32}` when detected, `{}` when not.
+>
+> **Signal samples:** `get_signals()` returns `(ndarray[channels×samples], list)` but the headless slice often returns **0 samples** (the cache is bound to the GUI cache head) — for live signal-quality (RMS/hum/saturation) use the Allego **Monitor** view, not a headless pull. `get_status().stream.time_range` advancing + low `hw_mem_level` confirms data is flowing.
+
 ## Key Methods for Hardware Sync
 
 ### Digital Output Control

@@ -105,6 +105,9 @@ s = AllegoClient().get_status()
 
 **Where to check in the UI:** **System tab** → system = SmartBox Pro, ports A–H = "no headstage". Empty ports are expected with no animal connected.
 
+> [!warning] Mode correction for HEADSTAGE detection (2026-06-19)
+> The `SMARTBOX_PRO` mode above is fine for verifying the **device/USB driver** (the XDAQ core enumerates over USB in any mode), but it is the **WRONG mode for detecting an Intan RHD headstage** — it reports `priSigs=0` / `port_num_channels={}` even with a headstage connected. The correct mode for this unit is **`SystemMode.XDAQ_ONE_REC`** — Allego UI label **"XDAQ One (G1) with XR Headstage"**. In that mode the RHD2216 enumerates immediately (`{<Port.D:3>:32}`, `priSigs=32`). So the `port_num_channels={}` row above means "no headstage **or** wrong mode" — confirm the mode before concluding a port is empty. Full story: [[first-headstage-connection]]. Caveat: switching modes reset `sample_freq` to 1000 Hz — restore 30 kHz.
+
 > [!tip] Digital-out control is programmable (relevant to the sync gate)
 > `get_digital_out_states()` returned `{'digital_outs_mode': 'GATED', 'states': [{chan 0: False}, {chan 1: False}]}` — DOs are **already in GATED mode**, and the API exposes `get_digital_out_states()` / `set_digital_out_manual()`. So the recording-gate signal can be **driven and read from Python**, not just measured on a DMM. Note: only **2** DO channels appeared via this API (chan_idx 0,1) — this may differ from the Core2's 6 DB25 DOs; map chan_idx → physical pin before wiring.
 
