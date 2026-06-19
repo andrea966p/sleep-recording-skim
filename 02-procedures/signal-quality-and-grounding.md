@@ -1,0 +1,137 @@
+---
+tags:
+  - procedure
+  - radiens
+  - allego
+  - signal-quality
+  - grounding
+  - eeg
+  - emg
+  - onboarding
+created: 2026-06-19
+status: complete
+---
+
+# Signal Quality & Grounding — Is the Signal Good Enough to Record?
+
+> [!abstract] TL;DR — for non-technical readers
+> **What this is.** A plain guide to two things you do *after* the channels are mapped: (1) connect the **ground** properly, and (2) **look at the live signal** and decide whether it's good enough to start real recordings.
+>
+> **Why it exists.** Two mice are wired into **one** Intan headstage — which Intan never designed for. So we don't assume it works; we **look at the actual signal and decide.** This page tells you exactly what to look at, what "good" vs "bad" looks like, and the order to do things.
+>
+> **How to read this page.** Do the steps top to bottom. §1 = a quick selection trap to avoid. §2 = the grounding fix (the big one). §3 = how to judge the signal. §4 = the decision. Maps first: [[signal-mapping-guide]]. Software: [[radiens-software-reference]].
+
+---
+
+## The short version (if you read nothing else)
+
+1. **Select the right channels** — with our custom map, pick **sites 1–8** (not 1–4 + 9–12). See §1.
+2. **Fix the ground** — the green animal-ground wire must go to the board's **GND pad**, not a signal pad. See §2. *This is almost certainly why the signal looks noisy/flat-topped right now.*
+3. **Then look at the signal** the right way — differences of pairs, not single wires — and check the two mice don't bleed into each other. See §3–§4.
+
+---
+
+## 1. First, a selection trap (sites vs. channel numbers)
+
+When you load our custom sensor (`2mice32`), Allego **renumbers** the channel chips in the System tab by **site number**, not by the headstage's own channel number. That changes which chips you tick:
+
+| Mouse | Signal | Pick this **site** | (headstage native ch) |
+|---|---|---|---|
+| 1 | EEG +/−, EMG +/− | **1, 2, 3, 4** | 0,1,2,3 |
+| 2 | EEG +/−, EMG +/− | **5, 6, 7, 8** | 8,9,10,11 |
+
+> [!warning] The mistake to avoid
+> Mouse 2 is on **sites 5–8** — **not** 9–12. Sites 9–32 are the **unused/parked** channels. If you tick `1,2,3,4,9,10,11,12` (the habit from the plain "passthrough" numbering), you record **Mouse 1 plus junk**, and **Mouse 2 never streams**. Always pick the contiguous block **sites 1–8**.
+> *(How to tell it went wrong: the Signal Metrics or a quick check shows Mouse 2's channels reading exactly 0.)*
+
+---
+
+## 2. Grounding — the one connection that makes or breaks the signal
+
+### What "ground" does, in one sentence
+The amplifier can only see voltages in a narrow window (about ±5 millivolts). If the **animal isn't connected to the headstage's ground**, the whole animal "floats" and drifts out of that window — so the traces **slam to the top/bottom (saturate)** and pick up big wall-power hum. Connecting the animal to ground holds it in the window.
+
+### Our chip needs GND, but NOT a reference electrode
+- Our headstage chip is the **RHD2216**, which is a **bipolar** chip: every channel already measures the **difference** between its own `+` and `−` wire. Each pair is its own reference.
+- Because of that, the RHD2216 has **no "reference electrode" input** (that `ref_elec` pad only exists on the *unipolar* RHD2132). **So the adapter's `REF` pad is not used — leave it unconnected.** *(Confirmed in the Intan RHD2000 datasheet.)*
+- What it **does** need is **GND** — the animal tied to the chip's ground.
+
+### The fix (the "GND bridge")
+- The adapter board (Intan **C3410**) has dedicated **`REF`** and **`GND`** pads, separate from the numbered signal pads.
+- Right now the **green animal-ground wire is soldered to signal pad 5** — that's an amplifier **input**, not ground. So the animal is **not actually grounded**.
+- **→ Move the green ground wire from signal pad 5 to the `GND` pad.** One good animal-ground connection per setup. Leave `REF` empty.
+
+> [!note] How we know grounding is the problem right now
+> Live metrics (2026-06-19) on Mouse 1: EEG+ and EMG+ read a sensible ~60–100 µV, but **EMG− was pegged at ~11.6 mV peak-to-peak — slammed against the rail** — and the green "ground" channel itself was railing. A railing channel that should be ground = the classic "animal is floating" signature. Expect this to calm down once the green wire is on the real `GND` pad.
+
+---
+
+## 3. How to look at the signal (the right way)
+
+> Stream (don't Record) while you do this. **Record** starts a real session + video.
+
+### a) Look at *differences*, not single wires
+Your real signals are **pairs**:
+- **EEG** = EEG+ minus EEG− (Mouse 1: sites 1 minus 2)
+- **EMG** = EMG+ minus EMG− (Mouse 1: sites 3 minus 4)
+
+A single wire on its own carries a lot of shared junk (hum, drift). Subtracting the pair cancels that junk and leaves the real brain/muscle signal. In Allego: **Signal Processing → Reference Types → Paired Reference** — set the `−` channel as the reference for its `+` partner. *(Manual p70.)* A healthy pair gets much cleaner after subtraction.
+
+### b) Check for saturation (the deal-breaker)
+In **Monitor**, no wired channel should sit **flat against the top or bottom** of its lane. Flat-topped = saturated = unusable (and usually a grounding problem). After the GND fix, the traces should sit in the middle and wiggle.
+
+### c) Check the wall-power hum (50 Hz in Korea)
+Turn on the **50 Hz notch** (Signal Processing) or look at the frequency view. A little hum is normal; a giant 50 Hz that buries the signal means grounding/shielding still needs work.
+
+### d) Check the signals are real (a gentle nudge test)
+- **EMG**: lightly move the animal (or the EMG lead) → the EMG trace should jump.
+- **EEG**: slower, smaller waves that change with sleep/wake.
+If a channel reacts to the *right* stimulus, it's wired to what you think it is.
+
+### e) The two-mice question — check for cross-talk
+This is the whole reason the professor said "look first." Because both animals share one headstage and one ground, **one mouse's signal can leak into the other's channels.**
+- With both mice grounded and streaming, **nudge Mouse 1 only** and watch **Mouse 2's** four channels.
+- **No reaction on Mouse 2** = good, the animals are independent.
+- **Mouse 2 echoes Mouse 1** = they're coupled through the shared headstage → the two-mice setup isn't clean.
+
+---
+
+## 4. The decision
+
+Do it in this order — each step unblocks the next:
+
+1. **Select sites 1–8** (so both mice actually stream). §1
+2. **Move the green wire to the `GND` pad** (so the animal is grounded). §2
+3. **Re-look at the signal** — differences of pairs, no saturation, hum under control. §3a–d
+4. **Run the cross-talk nudge test.** §3e
+
+**Then decide:**
+- Pairs look clean, no saturation, manageable hum, **and** the mice don't bleed into each other → **good to record.**
+- Mice cross-talk, or channels still saturate after grounding → the one-headstage-two-mice idea doesn't hold; options are separate grounds, or one headstage per mouse. Bring this back to the professor with the specific finding.
+
+> [!important] Don't judge too early
+> You **cannot** fairly judge the two-mice setup while channels are saturating from a missing ground — the saturation hides everything. Ground first, *then* evaluate.
+
+---
+
+## Appendix — reading the signal numbers without the GUI (optional, technical)
+
+You can pull per-channel quality numbers headless via the Radiens Python SDK (`signal_metrics().get_metrics(...)`), which returns RMS, noise, peak-to-peak, and SNR per channel.
+
+> [!bug] SDK quirk (radiens 4.0.0 + NumPy 2.x)
+> `get_metrics()` crashes with `module 'numpy' has no attribute 'NAN'` because the SDK uses the old `np.NAN` (removed in NumPy 2.x). Work around it by shimming before the call:
+> ```python
+> import numpy as np
+> if not hasattr(np, "NAN"): np.NAN = np.nan
+> from radiens import AllegoClient
+> sm = AllegoClient().signal_metrics().get_metrics(time_range=2.0, plot=False)
+> # sm.val is shape (1, 32, 6); columns = RMS, NOISE_UV, MAX_MIN_DIFF_ABS, SNR, EVENT_RATE, EVENT_MEAN
+> ```
+> Peak-to-peak (`MAX_MIN_DIFF_ABS`) near ~10–12 mV = a railed/saturated channel.
+
+---
+
+## Related
+- [[signal-mapping-guide]] — map channels to electrodes first (sites, EEG/EMG, csv2sensor)
+- [[radiens-software-reference]] — Allego/Videre reference (referencing p70, manual embedded)
+- [[first-headstage-connection]] — bring-up + this rig's channel map

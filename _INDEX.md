@@ -45,6 +45,7 @@ Production IPs, usernames, paths, and settings.
 - [[06-references/radiens-software-reference|⭐ Radiens Software — PRIMARY Reference (Allego + Videre)]] — **main software reference; embeds the full 177-page NeuroNexus manual + our load-bearing facts (mode, channel select, no in-GUI rename)**
 - [[02-procedures/first-headstage-connection|First Headstage Connection — bring-up + channel map]] ✅ resolved 2026-06-19
 - [[02-procedures/signal-mapping-guide|⭐ Signal Mapping Guide — which channel is which electrode (EEG/EMG, step-by-step for any operator)]]
+- [[02-procedures/signal-quality-and-grounding|⭐ Signal Quality & Grounding — fix the ground, then decide if the signal is good enough to record]]
 
 **Hardware Sync (XDAQ GPIO):**
 - [[01-infrastructure/hardware-sync/xdaq-core-gen1-ubuntu-driver|⭐ XDAQ Core (Gen-1) — Ubuntu Driver Setup + Verified State (2026-05-29)]] — **current source of truth; supersedes Core2 assumptions below**

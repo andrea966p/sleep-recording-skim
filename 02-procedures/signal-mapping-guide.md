@@ -232,6 +232,9 @@ Output (named `usrdef_<your-csv-name>`) lands in **`/home/skimlab/radix/devices/
 
 You should end with **8 selected channels** (4 per mouse).
 
+> [!warning] Sites vs. channel numbers — easy mistake after loading a custom map
+> Once a **custom sensor** (e.g. `2mice32`) is loaded, the channel chips are labeled by **site number**, not the headstage's native number. So Mouse 2 is on **sites 5,6,7,8** — **not** 9–12 (sites 9+ are the unused/parked channels). Select the contiguous block **sites 1–8** to get both mice. Picking `1,2,3,4,9,10,11,12` (the plain-passthrough habit) records Mouse 1 + junk and **Mouse 2 never streams**. See [[signal-quality-and-grounding]] §1.
+
 ![[sigmap-fig1-channel-select.png]]
 *Figure 3 — System tab → Signals → Port D. Each chip (`D/1, D/2 …`) is one channel; the `×` removes it. The drop-down checklist (**Select More**) is where you tick exactly the channels you use. Remember `D/1` = native `0` = your first electrode. Here Port D has 32 available channels; you keep only the 8 wired ones.*
 
@@ -311,6 +314,7 @@ Because both mice share **one** headstage, there is **one** sensor file covering
 ---
 
 ## Related
+- [[signal-quality-and-grounding]] — next step after mapping: grounding + judging if the signal is good enough to record
 - [[radiens-software-reference]] — main Allego/Radiens software reference (embeds the full manual; `csv2sensor` section)
 - [[first-headstage-connection]] — first-rig bring-up + our exact channel map (§8.1)
 - [[radiens-api-reference]] — the Python SDK (read-only `get_channel_metadata` etc.)
