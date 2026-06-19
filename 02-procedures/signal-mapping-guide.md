@@ -72,6 +72,12 @@ The **site number** is whatever *you* decide when you build a custom map (see §
 ## 2. Before you start (prerequisites)
 
 1. **Headstage is detected.** In Allego's **System** tab, your port (usually **Port D**) shows a channel count (e.g. `32`), not `0`. If it shows `0`, fix detection first — see [[first-headstage-connection]] (most common cause: wrong **Mode** — it must be **"XDAQ One (G1) with XR Headstage"**, not "SmartBox Pro").
+
+![[sigmap-fig0-mode-dropdown.png]]
+*Figure 0 — The **Mode** dropdown (top of System tab). For our XDAQ Core Gen-1 + XR headstage the correct entry is **"XDAQ One (G1) with XR Headstage"** (highlighted). Sample Rate beside it should read **30000**.*
+
+> [!warning] "One" vs "Core" naming trap
+> Our hardware chassis is badged **XDAQ Core**, but the **mode that actually detects the headstage is "XDAQ One (G1) with XR Headstage"** — *not* "XDAQ Core (G1)…", even though that also exists in the list. Pick the mode that **detects** (channel count > 0 / `priSigs > 0`), not the one whose name matches the chassis label. `XSR` = a different headstage type; we use **`XR`**.
 2. **You are streaming** (click **STREAM**, not **RECORD** — `RECORD` starts a real session + video).
 3. **You have your wiring sheet** — the piece of paper (or PDF) that says which electrode wire went to which pad. You cannot map without it. If you don't have one, make one *before* you ever put the animal on (you can't recover it afterwards).
 
@@ -210,6 +216,12 @@ Output (named `usrdef_<your-csv-name>`) lands in **`/home/skimlab/radix/devices/
 5. **Probe** dropdown → choose your probe file (e.g. `Usrdef-2mice32-Probe`).
 6. Click **Apply**. The wireframe picture should redraw as your layout (two clusters, one per mouse).
 
+![[sigmap-fig2-headstage-dropdown.png]]
+*Figure 1 — Electrodes tab, Headstage dropdown open with **"Use local devices"** ticked (blue check). Your custom files (e.g. `Usrdef mouse1`) appear alongside the built-in `Passthrough …` entries. Pick yours here, then pick the matching Probe.*
+
+![[sigmap-fig3-electrodes-loaded.png]]
+*Figure 2 — After **Apply** with the 2-mice sensor loaded: Headstage = `Usrdef 2mice`, Probe = `Usrdef-2mice-Probe`. The wireframe (bottom) now shows two clusters — the left filled cluster is Mouse 1's selected sites, the right outlined cluster is Mouse 2. This visual grouping is the payoff of a custom map.*
+
 *(Quick-map users: skip loading; leave Headstage = `Passthrough 32`, Probe = `Default-4x8`.)*
 
 ### 7.2 Select the channels you actually record (System tab)
@@ -219,6 +231,9 @@ Output (named `usrdef_<your-csv-name>`) lands in **`/home/skimlab/radix/devices/
 4. Do **not** select the ground/reference channels or unused pads.
 
 You should end with **8 selected channels** (4 per mouse).
+
+![[sigmap-fig1-channel-select.png]]
+*Figure 3 — System tab → Signals → Port D. Each chip (`D/1, D/2 …`) is one channel; the `×` removes it. The drop-down checklist (**Select More**) is where you tick exactly the channels you use. Remember `D/1` = native `0` = your first electrode. Here Port D has 32 available channels; you keep only the 8 wired ones.*
 
 ---
 
@@ -230,7 +245,16 @@ Click **Signal Map** (top of the System tab). Add the **Site Number** and **Data
 - Data Channel Index `8,9,10,11` → Site Number `5,6,7,8`
 - **No row shows `−23` / "no-site"** for your used channels, and Headstage/Probe columns are filled in.
 
+![[sigmap-fig4b-signalmap-2mice32-ok.png]]
+*Figure 4 — The **final 2-mice map, verified**. "Data Channel Index" = native channel (from 0); "Site Number" = your logical site; "Channel Name" = `pri_N` (how the data file stores it). Read the mapping: native **0,1,2,3 → sites 1,2,3,4** (Mouse 1 EEG±/EMG±) and native **8,9,10,11 → sites 5,6,7,8** (Mouse 2 EEG±/EMG±). The "parked" unused channels (4,5,6,7 → sites 9,10,11,12 …) sit on the high site numbers. Every row has a real Headstage (`hstg__usrdef_2mice32`) + Probe — no `−23`. **This is what "mapped correctly" looks like.***
+
+![[sigmap-fig4-signal-map-table.png]]
+*Figure 4b — Earlier single-mouse test (`mouse1`) for comparison: only native 0–3 are defined here.*
+
 If you see `−23`, your headstage CSV didn't list all native channels — go back to §6.1.
+
+![[sigmap-fig5-signalmap-nosite.png]]
+*Figure 5 — The **failure** to recognise: rows 4–31 show **Site Number `−23`** with blank Headstage/Probe = "no-site" (unmapped). In this shot only natives 0–3 were defined, so everything else is unmapped. If you see `−23` on channels you expect to use, your headstage file is missing native channels (§6.1, "map ALL native channels").*
 
 ### 8.2 Confirm the wiring physically (the "tap test")
 The software map only matches reality if the **soldering** matches your sheet. Prove it:
@@ -259,6 +283,7 @@ Because both mice share **one** headstage, there is **one** sensor file covering
 | Wrong channel jumps in the **tap test** | Physical solder ≠ your table | Re-check soldering; correct the Step-A table to match reality |
 | Channels look like pure noise/hum | Ground/reference not connected | Connect ground; mapping is still fine |
 | You want literal "EEG"/"EMG" text labels | Allego can't do that | Keep the meaning in your wiring sheet / analysis script; sensor files only give site numbers + geometry |
+| Allego suddenly spams **dozens of "notifications"** full of code/gibberish (random dates like 1970, 5897) | The Radiens **backend (allegoserver) crashed** and dumped its stack trace into the notification area — seen after heavy/rapid sensor reloads + channel select/deselect | It's software, not your hardware/wiring (sensor files on disk are safe). **Restart Allego**, then re-set Mode + Electrodes + channel selection and STREAM. The session daemon re-pairs automatically. Avoid rapid-fire reloading sensors; apply once and let it settle. |
 
 ---
 

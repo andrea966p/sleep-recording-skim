@@ -34,7 +34,7 @@ source: NeuroNexus — Radiens Technical Documentation (©2025, 177 pp)
 ## For our setup — load-bearing facts (verified 2026-06-19)
 
 > [!important] Mode (the thing that blocked us for 2 days)
-> Correct Allego **system mode** for our XDAQ Core Gen-1 + Intan RHD XR headstage = **"XDAQ One (G1) with XR Headstage"** (`XDAQ_ONE_REC`). `SMARTBOX_PRO` reports `priSigs=0` (connects + scans but wrong headstage profile); `INTAN_USB2` = legacy eval board. Manual: **Mode, p33**. Full story: [[first-headstage-connection]].
+> Correct Allego **system mode** for our XDAQ Core Gen-1 + Intan RHD XR headstage = **"XDAQ One (G1) with XR Headstage"** (`XDAQ_ONE_REC`). **Naming trap:** the chassis is badged XDAQ **Core**, but the mode that detects is "XDAQ **One** (G1)…" — the dropdown *also* has "XDAQ Core (G1)…" which does **not** work for us. Pick the mode that yields `priSigs > 0`, not the one matching the chassis label (`XSR` = a different headstage; we use `XR`). `SMARTBOX_PRO` reports `priSigs=0` (connects + scans but wrong headstage profile); `INTAN_USB2` = legacy eval board. Manual: **Mode, p33**. Full story: [[first-headstage-connection]].
 
 > [!warning] Channel naming — NOT editable in Allego
 > The **Signal Map** (p37) is a **read-only** routing visualization — it shows site → amplifier-channel (`pri_N`) → port, and updates in real time, but you **cannot rename channels** there (no double-click edit). **XDAT data files are sorted by preamplifier channel (`pri_N`), not by site.** Custom per-channel labels come only from **loading a probe map**; custom probe maps are **built by NeuroNexus** (FAQ p176: "if your electrode is customized... contact us"), not editable in-GUI.
