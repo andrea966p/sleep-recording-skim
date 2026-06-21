@@ -28,23 +28,26 @@ status: planned
 
 Attach the DB25 male screw-terminal breakout board to the XDAQ Core's DB25 connector on the rear panel. Do NOT power on yet.
 
-### 2. Build the Voltage Divider
+> [!check] 2026-06-21 — no voltage divider; gate = `DO 03` (pin 22) direct
+> `DO 03` (DB25 pin 22) is **3.3 V fixed** (KC + Jeffrey) = Pi GPIO ceiling exactly → **wire direct, no divider**. The old 1kΩ+2kΩ divider on `DAQ_ON` (pin 13) is removed. Use the **220 Ω series + 10 kΩ pull-down star node** from [[../01-infrastructure/hardware-sync/wiring-guide#Multi-Pi fan-out and star grounding|wiring-guide]]. Requires Allego "BNC Breakout Board" toggle ON + Digital Out Control = "Gated".
 
-On a small breadboard or directly with resistors:
+### 2. Build the Star-Node Fan-Out (no divider)
 
-- Connect a 1kΩ resistor from the DB25 Pin 13 screw terminal.
-- Connect the other end of the 1kΩ resistor to a Dupont jumper wire (this goes to Pi GPIO {GPIO_DAQ_ON}).
-- At the junction between the 1kΩ resistor and the jumper wire, connect a 2kΩ resistor to ground.
-- Connect the ground leg of the 2kΩ resistor to DB25 Pin 14 (SYS GND).
+On a small perfboard / breadboard near the Core:
+
+- From the DB25 **Pin 22 (`DO 03`)** screw terminal, run to a common star node.
+- Per Pi branch: a **220 Ω** series resistor from the star node → Dupont jumper → Pi GPIO {GPIO_GATE} (Pin 11).
+- At each Pi, a **10 kΩ** pull-down from GPIO {GPIO_GATE} → Pi GND (holds LOW when the Core is off).
+- No resistor divider anywhere — `DO 03` is already at the 3.3 V Pi-safe level.
 
 ### 3. Wire the Connections
 
 | From | To | Wire Color (suggestion) |
 |------|----|------------------------|
-| DB25 Pin 13 → through 1kΩ → junction | Pi GPIO {GPIO_DAQ_ON} (Pin 11) | **Yellow** (signal) |
-| Junction → through 2kΩ → GND | DB25 Pin 14 / Pi Pin 14 | (part of divider) |
+| DB25 Pin 22 (`DO 03` gate) → 220 Ω star branch | Pi GPIO {GPIO_GATE} (Pin 11) | **Yellow** (signal) |
+| Pi GPIO {GPIO_GATE} → 10 kΩ pull-down | Pi GND (Pin 14) | (holds line LOW when Core off) |
 | Pi GPIO {GPIO_FRAME} (Pin 13) | DB25 Pin 2 (DI 03) | **Blue** (signal) |
-| DB25 Pin 14 (SYS GND) | Pi Pin 14 (GND) | **Black** (ground) |
+| DB25 Pin 14 (SYS GND) | Pi Pin 14 (GND) — home-run / star | **Black** (ground) |
 
 ### 4. Pre-Power Multimeter Checks
 
@@ -96,7 +99,7 @@ sudo systemctl status gpio-sync.service
 # Expected: active (running) in green
 
 journalctl -u gpio-sync.service -n 10
-# Expected: "GPIO sync listener started. Monitoring DAQ_ON on GPIO ..."
+# Expected: "GPIO sync listener started. Monitoring DO 03 recording gate on GPIO ..."
 ```
 
 ### 9. End-to-End MQTT Validation

@@ -197,13 +197,17 @@ Setup + ops: [[02-procedures/installation/nas-backup|NAS Backup procedure]].
 
 ## Hardware Sync Variables
 
+> [!check] 2026-06-21 — gate moved `DAQ_ON` (pin 13) → `DO 03` (pin 22)
+> Recording gate = **`DO 03`** (DB25 pin 22, Allego "Gated" mode + "BNC Breakout Board" toggle), **not** `DAQ_ON` (which tracks streaming + emits idle pulses). Pi input pin unchanged (GPIO 17). Variable renamed `{GPIO_DAQ_ON}` → `{GPIO_GATE}`; `{XDAQ_DAQ_ON_PIN}` retained as an optional streaming-flag reference only. See [[01-infrastructure/hardware-sync/wiring-guide|wiring-guide]].
+
 | Variable | Value | Notes |
 |----------|-------|-------|
-| `{GPIO_DAQ_ON}` | `17` | Pi GPIO pin receiving XDAQ DAQ_ON signal (physical pin 11) |
+| `{GPIO_GATE}` | `17` | Pi GPIO pin receiving XDAQ `DO 03` recording gate (physical pin 11). Was `{GPIO_DAQ_ON}`. |
 | `{GPIO_FRAME}` | `27` | Pi GPIO pin sending frame sync pulses to XDAQ DIN (physical pin 13) |
-| `{XDAQ_DIN_CHANNEL}` | `DI 03` | XDAQ digital input channel (DB25 Pin 2) |
-| `{XDAQ_DAQ_ON_PIN}` | `13` | DB25 pin number for DAQ_ON signal |
-| `{XDAQ_GND_PIN}` | `14` | DB25 pin number for SYS GND |
+| `{XDAQ_DIN_CHANNEL}` | `DI 03` | XDAQ digital input channel (DB25 Pin 2); DI 04–06 = pins 15/3/16 for Pis 2–4 |
+| `{XDAQ_GATE_PIN}` | `22` | ★ DB25 pin number for `DO 03` recording gate (HIGH while recording, "Gated" mode) |
+| `{XDAQ_DAQ_ON_PIN}` | `13` | DB25 pin for `DAQ_ON` — streaming indicator only (idle ~0.5 s pulses); NOT the gate |
+| `{XDAQ_GND_PIN}` | `14` | DB25 pin number for SYS GND (star-ground hub) |
 | `{MQTT_SYNC_TOPIC}` | `neurosurveillance/hardware_sync` | MQTT topic for GPIO sync events |
 | `{GPIO_SYNC_SERVICE}` | `gpio-sync.service` | systemd service name on Pi |
 | `{GPIO_SYNC_SCRIPT}` | `/opt/neurosurveillance/gpio_sync.py` | Script path on Pi |

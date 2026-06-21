@@ -6,18 +6,21 @@ status: planned
 
 # GPIO Sync Listener — Service Configuration
 
+> [!check] 2026-06-21 — corrected: gate = `DO 03`, not `DAQ_ON`
+> This page originally watched `DAQ_ON` (DB25 pin 13). The vendor thread settled on the **`DO 03` recording gate** (DB25 **pin 22**, Allego "Gated" mode + "BNC Breakout Board" toggle) instead — `DAQ_ON` tracks *streaming* and emits ~0.5 s idle pulses (false edges). The Pi-side input pin is unchanged (**GPIO 17**); only the *source* and *semantics* change (streaming→recording, pin 13→22). See [[wiring-guide]] / [[overview]]. SDK cross-check confirmed 2026-06-21: `AllegoClient.get_digital_out_states()` reports `{'digital_outs_mode':'GATED', ...}` live.
+
 > [!abstract] TL;DR — for non-technical readers
-> **What this is.** The planned Python listener that runs on each Raspberry Pi, watches a GPIO pin for the XDAQ `DAQ_ON` TTL signal, and publishes MQTT sync events.
+> **What this is.** The planned Python listener that runs on each Raspberry Pi, watches a GPIO pin for the XDAQ `DO 03` recording-gate TTL level, and publishes MQTT sync events.
 >
-> **Why it exists.** The GPIO pulse comes in on the Pi side; something has to translate "pin went high" into "session began at timestamp T" and tell the rest of the system over MQTT.
+> **Why it exists.** The gate level comes in on the Pi side; something has to translate "pin went high (recording started)" into "session began at timestamp T" and tell the rest of the system over MQTT.
 >
 > **How to read this page.** Skim the service unit + config to know what's planned. Cross-link: [[overview]] for context, [[wiring-guide]] for the physical side.
 
 > [!quote] Paper-ready
-> A dedicated Python systemd service on each Raspberry Pi monitors the XDAQ DAQ_ON GPIO pin via interrupt-driven `lgpio`, translating rising-edge events into MQTT messages timestamped to the rising edge with sub-millisecond accuracy.
+> A dedicated Python systemd service on each Raspberry Pi monitors the XDAQ `DO 03` recording-gate GPIO line via interrupt-driven edge detection, translating rising/falling edges into MQTT messages timestamped to the edge with sub-millisecond accuracy.
 
 > [!tip] Role
-> A lightweight Python service on each Raspberry Pi that monitors the XDAQ `DAQ_ON` signal via GPIO and publishes MQTT sync events. Runs independently from go2rtc — does NOT interfere with camera streaming.
+> A lightweight Python service on each Raspberry Pi that monitors the XDAQ `DO 03` recording gate via GPIO and publishes MQTT sync events. Runs independently from go2rtc — does NOT interfere with camera streaming. **Shadow-first:** publishes for jitter logging; the Radiens 1 s poll stays the real trigger until jitter is proven.
 
 ## Service File
 
@@ -69,8 +72,9 @@ WantedBy=multi-user.target
 #!/usr/bin/env python3
 """
 NeuroSurveillance GPIO Sync Listener
-Monitors XDAQ DAQ_ON signal and publishes MQTT sync events.
-Sends frame-sync pulses back to XDAQ DIN on recording transitions.
+Monitors the XDAQ DO 03 recording gate (DB25 pin 22, "Gated" mode) and
+publishes MQTT sync events. Sends frame-sync pulses back to XDAQ DIN on
+recording transitions.
 """
 
 import gpiod
@@ -83,8 +87,10 @@ from datetime import datetime, timezone
 
 # --- Configuration ---
 CHIP = "/dev/gpiochip4"       # Pi 5 uses gpiochip4 for main GPIO header
-DAQ_ON_PIN = {GPIO_DAQ_ON}    # GPIO pin receiving XDAQ DAQ_ON signal (input)
-FRAME_SYNC_PIN = {GPIO_FRAME} # GPIO pin sending sync pulses to XDAQ DIN (output)
+GATE_PIN = {GPIO_GATE}        # GPIO 17 — receives XDAQ DO 03 recording gate (input).
+                              # DO 03 in "Gated" mode is a clean level (HIGH while
+                              # recording), no idle pulses — unlike the old DAQ_ON.
+FRAME_SYNC_PIN = {GPIO_FRAME} # GPIO 27 — sends sync pulses to XDAQ DIN (output)
 
 MQTT_BROKER = "{NVR_IP}"      # NVR IP (Mosquitto broker)
 MQTT_PORT = 1883
@@ -115,9 +121,9 @@ def main():
     # Open GPIO chip
     chip = gpiod.Chip(CHIP)
 
-    # Configure DAQ_ON as input with pull-down
-    daq_on_line = chip.get_line(DAQ_ON_PIN)
-    daq_on_line.request(
+    # Configure the DO 03 recording gate as input with pull-down
+    gate_line = chip.get_line(GATE_PIN)
+    gate_line.request(
         consumer="neurosurveillance_sync",
         type=gpiod.LINE_REQ_EV_BOTH_EDGES,
         flags=gpiod.LINE_REQ_FLAG_BIAS_PULL_DOWN,
@@ -131,14 +137,14 @@ def main():
         default_val=0,
     )
 
-    print(f"GPIO sync listener started. Monitoring DAQ_ON on GPIO {DAQ_ON_PIN}...")
+    print(f"GPIO sync listener started. Monitoring DO 03 recording gate on GPIO {GATE_PIN}...")
 
     last_transition_time = 0
 
     while running:
         # Wait for edge event with 1 s timeout
-        if daq_on_line.event_wait(sec=1):
-            event = daq_on_line.event_read()
+        if gate_line.event_wait(sec=1):
+            event = gate_line.event_read()
             now = time.monotonic()
 
             # Debounce
@@ -155,7 +161,7 @@ def main():
                         "event": "EEG_START",
                         "source": "hardware_gpio",
                         "timestamp": timestamp,
-                        "gpio_pin": DAQ_ON_PIN,
+                        "gpio_pin": GATE_PIN,
                         "pi_hostname": "{PI_HOSTNAME}",
                     }
                 )
@@ -166,7 +172,7 @@ def main():
                 time.sleep(0.001)  # 1 ms pulse
                 frame_sync_line.set_value(0)
 
-                print(f"[{timestamp}] DAQ_ON RISING -> EEG_START published")
+                print(f"[{timestamp}] DO 03 RISING -> EEG_START published")
 
             elif event.type == gpiod.LineEvent.FALLING_EDGE:
                 # EEG recording stopped — publish MQTT event
@@ -175,7 +181,7 @@ def main():
                         "event": "EEG_STOP",
                         "source": "hardware_gpio",
                         "timestamp": timestamp,
-                        "gpio_pin": DAQ_ON_PIN,
+                        "gpio_pin": GATE_PIN,
                         "pi_hostname": "{PI_HOSTNAME}",
                     }
                 )
@@ -186,12 +192,12 @@ def main():
                 time.sleep(0.001)  # 1 ms pulse
                 frame_sync_line.set_value(0)
 
-                print(f"[{timestamp}] DAQ_ON FALLING -> EEG_STOP published")
+                print(f"[{timestamp}] DO 03 FALLING -> EEG_STOP published")
 
     # Cleanup
     frame_sync_line.set_value(0)
     frame_sync_line.release()
-    daq_on_line.release()
+    gate_line.release()
     chip.close()
     client.loop_stop()
     client.disconnect()
