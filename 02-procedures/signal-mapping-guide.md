@@ -69,6 +69,41 @@ The **site number** is whatever *you* decide when you build a custom map (see §
 
 ---
 
+## 1.1 The master decoder — one row, all three numbers (our 2-mice rig)
+
+> [!important] If you read one table, read this one
+> Every real wire has **four** different numbers (board pad, native channel, Allego `D/n`, site number) plus its meaning. The confusion is that they don't line up — `D/n` skips, sites are repacked. This table puts all four side by side so you never have to convert in your head. **It is the single source of truth for our wiring.**
+
+| Signal | C3410 **pad** | **native** `pri_N` | Allego **`D/n`** | **site #** | record it? |
+|---|---|---|---|---|---|
+| M1 EEG+ | pad 0 | `pri_0` | **D/1** | **1** | ✅ |
+| M1 EEG− | pad 1 | `pri_1` | **D/2** | **2** | ✅ |
+| M1 EMG+ | pad 2 | `pri_2` | **D/3** | **3** | ✅ |
+| M1 EMG− | pad 3 | `pri_3` | **D/4** | **4** | ✅ |
+| **M1 ground** (green) | **pad 5** | `pri_5` | D/6 | 10 | ❌ — should be on the **`GND`** pad, not a signal pad |
+| M2 EEG+ | pad 8 | `pri_8` | **D/9** | **5** | ✅ |
+| M2 EEG− | pad 9 | `pri_9` | **D/10** | **6** | ✅ |
+| M2 EMG+ | pad 10 | `pri_10` | **D/11** | **7** | ✅ |
+| M2 EMG− | pad 11 | `pri_11` | **D/12** | **8** | ✅ |
+| **M2 ground** (green) | **pad 13** | `pri_13` | D/14 | 14 | ❌ — should be on the **`GND`** pad, not a signal pad |
+
+**Three rules that remove all confusion:**
+1. **pad = native.** The C3410 hole `N` solders straight to headstage channel `N` (identity). Pad 0 → `pri_0`.
+2. **`D/n` = native + 1.** Allego's on-screen label is 1-indexed. `pri_3` shows as `D/4`.
+3. **site = the custom remap.** `csv2sensor` packs the 8 real wires into a clean block **sites 1–8** (M1 = 1–4, M2 = 5–8) so the System tab shows them contiguous. That's the whole point of the custom map.
+
+> [!warning] The "1–8" trap — sites 1–8 ≠ D/1–D/8
+> With the custom map loaded, the channel-select chips are labeled by **site number**, so ticking **sites 1–8 is CORRECT** (both mice). But "1–8" in *raw* `D/n` terms (`D/1…D/8`) is **WRONG** — that's native 0–7 = Mouse 1 + four parked junk channels, and **Mouse 2 never streams**. Same digits, different channels.
+>
+> | You tick "1–8" as… | Native channels | Result |
+> |---|---|---|
+> | **site numbers** (custom map loaded) | 0,1,2,3,8,9,10,11 | ✅ both mice |
+> | **`D/n` channels** (raw) | 0,1,2,3,4,5,6,7 | ❌ M1 + junk, no M2 |
+>
+> Correct selection expressed either way: **sites 1–8**, or equivalently **`D/1,D/2,D/3,D/4,D/9,D/10,D/11,D/12`**. Both name the same 8 channels.
+
+---
+
 ## 2. Before you start (prerequisites)
 
 1. **Headstage is detected.** In Allego's **System** tab, your port (usually **Port D**) shows a channel count (e.g. `32`), not `0`. If it shows `0`, fix detection first — see [[first-headstage-connection]] (most common cause: wrong **Mode** — it must be **"XDAQ One (G1) with XR Headstage"**, not "SmartBox Pro").
@@ -233,7 +268,7 @@ Output (named `usrdef_<your-csv-name>`) lands in **`/home/skimlab/radix/devices/
 You should end with **8 selected channels** (4 per mouse).
 
 > [!warning] Sites vs. channel numbers — easy mistake after loading a custom map
-> Once a **custom sensor** (e.g. `2mice32`) is loaded, the channel chips are labeled by **site number**, not the headstage's native number. So Mouse 2 is on **sites 5,6,7,8** — **not** 9–12 (sites 9+ are the unused/parked channels). Select the contiguous block **sites 1–8** to get both mice. Picking `1,2,3,4,9,10,11,12` (the plain-passthrough habit) records Mouse 1 + junk and **Mouse 2 never streams**. See [[signal-quality-and-grounding]] §1.
+> Once a **custom sensor** (e.g. `2mice32`) is loaded, the channel chips are labeled by **site number**, not the headstage's native number. So Mouse 2 is on **sites 5,6,7,8** — **not** 9–12 (sites 9+ are the unused/parked channels). Select the contiguous block **sites 1–8** to get both mice. Picking `1,2,3,4,9,10,11,12` (the plain-passthrough habit) records Mouse 1 + junk and **Mouse 2 never streams**. Full cross-reference of pad ↔ native ↔ `D/n` ↔ site is in **§1.1 (master decoder)**; also note **sites 1–8 ≠ `D/1–D/8`** (§1.1 trap box). See [[signal-quality-and-grounding]] §1.
 
 ![[sigmap-fig1-channel-select.png]]
 *Figure 3 — System tab → Signals → Port D. Each chip (`D/1, D/2 …`) is one channel; the `×` removes it. The drop-down checklist (**Select More**) is where you tick exactly the channels you use. Remember `D/1` = native `0` = your first electrode. Here Port D has 32 available channels; you keep only the 8 wired ones.*
