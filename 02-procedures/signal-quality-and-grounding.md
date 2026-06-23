@@ -58,8 +58,30 @@ The amplifier can only see voltages in a narrow window (about ±5 millivolts). I
 
 ### The fix (the "GND bridge")
 - The adapter board (Intan **C3410**) has dedicated **`REF`** and **`GND`** pads, separate from the numbered signal pads.
-- Right now the **green animal-ground wire is soldered to signal pad 5** — that's an amplifier **input**, not ground. So the animal is **not actually grounded**.
-- **→ Move the green ground wire from signal pad 5 to the `GND` pad.** One good animal-ground connection per setup. Leave `REF` empty.
+- Right now **both green animal-ground wires are soldered to signal pads** — M1 green on **signal pad 5**, M2 green on **signal pad 13** — those are amplifier **inputs**, not ground. So **both animals are floating** (live 2026-06-22: all 4 M2 channels + M1 EMG− railed at 9–11.5 mV pk-pk).
+- **→ Move BOTH greens off the signal pads to the shared `GND` net.** Leave `REF` empty.
+
+> [!important] Two mice, one headstage = ONE shared ground net
+> The RHD2216 has exactly **one** ground. Both animals must tie to it — there is no independent per-mouse ground without a second headstage. So both greens land on the **same** `GND` net. This is also why you **cannot** fully separate the mice electrically; if the cross-talk nudge test (§3e) fails, the shared ground is inherent and the real fix is one headstage per mouse.
+
+### How we wire the shared ground — brass busbar star node (2026-06-23)
+Rather than cram two thin wires onto the tiny C3410 `GND` pad, use a **5-position brass grounding busbar** (electrical ground/neutral bar — all 5 screw holes are one common brass strip = one electrical node) as a clean **star hub**:
+
+```
+M1 slip-ring GND ──► end screw 1 ┐
+                                 ├─ common brass bar (star) ──► center screw ──► C3410 GND pad
+M2 slip-ring GND ──► end screw 5 ┘
+```
+
+- Both mice's grounds + the single wire to the C3410 `GND` pad all meet on the common brass = the star node. Electrically identical to soldering all three onto the `GND` pad, but screw-terminal (no solder on the tiny pad, swappable).
+- **The busbar does NOT separate the mice** — all 5 holes are common brass = one net. Same shared-ground caveat above applies.
+- **Build checklist:**
+  1. **Desolder** M1 green from C3410 **pad 5** and M2 green from **pad 13** (they go to the busbar now, not the signal pads). Afterward `pri_5`/`pri_13` inputs float — fine, they're parked/deselected (sites 10/14, not recorded).
+  2. **Clamp thin wires properly** — tin the tip or fold double so the screw bites; fine-gauge tether wire slips out otherwise.
+  3. **One wire** from the busbar center screw → C3410 `GND` pad.
+  4. **DMM continuity** end-to-end: screw1 ↔ center ↔ screw5 ↔ C3410 `GND` pad all **~0 Ω**.
+  5. **Mount the busbar close to the headstage** — short ground leads = smaller loop = less 50 Hz pickup.
+  6. **Keep the bar isolated** — brass/screws must not touch other conductive parts (it sits at ground; a stray short to a signal pad is bad).
 
 > [!note] How we know grounding is the problem right now
 > Live metrics (2026-06-19) on Mouse 1: EEG+ and EMG+ read a sensible ~60–100 µV, but **EMG− was pegged at ~11.6 mV peak-to-peak — slammed against the rail** — and the green "ground" channel itself was railing. A railing channel that should be ground = the classic "animal is floating" signature. Expect this to calm down once the green wire is on the real `GND` pad.
