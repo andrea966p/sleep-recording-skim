@@ -1,3 +1,17 @@
+---
+tags:
+  - procedure
+  - grounding
+  - reference
+  - noise
+  - eeg
+  - emg
+  - headstage
+  - onboarding
+created: 2026-06-27
+status: complete
+---
+
 # Grounding vs Reference vs Tissue Noise vs Environmental Noise — concepts + the slip-ring color defect
 
 > [!abstract] Why this page exists
@@ -116,5 +130,9 @@ Then power: stream **raw** → railing should stay collapsed (see [[2026-06-27]]
 ## Related
 - [[signal-quality-and-grounding]] — grounding fix + how to judge signal (±5 mV rail, floating signature)
 - [[signal-mapping-guide]] — pad ↔ native ↔ `D/n` ↔ site numbering
+- [[intan-rhd2216-reference]] — chip reason `REF` is empty (bipolar; no `ref_elec` pin)
+- [[multimeter-guide]] — how to run the §5 continuity checks
+- [[rig-assembly-guide]] — where the ground bus + copper coil attach during assembly
+- [[sleep-recording-operator-manual]] — full ordered workflow
 - [[2026-06-27]] — the day the grounding root cause was found + this color defect documented
 - [[radiens-software-reference]] — Paired Reference / referencing (manual p70)

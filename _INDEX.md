@@ -41,11 +41,21 @@ Production IPs, usernames, paths, and settings.
 - [[01-infrastructure/frigate/docker-compose|Docker Compose]]
 - [[01-infrastructure/frigate/config-yml|config.yml]]
 
-**Radiens / Allego software:**
+**Sleep recording (Intan RHD2216 + Allego) — operator docs:**
+- [[02-procedures/sleep-recording-operator-manual|⭐ Sleep-Recording Operator Manual — START HERE, ordered phases from assembly to EEG/EMG analysis]]
 - [[06-references/radiens-software-reference|⭐ Radiens Software — PRIMARY Reference (Allego + Videre)]] — **main software reference; embeds the full 177-page NeuroNexus manual + our load-bearing facts (mode, channel select, no in-GUI rename)**
+- [[06-references/intan-rhd2216-reference|⭐ Intan RHD2216 Chip Reference — bipolar, ±5 mV rail, filters (datasheet-cited)]]
+- [[02-procedures/signal-mapping-guide|⭐ Signal Mapping Guide — which channel is which electrode (EEG/EMG, step-by-step)]]
+- [[02-procedures/signal-quality-and-grounding|⭐ Signal Quality & Grounding — fix the ground, then judge the signal]]
+- [[02-procedures/grounding-reference-noise-concepts|Grounding vs Reference vs Tissue/Environmental Noise — concepts + slip-ring color defect]]
+- [[02-procedures/eeg-emg-data-guide|EEG/EMG Data Guide — read by eye first, then analyze in Python]]
+- [[02-procedures/rig-assembly-guide|Rig Assembly Guide — connect the full recording chain]]
+- [[02-procedures/multimeter-guide|Multimeter Guide (Harden 661002) — power/continuity/short tests]]
+- [[02-procedures/allego-monitor-guide|Allego Monitor Tab Guide]]
+- [[02-procedures/allego-sampling-rate|Allego Sampling Rate — 1 kHz min; 128–256 Hz = offline decimate]]
+- [[02-procedures/allego-presets-workspace|Allego Presets & Save Workspace]]
+- [[02-procedures/intan-headstage-troubleshooting|Intan Headstage Troubleshooting — symptom → cause → fix]]
 - [[02-procedures/first-headstage-connection|First Headstage Connection — bring-up + channel map]] ✅ resolved 2026-06-19
-- [[02-procedures/signal-mapping-guide|⭐ Signal Mapping Guide — which channel is which electrode (EEG/EMG, step-by-step for any operator)]]
-- [[02-procedures/signal-quality-and-grounding|⭐ Signal Quality & Grounding — fix the ground, then decide if the signal is good enough to record]]
 
 **Hardware Sync (XDAQ GPIO):**
 - [[01-infrastructure/hardware-sync/xdaq-core-gen1-ubuntu-driver|⭐ XDAQ Core (Gen-1) — Ubuntu Driver Setup + Verified State (2026-05-29)]] — **current source of truth; supersedes Core2 assumptions below**
@@ -155,4 +165,4 @@ ffprobe rtsp://192.168.0.11:8554/pi_cam_0
 
 ---
 
-*Last updated: 2026-06-19 (🎉 **first headstage detected — electrophysiology first light.** Intan RHD2216 enumerates on the XDAQ Core Gen-1, streaming shows signal. Root cause of the prior block was a wrong Allego system mode (`SMARTBOX_PRO`); correct = **"XDAQ One (G1) with XR Headstage"** / `XDAQ_ONE_REC` — see [[02-procedures/first-headstage-connection]]. No hardware fault, no RMA). Prev 2026-05-29 (XDAQ unit identified as Gen-1 Core / Opal Kelly USB — NOT Core2; Ubuntu driver solved via plugdev udev rule, Allego detects device; new authoritative doc `xdaq-core-gen1-ubuntu-driver`, Core2 docs banner-flagged, KC email trimmed). Prev 2026-05-28 (Phase 4.6 reconciler→Slack enabled in bridge; vault restructure — `07-decisions/` section added; council + sprint plan extracted out of `04-journal/2026-05-01.md` and `2026-05-20.md` into their own decision docs; daily journals get `created:` frontmatter for stable sort; bus-factor runbook shipped — Phase 6 council Stage 3.4 closed)*
+*Last updated: 2026-06-27 (📚 **sleep-recording operator documentation set shipped** — new [[02-procedures/sleep-recording-operator-manual|operator manual]] (start-here hub) + 8 new docs: Intan RHD2216 chip reference (datasheet-cited), rig-assembly, multimeter, Allego Monitor/sampling-rate/presets, headstage troubleshooting, EEG/EMG data guide. Verified finding: **128–256 Hz acquisition impossible; Allego min = 1 kHz → decimate offline**. Earlier 2026-06-19 (🎉 **first headstage detected — electrophysiology first light.** Intan RHD2216 enumerates on the XDAQ Core Gen-1, streaming shows signal. Root cause of the prior block was a wrong Allego system mode (`SMARTBOX_PRO`); correct = **"XDAQ One (G1) with XR Headstage"** / `XDAQ_ONE_REC` — see [[02-procedures/first-headstage-connection]]. No hardware fault, no RMA). Prev 2026-05-29 (XDAQ unit identified as Gen-1 Core / Opal Kelly USB — NOT Core2; Ubuntu driver solved via plugdev udev rule, Allego detects device; new authoritative doc `xdaq-core-gen1-ubuntu-driver`, Core2 docs banner-flagged, KC email trimmed). Prev 2026-05-28 (Phase 4.6 reconciler→Slack enabled in bridge; vault restructure — `07-decisions/` section added; council + sprint plan extracted out of `04-journal/2026-05-01.md` and `2026-05-20.md` into their own decision docs; daily journals get `created:` frontmatter for stable sort; bus-factor runbook shipped — Phase 6 council Stage 3.4 closed)*
