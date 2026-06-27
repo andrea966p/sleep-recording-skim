@@ -59,6 +59,17 @@ Why this is the right call:
 
 For the offline decimation workflow, naming, and analysis conventions, see [[eeg-emg-data-guide]].
 
+## Explaining it to the professor
+
+> [!quote] Ready-to-send answer
+> "The Intan/Allego system's **minimum hardware sampling rate is 1,000 Hz** — 128–256 Hz simply isn't selectable (the chip's ADC offers a fixed set of 17 rates from 1,000 to 30,000 S/s). So I **record at 1,000 Hz and downsample to 256 Hz in analysis**. That gives exactly the same data we'd get sampling at 256 Hz directly — sleep EEG/EMG has no useful content above ~100 Hz, so by Nyquist 256 Hz is plenty, and offline downsampling applies a proper anti-alias filter (cleaner than acquiring slow). Files end up the same size as a 256 Hz recording after downsampling."
+
+Why the request is reasonable but the *acquisition* rate can't honour it:
+- **The goal is sound.** Classic sleep scoring uses 128–256 Hz because the relevant EEG/EMG bands sit well below ~100 Hz; ~256 Hz is the standard *effective* rate. The professor is asking for the right analysis rate.
+- **The limit is the hardware, not a missing setting.** The Intan RHD ADC + multiplexer are clocked for 1,000–30,000 S/s (datasheet up to 30 kS/s/channel); rates below 1 kHz are not exposed in Allego (manual p176). It is not something that can be "turned on."
+- **The effective 256 Hz is delivered in software.** Acquire 1 kHz → `scipy.signal.decimate` to 256 Hz offline = identical staging data, no information lost, smaller files. One line; see [[eeg-emg-data-guide]] §8a.
+- **Net:** the professor gets the 256 Hz data they want for staging; it's produced by downsampling, not by changing the acquisition rate.
+
 ## Reference — the dropdown values (manual p36)
 
 The Sample Rate dropdown (manual p36 image) lists, in order:
