@@ -142,8 +142,8 @@ Before any stage call, confirm the trace is **biology, not garbage**. The full g
 
 # PART 2 — Analyze in Python
 
-> [!important] Scope of what's verified here
-> The **live-metrics** path (`signal_metrics().get_metrics`) and the SDK package facts are **verified against the installed SDK** ([[radiens-api-reference]], [[signal-quality-and-grounding]] appendix). The **offline file-loading** path is the realistic way to analyze a whole recording, but the exact XDAT reader call is **not yet bench-verified** — those steps carry `VERIFY` flags. Read the flags before trusting them.
+> [!success] Scope of what's verified here
+> Both the **live-metrics** path (`signal_metrics().get_metrics`) and the **offline XDAT file reader** (§7b) are now **bench-verified on this rig** (radiens 4.0.0, 2026-06-27 — recorded a 6 s test set and read it back). The reader below reflects the *actual* file format (float32 already in µV, 38 interleaved channels), not a guess.
 
 ## 5. The sampling-rate reality (read this before loading anything)
 
@@ -154,13 +154,21 @@ Before any stage call, confirm the trace is **biology, not garbage**. The full g
 
 ## 6. Environment
 
-```bash
-# Use the project venv that already has the SDK
-/opt/neurosurveillance/venv/bin/python
+> [!warning] Use a SEPARATE analysis venv — the project venv's SciPy is broken (verified 2026-06-27)
+> The project venv `/opt/neurosurveillance/venv` has **NumPy 2.2.6** but **no matching SciPy** — it falls back to the system SciPy (built for NumPy 1.x), so `import scipy.signal` **crashes** (`numpy.core.multiarray failed to import`). The SDK lives there, but the analysis stack does not work there.
+>
+> - The **XDAT reader** (§7b) is **NumPy-only** → runs anywhere, including the project venv.
+> - For the **SciPy pipeline** (decimate/filter/PSD below), make a **dedicated analysis venv** with matched versions:
 
-# Core analysis stack (numpy/scipy do everything below; mne is optional)
-pip install numpy scipy matplotlib
-pip install mne          # optional: EDF export + interactive viewer
+```bash
+# Dedicated analysis environment (NOT the project venv)
+python3 -m venv ~/analysis-env
+~/analysis-env/bin/pip install "numpy>=2" "scipy>=1.13" matplotlib
+~/analysis-env/bin/pip install mne          # optional: EDF export + interactive viewer
+# verified working combo on this rig: numpy 2.5.0 + scipy 1.18.0
+
+# The radiens SDK (live metrics, §7a) stays in the project venv:
+/opt/neurosurveillance/venv/bin/python
 ```
 
 ## 7. Loading the data
@@ -191,45 +199,56 @@ This is for **judging signal quality live**, not for offline staging.
 ### 7b. Offline recordings — XDAT files (the real analysis path)
 Recordings are saved in the open **XDAT** format ([[radiens-software-reference]]: raw signals + metadata, Python/MATLAB-friendly). A recording is a set of files sharing a base name:
 
+An XDAT recording is a **three-file set** sharing a base name (verified 2026-06-27):
+
 ```
-<base>_data.xdat        # raw int16 samples, interleaved by channel
-<base>.xdat.json        # metadata: n channels, sampling freq, channel order, scaling
-<base>_timestamp.xdat   # per-sample timestamps
+<base>_data.xdat        # float32 samples, interleaved by channel (NOT int16)
+<base>_timestamp.xdat   # int64 per-sample timestamps (8 bytes/sample)
+<base>.xdat.json        # metadata: sample rate, n samples, channel counts, channel↔site map
 ```
 
-> [!todo] VERIFY: exact XDAT reader API
-> NeuroNexus ships an XDAT reader (commonly `xdatpy`, and/or a reader inside the `radiens` SDK's offline/`videre` interface). **The exact import + call has NOT been bench-verified on this system.** Before relying on the snippet below, confirm one of:
-> 1. `from radiens import VidereClient` (or similar offline client) → open dataset → pull signals, **or**
-> 2. an `xdatpy`-style reader, **or**
-> 3. read the `.json` for `sampling_freq` + channel count and `np.fromfile` the `_data.xdat` as `int16`, then apply the metadata's µV scaling.
-> Treat the function below as a **template** showing the *shape* of the result (a `(n_channels, n_samples)` float array in µV + the sample rate), not a confirmed call.
+> [!success] Verified XDAT format (radiens 4.0.0, this rig)
+> Read a 6 s test recording (`allego_0__uid…`) and confirmed the exact format:
+> - `_data.xdat` = **float32** (4 bytes/sample/channel — file size = `num_smpl × total_channels × 4`). **NOT int16, and NO 0.195 µV scaling.**
+> - Primary channels are **already in micro-volts** — JSON says `sig_units_pri = "micro-volts"` (aux = volts).
+> - Channels are interleaved **sample-major**: each sample has `total` channels = `pri` (32) + `aux` (2) + `din` (2) + `dout` (2) = **38**. The amplifier channels are the **first `pri` columns**.
+> - Metadata keys (all under `status`): `samp_freq` (e.g. 30000), `num_smpl`, `signals.{total,pri,aux,din,dout}`. The channel↔site map is under `sapiens_base.neighborhoods.site_hood.<i>.{home_ntv_chan_idx, home_chan_nam, home_site_num}`.
 
 ```python
 import json
 import numpy as np
 
 def load_xdat(base_path):
-    """Load an XDAT recording -> (data[ch, samples] in microvolts, fs_hz).
+    """Load an XDAT recording -> (pri[ch, samples] in microvolts, fs_hz, meta).
 
-    VERIFY: confirm metadata key names and the int16->uV scale against an
-    actual .xdat.json on this rig before trusting absolute amplitudes.
+    Verified on radiens 4.0.0 / Allego XDAT, 2026-06-27. The _data.xdat is
+    float32 and the primary channels are ALREADY in micro-volts (json
+    sig_units_pri == "micro-volts") — no int16 conversion, no LSB scaling.
+    Channels are interleaved: total = pri + aux + din + dout; the amplifier
+    channels are the first `pri` columns.
     """
     with open(f"{base_path}.xdat.json") as f:
         meta = json.load(f)
+    st  = meta["status"]
+    fs  = st["samp_freq"]                 # e.g. 30000
+    n   = st["num_smpl"]                  # total samples
+    tot = st["signals"]["total"]          # ALL interleaved channels, e.g. 38
+    pri = st["signals"]["pri"]            # amplifier channels, e.g. 32
 
-    fs = meta["status"]["samp_freq"]              # VERIFY: key path
-    n_ch = meta["status"]["signals"]["pri"]       # VERIFY: # primary channels
-    scale_uv = 0.195                              # VERIFY: Intan RHD LSB = 0.195 uV/bit (typical)
+    d = np.fromfile(f"{base_path}_data.xdat", dtype=np.float32)  # float32
+    d = d.reshape(n, tot)                  # (samples, total_channels), sample-major
+    pri_uv = d[:, :pri].T                  # (pri_channels, samples), already micro-volts
+    return pri_uv, fs, meta
 
-    raw = np.fromfile(f"{base_path}_data.xdat", dtype="<i2")  # little-endian int16
-    raw = raw.reshape(-1, n_ch).T                  # -> (channels, samples)
-    return raw.astype(np.float64) * scale_uv, fs
-
-# data, fs = load_xdat("/media/.../session_2026-06-27")
+# data, fs, meta = load_xdat("/home/skimlab/radix/data/allego_0__uid0627-21-11-02")
+# data.shape -> (32, num_smpl); units = microvolts; native channel i = data[i]
 ```
 
-> [!tip] When in doubt, export to EDF from Allego/Videre
-> If the XDAT-in-Python path is uncertain, export the recording to **EDF** from Videre and read it with **MNE** — a fully standard, well-documented path (§12). EDF carries the sampling rate and channel labels for you.
+> [!note] SDK offline readers need the Radiens hub running
+> `radiens` also ships `FileSystemClient.get_data_file_metadata()` and `VidereClient.link_data_file()` → `.signals()` for reading recordings, but those require the **Videre/Curate hub services** to be running (not just `allegoserver`); headless they fail with `Confirm ClientType.VIDERE is running`. The **direct file read above needs no services** — prefer it for headless analysis. (Also: `AllegoClient.set_recording_config()` has a request-serialization bug in radiens 4.0.0 — set the recording name/path from the Allego **Settings** GUI instead.)
+
+> [!tip] EDF + MNE is still a fine alternative
+> You can also export the recording to **EDF** from Videre and read it with **MNE** (§12) — EDF carries sample rate + channel labels. Use whichever fits; the direct XDAT reader above is the no-dependency path.
 
 ---
 
