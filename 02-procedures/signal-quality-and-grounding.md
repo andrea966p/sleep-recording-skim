@@ -200,6 +200,7 @@ You can pull per-channel quality numbers headless via the Radiens Python SDK (`s
 ---
 
 ## Related
+- [[grounding-reference-noise-concepts]] — ⭐ ground vs reference vs tissue noise vs environmental noise (kept strictly separate); the copper-coil environmental reference; the slip-ring green↔orange color-swap defect (animal ground → nothing; rebuild required)
 - [[signal-mapping-guide]] — map channels to electrodes first (sites, EEG/EMG, csv2sensor)
 - [[radiens-software-reference]] — Allego/Videre reference (referencing p70, manual embedded)
 - [[first-headstage-connection]] — bring-up + this rig's channel map
