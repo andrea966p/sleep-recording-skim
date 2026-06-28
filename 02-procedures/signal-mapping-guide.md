@@ -88,7 +88,7 @@ The **site number** is whatever *you* decide when you build a custom map (see §
 | **M2 ground** (green) | **pad 13** | `pri_13` | D/14 | 14 | ❌ — should be on the **`GND`** pad, not a signal pad |
 
 > [!warning] This table = the OLD 2-mice (`2mice32`) layout. Current standard = single-mouse 8-channel slip-ring.
-> Since 2026-06-27 the standard rig is **one mouse, 8-pin slip-ring socket** with a different pad map. In the current scheme **pad 5 = white / right-frontal dura** (a recorded electrode), **not** an M1 ground; green is the **right-parietal (caudal)** dura pin used as **animal ground** → slip-ring **orange** → brass bus → `GND` (not a signal pad at all). Full current color→pad map (incl. the frontal/parietal correction and white→pad 5) lives in [[grounding-reference-noise-concepts]] §2.2. Use that for the single-mouse rig; this table only for the legacy 2-mice setup.
+> Since 2026-06-27 the standard rig is **one mouse, 8-pin slip-ring socket** with a different pad map. Current scheme (slip-ring colour → pad): pad 0 red EEG-F_L, 1 black EEG-P_L, 2 yellow EMG-L, 3 blue EMG-R, **pad 4 brown = dura frontal-R** (recorded), **pad 5 purple = nothing** (spare line, deselect), **pad 6 orange = copper/env-ref**, **`GND` bus = green = dura parietal-R animal ground** (not a signal pad). `REF` empty (bipolar). Note pad 5 here ≠ an M1 ground. Full definitive map lives in [[grounding-reference-noise-concepts]] §2. Use that for the single-mouse rig; this table only for the legacy 2-mice setup.
 
 **Three rules that remove all confusion:**
 1. **pad = native.** The C3410 hole `N` solders straight to headstage channel `N` (identity). Pad 0 → `pri_0`.

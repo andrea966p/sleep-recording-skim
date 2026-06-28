@@ -41,82 +41,75 @@ Same word, opposite origin (inside the animal vs. outside the animal). Keep them
 
 ---
 
-## 2. How this maps onto our wiring (the PDF "color" table)
+## 2. The DEFINITIVE plug map (2026-06-28)
 
-Source of truth = the **table**, not the wire colours (tether and slip ring use **different colour conventions**):
+Single source of truth = this table (**slip-ring colour → C3410 pad → signal**). The tether uses a **different** colour convention — **map by slip-ring colour + signal, never by tether colour name.**
 
-| Signal | Tether colour | Slip-ring colour | C3410 dest |
-|---|---|---|---|
-| EEG (frontal left) `+` | red | red | pad 0 |
-| EEG (parietal left) `−` | black | black | pad 1 |
-| EMG (left) `+` | yellow | yellow | pad 2 |
-| EMG (right) `−` | blue | blue | pad 3 |
-| dura pin (**frontal right**) | **white** | **brown** | **pad 5** |
-| dura pin (**parietal right**) — **ANIMAL GROUND** | **green** | **orange** | **ground bus → `GND`** |
-| Reference — copper tinned coil | **peach** | **magenta** | pad 6 |
+| C3410 pad | Slip-ring colour | Signal |
+|---|---|---|
+| **0** | red | EEG frontal-L (`+`) |
+| **1** | black | EEG parietal-L (`−`) |
+| **2** | yellow | EMG L (`+`) |
+| **3** | blue | EMG R (`−`) |
+| **4** | brown | dura **frontal-R** (right-frontal cortex) |
+| **5** | purple | **nothing** — spare line: soldered + resined to the strip & plugged to pad 5, but **no electrode behind it** (carries no signal) |
+| **6** | orange | copper coil = **environmental-noise** reference |
+| **`GND` bus** | green | dura **parietal-R** = **animal tissue ground** |
+| **`REF`** | — | (empty) — bipolar → no brain reference |
 
 > [!warning] Frontal/parietal corrected 2026-06-28
-> Earlier versions of this table had **green = frontal-R / white = parietal-R** — that was **backwards**. Bench truth (operator + [[2026-06-27]] root-cause: "tether green → right **caudal** dura pin"): **green = parietal-R (caudal)**, **white = frontal-R**. Green is the **animal ground**; white is the leftover right-frontal dura electrode. Verify physically which right dura pin green sits on before powering.
+> Green = **parietal-R (caudal)** = animal ground. The right-**frontal** dura pin is the separate **brown / pad 4** line. Earlier tables had frontal/parietal backwards (and had ground on *orange*). Verify physically which right dura pin the green/ground wire sits on before powering.
 
-- **white↔brown** (pad 5) and **peach↔magenta** (pad 6) are **NOT errors** — just different colour conventions between the two parts. Map them by the **table**, never by colour name.
-- **GREEN = the tissue/animal ground line.** It carries the right-parietal dura pin but is **repurposed as the animal ground**: it does **not** go to a signal pad — it routes to the **ground bus → `GND`**. For ground to reach the bus, the slip-ring **orange** (ground-bus) contact must mate the tether **green** contact (this is the [§3](#3-the-defect--slip-ring-greenorange-swap-animal-ground--nothing) defect).
-- **WHITE (slip-ring brown) = the right-frontal dura electrode → pad 5**, recorded as a real tissue channel (see [§2.1](#21-what-the-white--brown-wire-is-for) below).
+- **Ground = slip-ring GREEN** → brass bus → C3410 `GND`. Carries dura parietal-R; does **not** go to a signal pad.
+- **Pad 4 (brown) = dura frontal-R** = a real recorded right-frontal cortical channel (single-ended; see [§2.1](#21-what-the-brown--pad-4-dura-frontal-r-wire-is-for)).
+- **Pad 5 (purple) = nothing.** Physically present (resined + plugged) but no electrode → it will **float / rail** → **deselect it, do not record.** It exists only to fill the strip position.
+- **Pad 6 (orange) = copper coil** = environmental-noise reference ([§4](#4-the-copper-tinned-coil-environmental-reference--what-to-do-with-it)).
+- **`REF` empty** (bipolar).
 
-### 2.1 What the white / brown wire is for
+### 2.1 What the brown / pad 4 (dura frontal-R) wire is for
 
-White (tether) = brown (slip-ring) = the **right-frontal dura pin** = a **real tissue electrode** (unlike the cut copper coil). Because green (its right-side partner) is consumed as ground, white can't form a right-hemisphere **bipolar pair** anymore. We still **resin it into the new slip ring and plug it on pad 5**, recorded as a single-ended dura channel.
+Slip-ring **brown → pad 4** = the **right-frontal dura pin** = a **real tissue electrode** (unlike the cut copper coil). Because green (its right-side partner) is consumed as ground, it can't form a right-hemisphere **bipolar pair** — so it's recorded **single-ended** on pad 4.
 
-Use it as a **software re-reference / spare cortical trace**: record pad 5, then in Radiens **Paired Reference (manual p70)** optionally subtract it from the left EEG/EMG channels (a referential montage against right-frontal cortex).
+Use it as a **software re-reference / spare cortical trace**: record pad 4, then in Radiens **Paired Reference (manual p70)** optionally subtract it from the left EEG/EMG channels (a referential montage against right-frontal cortex).
 
-> [!important] White ≠ hardware `REF` pad
-> White-on-pad-5 is a **recorded channel** you re-reference **in software**. It is **NOT** wired to the chip's `REF` pad — that stays **EMPTY** (RHD2216 is bipolar). Three different "reference-ish" things, do not merge: **white** = optional biological re-ref (recorded, pad 5); **copper coil** = environmental ref (pad 6, [§4](#4-the-copper-tinned-coil-environmental-reference--what-to-do-with-it)); **hardware `REF`** = unused.
+> [!important] Pad 4 ≠ hardware `REF` pad
+> Pad 4 is a **recorded channel** you re-reference **in software**. It is **NOT** wired to the chip's `REF` pad — that stays **EMPTY** (RHD2216 is bipolar). Three different "reference-ish" things, do not merge: **pad 4 (brown)** = optional biological re-ref (recorded); **copper coil (pad 6, orange)** = environmental ref ([§4](#4-the-copper-tinned-coil-environmental-reference--what-to-do-with-it)); **hardware `REF`** = unused.
 
-### 2.2 Adapter-board plug map — how the C3410 pads SHOULD be plugged
+### 2.2 Build / select notes
 
-This is the "should-be" build target for the new slip ring + fan-out:
-
-| C3410 pad | Plug in (tether / slip-ring) | Signal | Role |
-|---|---|---|---|
-| **0** | red / red | EEG frontal-L | `+` of left EEG (pair 0−1) |
-| **1** | black / black | EEG parietal-L | `−` of left EEG |
-| **2** | yellow / yellow | EMG L | `+` of EMG (pair 2−3) |
-| **3** | blue / blue | EMG R | `−` of EMG |
-| **4** | — | (empty) | green vacated here → now ground, not a signal pad |
-| **5** | white / brown | dura frontal-R | recorded re-ref / spare EEG (single-ended) |
-| **6** | peach / magenta | copper coil | environmental-noise reference |
-| **`GND`** | green / **orange** | dura parietal-R | **animal tissue ground** (→ brass bus → `GND`) |
-| **`REF`** | — | (empty) | bipolar chip → no brain reference |
-
-- **Pad 4 ends empty** (green moved to the ground bus). Recorded pads are therefore 0,1,2,3,5,6 — non-contiguous, so **select them explicitly** in channel-select (don't rely on a contiguous range; see [[signal-mapping-guide]]).
-- Differential pairs in software: **0−1 = left EEG**, **2−3 = EMG**. Pad 5 (right-frontal) stands alone as the optional re-reference. Pad 6 (copper) = env-noise subtract.
+- **Recorded pads = 0,1,2,3,4,6.** Pad 5 (purple) carries nothing → **deselect.** So the recorded set is non-contiguous (skips 5) → **select pads explicitly** in channel-select, don't rely on a contiguous range (see [[signal-mapping-guide]]).
+- Differential pairs in software: **0−1 = left EEG**, **2−3 = EMG**. Pad 4 (right-frontal) stands alone as the optional re-reference. Pad 6 (copper) = env-noise subtract.
+- Ground (green) and `REF` are not recorded channels.
 
 ---
 
 ## 3. The defect — slip-ring green↔orange swap (animal ground → nothing)
 
-Diffing the "current status" vs "how it should be" diagrams, the **only** difference is the slip-ring right column, bottom two positions:
+In the [§2](#2-the-definitive-plug-map-2026-06-28) definitive map, **green = animal ground → brass bus → `GND`** and **orange = copper / environmental ref → pad 6**. The old (current) slip ring has the **green and orange contacts swapped**:
 
 ```
-slip ring, current  : … brown, blue, GREEN, ORANGE   (green & orange positions wrong)
-slip ring, should be: … brown, blue, ORANGE, GREEN
+slip ring, should be:  green → ground bus,  orange → pad 6 (copper/env)
+slip ring, current   : green → pad 6 line,  orange → ground bus   (swapped)
 ```
 
-**Consequence:** the tether **green (tissue ground)** no longer mates the slip-ring **orange (ground bus)** line — it lands on a line that **goes nowhere**. So:
+**Consequence:** the animal-ground **green** wire lands on the **pad-6 (env) line** — an amplifier **input**, not the ground bus — so the animal is never tied to `GND`. So:
 
-> **The animal's tissue ground does not reach the ground bus → the animal floats → the railing comes back.** This is the exact failure mode from §1 row 1, re-introduced by a single mis-potted pin.
+> **The animal's tissue ground does not reach the ground bus → the animal floats → the railing comes back.** This is the exact failure mode from §1 row 1, re-introduced by a single mis-potted swap.
 
 Everything else in the chain is correct. It is **one** swap, but it is the **ground**, so it is fatal (ground is physical — it cannot be patched in software/mapping).
 
 ### Why we can't just re-pin it
 The slip ring is **resin-potted with its pins** → the wiring is permanent → **not re-pinnable.** 
 
-**Fix = build a NEW slip ring**, resined to the full [§2.2](#22-adapter-board-plug-map--how-the-c3410-pads-should-be-plugged) plug map:
-- **orange (ground-bus) contact aligns with the tether's GREEN** (tissue ground) — i.e. swap green↔orange back to the "should be" layout. This is the rail-fix.
-- **brown (right-frontal dura) contact aligns with tether WHITE → pad 5** — resin and plug this line too (recorded re-ref / spare EEG, [§2.1](#21-what-the-white--brown-wire-is-for)).
-- red/black/yellow/blue → pads 0/1/2/3 and magenta (copper) → pad 6 unchanged.
+**Fix = build a NEW slip ring**, resined to the full [§2](#2-the-definitive-plug-map-2026-06-28) plug map:
+- **green → ground bus** (not the pad-6 line) — swap green↔orange back. This is the rail-fix.
+- **orange → pad 6** (copper / environmental ref).
+- **brown → pad 4** (dura frontal-R, recorded re-ref / spare — [§2.1](#21-what-the-brown--pad-4-dura-frontal-r-wire-is-for)).
+- **purple → pad 5** (spare/nothing — still soldered + resined + plugged, but no electrode).
+- red/black/yellow/blue → pads 0/1/2/3 unchanged.
 
 > [!warning] Do not "fix" only one end later
-> If anyone re-routes green/orange at the busbar/tether end to compensate, and *then* a corrected slip ring arrives, the two swaps stack and re-break the ground. The correct, permanent fix is **the new slip ring built to the "should be" layout**; leave the tether/busbar end matching the table.
+> If anyone re-routes green/orange at the busbar/tether end to compensate, and *then* a corrected slip ring arrives, the two swaps stack and re-break the ground. The correct, permanent fix is **the new slip ring built to the §2 map**; leave the tether/busbar end matching the table.
 
 ---
 
@@ -140,13 +133,13 @@ The slip ring is **resin-potted with its pins** → the wiring is permanent → 
 
 Beep each path end-to-end, by the **table** (not colour):
 
-- tether **green** (tissue ground) → slip-ring **orange** → **ground bus** → C3410 `GND` → chip GND = **must beep** (this is the one that was broken).
-- tether **white** → slip-ring **brown** → C3410 **pad 5** = beep (right-frontal dura channel present).
-- copper coil → pad **6** = beep (env-noise reference present).
-- spot-check signal pads: tether red/black/yellow/blue → C3410 pads 0/1/2/3 = beep.
-- confirm **pad 4 is unconnected** (green moved to ground bus → pad 4 is now empty).
-- confirm copper coil is **NOT** continuous with `GND` (env reference must stay separate from animal ground).
-- confirm white (pad 5) is **NOT** continuous with `GND` (it's a recorded electrode, not ground).
+- **green** (tissue ground) → slip-ring **green** → **ground bus** → C3410 `GND` → chip GND = **must beep** (this is the one that was broken).
+- **brown** → C3410 **pad 4** = beep (dura frontal-R recorded channel present).
+- copper coil → slip-ring **orange** → pad **6** = beep (env-noise reference present).
+- spot-check signal pads: red/black/yellow/blue → C3410 pads 0/1/2/3 = beep.
+- **purple → pad 5** = beep to pad 5 only (line present), but confirm **nothing else** hangs off it (no electrode) → it stays deselected.
+- confirm copper coil (pad 6) is **NOT** continuous with `GND` (env reference must stay separate from animal ground).
+- confirm pad 4 and pad 5 are **NOT** continuous with `GND` (they're inputs, not ground).
 - confirm `REF` pad is **unconnected** (bipolar).
 
 Then power: stream **raw** → railing should stay collapsed (see [[2026-06-27]] result: ch1 RMS 30 µV / SNR 11.7 when ground was good). Apply bandpass + 50 Hz notch + Paired Reference only after.
@@ -155,8 +148,8 @@ Then power: stream **raw** → railing should stay collapsed (see [[2026-06-27]]
 
 ## 6. Action items
 
-- [ ] **Build a new resin-potted slip ring** to the [§2.2](#22-adapter-board-plug-map--how-the-c3410-pads-should-be-plugged) plug map: **orange (ground bus) aligned to tether green** ("how it should be" layout). Current slip rings are unusable (green↔orange swap → animal ground floats).
-- [ ] On the new build, also resin + plug **brown (white tether / right-frontal dura) → pad 5** (recorded re-ref / spare EEG); keep copper coil → pad 6 (environmental reference); leave **pad 4** and `REF` empty.
+- [ ] **Build a new resin-potted slip ring** to the [§2](#2-the-definitive-plug-map-2026-06-28) plug map: **green → ground bus** (fixes the rail), **orange → pad 6** (copper/env). Current slip rings are unusable (green↔orange swap → animal ground floats).
+- [ ] On the new build also resin + plug: **brown → pad 4** (dura frontal-R, recorded re-ref/spare) and **purple → pad 5** (spare line, no electrode → deselect); leave `REF` empty.
 - [ ] DMM-verify per §5 before powering.
 - [ ] Re-stream, confirm railing stays gone, then filter + evaluate.
 - [ ] Carry the ground-electrode requirement into Tuesday's surgery (dura/bone pin → one tether pin as animal ground).
@@ -171,5 +164,5 @@ Then power: stream **raw** → railing should stay collapsed (see [[2026-06-27]]
 - [[rig-assembly-guide]] — where the ground bus + copper coil attach during assembly
 - [[sleep-recording-operator-manual]] — full ordered workflow
 - [[2026-06-27]] — the day the grounding root cause was found + this color defect documented
-- [[2026-06-28]] — frontal/parietal correction + decision to record white on pad 5 (this page's §2.1/§2.2)
+- [[2026-06-28]] — frontal/parietal correction + definitive plug map (brown→pad 4 recorded, purple→pad 5 nothing, green=ground, orange→pad 6); this page's §2
 - [[radiens-software-reference]] — Paired Reference / referencing (manual p70)
