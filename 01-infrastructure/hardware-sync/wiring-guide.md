@@ -204,6 +204,9 @@ With Pi powered on:
 > [!tip] GPIO Chip on Pi 5
 > The Pi 5 uses `gpiochip4` for the main 40-pin GPIO header (RP1 chip). Older Pis use `gpiochip0`. Verify with `gpioinfo gpiochip4`.
 
+> [!tip] No-electronics-background walkthrough (parts arrived 2026-06-29)
+> DB25 breakout + 8-ch USB logic analyzer received. For a hand-holding, step-by-step version of the check below — what each part is, PulseView setup, exactly which wire goes where, no Pi connected — see [[hardware-sync-bench-test-do03]].
+
 ## ⭐ Pin 22 (`DO 03`) sanity check — run at first plug-in
 
 > [!abstract] Why this step exists (post 2026-05-28)
