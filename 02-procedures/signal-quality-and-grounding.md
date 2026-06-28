@@ -48,6 +48,9 @@ When you load our custom sensor (`2mice32`), Allego **renumbers** the channel ch
 
 ## 2. Grounding — the one connection that makes or breaks the signal
 
+> [!warning] §2 specifics = the OLD 2-mice (`2mice32`) rig. Current standard = single-mouse 8-channel slip-ring.
+> The principle below (animal must tie to `GND` or it floats and rails) is **still correct**. But the part-specific details — two greens on signal pads **5/13**, a busbar joining **two** mouse grounds — are the legacy 2-mice layout. In the current **single-mouse 8-pin slip-ring** rig: one ground = the **green / right-parietal (caudal) dura pin** → slip-ring **orange** → brass bus → `GND`; **pad 5 = white / right-frontal dura** (a recorded electrode, NOT ground); copper coil = env-ref → pad 6; `REF` empty. Full current color→pad map (frontal/parietal corrected, white→pad 5) is in [[grounding-reference-noise-concepts]] §2.2.
+
 ### What "ground" does, in one sentence
 The amplifier can only see voltages in a narrow window (about ±5 millivolts). If the **animal isn't connected to the headstage's ground**, the whole animal "floats" and drifts out of that window — so the traces **slam to the top/bottom (saturate)** and pick up big wall-power hum. Connecting the animal to ground holds it in the window.
 

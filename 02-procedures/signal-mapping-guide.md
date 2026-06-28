@@ -87,6 +87,9 @@ The **site number** is whatever *you* decide when you build a custom map (see §
 | M2 EMG− | pad 11 | `pri_11` | **D/12** | **8** | ✅ |
 | **M2 ground** (green) | **pad 13** | `pri_13` | D/14 | 14 | ❌ — should be on the **`GND`** pad, not a signal pad |
 
+> [!warning] This table = the OLD 2-mice (`2mice32`) layout. Current standard = single-mouse 8-channel slip-ring.
+> Since 2026-06-27 the standard rig is **one mouse, 8-pin slip-ring socket** with a different pad map. In the current scheme **pad 5 = white / right-frontal dura** (a recorded electrode), **not** an M1 ground; green is the **right-parietal (caudal)** dura pin used as **animal ground** → slip-ring **orange** → brass bus → `GND` (not a signal pad at all). Full current color→pad map (incl. the frontal/parietal correction and white→pad 5) lives in [[grounding-reference-noise-concepts]] §2.2. Use that for the single-mouse rig; this table only for the legacy 2-mice setup.
+
 **Three rules that remove all confusion:**
 1. **pad = native.** The C3410 hole `N` solders straight to headstage channel `N` (identity). Pad 0 → `pri_0`.
 2. **`D/n` = native + 1.** Allego's on-screen label is 1-indexed. `pri_3` shows as `D/4`.
