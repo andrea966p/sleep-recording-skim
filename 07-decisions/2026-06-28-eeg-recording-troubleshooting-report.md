@@ -150,21 +150,36 @@ EEG = pad 0 − pad 1 (the two left-hemisphere pins). EMG = pad 2 − pad 3. The
 
 ---
 
-## 7. Reinforcing the ground wire (the latest step)
+## 7. Reinforcing the ground wire — what finally made grounding reliable (the latest step)
 
-Since the ground is the one connection that can't be allowed to fail, I'm reinforcing it physically on the new build:
+The ground is the one connection that can't fail, so it had to be mechanically bulletproof — and getting there took a few tries.
 
-- **Reinforce the slip-ring ground wire with a thicker wire** — the thin slip-ring ground wire and the thicker wire are joined together, held with **heat-shrink that has glue inside**, plus **solder** for a solid electrical bond.
-- That **thicker wire is robust enough to bolt onto the grounding bus's thick screw** (the thin original wire alone was too fragile for that).
-- At the **central screw of the grounding bus**, the same thick wire is **soldered to a pin and covered with cement** (for strain relief / insulation); that pin then **plugs into a single socket sitting on the board's `GND` pad**.
+- **Why a thick wire at all:** I was worried about **trunking/breaking the thin slip-ring ground wire** if I bolted it straight into the grounding bus. I tried attaching the thin wire to the bus in several delicate ways and **none of them held well.**
+- **What worked:** join the thin slip-ring ground wire to a **thicker wire**, locked together with **glue-lined heat-shrink + solder.** That locks the two wires in place and gives something sturdy enough to **clamp firmly into the grounding bus** without worrying about the thin wire snapping.
+- **From the bus to the board:** off the **center screw** of the grounding bus, solder a **pin** that fits the **socket** soldered on the adapter board's `GND` pad.
+  - **Key trick for a clean joint:** **sandpaper the pin where the solder goes** first — otherwise the solder doesn't take and you get a noisy/flaky connection.
+  - Once the pin is soldered to the wire, **cover it in resin or dental cement** → strong and insulated.
+- **This is what finally gave a clean, reliable solution to the grounding problem.**
 
-So the ground path end to end becomes: animal dura pin → green → (reinforced join) thick wire → grounding-bus screw → central screw → cemented pin → socket → board `GND` pad → headstage ground. One solid, mechanically tough path with no fragile thin-wire joints to work loose.
+Whole path, end to end: animal dura pin → green → (glue-heatshrink + solder join) thick wire → grounding-bus screw → center screw → sanded + soldered pin (resin/cement covered) → socket → board `GND` pad → headstage ground.
 
-*(This part isn't in the lab notes yet — I'll write it into the grounding doc.)*
+**One mechanical gotcha to fix:** the center screw of the bus carries this wire+pin up to the board's GND socket, and that spot is **right under the 3D-printed headstage support — which presses down hard on the wire.** Fix it one of two ways: **raise the 3D-printed headstage support**, or **attach the ground wire from the *bottom* of the grounding bus instead of the top** so the support doesn't crush it.
+
+*(Sections 7 and 8 aren't in the lab notes yet — I'll write them into the grounding doc.)*
 
 ---
 
-## 8. Did we pick the right recording setup? — yes
+## 8. The slip-ring-to-board pin strip is fragile (a problem we still have)
+
+On the adapter-board side of the slip ring, the wires are soldered onto a **pin strip** and resined in the order we decided — **everything except the green ground** (the ground goes to the bus / GND socket separately). That pin strip turned out to be a weak point:
+
+- **It's flimsy.** Plugging and unplugging it into the sockets soldered on the adapter board is genuinely hard — especially in the cramped space of the **sleep-recording room rack shelf** — and the pins **bend and get damaged really easily.**
+- **The resin makes it worse:** applying the resin gives off some **heat, which softens the pin strip so it bends while the resin dries.**
+- **If we keep this pin strip:** the resin has to be **dried overnight with the pin strip held/clamped onto something straight** so it sets without bending. (Worth considering a sturdier connector instead.)
+
+---
+
+## 9. Did we pick the right recording setup? — yes
 
 I checked our montage against your lab's own published protocol (Iwasaki, Hotta-Hirashima, Funato, Yanagisawa, *STAR Protocols* 2021, IIIS Tsukuba). It matches:
 
@@ -178,9 +193,9 @@ So no cerebellum screw needed — the no-reference bipolar setup is the validate
 
 ---
 
-## 9. Smaller headaches worth noting
+## 10. Smaller headaches worth noting
 
-- **Sample rate — can't record at 128–256 Hz.** Allego's minimum is **1000 Hz** (17 rates, 1k–30k). There's no 128/256 option. Plan: **acquire at 1 kHz and down-sample to 256 Hz offline** (with a proper anti-alias filter) — identical data for sleep, smaller files. Also: **switching the mode resets the sample rate**, so I have to re-set it every session.
+- **Sample rate — can't record at 128–256 Hz.** The dropdown's lowest entries are **625** and **1000 Hz** (then up to 30k). So there's a 625 option, but still nothing at 128/256, and 1 kHz is the practical floor for normal acquisition. Plan: **acquire at 1 kHz and down-sample to 256 Hz offline** (with a proper anti-alias filter) — identical data for sleep, smaller files. Also: **switching the mode resets the sample rate**, so I have to re-set it every session.
 - **Allego backend crashes** if you reload sensors / select-deselect channels too fast — it spams dozens of garbage "notifications" with nonsense dates. It's the software backend crashing, not the wiring. Fix = restart Allego, re-set mode + electrodes + channels, let it settle.
 - **Channel-selection trap:** with the custom sensor map loaded, the channel chips are labeled by *site number*, so you tick **sites 1–8** to get both mice — ticking "1–8" as the raw `D/n` labels silently records the wrong channels and one mouse never streams.
 - **Recording file format (XDAT):** figured out the format — it's **float32, already in microvolts** (not int16, no scaling factor needed). Verified by recording a test clip and reading it back; the offline filter pipeline runs on it.
@@ -188,7 +203,7 @@ So no cerebellum screw needed — the no-reference bipolar setup is the validate
 
 ---
 
-## 10. Still open
+## 11. Still open
 
 1. **The second headstage still won't enumerate.** After everything above, the single-mouse headstage on the *second* SAdpt socket still shows 0 channels (`priSigs=0`), and this one looks like a **real SPI signal fault**, not the mode issue. Bench tests found no short and no bent pin, but a signal-contact fault only shows under live clocking. **Decisive test: swap sockets at the rig** — move the dead headstage to the known-good socket and a working headstage to the suspect socket. If the fault follows the headstage → headstage is bad (RMA). If it stays on the socket → that adapter socket/HDMI path is bad. (Haven't done it yet — needs me at the rig.)
 2. **Build + verify the new reinforced slip ring**, beep-test the whole ground path, then power up and confirm the railing stays gone. After that: bandpass filter (EEG 0.5–30 Hz, EMG 10–300 Hz) + 50 Hz notch + paired reference, a tap-test to confirm channel identity, then record for real.
