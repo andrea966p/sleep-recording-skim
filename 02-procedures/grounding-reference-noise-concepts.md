@@ -163,6 +163,7 @@ Then power: stream **raw** → railing should stay collapsed (see [[2026-06-27]]
 - [[multimeter-guide]] — how to run the §5 continuity checks
 - [[rig-assembly-guide]] — where the ground bus + copper coil attach during assembly
 - [[sleep-recording-operator-manual]] — full ordered workflow
+- [[tsukuba-sleep-recording-method]] — ⭐ the published IIIS Tsukuba method our montage follows (bipolar left EEG, neck EMG, NO reference/cerebellum screw); validates this rig's design
 - [[2026-06-27]] — the day the grounding root cause was found + this color defect documented
 - [[2026-06-28]] — frontal/parietal correction + definitive plug map (brown→pad 4 recorded, purple→pad 5 nothing, green=ground, orange→pad 6); this page's §2
 - [[radiens-software-reference]] — Paired Reference / referencing (manual p70)
