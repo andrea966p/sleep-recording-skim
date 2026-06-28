@@ -8,8 +8,9 @@ tags:
   - troubleshooting
   - for-professor
 created: 2026-06-28
-status: draft
+status: final
 audience: professor
+note: final-to-print version (andrea's edits) lives in ~/Downloads/ as "eeg-recording-troubleshooting-report final to print.odt" + .docx/.pdf
 ---
 
 # EEG recording, everything that went wrong and how we fixed it (so far)
@@ -37,7 +38,7 @@ Before any headstage, the XDAQ controller itself had to talk to Ubuntu.
 - **Problem:** the box is a **Gen-1 XDAQ Core** (Opal Kelly USB inside, `lsusb` shows `151f:0130`). Not the Thunderbolt "Core2" the older notes assumed. Linux saw the USB device but Allego couldn't open it.
 - **Cause:** the USB device node was read-only for normal users; Allego needs write access to push the FPGA bitfile.
 - **What worked:** one udev rule giving the `plugdev` group write access (`/etc/udev/rules.d/60-opalkelly.rules`), reload, replug. No root, no Thunderbolt, no extra driver install, Allego already ships the Opal Kelly FrontPanel library. After that the device came up healthy (30 kHz, connected), just with no headstage attached yet.
-- Side note: a bad USB-C cable had it falling back to USB 2.0 speeds at first, a good cable gave full USB 3.0.
+- Side note: a bad USB-C cable had it falling back to USB 2.0 speeds at first, a good cable gave full USB 3.0. **DO NOT SWAP THE KONTEX USB CABLE.**
 
 Status: **resolved.**
 
@@ -128,7 +129,7 @@ This is the day it actually got solved.
   - and the whole tether/slip-ring/busbar path beeps end to end.
 - So **there was no cold joint.** The entire *system-side* ground was solid the whole time.
 - **The real cause:** the busbar grounds the **headstage/system**, but **nothing was carrying that ground into the mouse.** No electrode tied the animal's body to ground. So the animal floated, and a bipolar amp with a floating subject rails every channel. The ground was "connected", just not connected to the *animal*.
-- **The fix:** dedicate one dura-contacting skull pin as the animal ground → run the tether **green** wire from that pin → busbar → board `GND`.
+- **The fix:** dedicate one dura-contacting skull pin as the animal ground → run the tether **green** wire from that pin → busbar → board `GND`. Because the slip ring isn't disposable, wiring the ring wire straight onto the bus was risky, the bus screw grinds the thin ring wire and trying to be delicate wasn't working (this is why I reinforced it, section 7).
 - **Result, live, same evening:** connected the green to the animal ground and the **railing collapsed.** A real noise floor appeared (~35 µV), and one channel came up genuinely clean:
   - **ch1: RMS 30 µV, pk-pk 178 µV, SNR ≈ 11.7** (the signal about 12 times the background noise), proof a clean signal is reachable now.
   - (The other channels still looked rough, but that's because with a single mouse only 4 electrodes are wired and the rest of the inputs are just floating/open, normal, not bad electrodes.)
@@ -168,7 +169,7 @@ EEG = pad 0 − pad 1 (the two left-hemisphere pins). EMG = pad 2 − pad 3. The
 
 The ground is the one connection that can't fail, so it had to be mechanically bulletproof, and getting there took a few tries.
 
-- **Why a thick wire at all:** I was worried about **trunking/breaking the thin slip-ring ground wire** if I bolted it straight into the grounding bus. I tried attaching the thin wire to the bus in several delicate ways and **none of them held well.**
+- **Why a thick wire at all:** I was worried about **trunking/breaking the thin slip-ring ground wire** if I bolted it straight into the grounding bus. I tried attaching the thin wire to the bus in several delicate ways and **none of them held well**, the grounding would disappear whenever I moved the setup.
 - **What worked:** join the thin slip-ring ground wire to a **thicker wire**, locked together with **glue-lined heat-shrink + solder.** That locks the two wires in place and gives something sturdy enough to **clamp firmly into the grounding bus** without worrying about the thin wire snapping.
 - **From the bus to the board:** off the **center screw** of the grounding bus, solder a **pin** that fits the **socket** soldered on the adapter board's `GND` pad.
   - **Key trick for a clean joint:** **sandpaper the pin where the solder goes** first, otherwise the solder doesn't take and you get a noisy/flaky connection.
@@ -189,7 +190,7 @@ On the adapter-board side of the slip ring, the wires are soldered onto a **pin 
 
 - **It's flimsy.** Plugging and unplugging it into the sockets soldered on the adapter board is genuinely hard, especially in the cramped space of the **sleep-recording room rack shelf**, and the pins **bend and get damaged really easily.**
 - **The resin makes it worse:** applying the resin gives off some **heat, which softens the pin strip so it bends while the resin dries.**
-- **If we keep this pin strip:** the resin has to be **dried overnight with the pin strip held/clamped onto something straight** so it sets without bending. (Worth considering a sturdier connector instead.)
+- **If we keep this pin strip:** the resin has to be **dried overnight with the pin strip held/clamped onto something straight** so it sets without bending. (Worth a sturdier connector long-term, I'm looking for alternatives, for now it works well enough but won't be reliable on a long run.)
 
 ---
 
@@ -216,7 +217,7 @@ Our montage is the standard one for mouse sleep recording, so I'm confident it's
 
 ## 11. Still open
 
-1. **The second headstage still won't enumerate.** After everything above, the single-mouse headstage on the *second* SAdpt socket still shows 0 channels (`priSigs=0`), and this one looks like a **real SPI signal fault**, not the mode issue. Bench tests found no short and no bent pin, but a signal-contact fault only shows under live clocking. **Decisive test: swap sockets at the rig**, move the dead headstage to the known-good socket and a working headstage to the suspect socket. If the fault follows the headstage → headstage is bad (RMA). If it stays on the socket → that adapter socket/HDMI path is bad. (Haven't done it yet, needs me at the rig.)
+1. **The second headstage still won't enumerate.** After everything above, the single-mouse headstage on the *second* SAdpt socket still shows 0 channels (`priSigs=0`), and this one looks like a **real SPI signal fault**, not the mode issue. Bench tests (under a magnifying lens) found no short and no bent pin, but a signal-contact fault only shows under live use. **Decisive test: swap sockets at the rig**, move the dead headstage to the known-good socket and a working headstage to the suspect socket. If the fault follows the headstage → headstage is bad (RMA). If it stays on the socket → that adapter socket/HDMI path is bad. (Haven't done it yet, needs me at the rig.)
 2. **Build + verify the new reinforced slip ring**, beep-test the whole ground path, then power up and confirm the railing stays gone. After that: bandpass filter (EEG 0.5–30 Hz, EMG 10–300 Hz) + 50 Hz notch + paired reference, a tap-test to confirm channel identity, then record for real.
 3. **Surgery requirement going forward:** every implant must include a real **animal-ground dura/bone pin** wired to one tether pin. This is now a surgical step, not something I can fix later in software.
 
