@@ -171,4 +171,5 @@ Then power: stream **raw** → railing should stay collapsed (see [[2026-06-27]]
 - [[rig-assembly-guide]] — where the ground bus + copper coil attach during assembly
 - [[sleep-recording-operator-manual]] — full ordered workflow
 - [[2026-06-27]] — the day the grounding root cause was found + this color defect documented
+- [[2026-06-28]] — frontal/parietal correction + decision to record white on pad 5 (this page's §2.1/§2.2)
 - [[radiens-software-reference]] — Paired Reference / referencing (manual p70)
