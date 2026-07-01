@@ -38,10 +38,14 @@ CHANNEL_MAPS = {
         6: "copper",    # cut cable shield = environmental-noise reference
         # native 5 = purple = nothing (deselect); 7-31 = unwired
     },
-    # legacy 2-mice-per-headstage map (sites 1-8)
+    # 2-mice-per-headstage map (validated 2026-07-01: impedance sweep good on
+    # all 8 electrode sites; grid rows 1 & 3 = M1 / M2, natives 0-3 / 8-11).
+    # M1 = chip-1 natives 0-3, M2 = chip-1 natives 8-11 (both share one GND bus).
+    # Each mouse's green ground -> brass bus -> C3410 GND (shared ground).
     "2mice32": {
         0: "M1_EEG_F", 1: "M1_EEG_P", 2: "M1_EMG_L", 3: "M1_EMG_R",
         8: "M2_EEG_F", 9: "M2_EEG_P", 10: "M2_EMG_L", 11: "M2_EMG_R",
+        12: "M2_EEG_FR",   # brown = right-frontal dura (spare / re-reference)
     },
 }
 
