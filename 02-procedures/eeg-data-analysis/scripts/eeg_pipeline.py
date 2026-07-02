@@ -16,8 +16,9 @@ Pipeline (all offline, never in Allego):
 Requires the analysis venv (numpy, scipy). See 01-environment-setup.md.
 
 Usage:
-    python eeg_pipeline.py <recording_base> [--config single_mouse|2mice32]
+    python eeg_pipeline.py <recording_base> [--config single_mouse]
                            [--epoch 4] [--target-fs 256]
+    (2mice32 config DEPRECATED 2026-07-01 -- one mouse per headstage; see xdat_io.py)
 """
 import argparse
 import numpy as np

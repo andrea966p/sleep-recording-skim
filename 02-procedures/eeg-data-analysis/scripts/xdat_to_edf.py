@@ -10,7 +10,8 @@ Open the result in EDFbrowser (use the 2.14+ build; the apt 2.06 build crashes
 on launch on Ubuntu 24.04 -- see 05-quality-control.md / journal 2026-06-30).
 
 Usage:
-    python xdat_to_edf.py <recording_base> [--config single_mouse|2mice32]
+    python xdat_to_edf.py <recording_base> [--config single_mouse]
+    (2mice32 config DEPRECATED 2026-07-01 -- one mouse per headstage; see xdat_io.py)
 """
 import argparse
 import datetime

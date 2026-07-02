@@ -11,8 +11,9 @@ recording) so you can confirm at a glance that:
 Requires the analysis venv (numpy, scipy, matplotlib).
 
 Usage:
-    python qc_report.py <recording_base> [--config single_mouse|2mice32]
+    python qc_report.py <recording_base> [--config single_mouse]
                         [--epoch 4]
+    (2mice32 config DEPRECATED 2026-07-01 -- one mouse per headstage; see xdat_io.py)
 """
 import argparse
 import numpy as np

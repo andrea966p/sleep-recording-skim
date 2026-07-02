@@ -7,8 +7,9 @@ Python/pandas, or pass --target-fs to decimate (e.g. 256 Hz -> ~4x smaller and
 Excel-openable for short recordings).
 
 Usage:
-    python xdat_to_csv.py <recording_base> [--config single_mouse|2mice32]
+    python xdat_to_csv.py <recording_base> [--config single_mouse]
                           [--target-fs 0]      # 0 = keep native rate (raw)
+    (2mice32 config DEPRECATED 2026-07-01 -- one mouse per headstage; see xdat_io.py)
                           [--bipolar]          # also add bipolar derivations
 """
 import argparse

@@ -26,7 +26,8 @@ import numpy as np
 
 # native-channel (== pad, passthrough) -> human label, per rig config.
 # See vault: grounding-reference-noise-concepts.md (single-mouse definitive map)
-# and signal-mapping-guide.md (2mice32).
+# and signal-mapping-guide.md. (The old 2-mice-per-headstage map is DEPRECATED
+# 2026-07-01 — see the retracted-topology note on the DEPRECATED_* key below.)
 CHANNEL_MAPS = {
     # single-mouse 8-pin slip-ring rig (2026-06 onward)
     "single_mouse": {
@@ -38,11 +39,19 @@ CHANNEL_MAPS = {
         6: "copper",    # cut cable shield = environmental-noise reference
         # native 5 = purple = nothing (deselect); 7-31 = unwired
     },
-    # 2-mice-per-headstage map (validated 2026-07-01: impedance sweep good on
-    # all 8 electrode sites; grid rows 1 & 3 = M1 / M2, natives 0-3 / 8-11).
-    # M1 = chip-1 natives 0-3, M2 = chip-1 natives 8-11 (both share one GND bus).
-    # Each mouse's green ground -> brass bus -> C3410 GND (shared ground).
-    "2mice32": {
+    # DEPRECATED 2026-07-01 — DO NOT USE FOR NEW RECORDINGS.
+    # This map put TWO mice on ONE headstage (M1 natives 0-3, M2 natives 8-11),
+    # both sharing a single GND bus -> one C3410 GND pad. The 2026-07-01 verdict
+    # RETRACTED this topology: a shared single ground for two animals is NOT
+    # electrically independent (violates one-ground-per-animal practice), so the
+    # animals can couple. Correct topology = ONE mouse per headstage (use
+    # `single_mouse`); scale by adding headstages (dual-headstage 64ch works).
+    # (An earlier comment here read "validated 2026-07-01: impedance sweep good"
+    # — that was FALSE and contradicted the day's actual verdict; corrected.)
+    # Kept only for reading back any pre-existing 2-mice stream; the renamed key
+    # makes callers fail loudly rather than silently mislabel animal channels.
+    # See journal 2026-07-01 §6 and 07-decisions checkpoint.
+    "DEPRECATED_2mice32_shared_ground": {
         0: "M1_EEG_F", 1: "M1_EEG_P", 2: "M1_EMG_L", 3: "M1_EMG_R",
         8: "M2_EEG_F", 9: "M2_EEG_P", 10: "M2_EMG_L", 11: "M2_EMG_R",
         12: "M2_EEG_FR",   # brown = right-frontal dura (spare / re-reference)
@@ -52,8 +61,10 @@ CHANNEL_MAPS = {
 # default bipolar derivations per config: (label, plus_native, minus_native)
 BIPOLAR_DERIVATIONS = {
     "single_mouse": [("EEG_bip", 0, 1), ("EMG_bip", 2, 3)],
-    "2mice32": [("M1_EEG_bip", 0, 1), ("M1_EMG_bip", 2, 3),
-                ("M2_EEG_bip", 8, 9), ("M2_EMG_bip", 10, 11)],
+    # DEPRECATED 2026-07-01 (shared-ground 2-mice topology retracted); see above.
+    "DEPRECATED_2mice32_shared_ground": [
+        ("M1_EEG_bip", 0, 1), ("M1_EMG_bip", 2, 3),
+        ("M2_EEG_bip", 8, 9), ("M2_EMG_bip", 10, 11)],
 }
 
 
