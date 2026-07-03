@@ -87,3 +87,17 @@ A recording counts as validated only if, on a **single fully-instrumented mouse*
 - [[2026-06-28-eeg-recording-troubleshooting-report]] — narrative report (status now superseded by §1 here)
 - [[grounding-reference-noise-concepts]], [[signal-mapping-guide]], [[intan-headstage-troubleshooting]]
 - [[2026-05-01-llm-council-review]] — prior council format
+
+
+---
+
+## UPDATE 2026-07-03 — "the one thing to do first" is DONE ✅
+
+The endurance + thermal + Allego-survival test (§3.1 / "one thing to do first") **ran overnight and PASSED**. See [[2026-07-03]]. Results:
+- **Thermal: PASS** — 14.23 h of 2 headstages + 4 cameras peaked **82 °C** (never 90), avg 65 °C. Mini-PC thermally adequate at this scale; the 90 °C scare was transient/GUI. Council mini-PC-vs-desktop concern answered for 2-mouse+4-cam scale.
+- **Allego endurance: PASS** — 14 h unattended, stream continuous, Port A 64 ch stable, **zero dropped samples**, watchdog clean (triples the prior 4.5 h record).
+- **Data integrity: PASS** — `data.xdat` byte-exact, contiguous timestamps; M1_EEG_F held clean ~110 µV for 14 h.
+- **Video: PASS** — 4 cams, 5121 segments each, continuous.
+- **C3442 dual-headstage-per-port VALIDATED** → 8-mice path confirmed with owned headstages.
+
+Still open from this checkpoint: clean **bipolar EEG pair + working EMG** (electrode/surgical), and the crash-resilience gap is now partially covered (temp logger + Allego watchdog exist in `~/stress_test_2026-07-02/`, reusable). Daemon rough edges (JSON collision, partial long-export, log rotation) are **deferred** — daemon is being replaced by hardware sync; auto video start/stop disabled 2026-07-03 (`sessions.auto_start=false`).
