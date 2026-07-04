@@ -53,46 +53,40 @@ Each mouse uses **4 electrodes on C3410 pads 0,1,2,3**, plus a **ground** on the
 
 ## 2. ⭐ Master signal map — all 8 mice
 
-`native` = the headstage channel (files store this as `pri_N`). `Allego label` = what you see on the chip (`Port/n` = native + 1). `site` = the tidy number after loading the custom sensor (§3).
+`native` = the headstage channel (files store this as `pri_N`). `Allego label` = what you see on the chip (`Port/n` = native + 1). **Use passthrough — no custom sensor (see §3); the label IS native+1.**
 
-| Mouse | Port / HS | Signal | pad | native | **Allego label** | **site** |
-|---|---|---|---|---|---|---|
-| **M1** | A / HS-A | EEG+ | 0 | 0  | **A/1**  | 1 |
-| M1 | A / HS-A | EEG− | 1 | 1  | A/2  | 2 |
-| M1 | A / HS-A | EMG+ | 2 | 2  | A/3  | 3 |
-| M1 | A / HS-A | EMG− | 3 | 3  | A/4  | 4 |
-| **M2** | A / HS-B | EEG+ | 0 | 32 | **A/33** | 5 |
-| M2 | A / HS-B | EEG− | 1 | 33 | A/34 | 6 |
-| M2 | A / HS-B | EMG+ | 2 | 34 | A/35 | 7 |
-| M2 | A / HS-B | EMG− | 3 | 35 | A/36 | 8 |
-| **M3** | B / HS-A | EEG+…EMG− | 0–3 | 0–3   | **B/1–B/4**  | 1–4 |
-| **M4** | B / HS-B | EEG+…EMG− | 0–3 | 32–35 | **B/33–B/36** | 5–8 |
-| **M5** | C / HS-A | EEG+…EMG− | 0–3 | 0–3   | **C/1–C/4**  | 1–4 |
-| **M6** | C / HS-B | EEG+…EMG− | 0–3 | 32–35 | **C/33–C/36** | 5–8 |
-| **M7** | D / HS-A | EEG+…EMG− | 0–3 | 0–3   | **D/1–D/4**  | 1–4 |
-| **M8** | D / HS-B | EEG+…EMG− | 0–3 | 32–35 | **D/33–D/36** | 5–8 |
+> [!danger] The 2nd headstage sits at native +32, NOT +16 or +28 — verified live 2026-07-04
+> With a C3442, each port = 64 ch: HS-A real = natives **0–3** (pads 0–3), HS-B real = natives **32–35** (pads 0–3). Natives **16–31 and 48–63 are the empty second-MISO floor slots** (quiet ~40 µV). Live proof (2026-07-04): on passthrough ports the 2nd-mouse channels `pri_(base+32..35)` read railing/signal (real), while `pri_28–31` read quiet floor (empty). **Select `/33,/34,/35,/36` for the 2nd mouse — never `/29–/32`.**
 
-**Total recorded = 8 mice × 4 = 32 channels.**
+| Mouse | Port / HS | pad→signal | native | **Allego label (select these)** |
+|---|---|---|---|---|
+| **M1** | A / HS-A | 0,1,2,3 = EEG+,EEG−,EMG+,EMG− | 0–3   | **A/1, A/2, A/3, A/4** |
+| **M2** | A / HS-B | 0,1,2,3 = EEG+,EEG−,EMG+,EMG− | 32–35 | **A/33, A/34, A/35, A/36** |
+| **M3** | B / HS-A | 0–3 | 0–3   | **B/1–B/4** |
+| **M4** | B / HS-B | 0–3 | 32–35 | **B/33–B/36** |
+| **M5** | C / HS-A | 0–3 | 0–3   | **C/1–C/4** |
+| **M6** | C / HS-B | 0–3 | 32–35 | **C/33–C/36** |
+| **M7** | D / HS-A | 0–3 | 0–3   | **D/1–D/4** |
+| **M8** | D / HS-B | 0–3 | 32–35 | **D/33–D/36** |
+
+**Total recorded = 8 mice × 4 = 32 channels. Same block every port: `/1,/2,/3,/4` + `/33,/34,/35,/36`.**
 
 > [!note] Offline decode (analysis)
 > Allego records **all** primary channels of every enumerated port, not just the selected ones (selection is display/QC only). In `get_signals` / the `.xdat` file the rows are per-port blocks of 64: **Port A = rows 0–63, B = 64–127, C = 128–191, D = 192–255**. Each mouse's 4 channels are at offset **0–3** (HS-A) or **32–35** (HS-B) inside its port block. The analysis channel-name map needs an 8-mouse version before scoring (TODO — the old `2mice32` decode map is deprecated).
 
 ---
 
-## 3. Allego sensor files (already built — ready to load)
+## 3. Use PASSTHROUGH — no custom sensor
 
-One custom sensor covers a **whole C3442 port** (2 mice, 64 ch). **Load the same file on all 4 ports.** It puts the 8 used channels on tidy **sites 1–8** and parks the rest.
+> [!warning] Custom `dual_mouse_c3442` sensor DEPRECATED 2026-07-04 — do NOT load it
+> A custom sensor was built first, but it **relabels channels by site number** and that collided with the natural per-port layout: picking "sites 33–36" landed on natives **28–31 (empty floor)** instead of the 2nd mouse at natives 32–35. It caused a wrong Port-A selection on the first real 8-mouse setup. For only 4 channels per headstage a custom map buys nothing and adds a trap. **Use the built-in passthrough** so the on-screen label = native + 1 on every port.
 
-**Files (already generated into `/home/skimlab/radix/devices/`):**
-- Headstage: `hstg__usrdef_dual_mouse_c3442.hstg`
-- Probe: `probe__usrdef_dual_mouse_c3442_probe.prb`
+Per port, in the **Electrodes** tab:
+- Headstage = **`Passthrough 64`**
+- Probe = **`Default 8x8`**
+- Apply. (Same on all 4 ports.)
 
-Source CSVs + generator in the vault: `06-references/neuronexus/sensor-maps/dual_mouse_c3442.csv`, `..._probe.csv`, `gen_dual_mouse.py`. To rebuild: `./csv2sensor-linux-x86_64 -type headstage dual_mouse_c3442.csv` (and `-type probe ..._probe.csv`).
-
-Site layout inside the file:
-- sites **1,2,3,4** = HS-A mouse EEG+, EEG−, EMG+, EMG− (natives 0,1,2,3)
-- sites **5,6,7,8** = HS-B mouse EEG+, EEG−, EMG+, EMG− (natives 32,33,34,35)
-- sites 9–64 = parked unused channels
+The label you see is then simply `Port/(native+1)`, so the §2 table's "Allego label" column is exactly what you tick. The dead `hstg__usrdef_dual_mouse_c3442.*` files can be left in `/home/skimlab/radix/devices/` (ignored) or deleted.
 
 ---
 
@@ -119,32 +113,26 @@ Per mouse, before streaming:
 
 ---
 
-## 6. Load sensor + select channels in Allego
+## 6. Set passthrough + select channels in Allego
 
-**Load (Electrodes tab) — repeat for each port A, B, C, D:**
-1. Electrodes tab → **Port = A**.
-2. Tick **"Use local devices"** (un-tick/re-tick if the file isn't listed).
-3. Headstage dropdown → **`Usrdef dual_mouse_c3442`**.
-4. Probe dropdown → **`Usrdef-dual_mouse_c3442-Probe`**.
-5. **Apply.** Wireframe redraws as two clusters (left = HS-A mouse, right = HS-B mouse).
-6. Repeat for Port B, C, D (same two files).
+**Electrodes tab — each port A, B, C, D:** Headstage = `Passthrough 64`, Probe = `Default 8x8`, Apply. (No "Use local devices" / custom file.)
 
 **Select channels (System tab → Signals) — per port:**
-- On each port row, **DESELECT ALL**, then tick **sites 1–8**. That's both mice on that port.
-- Do all 4 ports → **32 channels selected total** (8 mice).
+- On each port row, **DESELECT ALL**, then tick: **`/1, /2, /3, /4`** (HS-A mouse) **+ `/33, /34, /35, /36`** (HS-B mouse).
+- Do all 4 ports → **32 channels total** (8 mice).
 
-> [!warning] The sites-vs-labels trap (read this)
-> With the custom sensor loaded, chips are labeled by **site number**. Ticking **sites 1–8 is CORRECT** (= natives 0,1,2,3,32,33,34,35). Do NOT tick "1,2,3,4,33,34,35,36" as raw labels here — after the map loads those digits mean sites, and sites 9+ are the parked junk. **Just pick the contiguous block sites 1–8 per port.**
+> [!warning] The +32 trap (read this)
+> The 2nd mouse on each port is at label **`/33–/36`** (native 32–35), **not `/29–/32`**. `/17–/32` are HS-A's empty floor. If you tick `/29,/30,/31,/32` you record **empty channels** and the 2nd mouse is missing. Always `/33,/34,/35,/36` for the second mouse. (This is exactly the mistake that happened on Port A the first time — see [[2026-07-04]].)
 
 ---
 
 ## 7. Verify before recording (per mouse, 2-min check)
 
-1. **Signal Map** (System tab): used channels show real Headstage/Probe, **no `−23` / no-site**. Native 0–3 → sites 1–4; native 32–35 → sites 5–8.
-2. **Floor quiet** = grounded (§4.4).
-3. **Tap test:** nudge a mouse's EMG lead → its EMG site (3 or 7) jumps. Wrong site jumps ⇒ wiring ≠ map, fix the sheet.
-4. **Signal Metrics:** background RMS tens of µV = good; thousands of µV = floating/open. Railing wired channel = **open electrode contact** (surgical/contact issue, not the rig).
-5. **Bipolar pair check:** EEG = site1−site2 (or 5−6), EMG = site3−site4 (or 7−8). A scoreable mouse needs a clean EEG pair **and** a working EMG pair.
+1. **Signal Map** (System tab): every selected channel has a real Headstage/Probe (passthrough), no blanks.
+2. **Floor quiet** = grounded (§4.4): HS-A floor natives 16–31, HS-B floor 48–63 read ~5–40 µV.
+3. **Tap test:** nudge a mouse's EMG lead → its EMG channel (`/3` or `/35`) jumps. Wrong channel jumps ⇒ wiring ≠ map.
+4. **Signal Metrics:** background RMS tens of µV = good; ~thousands of µV (railing) = **open electrode contact** (surgical, not the rig).
+5. **Bipolar pair check:** EEG = `/1`−`/2` (or `/33`−`/34`); EMG = `/3`−`/4` (or `/35`−`/36`). A scoreable mouse needs a clean EEG pair **and** a working EMG pair.
 
 Record only mice that pass. A single clean leg is not scoreable.
 
