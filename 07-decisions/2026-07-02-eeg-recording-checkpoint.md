@@ -68,7 +68,7 @@ Full method: 5 advisors + peer review. Highlights:
 ## 4. Validation criteria — what "done" means (fill in exact numbers)
 
 A recording counts as validated only if, on a **single fully-instrumented mouse**:
-- **EEG:** RMS in the tens-to-low-hundreds µV; PSD shows 1/f falloff, delta-dominant with theta/delta cycling (sleep/wake structure); 50 Hz clean after notch.
+- **EEG:** RMS in the tens-to-low-hundreds µV; PSD shows 1/f falloff, delta-dominant with theta/delta cycling (sleep/wake structure); 60 Hz clean after notch.
 - **EMG:** real muscle signal with **atonia during REM** (the discriminator); RMS above noise floor, not railed, not open (impedance in the good window, ≈0.1–1 MΩ; ≫5 MΩ = open).
 - **Stability:** signal holds across a **full sleep cycle** and ideally the target **72 h**, with contact/impedance drift within tolerance (define threshold).
 - **Handoff:** XDAT → EDF+ imports into the IIIS scorer AND is actually scored into 3 states (not just "opens").

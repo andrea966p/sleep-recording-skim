@@ -83,7 +83,7 @@ Headstage detected, but the traces were garbage.
 
 - Open the **Monitor** tab and watch the live traces. A good channel sits **in the middle of its lane and wiggles**. A **railed** channel sits **flat-pinned against the top or bottom edge** of its lane (flat-topped = saturated = unusable, almost always a grounding problem). A **dead/broken** channel is a **flat line** with no wiggle at all.
 - Use the **Amplitude Range** control to set the vertical scale (e.g. ±5 mV to see the railing, or a few hundred µV to see real EEG). If everything is still flat-topped even at the ±5 mV scale, the animal is floating, fix the ground first.
-- Turn on the **50 Hz notch** (signal processing) or open the frequency view. A little 50 Hz hum is normal, a giant 50 Hz that buries everything means grounding/shielding still needs work.
+- Turn on the **60 Hz notch** (signal processing) or open the frequency view. A little 60 Hz hum is normal, a giant 60 Hz that buries everything means grounding/shielding still needs work.
 - The **Measure** tool reads pk-pk off a channel by eye, the **Signal Metrics** readout gives the RMS / pk-pk / SNR numbers I quote above.
 - Quick routine: glance at Monitor first (is anything flat against an edge?), then check Signal Metrics (RMS in tens of µV = good, thousands = floating).
 
@@ -218,7 +218,7 @@ Our montage is the standard one for mouse sleep recording, so I'm confident it's
 ## 11. Still open
 
 1. **The second headstage still won't enumerate.** After everything above, the single-mouse headstage on the *second* SAdpt socket still shows 0 channels (`priSigs=0`), and this one looks like a **real SPI signal fault**, not the mode issue. Bench tests (under a magnifying lens) found no short and no bent pin, but a signal-contact fault only shows under live use. **Decisive test: swap sockets at the rig**, move the dead headstage to the known-good socket and a working headstage to the suspect socket. If the fault follows the headstage → headstage is bad (RMA). If it stays on the socket → that adapter socket/HDMI path is bad. (Haven't done it yet, needs me at the rig.)
-2. **Build + verify the new reinforced slip ring**, beep-test the whole ground path, then power up and confirm the railing stays gone. After that: bandpass filter (EEG 0.5–30 Hz, EMG 10–300 Hz) + 50 Hz notch + paired reference, a tap-test to confirm channel identity, then record for real.
+2. **Build + verify the new reinforced slip ring**, beep-test the whole ground path, then power up and confirm the railing stays gone. After that: bandpass filter (EEG 0.5–30 Hz, EMG 10–300 Hz) + 60 Hz notch + paired reference, a tap-test to confirm channel identity, then record for real.
 3. **Surgery requirement going forward:** every implant must include a real **animal-ground dura/bone pin** wired to one tether pin. This is now a surgical step, not something I can fix later in software.
 
 ---

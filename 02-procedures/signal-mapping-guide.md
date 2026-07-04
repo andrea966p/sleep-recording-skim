@@ -304,7 +304,7 @@ The software map only matches reality if the **soldering** matches your sheet. P
 3. The trace on **that** channel should jump. If a *different* channel jumps, your physical wiring differs from your table — trust the tap test and fix the table.
 
 > [!note] Signal quality this round
-> If the **ground/reference is not yet connected**, expect every channel to look noisy or railed (big 50 Hz hum). That is normal and does **not** mean the mapping is wrong. Mapping is about *identity* (which channel is which); cleanliness comes from grounding.
+> If the **ground/reference is not yet connected**, expect every channel to look noisy or railed (big 60 Hz hum). That is normal and does **not** mean the mapping is wrong. Mapping is about *identity* (which channel is which); cleanliness comes from grounding.
 
 ---
 

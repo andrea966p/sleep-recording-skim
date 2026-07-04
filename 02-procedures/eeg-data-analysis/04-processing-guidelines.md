@@ -32,11 +32,11 @@ Background: [[grounding-reference-noise-concepts]].
 
 | Signal | Bandpass | Notch | Rationale |
 |---|---|---|---|
-| EEG | **0.5–30 Hz** | 50 Hz | sleep EEG content is < ~30 Hz (delta/theta/sigma); 0.5 Hz HP removes drift |
-| EMG | **10–300 Hz** | 50 Hz | muscle tone is broadband; 10 Hz HP rejects movement/EEG bleed |
+| EEG | **0.5–30 Hz** | 60 Hz | sleep EEG content is < ~30 Hz (delta/theta/sigma); 0.5 Hz HP removes drift |
+| EMG | **10–300 Hz** | 60 Hz | muscle tone is broadband; 10 Hz HP rejects movement/EEG bleed |
 
 - Butterworth, **zero-phase** (`sosfiltfilt` / `filtfilt`) so peaks don't shift in time.
-- **50 Hz** notch (Korea/EU mains). Change to 60 Hz if ever recording on 60 Hz mains.
+- **60 Hz** notch — **South Korea mains is 60 Hz** (corrected 2026-07-05; was wrongly 50 Hz). Also notch harmonics (120/180 Hz) when hum is strong. See [[60hz-mains-hum-discovery]].
 
 ## 4. Decimation — 1 kHz → 256 Hz
 

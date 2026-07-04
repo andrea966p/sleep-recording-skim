@@ -127,7 +127,7 @@ animal dura pin → tether GREEN → slip ring → brass busbar (star node) → 
 1. The 5-position brass bar is **one common node** (all screws bridged) — use it as a clean star hub, not as a way to separate mice.
 2. Animal-ground wire(s) → end screws; **one** wire from the center screw → C3410 `GND` pad.
 3. **Tin or fold** fine tether wire so the screw bites (it slips out otherwise).
-4. Mount the busbar **close to the headstage** (short ground leads = smaller loop = less 50 Hz pickup).
+4. Mount the busbar **close to the headstage** (short ground leads = smaller loop = less 60 Hz pickup).
 5. Keep the bar **isolated** from other conductors (a stray short from the bar to a signal pad is bad).
 
 > [!note] Two mice on one headstage share ONE ground
@@ -167,7 +167,7 @@ The **copper tinned coil** (cable shield, cut at the mouse end) is an **environm
    /opt/neurosurveillance/venv/bin/python -c "from radiens import AllegoClient; print(AllegoClient().get_status().port_num_channels)"
    ```
    Expect e.g. `{<Port.D: 3>: 32}`, not `{}`.
-5. Map channels ([[signal-mapping-guide]]), then judge signal quality ([[signal-quality-and-grounding]]) — stream **raw** first to confirm the railing is gone, then apply bandpass + 50 Hz notch + Paired Reference.
+5. Map channels ([[signal-mapping-guide]]), then judge signal quality ([[signal-quality-and-grounding]]) — stream **raw** first to confirm the railing is gone, then apply bandpass + 60 Hz notch + Paired Reference.
 
 ---
 

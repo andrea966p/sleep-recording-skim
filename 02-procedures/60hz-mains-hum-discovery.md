@@ -79,8 +79,43 @@ The amplifier only sees **±6.4 mV**. When the 60 Hz hum on a high-impedance ele
 > [!important] Refines a durable "fact" we had wrong
 > Earlier durable claim: *"a railing wired channel = OPEN input / no electrode contact."* **Partly wrong.** A railing single channel was usually **60 Hz common-mode hum**, present even on well-contacted electrodes. Contact still matters (it sets how much hum a channel picks up and whether it clips), but "railing ≠ automatically a dead electrode." Judge the **bipolar difference with a 60 Hz notch**, not the raw single channel.
 
+## 8. Hum-reduction troubleshooting checklist (do at the rig, in order)
+
+> [!important] The notch does NOT reduce hum
+> Allego's 60 Hz notch runs **after** the amplifier — it cleans the display/output but the hum still enters the amp, so it **cannot stop clipping**. Everything below reduces 60 Hz **at the source, before the amp** — the only thing that recovers the clipping mice (M2, M7, M8).
+
+> [!note] Anchor facts (measured this rig, 2026-07-05)
+> Common-mode 60 Hz ranged **15 µV → ~4900 µV** across electrodes and **tracks ground quality**: A1/M1 (good ground) = ~88 µV → clean EEG; M2/M6/M7/M8 = thousands → clipping the **±6.4 mV** amp rail. Same room, same field — the difference is the ground. So **fix grounds first**, and **fix the high-hum animals first** (M2, M6, M7, M8). Clipped samples are unrecoverable; reducing hum below ±6.4 mV is what matters.
+
+### A. Grounding — biggest lever, start here (per animal)
+- [ ] Verify the ground path is electrically solid: animal ground (green) → slip-ring → brass busbar → C3410 `GND`. **DMM continuity end-to-end ≈ 0 Ω** (per [[signal-quality-and-grounding]] §2 busbar checklist).
+- [ ] **Measure the GROUND electrode's own impedance** (Allego GUI, paused — never SDK while streaming). A high-impedance ground is the usual cause of big common-mode. Want it **low** (signal electrodes good < ~1 MΩ; a ground ideally lower still). If the ground reads open/high, the animal isn't held at amp ground → hum everywhere on that animal.
+- [ ] Confirm the ground electrode makes real low-impedance tissue contact (bone screw to dura/CSF, not loose in dry bone).
+- [ ] Confirm `REF` left empty (RHD2216 is bipolar — correct) and the green is on `GND`, not a signal pad.
+- [ ] Confirm **floor channels quiet** while streaming (HS-A natives 16–31, HS-B 48–63): quiet ⇒ grounded, all-railing ⇒ that animal floats.
+
+### B. Ground loops + nearby mains sources (free, do next)
+- [ ] Inspect for multiple earth paths around one animal (mouse earthed through more than one device) → aim for a **single ground reference**.
+- [ ] Check for mains sources near the cage/tether and move them ≥ ~1 m: **power-supply bricks, wall-warts, PoE injectors, the mini-PC PSU, camera power adapters, chargers, fluorescent/LED drivers**.
+- [ ] Route the tether / SPI cable **away from and not parallel to power cords** (cross at 90° if unavoidable).
+
+### C. Shielding (Faraday) — if A+B leave residual hum
+- [ ] Enclose the cage/recording area in a **grounded conductive shield** (copper mesh / aluminum sheet or foil / metal enclosure), tied to **amplifier ground** (single point, no loop).
+
+### D. Lead hygiene (cheap wins)
+- [ ] **Twist each +/− pair** (EEG frontal/parietal, EMG L/R) so both wires pick up identical hum → better common-mode cancellation.
+- [ ] Keep ground leads **short**, minimize loop area (mount busbar close to the headstage).
+- [ ] If the copper-coil environmental reference (orange → pad 6) is wired, keep it — it can subtract ambient noise.
+
+### E. Verify each fix worked
+- [ ] Re-check the **per-mouse 60 Hz level** after each change (live meter available via SDK on request, or watch the frequency view in Allego). Target: hum small enough that **no leg clips** and the **bipolar difference (60 Hz notch on)** shows clean tens-of-µV EEG.
+- [ ] Re-run impedance (GUI, paused) + the bipolar-difference check on all 8; record the mice that no longer clip.
+
+> [!warning] Don't blame surgery until hum is handled
+> Given A1 proves the rig can reject the hum, treat railing/clipping as a **60 Hz + grounding** problem first. Only after A–D are done and hum is low should a still-bad electrode be attributed to contact/implant.
+
 ## Related
 - [[2026-07-05]] — the session where this was found (full log + measurements)
 - [[eight-mouse-acquisition-setup]] — 8-mouse map + channel selection (now correct)
-- [[signal-quality-and-grounding]] — signal-eval guide (being corrected 50→60 Hz)
+- [[signal-quality-and-grounding]] — signal-eval guide (corrected 50→60 Hz)
 - [[grounding-reference-noise-concepts]] — ground vs reference vs noise (the hum-rejection physics)

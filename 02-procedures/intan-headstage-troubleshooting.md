@@ -101,7 +101,7 @@ grep priSigs ~/.local/state/radiens/logs/allegoserver.log | tail
 **Fix:**
 - Confirm the channel is supposed to be wired. If it's an **unused pad**, that's expected — **deselect** it (it won't be recorded).
 - If it *should* be a real electrode: reflow/repair its joint, check tether continuity, check the electrode-to-tissue contact.
-- Don't judge until **raw** looks grounded, then apply bandpass + 50 Hz notch + Paired Reference — hum on open inputs dominates raw.
+- Don't judge until **raw** looks grounded, then apply bandpass + 60 Hz notch + Paired Reference — hum on open inputs dominates raw.
 
 ---
 

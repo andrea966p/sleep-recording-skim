@@ -16,7 +16,7 @@ status: complete
 > [!abstract] TL;DR — for non-technical readers
 > **What this is.** A from-scratch guide to the two signals this rig records — **EEG** (brain waves) and **EMG** (neck-muscle activity) — and how to turn them into a **sleep score** (Wake / NREM / REM). Part 1 teaches you to read the traces **by eye**; Part 2 shows the **Python** that does it numerically.
 >
-> **Why it exists.** The operator running the rig is not an ephys expert. Before touching code you should be able to glance at a trace and say "that's NREM" or "that's just 50 Hz hum." This page builds that intuition first, then automates it.
+> **Why it exists.** The operator running the rig is not an ephys expert. Before touching code you should be able to glance at a trace and say "that's NREM" or "that's just 60 Hz hum." This page builds that intuition first, then automates it.
 >
 > **How to read this page.** Read **Part 1 top to bottom** until the sleep-stage table feels obvious — that is the real skill. Only then go to **Part 2** (Python). Mapping/grounding are prerequisites and live elsewhere: [[signal-mapping-guide]], [[signal-quality-and-grounding]], [[grounding-reference-noise-concepts]]. Software: [[radiens-software-reference]].
 
@@ -132,7 +132,7 @@ Before any stage call, confirm the trace is **biology, not garbage**. The full g
 | Centered trace, wiggling, EMG jumps when mouse moves | **Good biology** | Analyze |
 | Flat line pinned at top/bottom (~10 mV pk-pk) | **Saturated / floating ground** | Stop → fix ground ([[signal-quality-and-grounding]] §2) |
 | Dead-flat line | **Broken connection** | Check wiring/solder |
-| Fat, regular ~50 Hz sine burying the signal | **Mains hum** (Korea = 50 Hz) | Notch + shielding ([[grounding-reference-noise-concepts]]) |
+| Fat, regular ~60 Hz sine burying the signal | **Mains hum** (Korea = 60 Hz) | Notch + shielding ([[grounding-reference-noise-concepts]]) |
 | One mouse's trace echoes the other's movements | **Cross-talk** (shared headstage) | [[signal-quality-and-grounding]] §3e |
 
 > [!warning] You cannot stage a saturated trace
@@ -303,7 +303,7 @@ def bandpass(sig, fs, lo, hi, order=4):
 # emg = bandpass(emg_1k, fs_emg, 10, 300)
 ```
 
-### 8c. 50 Hz mains notch (Korea)
+### 8c. 60 Hz mains notch (Korea)
 ```python
 from scipy.signal import iirnotch, filtfilt
 

@@ -5,7 +5,7 @@ Pipeline (all offline, never in Allego):
     raw XDAT (uV, 1 kHz)
       -> bipolar derivation (EEG = n0-n1, EMG = n2-n3)
       -> bandpass  (EEG 0.5-30 Hz, EMG 10-300 Hz, Butterworth, zero-phase)
-      -> 50 Hz notch
+      -> 60 Hz notch
       -> decimate to target rate (default 256 Hz, anti-aliased)
       -> epoch into fixed windows (default 4 s)
       -> per-epoch band power (Welch) + EMG RMS + artifact flag
@@ -35,7 +35,7 @@ def butter_band(x, fs, lo, hi, order=4):
     return signal.sosfiltfilt(sos, x)
 
 
-def notch(x, fs, f0=50.0, Q=30.0):
+def notch(x, fs, f0=60.0, Q=30.0):
     b, a = signal.iirnotch(f0, Q, fs)
     return signal.filtfilt(b, a, x)
 

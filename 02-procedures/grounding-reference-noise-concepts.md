@@ -28,7 +28,7 @@ status: complete
 | **Reference — brain/biological** | A **tissue** point (e.g. cerebellar screw) that signals are measured **against** | Gives unipolar channels a baseline | **NOT USED.** RHD2216 is **bipolar**: every channel = its own **+ minus −** pair, so each pair self-references. C3410 **`REF` pad stays EMPTY** | Wiring a brain ref on a bipolar chip = pointless / confusing |
 | **Reference — environmental (the copper coil)** | The tether cable's **shield / drain braid** ("copper tinned coil"). **Cut at the mouse end** → touches **no tissue** | Captures **ambient EM noise along the cable** so it can be drained or subtracted | **Copper tinned coil → pad 6** = a **recorded environmental-noise channel** (subtract in software later). **NOT ground, NOT a brain reference** | Confusing it with ground or brain-ref; soldering it to `GND` instead of pad 6 (different technique — see §4) |
 | **Tissue noise** | Biological junk **from the animal** — EMG bleeding into EEG, movement artifact, ECG/heartbeat | — | Reduced by **paired/differential** recording (Paired Reference, manual p70) + good electrode placement | EEG contaminated by muscle, etc. |
-| **Environmental noise** | **External** EM — 50 Hz mains hum, equipment EMI — picked up by leads acting as antennas | — | Reduced by **shield (copper coil)** + **50 Hz notch** + short/twisted leads + (ideally) a Faraday cage | Big 50 Hz sine burying the signal |
+| **Environmental noise** | **External** EM — 60 Hz mains hum, equipment EMI — picked up by leads acting as antennas | — | Reduced by **shield (copper coil)** + **60 Hz notch** + short/twisted leads + (ideally) a Faraday cage | Big 60 Hz sine burying the signal |
 
 > [!important] The one sentence to remember
 > **Ground = a DC tie that keeps the animal in range (green wire → bus → chip GND). Reference = a baseline you subtract against.** They are different jobs. Our bipolar chip needs **ground (green)** and uses **no brain reference**; the **copper coil** is an **environmental-noise reference**, a third, separate thing.
@@ -142,7 +142,7 @@ Beep each path end-to-end, by the **table** (not colour):
 - confirm pad 4 and pad 5 are **NOT** continuous with `GND` (they're inputs, not ground).
 - confirm `REF` pad is **unconnected** (bipolar).
 
-Then power: stream **raw** → railing should stay collapsed (see [[2026-06-27]] result: ch1 RMS 30 µV / SNR 11.7 when ground was good). Apply bandpass + 50 Hz notch + Paired Reference only after.
+Then power: stream **raw** → railing should stay collapsed (see [[2026-06-27]] result: ch1 RMS 30 µV / SNR 11.7 when ground was good). Apply bandpass + 60 Hz notch + Paired Reference only after.
 
 ---
 

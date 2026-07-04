@@ -70,7 +70,7 @@ mouse 4-pin dura electrode → tether → slip ring → **C3410** adapter → **
 - **Pass criterion:** recording running; data + video landing where expected.
 
 ## Phase 9 — Analyze EEG/EMG
-- **Do:** [[eeg-emg-data-guide]] — read by eye first (sleep-stage signatures), then Python: decimate to 128–256 Hz, bandpass (EEG 0.5–30 / EMG 10–300), 50 Hz notch, paired-reference, band power / EMG RMS, simple hypnogram.
+- **Do:** [[eeg-emg-data-guide]] — read by eye first (sleep-stage signatures), then Python: decimate to 128–256 Hz, bandpass (EEG 0.5–30 / EMG 10–300), 60 Hz notch, paired-reference, band power / EMG RMS, simple hypnogram.
 - **Pass criterion:** you can identify Wake / NREM / REM from your own traces and reproduce it in code.
 
 ---

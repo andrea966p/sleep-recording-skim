@@ -61,7 +61,7 @@ Read it: EEG channels should be **tens-to-low-hundreds uV, ~0 % @rail**. A chann
 
 ## `eeg_pipeline.py` — clean + per-epoch features
 
-Bipolar → bandpass (EEG 0.5–30, EMG 10–300) → 50 Hz notch → decimate (default 256 Hz) → epoch (default 4 s) → band power (Welch) + EMG RMS + artifact flag. Writes `<base>_features.csv`.
+Bipolar → bandpass (EEG 0.5–30, EMG 10–300) → 60 Hz notch → decimate (default 256 Hz) → epoch (default 4 s) → band power (Welch) + EMG RMS + artifact flag. Writes `<base>_features.csv`.
 
 ```bash
 $PY eeg_pipeline.py $REC                       # defaults
