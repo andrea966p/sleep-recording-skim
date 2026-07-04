@@ -14,6 +14,9 @@ status: complete
 
 # Signal Quality & Grounding — Is the Signal Good Enough to Record?
 
+> [!danger] 🔴 Korea mains is 60 Hz, NOT 50 Hz — corrected 2026-07-05
+> This doc's hum/notch values were originally written as "50 Hz" — **wrong**. South Korea mains is **60 Hz**, and the 50 Hz assumption caused weeks of 60 Hz hum to be misread as "open / bad electrodes." The values below now say 60 Hz. Always judge the **bipolar difference with a 60 Hz notch**, not a raw single channel. Full story: [[60hz-mains-hum-discovery]].
+
 > [!abstract] TL;DR — for non-technical readers
 > **What this is.** A plain guide to two things you do *after* the channels are mapped: (1) connect the **ground** properly, and (2) **look at the live signal** and decide whether it's good enough to start real recordings.
 >
@@ -83,7 +86,7 @@ M2 slip-ring GND ──► end screw 5 ┘
   2. **Clamp thin wires properly** — tin the tip or fold double so the screw bites; fine-gauge tether wire slips out otherwise.
   3. **One wire** from the busbar center screw → C3410 `GND` pad.
   4. **DMM continuity** end-to-end: screw1 ↔ center ↔ screw5 ↔ C3410 `GND` pad all **~0 Ω**.
-  5. **Mount the busbar close to the headstage** — short ground leads = smaller loop = less 50 Hz pickup.
+  5. **Mount the busbar close to the headstage** — short ground leads = smaller loop = less 60 Hz pickup.
   6. **Keep the bar isolated** — brass/screws must not touch other conductive parts (it sits at ground; a stray short to a signal pad is bad).
 
 > [!note] How we know grounding is the problem right now
@@ -105,8 +108,8 @@ A single wire on its own carries a lot of shared junk (hum, drift). Subtracting 
 ### b) Check for saturation (the deal-breaker)
 In **Monitor**, no wired channel should sit **flat against the top or bottom** of its lane. Flat-topped = saturated = unusable (and usually a grounding problem). After the GND fix, the traces should sit in the middle and wiggle.
 
-### c) Check the wall-power hum (50 Hz in Korea)
-Turn on the **50 Hz notch** (Signal Processing) or look at the frequency view. A little hum is normal; a giant 50 Hz that buries the signal means grounding/shielding still needs work.
+### c) Check the wall-power hum (60 Hz in Korea)
+Turn on the **60 Hz notch** (Signal Processing) or look at the frequency view. A little hum is normal; a giant 60 Hz that buries the signal means grounding/shielding still needs work.
 
 ### d) Check the signals are real (a gentle nudge test)
 - **EMG**: lightly move the animal (or the EMG lead) → the EMG trace should jump.
@@ -138,8 +141,8 @@ Real mouse signals live comfortably between those:
 |---|---|---|---|
 | **Peak-to-peak** (Monitor, or `MAX_MIN_DIFF_ABS`) | < ~1–2 mV and **not clipping** | 2–5 mV | **≥ ~10 mV = saturated/railed** |
 | **RMS / noise** (Signal Metrics, µV) | tens of µV (≈10–150) | few hundred µV | **> ~1000 µV (1 mV) = floating / hum** |
-| **The trace looks like** (Monitor) | centered in its lane, wiggling | wiggling + visible hum | **flat line pinned at top/bottom** (saturated), or **dead-flat** (no connection), or a **fat 50 Hz sine** (hum) |
-| **50 Hz wall hum** | small next to the signal | about the same size | **buries the signal** — toggling the 50 Hz notch changes the whole trace |
+| **The trace looks like** (Monitor) | centered in its lane, wiggling | wiggling + visible hum | **flat line pinned at top/bottom** (saturated), or **dead-flat** (no connection), or a **fat 60 Hz sine** (hum) |
+| **60 Hz wall hum** | small next to the signal | about the same size | **buries the signal** — toggling the 60 Hz notch changes the whole trace |
 | **Does it react?** | EMG jumps when the animal moves; EEG changes with sleep/wake | weak/slow reaction | **no reaction to anything** |
 | **Subtract the pair** (Paired Reference) | pair gets noticeably **cleaner** | small change | **can't recover** — one side is railed |
 | **Two-mice cross-talk** | nudge Mouse 1 → Mouse 2 **doesn't move** | tiny echo | **Mouse 2 mirrors Mouse 1** |
@@ -150,14 +153,14 @@ Real mouse signals live comfortably between those:
 ### Where each number lives in Allego
 - **Monitor tab** → the live picture. Watch for clipping (flat top/bottom) and set the µV/division scale so you can see the wiggle.
 - **Signal Metrics tab** → the **numbers**: RMS and noise (µV) per channel. This is your quantitative judge. Set the bandpass first.
-- **Signal Processing tab** → apply the right **bandpass** (EEG ≈ 0.5–30 Hz, EMG ≈ 10–300 Hz), the **50 Hz notch**, and **Paired Reference** for the +/− pairs.
+- **Signal Processing tab** → apply the right **bandpass** (EEG ≈ 0.5–30 Hz, EMG ≈ 10–300 Hz), the **60 Hz notch**, and **Paired Reference** for the +/− pairs.
 - **HD Snapshot** → save a still image of a good (or bad) trace for your records.
 
 ---
 
 ## 3c. Your every-session 5-minute check (do this each time)
 
-1. **Bandpass + notch on.** Signal Processing: EEG band on the EEG channels, EMG band on the EMG channels, 50 Hz notch on.
+1. **Bandpass + notch on.** Signal Processing: EEG band on the EEG channels, EMG band on the EMG channels, 60 Hz notch on.
 2. **Glance at Monitor.** Any channel flat-pinned at top/bottom? → saturated, stop and fix grounding. Any dead-flat line? → broken connection.
 3. **Read Signal Metrics.** Background RMS in **tens of µV** = good. **Thousands of µV** = floating/hum, fix before recording.
 4. **Pair-subtract (Paired Reference)** the EEG and EMG pairs — they should get cleaner.
