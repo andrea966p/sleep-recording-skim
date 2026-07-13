@@ -68,7 +68,7 @@ cd ~/Monitoring_project/Monitoring_project_obsidian_vault/06-references/neuronex
 Output lands in `~/radix/devices/` as `hstg__usrdef_sleep64.hstg` + `probe__usrdef_sleep64_probe.prb`.
 
 ## Cleanup done 2026-07-13
-Archived (moved to `~/radix/devices/_archive_old_maps/`, reversible, and regenerable from CSVs): `usrdef_2mice32`, `usrdef_mouse1`, `usrdef_single_mouse`, `usrdef_mouse_4ch` (headstage + probe each). `usrdef_dual_mouse_c3442` was still LOADED at cleanup time, so it's left in place, once `sleep64` is confirmed working it can be archived too.
+ALL old custom maps archived to `~/radix/devices/_archive_old_maps/` (reversible, and regenerable from the CSVs in the vault): `usrdef_2mice32`, `usrdef_mouse1`, `usrdef_single_mouse`, `usrdef_mouse_4ch`, and `usrdef_dual_mouse_c3442` (headstage + probe each). `~/radix/devices/` now holds exactly ONE custom map, **`sleep64`**, plus the stock NeuroNexus built-ins. Confirmed `usrdef_sleep64` loaded and streaming on the ports before archiving c3442.
 
 ## Related
 - [[signal-mapping-guide]] — the deep reference (3 numbering systems, csv2sensor, real-world ↔ channel)
