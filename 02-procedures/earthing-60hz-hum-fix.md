@@ -23,7 +23,7 @@ status: draft-needs-bench-test
 > The Jul 10 to Jul 13 2026 run (`allego_0__uid0710-08-53-31`, 72h, 4 mice) and yesterday's Jul 13 to Jul 14 run (`allego_0__uid0713-12-59-49`, 20h, 8 slots) were both unscoreable, every channel swamped by ~60 Hz mains hum at 2 to 5 mV. The hum survives both the 60 Hz notch AND the bipolar subtraction, which means it is partly DIFFERENTIAL, not pure common-mode. Cause: the WHOLE recording system is FLOATING (nothing is tied to earth). This page is how to earth it. Audits in [[2026-07-13]], [[2026-07-14]], and [[60hz-mains-hum-discovery]].
 
 > [!abstract] TL;DR
-> Our recording chain touches nothing connected to the building's ground, so the whole thing floats and the 60 Hz mains field swings it up and down. Because the two legs of each electrode pair have slightly different contact resistance, a fraction of that big common-mode swing turns into real differential hum that no filter can remove. THE FIX: get a true earth reference INTO THE XDAQ, either by powering it from its earthed 3-prong AC/DC adapter or by bonding the XDAQ Sys GND to a real earth point, then bond XDAQ Sys GND to Chassis GND and star-ground the Faraday cage and rig metal to that one point. The animal stays grounded ONLY through the headstage. One earth point only. Test it live before making it permanent.
+> Our recording chain touches nothing connected to the building's ground, so the whole thing floats and the 60 Hz mains field swings it up and down. Because the two legs of each electrode pair have slightly different contact resistance, a fraction of that big common-mode swing turns into real differential hum that no filter can remove. THE FIX (no soldering): our CORE2 runs off the 2-prong USB-PD brick, which carries NO earth by design, so we bring earth in at the CORE2's rear-panel **Chassis GND port** (the manual says this port exists for exactly the USB-PD case). Wire Chassis GND -> a verified earth, bond Chassis GND to Sys GND at that one point, and star-ground the Faraday cage / rack / commutator to it. The animal stays grounded ONLY through the headstage. One earth point only. Test it live before making it permanent.
 
 ---
 
@@ -59,43 +59,42 @@ That leftover is the 0.5 to 1.9 mV of hum we measured AFTER notch and AFTER bipo
 > [!warning] This is NOT a ground-loop problem
 > We have too FEW earth connections (zero effective), not too many. The fix is to ADD exactly one earth reference at the XDAQ. Adding a second earth (e.g. also on the animal) creates a loop and the hum returns.
 
-## 3. The fix: earth the XDAQ, star-ground the rig (KonteX method)
+## 3. Our XDAQ = CORE2, powered by the 2-prong USB-PD brick
 
-The XDAQ has two ground ports:
-- **Sys GND** — referenced to Protective Earth via the XDAQ AC/DC adapter.
-- **Chassis GND** — the enclosure, acts as RF shield.
+Our CORE2 is powered by the KonteX USB-C USB-PD brick (2-prong, into the multitap). Per the CORE2 manual, the USB-PD brick is a valid power option and carries NO earth by design. That is exactly why the CORE2 has a dedicated **Chassis GND (Earth GND) port** on the rear panel:
 
-KonteX recipe (their own hardware, authoritative):
-1. Make sure Sys GND actually reaches earth (power the XDAQ from its earthed 3-prong adapter into an earthed socket, or bond Sys GND to a verified earth point).
-2. **Short (bond) Sys GND and Chassis GND** together.
-3. **Star-ground** the Faraday cage and the rest of the rig metal (rack, slip-ring / commutator body) to that ONE bonded point.
+> CORE2 manual — Chassis GND "provides grounding access to the earth ground IF POWERED BY THE USB-PD ADAPTER, or when the AC plug's ground is not truly grounded."
+> Sys GND "is referenced (not directly bonded) to Protective Earth via AC/DC adapter." Chassis GND "when bonded to PE (or to system ground at a single point), serves as an RF shield and shunts high-frequency common-mode noise away from the signal path."
+
+So the 2-prong brick being what KonteX ships does NOT mean earthing is unnecessary. It means earth is a SEPARATE wire we add at the rear-panel Chassis GND port. Both **Chassis GND and Sys GND terminals are on the rear panel by the power input.** NO soldering needed anywhere.
+
+### The fix (uses existing rear-panel ports)
+1. Run a wire from the CORE2 **Chassis GND** port to a VERIFIED earth (multitap earth, if real — see Step 1).
+2. **Bond Chassis GND to Sys GND** at that single point.
+3. **Star-ground** the Faraday cage / aluminium rack / slip-ring commutator body to that same Sys GND point.
 4. **Animal ground stays only on the headstage.** Keep the animal off all grounded metal (frame, bite bar, cage mesh, heating pad).
-5. **Short unused headstage channels to headstage ground** to kill stray pickup. We have many unused channels, so this matters.
+5. **Short unused headstage channels to headstage ground.** We have many unused channels, so this matters.
 
 ## 4. Steps
 
-### Step 0 — check the XDAQ power adapter first (this is probably the whole bug)
-Look at the XDAQ's own power adapter.
-- Is it a **3-prong** (earthed) AC/DC adapter, plugged into an **earthed** socket? If it is 2-prong, or the XDAQ is USB-powered with no adapter, Sys GND is NOT earthed — that alone explains the float.
-
-### Step 1 — confirm what is and isn't earthed (multimeter, once)
-Continuity / resistance:
-- XDAQ **Sys GND** to the multitap round earth pin (or a verified earthed metal): near 0 Ω = earthed, open = floating (expected, this is the bug).
-- Multitap earth pin to a wall-outlet earth pin: near 0 Ω confirms the multitap earth is real.
-- XDAQ Sys GND to Chassis GND: tells you if they are already bonded.
+### Step 1 — confirm you actually HAVE an earth (multimeter, once)
+The multitap is 2-prong-ish with side earth clips. Those only carry earth if the multitap's own plug reaches an earthed wall socket. Continuity / resistance:
+- Multitap earth clip -> wall-outlet round earth pin: near 0 Ω = real earth, usable. Open = the multitap earth is fake, get a real earthed socket or ask facilities.
+- CORE2 **Sys GND** -> that verified earth: open = floating (expected, this is the bug).
+- CORE2 Sys GND -> Chassis GND: tells you if they are already bonded.
 
 ### Step 2 — LIVE TEST before making anything permanent
 In Allego live view, mouse connected, 60 Hz hum visible:
-1. Clip a lead from **XDAQ Sys GND (or its chassis)** to the multitap earth pin (or earthed metal). NOTE: earth goes on the XDAQ, NOT on the animal's board GND.
+1. Clip a lead from the CORE2 **Chassis GND port** to the verified earth. NOTE: earth goes on the XDAQ Chassis GND port, NOT on the animal's board GND.
 2. Watch the trace.
 - Hum **collapses** the instant you touch it -> floating-system diagnosis CONFIRMED, go to Step 3.
 - Hum **barely changes** -> it is electrode impedance mismatch, not the system reference. Stop and look at contact quality / impedances ([[signal-quality-and-grounding]]).
 
-### Step 3 — make the earth connection permanent
-Preferred: power the XDAQ from its earthed 3-prong adapter into an earthed socket so Sys GND is earthed by design. If that is not possible, bond XDAQ Sys GND to a verified earth point with a ring terminal. Then bond Sys GND to Chassis GND per KonteX.
+### Step 3 — make it permanent
+Wire CORE2 Chassis GND -> verified earth with a ring terminal, and bond Chassis GND to Sys GND at that one point (per the CORE2 manual).
 
 ### Step 4 — star-ground the rig
-From that ONE bonded XDAQ ground point, run wires to: the Faraday cage / aluminium rack, and the slip-ring / commutator body. Single central point only (star), never a second earth. Once earthed, the rack acts as a partial Faraday shield around the chambers.
+From that ONE bonded Sys GND point, run wires to: the Faraday cage / aluminium rack, and the slip-ring / commutator body. Single central point only (star), never a second earth. Once earthed, the rack acts as a partial Faraday shield around the chambers.
 
 ### Step 5 — short unused headstage channels to headstage ground
 Reduces stray pickup on the many unwired inputs.
@@ -109,11 +108,13 @@ Everything earths through ONE point, the bonded XDAQ Sys+Chassis GND. Faraday ca
 ```
 mouse gnd (dura) - slip ring -> board GND -> headstage -> SPI splitter -> XDAQ port
                                                                               |
-                                    XDAQ Sys GND <---(earth via 3-prong adapter
-                                        |               OR bond wire to earth)
-                                        +== bonded ==> XDAQ Chassis GND
-                                                          |  star ground
-                                        Faraday cage / rack / commutator body
+power: 2-prong USB-PD brick (NO earth) --> CORE2                              |
+                                                                              |
+CORE2 rear panel:  Chassis GND port <--- wire ---> VERIFIED EARTH (multitap earth pin)
+                        |
+                        +===== bonded at ONE point =====> Sys GND port
+                                                            |  star ground
+                                        Faraday cage / aluminium rack / commutator body
 
 ANIMAL: grounded ONLY through the headstage. Never wired to earth or grounded metal.
 ```
