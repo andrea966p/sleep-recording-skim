@@ -11,10 +11,13 @@ tags:
   - xdaq
 created: 2026-07-13
 updated: 2026-07-14
-status: draft-needs-bench-test
+status: VALIDATED-2026-07-14
 ---
 
 # Earthing Fix for the 60 Hz Hum (Float-to-Earth)
+
+> [!success] ✅ VALIDATED 2026-07-14 ~17:00
+> The building electrician ran a **dedicated earth conductor from the wall and bonded it directly to the CORE2 Chassis GND** (permanent, not a socket clip), still powered by the 2-prong USB-PD brick. A short port-A test clip (`allego_0__uid0714-16-58-16`, mouse on rows 32-35) went from the floating baseline (60 Hz = 53-88 % of power, residual 0.5-1.9 mV, physiological fraction 4-31 %) to **60 Hz = 11.8 %, residual 134.7 µV, physiological fraction 97 %** — clean, scoreable EEG. The floating-system diagnosis and this fix are both CONFIRMED. NEW limiting factor after earthing = per-electrode contact reliability (one open/high-impedance lead ruins a bipolar and drifts clean-to-open within minutes; reseat leads, clean sockets, verify impedance 0.1-1 MΩ). See [[2026-07-14]] for the full validation.
 
 > [!danger] 🔴 CORRECTED 2026-07-14 — earth the XDAQ, NOT the animal
 > The first draft of this page (2026-07-13) told me to run a wire from the animal's adapter board `GND` pad to an earthed PC case. That is WRONG and I have replaced it. Both Intan and KonteX (the company that makes our XDAQ) are explicit: the animal must have NO ground path other than the headstage leads, and must not touch external earth or grounded metal. The earth reference belongs at the ACQUISITION SYSTEM (the XDAQ), which reaches Protective Earth through its own AC/DC power adapter. The diagnosis (whole system floating) stays the same, only the injection point for earth changes. See the corrected steps below.
