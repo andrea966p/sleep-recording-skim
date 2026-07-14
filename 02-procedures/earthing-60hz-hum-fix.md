@@ -8,112 +8,128 @@ tags:
   - 60hz
   - radiens
   - allego
+  - xdaq
 created: 2026-07-13
+updated: 2026-07-14
 status: draft-needs-bench-test
 ---
 
 # Earthing Fix for the 60 Hz Hum (Float-to-Earth)
 
-> [!danger] 🔴 This is the leading fix for the 72h 4-mouse recording being unusable
-> The Jul 10 to Jul 13 2026 recording (`allego_0__uid0710-08-53-31`) was byte-perfect as a file but 0 of 4 mice were scoreable, every channel swamped by ~60 Hz mains hum at 2 to 4.5 mV. The hum survived both the 60 Hz notch AND the bipolar subtraction, which means it is partly DIFFERENTIAL, not pure common-mode. The most likely cause is that the WHOLE recording system is FLOATING (nothing is tied to earth). This page is how to earth it. Full audit in the journal and [[60hz-mains-hum-discovery]].
+> [!danger] 🔴 CORRECTED 2026-07-14 — earth the XDAQ, NOT the animal
+> The first draft of this page (2026-07-13) told me to run a wire from the animal's adapter board `GND` pad to an earthed PC case. That is WRONG and I have replaced it. Both Intan and KonteX (the company that makes our XDAQ) are explicit: the animal must have NO ground path other than the headstage leads, and must not touch external earth or grounded metal. The earth reference belongs at the ACQUISITION SYSTEM (the XDAQ), which reaches Protective Earth through its own AC/DC power adapter. The diagnosis (whole system floating) stays the same, only the injection point for earth changes. See the corrected steps below.
+
+> [!danger] 🔴 This is the leading fix for BOTH multi-day recordings being unusable
+> The Jul 10 to Jul 13 2026 run (`allego_0__uid0710-08-53-31`, 72h, 4 mice) and yesterday's Jul 13 to Jul 14 run (`allego_0__uid0713-12-59-49`, 20h, 8 slots) were both unscoreable, every channel swamped by ~60 Hz mains hum at 2 to 5 mV. The hum survives both the 60 Hz notch AND the bipolar subtraction, which means it is partly DIFFERENTIAL, not pure common-mode. Cause: the WHOLE recording system is FLOATING (nothing is tied to earth). This page is how to earth it. Audits in [[2026-07-13]], [[2026-07-14]], and [[60hz-mains-hum-discovery]].
 
 > [!abstract] TL;DR
-> Our recording chain touches nothing that is connected to the building's ground, so the whole thing floats and the 60 Hz mains field swings it up and down. Because the two legs of each electrode pair have slightly different contact resistance, a fraction of that big common-mode swing turns into real differential hum that no filter can remove. THE FIX: run ONE thin wire from the adapter board GND to a single earth point (the metal case of an earthed desktop PC is easiest and safest), and bond the aluminium rack to the same point. One earth point only, never two. Test it live before making it permanent.
+> Our recording chain touches nothing connected to the building's ground, so the whole thing floats and the 60 Hz mains field swings it up and down. Because the two legs of each electrode pair have slightly different contact resistance, a fraction of that big common-mode swing turns into real differential hum that no filter can remove. THE FIX: get a true earth reference INTO THE XDAQ, either by powering it from its earthed 3-prong AC/DC adapter or by bonding the XDAQ Sys GND to a real earth point, then bond XDAQ Sys GND to Chassis GND and star-ground the Faraday cage and rig metal to that one point. The animal stays grounded ONLY through the headstage. One earth point only. Test it live before making it permanent.
 
 ---
 
-## 1. Our actual wiring (as of 2026-07-13)
+## 1. Our actual wiring (as of 2026-07-14)
 
-This corrects earlier notes that said "two mice into one headstage." Current setup is:
+- **One mouse per headstage.** 1 slip ring, 1 mouse, 1 headstage plus its adapter board. NO brass bus.
+- **Ground path per mouse:** right parietal / dura ground pin, through the slip ring, straight to the `GND` pad on that mouse's adapter board. Each mouse has its own board `GND`.
+- **SPI splitter:** each headstage plugs into an SPI splitter, so 2 headstages (2 mice) share one XDAQ port.
+- **XDAQ** = Opal Kelly XEM7310-A75 on the KonteX carrier, USB to the mini-PC (`ASUS NUC14RVH-B`, Ultra 5 125H, external 2-prong DC brick).
 
-- **One mouse per headstage.** 1 slip ring, 1 mouse, 1 headstage plus its adapter board. NO brass bus anymore.
-- **Ground path per mouse:** right parietal ground pin, through the slip ring, straight to the `GND` pad on that mouse's adapter board. Each mouse has its own board `GND`, no shared bus bar.
-- **SPI splitter:** each headstage plugs into an SPI splitter, so **2 headstages (2 mice) share one XDAQ port**.
-- **Channel map per port:** channels **1, 2, 3, 4 = mouse A**; channels **33, 34, 35, 36 = mouse B** (second headstage sits at native +32). See [[signal-mapping-guide]].
-
-So the full ground chain for any mouse is:
+Full signal-ground chain for any mouse:
 
 ```
-mouse ground (right parietal) -> slip ring -> adapter board GND pad
-     -> headstage -> SPI splitter -> XDAQ port -> USB -> mini-PC
+mouse ground (dura pin) -> slip ring -> adapter board GND pad
+     -> headstage -> SPI splitter -> XDAQ port -> XDAQ system ground -> USB -> mini-PC
 ```
 
-## 2. Why the hum is there (root cause)
+> [!warning] The animal ground is ALREADY correct — do not add to it
+> Dura pin -> slip ring -> board GND -> headstage is the intended and ONLY ground path the animal should have. Do NOT solder a second wire from that board `GND` pad to earth, a PC case, or the rack. That is the mistake the first draft made. A second ground path on the animal is exactly what Intan and KonteX warn against.
 
-Nothing in that chain connects to earth. The mini-PC that anchors the ground almost certainly runs off a 2-prong power brick (no earth pin), and the router, PoE switch, and XDAQ are all 2-prong or USB-powered too. So the entire island (animals, boards, headstages, XDAQ, mini-PC) floats.
+## 2. Why the hum is there (root cause) — unchanged, still correct
 
-A floating system sits in the building's 60 Hz electric field and bobs up and down at 60 Hz. That is a large COMMON-MODE voltage, often volts, on every input at once. Bipolar recording (the `n0 - n1` subtraction) rejects most of it, but the amplifier's rejection is not perfect, and the two legs of each pair never have exactly equal impedance. A big common-mode voltage across two unequal impedances gets partly converted into a real DIFFERENTIAL voltage:
+Nothing in the chain reaches earth. The XDAQ's system ground is supposed to be earth-referenced through its AC/DC adapter, but if that adapter is a 2-prong isolated brick (or the XDAQ is USB-powered only), Sys GND never reaches earth. The mini-PC is a 2-prong brick too. So the entire island (animals, boards, headstages, XDAQ, mini-PC) floats.
+
+A floating system sits in the building's 60 Hz field and bobs up and down at 60 Hz. That is a large COMMON-MODE voltage on every input at once. Bipolar recording rejects most of it, but rejection is imperfect and the two legs of each pair never have equal impedance, so a big common-mode voltage across two unequal impedances is partly converted to real DIFFERENTIAL voltage:
 
 ```
 differential hum  ~=  common-mode voltage  x  (impedance mismatch / source impedance)
 ```
 
-That leftover is the 200 to 475 µV of hum we measured AFTER notch and AFTER bipolar subtraction. It is uniform across all 4 mice on all 4 ports, which is the fingerprint of a SYSTEM-level reference problem, not four separate bad surgeries.
+That leftover is the 0.5 to 1.9 mV of hum we measured AFTER notch and AFTER bipolar. It is uniform across every mouse and every port, the fingerprint of a SYSTEM-level reference problem, not many bad surgeries.
 
 > [!warning] This is NOT a ground-loop problem
-> An earlier memory note said "hunt a ground loop." That is the OPPOSITE of our situation. We have too FEW earth connections (zero), not too many. The fix is to ADD exactly one earth reference. Adding two would create the loop.
+> We have too FEW earth connections (zero effective), not too many. The fix is to ADD exactly one earth reference at the XDAQ. Adding a second earth (e.g. also on the animal) creates a loop and the hum returns.
 
-## 3. The fix: give the system ONE earth point
+## 3. The fix: earth the XDAQ, star-ground the rig (KonteX method)
 
-### What "earth" means
-The round/earth pin of a wall outlet connects to the building's grounding system and ultimately a rod in the ground. It is a rock-stable 0 V reference. "Earthing" our system means running one thin wire from the board `GND` to that point. The wire carries no power and no normal current, it is only a reference drain, so thin wire is fine.
+The XDAQ has two ground ports:
+- **Sys GND** — referenced to Protective Earth via the XDAQ AC/DC adapter.
+- **Chassis GND** — the enclosure, acts as RF shield.
 
-### Easiest and safest earth point: an earthed desktop PC case
-The full desktop PC (3-prong plug, metal case) is already earthed through its own power cord. Its metal chassis IS earth. Use it, so you never touch a mains pin.
+KonteX recipe (their own hardware, authoritative):
+1. Make sure Sys GND actually reaches earth (power the XDAQ from its earthed 3-prong adapter into an earthed socket, or bond Sys GND to a verified earth point).
+2. **Short (bond) Sys GND and Chassis GND** together.
+3. **Star-ground** the Faraday cage and the rest of the rig metal (rack, slip-ring / commutator body) to that ONE bonded point.
+4. **Animal ground stays only on the headstage.** Keep the animal off all grounded metal (frame, bite bar, cage mesh, heating pad).
+5. **Short unused headstage channels to headstage ground** to kill stray pickup. We have many unused channels, so this matters.
 
 ## 4. Steps
 
-### Step 1 — confirm the desktop PC is earthed (multimeter, once)
-Set a multimeter to continuity / resistance. One probe on a bare screw of the desktop PC metal case, the other on the round earth pin of a wall outlet.
-- Near 0 Ω = the case is earthed. Use it.
-- Open / high = not earthed, try a different device or use the earth-plug method in Step 5.
+### Step 0 — check the XDAQ power adapter first (this is probably the whole bug)
+Look at the XDAQ's own power adapter.
+- Is it a **3-prong** (earthed) AC/DC adapter, plugged into an **earthed** socket? If it is 2-prong, or the XDAQ is USB-powered with no adapter, Sys GND is NOT earthed — that alone explains the float.
 
-Also check the mini-PC case, XDAQ case, and aluminium rack the same way. They will almost certainly read open (floating), which confirms the diagnosis.
+### Step 1 — confirm what is and isn't earthed (multimeter, once)
+Continuity / resistance:
+- XDAQ **Sys GND** to the multitap round earth pin (or a verified earthed metal): near 0 Ω = earthed, open = floating (expected, this is the bug).
+- Multitap earth pin to a wall-outlet earth pin: near 0 Ω confirms the multitap earth is real.
+- XDAQ Sys GND to Chassis GND: tells you if they are already bonded.
 
 ### Step 2 — LIVE TEST before making anything permanent
-In Allego live view, with a mouse connected and the 60 Hz hum visible:
-1. Hold a clip lead from the adapter board `GND` pad to a bare screw on the earthed desktop PC case.
+In Allego live view, mouse connected, 60 Hz hum visible:
+1. Clip a lead from **XDAQ Sys GND (or its chassis)** to the multitap earth pin (or earthed metal). NOTE: earth goes on the XDAQ, NOT on the animal's board GND.
 2. Watch the trace.
-- If the 60 Hz **collapses** the instant you touch it, the floating-system diagnosis is CONFIRMED. Go to Step 3 and make it permanent.
-- If the hum **barely changes**, then it is electrode impedance mismatch, not the system reference. STOP here and look at contact quality / impedances instead (see [[signal-quality-and-grounding]]).
+- Hum **collapses** the instant you touch it -> floating-system diagnosis CONFIRMED, go to Step 3.
+- Hum **barely changes** -> it is electrode impedance mismatch, not the system reference. Stop and look at contact quality / impedances ([[signal-quality-and-grounding]]).
 
 ### Step 3 — make the earth connection permanent
-Run one wire from a spare adapter board `GND` pad (or piggyback where the slip-ring grounds land) to a metal chassis screw on the earthed desktop PC. Use a ring terminal under a loosened case screw, then retighten.
+Preferred: power the XDAQ from its earthed 3-prong adapter into an earthed socket so Sys GND is earthed by design. If that is not possible, bond XDAQ Sys GND to a verified earth point with a ring terminal. Then bond Sys GND to Chassis GND per KonteX.
 
-Because all the mice share the same board `GND` net through the boards and XDAQ, this single wire earths every mouse at once. You do NOT need a separate earth wire per mouse.
+### Step 4 — star-ground the rig
+From that ONE bonded XDAQ ground point, run wires to: the Faraday cage / aluminium rack, and the slip-ring / commutator body. Single central point only (star), never a second earth. Once earthed, the rack acts as a partial Faraday shield around the chambers.
 
-### Step 4 — earth the aluminium rack too (bonus shield)
-Run a second wire from the SAME earth point (the PC chassis screw) to a bolt on the aluminium rack. Once earthed, the metal rack acts as a partial Faraday shield around the chambers and blocks mains field from reaching the mice. Nearly free, big help.
+### Step 5 — short unused headstage channels to headstage ground
+Reduces stray pickup on the many unwired inputs.
 
-### Step 5 — ONLY if there is no earthed PC: an earth plug
-Make a mains plug wired to ONLY the earth pin, with the live and neutral pins left disconnected. Plug it into any socket, and the wire coming out is earth, clip it to board `GND`.
-> [!danger] MAINS SAFETY
-> Wire ONLY the EARTH pin. NEVER the live or neutral pin. If you are not 100% certain which pin is earth and confident wiring a plug, do NOT do this, use the PC-chassis method or ask facilities staff to make the earth lead. Connecting live or neutral instead of earth is dangerous and will destroy the headstage.
+## 5. The one rule: single earth point at the XDAQ
 
-## 5. The one rule: single earth point
-
-Everything goes to ONE earth point. Board `GND` to PC chassis, and rack to PC chassis. Do NOT also earth to a wall plug at the same time. Two earth points = a ground loop = the hum comes back a different way.
+Everything earths through ONE point, the bonded XDAQ Sys+Chassis GND. Faraday cage, rack, and commutator all star to it. Do NOT also earth the animal, and do NOT add a second wall-earth elsewhere. Two earth points = a ground loop = the hum comes back a different way.
 
 ## 6. Wiring picture
 
 ```
-mouse A gnd (parietal) - slip ring -> board A GND -+
-mouse B gnd (parietal) - slip ring -> board B GND -+-> (shared via boards/XDAQ) -> mini-PC
-                                                    |
-                                                    |  ONE thin earth wire
-aluminium rack -----------------------------------> +--> screw on EARTHED desktop PC metal case
-                                                            (PC power cord -> wall earth pin -> building ground)
+mouse gnd (dura) - slip ring -> board GND -> headstage -> SPI splitter -> XDAQ port
+                                                                              |
+                                    XDAQ Sys GND <---(earth via 3-prong adapter
+                                        |               OR bond wire to earth)
+                                        +== bonded ==> XDAQ Chassis GND
+                                                          |  star ground
+                                        Faraday cage / rack / commutator body
+
+ANIMAL: grounded ONLY through the headstage. Never wired to earth or grounded metal.
 ```
 
 ## 7. Still open / needs bench test
 
-- The whole thing is a HYPOTHESIS until the Step 2 live test. Do that test first, it is 2 minutes and non-destructive.
-- Confirm the mini-PC really is on a 2-prong (unearthed) brick, that is the assumption behind "the system floats."
-- After earthing, re-check with a fresh short recording, look at 60 Hz peak power in the PSD (should drop by orders of magnitude) and the post-notch / post-bipolar residual (should fall well below 50 µV).
-- If earthing alone is not enough, next levers are lowering / matching electrode impedances and full Faraday enclosure.
+- HYPOTHESIS until the Step 2 live test (2 minutes, non-destructive). Do it first.
+- Confirm the XDAQ power adapter: 2-prong vs 3-prong, and whether Sys GND reads earth. This is the most likely root cause.
+- After earthing, re-check with a fresh short recording and re-run `eeg-data-analysis/scripts/multimouse_scan.py`: the 60 Hz PSD peak should drop by orders of magnitude and the post-notch residual should fall well below ~50 µV (physio-band fraction above ~70%).
+- If earthing alone is not enough: lower / match electrode impedances, short unused channels, full Faraday enclosure.
 
 ## Related
-- [[60hz-mains-hum-discovery]] — the original discovery that Korea mains is 60 Hz
-- [[signal-quality-and-grounding]] — signal evaluation and the older grounding notes (NOTE: its "two mice per headstage" framing is superseded, we now run one mouse per headstage)
-- [[signal-mapping-guide]] — channel map (1-4 mouse A, 33-36 mouse B per port)
-- [[allego-settings-save-restore]] — keeping the acquisition config from getting lost
+- [[2026-07-14]] — QC of both runs + this correction
+- [[2026-07-13]] — original 72h audit
+- [[60hz-mains-hum-discovery]] — Korea mains is 60 Hz
+- [[signal-quality-and-grounding]] — signal evaluation and older grounding notes
+- [[signal-mapping-guide]] — channel map
+- KonteX, "Reducing Interference During Electrophysiology Recording Sessions" (Sys GND / Chassis GND bonding, star ground)
+- Intan noise reduction techniques (animal grounded only via headstage, short unused channels)
