@@ -1,0 +1,3 @@
+2026-07-14 15:16:43,693 - ERROR - grpc_error - Error: code: 14 (StatusCode.UNAVAILABLE), details: failed to connect to all addresses; last error: UNKNOWN: ipv4:127.0.0.1:50051: Failed to connect to remote host: connect: Connection refused (111)
+2026-07-14 15:18:13,789 - ERROR - grpc_error - Error: code: 14 (StatusCode.UNAVAILABLE), details: failed to connect to all addresses; last error: UNKNOWN: ipv4:127.0.0.1:50051: Failed to connect to remote host: connect: Connection refused (111)
+2026-07-14 15:19:43,998 - ERROR - grpc_error - Error: code: 14 (StatusCode.UNAVAILABLE), details: failed to connect to all addresses; last error: UNKNOWN: ipv4:127.0.0.1:50051: Failed to connect to remote host: connect: Connection refused (111)
