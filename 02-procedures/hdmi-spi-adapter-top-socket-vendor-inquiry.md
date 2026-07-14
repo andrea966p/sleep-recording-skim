@@ -102,7 +102,7 @@ Andrea
 
 ## Before sending
 
-- [ ] Pick recipients / confirm addresses (Jeffrey's NeuroNexus address, `KC@kontex.io`)
+- [x] Pick recipients / confirm addresses (Jeffrey's NeuroNexus address, `KC@kontex.io`) ✅ 2026-07-14
 - [ ] Attach or reference allegoserver logs from the isolation sessions if wanted
 - [ ] Send as two separate new threads (not replies to the GPIO-sync thread)
 
