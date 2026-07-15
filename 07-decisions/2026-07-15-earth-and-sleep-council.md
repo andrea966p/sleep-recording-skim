@@ -3,7 +3,7 @@ tags: [decision, council, audit, review, eeg, grounding, sleep-scoring]
 date: 2026-07-15
 created: 2026-07-15
 type: technical-review
-status: open (TEST 1 done → H2 CONFIRMED on port A; electrode reseat + earth TEST 3 pending)
+status: open (superseded in priority by the FOIL discovery same evening — see [[headstage-shielding-faraday-foil]])
 sourced-from: 04-journal/2026-07/2026-07-15.md
 ---
 
@@ -20,6 +20,13 @@ sourced-from: 04-journal/2026-07/2026-07-15.md
 > "The 60 Hz contamination of the EEG was characterised by single-ended per-electrode spectral decomposition. A single mains source drove all channels (phase-locking value = 1.00 across connected and open inputs), but the bipolar montage failed to reject it because electrode-impedance imbalance converted the common-mode field to a differential signal (bipolar/common-mode 60 Hz ratio ≈ 2). Usability was therefore governed multiplicatively by both an incompletely-earthed acquisition system (setting the common-mode floor) and per-electrode contact balance (setting the day-to-day and channel-to-channel variance); of the two, electrode contact was the binding, controllable variable."
 
 ---
+
+> [!success] OUTCOME, same evening — the council's framework held, but the winning lever was one nobody named: SHIELDING. See [[headstage-shielding-faraday-foil]].
+> Hours after this council reported, Andrea wrapped the headstages in aluminium foil and single-ended 60 Hz collapsed by up to 450x (3604 → 8 µV), producing **the first channel in project history to show real sleep architecture** (A1 of `uid0715-18-58-54`, td_sep -0.65). Re-analysing every archive with a corrected, scorer-style method confirmed **0 sleep biology across 111 h of previous recordings** (the 72 h run scored circadian power 0.0% on all 8 slots), so the council's "zero scoreable data" verdict is now DEFINITIVE rather than provisional.
+>
+> **What the council got right:** the equation `differential_60Hz ≈ common_mode(floor) × electrode_Z_imbalance(binding)`; contact as the binding variable; "no scoreable data, NO-GO"; that the floating-slot control was invalid; that `60Hz%raw` was the wrong metric.
+> **What it missed:** all five advisors reasoned about *earth* and *electrodes*, and none proposed **shielding the input node** — which is step 4 of Intan's own noise checklist and turned out to be the dominant coupling path. A reminder that a council reasoning from the packet you give it will not find the option you didn't put in the packet.
+> **Also refuted since:** the SPI splitter (ruled out), slip-ring rotation (refuted by direct twist experiment), and the grounded power brick (no effect). The device is a **Gen-1 XDAQ Core with NO Sys GND port** — this doc's references to a "CORE2 Chassis GND port" are the WRONG DEVICE and need correcting.
 
 ## Mandate
 
