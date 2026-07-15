@@ -3,7 +3,7 @@ tags: [decision, council, audit, review, eeg, grounding, sleep-scoring]
 date: 2026-07-15
 created: 2026-07-15
 type: technical-review
-status: open (diagnosis converged; bench tests + record corrections pending)
+status: open (TEST 1 done → H2 CONFIRMED on port A; electrode reseat + earth TEST 3 pending)
 sourced-from: 04-journal/2026-07/2026-07-15.md
 ---
 
@@ -68,6 +68,14 @@ In Allego, pause acquisition, run the built-in impedance measurement. Read BOTH 
 - Good contact = 0.1–1 MΩ; open = ≫5 MΩ; legs of a pair should be within ~2–3× of each other.
 - Prediction (H2): at least one leg on the dirty pairs reads >5 MΩ or the pair is imbalanced >3×.
 - Falsifier: if BOTH legs read <1 MΩ and balanced, yet bipolar 60 Hz is still >500 µV → H2 is wrong and it's earth-dominant (H1). Go to TEST 2/3.
+
+> [!check] TEST 1 RESULT (2026-07-15 ~10:28, `impedance port A 2 mice.csv`) — **H2 CONFIRMED, contacts are the failure on port A.** Sleep64 map: A1 = sites A/1–4, A2 = A/33–36 (EEG_F, EEG_P, EMG_L, EMG_R).
+> - **A1 EEG:** frontal A/1 = 0.824 MΩ GOOD, parietal A/2 = **7.144 MΩ OPEN** → one open leg, 8.7× imbalance. Kills the bipolar; the open high-Z parietal leg is the 60 Hz antenna (matches contrarian's A1-parietal-dominant pickup).
+> - **A2 EEG:** frontal A/33 = **8.927 MΩ**, parietal A/34 = **8.416 MΩ** → BOTH legs open. No usable EEG contact → matches A2 = worst HUM.
+> - EMG: A1 2.15/2.41 MΩ (mediocre, matched); A2 0.665/2.70 MΩ (imbalanced 4×).
+> - Sanity: grounded floor sites (A/17–32, /49–64 ≈ 0.04–0.2 MΩ) read correctly → amp + measurement fine; failure is specifically the electrodes.
+> - Post-impedance recording `uid0715-10-28-40` (1.5 min): A1 phys 10% MARGINAL, A2 phys 10% HUM — unchanged (measured, not reseated). A1 frontal now rails 11% → likely nudged during the sweep.
+> - **Does NOT clear H1:** with legs this open, bad contact alone produces the differential hum, so the earth floor is untestable until contacts are fixed. Run TEST 3 AFTER reseating. **FIX FIRST:** reseat/replace A2 both EEG + A1 parietal (protect A1 frontal 0.82 MΩ), clean dried blood, re-measure to 0.1–1 MΩ matched within 2–3×.
 
 **TEST 2 — verify a REAL earth, then the single-ended collapse test (the H1 discriminator, done right).**
 The prior "squeeze the clip" test was uninformative because it re-seated an unverified (possibly fake) earth and watched the *bipolar* (which is dominated by mismatch). Do it properly:
