@@ -23,6 +23,8 @@ ap = argparse.ArgumentParser()
 ap.add_argument("base"); ap.add_argument("--interval", type=float, default=60.0)
 ap.add_argument("--slots-per-port", type=int, default=2)
 ap.add_argument("--tag", default=None)
+ap.add_argument("--start-h", type=float, default=0.0, help="analyse from this hour into the file")
+ap.add_argument("--end-h", type=float, default=None, help="stop at this hour into the file (e.g. chewed tether, lights-on)")
 ap.add_argument("--png", action="store_true")
 a = ap.parse_args()
 base = a.base
@@ -32,7 +34,9 @@ for suf in ("_data.xdat", ".xdat.json"):
 J = json.load(open(base + ".xdat.json")); m = J["status"]
 fs = int(m["samp_freq"]); n = int(m["num_smpl"]); tot = int(m["signals"]["total"])
 mm = np.memmap(base + "_data.xdat", dtype="<f4", mode="r", shape=(n, tot))
-dur_h = n/fs/3600
+S0 = int(a.start_h*3600*fs)
+S1 = n if a.end_h is None else min(n, int(a.end_h*3600*fs))
+dur_h = (S1 - S0)/fs/3600
 
 sp = J["sapiens_base"]["sensors_by_port"]
 SLOTS = []
@@ -56,7 +60,7 @@ def bp(f, P, lo, hi):
     k = (f >= lo) & (f < hi); return np.trapezoid(P[k], f[k])
 
 win = int((EP + 2*PAD)*fs); step = int(a.interval*fs)
-starts = np.arange(0, n - win, step)
+starts = np.arange(S0, S1 - win, step)
 tag = a.tag or base.split("__")[-1]
 print(f"\n########## {tag}  {dur_h:.2f} h  {len(starts)} epochs @1/{a.interval:.0f}s  slots={[l for l,_ in SLOTS]}")
 
@@ -78,11 +82,17 @@ def cliffs(x, y):
     u = stats.mannwhitneyu(x, y, alternative="two-sided").statistic
     return 2*u/(len(x)*len(y)) - 1
 
-print(f"{'slot':4s} {'rail%':>6s} {'EEGuV':>6s} {'EMGuV':>6s} | {'td_sep':>7s} {'bimod':>6s} {'persist':>7s} {'circ':>6s} | VERDICT")
+print(f"{'slot':4s} {'rail%':>6s} {'keep%':>6s} {'EEGuV':>6s} {'EMGuV':>6s} | {'td_sep':>7s} {'bimod':>6s} {'persist':>7s} {'circ':>6s} | VERDICT")
 out = {}
 for lab, _ in SLOTS:
     d = np.array(R[lab]["d"]); t = np.array(R[lab]["t"]); r = np.array(R[lab]["r"])
     e = np.array(R[lab]["e"]); rl = np.array(R[lab]["rail"])
+    # REJECT clipped epochs: a railed amp is non-linear, its spectrum is meaningless.
+    # Scorers drop these; computing td_sep over them measures the artifact, not the brain.
+    keep = rl < 1.0
+    frac_keep = keep.mean()
+    enough = keep.sum() > 60
+    if enough: d, t, r, e = d[keep], t[keep], r[keep], e[keep]
     td = t/(d+1e-12); le = np.log10(e+1e-12)
 
     # 1) BIOLOGY TEST: theta/delta in low-EMG vs high-EMG epochs (real: low EMG => low th/d)
@@ -111,9 +121,12 @@ for lab, _ in SLOTS:
     ok_bio = (not np.isnan(td_sep)) and td_sep < -0.25
     ok_state = (bimod > 0.45) or (not np.isnan(persist) and persist > 0.3)
     ok_circ = True if dur_h < 24 else (not np.isnan(circ) and circ > 0.05)
-    ok_rail = np.median(rl) < 5
-    if ok_bio and ok_state and ok_circ:
-        v = "SLEEP-LIKE" + ("" if ok_rail else " (but CLIPPING)")
+    # A slot with too few clean epochs cannot be verdicted at all. Never fall back to
+    # railed data and print a biology call from it - that reports the artifact as sleep.
+    if not enough:
+        v = f"UNSCOREABLE (only {keep.sum()} clean epochs)"
+    elif ok_bio and ok_state and ok_circ:
+        v = "SLEEP-LIKE"
     elif not ok_bio:
         v = "no sleep biology"
     elif not ok_circ:
@@ -121,7 +134,7 @@ for lab, _ in SLOTS:
     else:
         v = "weak"
     cs = f"{circ*100:5.1f}%" if not np.isnan(circ) else "   n/a"
-    print(f"{lab:4s} {np.median(rl):5.1f}% {np.median(r):6.0f} {np.median(e):6.0f} | "
+    print(f"{lab:4s} {np.median(rl):5.1f}% {frac_keep*100:5.0f}% {np.median(r):6.0f} {np.median(e):6.0f} | "
           f"{td_sep:+7.2f} {bimod:6.2f} {persist:+7.2f} {cs:>6s} | {v}")
     out[lab] = v
 print("  (td_sep must be NEGATIVE = low-EMG epochs are delta-rich = NREM. bimod>0.555 bimodal. "
