@@ -87,7 +87,7 @@ In Allego, pause acquisition, run the built-in impedance measurement. Read BOTH 
 **TEST 2 — verify a REAL earth, then the single-ended collapse test (the H1 discriminator, done right).**
 The prior "squeeze the clip" test was uninformative because it re-seated an unverified (possibly fake) earth and watched the *bipolar* (which is dominated by mismatch). Do it properly:
 1. DMM continuity, wall-socket round earth pin ↔ known building earth (a second earthed socket / grounded conduit): expect ~0 Ω. The Korean multitap side-clip is flagged in `02-procedures/earthing-60hz-hum-fix.md` as possibly fake — verify, don't assume.
-2. With the animal connected and hum live in Allego, clip XDAQ **Chassis GND port → that verified earth** and watch the **raw SINGLE-ENDED 60 Hz on a connected leg** (A1's legs, ~2.3–3.8 mV now), NOT the bipolar.
+2. ~~With the animal connected and hum live in Allego, clip XDAQ **Chassis GND port → that verified earth**~~ 🛑 **NOT POSSIBLE — WRONG DEVICE.** Our Gen-1 XDAQ Core has **no Chassis GND port**; that port is on the CORE2. The nearest substitute (earthed power brick) was tried 2026-07-15 and had **no effect**. Superseded: the mains floor was killed by shielding instead ([[headstage-shielding-faraday-foil]]), and the residual is set by contact impedance ([[2026-07-16]]).
    - Collapses ~10× (→ <300 µV) ⇒ system was floating, earth is the fresh break (H1 confirmed).
    - Barely moves ⇒ earth already effective, chase electrodes (H2).
 
@@ -99,7 +99,9 @@ The prior "squeeze the clip" test was uninformative because it re-seated an unve
 - DROPS ⇒ the bond formed a ground loop; the "fix" was backfiring. Re-wire to a single earth point.
 - RISES ⇒ earth was helping; keep it, make it permanent.
 
-**Make the earth permanent regardless:** ring terminals (not hand-clips) under the Chassis-GND screw and the verified-earth screw; single-point Chassis↔Sys GND bond; star-ground cage/rack/commutator to that one node; strain-relieve so handling/KVM-switch/reboot can't lift it. Per `02-procedures/earthing-60hz-hum-fix.md`.
+> [!danger] 🛑 **RETRACTED 2026-07-16 — WRONG DEVICE.** The original text here said: *"Make the earth permanent regardless: ring terminals under the Chassis-GND screw ... single-point Chassis↔Sys GND bond ... per `02-procedures/earthing-60hz-hum-fix.md`."* **None of that is executable.** The Gen-1 XDAQ Core has no Chassis GND screw and no Sys GND terminal — those are CORE2 features. `earthing-60hz-hum-fix.md` is itself now retracted for the same reason.
+>
+> **Do not chase earth further.** Foil dropped the mains floor ~450× ([[headstage-shielding-faraday-foil]]) and the earthed-brick trial changed nothing. As of [[2026-07-16]] the 60 Hz that remains scales with **electrode impedance**, not earth: 0.206 MΩ → 80 µV, 7.641 MΩ → 4262 µV, same mouse and same foil.
 
 ---
 

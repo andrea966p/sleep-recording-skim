@@ -10,14 +10,20 @@ tags:
   - allego
   - xdaq
 created: 2026-07-13
-updated: 2026-07-14
-status: VALIDATED-2026-07-14
+updated: 2026-07-16
+status: RETRACTED-2026-07-16 — wrong device, unvalidated, superseded
 ---
 
 # Earthing Fix for the 60 Hz Hum (Float-to-Earth)
 
-> [!success] ✅ VALIDATED 2026-07-14 ~17:00
-> The building electrician ran a **dedicated earth conductor from the wall and bonded it directly to the CORE2 Chassis GND** (permanent, not a socket clip), still powered by the 2-prong USB-PD brick. A short port-A test clip (`allego_0__uid0714-16-58-16`, mouse on rows 32-35) went from the floating baseline (60 Hz = 53-88 % of power, residual 0.5-1.9 mV, physiological fraction 4-31 %) to **60 Hz = 11.8 %, residual 134.7 µV, physiological fraction 97 %** — clean, scoreable EEG. The floating-system diagnosis and this fix are both CONFIRMED. NEW limiting factor after earthing = per-electrode contact reliability (one open/high-impedance lead ruins a bipolar and drifts clean-to-open within minutes; reseat leads, clean sockets, verify impedance 0.1-1 MΩ). See [[2026-07-14]] for the full validation.
+> [!danger] 🛑 RETRACTED 2026-07-16 — READ THIS BEFORE ANY OTHER LINE ON THIS PAGE
+> **This page describes a device we do not own.** Our rig is a **Gen-1 XDAQ Core**, which has **NO rear-panel Chassis GND port and NO Sys GND port**. Every instruction below that says "wire Chassis GND → earth" or "bond Chassis GND to Sys GND" refers to the **KonteX CORE2**, a different product. Those steps are **not executable on our hardware** and must not be attempted or cited.
+>
+> **The "VALIDATED 2026-07-14" claim that used to sit here is also withdrawn.** It rested on a single ~42 s single-electrode clip with no controlled before/after, and the `phys%`-style metrics it quoted are now known to be denominator-confounded (see [[eeg-qc-tooling]] reasoning in [[2026-07-15]]). It was never a validation.
+>
+> **What actually turned out to be true (2026-07-15 → 16):** earthing was NOT the binding variable. The mains floor was killed by **shielding** ([[headstage-shielding-faraday-foil]]), and the remaining hum is set entirely by **per-electrode contact impedance**. A leg at 0.206 MΩ picks up 80 µV of 60 Hz while its neighbour at 7.641 MΩ — *same mouse, same foil, same headstage* — picks up 4262 µV and rails the amplifier. See [[2026-07-16]].
+>
+> **Kept for the physics only** (the float/common-mode/imbalance reasoning in §2 is still sound and still useful). **Do not follow the procedure.**
 
 > [!danger] 🔴 CORRECTED 2026-07-14 — earth the XDAQ, NOT the animal
 > The first draft of this page (2026-07-13) told me to run a wire from the animal's adapter board `GND` pad to an earthed PC case. That is WRONG and I have replaced it. Both Intan and KonteX (the company that makes our XDAQ) are explicit: the animal must have NO ground path other than the headstage leads, and must not touch external earth or grounded metal. The earth reference belongs at the ACQUISITION SYSTEM (the XDAQ), which reaches Protective Earth through its own AC/DC power adapter. The diagnosis (whole system floating) stays the same, only the injection point for earth changes. See the corrected steps below.
@@ -25,8 +31,16 @@ status: VALIDATED-2026-07-14
 > [!danger] 🔴 This is the leading fix for BOTH multi-day recordings being unusable
 > The Jul 10 to Jul 13 2026 run (`allego_0__uid0710-08-53-31`, 72h, 4 mice) and yesterday's Jul 13 to Jul 14 run (`allego_0__uid0713-12-59-49`, 20h, 8 slots) were both unscoreable, every channel swamped by ~60 Hz mains hum at 2 to 5 mV. The hum survives both the 60 Hz notch AND the bipolar subtraction, which means it is partly DIFFERENTIAL, not pure common-mode. Cause: the WHOLE recording system is FLOATING (nothing is tied to earth). This page is how to earth it. Audits in [[2026-07-13]], [[2026-07-14]], and [[60hz-mains-hum-discovery]].
 
-> [!abstract] TL;DR
-> Our recording chain touches nothing connected to the building's ground, so the whole thing floats and the 60 Hz mains field swings it up and down. Because the two legs of each electrode pair have slightly different contact resistance, a fraction of that big common-mode swing turns into real differential hum that no filter can remove. THE FIX (no soldering): our CORE2 runs off the 2-prong USB-PD brick, which carries NO earth by design, so we bring earth in at the CORE2's rear-panel **Chassis GND port** (the manual says this port exists for exactly the USB-PD case). Wire Chassis GND -> a verified earth, bond Chassis GND to Sys GND at that one point, and star-ground the Faraday cage / rack / commutator to it. The animal stays grounded ONLY through the headstage. One earth point only. Test it live before making it permanent.
+> [!abstract] TL;DR — for non-technical readers (rewritten 2026-07-16)
+> **What this is:** the 2026-07-13 theory that our 60 Hz hum came from the whole rig not being connected to the building's earth. The physics write-up is good. The proposed fix was for the wrong machine and the claimed validation did not hold up.
+>
+> **The idea:** the recording chain touches nothing earthed, so it floats, and the mains field swings the whole thing up and down. Because the two legs of an electrode pair have different contact resistance, part of that common swing turns into real differential hum that no filter can remove. That mechanism is REAL and still explains our data.
+>
+> **Why the fix failed:** it told us to plug earth into a "Chassis GND port" on the back of the XDAQ. Our Gen-1 XDAQ Core has no such port — that port is on the CORE2, a different product. We also tried the nearest available substitute (an earthed power brick) on 2026-07-15 and it changed nothing.
+>
+> **What was actually the answer:** the swing gets in through the air, so we blocked it with aluminium foil around the headstages ([[headstage-shielding-faraday-foil]]) — 60 Hz dropped up to 450×. What's left is not an earth problem at all: it's electrodes that never touched brain ([[2026-07-16]]).
+>
+> **How to read this page:** §2 for the physics. Ignore §3 onward.
 
 ---
 
@@ -62,7 +76,12 @@ That leftover is the 0.5 to 1.9 mV of hum we measured AFTER notch and AFTER bipo
 > [!warning] This is NOT a ground-loop problem
 > We have too FEW earth connections (zero effective), not too many. The fix is to ADD exactly one earth reference at the XDAQ. Adding a second earth (e.g. also on the animal) creates a loop and the hum returns.
 
-## 3. Our XDAQ = CORE2, powered by the 2-prong USB-PD brick
+## 3. ~~Our XDAQ = CORE2, powered by the 2-prong USB-PD brick~~ 🛑 WRONG DEVICE — DO NOT FOLLOW
+
+> [!danger] Everything from here to the end of the page is for a **KonteX CORE2**, not our **Gen-1 XDAQ Core**.
+> Our unit has no Chassis GND port and no Sys GND port. There is nothing to wire, nothing to bond, and nothing to star-ground to. Left in place unedited as a record of what we believed on 2026-07-14 and why it was wrong. Retracted 2026-07-16.
+
+### Original text (wrong device, retained for the record)
 
 Our CORE2 is powered by the KonteX USB-C USB-PD brick (2-prong, into the multitap). Per the CORE2 manual, the USB-PD brick is a valid power option and carries NO earth by design. That is exactly why the CORE2 has a dedicated **Chassis GND (Earth GND) port** on the rear panel:
 

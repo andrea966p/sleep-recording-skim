@@ -1,14 +1,24 @@
 ---
 tags: [procedure, eeg, emg, signal-quality, shielding, faraday, mains-hum, 60hz, critical, discovery]
 created: 2026-07-15
-status: active
-priority: critical
+updated: 2026-07-16
+status: active — the 60 Hz result stands, the sleep claim is RETRACTED
+priority: high
 ---
 
-# ⭐🎉 Headstage shielding (Faraday foil) — the intervention that produced the first real sleep signal
+# ⭐ Headstage shielding (Faraday foil) — the intervention that killed the mains floor
+
+> [!danger] 🛑 CORRECTION 2026-07-16 — the sleep claim on this page is RETRACTED
+> This page originally read *"the intervention that produced the first real sleep signal"*. **It did not.** The channel in question (A1 of `uid0715-18-58-54`, td_sep −0.65) was **hard-saturated against the ±6390 µV rail** — only **1 of its 493 epochs** was free of clipped samples. Excluding railed epochs flips the effect to **+0.63**, i.e. the "sleep" was an artifact of clipping severity tracking EMG. **The project still has zero scoreable sleep data.** Full post-mortem in [[2026-07-16]].
+>
+> **What survives, and it is real:** the **60 Hz collapse**. That is a direct single-ended voltage measurement, not a derived statistic, and it reproduces. Foil remains the right call and stays on the rig.
+>
+> **What replaced it as the wall:** electrode contact. Same mouse, same foil, two legs millimetres apart — 0.206 MΩ picks up **80 µV**, 7.641 MΩ picks up **4262 µV** and rails. Shielding cannot help a leg that never touched brain.
 
 > [!abstract] TL;DR — for non-technical readers
-> **What this is.** On 2026-07-15 we wrapped the Intan headstages in ordinary aluminium kitchen foil. The 60 Hz mains interference on the electrodes collapsed by up to a hundredfold, and for the first time in the project's history a recording contained genuine, measurable mouse sleep. This page is what we did, why it works, and how to do it properly (we did it badly and it still worked).
+> **What this is.** On 2026-07-15 we wrapped the Intan headstages in ordinary aluminium kitchen foil. The 60 Hz mains interference on the electrodes collapsed by up to a hundredfold. This page is what we did, why it works, and how to do it properly (we did it badly and it still worked).
+>
+> **What it did NOT do.** It did not give us sleep data. We briefly thought it had; that was an analysis error, corrected 2026-07-16. Foil fixed the interference arriving through the air. It cannot fix an electrode that isn't touching the brain, and that turned out to be the real problem.
 >
 > **Why it exists.** For months every recording was drowned in 60 Hz hum and we blamed surgery, then grounding, then earth, then the splitter. The actual dominant coupling path was an electric field reaching the amplifier input through the air. A shield blocks it. This is the single highest-value intervention found so far. See [[01-infrastructure/system-overview]] for the big picture.
 >
@@ -65,14 +75,16 @@ Our version was, in Andrea's words, "badly wrapped", and it still produced the b
 
 1. **Wrap the headstages, electrodes and the animal's immediate surroundings.** Intan: "The tissue, electrodes, and Intan headstages should be placed inside the Faraday cage. The Intan controller and computer... should be located outside the cage."
 2. **Cover all sides.** "Small holes in the conductive material do not matter, but it is important to cover all sides of the experiment, even the bottom."
-3. **Tie the shield to a ground point OUTSIDE the cage.** This is the step we are missing. Intan: connect it to the controller's chassis/IO ground terminal, "or you can connect the cage to another ground point in your lab. Experiment with different ground points and see which one works best. You don't have to use a thick wire for this connection."
+3. ~~**Tie the shield to a ground point OUTSIDE the cage.**~~ 🛑 **SKIP — not applicable to us (2026-07-16).** Intan says to connect the shield to the controller's chassis/IO ground terminal, "or ... another ground point in your lab." **Our Gen-1 XDAQ Core has no such terminal**, and our floating foil already delivers legs at 12–80 µV, so there is no measurable headroom to recover. Kept here only so a future reader knows this step was considered and deliberately dropped on evidence, not forgotten.
 4. **Do not let the shield touch anything inside it.** Especially not the animal, the implant, or the headstage GND.
 5. **Verify by measurement, not by eye** — record 30-60 s and check single-ended 60 Hz per leg in absolute µV (see [[#See also]]). Target under 50 µV per leg.
 
 ## The three rules we are still breaking
 
 > [!warning] Free improvement still on the table (as of 2026-07-15 night)
-> 1. **The foil is FLOATING (not grounded).** Intan is explicit that the shield works *because* it is tied to ground. A floating shield still helped enormously here, but we are probably leaving most of the available ~40 dB (100-fold) unclaimed. **Grounding the foil is the single cheapest remaining win.**
+> 1. ~~**The foil is FLOATING (not grounded).** ... Grounding the foil is the single cheapest remaining win.~~
+>    **DROPPED 2026-07-16 — do not ground the foil, it is not worth doing.** The claim that we were "leaving ~40 dB unclaimed" was theory, and measurement contradicts it. Under the *floating* foil, individual legs already read **12 µV** (A2 parietal), **46 µV** (D2 parietal), **80 µV** (B1 parietal) of 60 Hz. That is at or below the <50–100 µV target — **the floor is already low enough, so there is no 40 dB left to claim.** The legs that scream 4000 µV sit under the *same floating foil* as the legs that read 12 µV; the difference between them is impedance, not grounding. Grounding a shield cannot fix a 300× spread *inside* itself.
+>    Also worth noting: our Gen-1 XDAQ Core has **no chassis/IO ground terminal** to tie a shield to (that's a CORE2 feature — see the retraction in [[earthing-60hz-hum-fix]]), so Intan's suggested attachment point does not exist on our hardware anyway.
 > 2. **Possible contact with the animal.** Photos suggest foil may be near or touching the implant. Intan: "The GND terminal on the Intan headstage should be connected to the tissue via a ground electrode or skull screw, but this **should not be connected to the Faraday cage or to any external ground**... Try to keep your tissue electrically isolated from the Faraday cage." Our animal must stay grounded ONLY through the headstage.
 > 3. **Partial coverage.** Cover all sides, including underneath.
 
