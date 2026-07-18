@@ -57,7 +57,7 @@ def clean(x, sos):
     for b, aa in NOTCH: x = signal.filtfilt(b, aa, x)
     return signal.sosfiltfilt(sos, x)
 def bp(f, P, lo, hi):
-    k = (f >= lo) & (f < hi); return np.trapezoid(P[k], f[k])
+    k = (f >= lo) & (f < hi); return np.trapz(P[k], f[k])
 
 win = int((EP + 2*PAD)*fs); step = int(a.interval*fs)
 starts = np.arange(S0, S1 - win, step)
@@ -116,7 +116,7 @@ for lab, _ in SLOTS:
         f2, P2 = signal.welch(y, fs=1.0/a.interval, nperseg=min(len(y), int(len(y)/2)))
         per_h = 1.0/(f2[1:]*3600); Pp = P2[1:]
         k = (per_h >= 20) & (per_h <= 28)
-        circ = np.trapezoid(Pp[k], f2[1:][k])/(np.trapezoid(Pp, f2[1:]) + 1e-12) if k.any() else 0.0
+        circ = np.trapz(Pp[k], f2[1:][k])/(np.trapz(Pp, f2[1:]) + 1e-12) if k.any() else 0.0
 
     ok_bio = (not np.isnan(td_sep)) and td_sep < -0.25
     ok_state = (bimod > 0.45) or (not np.isnan(persist) and persist > 0.3)
