@@ -6,6 +6,15 @@ status: complete
 
 # EEG Data Analysis — Hub
 
+> [!warning] Superseded 2026-07-18 — code moved out of the vault
+> The runnable scripts here predate the **sleep64 8-headstage** rig and are
+> **archived** under `scripts/_archive_pre_sleep64/`. The current, clean codebase
+> lives in its own project folder: **`Monitoring_project/eeg-emg-analysis/`**
+> (QC / convert / sleep, with the 8-mouse channel map derived-and-validated from
+> metadata). Start at its `README.md`. Rationale + fact-check citations:
+> `07-decisions/2026-07-18-eeg-emg-analysis-checkpoint.md`. The science below
+> (bands, filters, referencing in `04-processing-guidelines`) still holds.
+
 > [!abstract] TL;DR — for non-technical readers
 > **What this is.** The start-here page for everything *after* a recording is made: where the files are, how to read them, how to filter/score-prep the EEG, and the Python scripts you run yourself. The acquisition side (plugging the mouse, Allego, grounding) lives elsewhere — this section begins the moment an XDAT recording exists on disk.
 > **Why it exists.** The raw recording (`.xdat`) is not directly readable by eye or by most tools. You need a small, repeatable toolkit to turn it into clean EEG, summary features, and portable formats (CSV, EDF). This section is that toolkit, with every script already tested on a real recording.

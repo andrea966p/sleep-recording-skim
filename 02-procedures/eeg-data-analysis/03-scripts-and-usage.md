@@ -6,6 +6,12 @@ status: complete
 
 # 03 — Scripts and Usage
 
+> [!warning] Superseded 2026-07-18
+> These scripts are **archived** (`scripts/_archive_pre_sleep64/`) — they predate
+> the sleep64 8-headstage rig and carry known bugs. Use the new codebase in
+> **`Monitoring_project/eeg-emg-analysis/`** (see its `README.md`). The commands
+> below are kept for historical reference only.
+
 > [!abstract] TL;DR
 > Five Python scripts in `02-procedures/eeg-data-analysis/scripts/`. Run them with the analysis venv ([[01-environment-setup]]), from the scripts folder (so `import xdat_io` works). Every example below was run on the real 4.5 h recording `allego_1__uid0629-12-05-09`. Hub: [[_eeg-analysis-hub]].
 
