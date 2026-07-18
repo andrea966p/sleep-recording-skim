@@ -120,3 +120,70 @@ Andrea
 - [[eight-mouse-acquisition-setup]] — current bottom-socket + C3442 8-mouse topology
 - [[01-infrastructure/hardware-sync/neuronexus-inquiry-email|neuronexus-inquiry-email]] — the other (DB25/GPIO-sync) vendor thread, contact pattern reference
 - [[intan-headstage-troubleshooting]]
+
+---
+
+## Reply — 2026-07-18 (SolutionsKR VIVO, Korean distributor) — CONFIRMS top-socket-dead-by-design
+
+> [!info] Distributor (vivosolkr@gmail.com) forwarded + endorsed Jeff/NeuroNexus's message. Same finding as the RESOLVED callout at top — **independent confirmation from the seller of record**. Nothing new technically; closes the RMA question with the distributor too (no RMA — working as designed).
+
+**Part-number note:** VIVO/Jeff call the adapter **`SAdpt-HDMI-OM12`**; our vault has been calling it **`SAdpt-XDAQ-OM12`**. Same part (HDMI↔dual-Intan-SPI bridge). Treat the two names as aliases.
+
+### Verbatim (archived)
+
+> Dear Andrea
+>
+> Thanks for the detailed explanation about your requirement in using your XDAQ-Core system with Intan's product.
+>
+> Unfortunately, it seems that only one connector of the adapter for SPI cable (SAdpt-HDMI-OM12) will work at the same time with the XDAQ-Core. And so, the 8 headstages will be the maximum number that your XDAQ-Core can support when you use those headstages with the RHD dual headstage adapter (Part #C3442). Please understand this situation and let us know if you need more information or support in setting up your experiment set.
+>
+> For your reference, I additionally share Jeff of NeuroNexus' original message as below. (I think he replied to you directly also.)
+>
+> #1. Regarding the SAdpt-HDMI-OM12, only one of the two 12-pin polarized connectors will work on the XDAQ Core system. This is due to restrictions based on how the Intan RHD chip design works, and differences between the XDAQ Core and higher models like the XDAQ One+ and AIO. While the One+ and AIO systems support up to 4 Intan chips per HDMI port (up to 256ch), the Core can only support up to two (128ch max).
+>
+> The digitization and multiplexing of neural signals transmit the signal over two wires, called a MISO pair. Each pair can handle up to 64ch. Since the Core only has two MISO pairs per HDMI port, it is hardwired to pairs 1 & 2. When the SAdpt-HDMI-OM12 in plugged into the Core, these two pairs are directly connected to one of the Intan polarized connectors as your customer noted. Since the Core system does not have MISO pairs 3 & 4 in the HDMI ports, nothing happens when connecting an Intan headstage to the second Intan polarized connector.
+>
+> To use a second Intan headstage with the Core system, another SAdpt-HDMI-OM12 will need to be used on a different port.
+>
+> #2. One other detail I forgot to include – Intan's own RHD dual headstage adapter will work in this customer's situation with headstages up to 64ch with a single SAdpt-HDMI-OM12 on an XDAQ Core.
+> https://intantech.com/RHD_SPI_cables.html?tabSelect=RHDdual&yPos=0
+
+**Takeaway (unchanged):** 8-headstage ceiling on the Core is a hard limit (4 ports × bottom socket × C3442 dual). Past 8 needs a One+/AIO DAQ. Top sockets stay unused forever on the Core.
+
+---
+
+## Follow-up to VIVO — round 2 (draft 2026-07-18) — permanent chassis-earth connector + EEG noise from nearby gear
+
+> [!abstract] Why this email
+> Two new asks in the same VIVO thread: (1) a **proper earth/chassis-ground connector for our Gen-1 XDAQ Core** — right now the earth is a wire *taped* to the chassis and run to the wall earth, we want something permanent/stable; (2) whether the **physical placement** of the XDAQ + Intan headstages next to 2 PCs, a WiFi router, 2 Raspberry Pi, an Ethernet switch, HDMI cables and a power multitap **adds noise to the mouse EEG**.
+>
+> ⚠️ **Reality check for us (not for the vendor):** per [[eeg-60hz-saga]] / [[headstage-shielding-faraday-foil]], **earth has been EXONERATED as the 60 Hz root cause** — the real wall is open frontal electrodes (nonphysical impedance). A better earth connector is good hygiene + mechanical stability, NOT expected to move the 60 Hz floor. Frame the ask as "we want a permanent, stable earth" not "this will fix our hum." KC already gave the *signal* star-ground scheme (Core = hub, each device GND home-runs to DB25 pin 14, see [[neuronexus-inquiry-email#Reply — round 3b received 2026-06-05 (KC Kong)|round-3b]]); this new ask is specifically the **chassis→wall-earth** path, which the Gen-1 Core lacks a dedicated terminal for (Core2 has 2 banana terminals SYS GND + Chassis GND; our Gen-1 has only a single GND pin).
+
+> **To:** SolutionsKR VIVO <vivosolkr@gmail.com> (cc Jeff / NeuroNexus if appropriate)
+> **From:** andrea96p@kaist.ac.kr
+> **Subject:** Re: XDAQ Core + Intan — permanent earth-ground connector, and EEG noise from nearby equipment
+
+Dear VIVO,
+
+Thank you, and thank you Jeff — that fully explains the single-connector behavior of the SAdpt-HDMI-OM12 on the XDAQ Core, and confirms the 8-headstage ceiling for our system. That's clear now.
+
+Two follow-up questions on our Gen-1 XDAQ Core (serial 0C006218):
+
+1. **A permanent earth-ground connector for the XDAQ Core.** For noise reasons we tie the XDAQ to building earth. Right now this is literally a wire taped to the chassis and run to the wall earth, which is neither mechanically stable nor reliable. Our Gen-1 Core has only a single small GND pin, not the dedicated banana ground terminals of the larger units. Is there a proper, permanent way to earth-ground this chassis — a screw-terminal, a grounding lug, a designated chassis screw, or an accessory/adapter you sell — so we can make a solid, stable earth connection rather than a taped wire? If there's a recommended grounding point on the enclosure, a photo or diagram would help.
+
+2. **Effect of nearby equipment on the EEG recordings.** The XDAQ and the Intan headstages (analog cable running ~36 cm down to the animal) sit close to a fair amount of other equipment: two PCs, a WiFi router, two Raspberry Pi camera nodes, an Ethernet switch, several HDMI cables, and a power multitap. In your experience, can the proximity of any of these — mains-powered devices, the WiFi router, the switched-mode supplies, the digital cabling — couple noise into the mouse EEG? If so, which items tend to matter most, and what separation distances or layout/shielding practices do you recommend for a low-noise Intan recording setup (e.g. keeping the analog headstage run away from power/HDMI, distance from the router/PSUs, cable routing, whether to shield the headstage or the analog cable)?
+
+For context, we do see 60 Hz mains pickup in some recordings and are working through it on the electrode side; I'd like to make sure the bench layout and grounding aren't quietly making it worse.
+
+Thank you again for the clear explanations and the help.
+
+Best regards,
+Andrea
+andrea96p@kaist.ac.kr
+
+---
+
+### Before sending (round 2)
+- [ ] Decide whether to cc Jeff/NeuroNexus (he answered the technical parts directly).
+- [ ] Optional: attach a photo of the current taped-wire earth + the Gen-1 rear panel single GND pin, so they can point to the right grounding spot.
+- [ ] Frame stays "permanent/stable earth," NOT "this fixes our hum" — earth is exonerated as the 60 Hz cause ([[eeg-60hz-saga]]).
