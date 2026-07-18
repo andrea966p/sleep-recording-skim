@@ -159,7 +159,7 @@ Andrea
 >
 > ⚠️ **Reality check for us (not for the vendor):** per [[eeg-60hz-saga]] / [[headstage-shielding-faraday-foil]], **earth has been EXONERATED as the 60 Hz root cause** — the real wall is open frontal electrodes (nonphysical impedance). A better earth connector is good hygiene + mechanical stability, NOT expected to move the 60 Hz floor. Frame the ask as "we want a permanent, stable earth" not "this will fix our hum." KC already gave the *signal* star-ground scheme (Core = hub, each device GND home-runs to DB25 pin 14, see [[neuronexus-inquiry-email#Reply — round 3b received 2026-06-05 (KC Kong)|round-3b]]); this new ask is specifically the **chassis→wall-earth** path, which the Gen-1 Core lacks a dedicated terminal for (Core2 has 2 banana terminals SYS GND + Chassis GND; our Gen-1 has only a single GND pin).
 
-> **To:** SolutionsKR VIVO <vivosolkr@gmail.com> (cc Jeff / NeuroNexus if appropriate)
+> **To:** SolutionsKR VIVO <vivosolkr@gmail.com> — VIVO ONLY (Jeff gets a separate email, see below)
 > **From:** andrea96p@kaist.ac.kr
 > **Subject:** Re: XDAQ Core + Intan — permanent earth-ground connector, and EEG noise from nearby equipment
 
@@ -171,7 +171,7 @@ Two follow-up questions on our Gen-1 XDAQ Core (serial 0C006218):
 
 1. **A permanent earth-ground connector for the XDAQ Core.** For noise reasons we tie the XDAQ to building earth. Right now this is literally a wire taped to the chassis and run to the wall earth, which is neither mechanically stable nor reliable. Our Gen-1 Core has only a single small GND pin, not the dedicated banana ground terminals of the larger units. Is there a proper, permanent way to earth-ground this chassis — a screw-terminal, a grounding lug, a designated chassis screw, or an accessory/adapter you sell — so we can make a solid, stable earth connection rather than a taped wire? If there's a recommended grounding point on the enclosure, a photo or diagram would help.
 
-2. **Effect of nearby equipment on the EEG recordings.** The XDAQ and the Intan headstages (analog cable running ~36 cm down to the animal) sit close to a fair amount of other equipment: two PCs, a WiFi router, two Raspberry Pi camera nodes, an Ethernet switch, several HDMI cables, and a power multitap. In your experience, can the proximity of any of these — mains-powered devices, the WiFi router, the switched-mode supplies, the digital cabling — couple noise into the mouse EEG? If so, which items tend to matter most, and what separation distances or layout/shielding practices do you recommend for a low-noise Intan recording setup (e.g. keeping the analog headstage run away from power/HDMI, distance from the router/PSUs, cable routing, whether to shield the headstage or the analog cable)?
+2. **Effect of nearby equipment on the EEG recordings.** The XDAQ and the Intan headstages (analog cable running ~36 cm down to the animal) sit close to a fair amount of other equipment: two PCs, a WiFi router, two Raspberry Pi camera nodes, an Ethernet switch, several HDMI cables, and a power multitap. In your experience, can the proximity of any of these — mains-powered devices, the WiFi router, the switched-mode supplies, the digital cabling — couple noise into the mouse EEG? If so, which items tend to matter most, and what separation distances or layout/shielding practices do you recommend for a low-noise Intan recording setup (e.g. keeping the analog headstage run away from power/HDMI, distance from the router/PSUs, cable routing, whether to shield the headstage or the analog cable)? And if you have any advice on how to properly place the Intan headstages, the SPI cables, the surrounding environment and such, I would really appreciate you sharing it.
 
 For context, we do see 60 Hz mains pickup in some recordings and are working through it on the electrode side; I'd like to make sure the bench layout and grounding aren't quietly making it worse.
 
@@ -184,6 +184,41 @@ andrea96p@kaist.ac.kr
 ---
 
 ### Before sending (round 2)
-- [ ] Decide whether to cc Jeff/NeuroNexus (he answered the technical parts directly).
 - [ ] Optional: attach a photo of the current taped-wire earth + the Gen-1 rear panel single GND pin, so they can point to the right grounding spot.
 - [ ] Frame stays "permanent/stable earth," NOT "this fixes our hum" — earth is exonerated as the 60 Hz cause ([[eeg-60hz-saga]]).
+
+---
+
+## Follow-up to Jeff (NeuroNexus) — round 2 (draft 2026-07-18) — general noise-reduction tips beyond the manual
+
+> [!abstract] Why this email
+> Separate email from the VIVO one above. Asks Jeff (who answers the technical/experience side directly) for **general noise-reduction tips for the recording rig that aren't in the manual** — his own bench experience for a low-noise Intan setup. Gives him the rig specifics that matter for noise: **custom-made tether attached to an 8-pin rotary slip ring** (freely-moving mouse), RHD2216 bipolar headstage, ~6 ft C3026 analog SPI run (~36 cm down to the animal), Faraday-foil around the headstage already tried, copper-coil cable shield landed on a recorded channel as a noise reference.
+
+> **To:** Jeff / NeuroNexus support
+> **From:** andrea96p@kaist.ac.kr
+> **Subject:** XDAQ Core + Intan RHD2216 — general noise-reduction tips for a freely-moving mouse EEG rig?
+
+Dear Jeff,
+
+Thanks again for the clear explanation on the SAdpt adapter and the MISO-pair limits — that settled it for us.
+
+A more open-ended question, if you have a moment: beyond what's in the manual, do you have any general noise-reduction tips from your own experience for keeping a low-noise Intan recording, specifically for a freely-moving mouse EEG/EMG setup?
+
+Some details of our rig that may be relevant:
+
+- **XDAQ Core Gen-1**, **Intan RHD2216** bipolar headstage (one 16-ch chip per mouse), bipolar left-hemisphere EEG (frontal + parietal) plus neck EMG, animal ground on a dedicated dura pin.
+- The animal is **freely moving**: a **custom-made tether** connects the implant to an **8-pin rotary slip ring** (commutator) that lets the mouse rotate without twisting the wires, then out to the headstage. The slip ring and the custom tether are both in the signal path before the headstage.
+- The headstage sits at the top of the chamber with roughly a **36 cm analog run** down to the animal, then a **6 ft C3026 SPI cable** back to the XDAQ.
+- We already wrap the **headstage in Faraday foil**, which helped, and we land the **cable's copper-coil shield on a spare recorded channel** as an environmental-noise reference rather than on ground.
+
+We do see 60 Hz mains pickup in some recordings and are chasing it primarily on the electrode side, but I'd value any hardware/layout wisdom you have — things like: does a slip ring / custom tether commonly add noise and how to mitigate it, grounding of the tether or slip-ring body, cable routing and separation from mains/digital lines, whether shielding the analog run (not just the headstage) is worth it, filtering/referencing choices in Allego, or anything else you've found matters in practice.
+
+Thank you for your time and patience.
+
+Best regards,
+Andrea
+andrea96p@kaist.ac.kr
+
+### Before sending (Jeff round 2)
+- [ ] This is a separate email — VIVO does NOT get the tether/slip-ring detail; Jeff does.
+- [ ] Frame as "any tips beyond the manual," experience-level — earth/60 Hz already chased on the electrode side ([[eeg-60hz-saga]]).
