@@ -9,10 +9,18 @@ tags:
   - sadpt
   - headstage
 created: 2026-07-14
-status: draft
+status: resolved
+resolved: 2026-07-18
 ---
 
 # HDMI/SPI Dual-Socket Adapter — TOP Socket Dead — Vendor Inquiry Drafts
+
+> [!success] RESOLVED 2026-07-18 — NeuroNexus (Jeff) replied. TOP SOCKET DEAD BY DESIGN, NOT A DEFECT. DO NOT RMA.
+> **Root cause (vendor, authoritative):** The HDMI port carries max 19 conductors. Intan neural channels are digitized+multiplexed in the chip, then grouped into blocks of up to 64ch transmitted over one **MISO pair** of wires. The **top socket of the SAdpt-XDAQ-OM12 has 4 wires wired to the MISO3 + MISO4 pairs** in the HDMI connector.
+> - **XDAQ Core (our Gen-1)** HDMI ports support only **2 MISO pairs = 128ch** (MISO1/MISO2). MISO3/MISO4 lines are **physically absent** in the Core's headstage ports → a headstage on the top socket has nothing to talk on → never detected. Correct, expected behavior for the Core.
+> - One+ and AIO support **4 MISO pairs = 256ch** — those DAQs *would* use the top socket. The adapter is built for the higher-end DAQs; the Core simply doesn't wire MISO3/4.
+> - Jeff hit this himself at product launch, needed clarification from Kontex — "seems like it should work but doesn't" is a Core hardware limitation, from Intan's architecture + Kontex's DAQ design choices.
+> **Consequence:** The **8-headstage ceiling is a hard hardware limit of the XDAQ Core** (4 ports × bottom socket × C3442 dual-headstage cable = 8). Top sockets stay unused forever on the Core. To go past 8 you need a One+/AIO-class DAQ, not more adapters. Kontex draft below no longer needs sending.
 
 > [!abstract] TL;DR
 > Draft emails to NeuroNexus (Jeffrey) and Kontex (KC Kong) asking why the **top SPI socket** of our SAdpt-XDAQ-OM12 HDMI↔SPI bridge adapter never detects a headstage, on **both** units we own. Root cause isolated 2026-06-18→07-01 (see [[first-headstage-connection]] and [[2026-07-01]]). Not currently blocking — we scaled around it with the bottom socket + C3442 splitter — but leaves capacity on the table and is worth an RMA/fix ask.
