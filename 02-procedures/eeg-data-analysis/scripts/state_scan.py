@@ -47,15 +47,24 @@ for P in sorted(sp):
 
 DEC = 4; fsd = fs//DEC; EP = 4.0; ep = int(EP*fsd); PAD = 4.0
 sos_eeg = signal.butter(4, [0.5, 30], btype="band", fs=fsd, output="sos")
-sos_emg = signal.butter(4, [10, 100], btype="band", fs=fsd, output="sos")
+# EMG runs at FULL fs (not decimated): band tops out at 150 Hz, which exceeds the
+# decimated Nyquist (fsd/2 = 125 Hz at DEC=4). Convention is 10-150 Hz + 60 Hz notch.
+sos_emg = signal.butter(4, [10, 150], btype="band", fs=fs, output="sos")
 NOTCH = []
 h = 60.0
 while h < fsd/2 - 1:
     NOTCH.append(signal.iirnotch(h, 30, fsd)); h += 60.0
+NOTCH_F = []   # full-rate notch comb for the EMG path
+h = 60.0
+while h < fs/2 - 1:
+    NOTCH_F.append(signal.iirnotch(h, 30, fs)); h += 60.0
 
 def clean(x, sos):
     for b, aa in NOTCH: x = signal.filtfilt(b, aa, x)
     return signal.sosfiltfilt(sos, x)
+def clean_emg(x):
+    for b, aa in NOTCH_F: x = signal.filtfilt(b, aa, x)
+    return signal.sosfiltfilt(sos_emg, x)
 def bp(f, P, lo, hi):
     k = (f >= lo) & (f < hi); return np.trapz(P[k], f[k])
 
@@ -64,15 +73,17 @@ starts = np.arange(S0, S1 - win, step)
 tag = a.tag or base.split("__")[-1]
 print(f"\n########## {tag}  {dur_h:.2f} h  {len(starts)} epochs @1/{a.interval:.0f}s  slots={[l for l,_ in SLOTS]}")
 
-R = {l: dict(d=[], t=[], r=[], e=[], rail=[]) for l, _ in SLOTS}
+R = {l: dict(d=[], t=[], r=[], e=[], rail=[], erail=[]) for l, _ in SLOTS}
 for i, s0 in enumerate(starts):
     seg = np.asarray(mm[s0:s0+win, :]).astype(np.float64)
     for lab, b in SLOTS:
         F, P, EL, ER = seg[:, b], seg[:, b+1], seg[:, b+2], seg[:, b+3]
         R[lab]["rail"].append(100*np.mean((np.abs(F) > 0.98*6390) | (np.abs(P) > 0.98*6390)))
+        R[lab]["erail"].append(100*np.mean((np.abs(EL) > 0.98*6390) | (np.abs(ER) > 0.98*6390)))
         be = clean(signal.decimate(F-P, DEC, ftype="fir", zero_phase=True), sos_eeg)
-        bm = clean(signal.decimate(EL-ER, DEC, ftype="fir", zero_phase=True), sos_emg)
-        k0 = int(PAD*fsd); be = be[k0:k0+ep]; bm = bm[k0:k0+ep]
+        bm = clean_emg(EL-ER)   # full rate, band tops 150 Hz
+        k0 = int(PAD*fsd); be = be[k0:k0+ep]
+        kf = int(PAD*fs); bm = bm[kf:kf+int(EP*fs)]
         f, Px = signal.welch(be, fs=fsd, nperseg=ep)
         R[lab]["d"].append(bp(f, Px, 0.5, 4)); R[lab]["t"].append(bp(f, Px, 6, 9))
         R[lab]["r"].append(be.std()); R[lab]["e"].append(bm.std())
@@ -82,11 +93,11 @@ def cliffs(x, y):
     u = stats.mannwhitneyu(x, y, alternative="two-sided").statistic
     return 2*u/(len(x)*len(y)) - 1
 
-print(f"{'slot':4s} {'rail%':>6s} {'keep%':>6s} {'EEGuV':>6s} {'EMGuV':>6s} | {'td_sep':>7s} {'bimod':>6s} {'persist':>7s} {'circ':>6s} | VERDICT")
+print(f"{'slot':4s} {'rail%':>6s} {'keep%':>6s} {'EMGrl%':>6s} {'EEGuV':>6s} {'EMGuV':>6s} | {'td_sep':>7s} {'bimod':>6s} {'persist':>7s} {'circ':>6s} | VERDICT")
 out = {}
 for lab, _ in SLOTS:
     d = np.array(R[lab]["d"]); t = np.array(R[lab]["t"]); r = np.array(R[lab]["r"])
-    e = np.array(R[lab]["e"]); rl = np.array(R[lab]["rail"])
+    e = np.array(R[lab]["e"]); rl = np.array(R[lab]["rail"]); erl = np.array(R[lab]["erail"])
     # REJECT clipped epochs: a railed amp is non-linear, its spectrum is meaningless.
     # Scorers drop these; computing td_sep over them measures the artifact, not the brain.
     keep = rl < 1.0
@@ -134,7 +145,7 @@ for lab, _ in SLOTS:
     else:
         v = "weak"
     cs = f"{circ*100:5.1f}%" if not np.isnan(circ) else "   n/a"
-    print(f"{lab:4s} {np.median(rl):5.1f}% {frac_keep*100:5.0f}% {np.median(r):6.0f} {np.median(e):6.0f} | "
+    print(f"{lab:4s} {np.median(rl):5.1f}% {frac_keep*100:5.0f}% {np.median(erl):5.1f}% {np.median(r):6.0f} {np.median(e):6.0f} | "
           f"{td_sep:+7.2f} {bimod:6.2f} {persist:+7.2f} {cs:>6s} | {v}")
     out[lab] = v
 print("  (td_sep must be NEGATIVE = low-EMG epochs are delta-rich = NREM. bimod>0.555 bimodal. "
