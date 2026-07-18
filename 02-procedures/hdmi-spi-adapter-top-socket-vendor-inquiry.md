@@ -152,7 +152,7 @@ Andrea
 
 ---
 
-## Follow-up to VIVO — round 2 (draft 2026-07-18) — permanent chassis-earth connector + EEG noise from nearby gear
+## Follow-up to VIVO — round 2 (✅ SENT 2026-07-18) — permanent chassis-earth connector + EEG noise from nearby gear
 
 > [!abstract] Why this email
 > Two new asks in the same VIVO thread: (1) a **proper earth/chassis-ground connector for our Gen-1 XDAQ Core** — right now the earth is a wire *taped* to the chassis and run to the wall earth, we want something permanent/stable; (2) whether the **physical placement** of the XDAQ + Intan headstages next to 2 PCs, a WiFi router, 2 Raspberry Pi, an Ethernet switch, HDMI cables and a power multitap **adds noise to the mouse EEG**.
@@ -183,13 +183,12 @@ andrea96p@kaist.ac.kr
 
 ---
 
-### Before sending (round 2)
-- [ ] Optional: attach a photo of the current taped-wire earth + the Gen-1 rear panel single GND pin, so they can point to the right grounding spot.
-- [ ] Frame stays "permanent/stable earth," NOT "this fixes our hum" — earth is exonerated as the 60 Hz cause ([[eeg-60hz-saga]]).
+### Sent (round 2) — awaiting VIVO reply
+- [x] Sent to VIVO only 2026-07-18. Awaiting reply on: permanent chassis-earth connector for Gen-1 Core + noise from nearby gear + placement advice.
 
 ---
 
-## Follow-up to Jeff (NeuroNexus) — round 2 (draft 2026-07-18) — general noise-reduction tips beyond the manual
+## Follow-up to Jeff (NeuroNexus) — round 2 (✅ SENT 2026-07-18) — general noise-reduction tips beyond the manual
 
 > [!abstract] Why this email
 > Separate email from the VIVO one above. Asks Jeff (who answers the technical/experience side directly) for **general noise-reduction tips for the recording rig that aren't in the manual** — his own bench experience for a low-noise Intan setup. Gives him the rig specifics that matter for noise: **custom-made tether attached to an 8-pin rotary slip ring** (freely-moving mouse), RHD2216 bipolar headstage, ~6 ft C3026 analog SPI run (~36 cm down to the animal), Faraday-foil around the headstage already tried, copper-coil cable shield landed on a recorded channel as a noise reference.
@@ -219,6 +218,5 @@ Best regards,
 Andrea
 andrea96p@kaist.ac.kr
 
-### Before sending (Jeff round 2)
-- [ ] This is a separate email — VIVO does NOT get the tether/slip-ring detail; Jeff does.
-- [ ] Frame as "any tips beyond the manual," experience-level — earth/60 Hz already chased on the electrode side ([[eeg-60hz-saga]]).
+### Sent (Jeff round 2) — awaiting reply
+- [x] Sent to Jeff only 2026-07-18. Awaiting general noise-reduction tips (slip-ring/custom-tether/analog-run/shielding/referencing).
