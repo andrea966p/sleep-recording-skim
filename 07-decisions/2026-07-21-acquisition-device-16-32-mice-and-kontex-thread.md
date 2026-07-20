@@ -77,9 +77,20 @@ Pulled the actual Kontex docs (full transcription + archived HTML in [[kontex-xd
 - **Port Expander (SAdpt-Port-EXP):** "each HDMI port supports **up to 4 animals with XR headstages**" with **isolated ground/reference per animal** (EXP C/D unavailable on lower models → 2/port on Core, 4/port on ONE+). Confirms 8-on-Core / 16-on-ONE+ AND is the fix for inter-animal ground crosstalk.
 - **SyncLink:** one per XDAQ, **each XDAQ → its own PC**, SyncLinks daisy-chained via Ethernet (OUT→IN). 32 mice = 2× ONE+ + 2× SyncLink.
 
+## Reply SENT to KC (2026-07-21)
+
+Accepted the video call (Prof. Kim Staci Jakyong joining, KST but flexible to KC's timezone). Asked, ahead of the call:
+1. **Custom re-routing adapter — usage:** how is it used in practice, does it let both SAdpt-XDAQ-OM12 sockets run at once (each with its own SPI cable + C3442 dual)?
+2. **Prof. Kim's variant:** could the adapter instead be built with **a single MISO per socket = 4 sockets per adapter, one MISO each** — is that feasible?
+3. **Port Expander price** — flagged as the most valuable option for our current Core, tied to our ongoing grounding/earth/noise struggles at 8 mice; want the per-animal isolated ground/reference. **Price requested.**
+4. **Confirm: a second XDAQ = second PC + second software license?**
+Framed everything as discussion points to plan our **simultaneous circadian multi-mouse rig**, centered on the **current Core Gen-1** (not a new-unit purchase).
+
+**Awaiting:** KC's reply — call date/time, adapter usage + 1-MISO-per-socket feasibility, Port Expander price + Intan RHD2216 compatibility, 2nd-PC/2nd-license confirmation.
+
 ## Still open / next steps
 
-- [ ] Reply to KC accepting the **video call**; Prof. Kim Staci Jakyong joins; we're KST but flexible to his timezone.
+- [ ] KC reply: schedule call + answers to the 4 questions above.
 - [ ] **Confirm the Port Expander accepts our Intan RHD2216 headstages** (via SAdpt-XDAQ-OM12 / Omnetics), not only Kontex XR headstages — the whole 4/port + isolation benefit hinges on this.
 - [ ] Ask KC for an **official quote**: 16-mouse ONE+ build (1× ONE+ + 4× Port Expander + 16× headstage interface + commutators/cables), the 32-mouse plan (2× ONE+ + 2× SyncLink), with lead time.
 - [ ] **32-mouse: one PC or two?** SyncLink docs say "each XDAQ → its own PC" — confirm whether one PC can host both Allego instances, and how the two units appear in Allego/Radiens.
