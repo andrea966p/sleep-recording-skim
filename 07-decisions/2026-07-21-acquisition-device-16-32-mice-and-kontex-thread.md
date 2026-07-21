@@ -1,5 +1,5 @@
 ---
-tags: [decision, hardware, xdaq, kontex, acquisition, scale-up, email-log]
+tags: [ decision, hardware, xdaq, kontex, acquisition, scale-up, email-log ]
 created: 2026-07-21
 status: open
 ---
@@ -105,3 +105,38 @@ Framed everything as discussion points to plan our **simultaneous circadian mult
 - [[hdmi-spi-adapter-top-socket-vendor-inquiry]] — earlier NeuroNexus/VIVO/Jeff + KC thread, dead-top-socket root cause
 - [[eight-mouse-acquisition-setup]] — current 8-mouse topology
 - [[eeg-60hz-saga]] — grounding history (why the Port Expander matters)
+
+---
+
+## ✅ VIDEO CALL HELD — KC Kong + Prof. Kim (2026-07-21)
+
+Journal: [[2026-07-21]]. Prep: [[2026-07-21-kontex-kc-call-prep]].
+
+### Confirmed on the call
+1. **Custom "4-socket, 1-MISO-per-socket" adapter = NOT possible.** Prof. Kim's variant (one MISO per socket → 4 mice/HDMI port on the Core) is dead from the vendor's mouth. Closes question #2 of the sent email. The MISO-pair count is fixed by the box.
+2. **Port Expander (SAdpt-Port-EXP) — KC recommends we TRY it**, specifically because it **handles each mouse's grounding separately** (isolated ground/reference per animal). This is the isolation we want for the [[eeg-60hz-saga]].
+3. **Second-XDAQ license limitation ACKNOWLEDGED** — 2× XDAQ = 2× software license (and per SyncLink docs, each XDAQ → its own PC). Closes question #4.
+4. **Headstage must be as CLOSE to the mouse as possible.** Our ~**40 cm analog run** is **a stretch** per KC. Rig-redesign action: shorten it. Directly supports the 60 Hz/impedance-noise fight (shorter analog antenna).
+5. **2 mice per Intan adapter board = NOT possible, not even with the Port Expander.** One adapter board = one mouse. ⚠️ Clarify which board he meant (C3410 electrode board vs C3442 dual adapter).
+6. KC **proposed several parts on the Kontex website** to complete the rig.
+
+### 🔧 THE MAIN OPEN ITEM — wiring 4 Port Expanders to the Core Gen-1
+Buying 4× Port Expander for the **current Core** needs **extra adapters** to complete the chain — it does not drop in. Must work out the full wiring order + BOM from the Kontex site:
+```
+Core HDMI port → [extra adapter?] → Port Expander (SAdpt-Port-EXP) → per-EXP-port Intan adapter → RHD2216 headstage
+```
+
+> [!important] Port Expander on the CORE does NOT increase mouse count
+> Core = 2 MISO pairs/port → only **EXP A + B** available per port → **2 animals/port × 4 ports = 8**, same hard ceiling. 4× Port Expander on the Core = **per-animal grounding isolation on the existing 8-mouse rig** (a 60 Hz-hum test), NOT a route to 16. 16 still requires the ONE+.
+
+### Revised plan (post-call)
+- **Step 1 (cheaper, testable now):** Port-Expander-on-Core **grounding trial** at 8 mice — does per-animal isolation reduce the 60 Hz hum? Needs the 4× Port Expander + the extra Core adapters (BOM TBD from Kontex site).
+- **Step 2 (scale-up):** XDAQ **ONE+** for 16 mice, once the isolation benefit is proven and surgical yield (open frontal electrodes) is fixed.
+- **Step 3 (future):** 2× ONE+ + SyncLink + 2nd PC + 2nd license for 32.
+
+### Next steps (updated)
+- [ ] Work out the **Core + 4× Port Expander wiring + full BOM** from the parts KC proposed on the Kontex website (the "extra adapters").
+- [ ] Clarify #5 — which adapter board is "one mouse only."
+- [ ] Quote from KC: (a) Port-Expander grounding kit for the current Core, (b) 16-mouse ONE+ build.
+- [ ] Rig redesign: shorten the ~40 cm analog headstage→animal run.
+- [ ] Still gated by surgical yield — no box fixes open frontal electrodes ([[eeg-60hz-saga]]).
