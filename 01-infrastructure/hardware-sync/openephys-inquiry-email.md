@@ -33,10 +33,10 @@ I am writing from a sleep-neuroscience lab at KAIST (PI: Prof. Kim Staci Jakyong
 
 **Our current setup (for context):**
 - One Intan **RHD2216** bipolar headstage per mouse (16-channel, but we use only ~4–6 channels: a bipolar EEG pair + a bipolar EMG pair). One headstage = one animal.
-- We currently record 8 mice at once on another Intan-RHD-based acquisition system, and we already have a full analysis pipeline around the Intan data.
+- We currently record 8 mice at once on a **NeuroNexus system** (XDAQ + Allego/Radiens), and we have a full analysis pipeline built around the Intan data.
 - Recordings are long-duration (24–72 h continuous), so **reliability is critical** — this is a live-animal instrument.
 
-We are evaluating the **Open Ephys Acquisition Board** because it uses the same Intan RHD chips we already own, its software is open-source, and its hardware is open — which is very attractive for a lab that wants to reuse hardware and avoid per-seat software licenses.
+We are on NeuroNexus today, but **for this expansion we are interested in switching to Open Ephys** — it uses the same Intan RHD chips we already own, its software is open-source, and its hardware is open, which is very attractive for a lab that wants to reuse hardware and avoid per-seat software licenses. We would like to understand whether the Open Ephys Acquisition Board is a solid path to a reliable 16-animal (→32) rig.
 
 We understand from your documentation that a single Acquisition Board supports up to **8 headstages (4 ports × 2) / 512 channels**. We also found the **`extension-board`** design in your `acquisition-board` GitHub repository, whose README describes adding 4 more SPI connectors for **up to 16 RHD chips / 1024 channels**, while noting it is "not a finished or tested design yet."
 

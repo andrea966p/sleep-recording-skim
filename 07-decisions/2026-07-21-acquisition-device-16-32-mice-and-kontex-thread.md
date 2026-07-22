@@ -36,7 +36,28 @@ Both ecosystems run the **same Intan RHD chips**. Our RHD2216 headstages, tether
 | XDAQ Core (ours) | **8** |
 | XDAQ One / One+ | **16** |
 
-Reliability + reuse points at staying in the **XDAQ + Allego/Radiens** world we already run (our sensor maps, analysis code, SOPs all carry over). So: **XDAQ One+.**
+Reliability + reuse points at staying in the **XDAQ + Allego/Radiens** world we already run (our sensor maps, analysis code, SOPs all carry over). So: **XDAQ One+** — but see the full 3-way comparison below, which adds the software / license / openness dimensions surfaced 2026-07-21.
+
+## 3-WAY COMPARISON — the real 16-mouse candidates (updated 2026-07-21)
+
+Full Open Ephys write-up + sources: [[2026-07-21-openephys-acquisition-board-scale-up-option]]. Software/license findings from the post-call research.
+
+| Dimension | **XDAQ ONE+** (Kontex) | **Intan RHD Rec. Controller 1024** (C3008) | **Open Ephys Acq. Board** |
+|---|---|---|---|
+| Reaches 16 mice? | ✅ native (4 ports × 4 MISO) | ✅ native (8 ports × 2) | ⚠️ 8 today; 16 only via **unvalidated `extension-board`** |
+| Reaches 32? | 2× ONE+ + SyncLink | 2× controllers (sync TBD) | multi-board sync (ask) |
+| Hardware | closed, productized | closed, productized | **open-source, customizable** |
+| Software | Allego/Radiens **or** free OE/RHX | RHX (free) or Allego | **Open Ephys GUI (free)** |
+| Software license | **~$2.5–5k/seat Allego** (or $0 on OE/RHX) | $0 on RHX | **$0** |
+| Per-animal ground isolation | ✅ via **Port Expander** | not built-in (confirm) | **ask OE** (our 60 Hz concern) |
+| Reuse of our pipeline | ✅ full (sleep64 / XDAT / Allego) | partial (Intan-family) | ✗ rebuild (XDAT→OE format) |
+| Maturity / risk | **Low — turnkey** | **Low — turnkey** | **High — 16-path is a concept** |
+| Reuses our RHD2216 headstages | ✅ | ✅ | ✅ (confirm bipolar) |
+
+> [!note] The software "license" clarification (post-call)
+> The license KC flagged for a 2nd XDAQ = **NeuroNexus Allego/Radiens paid software** (~$2.5–5k perpetual/seat), NOT an XDAQ hardware entitlement. **Open Ephys GUI, the XDAQ-OE plugin, and XDAQ-RHX are all free/open-source** — so a new XDAQ (or an OE board, or an Intan controller) can run **license-free** if we leave Allego. The catch: leaving Allego means rebuilding our whole pipeline (sleep64 map, `eeg-emg-analysis` XDAT reader, impedance workflow, video-sync Phase 0a gate). ⚠️ Still worth confirming with KC that the license he meant is the Allego software, not something baked into the XDAQ.
+
+**Reading:** turnkey/reliable 16 = **XDAQ ONE+** or **Intan 1024 Controller**. **Open Ephys** = the open / low-cost / custom wildcard — cheapest on paper + no license, but its 16-mouse path is unvalidated. Facts being gathered via [[openephys-inquiry-email]]; final call → council once both vendors reply.
 
 ## The Kontex (KC Kong) email thread — Jul 2026
 
