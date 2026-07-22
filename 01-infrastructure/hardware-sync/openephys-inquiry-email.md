@@ -7,7 +7,8 @@ tags:
   - inquiry
   - scale-up
 created: 2026-07-21
-status: draft
+status: sent
+sent: 2026-07-22
 ---
 # Open Ephys Inquiry — Acquisition Board scale-up to 16 (→32) mice
 
@@ -23,7 +24,9 @@ status: draft
 
 ---
 
-## DRAFT EMAIL
+> [!success] SENT 2026-07-22 — awaiting Open Ephys reply (extension-board status, price, RHD2216 compat, per-animal isolation, multi-board sync, custom build, call).
+
+## EMAIL (as sent)
 
 **Subject:** Acquisition Board for 16-animal simultaneous EEG/EMG — scale-up + extension-board question
 
