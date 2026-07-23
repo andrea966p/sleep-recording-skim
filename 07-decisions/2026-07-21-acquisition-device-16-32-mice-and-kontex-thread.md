@@ -175,3 +175,35 @@ Reply from Margarida (OE Support) — full log [[openephys-inquiry-email#✅ REP
 - **Software $0** → ✅ confirmed.
 
 **Standings after both vendors replied:** turnkey/reliable 16 = **XDAQ ONE+** (or Intan 1024). OE = open/license-free but its 16-path degraded to multi-board-or-custom, and it has **no per-animal isolation** — a real minus for us. XDAQ ONE+ still leads on reliability + pipeline reuse + Port Expander isolation. **Ready to council the DAQ/software decision** once OE prices (multi-board build vs Atlanta custom) are pulled.
+
+---
+
+## 💵 KONTEX QUOTE 262024 received (2026-07-23) — Port-Expander-on-Core grounding kit
+
+Quote No. **262024**, prepared by KC Kong (kc@kontex.io), issued 2026-07-21, **valid through 2026-08-20**, USD. PDF in `~/Downloads/Quotation - 262024.pdf`.
+
+> [!important] What this quote IS and IS NOT
+> This is the **Step-1 per-animal grounding retrofit for our CURRENT 8-mouse Core** — NOT the 16-mouse ONE+ scale-up. It also **resolves the main open BOM item** ("wiring 4× Port Expander to the Core needs extra adapters"): the extra adapter is the **SAdpt-CORE-OM12** (×4, one per Core HDMI port). The 16-mouse ONE+ build quote is still ⏳ owed.
+
+| Item | Part | Unit | Qty | Ext |
+|---|---|---|---|---|
+| XDAQ CORE to OM12 Adapter (the "extra adapter" per port) | **SAdpt-CORE-OM12** | $350.00 | 4 | $1,400.00 |
+| XDAQ HDMI to Single OM12 (per-mouse Intan/OM12 interface) | **SAdpt-XDAQ-OM12(1)** | $275.00 | 8 | $2,200.00 |
+| XDAQ Port Expander (isolated ground/ref, one per port) | **XDAQ-Port-EXP** | $1,525.00 | 4 | $6,100.00 |
+| | | | Subtotal | **$9,700.00** |
+| | | | Shipping | $252.89 |
+| | | | Fees | $50.00 |
+| | | | **Total** | **$10,002.89** |
+
+**BOM logic (confirms Core = 8, EXP A+B only):** 4 Core ports × 1 Port Expander each; each Port Expander drives **2 animals (EXP A + B)** on the Core → **8 mice**; 8× SAdpt-XDAQ-OM12(1) = one single-OM12 interface per mouse (the Intan RHD2216 path); 4× SAdpt-CORE-OM12 = the Core-HDMI→OM12 bridge feeding each Port Expander. Full chain now known:
+```
+Core HDMI port → SAdpt-CORE-OM12 → XDAQ-Port-EXP → SAdpt-XDAQ-OM12(1) ×2 (EXP A/B) → RHD2216 headstage ×2
+```
+
+**Warranty (Schedule A):** Systems & Instrumentation 12 mo (**24 mo if registered within 30 days**); Commutators 6/12 mo; **Headstages 90 days; Adapters/EIBs/Cables 90 days**. KonteX Care Extended → 48 mo (buy within 60 days). All sales final; prepayment in full before shipment; RUO only; governed by Taiwan law. Confidentiality clause = **do not publicly disclose pricing**.
+
+**Notes / still open:**
+- ⚠️ Quote does **not** itemize a commutator/slip-ring or the RHD2216 headstages themselves (we already own those) — it's purely the grounding-isolation adapter chain.
+- ⏳ Does **SAdpt-XDAQ-OM12(1)** accept our exact Intan RHD2216 (Omnetics) headstage? Implied yes (OM12 = Intan interface) but confirm.
+- ⏳ Still need the separate **16-mouse ONE+ build** quote (1× ONE+ + 4× Port Expander + 16× OM12 interface + commutators/cables) and the 32-mouse plan (2× ONE+ + 2× SyncLink).
+- This $10k retrofit buys the **60 Hz per-animal isolation trial on the existing rig** ([[eeg-60hz-saga]]), Step 1 of the revised plan — not more mice.
