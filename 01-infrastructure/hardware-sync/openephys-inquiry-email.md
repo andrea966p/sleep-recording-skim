@@ -10,6 +10,7 @@ created: 2026-07-21
 status: replied
 sent: 2026-07-22
 replied: 2026-07-23
+followup_drafted: 2026-07-23
 ---
 # Open Ephys Inquiry — Acquisition Board scale-up to 16 (→32) mice
 
@@ -113,3 +114,37 @@ Best regards,
 - [ ] Per-animal ground **isolation**: is there any OE hardware for it, or is shared-board-ground unavoidable (our 60 Hz risk)? Ask Discord/developers.
 - [ ] Pull **prices** (acq board, SPI 16ch bipolar headstage, I/O boards) from webstore or request formal quote for a 16-mouse multi-board config.
 - [ ] If multi-board is messy → get a scope + rough price from the **Atlanta custom team** for a 16-headstage board.
+
+---
+
+## FOLLOW-UP EMAIL (drafted 2026-07-23 — reply to Margarida)
+
+> [!info] Purpose
+> Tight, table-driven reply that fills the ⏳ Open Ephys cells in [[2026-07-23-daq-ecosystem-comparison-xdaq-vs-openephys]]. **OE-facing only — deliberately does NOT mention Kontex/NeuroNexus or that we are comparing vendors.** User sends it; not yet marked sent.
+
+**Subject:** Re: Acquisition Board for 16-animal EEG/EMG — clarifications + Atlanta custom team
+
+Hi Margarida,
+
+Thank you, this is really helpful. A few focused follow-ups so we can plan properly.
+
+**1. Animals per board (our configuration).** We run **one RHD2216 headstage per mouse** — each animal is a separate headstage on its own SPI/MISO line (we use only ~4–6 of the 16 channels: a bipolar EEG pair + a bipolar EMG pair). So rather than two headstages in one animal, can a single Acquisition Board record **8 physically separate mice** (4 ports × 2 single-headstage animals)? This decides whether we need 2 boards or 4 for 16 mice.
+
+**2. Per-animal grounding isolation.** Our hardest recording problem is **60 Hz mains hum and ground coupling between animals**. When several headstages share one board, are the animals' grounds/references tied together at the board, or is there a hardware option or wiring scheme to keep **each animal electrically isolated (independent ground + reference)**? This is a major factor for us — a clear hardware answer would help a lot (we'll also ask on Discord).
+
+**3. Custom 16-headstage board / Atlanta team.** Understood the extension board isn't in active development — for reference it's the design in your repo: https://github.com/open-ephys/acquisition-board/tree/master/extension-board . A single, reliable 16-animal board would be far preferable to synchronizing four boards. Could you please **connect us with the Atlanta team** to scope a custom or validated 16-headstage board (feasibility, timeline, cost)?
+
+**4. Multi-board route — formal quote.** In parallel, please send an **itemized quote** for the multi-board path to 16 animals: Acquisition Boards + the I/O boards needed to synchronize them + your SPI 16-ch bipolar headstages + required cables. **Academic pricing and lead time** appreciated.
+
+**5. Long-duration reliability + host PC.** Our recordings run **24–72 h continuous**, so reliability is critical. Do you have experience or references for multi-day continuous recording on multiple synchronized boards, and what **host-PC spec** would you recommend for the data + storage load at 16 (and later 32) animals on one machine?
+
+**6. Scaling to 32 + data format.** Longer term we'd like to reach **32 animals** — can more boards be synchronized on one PC to get there, and is there a practical ceiling? Also, what **file format does the Open Ephys GUI record**, and is there an Intan-compatible export? (We have an existing analysis pipeline and want to understand the migration.)
+
+A short video call to go over the 16→32-animal plan would be very welcome — we're in Korea (KST) but flexible.
+
+Thanks again,
+[Your name]
+Prof. Kim Staci Jakyong lab, KAIST
+
+### Internal — question → comparison-table cell (do NOT send)
+Q1 → row 1 (animals/box) · Q2 → row 4 (isolation) · Q3 → rows 2/13/14 (custom/openness) · Q4 → row 11 (price) · Q5 → row 10 (reliability) + row 9 (host PC) · Q6 → row 3 (scale to 32) + row 7 (data format). Optional commutator question → row 9. Table: [[2026-07-23-daq-ecosystem-comparison-xdaq-vs-openephys]].
