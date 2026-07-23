@@ -161,3 +161,17 @@ Core HDMI port → [extra adapter?] → Port Expander (SAdpt-Port-EXP) → per-E
 - [ ] Quote from KC: (a) Port-Expander grounding kit for the current Core, (b) 16-mouse ONE+ build.
 - [ ] Rig redesign: shorten the ~40 cm analog headstage→animal run.
 - [ ] Still gated by surgical yield — no box fixes open frontal electrodes ([[eeg-60hz-saga]]).
+
+---
+
+## Open Ephys reply folded in (2026-07-23)
+
+Reply from Margarida (OE Support) — full log [[openephys-inquiry-email#✅ REPLY RECEIVED 2026-07-23 — Margarida (Open Ephys Support)]], analysis [[2026-07-21-openephys-acquisition-board-scale-up-option#REPLY RECEIVED 2026-07-23 — Open Ephys answers]]. Updates the OE column of the 3-way table above:
+
+- **"Reaches 16 mice?"** — the `extension-board` route is **DEAD** (OE disowns it, not developed). 16 is now only **4 boards synced via I/O boards** OR a **paid custom Atlanta build**. Was already the highest-risk column; single-board dream is gone.
+- **"Reaches 32?"** — same multi-board sync, just more boards + I/O boards + a strong PC.
+- **RHD2216 reuse** → ✅ **CONFIRMED** by vendor (no longer "confirm").
+- **Per-animal ground isolation** → ❌ **no OE product** (docs/Discord only). Kontex **Port Expander still the only vendor with a real isolation answer** — reinforces XDAQ for our [[eeg-60hz-saga]].
+- **Software $0** → ✅ confirmed.
+
+**Standings after both vendors replied:** turnkey/reliable 16 = **XDAQ ONE+** (or Intan 1024). OE = open/license-free but its 16-path degraded to multi-board-or-custom, and it has **no per-animal isolation** — a real minus for us. XDAQ ONE+ still leads on reliability + pipeline reuse + Port Expander isolation. **Ready to council the DAQ/software decision** once OE prices (multi-board build vs Atlanta custom) are pulled.

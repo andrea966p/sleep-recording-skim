@@ -89,3 +89,33 @@ Open Ephys's `acquisition-board` GitHub repo contains an **`extension-board/`** 
 - [[intan-rhd-spi-wiring-and-headstage-limits]] — the MISO physics (why 8 / 16)
 - [[kontex-xdaq-hardware-reference]] — the XDAQ side
 - [[eeg-60hz-saga]] — grounding history (why per-animal isolation matters)
+
+---
+
+## REPLY RECEIVED 2026-07-23 — Open Ephys answers
+
+Reply from **Margarida (Open Ephys Support)**. Full log + verbatim quotes: [[openephys-inquiry-email#✅ REPLY RECEIVED 2026-07-23 — Margarida (Open Ephys Support)]]. Net effect on this option:
+
+> [!danger] The extension board (§2) is DEAD
+> OE Support: *"I'm not familiar with the extension board design you mentioned... this is not something the Open Ephys team is currently developing, so we're unable to provide any further details."* The `extension-board/` repo folder is a **stale, abandoned concept the vendor won't stand behind.** The single-board route to 16/1024ch is off the table. §2 of this doc is now historical.
+
+**Revised picture of the OE option (post-reply):**
+
+| Item | Answer |
+|---|---|
+| Base board | 4 ports × 2 RHD chips, 512ch, 30 kSps |
+| Animals per board | **OE says "max 4 animals"** (dual adapter = 2 headstages in the SAME animal). ⚠️ Conflicts with our MISO physics (8 chips = 8 MISO = 8 single-headstage mice). **Unresolved — must clarify.** |
+| Extension board (16 on one board) | **DEAD** — not developed, vendor disowns it |
+| Real path to 16 | **(a)** 4 acq boards synced via **I/O boards** (their SyncLink equiv), all on one PC/one GUI; **(b)** **custom 16-headstage board** built by OE **Atlanta team** (paid) |
+| RHD2216 support | ✅ **Fully supported** — bipolar in+/in−, "optimal for paired differential EEG/EMG" |
+| Software | ✅ Free open-source Open Ephys GUI, no paid component |
+| Per-animal ground isolation | ❌ **No productized answer** — "depends on your design," punted to docs + Discord. **No Port-Expander equivalent.** |
+| Price | On webstore / formal quote; base board + SPI 16ch bipolar headstage **in stock** |
+| Support | Paid Training; 1-yr warranty + repairs; Discord community |
+
+**Bottom line:** OE stays the **open / license-free** option but its 16-mouse story got **worse, not better** — the cheap single-board dream (extension board) is vapor. Real 16-mouse routes are now **multi-board (2–4 boards + I/O boards + strong PC)** or a **paid custom Atlanta build** — neither is obviously cheaper or less risky than XDAQ ONE+ once you add boards, I/O sync boards, and a rebuilt pipeline. Its two genuine wins remain: **$0 software** and **confirmed RHD2216 support.** Its two genuine gaps: **no per-animal ground isolation product** (bad for our [[eeg-60hz-saga]]) and **full pipeline rebuild** (XDAT→OE format, sleep64 map, video-sync Phase 0a).
+
+**Open before this can be councilled against XDAQ ONE+ / Intan 1024:**
+- [ ] Resolve the **4-vs-8 animals per board** question (decides 2 vs 4 boards for 16) — Discord/GitHub.
+- [ ] Per-animal isolation: any OE hardware, or shared board ground only?
+- [ ] Prices: board + I/O board + SPI 16ch headstage, for a 16-mouse multi-board build; OR Atlanta custom-build scope + price.

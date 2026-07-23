@@ -7,8 +7,9 @@ tags:
   - inquiry
   - scale-up
 created: 2026-07-21
-status: sent
+status: replied
 sent: 2026-07-22
+replied: 2026-07-23
 ---
 # Open Ephys Inquiry — Acquisition Board scale-up to 16 (→32) mice
 
@@ -88,3 +89,27 @@ Best regards,
 - [[2026-07-21-acquisition-device-16-32-mice-and-kontex-thread]] — the XDAQ/Kontex side of the decision
 - [[neuronexus-inquiry-email]] — the parallel Kontex/NeuroNexus inquiry thread (same format)
 - [[intan-rhd-spi-wiring-and-headstage-limits]] — MISO physics
+
+---
+
+## ✅ REPLY RECEIVED 2026-07-23 — Margarida (Open Ephys Support)
+
+> [!success] Answered. Verdict: base board = 8 headstages BUT OE frames it as **4 animals**; **extension board is DEAD** (not developed); 16-path = **4 boards synced** OR **custom build (Atlanta team)**; **RHD2216 fully supported**; software free; **NO productized per-animal ground isolation** (punted to docs/Discord). Analysis folded into [[2026-07-21-openephys-acquisition-board-scale-up-option#REPLY RECEIVED 2026-07-23 — Open Ephys answers]].
+
+### Answers, question by question
+
+- **Extension board (Q1–3): DEAD.** Verbatim: *"I'm not familiar with the extension board design you mentioned... this is not something the Open Ephys team is currently developing, so we're unable to provide any further details."* → the 16-chip/1024ch-on-one-board README idea is **vapor from the vendor's side.** Kills the cheap single-board route to 16.
+- **Board capacity (context):** 4 ports × 2 RHD chips = **512ch, 30 kSps.** BUT OE frames the dual-headstage adapter as **"two headstages in the SAME animal"** (probe-positioning flexibility), so *"the acquisition board can be used to record from a **maximum of four animals**."* ⚠️ **DISCREPANCY vs our MISO physics** ([[intan-rhd-spi-wiring-and-headstage-limits]]): 8 chips = 8 MISO lines = 8 single-headstage mice for us. Her "4 animals" is a usage framing, not obviously a hard limit — **must clarify (see follow-ups).**
+- **16 mice (Q7):** *"use four acquisition boards simultaneously... connect multiple acquisition boards to the same computer and also use them in the same GUI, and have the data streams synchronized."* Sync done via the **I/O boards** (8 analog + 8 digital in, 8 analog + 8 digital out per board). This is OE's SyncLink equivalent. Note: **four** boards for 16 tracks HER "4 animals/board" number, not our "8/board" — the discrepancy above decides whether 16 needs **2 boards or 4**.
+- **RHD2216 (Q5): ✅ FULLY SUPPORTED.** *"fully supports your Intan RHD2216 bipolar headstages... independent in+ and in- inputs on each amplifier channel... optimal for paired differential recordings with electrodes that have similar impedances, such as surface EMG and EEG."*
+- **Grounding/isolation (Q6): NO productized answer.** *"depends on your specific experimental design"* → pointed to docs (Grounding your system, Troubleshooting Noise) + Discord. **No hardware equivalent of the Kontex Port Expander** (per-animal isolated ground) was offered. Weak spot for our [[eeg-60hz-saga]].
+- **Software (Q8): ✅ FREE.** Open Ephys GUI, open-source, no paid component.
+- **Custom build (Q9): YES — Atlanta team.** *"Our team in Atlanta does custom designs and could potentially help you... for a 16-headstage board. They would be the main point of contact."* → the real (non-vapor) path to 16-on-one-board is a **paid custom job**, not the extension board.
+- **Price/lead time (Q4):** on the webstore, or formal quote on request. Acq board + SPI 16ch bipolar headstage **in stock, immediate shipment.** (No numbers given — pull from store / request quote.)
+- **Extras:** recommends a **powerful PC** (all boards on one machine — data + storage demands for long sessions). Offers **paid Training** (setup help). **1-yr warranty** + repair service. Discord community for grounding/referencing advice.
+
+### Follow-ups needed
+- [ ] **THE key question:** confirm whether one board records **8 separate animals** (our 1-headstage-per-mouse use, 8 MISO lines) or is genuinely capped at **4 animals** — decides 2 vs 4 boards for 16. Raise on Discord / GitHub.
+- [ ] Per-animal ground **isolation**: is there any OE hardware for it, or is shared-board-ground unavoidable (our 60 Hz risk)? Ask Discord/developers.
+- [ ] Pull **prices** (acq board, SPI 16ch bipolar headstage, I/O boards) from webstore or request formal quote for a 16-mouse multi-board config.
+- [ ] If multi-board is messy → get a scope + rough price from the **Atlanta custom team** for a 16-headstage board.
