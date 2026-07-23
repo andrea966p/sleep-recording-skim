@@ -11,6 +11,7 @@ status: replied
 sent: 2026-07-22
 replied: 2026-07-23
 followup_drafted: 2026-07-23
+followup_final: 2026-07-23
 ---
 # Open Ephys Inquiry — Acquisition Board scale-up to 16 (→32) mice
 
@@ -148,3 +149,39 @@ Prof. Kim Staci Jakyong lab, KAIST
 
 ### Internal — question → comparison-table cell (do NOT send)
 Q1 → row 1 (animals/box) · Q2 → row 4 (isolation) · Q3 → rows 2/13/14 (custom/openness) · Q4 → row 11 (price) · Q5 → row 10 (reliability) + row 9 (host PC) · Q6 → row 3 (scale to 32) + row 7 (data format). Optional commutator question → row 9. Table: [[2026-07-23-daq-ecosystem-comparison-xdaq-vs-openephys]].
+
+---
+
+## FOLLOW-UP EMAIL v2 — FINAL (2026-07-23, supersedes the v1 draft above)
+
+> [!important] Changes from v1
+> Added two high-value questions that outrank some v1 points: **(a) independent per-mouse/per-group record start-stop** (all-or-nothing? customizable via GUI API/SDK? or hardware limit?) — note XDAQ has the SAME global-R_ON limit ([[project_multiuser_recording_schedules]]); **(b) the SPI splitter for 2 SEPARATE animals** — we already do this on our Intan/NeuroNexus rig (8 mice), so we push back on Margarida's "dual adapter = 2 headstages same animal" framing. Key insight folded in: her framing likely = **the two headstages on one dual adapter SHARE ground/reference**, which for 2 separate animals is exactly our [[eeg-60hz-saga]] inter-animal coupling risk → splitter Q and isolation Q are the same question. Also de-duplicated Q7 (dropped the "can boards share one PC" half she already answered; kept ceiling + data format).
+
+**Subject:** Re: Acquisition Board for 16 animal EEG/EMG: clarifications and Atlanta custom team
+
+Hi Margarida,
+
+Thank you, this is really helpful. A few focused questions so we can plan properly.
+
+**1. Animals per board: we already record 2 separate animals per port today.** We run **one RHD2216 headstage per mouse** (about 4 to 6 of the 16 channels: a bipolar EEG pair plus a bipolar EMG pair). On our current Intan based system we already use the **SPI splitter (dual headstage adapter) to record two *separate* animals on one port**, 8 mice across 4 ports, and it works reliably. You mentioned the dual adapter is intended for two headstages in the *same* animal; could you clarify the reason? Specifically, **do the two headstages on one dual adapter share a common ground or reference at the board?** If they do, that would be our concern for two separate animals (see question 2). Assuming isolation is handled, can one Acquisition Board record **8 physically separate mice** (4 ports × 2)?
+
+**2. Per animal grounding isolation.** Our hardest recording problem is **60 Hz mains hum and ground coupling between animals**. You pointed us to the docs and Discord; to be concrete: when multiple headstages share one board (and especially two headstages on one dual adapter), are the animals' grounds and references **tied together at the board**, or is there a hardware option or wiring scheme to keep **each animal electrically isolated with independent ground and reference**? A clear hardware answer is a major factor for us.
+
+**3. Independent recording control per mouse.** With multiple animals on one board (and across synchronized boards), can we **start and stop recording for a single mouse or a subset independently**, or does pressing Record start and stop **all connected animals together**? If it is all or nothing, is per animal or per group control achievable through the **Open Ephys GUI's API, SDK, or plugins**, or is it a **hardware constraint** of the Acquisition Board? This matters for us because different animals run on different experimental schedules.
+
+**4. Custom 16 headstage board and the Atlanta team.** Understood the extension board is not in active development; for reference it is the design in your repo: https://github.com/open-ephys/acquisition-board/tree/master/extension-board . A single, reliable 16 animal board would be far preferable to synchronizing four boards, mainly to reduce clutter in the recording room. Could you please **connect us with the Atlanta team** to scope a custom or validated 16 headstage board (feasibility, timeline, cost)?
+
+**5. Multi board route and a formal quote.** In parallel, please send an **itemized quote** for the multi board path to 16 animals: Acquisition Boards, the I/O boards needed to synchronize them, your SPI 16 channel bipolar headstages, and required cables. **Academic pricing and lead time** appreciated.
+
+**6. Long duration reliability and host PC.** Our recordings run **24 to 72 h continuous**, so reliability is critical. Do you have experience or references for **multi day continuous recording** on multiple synchronized boards, and what **host PC spec** would you recommend for the data and storage load at 16 (and later 32) animals on one machine?
+
+**7. Ceiling to 32 and data format.** You noted multiple boards can share one PC and be synchronized; for planning to **32 animals**, is there a **practical ceiling** on how many boards sync together, and does 32 change the sync or PC setup? Also, what **file format does the Open Ephys GUI record**, and is there an **Intan compatible export**? (We have an existing analysis pipeline and want to understand the migration.)
+
+A short video call to go over the plan for 16 to 32 animals would be very welcome; we are in Korea (KST) but flexible.
+
+Thanks again,
+[Your name]
+Prof. Kim Staci Jakyong lab, KAIST
+
+### Internal — question → comparison-table cell (do NOT send)
+Q1 → row 1 (animals/box) + row 4 (shared-ground on dual adapter) · Q2 → row 4 (isolation) · Q3 → **row 15 NEW (independent record control)** · Q4 → rows 2/13/14 · Q5 → row 11 (price) · Q6 → row 10 (reliability) + row 9 (host PC) · Q7 → row 3 (32 ceiling) + row 7 (data format). Table: [[2026-07-23-daq-ecosystem-comparison-xdaq-vs-openephys]].

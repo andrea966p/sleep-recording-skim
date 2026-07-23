@@ -42,6 +42,7 @@ Companion docs: [[2026-07-21-acquisition-device-16-32-mice-and-kontex-thread]] (
 | 12 | **Support + warranty** | Vendor (Kontex + NeuroNexus), direct email/call | 1-yr warranty + repairs + Discord community + **paid Training** |
 | 13 | **Openness / customization** | Closed hardware — limited to what Kontex sells | **Open hardware** (public design files) + **Atlanta custom-design team** |
 | 14 | **Maturity / risk** | **Low** — fully turnkey, we already run it | **Higher** — 16-path is multi-board or unbuilt custom |
+| 15 | **Independent per-mouse/group record start-stop** | ❌ **global** — one XDAQ = one R_ON/R_OFF for the whole box ([[project_multiuser_recording_schedules]]); workaround = union+slice offline | **⏳** all-or-nothing on Record? per-animal/subset via GUI API/SDK/plugins, or hardware limit? (email Q3) |
 
 Legend: ✅ confirmed strength · ⚠️ conditional · ❌ confirmed gap · ⏳ answer still owed (see §3).
 
@@ -49,7 +50,7 @@ Legend: ✅ confirmed strength · ⚠️ conditional · ❌ confirmed gap · ⏳
 
 ## 2. Per-row notes (with vendor quotes)
 
-- **Row 1 (animals/box).** MISO physics is settled ([[intan-rhd-spi-wiring-and-headstage-limits]]): 1 RHD chip = 1 MISO line = 1 mouse, channel count irrelevant. XDAQ Core = 8, ONE+ = 16 (vendor-authoritative). Open Ephys reply framed the board as *"a maximum of four animals"* because it treats the dual-headstage adapter as *"two headstages in the same animal... not to record from animals that are physically separated."* For our 1-headstage-per-mouse use this should still be **8 MISO lines = 8 mice** — but the vendor's own framing conflicts, so it is the #1 clarification (email Q1). Decides 2 vs 4 boards for 16.
+- **Row 1 (animals/box).** MISO physics is settled ([[intan-rhd-spi-wiring-and-headstage-limits]]): 1 RHD chip = 1 MISO line = 1 mouse, channel count irrelevant. XDAQ Core = 8, ONE+ = 16 (vendor-authoritative). Open Ephys reply framed the board as *"a maximum of four animals"* because it treats the dual-headstage adapter as *"two headstages in the same animal... not to record from animals that are physically separated."* For our 1-headstage-per-mouse use this should still be **8 MISO lines = 8 mice** — but the vendor's own framing conflicts, so it is the #1 clarification (email Q1). Decides 2 vs 4 boards for 16. **Key counter-evidence: we already run the SPI splitter / dual-headstage adapter with 2 SEPARATE animals per port on our current Intan/NeuroNexus rig (8 mice), reliably** — so "same animal only" is not a hard rule for us. **Likely root of Margarida's framing = the two headstages on one dual adapter SHARE ground/reference**; fine within one animal, but for 2 separate animals it couples their grounds — which is exactly our [[eeg-60hz-saga]] inter-animal coupling risk. So Row 1 and Row 4 are the same question; email Q1 asks directly whether the dual adapter shares ground/ref.
 - **Row 2 (path to 16).** XDAQ ONE+ reaches 16 natively. Open Ephys's cheap single-board route (the repo `extension-board`, "up to 16 RHD chips / 1024 channels") is **dead**: OE Support — *"I'm not familiar with the extension board design... not something the Open Ephys team is currently developing."* Real OE routes to 16 = **4 boards synchronized via I/O boards** or a **paid custom Atlanta build**.
 - **Row 3 (path to 32).** XDAQ: 2× ONE+ + SyncLink, and per SyncLink docs *"each XDAQ connects to its own PC"* → 2nd PC + 2nd Allego license (KC acknowledged). OE: more synced boards on (likely) one PC — ceiling + PC spec unconfirmed (email Q6).
 - **Row 4 (isolation — the make-or-break).** This is our #1 historical wall ([[eeg-60hz-saga]]). Kontex **Port Expander** gives *"isolated and dedicated electrical systems to each connected headstage... ground and reference nodes from each animal's headstage do not interfere"* — exactly our need; KC recommended it unprompted. Open Ephys offered **no product** — *"depends on your specific experimental design"*, docs + Discord only. Big differentiator in XDAQ's favour unless OE surfaces a hardware answer (email Q2).
@@ -60,14 +61,16 @@ Legend: ✅ confirmed strength · ⚠️ conditional · ❌ confirmed gap · ⏳
 - **Row 9 (buildability).** XDAQ ONE+ = one box, native 16, minimal cabling (Core+PortExpander wiring BOM is a separate open item). OE = 2–4 boards + I/O boards + inter-board sync cabling; plus commutator/tethering for chronic freely-moving mice still to confirm (email — optional commutator question).
 - **Row 10 (reliability).** XDAQ has a **proven** 72 h byte-perfect run on our own rig — huge weight for a live-animal instrument. OE multi-day-continuous track record on synced boards is unknown to us (email Q5).
 - **Rows 11–14.** Prices ⏳ both sides. Support: XDAQ = vendor direct; OE = warranty + repairs + Discord + paid Training. Openness/custom: OE's real edge (open files + Atlanta team). Maturity: XDAQ low-risk turnkey, OE higher-risk on the 16-path.
+- **Row 15 (independent record control).** Operationally important — animals run on different schedules. **XDAQ is also limited: one box = one global R_ON/R_OFF** ([[project_multiuser_recording_schedules]]), current workaround = record the union of windows and slice offline. OE unknown: does the GUI Record button start/stop ALL connected animals, or can a single mouse/subset be controlled — and if not native, is it doable via the GUI API/SDK/plugins or is it a board hardware limit (email Q3)? A per-animal-control win here would favour whichever system offers it.
 
 ---
 
 ## 3. What's still owed (so the table can complete)
 
 **Open Ephys (via follow-up email 2026-07-23, [[openephys-inquiry-email]]):**
-- ⏳ Row 1 — 8 vs 4 separate animals per board (1 headstage/mouse).
+- ⏳ Row 1 — 8 vs 4 separate animals per board (1 headstage/mouse); **does the dual adapter share ground/ref between its two headstages?**
 - ⏳ Row 4 — any hardware/wiring for per-animal ground+reference isolation.
+- ⏳ Row 15 — independent per-mouse/subset record start-stop; native, API/SDK, or hardware limit?
 - ⏳ Row 3/9 — path to 32 ceiling + recommended host-PC spec.
 - ⏳ Row 7 — GUI record format + Intan-compatible export.
 - ⏳ Row 10 — multi-day continuous reliability references.
