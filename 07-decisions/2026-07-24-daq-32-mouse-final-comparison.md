@@ -94,7 +94,24 @@ Legend: ✅ confirmed strength · ⚠️ conditional · ❌ confirmed gap · ⏳
 Legend applies as above. **Row 15 was our long-standing "Allego is flatly global" belief — it is now doc-overturned; see the callout.**
 
 > [!important] Record control (Row 15) — DOC-VERIFIED 2026-07-24, overturns our old "single global R_ON/R_OFF" note
-> Two SEPARATE questions were being conflated. Splitting them, verified against PRIMARY docs (raw HTML pulled 2026-07-24, not paraphrased):
+> **These are TWO DIFFERENT capabilities. Do not conflate them:**
+> - **Q1 = FILE SEPARATION** — do the animals land in separate data files, or one big combined recording? (a data-layout question)
+> - **Q2 = INDEPENDENT RECORDING CONTROL** — can you START and STOP each animal on its OWN schedule (e.g. mouse A 9am, mouse B 9pm), independently? (a timing/scheduling question)
+>
+> A system can have Q1 without Q2. **Open Ephys is exactly that case: separate files YES, independent timing NO.**
+>
+> | System | Q1: separate file per animal | Q2: independent start/stop per animal |
+> |---|---|---|
+> | **Open Ephys** (GUI) | ✅ Record Nodes (per-animal dir+channels) | ❌ **GLOBAL** — one Record button drives all nodes |
+> | **Allego** (GUI) | ❌ one combined file | ❌ **GLOBAL** — one Record button |
+> | **Allego** (radiens Python API) | ✅ `split_files_by_port` | ✅ `start_recording(port)` — UNVALIDATED on our Gen-1 |
+>
+> > [!warning] What the Open Ephys Discord reply actually answered
+> > The Discord answer (multiple Record Nodes → one per animal → separate channels + separate directories) is a **Q1 answer ONLY — file separation.** It solves "two headstages saved as one big recording." It does **NOT** grant independent recording control: it never mentions start/stop timing, and the OE docs confirm start/stop stays GLOBAL. So that reply is correct but narrow — do not read it as "OE can record animals on independent schedules." It cannot.
+> >
+> > **The ONLY documented path to Q2 (independent per-animal start/stop) across all three ecosystems is the Allego radiens Python API — pending a bench test on our Gen-1 Core.**
+>
+> Both questions, verified against PRIMARY docs (raw HTML pulled 2026-07-24, not paraphrased):
 >
 > **Q1 — separate FILE per animal (not one big recording):**
 > - **Open Ephys: ✅ native.** Multiple Record Nodes, one per source/animal, each with its own recording directory and channel selection (`PUT /api/recording/<record_node_id>` sets `parent_directory`/`record_engine`; `/api/processors/<id>/config` sets channels). This is exactly what the OE Discord reply described, and it is correct. Source: [OE Record Node docs](https://open-ephys.github.io/gui-docs/User-Manual/Plugins/Record-Node.html).
