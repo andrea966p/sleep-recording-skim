@@ -89,7 +89,26 @@ Legend: ✅ confirmed strength · ⚠️ conditional · ❌ confirmed gap · ⏳
 | 12 | **32-mouse hardware price** | **EST ~$63-77k** hardware + license + 2 PCs (ONE+ unit price = estimate, quote owed) | **~€38-51k+** (EUR list; USD not published) + cables | **~$79-116k** (all PUBLISHED list) |
 | 13 | **Openness / customization** | Closed, productized | **Open hardware** + Atlanta custom team | Closed, productized |
 | 14 | **Maturity / risk for 32** | **Low** on reliability, ⏳ on price | **Higher** (multi-board sync homebrew, weak isolation) | **Medium** (turnkey boxes, but 4-controller sync unproven) |
-| 15 | **Independent per-mouse record start/stop** | ❌ global R_ON/R_OFF per box ([[project_multiuser_recording_schedules]]) | ⏳ per-board at least (4 boards = 4 groups); per-mouse via GUI API ⏳ | ⏳ per-controller at least |
+| 15 | **Independent per-mouse record: separate FILE / independent START-STOP** (see record-control note below) | file: ✅ **`split_files_by_port`** (API) · start-stop: ✅ **`start_recording(port)`** (API, radiens v4.0) — UNVALIDATED on our Gen-1 · GUI: ❌ one global file+button | file: ✅ **Record Nodes** (per-animal dir+channels) · start-stop: ❌ **global** (`PUT /api/status` RECORD) | ⏳ RHX not yet doc-checked |
+
+Legend applies as above. **Row 15 was our long-standing "Allego is flatly global" belief — it is now doc-overturned; see the callout.**
+
+> [!important] Record control (Row 15) — DOC-VERIFIED 2026-07-24, overturns our old "single global R_ON/R_OFF" note
+> Two SEPARATE questions were being conflated. Splitting them, verified against PRIMARY docs (raw HTML pulled 2026-07-24, not paraphrased):
+>
+> **Q1 — separate FILE per animal (not one big recording):**
+> - **Open Ephys: ✅ native.** Multiple Record Nodes, one per source/animal, each with its own recording directory and channel selection (`PUT /api/recording/<record_node_id>` sets `parent_directory`/`record_engine`; `/api/processors/<id>/config` sets channels). This is exactly what the OE Discord reply described, and it is correct. Source: [OE Record Node docs](https://open-ephys.github.io/gui-docs/User-Manual/Plugins/Record-Node.html).
+> - **Allego GUI: ❌** — Radiens manual p29: one Record button, one recording-file name/location → one file, all selected channels.
+> - **Allego Python API (radiens v4.0.0): ✅** — `RecordingConfig` field **`split_files_by_port: bool` — "True to create separate files for each port. Defaults to False."** (verbatim). Source: [Radiens RecordingConfig](https://neuronexus.github.io/radiens-core-python/latest/reference/radiens_core/models/status/).
+>
+> **Q2 — independent START/STOP per animal (different schedules, e.g. mouse A 9am + mouse B 9pm):**
+> - **Open Ephys: ❌ GLOBAL.** The only start/stop is `PUT /api/status` mode `RECORD` = whole-GUI mode switch; per-node endpoints are CONFIG only, not start/stop. All Record Nodes start/stop together. Source: [OE Remote-control](https://open-ephys.github.io/gui-docs/User-Manual/Remote-control.html).
+> - **Allego GUI: ❌** single global Record button (manual p29).
+> - **Allego Python API (radiens v4.0.0): ✅ DOCUMENTED per-port.** **`start_recording(*, port=None)`** / **`stop_recording(*, port=None)`** — verbatim: *"Optional port to start/stop recording on. Accepts Port enum, single-letter string ("a"–"h"), or int (0–7). If omitted, applies system-level control."* Source: [Radiens AllegoClient](https://neuronexus.github.io/radiens-core-python/latest/reference/radiens_core/).
+>
+> **WARNING — documented ≠ validated on OUR hardware.** Both Allego API wins are radiens v4.0.0 API features. They are **NOT yet bench-tested on our Gen-1 XDAQ Core** (Opal Kelly USB, known crash-on-sensor/channel-churn history). Two things still need a live test on our box: (1) `split_files_by_port` actually writes clean per-port XDAT, (2) `start_recording(port=...)` truly isolates one port's start/stop from the others without disturbing the running ports. Until then, treat as "documented, plausible, unproven here." The GUI-only path (no SDK) stays global on both systems.
+>
+> **Net:** Open Ephys wins separate-files-natively-in-the-GUI; Allego (via SDK only) potentially wins BOTH per-port files AND per-port timing — the capability our vault previously called impossible. Neither GUI alone does independent scheduling.
 
 ---
 
