@@ -8,9 +8,13 @@ tags:
   - acquisition
   - scale-up
 created: 2026-07-23
-status: open
+status: superseded
+superseded-by: "[[2026-07-24-daq-32-mouse-final-comparison]]"
 ---
 # DAQ Ecosystem Comparison — XDAQ/NeuroNexus vs Open Ephys (16 → 32 mice)
+
+> [!history] SUPERSEDED 2026-07-24 → [[2026-07-24-daq-32-mouse-final-comparison]]
+> This is the 16-mouse, 2-way (XDAQ vs Open Ephys) snapshot. The FINAL comparison is now 3-way (adds **Intan direct**), scoped to **32 mice**, with **priced bills of materials** for every ecosystem and the **two-headstages-per-port question SETTLED** from Intan datasheets. Read [[2026-07-24-daq-32-mouse-final-comparison]] instead. This doc is kept for its 16-mouse snapshot and the original per-row vendor-quote notes.
 
 > [!abstract] TL;DR — for non-technical readers
 > **What this is.** The head-to-head decision table for the acquisition box that will drive our next rig: **at least 16 mice recorded at once, scalable to 32 later**, reusing our Intan **RHD2216** bipolar headstages (one headstage = one mouse). Two ecosystems: **XDAQ / NeuroNexus (Kontex)** — what we already run and know — versus **Open Ephys** — open hardware, free software.
