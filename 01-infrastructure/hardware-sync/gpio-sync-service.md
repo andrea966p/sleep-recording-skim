@@ -12,7 +12,7 @@ status: planned
 > [!warning] 2026-07-27 — this listener is NOT sufficient for video-EEG synchronization as written
 > Two corrections, both source-confirmed. Full analysis → [[07-decisions/2026-07-27-video-eeg-sync-recording-architecture|Video-EEG Sync — The Recording Toggle Is Not Sync-Capable]].
 >
-> 1. **The MQTT events must NOT drive the Frigate recording toggle.** Frigate `frigate/record/maintainer.py:250` unlinks unflushed cache segments when recording is disabled, so **every toggled session permanently loses 10 to 20 s off its end**, and enabling starts capture at a random point up to 10 s away. Feeding a sub-millisecond `DO 03` edge into that switch throws the precision away. Frigate must record CONTINUOUSLY; these events become session-boundary metadata driving the export cut.
+> 1. **The MQTT events must NOT drive the Frigate recording toggle — they are ANNOTATION ONLY.** Two reasons, and the second is decisive. (a) Frigate `frigate/record/maintainer.py:250` unlinks unflushed cache segments when recording is disabled, so **every toggled session permanently loses 10 to 20 s off its end**, and enabling starts capture at a random point up to 10 s away, so a sub-millisecond `DO 03` edge is wasted on it. (b) **Requirement, Andrea 2026-07-27: the cameras are an independent instrument.** They are moved and switched on and off at will with no EEG running, they may be driven by non-Frigate software, and EEG-session recordings are **always started manually by a human** even after sync exists. So the gate may never control capture, regardless of precision. Continuous recording was considered and REJECTED on storage grounds; the tail loss is absorbed by an operator SOP of padding ~30 s either side of the session.
 > 2. **The frame-sync pulse block below fires only twice per session** (rising edge, falling edge). That pins the endpoints and leaves the free-running camera clock's drift in between unmeasured and unrecoverable. **Needs a periodic pulse train, ~1 pulse / 10 s.** See "Wire 2 cadence" below.
 
 > [!abstract] TL;DR — for non-technical readers
@@ -230,7 +230,7 @@ The script above emits its 1 ms `FRAME_SYNC_PIN` pulse inside the rising-edge an
 Periodic pins the drift curve at negligible cost. Implementation is a monotonic-clock timer in the main loop alongside `gate_line.event_wait()`, emitting the same 1 ms pulse and logging the Pi-side timestamp of each so the two timelines can be regressed against each other offline.
 
 > [!note] The pulse train should run whether or not a session is active
-> Frigate records continuously under the corrected architecture, so drift accrues continuously too. Gating the train on the session would reintroduce exactly the blind spot it exists to remove.
+> The camera clock free-runs continuously, so drift accrues continuously, whether or not anyone is recording. Gating the train on the session would reintroduce exactly the blind spot it exists to remove. The train is cheap and the Pi is already at full duty cycle, so there is no reason to gate it.
 
 ## Dependencies
 

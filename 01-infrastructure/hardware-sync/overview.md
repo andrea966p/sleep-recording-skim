@@ -123,9 +123,15 @@ Two-wire bidirectional sync per Pi, **one gate fanned out to all Pis**; everythi
 >
 > Full analysis, storage budget, and the decision → [[07-decisions/2026-07-27-video-eeg-sync-recording-architecture|Video-EEG Sync — The Recording Toggle Is Not Sync-Capable]].
 
-The GPIO sync layer publishes to MQTT topic `{MQTT_SYNC_TOPIC}` on the NVR broker. The session daemon subscribes to this topic as the **primary** session-boundary signal, with the existing `radiens_poller.py` software poll as a **fallback**.
+> [!important] Cameras are an INDEPENDENT instrument — the gate ANNOTATES, it never CONTROLS
+> Requirement set by Andrea 2026-07-27. The cameras get moved, re-aimed, and switched on and off at will, with no EEG session running, and **may be driven by recording software other than Frigate**. EEG-session recordings are **always started manually by a human**, before and after the hardware sync exists. Therefore any design in which the EEG gate starts or stops video capture is INVALID, however precise it is.
+>
+> Continuous recording was considered as a way to dodge the segment-cache problems and was **REJECTED** on storage grounds (~65 GB/day, ~455 GB at `retain.days: 7`). The tail loss is absorbed by operator procedure instead, see below.
 
-Frigate records **continuously**. The gate marks session boundaries as METADATA and drives the export cut, it does not start or stop capture.
+The GPIO sync layer publishes to MQTT topic `{MQTT_SYNC_TOPIC}` on the NVR broker. The session daemon subscribes to this topic as the **primary** session-boundary signal, with the existing `radiens_poller.py` software poll as a **fallback**. Both are used to ANNOTATE, never to trigger capture.
+
+> [!tip] SOP that makes the toggle safe: start recording ~30 s BEFORE the EEG session, stop ~30 s AFTER
+> The 10 to 20 s tail that Frigate deletes then falls in the trailing pad instead of in the data, and the up-to-10 s random start offset falls in the leading pad. Costs ~60 s of extra footage per session, roughly 6 MB. No code, no storage policy change.
 
 ```
 GPIO edge event (Pi)
@@ -141,10 +147,14 @@ MQTT publish → neurosurveillance/hardware_sync
     ▼
 Session Daemon (NVR) subscribes
     │
-    ├─ EEG_START → journal session start; Frigate ALREADY recording (no toggle)
-    └─ EEG_STOP  → journal session end; export the [start, end] window
-                   (footage stays on disk, a sloppy cut can be re-cut)
+    ├─ EEG_START → journal session start  (annotation only, NO toggle)
+    └─ EEG_STOP  → journal session end    (annotation only, NO toggle)
+                   operator already started/stopped recording manually,
+                   padded either side; export cuts the [start, end] window
 ```
+
+> [!note] Marker must survive a change of recorder (from the "other systems" requirement)
+> If the cameras may be recorded by software other than Frigate, then a marker living in Frigate metadata, in the session journal, or in Pi-side frame logs is worthless the moment the recorder changes. [[literature-review]] line 62 lists an in-frame LED and dismisses it as lower precision (~67 ms at 15 fps vs 50 µs for the digital-input path), but it is the ONLY marker that survives that swap. Run both, and the LED doubles as a validator of the digital path. Would need to be **infrared** so as not to disturb sleeping animals. Not yet evaluated → [[07-decisions/2026-07-27-video-eeg-sync-recording-architecture|decision doc]].
 
 > [!warning] Wire 2 as currently specced CANNOT measure clock drift
 > [[gpio-sync-service]] emits a pulse only on the gate's rising and falling edge, i.e. **two pulses per session** (Phase 1). That pins the two endpoints and says nothing about what the free-running camera clock did in between. Over a 12 h run a 0.1 % camera clock error is ~43 s of skew, and two pulses cannot tell you whether it accrued linearly, in a step, or not at all.

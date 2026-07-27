@@ -7,10 +7,22 @@ status: open
 # Video-EEG Sync — The Recording Toggle Is Not Sync-Capable
 
 > [!abstract] TL;DR — for non-technical readers
-> Today's short export was not a bug in our software. Frigate DELETES the last 10 to 20 seconds of video every single time recording is switched off, on purpose, in its own source code. That led to a bigger realization: the whole approach of switching Frigate recording on and off cannot ever give us frame-accurate alignment between video and EEG, no matter how precise the trigger is. The planned hardware sync upgrade does NOT fix this on its own, because it feeds its sub-millisecond trigger straight back into the same on/off switch. The fix is to record video continuously and get alignment from sync pulses written into the EEG data stream instead.
+> **What this is.** Today's short export was not a bug in our software. Frigate DELETES the last 10 to 20 seconds of video every single time recording is switched off, on purpose, in its own source code. That led to a bigger realization: switching Frigate recording on and off cannot ever give us frame-accurate alignment between video and EEG, no matter how precise the trigger is. The planned hardware sync upgrade does NOT fix this on its own, because it feeds its sub-millisecond trigger straight back into the same on/off switch.
+>
+> **What we decided.** The cameras stay a fully independent instrument, recorded manually, never gated by the EEG system. Recording continuously was considered and REJECTED, because it would cost about 455 GB of permanent disk to solve a 14 second problem. Instead the operator starts recording about 30 seconds early and stops about 30 seconds late, so the deleted tail falls in the padding rather than in the data. Real alignment comes later, from sync pulses written into the EEG data stream, and possibly from an infrared LED visible in frame so that the marker survives even if we swap out the recording software.
 
 > [!quote] Paper-ready
-> Video acquisition was run continuously rather than gated on session boundaries, and video-to-electrophysiology alignment was established from transistor-transistor logic (TTL) sync pulses emitted by the Raspberry Pi camera nodes and digitized on the XDAQ digital input at the headstage sampling rate, rendering alignment independent of video container timestamps.
+> Video acquisition was operator-initiated and independent of the electrophysiology system, with recording started and stopped outside the electrophysiology session boundaries to avoid truncation at the recorder's segment cache. Video-to-electrophysiology alignment was established from transistor-transistor logic (TTL) sync pulses emitted by the Raspberry Pi camera nodes and digitized on the XDAQ digital input at the headstage sampling rate, rendering alignment independent of video container timestamps.
+
+## Constraints (set by Andrea, 2026-07-27) — these are REQUIREMENTS, not preferences
+
+> [!important] The cameras are an INDEPENDENT instrument. Nothing may gate them.
+> 1. **Cameras must stay flexible and always ready.** They get moved, re-aimed, switched on and off at will, including with no EEG session running at all.
+> 2. **They may be driven by other systems entirely**, not only Frigate and not only this daemon.
+> 3. **EEG-session recordings will ALWAYS be started manually**, by a human, even after hardware sync is built.
+> 4. **Storage is finite and is not to be spent on idle footage.**
+>
+> Consequence: any design that makes video capture a slave of the EEG gate, or that assumes Frigate is the recorder, is INVALID regardless of how precise it is. The gate may observe and annotate. It may not control.
 
 ## What happened (the trigger for this doc)
 
@@ -99,37 +111,49 @@ That is two pulses per session, one at start and one at stop. [[01-infrastructur
 > [!warning] TWO PULSES PER SESSION GIVES OFFSET BUT LEAVES DRIFT UNRECOVERABLE
 > Start and stop markers pin the two endpoints. They tell you nothing about what the camera clock did in between. For a 12 hour sleep run, a camera clock error of only 0.1 percent is about 43 seconds of accumulated skew, and with two pulses you cannot tell whether it accrued linearly, in a step, or not at all. You need a pulse train to recover the drift curve.
 
+## Rejected: continuous recording
+
+> [!failure] REJECTED 2026-07-27 by Andrea. Do not re-propose without new information.
+> The first draft of this document recommended leaving `record.enabled` true permanently and treating sessions as export windows. **Rejected on storage grounds and on constraint 1**, and the rejection is correct. It would spend ~455 GB of permanent disk to solve a 14 second problem, and it makes footage exist when nobody asked for it. It was never a sync PREREQUISITE, it was a convenience. Recorded here so the reasoning is not lost.
+
+The load objection raised alongside it does not survive measurement, and the numbers are worth keeping because they will come up again:
+
+| Claim | Verdict | Evidence (2026-07-27) |
+|---|---|---|
+| Constant load on the **Pi** | **FALSE, zero change** | `rpicam-vid` + go2rtc stream 24/7 regardless; the toggle never reaches the Pi. The Pi is already at full duty cycle. |
+| Constant load on the **PC** | **FALSE, near-zero change** | With all 4 cameras at `record.enabled=False`, Frigate was still encoding and writing 10 s segments to `/tmp/cache` and rotating them, then deleting. Container at 5.17 % CPU. |
+| Constant **storage** cost | **TRUE** | ~65 GB/day for 4 cameras (1.9 MB per 10 s segment = ~1.5 Mbps/camera). At `retain.days: 7` that is ~455 GB steady state. |
+
+Observed cache rotation with recording OFF everywhere:
+
+```
+t=1: 1572912 pi_cam_3@20260727171343+0900.mp4
+t=2:  524336 pi_cam_3@20260727171353+0900.mp4
+t=3: 1572912 pi_cam_3@20260727171353+0900.mp4
+```
+
+So the marginal cost of continuous recording is the difference between `unlink()` and `rename()`, plus retention. It is purely a **storage** decision. Encode, detect, RTSP pull and cache write are already being paid today.
+
 ## Decision
 
-Three changes, none of them yet implemented.
+### 1. Recording stays MANUAL and camera-independent (per constraints 1 to 3)
 
-### 1. Record continuously, stop toggling (PREREQUISITE for sync)
+No change to how recording is started. A human turns it on. The cameras remain a standalone instrument usable with or without EEG, and usable with recorders other than Frigate.
 
-Leave `record.enabled` true at runtime permanently. Sessions become pure export windows carved out of always-present footage. This removes failures 1 and 2 outright, and removes the entire "did video actually record?" class of incidents documented in the recording-toggle fragility notes.
+### 2. The gate ANNOTATES, it never CONTROLS
 
-Storage budget, measured 2026-07-27, so this is not hand waving:
+`DO 03` marks session boundaries into the session journal and can drive an export cut. **It must never start or stop capture.** This was originally argued from precision loss; under constraint 1 it is now a hard requirement independent of precision.
 
-| Quantity | Value | Source |
-|---|---|---|
-| Segment size | 1.9 MB per 10 s | `ls` of the cache segments above |
-| Per camera | ~1.5 Mbps | derived |
-| 4 cameras | **~65 GB/day** | derived |
-| `retain.days` | 7 (already configured, `mode: all`) | `/config/config.yml` |
-| 7 day steady state | **~455 GB** | derived |
-| Disk free | **1.1 TB** (1.9 TB total, 41 percent used) | `df -h` |
+### 3. Operator procedure absorbs the tail loss (no code, no storage)
 
-That clears the 200 GB EEG reserve enforced by `storage_monitor.py` with room to spare.
+Because recording is manual anyway, the 10 to 20 second tail deletion is handled by the operator, not by the system:
 
-> [!note] This is NOT the forbidden `record.enabled: false`
-> The standing rule against setting `record.enabled: false` in the configuration file is untouched, and in fact this change moves further away from it. `/config/config.yml` already has `record.enabled: true` with `retain.days: 7`. The change is to stop the RUNTIME MQTT toggle from flipping it back off.
+> [!tip] SOP: start recording ~30 s BEFORE the EEG session, stop it ~30 s AFTER.
+> The deleted tail then lands in the trailing pad instead of in the data, and the up-to-10 s random start offset lands in the leading pad. Cost is about 60 seconds of extra footage per session, roughly **6 MB**. This removes failures 1 and 2 for the price of a habit.
 
-### 2. Demote the gate from a capture switch to metadata
+What padding does NOT give you is the ability to re-cut later, since footage outside the pad is still gone. Acceptable for planned sessions, which is all of them under constraint 3.
 
-`DO 03` keeps marking session boundaries, and those boundaries go into the session journal and drive the export cut. It no longer starts or stops capture. If a cut comes out sloppy you re-cut it, because the underlying footage is still on disk.
-
-### 3. Wire 2 needs a pulse train, not two pulses
-
-Decide the cadence before the bench build, because it changes the code and possibly the digital input budget:
+### 4. Wire 2 needs a pulse train, not two pulses (unchanged, still open)
 
 | Option | Drift recoverable? | Cost |
 |---|---|---|
@@ -137,18 +161,32 @@ Decide the cadence before the bench build, because it changes the code and possi
 | Periodic, e.g. 1 pulse per 10 s | Yes, to within one interval | cheap, ~4300 pulses per 12 h |
 | Per frame at 15 Hz (Phase 2) | Yes, per frame | ~648k pulses per 12 h per Pi |
 
-Periodic is the recommendation. It pins the drift curve at negligible cost, and per-frame can be added later if a specific analysis demands single-frame attribution.
+Periodic remains the recommendation.
 
-## Consequences if we do nothing
+### 5. NEW, raised by constraint 2: the marker must survive a change of recorder
 
-Video and EEG stay alignable only to roughly plus or minus 10 seconds, with an unmeasured drift on top, and every session keeps losing its last 10 to 20 seconds. That is survivable for scoring vigilance states in 4 second or 10 second epochs. It is NOT survivable for anything event-locked, such as aligning video to a specific EEG transient, twitch, or arousal onset.
+If the cameras may be recorded by other systems, then any sync marker that lives in Frigate metadata, in the session journal, or in Pi-side frame logs is worthless the moment the recorder changes. The marker has to be recoverable from the video ITSELF.
+
+[[01-infrastructure/hardware-sync/literature-review]] line 62 already notes the option and dismisses it:
+
+> Alternative method: LED visible to camera for systems without GPIO input (lower precision)
+
+> [!note] Constraint 2 promotes the in-frame LED from fallback to serious contender
+> An LED in the camera's field of view, driven from the same GPIO line that pulses XDAQ `DI 03`, appears in ANY recording, from any software, in any container format, at any time. Precision is bounded by the frame interval, ~67 ms at 15 fps, which is worse than the 50 µs of the digital-input path. But it is the only marker that satisfies constraint 2, and the two are not exclusive: run both, and the LED becomes the recorder-agnostic fallback that also validates the digital path.
+>
+> NOT yet evaluated. Needs a decision on whether ~67 ms is good enough for the intended analyses, and an infrared LED would be required so as not to disturb sleeping animals.
+
+## Consequences of the decision
+
+Video and EEG stay alignable only to roughly plus or minus 10 seconds until Wire 2 exists, with unmeasured drift on top. With the padding SOP in place the tail loss stops costing data immediately, at no storage cost. That is fine for scoring vigilance states in 4 or 10 second epochs. It remains insufficient for event-locked analysis until the Wire 2 pulse train is built.
 
 ## Still open
 
+- **Wire 2 cadence** per the table above. Determines whether drift is recoverable at all. Decide before the listener is written.
+- **In-frame LED**, per item 5. New question raised by constraint 2. Infrared, and is ~67 ms adequate?
 - Bench validation of Phase 0a, scope on DB25 pin 22, ~$40 bill of materials. Unchanged, still owed.
-- Wire 2 cadence decision, per the table above. **This is the decision that determines whether drift is recoverable at all**, and it should be made before the listener is written.
-- Whether continuous recording is adopted. It is now a sync PREREQUISITE, not just an operational nicety.
-- Nobody has measured the actual Pi camera clock error yet, so the 0.1 percent figure above is illustrative, not measured. The pulse train is what would measure it.
+- Nobody has measured the actual Pi camera clock error, so the 0.1 percent figure used above is illustrative, not measured. The pulse train is what would measure it.
+- The padding SOP is not written into any procedure doc yet.
 
 ## Related
 
