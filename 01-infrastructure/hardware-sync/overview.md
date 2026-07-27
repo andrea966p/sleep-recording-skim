@@ -73,8 +73,8 @@ Two-wire bidirectional sync per Pi, **one gate fanned out to all Pis**; everythi
 
 ### Wire 2: Pi GPIO → XDAQ `DIN 03` (Frame Sync Markers)
 
-- **Signal:** Pi sends a 1 ms pulse on each video recording start/stop (Phase 1), optionally every frame at 15 Hz (Phase 2). **⚠ 2026-07-27: Phase 1 alone is NOT sufficient — two pulses per session leave clock drift unrecoverable. Prefer a periodic train (~1 pulse / 10 s). See Software Integration below.**
-- **Purpose:** Embeds video timing markers into the EEG data stream. **This wire, not Wire 1, is what actually delivers synchronization.**
+- **Signal:** ~~1 ms pulse on recording start/stop (Phase 1), optionally every frame at 15 Hz (Phase 2)~~ **SUPERSEDED 2026-07-27: fire a 1 ms pulse FROM THE CAMERA'S FRAME-CAPTURE CALLBACK at ~1 pulse / 10 s, plus one double-width pulse every 60 s as a re-anchor after a dropout.** The Pi logs the frame index each pulse fired on. Two pulses per session (old Phase 1) leaves drift unrecoverable; a timer-driven train measures the wrong clock. Rejected: Manchester/counter codecs (undebuggable), per-frame 15 Hz (unnecessary once the fit is linear).
+- **Purpose:** Embeds video FRAME IDENTITY into the EEG data stream, so analysis pairs frame N with sample S and fits a line whose slope is the measured camera drift. **Drift is fitted PER CAMERA, not per session** — 4 to 8 sensors free-run independently and one fit is wrong at n > 1.
 - **Voltage:** Pi outputs 3.3V, XDAQ DIN accepts 2.2–5.5V — direct connection, no level shifting.
 - **Result:** Each pulse is recorded at the headstage sampling rate (e.g., 20 kHz = 50 μs precision).
 
@@ -123,23 +123,23 @@ Two-wire bidirectional sync per Pi, **one gate fanned out to all Pis**; everythi
 >
 > Full analysis, storage budget, and the decision → [[07-decisions/2026-07-27-video-eeg-sync-recording-architecture|Video-EEG Sync — The Recording Toggle Is Not Sync-Capable]].
 
-> [!important] Cameras are an INDEPENDENT instrument — the gate ANNOTATES, it never CONTROLS
-> Requirement set by Andrea 2026-07-27. The cameras get moved, re-aimed, and switched on and off at will, with no EEG session running, and **may be driven by recording software other than Frigate**. EEG-session recordings are **always started manually by a human**, before and after the hardware sync exists. Therefore any design in which the EEG gate starts or stops video capture is INVALID, however precise it is.
+> [!important] FINAL as of 2026-07-27 (post-council). Auto-start is WANTED; the STOP path is what must change.
+> Video recording **must** start automatically when EEG recording starts. That is the desired behaviour, and the leading edge is free margin because enabling retains cache segments that predate the enable. The bug is entirely on the STOP side: `daemon.py:447` disables recording immediately, so Frigate's `drop_segment()` unlinks 10 to 20 s of unflushed cache.
 >
-> Continuous recording was considered as a way to dodge the segment-cache problems and was **REJECTED** on storage grounds (~65 GB/day, ~455 GB at `retain.days: 7`). The tail loss is absorbed by operator procedure instead, see below.
+> Continuous 24/7 recording was considered and **REJECTED** on storage grounds (~65 GB/day, ~455 GB at `retain.days: 7`). Do not re-propose it.
+>
+> Full reasoning, council round, and the measured pipeline flags → [[07-decisions/2026-07-27-video-eeg-sync-recording-architecture|decision doc]].
 
-The GPIO sync layer publishes to MQTT topic `{MQTT_SYNC_TOPIC}` on the NVR broker. The session daemon subscribes to this topic as the **primary** session-boundary signal, with the existing `radiens_poller.py` software poll as a **fallback**. Both are used to ANNOTATE, never to trigger capture.
-
-> [!tip] SOP that makes the toggle safe: start recording ~30 s BEFORE the EEG session, stop ~30 s AFTER
-> The 10 to 20 s tail that Frigate deletes then falls in the trailing pad instead of in the data, and the up-to-10 s random start offset falls in the leading pad. Costs ~60 s of extra footage per session, roughly 6 MB. No code, no storage policy change.
+The GPIO sync layer publishes to MQTT topic `{MQTT_SYNC_TOPIC}` on the NVR broker. The session daemon subscribes to this topic as the **primary** session trigger, with the existing `radiens_poller.py` software poll as a **fallback**.
 
 ```
 GPIO edge event (Pi)
     │
-    ├──► Wire 2 pulse → XDAQ DI 03  ★ THIS is what actually delivers sync
-    │      (digitized at headstage rate, 50 µs @ 20 kHz;
-    │       independent of Frigate, of container timestamps,
-    │       and of network latency)
+    ├──► Wire 2 pulse → XDAQ DI 03   fired from the camera's FRAME-CAPTURE
+    │      CALLBACK, so each pulse means "frame N exists". Digitized into
+    │      the neural file at 50 µs @ 20 kHz. Analysis pairs frame N with
+    │      sample S and fits a line; the SLOPE is the measured drift.
+    │      ★ No clock anywhere in this chain.
     │
     ▼
 MQTT publish → neurosurveillance/hardware_sync
@@ -147,14 +147,16 @@ MQTT publish → neurosurveillance/hardware_sync
     ▼
 Session Daemon (NVR) subscribes
     │
-    ├─ EEG_START → journal session start  (annotation only, NO toggle)
-    └─ EEG_STOP  → journal session end    (annotation only, NO toggle)
-                   operator already started/stopped recording manually,
-                   padded either side; export cuts the [start, end] window
+    ├─ EEG_START → acquire session lease → recording ON (auto-start, WANTED)
+    └─ EEG_STOP  → DRAIN 30 s, then release lease; export [start, end]
+                   never publishes OFF directly; enabled = (manual OR session)
 ```
 
-> [!note] Marker must survive a change of recorder (from the "other systems" requirement)
-> If the cameras may be recorded by software other than Frigate, then a marker living in Frigate metadata, in the session journal, or in Pi-side frame logs is worthless the moment the recorder changes. [[literature-review]] line 62 lists an in-frame LED and dismisses it as lower precision (~67 ms at 15 fps vs 50 µs for the digital-input path), but it is the ONLY marker that survives that swap. Run both, and the LED doubles as a validator of the digital path. Would need to be **infrared** so as not to disturb sleeping animals. Not yet evaluated → [[07-decisions/2026-07-27-video-eeg-sync-recording-architecture|decision doc]].
+> [!warning] Wire 2 alone is CIRCULAR — the capture callback is what fixes it
+> Pulsing off a wall-clock timer measures the Pi's CPU clock, which nobody cares about, and leaves both ends of the measurement inside the XDAQ clock while never touching the camera's sensor clock. **The pulse MUST be fired from the frame-capture callback**, and the Pi must log the frame index it fired on. That is what turns Wire 2 from a self-referential ruler into a real frame ↔ sample mapping.
+
+> [!failure] In-frame LED: REJECTED as permanent chamber hardware (Andrea, 2026-07-27, logistics)
+> Chambers get moved, cleaned and swapped; an LED per chamber is hardware to mount and keep aligned, ×4 today and ×8 to 32 later. It is unnecessary because Frigate records with `-c:v copy` and never re-encodes, so every frame survives and frame COUNTING is a valid timeline. The LED survives only as a possible **one-time bench instrument**, and becomes necessary again only if frames turn out to be dropped in transit. That is decided by `frame_integrity_check.py`, not yet run on real data.
 
 > [!warning] Wire 2 as currently specced CANNOT measure clock drift
 > [[gpio-sync-service]] emits a pulse only on the gate's rising and falling edge, i.e. **two pulses per session** (Phase 1). That pins the two endpoints and says nothing about what the free-running camera clock did in between. Over a 12 h run a 0.1 % camera clock error is ~43 s of skew, and two pulses cannot tell you whether it accrued linearly, in a step, or not at all.

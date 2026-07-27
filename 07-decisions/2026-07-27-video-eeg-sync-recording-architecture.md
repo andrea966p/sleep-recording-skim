@@ -9,20 +9,23 @@ status: open
 > [!abstract] TL;DR — for non-technical readers
 > **What this is.** Today's short export was not a bug in our software. Frigate DELETES the last 10 to 20 seconds of video every single time recording is switched off, on purpose, in its own source code. That led to a bigger realization: switching Frigate recording on and off cannot ever give us frame-accurate alignment between video and EEG, no matter how precise the trigger is. The planned hardware sync upgrade does NOT fix this on its own, because it feeds its sub-millisecond trigger straight back into the same on/off switch.
 >
-> **What we decided.** The cameras stay a fully independent instrument, recorded manually, never gated by the EEG system. Recording continuously was considered and REJECTED, because it would cost about 455 GB of permanent disk to solve a 14 second problem. Instead the operator starts recording about 30 seconds early and stops about 30 seconds late, so the deleted tail falls in the padding rather than in the data. Real alignment comes later, from sync pulses written into the EEG data stream, and possibly from an infrared LED visible in frame so that the marker survives even if we swap out the recording software.
+> **What we decided.** Video still starts automatically with the EEG, which is the behaviour we want. The fix is that the daemon must now WAIT about 30 seconds before switching recording off, so the chunk Frigate would have deleted gets written first. Recording continuously was considered and REJECTED: it would cost around 455 GB of permanent disk to solve a 14 second problem.
+>
+> **How video and brain data get lined up.** Each Raspberry Pi sends an electrical pulse the moment it captures a specific video frame, and that pulse is recorded straight into the brain-signal file. Matching "frame number" to "brain-signal sample number" then needs no clocks at all, just counting on both sides, and the relationship between the two counts directly measures how far the camera clock has drifted. A council of advisors argued we would also need a light blinking inside each chamber; that turned out to be avoidable, because Frigate copies the video without re-encoding it, so no frames are lost in transit. One script still has to confirm that.
 
 > [!quote] Paper-ready
 > Video acquisition was operator-initiated and independent of the electrophysiology system, with recording started and stopped outside the electrophysiology session boundaries to avoid truncation at the recorder's segment cache. Video-to-electrophysiology alignment was established from transistor-transistor logic (TTL) sync pulses emitted by the Raspberry Pi camera nodes and digitized on the XDAQ digital input at the headstage sampling rate, rendering alignment independent of video container timestamps.
 
 ## Constraints (set by Andrea, 2026-07-27) — these are REQUIREMENTS, not preferences
 
-> [!important] The cameras are an INDEPENDENT instrument. Nothing may gate them.
-> 1. **Cameras must stay flexible and always ready.** They get moved, re-aimed, switched on and off at will, including with no EEG session running at all.
-> 2. **They may be driven by other systems entirely**, not only Frigate and not only this daemon.
-> 3. **EEG-session recordings will ALWAYS be started manually**, by a human, even after hardware sync is built.
-> 4. **Storage is finite and is not to be spent on idle footage.**
->
-> Consequence: any design that makes video capture a slave of the EEG gate, or that assumes Frigate is the recorder, is INVALID regardless of how precise it is. The gate may observe and annotate. It may not control.
+> [!important] Final constraint set, superseding two earlier drafts in this same document
+> 1. **24/7 continuous recording is DEPRECATED and rejected outright.** Storage is finite and it is the root of many downstream problems. Do not re-propose it in any form.
+> 2. **Video recording MUST start automatically when EEG recording starts.** The user enters camera and chamber metadata in the web interface beforehand; pressing "start recording" for EEG makes video go along with it. The daemon already supports this via `sessions.auto_start`, currently `false`.
+> 3. **Frigate + go2rtc is PERMANENT.** Do not propose swapping the recorder. Recorder-agnostic concerns are out of scope.
+> 4. **Cameras must remain independently usable at will** (moved, re-aimed, switched on and off) when no EEG session is running.
+
+> [!history] Two constraints in earlier drafts of this doc were WRONG and are retracted
+> An earlier revision recorded "cameras may be driven by other systems entirely" and "EEG-session recordings will ALWAYS be started manually." Both were my misreading, corrected by Andrea 2026-07-27. Frigate is permanent, and auto-start on EEG start is the DESIRED behaviour, not something to be avoided. The recorder-agnostic argument that followed from the first of those (which promoted an in-frame LED to a requirement) collapses with it. Kept visible because the LED question survives on completely different grounds, see the council verdict below.
 
 ## What happened (the trigger for this doc)
 
@@ -71,10 +74,11 @@ Tail deletion is only one of three, and fixing it alone would not be enough.
 | # | Failure | Magnitude | Calibratable? |
 |---|---------|-----------|---------------|
 | 1 | Tail deletion on stop (`drop_segment`) | 10 to 20 s | No, data is gone |
-| 2 | Start lands on a cache segment boundary, not on the toggle | up to 10 s | **No**, it is uniform random over the segment period, not a fixed offset |
+| 2 | ~~Start lands on a cache segment boundary~~ | up to 10 s | **NOT A FAILURE — see correction** |
 | 3 | Frigate timestamps are packet ARRIVAL at the NVR, not capture instant | tens to hundreds of ms, jittering | No, and it drifts |
 
-Failure 2 is the one people underestimate. Because the offset is random per session rather than constant, you cannot measure it once and subtract it.
+> [!check] Correction: "failure" 2 is FREE MARGIN, not a loss
+> An earlier revision listed the start-side segment boundary as a second data-loss failure. That is wrong, and measurement settled it: enabling recording RETAINS cache segments that predate the enable. Recording was enabled at 45:34 and segment `45.23.mp4`, starting 11 s earlier, was written and kept. **Enabling gives you MORE footage than requested, never less.** The export cut trims the surplus. Only the STOP side loses data.
 
 Failure 3 survives even if you fix 1 and 2. The clock written into the mp4 reflects when the Real Time Streaming Protocol (RTSP) packet reached the Network Video Recorder (NVR) after Raspberry Pi encode, go2rtc, and the network. On top of that the Pi camera clock free-runs, so nominal 15 frames per second is not exactly 15.000, and the error accumulates across a 12 hour night with nothing in the current stack measuring it.
 
@@ -90,7 +94,10 @@ EEG_STOP  → Stop Frigate recording + export (same as R_ON→R_OFF)
 > [!warning] WIRE 1 ALONE BUYS TRIGGER LATENCY, NOT SYNCHRONIZATION
 > `DO 03` delivers an edge accurate to under 1 millisecond, and the plan then hands that edge to the Message Queuing Telemetry Transport (MQTT) recording toggle, which quantizes it to a ~10 second segment boundary and deletes the tail. The sub-millisecond precision is discarded in the final step. The "Current State vs Planned" table in that same document already claims per-frame alignment and shared-clock drift immunity, which the Software Integration block immediately below it contradicts.
 
-## What actually delivers sync: Wire 2
+## Wire 2 — necessary but NOT sufficient on its own
+
+> [!warning] SUPERSEDED by the council round. This section was headed "What actually delivers sync: Wire 2" and that claim was WRONG.
+> Wire 2 alone is CIRCULAR: the pulse leaves the Pi GPIO and is digitized by the XDAQ, so both ends sit in the XDAQ clock and nothing ever touches the camera's sensor clock. See the council section below. The resolution is to fire the pulse from the camera's FRAME-CAPTURE CALLBACK, which ties it to a specific frame rather than to a moment in the Pi's CPU clock. Wire 2 remains essential; it just needed that one change to mean anything.
 
 Wire 2 is Pi GPIO 27 to XDAQ `DI 03`, DB25 pin 2 (`DI 04` to `DI 06` on pins 15, 3, 16 for Pis 2 to 4). Each pulse is digitized into the EEG stream at the headstage sampling rate, so at 20 kHz it lands in the neural timeline with 50 microsecond resolution.
 
@@ -134,64 +141,179 @@ t=3: 1572912 pi_cam_3@20260727171353+0900.mp4
 
 So the marginal cost of continuous recording is the difference between `unlink()` and `rename()`, plus retention. It is purely a **storage** decision. Encode, detect, RTSP pull and cache write are already being paid today.
 
-## Decision
+## The recording pipeline, as actually configured (measured 2026-07-27)
 
-### 1. Recording stays MANUAL and camera-independent (per constraints 1 to 3)
+Everything below depends on these flags. They were read off the live `ffmpeg` process, not assumed.
 
-No change to how recording is started. A human turns it on. The cameras remain a standalone instrument usable with or without EEG, and usable with recorders other than Frigate.
+Pi side, `/opt/go2rtc/go2rtc.yaml` on Pi2:
 
-### 2. The gate ANNOTATES, it never CONTROLS
+```
+exec:rpicam-vid -n --codec libav --libav-format mpegts --width 1024 --height 768
+  --framerate 15 --bitrate 1500000 --inline --intra 15 --timeout 0 --camera 1
+  --level 4.1 --profile high --low-latency --output -
+```
 
-`DO 03` marks session boundaries into the session journal and can drive an export cut. **It must never start or stop capture.** This was originally argued from precision loss; under constraint 1 it is now a hard requirement independent of precision.
+NVR side, Frigate's record-role ffmpeg:
 
-### 3. Operator procedure absorbs the tail loss (no code, no storage)
+```
+... -i rtsp://192.168.0.12:8554/pi_cam_3 -f segment -segment_time 10
+    -segment_format mp4 -reset_timestamps 1 -strftime 1 -c:v copy ...
+    /tmp/cache/pi_cam_3@%Y%m%d%H%M%S%z.mp4
+```
 
-Because recording is manual anyway, the 10 to 20 second tail deletion is handled by the operator, not by the system:
+Three consequences that decide the whole design:
 
-> [!tip] SOP: start recording ~30 s BEFORE the EEG session, stop it ~30 s AFTER.
-> The deleted tail then lands in the trailing pad instead of in the data, and the up-to-10 s random start offset lands in the leading pad. Cost is about 60 seconds of extra footage per session, roughly **6 MB**. This removes failures 1 and 2 for the price of a habit.
+| Flag | Consequence |
+|---|---|
+| `rpicam-vid` on the Pi | **Encoding happens at the camera.** Frame timing originates at the sensor, not at the NVR. |
+| `-c:v copy` | **Frigate never re-encodes.** Every frame the Pi sent lands in the file untouched, so FRAME COUNT is an exact quantity on both ends. |
+| `-reset_timestamps 1` | **PTS is zeroed at every 10 s segment boundary.** PTS is valid only WITHIN a segment. Absolute position across segments must come from cumulative frame counts, never from PTS. |
 
-What padding does NOT give you is the ability to re-cut later, since footage outside the pad is still gone. Acceptable for planned sessions, which is all of them under constraint 3.
+> [!warning] Do not regress on PTS in this pipeline
+> A reviewer in the council round recommended regressing on PTS rather than frame index, which is correct advice in general and WRONG here. `-reset_timestamps 1` makes PTS restart per segment. Use cumulative frame counts.
 
-### 4. Wire 2 needs a pulse train, not two pulses (unchanged, still open)
+## Decision (post-council, 2026-07-27)
 
-| Option | Drift recoverable? | Cost |
-|---|---|---|
-| Start/stop only (current spec, Phase 1) | **No** | free |
-| Periodic, e.g. 1 pulse per 10 s | Yes, to within one interval | cheap, ~4300 pulses per 12 h |
-| Per frame at 15 Hz (Phase 2) | Yes, per frame | ~648k pulses per 12 h per Pi |
+### 1. Auto-start stays, and is the point
 
-Periodic remains the recommendation.
+EEG start triggers video start, exactly as Andrea wants. Flip `sessions.auto_start` to `true` when the stop path below is fixed. The leading edge is FREE MARGIN: enabling retains cache segments that predate the enable, so you get up to ~10 s MORE footage than requested, never less. Measured: enabled at 45:34, segment `45.23.mp4` retained.
 
-### 5. NEW, raised by constraint 2: the marker must survive a change of recorder
+### 2. Fix the stop path — this is the whole tail bug
 
-If the cameras may be recorded by other systems, then any sync marker that lives in Frigate metadata, in the session journal, or in Pi-side frame logs is worthless the moment the recorder changes. The marker has to be recoverable from the video ITSELF.
+`daemon.py:447` disables recording immediately on `R_ON -> R_OFF`, then exports. Worst-case unflushed data is one 10 s segment plus one 5 s flush interval = **15 s**, so:
 
-[[01-infrastructure/hardware-sync/literature-review]] line 62 already notes the option and dismisses it:
+> [!tip] Drain 30 s before disabling. 2x margin over the 15 s worst case. Do not tune it.
 
-> Alternative method: LED visible to camera for systems without GPIO input (lower precision)
+### 3. Fail-ON, never fail-OFF
 
-> [!note] Constraint 2 promotes the in-frame LED from fallback to serious contender
-> An LED in the camera's field of view, driven from the same GPIO line that pulses XDAQ `DI 03`, appears in ANY recording, from any software, in any container format, at any time. Precision is bounded by the frame interval, ~67 ms at 15 fps, which is worse than the 50 µs of the digital-input path. But it is the only marker that satisfies constraint 2, and the two are not exclusive: run both, and the LED becomes the recorder-agnostic fallback that also validates the digital path.
+On SIGTERM or crash, publish NOTHING and leave recording ON.
+
+> [!important] A stuck-ON camera is recoverable. A dropped tail is not.
+> The daemon currently publishes OFF to all cameras on SIGTERM, and because the MQTT topic is RETAINED that OFF survives the reboot. This is the failure that made a 72 h run record ZERO video. Deleting the SIGTERM-publishes-OFF path removes the entire class.
+
+### 4. Recording is a refcounted lease, not a boolean
+
+```
+enabled = (manual_lease OR session_lease)
+```
+
+The daemon never publishes OFF; it RELEASES its lease and publishes the OR. This resolves, in one model:
+
+- constraint 4, manual users become structurally impossible to stomp
+- back-to-back sessions, no OFF between them
+- the SIGTERM bug, since there is no OFF path to fire
+
+Log any preemption or overlap into the session journal as provenance.
+
+### 5. Alignment uses NO CLOCKS AT ALL — frame N to sample S
+
+This is the council's central correction and it replaces the earlier Wire-2-only plan.
+
+> [!quote] Paper-ready
+> Each Raspberry Pi emitted a transistor-transistor logic (TTL) pulse from its camera frame-capture callback, recording the corresponding frame index locally; the pulse was digitized on the XDAQ digital input alongside the neural data at the headstage sampling rate. Video-to-electrophysiology registration was therefore obtained by linear fit of video frame index against electrophysiology sample index, with the fitted slope providing a direct measurement of camera clock drift, and required no reference to system clocks or video container timestamps.
+
+- The Pi pulses **from the frame-capture callback, NOT from a wall-clock timer.** Each pulse then means "frame N exists", and the Pi logs N.
+- XDAQ digitizes that pulse at sample S, 50 µs resolution at 20 kHz, INSIDE the neural file.
+- Analysis pairs **frame N ↔ sample S** and fits a line. The SLOPE is the measured drift.
+
+No clock appears anywhere in that chain. Not the NVR clock, not RTSP arrival time, not the Pi wall clock. Two counters and a wire.
+
+> [!warning] Pulsing off a timer instead of the capture callback breaks this
+> A timer-driven pulse measures the Pi's CPU clock, which nobody cares about. The whole scheme rests on the pulse being tied to a specific FRAME.
+
+**Cadence: 1 pulse per 10 s, plus one double-width pulse every 60 s** as an unambiguous re-anchor after a dropout. Rejected: Manchester coding and full counter codecs, per the Executor, "you will never debug it." Rejected: per-frame 15 Hz, unnecessary once the fit is linear.
+
+**Drift is measured per CAMERA, not per session.** Four to eight sensors free-run independently; a single fit is wrong at n > 1.
+
+### 6. In-frame LED: NOT chamber furniture
+
+The council reached "optical marker or don't publish" because it assumed the video timeline was recoverable only through NVR timestamps. `-c:v copy` breaks that assumption: every frame survives, so frame COUNTING is a valid timeline, and the LED is not fundamental.
+
+> [!failure] Permanent in-chamber LED REJECTED 2026-07-27 by Andrea, on logistics
+> Chambers get moved, cleaned, and swapped. An LED in every chamber is hardware to mount, clean around, and keep aligned, multiplied by 4 and later 8 to 32. The logistics cost is real and the benefit is conditional.
+
+The LED survives only as a **one-time bench instrument** to validate the frame-counting method, then it comes out. It is needed permanently ONLY if frames turn out to be dropped between Pi and file, because a marker in the pixels is self-locating whereas a frame count silently shifts.
+
+**That condition is testable for free, with no hardware.** See below.
+
+### 7. Per-session sync manifest
+
+Written automatically at session close: pulse table (frame index, sample index), measured effective fps, fitted drift coefficients, segment boundaries and per-segment frame counts, export window. Without this the mapping exists only as something a person reconstructs later, which is not reproducible and a reviewer can break it.
+
+The per-segment frame counts double as the integrity record: a break becomes DETECTABLE offline rather than silently corrupting the fit.
+
+## Precision budget, stated honestly
+
+| Quantity | Value |
+|---|---|
+| Scoring epochs | 4 to 10 s |
+| Frame interval at 15 fps | 67 ms |
+| Alignment needed | ~±0.5 s |
+| Achievable via frame ↔ sample fit | one frame, ~67 ms |
+| Achievable via timestamps alone (no sync) | ~±10 s plus unmeasured drift |
+
+> [!warning] Video CANNOT support true sub-frame event-locked analysis
+> The floor is one frame interval. State this in the methods rather than implying a precision the medium does not have.
+
+## The test that settles the LED question
+
+`neurosurveillance/backend/scripts/frame_integrity_check.py` (written 2026-07-27, not yet run on real data).
+
+Checks two things per segment, straight from the recorded files:
+
+1. **Frame count.** `-segment_time 10` at 15 fps means a healthy segment holds exactly 150 frames. Any deviation is a deficit.
+2. **Timestamp gaps.** Packet PTS deltas within a segment should be a constant 1/15 s under `-c:v copy`; a delta over 1.5x nominal means frames vanished from the stream itself.
+
+```bash
+python3 frame_integrity_check.py --camera pi_cam_3 --minutes 220
+```
+
+Exit codes: `0` clean, `1` drops found, `2` no segments (recording was off), `3` error. All access is via `docker exec frigate`, so **no sudo**, and it is **READ-ONLY** (`ls` and `ffprobe` only), therefore safe to run during a live recording.
+
+> [!note] Run it over a REAL multi-hour session, ideally one spanning a Pi wobble
+> RTSP reconnects are the plausible drop source, so a short clean window proves nothing. The script refuses to give a firm verdict under 30 minutes for this reason. Run it across all four cameras.
 >
-> NOT yet evaluated. Needs a decision on whether ~67 ms is good enough for the intended analyses, and an infrared LED would be required so as not to disturb sleeping animals.
+> **Clean over hours → frame counting is sound, LED permanently off the table.**
+> **Any deficit → per-segment frame counts in the manifest, or the LED comes back.**
+
+First run 2026-07-27 covered only the 20 s of footage that existed and returned CLEAN but flagged PROVISIONAL. That is a smoke test of the tool, not evidence about the pipeline.
+
+## Council round, 2026-07-27
+
+Five advisors independently, then three anonymized peer reviews, then synthesis. Convened before any wiring, at Andrea's request, to check the concept was solid.
+
+**Unanimous, and the central finding:** the original Wire-2-only plan was **circular**. The pulse leaves the Pi GPIO and is digitized by the XDAQ; both ends live in the XDAQ clock. Nothing in that path ever touches the camera's sensor clock, which is the clock that actually drifts. It would have produced beautifully drift-corrected markers with no defensible relationship to any video frame, leaving the alignment floor at RTSP arrival jitter of roughly ±200 ms regardless of pulse count.
+
+The council's fix was an optical marker. **The accepted fix instead is pulsing from the frame-capture callback**, per decision item 5, which supplies the missing link (a specific FRAME, rather than a moment in the Pi's CPU clock) without any hardware in the chamber. The council did not have the `-c:v copy` and `-reset_timestamps 1` flags in front of it.
+
+Also unanimous, and adopted: fail-ON over fail-OFF, refcounted leases over booleans, drain before disable, per-camera rather than per-session drift fits, and the priority ordering that the free daemon fixes vastly outrank the ~$40 bill of materials, because the one-line stop bug and the retained-OFF class destroyed 72 h and 23 h of recordings while the tail costs 20 s.
+
+**Rejected from the council:** a Manchester-coded counter with session-ID preamble (over-engineered, undebuggable, and all three reviewers named it the weakest response); an exclusive EEG lease that preempts manual recording (violates constraint 4; the OR-lease is correct).
+
+> [!bug] The council proposed something physically impossible and no reviewer caught it
+> Two advisors recommended a fixed **60 s pre-roll** before each session. On the auto-start path the EEG start IS the trigger, so the daemon cannot begin recording 60 s before an event it has not yet observed. **The lag is controllable; the lead is not.** The only lead available is the ~10 s of accidental cache overshoot, which is free but not extensible. Do not design around a pre-roll that cannot exist.
+
+Open questions the reviewers raised that remain unresolved and are recorded here so they are not lost, even though the LED is now out of scope: whether the Pi camera modules are NoIR or carry an IR-cut filter (would gate any future optical work), whether a blinking marker would inflate Frigate's motion detection and bitrate, whether Frigate retention could prune a pre-roll before export runs, and the observation that **NTP/chrony discipline on the Pis and NVR is unmentioned anywhere in this vault** and is free.
 
 ## Consequences of the decision
 
-Video and EEG stay alignable only to roughly plus or minus 10 seconds until Wire 2 exists, with unmeasured drift on top. With the padding SOP in place the tail loss stops costing data immediately, at no storage cost. That is fine for scoring vigilance states in 4 or 10 second epochs. It remains insufficient for event-locked analysis until the Wire 2 pulse train is built.
+Until the pulse train exists, video and EEG stay alignable only to roughly ±10 s with unmeasured drift on top. Fixing the stop path (items 2 to 4) stops the tail loss immediately at zero storage cost and removes the silent-no-capture class, independently of any wiring. Once the pulse train exists, alignment reaches one frame, ~67 ms, which covers 4 to 10 s epoch scoring with wide margin and still will not support sub-frame event-locked work.
 
 ## Still open
 
-- **Wire 2 cadence** per the table above. Determines whether drift is recoverable at all. Decide before the listener is written.
-- **In-frame LED**, per item 5. New question raised by constraint 2. Infrared, and is ~67 ms adequate?
+- **Run `frame_integrity_check.py` over a real multi-hour session, all four cameras.** This is the gate on the LED question. Deferred 2026-07-27 because a recording was in progress and was not to be touched.
+- **Fix `daemon.py:447`**: drain 30 s, release lease, never publish OFF on SIGTERM or crash. Free, one file, highest value item in this document.
+- **Flip `sessions.auto_start` to `true`** once the stop path is fixed. Not before.
 - Bench validation of Phase 0a, scope on DB25 pin 22, ~$40 bill of materials. Unchanged, still owed.
-- Nobody has measured the actual Pi camera clock error, so the 0.1 percent figure used above is illustrative, not measured. The pulse train is what would measure it.
-- The padding SOP is not written into any procedure doc yet.
+- **Nobody has measured the actual camera clock drift.** Every figure in this document using 0.1 percent is illustrative, NOT measured. The pulse train is the instrument that would measure it.
+- NTP/chrony discipline on Pis and NVR, raised in peer review, never addressed.
+- `pi_cam_2` did not appear in `/tmp/cache` across several samples on 2026-07-27 while `pi_cam_3` did, despite both having the `record` role and Pi2 responding to ping. Unexplained, unrelated to this decision, worth a look.
 
 ## Related
 
 - [[01-infrastructure/hardware-sync/overview|Hardware Sync Overview]] — Software Integration section amended 2026-07-27 to match this doc
-- [[01-infrastructure/hardware-sync/gpio-sync-service|GPIO Sync Service]] — Phase 1 drift limitation flagged 2026-07-27
+- [[01-infrastructure/hardware-sync/gpio-sync-service|GPIO Sync Service]] — pulse cadence and capture-callback requirement amended 2026-07-27
 - [[01-infrastructure/hardware-sync/wiring-guide|Wiring Guide]]
-- [[01-infrastructure/hardware-sync/literature-review|Literature Review]]
+- [[01-infrastructure/hardware-sync/literature-review|Literature Review]] — line 62 notes the in-frame LED option
 - [[01-infrastructure/session-daemon/architecture|Session Daemon Architecture]]
+- `neurosurveillance/backend/scripts/frame_integrity_check.py` — the test that gates the LED question
