@@ -224,10 +224,22 @@ The script above emits its 1 ms `FRAME_SYNC_PIN` pulse inside the rising-edge an
 | Option | Drift recoverable? | Pulses per 12 h per Pi | Verdict |
 |---|---|---|---|
 | Start/stop only (current script, Phase 1) | **No** | 2 | insufficient |
-| **Periodic, 1 pulse / 10 s** | Yes, to within one interval | ~4,300 | **recommended** |
-| Per frame @ 15 Hz (Phase 2) | Yes, per frame | ~648,000 | only if single-frame attribution is needed |
+| **Periodic, 1 pulse / 10 s, + double-width every 60 s** | Yes | ~4,300 | **ADOPTED 2026-07-27** |
+| Per frame @ 15 Hz (Phase 2) | Yes, per frame | ~648,000 | unnecessary once the fit is linear |
+| Manchester / counter codec | Yes | ~4,300 | **rejected** — undebuggable at 3am |
 
-Periodic pins the drift curve at negligible cost. Implementation is a monotonic-clock timer in the main loop alongside `gate_line.event_wait()`, emitting the same 1 ms pulse and logging the Pi-side timestamp of each so the two timelines can be regressed against each other offline.
+The double-width pulse every 60 s is an unambiguous re-anchor after a dropout, giving just enough identity without a codec.
+
+> [!warning] DECISIVE: fire the pulse from the FRAME-CAPTURE CALLBACK, never from a timer
+> A monotonic-timer implementation (what an earlier revision of this page recommended) measures the **Pi's CPU clock**, which nobody cares about. Worse, both ends of the measurement then sit inside the XDAQ clock and nothing ever touches the camera's sensor clock, making the whole scheme circular.
+>
+> Fire from the capture callback and **log the frame index each pulse fired on**. Each pulse then means "frame N exists". The XDAQ records it at sample S. Analysis pairs **frame N ↔ sample S** and fits a line whose SLOPE is the measured drift. No clock appears anywhere: two counters and a wire.
+>
+> This depends on frame counting being valid end to end, which holds because Frigate records with `-c:v copy` and never re-encodes. Confirm with `neurosurveillance/backend/scripts/frame_integrity_check.py` before relying on it.
+
+**Fit drift PER CAMERA, not per session.** Four to eight sensors free-run independently; a single fit is wrong at n > 1.
+
+**Write a per-session sync manifest at session close:** pulse table (frame index, sample index), measured effective fps, fitted coefficients, segment boundaries with per-segment frame counts, export window. Without it the mapping is not reproducible, and the per-segment counts double as the integrity record that makes a break detectable offline.
 
 > [!note] The pulse train should run whether or not a session is active
 > The camera clock free-runs continuously, so drift accrues continuously, whether or not anyone is recording. Gating the train on the session would reintroduce exactly the blind spot it exists to remove. The train is cheap and the Pi is already at full duty cycle, so there is no reason to gate it.
