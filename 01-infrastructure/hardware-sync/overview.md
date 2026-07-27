@@ -73,8 +73,8 @@ Two-wire bidirectional sync per Pi, **one gate fanned out to all Pis**; everythi
 
 ### Wire 2: Pi GPIO → XDAQ `DIN 03` (Frame Sync Markers)
 
-- **Signal:** Pi sends a 1 ms pulse on each video recording start/stop (Phase 1), optionally every frame at 15 Hz (Phase 2).
-- **Purpose:** Embeds video timing markers into the EEG data stream.
+- **Signal:** Pi sends a 1 ms pulse on each video recording start/stop (Phase 1), optionally every frame at 15 Hz (Phase 2). **⚠ 2026-07-27: Phase 1 alone is NOT sufficient — two pulses per session leave clock drift unrecoverable. Prefer a periodic train (~1 pulse / 10 s). See Software Integration below.**
+- **Purpose:** Embeds video timing markers into the EEG data stream. **This wire, not Wire 1, is what actually delivers synchronization.**
 - **Voltage:** Pi outputs 3.3V, XDAQ DIN accepts 2.2–5.5V — direct connection, no level shifting.
 - **Result:** Each pulse is recorded at the headstage sampling rate (e.g., 20 kHz = 50 μs precision).
 
@@ -114,10 +114,26 @@ Two-wire bidirectional sync per Pi, **one gate fanned out to all Pis**; everythi
 
 ## Software Integration
 
-The GPIO sync layer publishes to MQTT topic `{MQTT_SYNC_TOPIC}` on the NVR broker. The session daemon subscribes to this topic as the **primary** recording trigger, with the existing `radiens_poller.py` software poll as a **fallback**.
+> [!warning] 2026-07-27 — CORRECTED. Wire 1 must NOT drive the recording toggle.
+> The flow below originally ended in `EEG_START → Start Frigate recording` / `EEG_STOP → Stop Frigate recording`, i.e. it fed the sub-millisecond `DO 03` edge straight back into the MQTT recording toggle. **That discards the precision in the last step** and contradicts the "Frame alignment" and "Clock drift" rows of the Current State vs Planned table above.
+>
+> Two hard reasons, both source-confirmed 2026-07-27:
+> - **Toggling OFF DELETES the tail.** Frigate `frigate/record/maintainer.py:250` calls `drop_segment()` and unlinks any `/tmp/cache` segment not yet flushed when it sees recording disabled. ffmpeg closes a segment every 10 s, the maintainer flushes every 5 s, so **every toggled session permanently loses 10 to 20 seconds off its end.** Measured live: a 37 s window yielded 19.0 s.
+> - **Toggling ON does not start capture at the toggle.** Capture begins at whatever cache segment boundary is in flight, up to 10 s away, and the offset is uniform random per session rather than constant, so it CANNOT be calibrated out.
+>
+> Full analysis, storage budget, and the decision → [[07-decisions/2026-07-27-video-eeg-sync-recording-architecture|Video-EEG Sync — The Recording Toggle Is Not Sync-Capable]].
+
+The GPIO sync layer publishes to MQTT topic `{MQTT_SYNC_TOPIC}` on the NVR broker. The session daemon subscribes to this topic as the **primary** session-boundary signal, with the existing `radiens_poller.py` software poll as a **fallback**.
+
+Frigate records **continuously**. The gate marks session boundaries as METADATA and drives the export cut, it does not start or stop capture.
 
 ```
 GPIO edge event (Pi)
+    │
+    ├──► Wire 2 pulse → XDAQ DI 03  ★ THIS is what actually delivers sync
+    │      (digitized at headstage rate, 50 µs @ 20 kHz;
+    │       independent of Frigate, of container timestamps,
+    │       and of network latency)
     │
     ▼
 MQTT publish → neurosurveillance/hardware_sync
@@ -125,9 +141,15 @@ MQTT publish → neurosurveillance/hardware_sync
     ▼
 Session Daemon (NVR) subscribes
     │
-    ├─ EEG_START → Start Frigate recording (same as R_OFF→R_ON)
-    └─ EEG_STOP  → Stop Frigate recording + export (same as R_ON→R_OFF)
+    ├─ EEG_START → journal session start; Frigate ALREADY recording (no toggle)
+    └─ EEG_STOP  → journal session end; export the [start, end] window
+                   (footage stays on disk, a sloppy cut can be re-cut)
 ```
+
+> [!warning] Wire 2 as currently specced CANNOT measure clock drift
+> [[gpio-sync-service]] emits a pulse only on the gate's rising and falling edge, i.e. **two pulses per session** (Phase 1). That pins the two endpoints and says nothing about what the free-running camera clock did in between. Over a 12 h run a 0.1 % camera clock error is ~43 s of skew, and two pulses cannot tell you whether it accrued linearly, in a step, or not at all.
+>
+> **Recommended: a periodic pulse train, e.g. 1 pulse per 10 s** (~4,300 pulses per 12 h). Recovers the drift curve at negligible cost. Phase 2 per-frame 15 Hz (~648k pulses per 12 h per Pi) only if a specific analysis needs single-frame attribution. **Decide this before the listener is written.**
 
 ## What Does NOT Change
 

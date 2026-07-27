@@ -9,6 +9,12 @@ status: planned
 > [!check] 2026-06-21 — corrected: gate = `DO 03`, not `DAQ_ON`
 > This page originally watched `DAQ_ON` (DB25 pin 13). The vendor thread settled on the **`DO 03` recording gate** (DB25 **pin 22**, Allego "Gated" mode + "BNC Breakout Board" toggle) instead — `DAQ_ON` tracks *streaming* and emits ~0.5 s idle pulses (false edges). The Pi-side input pin is unchanged (**GPIO 17**); only the *source* and *semantics* change (streaming→recording, pin 13→22). See [[wiring-guide]] / [[overview]]. SDK cross-check confirmed 2026-06-21: `AllegoClient.get_digital_out_states()` reports `{'digital_outs_mode':'GATED', ...}` live.
 
+> [!warning] 2026-07-27 — this listener is NOT sufficient for video-EEG synchronization as written
+> Two corrections, both source-confirmed. Full analysis → [[07-decisions/2026-07-27-video-eeg-sync-recording-architecture|Video-EEG Sync — The Recording Toggle Is Not Sync-Capable]].
+>
+> 1. **The MQTT events must NOT drive the Frigate recording toggle.** Frigate `frigate/record/maintainer.py:250` unlinks unflushed cache segments when recording is disabled, so **every toggled session permanently loses 10 to 20 s off its end**, and enabling starts capture at a random point up to 10 s away. Feeding a sub-millisecond `DO 03` edge into that switch throws the precision away. Frigate must record CONTINUOUSLY; these events become session-boundary metadata driving the export cut.
+> 2. **The frame-sync pulse block below fires only twice per session** (rising edge, falling edge). That pins the endpoints and leaves the free-running camera clock's drift in between unmeasured and unrecoverable. **Needs a periodic pulse train, ~1 pulse / 10 s.** See "Wire 2 cadence" below.
+
 > [!abstract] TL;DR — for non-technical readers
 > **What this is.** The planned Python listener that runs on each Raspberry Pi, watches a GPIO pin for the XDAQ `DO 03` recording-gate TTL level, and publishes MQTT sync events.
 >
@@ -207,6 +213,24 @@ def main():
 if __name__ == "__main__":
     main()
 ```
+
+## Wire 2 cadence — OPEN DECISION, blocks writing the final listener
+
+The script above emits its 1 ms `FRAME_SYNC_PIN` pulse inside the rising-edge and falling-edge branches only, so **two pulses per session**. That is Phase 1 in [[overview]]. It is not enough.
+
+> [!warning] TWO PULSES PER SESSION GIVES OFFSET BUT NOT DRIFT
+> Start and stop markers pin the two endpoints of the recording. They say nothing about what the free-running Pi camera clock did in between. Nominal 15 fps is not exactly 15.000, and over a 12 h run a 0.1 % error is ~43 s of accumulated skew. With only two pulses you cannot tell whether that skew accrued linearly, in a step, or not at all, so **you cannot correct it.**
+
+| Option | Drift recoverable? | Pulses per 12 h per Pi | Verdict |
+|---|---|---|---|
+| Start/stop only (current script, Phase 1) | **No** | 2 | insufficient |
+| **Periodic, 1 pulse / 10 s** | Yes, to within one interval | ~4,300 | **recommended** |
+| Per frame @ 15 Hz (Phase 2) | Yes, per frame | ~648,000 | only if single-frame attribution is needed |
+
+Periodic pins the drift curve at negligible cost. Implementation is a monotonic-clock timer in the main loop alongside `gate_line.event_wait()`, emitting the same 1 ms pulse and logging the Pi-side timestamp of each so the two timelines can be regressed against each other offline.
+
+> [!note] The pulse train should run whether or not a session is active
+> Frigate records continuously under the corrected architecture, so drift accrues continuously too. Gating the train on the session would reintroduce exactly the blind spot it exists to remove.
 
 ## Dependencies
 
