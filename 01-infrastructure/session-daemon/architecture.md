@@ -23,7 +23,7 @@ The **NeuroSurveillance Session Daemon** synchronizes Frigate video recording wi
 ## Design Principles
 
 1. **Autonomous core** -- the recording sync loop (Radiens poll -> Frigate toggle) runs independently and does not depend on the UI or API. If no metadata is set, the daemon uses safe defaults (`unknown` mouse ID, timestamp-based filenames). No data is ever lost.
-2. **Fail-safe bias** -- if the daemon crashes mid-session with recording ON, that is safe (extra footage, not lost footage). On restart, the daemon resets recording to OFF.
+2. **Fail-ON bias** -- if the daemon crashes or is stopped mid-session with recording ON, it is LEFT ON. A camera left recording is recoverable (it costs disk, someone switches it off); a lost tail or a whole run lost to a RETAINED `OFF` is not recoverable at all. Amended 2026-07-28, see the callout below.
 3. **No Radiens control** -- the daemon only *observes* Radiens state. It never starts/stops EEG recording. The researcher controls Radiens directly.
 4. **Metadata gates recording** -- the daemon only starts recording for chambers that have metadata set via the GUI/API. Chambers without metadata are skipped. If no chambers have metadata when Radiens starts, no video is recorded and a warning is logged.
 5. **Multi-chamber independence** -- each chamber (camera) has its own pending metadata, active session state, and manual recording tracker. Chambers operate independently.
@@ -165,11 +165,23 @@ Controls Frigate recording via MQTT and handles video export via HTTP API. Also 
 > [!warning] MQTT Recording Toggle Prerequisite
 > `record.enabled: true` must be set in Frigate's `config.yml` for the MQTT toggle to work. If disabled in config, MQTT/UI toggle has no effect. The current production config already has this set -- see [[../frigate/config-yml|Frigate Config]].
 
-**Recording control flow:**
+**Recording control flow (REWRITTEN 2026-07-28 — lease model):**
 
-1. **On startup:** Publish `OFF` to all camera recording topics (clean slate)
-2. **On session start:** Publish `ON` to each chamber's camera topic
-3. **On session end:** Publish `OFF`, then call the export API
+> [!important] Recording is a REFCOUNTED LEASE, not a boolean
+> `enabled = (manual_lease OR session_lease)`. Callers `acquire_lease()` and `release_lease()`; the LAST release turns recording off. Nothing outside `frigate_controller.py`'s lease section may call `set_recording(enabled=False)`. This makes it structurally impossible for an EEG session to stop a recording a human started, or for one of two overlapping sessions to stop the other.
+
+1. **On startup:** read runtime state from `/api/config` and **ADOPT** whatever is already recording as a manual lease. Recording in progress is NEVER stopped. (`recording.reset_on_start: true` restores the old publish-`OFF` clean slate.)
+2. **On session start:** `acquire_lease(camera, "session")` → publishes `ON` only if the camera was not already recording.
+3. **On session end:** **DRAIN 30 s**, then `release_lease(camera, "session")`, then call the export API.
+4. **On shutdown:** publish NOTHING. Recording is deliberately left ON.
+
+> [!warning] Why the 30 s drain exists — do NOT tune it
+> Frigate's `frigate/record/maintainer.py:250` calls `drop_segment()`, which UNLINKS any `/tmp/cache` segment not yet flushed, the moment it sees recording disabled. ffmpeg closes a segment every 10 s and the maintainer flushes every 5 s, so **15 s** can be in flight at the instant of an `OFF`. 30 s is 2×, costs ~3 MB per session, and is not a tuning parameter.
+>
+> Measured 2026-07-27: a 37 s window produced a 19.0 s file. Measured again 2026-07-28 on a 14.97 h run: ~11 s lost, i.e. **the loss is FIXED-SIZE, not proportional** — invisible on long sessions, devastating on short ones. Full analysis: [[07-decisions/2026-07-27-video-eeg-sync-recording-architecture|decision doc]].
+
+> [!bug] The drain CANNOT rescue manual recordings stopped from the Frigate UI
+> The UI publishes `OFF` before the daemon ever observes it, so Frigate has already dropped the unflushed segments by the time `_handle_external_recording_off()` runs. Only the daemon-controlled path (Radiens session end) is drainable. Mitigation for manual recordings is operator habit: stop ~30 s after the interesting part ends.
 
 **External change detection (two-stage filter):**
 
@@ -492,8 +504,8 @@ Orchestrates all components. Entry point for the systemd service.
 1. Load `config.yaml`
 2. Initialize `StorageMonitor(config)` and start its background thread
 3. Connect to MQTT broker (subscribes to `frigate/+/recordings/state`)
-4. Publish `OFF` to all camera recording topics (clean slate)
-5. If `manual_sessions.enabled`: wait **10 seconds** for Frigate to finish reasserting `record.enabled=true` from its config, drain stale `_expected_states`, then register the external recording change callback. This grace period prevents false manual sessions on every startup.
+4. Read runtime recording state from `/api/config` and **adopt** any camera already recording as a manual lease. **Does NOT publish `OFF`** (changed 2026-07-28 — the old clean slate would cut short a run already in progress). Set `recording.reset_on_start: true` to restore it.
+5. If `manual_sessions.enabled`: wait **10 seconds** for Frigate to finish reasserting `record.enabled=true` from its config, drain stale `_expected_states`, then register the external recording change callback. This grace period prevents false manual sessions on every startup. ⚠️ This grace logic was written assuming step 4 publishes `OFF`; it is the **least-tested part** of the 2026-07-28 change and deserves attention on first deploy.
 6. Connect to Radiens (`AllegoClient`) -- if unavailable, daemon continues and retries in the main loop
 7. Start HTTP API server (background thread, passes `storage_monitor` to `init_api()`)
 8. Enter main polling loop
