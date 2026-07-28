@@ -215,7 +215,7 @@ The rig splits into three blocks. **Only Block 1 differs between ecosystems.** B
 > - **32 mice on XDAQ is 2 boxes, always.** No model reaches 32 in one box, and the SPI splitter cannot exceed a box's ceiling (three independent blocks; see that note §4).
 > - **Max animals = XR recording channels ÷ 64.** CORE2 512→8 (exactly our current rig), ONE+ R512→8, **ONE+ R1024→16**, AIO→16. Our 16-channel RHD2216 still burns a full 64-channel slot; 60 of 64 channels per mouse are structurally wasted.
 > - ⚠️ **ORDERING TRAP: ONE+ ships in a 512ch tier that records only 8 mice**, same as the Core we own. Headstage ports are licence-gated ("other ports may be unavailable depending on the license purchased"). The part must read **R1024**.
-> - ⏳ **The Port Expander's compatibility table lists KonteX XR headstages (X3R32 / XeR64) only — NOT Intan RHD2216.** If it cannot drive our headstages, XDAQ's isolation advantage does not reach our animals and this column collapses. **Highest-priority question to Kontex.**
+> - ✅ **RESOLVED 2026-07-28 — KC Kong confirms Intan headstages CAN be used with the Port Expander.** The doc's compatibility table lists only KonteX XR headstages, but the vendor says otherwise. **The XDAQ column is un-blocked**: per-animal isolation reaches our animals, and we do not have to buy 32 KonteX headstages. Exact part-by-part chain to be pinned down on the 2026-07-29 call ([[2026-07-29-kontex-kc-call-prep-rig-finalization]]).
 > - ✅ **The ONE+ has Sys GND + Chassis GND 4 mm terminals** and Kontex documents bonding them to ground a Faraday cage. Our Gen-1 Core has no such terminal, which is why foil grounding was abandoned on 2026-07-16 ([[eeg-60hz-saga]]).
 
 **B) Open Ephys**
@@ -367,20 +367,24 @@ Read this carefully, because it reframes the whole decision:
 | | **XDAQ / KonteX** | **Open Ephys** | **Intan direct** |
 |---|---|---|---|
 | Boxes for 32 mice | 2 × ONE+ **R1024** | 4-8 boards | 4 × C3008 |
-| **Per-animal isolation** | ✅ via Port Expander (paid add-on) ⏳ **may not work with our headstages** | ❌ **no product exists** | ✅ **built into every port, free** |
+| **Per-animal isolation** | ✅ via Port Expander (paid add-on, $1,525/port) | ❌ **no product exists** | ✅ **built into every port, free** |
 | Adapters between box and mouse | **3 layers** (HDMI cable → Port Expander → interface) | 1 | **0 — plugs straight in** |
-| Drives our existing Intan RHD2216 | ⏳ **UNRESOLVED** | ✅ (their own equivalent) | ✅ native, it is their chip |
+| Drives our existing Intan RHD2216 | ✅ **CONFIRMED by KC 2026-07-28** | ✅ (their own equivalent) | ✅ native, it is their chip |
 | Software (Open Ephys GUI) | ✅ free, officially supported | ✅ free | ✅ free |
 | Pricing | ❌ quote-only, **still not quoted** | ✅ public (EUR) | ✅ **fully published (USD)** |
 | Proven on our bench | ✅ **72 h byte-perfect** (under Allego) | ✗ | ✗ |
 | **DAQ block cost** | ~$57-71k **estimate** | ~€27k | **$57,000 published** |
 | **Complete rig** | ~$127-226k | ~€94-186k | ~$124-209k |
 
-### 6.3 Recommendation
+### 6.3 Recommendation — UPDATED 2026-07-28
 
-**Intan direct is currently ahead**, and the gap widened once the licence came off the table. It includes per-animal isolation at no extra cost, plugs into our existing RHD2216 headstages with **zero adapters** (fewest connectors means fewest failure points on a 72 h run), and every price is published so there is nothing to wait for. It is no longer the most expensive option.
+**XDAQ moved back into the lead** once KC Kong confirmed the Port Expander drives our Intan RHD2216 headstages. That was the question that could have eliminated it, and it landed in XDAQ's favour. XDAQ now offers per-animal isolation, reuse of our existing headstages, the **only proven 72 h byte-perfect run on our own bench**, the chassis-ground terminal our current box lacks (directly relevant to the 60 Hz problem), and a lower DAQ-block cost than Intan. Its remaining weaknesses are the deepest adapter chain of the three and a price that is **still an estimate**.
 
-**XDAQ remains a serious contender for one reason: it is the only system with a proven 72 h byte-perfect run on our own bench**, and the ONE+ additionally provides the chassis-ground terminal our current box lacks. But it is blocked on two unanswered questions, and one of them could eliminate it outright.
+**Intan direct remains the strong alternative** and the benchmark to hold the Kontex quote against: isolation included free, zero adapters, and every price published. If the Kontex quote comes in near the top of the estimate range, Intan is competitive again on cost while being simpler to wire.
+
+**Open Ephys hardware stays out** on isolation grounds. Its GUI is still the software for whichever box we buy.
+
+**Decision posture: XDAQ, pending the 2026-07-29 call and a written quote.** See [[2026-07-29-kontex-kc-call-prep-rig-finalization]].
 
 **Open Ephys hardware is cheapest and does not solve our problem.** Its GUI, however, is now the software for whichever box we buy.
 
@@ -388,8 +392,9 @@ Read this carefully, because it reframes the whole decision:
 
 | # | Blocker | Who | Why it matters |
 |---|---|---|---|
-| 1 | **Does the XDAQ Port Expander drive our Intan RHD2216, with isolation intact?** | Kontex | If no, XDAQ's whole advantage disappears, or we must buy 32 new headstages |
-| 2 | Formal quote: 2× ONE-**R1024** + 8× Port Expander + all cables | Kontex | The XDAQ price is still a guess |
+| 1 | ~~Does the XDAQ Port Expander drive our Intan RHD2216?~~ | ~~Kontex~~ | ✅ **CLOSED 2026-07-28 — KC confirms YES** |
+| 2 | Formal quote: 2× ONE-**R1024** + 8× Port Expander + all cables | Kontex, **call 2026-07-29** | The XDAQ price is still a guess; now the top blocker |
+| 2b | Linux driver, cable lengths for our 36 cm chamber geometry, one PC or two, SyncLink needed or not | Kontex, **call 2026-07-29** | Each changes the build, not just the price. Full list: [[2026-07-29-kontex-kc-call-prep-rig-finalization]] |
 | 3 | Are the Open Ephys board's 4 ports isolated from each other? | Open Ephys | Decides whether their cheaper option is viable at all |
 | 4 | **Commutators: what do our current 8 mice use, how many do we own, do they scale?** | us, internally | Swings the budget by ~€70k, more than the vendor choice does |
 | 5 | **How many RHD2216 headstages do we actually own?** (believed 8, an earlier note claimed 32) | us, internally | ±$20k |

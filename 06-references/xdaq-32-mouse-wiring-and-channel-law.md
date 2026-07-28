@@ -276,32 +276,27 @@ Other ONE+ acquisition specs worth recording for the methods section: 16-bit, in
 
 ---
 
-## 8. ⏳ THE ONE QUESTION THAT DECIDES THE XDAQ COLUMN
+## 8. ✅ RESOLVED 2026-07-28 — Intan headstages ARE supported
 
-**Does the Port Expander drive Intan RHD2216 headstages, with the isolation intact?**
+> [!success] KC Kong (Kontex) confirmed 2026-07-28: **we can use our Intan headstages.**
+> This was the single question that could have eliminated the XDAQ column, and it is now answered in XDAQ's favour. The Port Expander path works with Intan RHD2216, so **we do not have to buy 32 KonteX XR headstages**, and XDAQ's per-animal ground isolation does reach our animals.
+>
+> **The XDAQ column is un-blocked and back to full strength**, since it now combines per-animal isolation, reuse of our existing headstages, the only proven 72 h byte-perfect run on our own bench, and the chassis-ground terminal our Gen-1 Core lacks.
+>
+> **Still to nail down on the 2026-07-29 call** (see [[2026-07-29-kontex-kc-call-prep-rig-finalization]]): the exact part-by-part chain from an EXP port to an Intan RHD2216, whether isolation is preserved on that path, and whether only P1 of the SAdpt-XDAQ-OM12 is live when it hangs off a single-MISO EXP port.
+>
+> The doc-derived concern below is retained for the record, since it explains why the question was asked and what to verify against the quote.
 
-The evidence is not encouraging, and it must be resolved before any quote is accepted:
+**The original concern (now answered, kept for the record):**
 
 - The Port Expander's XR compatibility table names **"X3R32 or XeR64"** as the compatible headstages. Both are **KonteX** parts. **Intan RHD is not listed.**
 - The KonteX commutator pages likewise list only KonteX headstages (X3R / X3SR / X6R / XeR / XeSR).
 - KonteX's XR headstage line has **no 16-channel bipolar** part. The closest is X3R32 (32 ch). Whether a KonteX XR headstage offers a true **bipolar** differential montage equivalent to the RHD2216 is unknown, and it matters: our entire montage, our CMRR argument, and our shared-ground tolerance all rest on bipolar inputs ([[intan-rhd2216-reference]]).
 - A plausible bridge exists on paper — the EXP ports are HDMI, and SAdpt-XDAQ-OM12 is an HDMI-male → Omnetics adapter, so it may physically mate with an EXP port and yield one Intan headstage per isolated EXP port (which is the topology we want anyway). **But no Kontex document shows or endorses this**, and one EXP port carries a single MISO line while the adapter exposes two Omnetics sockets, so at best only P1 would be live.
 
-**Three outcomes, with very different consequences:**
+**Outcome: the first row.** ✅ Reuse our headstages, get per-animal isolation, XDAQ stays fully competitive.
 
-| If Kontex says… | Consequence |
-|---|---|
-| ✅ Port Expander drives Intan RHD2216 via SAdpt-XDAQ-OM12, isolation intact | Best case. Reuse our headstages, get per-animal isolation, XDAQ stays fully competitive. |
-| ⚠️ Only with KonteX XR headstages | **32 new headstages must be bought**, and we must confirm a KonteX part offers a genuine bipolar montage. Adds a large, unbudgeted line and a scientific-equivalence question about the montage. |
-| ❌ Not supported | **XDAQ's per-animal isolation does not reach our animals.** Its main advantage over Open Ephys evaporates and Intan direct (isolation built into every port, natively driving RHD2216, no adapters) becomes the clear choice. |
-
-**Full question list for Kontex:**
-1. Does the Port Expander support Intan RHD2216 headstages, and by exactly which cable/adapter chain from EXP port to headstage? Is the per-animal ground/reference isolation preserved on that path?
-2. If not: does any KonteX XR headstage provide a **bipolar** (differential-pair) montage equivalent to the RHD2216? Part number and channel configuration.
-3. Does the Open Ephys XDAQ plugin support **two XDAQ devices in one GUI instance on one PC**, or is one PC per box required?
-4. Is SyncLink **required** for two-box operation, or is a shared TTL line into a digital input sufficient for our sub-millisecond needs?
-5. Is the **R512 → R1024 tier a field firmware upgrade**, or must it be specified at purchase?
-6. Formal quote: **2× ONE-R1024-SR64 + 8× SAdpt-Port-EXP + 8× KonteX HDMI cable + 32× per-animal cable + 32× commutator (STD and PRO priced separately) + optional 2× SyncLink + DB25 breakout**, delivered to KAIST, Korea, with lead time.
+All remaining open questions have moved to the call-prep sheet: **[[2026-07-29-kontex-kc-call-prep-rig-finalization]]**.
 
 ## Related
 - [[intan-rhd-spi-wiring-and-headstage-limits]] · [[kontex-xdaq-hardware-reference]] · [[2026-07-24-daq-32-mouse-final-comparison]] · [[2026-07-21-acquisition-device-16-32-mice-and-kontex-thread]] · [[eeg-60hz-saga]] · [[intan-rhd2216-reference]] · [[eight-mouse-acquisition-setup]]
