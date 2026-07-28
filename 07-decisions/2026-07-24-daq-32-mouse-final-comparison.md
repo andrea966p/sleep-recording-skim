@@ -202,13 +202,21 @@ The rig splits into three blocks. **Only Block 1 differs between ecosystems.** B
 
 | Item | Part | Unit | Qty | Ext | Tag |
 |---|---|---|---|---|---|
-| XDAQ ONE+ (1024 ch, 4 HDMI headstage ports, TB3) | ONE+ | ~$18,000-25,000 | 2 | ~$36k-50k | **ESTIMATE** (quote still owed) |
-| Port Expander (isolated ground/ref per animal) | XDAQ-Port-EXP | $1,525 | 8 | $12,200 | **QUOTE** |
-| Per-mouse Intan/OM12 interface | SAdpt-XDAQ-OM12(1) | $275 | 32 | $8,800 | **QUOTE** |
-| ONE+ HDMI → Port-EXP bridge (ONE+ analog of SAdpt-CORE-OM12) | (ONE+ bridge) | ~$350 | 8 | ~$2,800 | **ESTIMATE** |
+| XDAQ ONE+, **1024ch tier — must be R1024, NOT R512** | **ONE-R1024-SR64** | ~$18,000-25,000 | 2 | ~$36k-50k | **ESTIMATE** (quote still owed) |
+| Port Expander (isolated ground/ref per animal), 4 per box | SAdpt-Port-EXP | $1,525 | 8 | $12,200 | **QUOTE** |
+| Per-mouse Intan/OM12 interface (⏳ only if PE drives Intan) | SAdpt-XDAQ-OM12(1) | $275 | 32 | $8,800 | **QUOTE** |
+| KonteX HDMI cable, XDAQ port → Port Expander | KonteX | ⏳ | 8 | ⏳ | **owed** — non-KonteX cables can DAMAGE the system |
+| ~~ONE+ HDMI → Port-EXP bridge~~ | — | — | 0 | **$0** | **REMOVED** — docs show a plain KonteX HDMI cable, no bridge adapter |
 | ~~Allego/Radiens license~~ | — | **$0** | — | **$0** | **DROPPED, using OE GUI** |
-| SyncLink | SyncLink | ~$1,000-2,000 | 0-2 | $0 (omitted) | **OPTIONAL**, superseded by TTL sync (§2.5) |
-| | | | **Block 1** | **~$60k-74k** | |
+| SyncLink | SyncLink | ⏳ | 0-2 | $0 (omitted) | **OPTIONAL**, superseded by TTL sync (§2.5) |
+| | | | **Block 1** | **~$57k-71k** | |
+
+> [!danger] Verified 2026-07-28 against Kontex docs — see [[xdaq-32-mouse-wiring-and-channel-law]]
+> - **32 mice on XDAQ is 2 boxes, always.** No model reaches 32 in one box, and the SPI splitter cannot exceed a box's ceiling (three independent blocks; see that note §4).
+> - **Max animals = XR recording channels ÷ 64.** CORE2 512→8 (exactly our current rig), ONE+ R512→8, **ONE+ R1024→16**, AIO→16. Our 16-channel RHD2216 still burns a full 64-channel slot; 60 of 64 channels per mouse are structurally wasted.
+> - ⚠️ **ORDERING TRAP: ONE+ ships in a 512ch tier that records only 8 mice**, same as the Core we own. Headstage ports are licence-gated ("other ports may be unavailable depending on the license purchased"). The part must read **R1024**.
+> - ⏳ **The Port Expander's compatibility table lists KonteX XR headstages (X3R32 / XeR64) only — NOT Intan RHD2216.** If it cannot drive our headstages, XDAQ's isolation advantage does not reach our animals and this column collapses. **Highest-priority question to Kontex.**
+> - ✅ **The ONE+ has Sys GND + Chassis GND 4 mm terminals** and Kontex documents bonding them to ground a Faraday cage. Our Gen-1 Core has no such terminal, which is why foil grounding was abandoned on 2026-07-16 ([[eeg-60hz-saga]]).
 
 **B) Open Ephys**
 
@@ -342,6 +350,64 @@ Read this carefully, because it reframes the whole decision:
 - **Accept that per-mouse independent scheduling is gone** (§2.4), and plan for continuous recording at a deliberately chosen sample rate with offline slicing per user. Decide the sample rate early, it sets the storage budget.
 - **DECISION GATE:** do NOT decide until (a) Kontex answers Port-Expander-under-OE and two-devices-per-PC and sends a real ONE+ quote, (b) Open Ephys answers port isolation, (c) the commutator inventory and quotes land, (d) the headstage count is verified. THEN take it to a **council**. And remember: this whole scale-up is still gated behind **surgical yield** (open frontal electrodes). No acquisition box fixes an open electrode ([[eeg-60hz-saga]]). Buy the box that fits the science, after the science works.
 
+---
+
+## 6. ONE-PAGE SUMMARY FOR THE DECISION MEETING
+
+> Everything below assumes the four ground rules at the top: **no Allego licence, Open Ephys GUI on all three systems, complete rig priced, our own software excluded.**
+
+### 6.1 The three facts that matter most
+
+1. **A "channel" is really a mouse slot.** Every one of these systems reserves **64 channels per animal**, no matter that our headstage only has 16 and we use 4. So **animals = channels ÷ 64**. Our 512-channel box gives 8 mice, which is what we run. A 1024-channel box gives 16, not 64. **32 mice always means two boxes, in every ecosystem.**
+2. **The acquisition box is not the big cost any more.** Once the licence is gone and the whole rig is priced, the DAQ is only **25-45%** of the budget. The **commutators are the biggest single line: €10k to €83k for the same 32 mice**, depending only on which model we pick, and identical across all three vendors.
+3. **We are buying ONE thing: per-animal ground isolation.** That is the answer to the 60 Hz problem that has cost us the year. It is the axis on which the three systems genuinely differ.
+
+### 6.2 The comparison, stripped to what differs
+
+| | **XDAQ / KonteX** | **Open Ephys** | **Intan direct** |
+|---|---|---|---|
+| Boxes for 32 mice | 2 × ONE+ **R1024** | 4-8 boards | 4 × C3008 |
+| **Per-animal isolation** | ✅ via Port Expander (paid add-on) ⏳ **may not work with our headstages** | ❌ **no product exists** | ✅ **built into every port, free** |
+| Adapters between box and mouse | **3 layers** (HDMI cable → Port Expander → interface) | 1 | **0 — plugs straight in** |
+| Drives our existing Intan RHD2216 | ⏳ **UNRESOLVED** | ✅ (their own equivalent) | ✅ native, it is their chip |
+| Software (Open Ephys GUI) | ✅ free, officially supported | ✅ free | ✅ free |
+| Pricing | ❌ quote-only, **still not quoted** | ✅ public (EUR) | ✅ **fully published (USD)** |
+| Proven on our bench | ✅ **72 h byte-perfect** (under Allego) | ✗ | ✗ |
+| **DAQ block cost** | ~$57-71k **estimate** | ~€27k | **$57,000 published** |
+| **Complete rig** | ~$127-226k | ~€94-186k | ~$124-209k |
+
+### 6.3 Recommendation
+
+**Intan direct is currently ahead**, and the gap widened once the licence came off the table. It includes per-animal isolation at no extra cost, plugs into our existing RHD2216 headstages with **zero adapters** (fewest connectors means fewest failure points on a 72 h run), and every price is published so there is nothing to wait for. It is no longer the most expensive option.
+
+**XDAQ remains a serious contender for one reason: it is the only system with a proven 72 h byte-perfect run on our own bench**, and the ONE+ additionally provides the chassis-ground terminal our current box lacks. But it is blocked on two unanswered questions, and one of them could eliminate it outright.
+
+**Open Ephys hardware is cheapest and does not solve our problem.** Its GUI, however, is now the software for whichever box we buy.
+
+### 6.4 What must happen before we commit
+
+| # | Blocker | Who | Why it matters |
+|---|---|---|---|
+| 1 | **Does the XDAQ Port Expander drive our Intan RHD2216, with isolation intact?** | Kontex | If no, XDAQ's whole advantage disappears, or we must buy 32 new headstages |
+| 2 | Formal quote: 2× ONE-**R1024** + 8× Port Expander + all cables | Kontex | The XDAQ price is still a guess |
+| 3 | Are the Open Ephys board's 4 ports isolated from each other? | Open Ephys | Decides whether their cheaper option is viable at all |
+| 4 | **Commutators: what do our current 8 mice use, how many do we own, do they scale?** | us, internally | Swings the budget by ~€70k, more than the vendor choice does |
+| 5 | **How many RHD2216 headstages do we actually own?** (believed 8, an earlier note claimed 32) | us, internally | ±$20k |
+| 6 | **What sample rate do we need?** | us, scientific | 1 kHz vs 30 kHz is a 30× storage difference (88 GB vs 2.65 TB per day) |
+
+Items 4, 5 and 6 are ours to answer and cost nothing but an afternoon. They should not wait on any vendor.
+
+### 6.5 One consequence to accept knowingly
+
+Dropping Allego removes the only documented way to **start and stop each mouse on its own schedule**. Under the Open Ephys GUI, on any of the three systems, recording start/stop is global. Separate files per animal still work. The plan is to **record continuously and slice per user offline**, which is why the sample-rate decision above matters. (Buying two acquisition PCs instead of one would restore independent control for each group of 16.)
+
+### 6.6 The standing caveat
+
+None of this is the current bottleneck. **The frontal electrodes are open on every mouse, and there is still zero scoreable data.** No acquisition box fixes an open electrode ([[eeg-60hz-saga]]). This decision should be made deliberately and unhurriedly, in parallel with fixing surgical yield, not instead of it.
+
+---
+
 ## Related
+- ⭐ [[xdaq-32-mouse-wiring-and-channel-law]] — **the deep XDAQ wiring note (power supply → mouse), the channel law, and why the splitter cannot reach 32**
 - [[2026-07-23-daq-ecosystem-comparison-xdaq-vs-openephys]] (superseded predecessor) · [[2026-07-21-acquisition-device-16-32-mice-and-kontex-thread]] · [[2026-07-21-openephys-acquisition-board-scale-up-option]] · [[openephys-inquiry-email]]
 - [[intan-rhd-spi-wiring-and-headstage-limits]] · [[kontex-xdaq-hardware-reference]] · [[eeg-60hz-saga]] · [[project_multiuser_recording_schedules]] (⚠️ overturned by §2.4)
