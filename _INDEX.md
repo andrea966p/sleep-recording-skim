@@ -64,9 +64,13 @@ Production IPs, usernames, paths, and settings.
 - [[01-infrastructure/hardware-sync/gpio-sync-service|GPIO Sync Service (Golden Config)]]
 - [[01-infrastructure/hardware-sync/radiens-api-reference|Radiens API — Digital I/O Reference]]
 - [[01-infrastructure/hardware-sync/xdaq-core2-manual-reference|XDAQ Core2 Manual Reference (authoritative pinout + specs)]]
-- [[01-infrastructure/vendor-correspondence/neuronexus-inquiry-email|NeuroNexus / Kontex Inquiry & Replies]]
 - [[01-infrastructure/hardware-sync/kontex-developer-portal-notes|Kontex Developer Portal Notes (libxdaq / pylibxdaq / Linux Thunderbolt)]]
 - [[01-infrastructure/hardware-sync/literature-review|Literature Review]]
+
+**Vendor Correspondence:**
+- [[01-infrastructure/vendor-correspondence/kontex-call-confirmation-email-2026-07-29|⭐ Kontex — 2026-07-29 call confirmation + advance questions (DRAFT, ready to send)]]
+- [[01-infrastructure/vendor-correspondence/neuronexus-inquiry-email|NeuroNexus / Kontex Inquiry & Replies]]
+- [[01-infrastructure/vendor-correspondence/openephys-inquiry-email|Open Ephys Inquiry & Reply (Margarida)]]
 
 **Session Daemon:**
 - [[01-infrastructure/system-overview|System Overview — Q&A and glossary]]
