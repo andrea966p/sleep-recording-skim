@@ -58,11 +58,17 @@ Given our 60 Hz work concluded the rig is **floating with zero earth references*
 
 Confirms dropping foil grounding on 2026-07-16 was right ([[eeg-60hz-saga]]).
 
-**🔴 Intan's own analog-run spec, and we are far over it.** Same app note:
+**🟡 Intan's analog-run spec, and where we actually stand.** Same app note:
 
 > "**Minimize the length of the wires between the headstage and electrodes (ideally less than 10 cm).** Long wires pick up AC magnetic fields."
 
-This is the **analog electrode-to-headstage** run, NOT the digital SPI tether. KonteX independently flagged our run as too long. **Two vendors now agree, and this costs nothing to fix.** ⚠️ Confirm which run the 2026-07-28 shortening to 22.5 cm applied to.
+⚠️ **CONFIRMED 2026-07-28 (Andrea): the 22.5 cm shortening applied to the TETHER only. The ANALOG run is still 36 cm** (~30 cm brain→slip ring + 6 cm slip ring→headstage).
+
+**Do NOT frame this as a free fix — an earlier version of this note did, wrongly.** [[headstage-shielding-faraday-foil]] already reasoned it through: lid-mounted headstages are a **legitimate published arrangement** (one published rig runs ~64 cm; IIIS Tsukuba, our montage reference, also uses headmount→cable→slip ring with no head preamp). Intan's 10 cm rule assumes their head-mounted design. Lid-mounting is the **noisier of two valid designs**, compensated by shielding, grounding and matched contacts. Shortening it properly = head-mounted amplification (what Pinnacle does with a 100× preamp before the commutator) = **rig redesign, not an afternoon.**
+
+**✅ What IS free and still open:** `02-procedures/60hz-mains-hum-discovery.md` line 106 carries an **unchecked** action: *"Twist each +/− pair (EEG frontal/parietal, EMG L/R)"*. Foil blocks electric but **NOT magnetic** fields; the only magnetic fix is geometry (loop area). Intan names our exact chip: *"Twisted pairs of wires are useful for recording from pairs of electrodes using the bipolar-input Intan RHD2216 chip."* With 36 cm of analog run the loop area is large. **Do this.**
+
+**🔑 STRUCTURAL POINT FOR THE PURCHASE: our slip ring is on the ANALOG side, BEFORE the headstage.** A rotating mechanical joint carries microvolt analog; everything after the headstage is digital and noise-immune. All three vendors assume the opposite (digitise at the head, commutator carries digital). Consequences: (1) **commutator choice barely affects our signal quality** — it is a welfare/longevity purchase for us, not a signal one; (2) per-animal isolation attacks the **common-mode** term while our measured 53× **impedance imbalance** is the multiplier. (Slip-ring *rotation* was tested and cleared — this is about topology, not a new suspect.)
 
 **Only Open Ephys can synchronise multiple Intan controllers.** Intan RHX is one controller per instance, and **there is no clock input on the controller** — two controllers free-run and drift. But an OE `rhd-recording-controller` plugin exists (Windows/Linux/macOS) with a documented Record Node synchroniser. So even on Intan hardware we would end up in the Open Ephys GUI.
 
