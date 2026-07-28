@@ -71,7 +71,8 @@ Everything below assumes the Open Ephys GUI on all three, so software cost is $0
 
 | Doc | What it owns | Status |
 |---|---|---|
-| ⭐ [[2026-07-24-daq-32-mouse-final-comparison]] | **THE decision doc.** 3-way comparison, priced BOMs, professor summary (§6) | live |
+| ⭐⭐ [[2026-07-28-daq-research-findings-primary-sources]] | **NEWEST. Primary-source research + 8 CORRECTIONS** to claims below. Read before relying on the older docs | live |
+| ⭐ [[2026-07-24-daq-32-mouse-final-comparison]] | 3-way comparison, priced BOMs, professor summary (§6). ⚠️ **partly superseded** by the 2026-07-28 findings | live |
 | ⭐ [[2026-07-29-kontex-kc-call-prep-rig-finalization]] | **Tomorrow's call.** 45 questions, live build checklist (§9) | live |
 | [[2026-07-21-acquisition-device-16-32-mice-and-kontex-thread]] | Where the 16→32 question started + the full Kontex email thread | open |
 | [[2026-07-21-openephys-acquisition-board-scale-up-option]] | The Open Ephys option, standalone | open |
