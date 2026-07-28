@@ -24,7 +24,7 @@ counterpart: KC Kong (KonteX Neuroscience)
 >
 > Priorities, in order: **(A) the exact EXP-port-to-mouse chain** and whether isolation survives it · **(D+E) the two-PC and SyncLink tangle**, now the main unresolved topic · **(F) commutator pricing with a volume discount**, the biggest money question on the call · **(C) Linux driver**, a hard requirement we run on today · **(B) cable lengths**, now mostly solved · **(G) the package quote**.
 >
-> **Two things changed on 2026-07-28:** the tether was shortened to **22.5 cm including the slip ring**, comfortably under the ~40 cm KC flagged, so cable length is no longer a design risk. And **KC confirmed two PCs are needed** — but not why, whether it is truly unavoidable, or how SyncLink is supposed to work once everything runs under the Open Ephys GUI. §6 attacks that.
+> **Two things changed on 2026-07-28:** the tether was shortened to **22.5 cm including the slip ring** (note: the **analog run is still ~36 cm** and remains over spec, see §3). And **KC confirmed two PCs are needed** — but not why, whether it is truly unavoidable, or how SyncLink is supposed to work once everything runs under the Open Ephys GUI. §6 attacks that.
 >
 > Print §9 and use it as the live checklist during the call.
 
@@ -62,7 +62,7 @@ Background docs: ⭐ [[xdaq-32-mouse-wiring-and-channel-law]] (the deep wiring +
 - Chronic mouse **sleep** EEG/EMG. Bipolar montage, RHD2216, ~4 channels used per mouse. Record-only (XR), never stimulation.
 - Runs are **72 hours continuous**, live animals. Reliability outranks features.
 - Currently 8 mice on a Gen-1 XDAQ Core, fully maxed (8 × 64 = 512 ch).
-- Tether is now **22.5 cm including the slip ring** (shortened 2026-07-28), comfortably under the ~40 cm KC flagged as too long.
+- Tether shortened to **22.5 cm including the slip ring** (2026-07-28), BUT the **analog electrode-to-headstage run is still ~36 cm**, against Intan's "ideally under 10 cm". Our slip ring sits on the **analog** side, before the headstage.
 - Long-running **60 Hz** problem; per-animal ground isolation is the main thing we are buying.
 - Host PC runs **Ubuntu Linux**.
 
@@ -78,14 +78,21 @@ KC has confirmed Intan headstages work. What we need now is the chain, part by p
 4. **Is one mouse per EXP port correct**, giving 4 per Port Expander and 16 per ONE+ R1024? (Sanity-check against the channel law: 1024 ÷ 64 = 16.)
 5. **Can we reuse our existing 8 RHD2216 headstages and existing SAdpt-XDAQ-OM12 units** on the new build, or are different revisions required?
 6. Does anything change electrically when **all 4 EXP ports are populated**, versus one? Any per-port power budget to respect?
+6b. ⭐ **Where exactly does the isolation barrier sit?** Your figure says SYS GND *"should be connected to the GND pin of the XDAQ's HDMI port"*, so the Port Expander's internal common is bonded back to the XDAQ. Per-animal isolation must therefore be downstream, per EXP port. Confirm, and give the **barrier capacitance** if published, since that sets the residual common-mode floor.
+6c. **Does the Port Expander have an internal battery?** The March 2024 NeuroNexus manual says it is battery powered; the current Kontex page and front-panel figure say a 5 V 1 A USB-C mains adapter is required. **Which is correct for the current revision?** If there is no battery, the mains path remains, which matters for our 60 Hz work.
 
 ---
 
-## 3. 🅑 Cable lengths and physical layout — ✅ MOSTLY SOLVED, confirm and move on
+## 3. 🅑 Cable lengths and physical layout — ⚠️ ANALOG RUN STILL OVER SPEC
 
-> [!success] Update 2026-07-28: **the tether is now 22.5 cm including the slip ring.** Comfortably under the ~40 cm KC flagged as too long. The animal-side run is no longer a design risk, so this section is now a quick confirmation rather than a problem to solve.
+> [!warning] CORRECTED 2026-07-28 — the tether was shortened, the ANALOG RUN WAS NOT
+> The 22.5 cm figure is the **tether**. Andrea confirmed the **analog electrode-to-headstage run is still ~36 cm** (~30 cm brain to slip ring, plus ~6 cm slip ring to headstage). Intan's spec is *"ideally less than 10 cm"*, and KC previously called ~40 cm too long. **So we are still ~3.6× over spec on the segment that actually matters**, and this is NOT solved.
+>
+> Context before raising it: [[headstage-shielding-faraday-foil]] establishes that lid-mounted headstages are a **legitimate published arrangement** (one published rig runs ~64 cm; IIIS Tsukuba uses headmount → cable → slip ring with no head preamp). It is the noisier of two valid designs, compensated by foil, grounding and matched contacts. The real fix is **head-mounted amplification** (Pinnacle uses a 100× preamp before the commutator), which is a rig redesign.
+>
+> Worth asking KC directly: **given a 36 cm analog run, what does he recommend?** Does Kontex offer a head-mountable preamp or a shorter-run topology?
 
-7. **Confirm 22.5 cm (tether including slip ring) is well within spec** on the Port Expander → Intan RHD2216 path.
+7. **The digital SPI side is fine at 22.5 cm.** The open question is the **36 cm analog run**: what does Kontex recommend for a lid-mounted headstage topology, and is there a head-mountable preamp option?
 8. The remaining long run is **rack to chamber**. Which link should carry it, and what length is supported? Two candidate layouts:
    - **(a) Port Expanders at the rack, next to the XDAQ:** short KonteX HDMI cables from box to Port Expander, and a **long run from EXP port to the commutator**.
    - **(b) Port Expanders up at the chamber tops:** a **long KonteX HDMI cable from XDAQ to Port Expander**, short runs below.

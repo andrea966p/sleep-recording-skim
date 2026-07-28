@@ -31,7 +31,7 @@ method: 5 parallel research agents, primary sources only, verbatim quotes
 |---|---|---|
 | "Our 8 mice sit in 4 shared-ground pairs" | **Worse.** XDAQ Core spec: **"Signal Isolation: No"**, **"Headstage Power Circuits: 1"**. All 8 mice share ONE headstage power/ground circuit across all four ports | NNX XDAQ manual p.9 |
 | "The Port Expander is an optional isolation upgrade" | **Mandatory for 16 per box.** Model table lists ONE at "16 X3R32*" with footnote **"* Requires Port Expander"** | NNX XDAQ manual p.9 |
-| "Port Expander is USB-PD/AC powered" | **It has an internal battery.** "The Port Expander **is battery powered** to ensure a noise free communication"; "can be used solely on the built-in battery or plugged in" | NNX manual §3.4.3, §4.7 |
+| ~~"Port Expander has an internal battery"~~ | 🔴 **RETRACTED 2026-07-28 (Andrea caught it).** The March-2024 NNX manual says "is battery powered" / "solely on the built-in battery or plugged in", but the **current** Kontex page (Dec 2025) says only: *"Power on the Port Expander by supplying power to the USB-PD port with the provided AC adapter"*, and the front-panel figure states *"A **5V 1A USB-C power adapter is required**... connect the device to a standard power outlet for proper operation."* **The 2024 manual is stale / describes an earlier revision. Treat the Port Expander as MAINS POWERED.** This removes the "battery removes the mains path" argument I gave XDAQ. Isolation claim itself is unaffected | docs.kontex.io SAdpt-Port-EXP + front-panel figure |
 | "The radiens API gives per-ANIMAL start/stop" | **Per-PORT only, and ports max out at 8** (`"a"`–`"h"`). ONE+ has **4** physical ports; 16 animals hang off Port Expanders. **16 independently schedulable animals is unreachable in any package.** Worse: port args are "Only meaningful in **split-ports mode**", and that mode is **documented nowhere** | Radiens API docs |
 | "Intan ports are isolated ✅" | **Overstated.** Verbatim is "isolated from the controller and from earth ground" — names neither other ports. Strongly implied port-to-port (word "independent" ×3, contrast vs old board's "4, non-isolated", ground-loop rationale) but **no isolation voltage, no barrier capacitance, no leakage spec, no schematic** | Intan Rec Controller User Guide p.3 |
 | "Intan direct" | **Intan sells nothing directly since Feb 2026.** Sole worldwide distributor = **White Mountain Systems**. No Korea distributor. **Closed 22 Jul – 2 Aug 2026.** 90-day warranty | intantech.com/pricing.html, WMS_partnership.html |
@@ -41,6 +41,9 @@ method: 5 parallel research agents, primary sources only, verbatim quotes
 ---
 
 ## 2. ✅ NEW FINDINGS THAT HELP US
+
+> [!warning] Where the Port Expander's isolation barrier actually sits — ASK KC
+> The front-panel figure states: *"**SYS GND** is the common ground shared by all electrical circuits within the Port Expander and, under normal operation, **should be connected to the GND pin of the XDAQ's HDMI port** to ensure a stable and consistent reference potential."* So the Port Expander's internal common is **deliberately bonded back to the XDAQ**. Any per-animal isolation must therefore sit **downstream of SYS GND, per EXP port**. Get the barrier location, and ideally its capacitance, confirmed.
 
 **The ONE+ has grounding tools the Gen-1 Core entirely lacks.** Verbatim, NNX manual p.22:
 
