@@ -23,7 +23,7 @@ source: docs.kontex.io retrieved 2026-07-28 via curl + doc figure images
 > **The unresolved risk.** Kontex's own compatibility table lists the Port Expander as working with **KonteX XR headstages (X3R32 / XeR64)**. It does **not** list Intan RHD2216, which is what all our mice use. If the Port Expander cannot drive our Intan headstages, XDAQ's per-animal ground isolation, the entire reason we are considering it, does not reach our animals. This is the single most important question to put to Kontex (§8).
 
 > [!quote] Paper-ready
-> The XDAQ acquisition system allocates a fixed 64-channel data slot per recording headstage, so the maximum number of simultaneously monitored animals equals the system's nominal recording-channel capacity divided by 64, independent of the channel count of the headstage used. A 512-channel XDAQ CORE2 therefore supports eight animals and a 1024-channel XDAQ ONE+ supports sixteen, each headstage occupying one SPI MISO return line. Because the Intan RHD dual-headstage adapter consumes both MISO lines of a single SPI cable rather than creating additional ones, per-port headstage splitting cannot raise a system above its slot ceiling; scaling to 32 animals requires two 1024-channel units synchronised by a shared clock.
+> The XDAQ acquisition system allocates a fixed 64-channel data slot per recording headstage, so the maximum number of simultaneously monitored animals equals the system's nominal recording-channel capacity divided by 64, independent of the channel count of the headstage used. A 512-channel XDAQ CORE2 therefore supports eight animals and a 1024-channel XDAQ ONE+ supports sixteen, each headstage occupying one SPI MISO return line. Because the Intan RHD dual-headstage adapter consumes both MISO lines already present at a port rather than creating additional ones, per-port headstage splitting cannot raise a system above its slot ceiling; scaling to 32 animals requires two 1024-channel units synchronised by a shared clock.
 
 > [!info] Sources, all retrieved 2026-07-28
 > - `docs.kontex.io/XDAQ/ONE/` — ONE+ manual: setup, power, ports, PC requirement, DB25, grounds, software, **Model Comparison table (figure `ONE_P -28.png`)** and **Technical Specifications table (figure `ONE_P -27.png`)**
@@ -110,7 +110,17 @@ Andrea's question. The answer is no, and it fails three separate ways, so there 
 
 **Block 1 — The slot ceiling.** ONE+ R1024 has 1024 ÷ 64 = **16 slots**. The FPGA has no seventeenth. A splitter cannot conjure a slot that the licensed channel budget does not contain. This alone is decisive.
 
-**Block 2 — The splitter needs two MISO lines; an EXP port has one.** The Intan dual-headstage adapter (C3442) works by putting one chip on MISO1 and the other on MISO2 of a single SPI cable ([[intan-rhd-spi-wiring-and-headstage-limits]]). But a Port Expander EXP port is *already* the breakout of exactly **one** MISO line, which is why 4 EXP ports consume the port's 4 MISO lines and yield 4 animals. **There is no second MISO line at an EXP port for the splitter to use.** Hanging a C3442 off EXP A cannot work.
+**Block 2 — The splitter needs two MISO lines; an EXP port appears to have one.** ⚠️ **INFERRED, not a vendor statement.** The Intan dual-headstage adapter (C3442) works by putting one chip on MISO1 and the other on MISO2 of one SPI port ([[intan-rhd-spi-wiring-and-headstage-limits]]). (Placed at the XDAQ port, as we do, each of those two chips then gets its own cable out to its own animal.) A Port Expander EXP port appears to be the breakout of exactly **one** MISO line, which is why 4 EXP ports consume a port's 4 MISO lines and yield 4 animals.
+
+> [!warning] Provenance: Kontex publishes no EXP-port pin map
+> This block is reasoning from three sourced facts, not a quote:
+> 1. MISO pairs per XDAQ headstage port: Core = 2, ONE/ONE+ = 4 — **vendor, but via Jeff (NeuroNexus) and KC Kong emails**, not published docs.
+> 2. Animals per XDAQ port: Core → EXP A+B only = 2; ONE+ R1024 → EXP A-D = 4 — **Kontex Port Expander figure** (`SAdpt_Port_EXP-10.png`), plus *"Depending on the XDAQ models, port EXP C and EXP D might not be available."*
+> 3. One RHD chip = one MISO line — **Intan SPI cable datasheet, verbatim.**
+>
+> The active-EXP-port count matches the MISO-pair count exactly on both models, and the channel law agrees independently (256 ch/port ÷ 64 = 4 slots on ONE+; 128 ÷ 64 = 2 on Core). That is strong, but it is an inference.
+>
+> **Not ruled out from documents:** an EXP port might physically present both MISO lines with Kontex using only one, in which case a splitter could mate. **Block 1 is unaffected and still binds**, so the overall conclusion survives either way. Confirm with Kontex ([[2026-07-29-kontex-kc-call-prep-rig-finalization]]).
 
 **Block 3 — It would destroy the only reason to buy the Port Expander.** Even setting aside blocks 1 and 2, two headstages on one SPI cable **share that cable's single ground and single supply conductor**. That is the shared-ground compromise documented in [[2026-07-24-daq-32-mouse-final-comparison]] §1. Using a splitter downstream of an isolator re-couples the two animals and throws away the isolation you paid $1,525 per port to get.
 

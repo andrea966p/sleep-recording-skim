@@ -38,10 +38,22 @@ Background docs: ⭐ [[xdaq-32-mouse-wiring-and-channel-law]] (the deep wiring +
 | **Animals = XR recording channels ÷ 64** (64 ch reserved per headstage slot) | ✅ vendor docs, two independent figures |
 | CORE2 = 8 mice, ONE+ **R512 = 8**, ONE+ **R1024 = 16**, AIO = 16 | ✅ vendor docs |
 | **32 mice = 2 boxes.** No single-box option in any model | ✅ derived + vendor docs |
-| **SPI splitter (C3442) cannot exceed a box's ceiling** — slot limit, EXP port carries 1 MISO, and it re-shares ground | ✅ Intan + Kontex docs |
+| **SPI splitter (C3442) cannot exceed a box's ceiling** | ✅ on the **slot-ceiling** argument (1024 ÷ 64 = 16), which is doc-sourced and binds on its own · ⚠️ the **"EXP port carries 1 MISO"** argument is **our inference, not a vendor statement** (see note below) |
 | **Intan RHD2216 headstages ARE usable with the Port Expander** | ✅ **KC confirmed 2026-07-28** |
 | We are dropping Allego and running the **Open Ephys GUI** (free, Kontex-supported for XR mode) | ✅ our decision |
 | ONE+ has **Sys GND + Chassis GND** terminals; Kontex documents bonding them to ground a Faraday cage | ✅ vendor docs |
+
+> [!warning] Provenance check on "one EXP port = one MISO line" — this is INFERRED, not quoted
+> **Kontex does not publish an EXP-port pin map.** The claim is our reasoning from three sourced facts:
+> 1. MISO pairs per XDAQ headstage port: Core = 2, ONE/ONE+ = 4 (**vendor, but via Jeff/KC emails, not published docs** — see [[intan-rhd-spi-wiring-and-headstage-limits]]).
+> 2. Animals per XDAQ port: Core → EXP A+B only = 2, ONE+ R1024 → EXP A-D = 4 (**Kontex Port Expander figure**, plus *"Depending on the XDAQ models, port EXP C and EXP D might not be available"*).
+> 3. One RHD chip = one MISO line (**Intan SPI cable datasheet, verbatim**).
+>
+> Since the active-EXP-port count matches the MISO-pair count exactly on both models, we infer EXP port ↔ MISO line, 1:1. The channel law corroborates it independently: 256 ch/port ÷ 64 = 4 slots on ONE+, 128 ÷ 64 = 2 on Core.
+>
+> **What we cannot rule out from documents:** that an EXP port physically presents both MISO lines and Kontex simply uses one. If so, a splitter might physically mate. **This is precisely why the question is being asked rather than assumed.**
+>
+> **Important: the conclusion does not depend on this inference.** The **slot ceiling** (1024 ÷ 64 = 16 animals per box) is doc-sourced and binds on its own, so the splitter cannot exceed 16 per box regardless. Ask KC to confirm both legs separately.
 
 **Our situation, for context when KC asks:**
 - Chronic mouse **sleep** EEG/EMG. Bipolar montage, RHD2216, ~4 channels used per mouse. Record-only (XR), never stimulation.
