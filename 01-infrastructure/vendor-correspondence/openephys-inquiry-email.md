@@ -12,6 +12,7 @@ sent: 2026-07-22
 replied: 2026-07-23
 followup_drafted: 2026-07-23
 followup_final: 2026-07-23
+followup_replied: 2026-07-28
 ---
 # Open Ephys Inquiry — Acquisition Board scale-up to 16 (→32) mice
 
@@ -114,7 +115,11 @@ Best regards,
 - **Extras:** recommends a **powerful PC** (all boards on one machine — data + storage demands for long sessions). Offers **paid Training** (setup help). **1-yr warranty** + repair service. Discord community for grounding/referencing advice.
 
 ### Follow-ups needed
-- [ ] **THE key question:** confirm whether one board records **8 separate animals** (our 1-headstage-per-mouse use, 8 MISO lines) or is genuinely capped at **4 animals** — decides 2 vs 4 boards for 16. Raise on Discord / GitHub.
+
+> [!done] Mostly closed by the 2026-07-28 reply — see §"REPLY 2 RECEIVED 2026-07-28" below
+> The 8-vs-4-animals question and the isolation question are both answered there. Prices and the custom board are still open.
+
+- [x] **THE key question:** confirm whether one board records **8 separate animals** (our 1-headstage-per-mouse use, 8 MISO lines) or is genuinely capped at **4 animals** — decides 2 vs 4 boards for 16. Raise on Discord / GitHub.
 - [ ] Per-animal ground **isolation**: is there any OE hardware for it, or is shared-board-ground unavoidable (our 60 Hz risk)? Ask Discord/developers.
 - [ ] Pull **prices** (acq board, SPI 16ch bipolar headstage, I/O boards) from webstore or request formal quote for a 16-mouse multi-board config.
 - [ ] If multi-board is messy → get a scope + rough price from the **Atlanta custom team** for a 16-headstage board.
@@ -188,3 +193,69 @@ Prof. Kim Staci Jakyong lab, KAIST
 
 ### Internal — question → comparison-table cell (do NOT send)
 Q1 → row 1 (animals/box) + row 4 (shared-ground on dual adapter) · Q2 → row 4 (isolation) · Q3 → **row 15 NEW (independent record control)** · Q4 → rows 2/13/14 · Q5 → row 11 (price) · Q6 → row 10 (reliability) + row 9 (host PC) · Q7 → row 3 (32 ceiling) + row 7 (data format). Table: [[2026-07-23-daq-ecosystem-comparison-xdaq-vs-openephys]].
+
+---
+
+## ✅ REPLY 2 RECEIVED 2026-07-28 — Open Ephys Support (answer to follow-up v2)
+
+> [!success] Answered 4 of 7. Verdict: **2 separate animals per dual adapter is fine** ("no reason not to continue") → the "maximum 4 animals per board" framing is retired, one board = 8 mice. **Per-animal ground isolation is impossible, stated verbatim.** BUT the genuinely new fact: **our bipolar RHD2216 configuration is ALREADY independent referencing per animal.** Recording start/stop confirmed **global**. Custom 16-headstage board punted to Jon Newman with a capacity hedge. **Silently dropped: the itemized quote, multi-day reliability references, the 32-animal ceiling, the file format and Intan export question.**
+>
+> Attachment received: `Support Andrea Piazzola.docx` (grounding / unipolar vs bipolar explainer, 3 diagrams). Local copy: `~/Downloads/Support Andrea Piazzola.docx`. Its full text is transcribed in §"Attachment" below.
+
+### Answers, question by question
+
+- **Q1 — two separate animals on one dual adapter: ✅ SOFT GREEN LIGHT.** Verbatim: *"The dual headstage adapter was designed to allow two RHD headstages to share a single SPI interface cable and to position the headstages in different configurations, and not to run two animals from the same port."* Then, crucially: *"That said, if your current setup is working reliably and you have not experienced any issues using the dual headstage adapter that way, I don't see a reason why you should not continue using it."*
+  → **No engineering objection, only a statement of design intent.** This retires the 2026-07-23 *"maximum of four animals"* framing as a usage convention, not a hardware limit, and confirms the vault's own correction in [[2026-07-28-daq-research-findings-primary-sources]] §1. **One board = 8 separate mice → 16 mice needs 2 boards, not 4.**
+- **⚠️ NEW BENCH ITEM — dual adapter orientation.** They specify the Intan-recommended wiring, with a diagram: **the SPI cable plugs into the CENTER connector, and the headstages connect to the LEFT and RIGHT connectors.** Referred to the Intan dual headstage adapter datasheet. **Our own C3442 orientation is not documented anywhere in this vault — verify it on the bench.**
+- **Q2 — per-animal ground isolation: ❌ IMPOSSIBLE, now first-party verbatim.** *"It is not possible to have an electrically isolated ground for each individual animal within the same acquisition system as the same ground is shared by all the components of the acquisition system."* And specifically for the splitter: *"the SPI tether (and headstage port) has one common ground wire for both headstages, which is in turn connected to the acquisition board ground when the cable is connected."*
+  → Confirms the cable-level fact in [[2026-07-28-daq-research-findings-primary-sources]] §4 (12 conductors, one ground) and §5 (OE has no isolation in any configuration). Nothing new in substance, but it is now stated by the vendor rather than inferred by us.
+- **🔑 Q2, THE ACTUALLY NEW PART — bipolar is already per-animal referencing.** Verbatim: *"Although the acquisition system uses a common ground for all connected headstages, **each headstage can use its own independent reference electrode**, depending on the configuration you choose."* And for our configuration: *"**Essentially, this would already be independent referencing per animal, because each electrode is referenced to a local electrode on the same animal.**"*
+  The unipolar caveat does **not** apply to us: in unipolar headstages REF and GND are tied by an **R0 0-ohm jumper** that must be physically removed for independent per-animal referencing. The RHD2216 has no REF pin at all ([[intan-rhd2216-reference]]), so there is nothing to cut.
+  → **Consequence for the purchase:** the reference half of "per-animal isolation" is already ours for free. Any Port Expander buys **ground** isolation only. Set against our own measurement that `differential_60Hz ≈ common_mode(floor) × electrode_Z_imbalance` with a measured 53× impedance ratio ([[eeg-60hz-saga]]), and against eNeuro 2022's negligible bleed-through on a shared board ground ([[2026-07-28-daq-research-findings-primary-sources]] §3), **the Port Expander should be justified as a port multiplier (mandatory for 16/box, NNX manual p.9) and NOT priced as the 60 Hz fix.**
+- **Q3 — independent recording control: ❌ GLOBAL, confirmed.** *"Acquisition and recording start at the same time for all connected headstages. While it is possible to record only a selected subset of channels, there is currently no flexible way to change this dynamically. If you require more advanced or customized recording settings, this would need to be implemented by modifying the plugin, which is fully customizable."* Referred to `gui@open-ephys.org` for customization guidance.
+  → Subset selection is **static**, not per-session schedulable. Per-animal start/stop = a plugin fork. **Same answer as XDAQ** (radiens' per-port arguments are "only meaningful in split-ports mode", a mode documented nowhere). **Independent per-mouse scheduling is now dead on both vendors** → the "record continuously, slice per user offline" plan in [[RIG-EXPANSION-HUB]] §7 stands, confirmed from both sides.
+- **Q4 — custom 16-headstage board: 🟡 PUNTED, with a capacity hedge.** *"I'm not sure whether the team currently has the capacity to take on a custom design like this, but you're welcome to contact **Jon Newman (jpn@open-ephys.org)** directly."* Jon is named as the main point of contact for custom design requests; they ask for as much detail as possible on requirements. **Second vendor-side hedge on the same idea** (after the extension board being dead). Treat the single-board 16-animal route as vapor unless Jon says otherwise.
+- **Q6 — host PC: partial.** Referred to the **Hardware Requirements** page of their documentation; *"depends on your setup and the number of channels you plan to acquire simultaneously"*; *"you should use a fast SSD with sufficient capacity to handle the expected recording data."* **No multi-day continuous-recording references given** — the reliability half of Q6 was not answered.
+- **Q5 (itemized quote), Q7 (32-animal ceiling, file format, Intan-compatible export): ❌ NOT ANSWERED.** Silently dropped. Q5 is the second round in which no pricing has been produced.
+- **Also unanswered across both rounds:** the video call request.
+
+### Bearing on the decision
+
+**No change to the leading choice** (2× ONE+ R1024 + 8× Port Expander + our RHD2216 headstages, Open Ephys GUI). Open Ephys *hardware* was already out on isolation before this reply; this closes it more politely. Open Ephys *software* remains the decided GUI on whatever box we buy, and that decision never depended on this thread.
+
+What did move:
+1. **Board capacity framing corrected in our favour** (8 animals/board, not 4) — matters only if OE hardware is ever reconsidered.
+2. **The Port Expander's justification narrows to capacity**, because bipolar already gives us independent per-animal referencing. → carry into [[2026-07-29-kontex-kc-call-prep-rig-finalization]].
+3. **Global start/stop is now confirmed by both vendors**, so it stops being a comparison axis.
+
+Still open on OE, if anyone pursues it: itemized quote, 32-animal ceiling, recorded file format and Intan-compatible export path, multi-day reliability references, and Jon Newman on the custom board.
+
+### Attachment — `Support Andrea Piazzola.docx`, transcribed
+
+> [!note] Diagrams not reproduced
+> The document carries three images: the SPI tether / common ground wire, the bipolar amplifier input stage (independent in+ and in− per channel), and the unipolar headstage with a single common reference. Only the text is transcribed here; the source file is at `~/Downloads/Support Andrea Piazzola.docx`.
+
+**Ground.** *"It is not possible to have an electrically isolated ground for each individual animal within the same acquisition system as the same ground is shared by all the components of the acquisition system. Specifically, since you are asking about two headstages on one dual adapter, you can see the SPI tether (and headstage port) has one common ground wire for both headstages, which is in turn connected to the acquisition board ground when the cable is connected."*
+
+**Reference.** *"Although the acquisition system uses a common ground for all connected headstages, each headstage can use its own independent reference electrode, depending on the configuration you choose."*
+
+**Bipolar.** *"In the bipolar configuration you intend to use, each recording channel measures the difference between two electrodes, usually pairs of electrodes of similar impedances. You can see each amplifier channel has independent in+ and in- inputs... Essentially, this would already be independent referencing per animal, because each electrode is referenced to a local electrode on the same animal."*
+
+**Unipolar (for contrast, not our case).** *"In a unipolar configuration, activity in each recording electrode is measured against one shared reference electrode... the headstage has a single common reference that is used by all channels. Additionally, in this headstage, REF and GND are tied together using the R0 0-ohm jumper resistor. This resistor can be removed to disconnect the reference electrode from ground, which is what you would need if you wanted to use individual referencing per animal in this case."*
+
+**Grounding your system.** *"Since you mentioned you are dealing with 60 Hz hum, I would suggest troubleshooting the ground connection:"*
+- *"Check all GND connections, including GND terminals and the BNC connector shield"*
+- *"Use a Faraday cage and verify shield connections"*
+- *"Ensure you have a good GND screw making good contact with the animal. You could even attempt to measure the impedance of the ground screw to ensure it is low"*
+
+> [!warning] Their grounding advice conflicts with Intan's, and with our own bench result
+> "Use a Faraday cage and verify shield connections" reads as *ground the foil*. **We tested that and dropped it on 2026-07-16** — no headroom left, and the Gen-1 Core has no chassis terminal. Intan's own Noise Reduction app note says the headstage GND *"should not be connected to the Faraday cage or to any external ground"* ([[2026-07-28-daq-research-findings-primary-sources]] §2). Earth was exonerated as a source in [[eeg-60hz-saga]]. **Do not re-chase this.**
+>
+> The last bullet is the one worth keeping: **measure the impedance of the animal ground screw.** That is cheap, and it is the same impedance-imbalance term that dominates our hum.
+
+### Follow-ups still needed
+- [ ] **Bench: verify C3442 dual adapter orientation** — SPI cable in the CENTER connector, headstages left and right, per Intan's datasheet and their diagram.
+- [ ] Decide whether to pursue **Jon Newman (jpn@open-ephys.org)** on a custom 16-headstage board, or close the OE hardware track entirely.
+- [ ] If OE hardware stays alive: chase the **itemized quote** (unanswered twice), the **32-animal ceiling**, the **recorded file format + Intan export**, and **multi-day reliability references**.
+- [ ] Carry the **bipolar-already-is-per-animal-referencing** finding into the 2026-07-29 KonteX call → ask KC what the Port Expander's ground isolation buys us **in µV**, given we have no shared reference to isolate.
+- [ ] Retire the **"maximum 4 animals per Open Ephys board"** claim wherever it still appears.
