@@ -169,23 +169,23 @@ This is the part that does not currently make sense to us, and it should be spel
 
 Print this. Fill in the blanks live.
 
-| # | Item | Part number | Qty | Unit | Confirmed? |
-|---|---|---|---|---|---|
-| 1 | XDAQ ONE+, **1024ch tier** | ONE-R1024-SR64 | **2** | ⏳ | ☐ |
-| 2 | 200 W DC power adapter | supplied | 2 | incl | ☐ |
-| 3 | Thunderbolt 3 cable | supplied | 2 | incl | ☐ |
-| 4 | Port Expander | SAdpt-Port-EXP | **8** | $1,525 (quote 262024) | ☐ |
-| 5 | USB-PD adapter for Port Expander | supplied | 8 | incl | ☐ |
-| 6 | KonteX HDMI cable, XDAQ → Port Expander | ⏳ | **8** | ⏳ | ☐ length? |
-| 7 | EXP → Intan interface adapter | SAdpt-XDAQ-OM12(1)? | **32** | $275 | ☐ **chain confirmed?** |
-| 8 | Intan SPI cable, adapter → headstage | Intan C3213 / C3206 | 32 | $415 / $295 | ☐ length? |
-| 9 | Commutator | STD or PRO | **32** | ⏳ | ☐ **STD vs PRO?** |
-| 10 | Intan RHD2216 headstage | C3313 | **32** | $820 | ☐ we own 8, need ~24 |
-| 11 | SyncLink | SyncLink | **0 or 2** | ⏳ | ☐ **needed at all? works under OE?** |
-| 12 | DB25 breakout board | ⏳ | 1-2 | ⏳ | ☐ |
-| 13 | 4 mm banana ground leads | generic | ~6 | — | ☐ |
-| 14 | Acquisition PC | ⏳ | **2** (KC confirmed) | ⏳ | ☐ spec each? truly unavoidable? |
-| — | ⭐ **PACKAGE PRICE, all of the above, volume discounted** | — | 1 | ⏳ | ☐ **get this in writing** |
+| #   | Item                                                     | Part number         | Qty                  | Unit                  | Confirmed?                           |
+| --- | -------------------------------------------------------- | ------------------- | -------------------- | --------------------- | ------------------------------------ |
+| 1   | XDAQ ONE+, **1024ch tier**                               | ONE-R1024-SR64      | **2**                | ⏳                     | ☐                                    |
+| 2   | 200 W DC power adapter                                   | supplied            | 2                    | incl                  | ☐                                    |
+| 3   | Thunderbolt 3 cable                                      | supplied            | 2                    | incl                  | ☐                                    |
+| 4   | Port Expander                                            | SAdpt-Port-EXP      | **8**                | $1,525 (quote 262024) | ☐                                    |
+| 5   | USB-PD adapter for Port Expander                         | supplied            | 8                    | incl                  | ☐                                    |
+| 6   | KonteX HDMI cable, XDAQ → Port Expander                  | ⏳                   | **8**                | ⏳                     | ☐ length?                            |
+| 7   | EXP → Intan interface adapter                            | SAdpt-XDAQ-OM12(1)? | **32**               | $275                  | ☐ **chain confirmed?**               |
+| 8   | Intan SPI cable, adapter → headstage                     | Intan C3213 / C3206 | 32                   | $415 / $295           | ☐ length?                            |
+| 9   | Commutator                                               | STD or PRO          | **32**               | ⏳                     | ☐ **STD vs PRO?**                    |
+| 10  | Intan RHD2216 headstage                                  | C3313               | **32**               | $820                  | ☐ we own 8, need ~24                 |
+| 11  | SyncLink                                                 | SyncLink            | **0 or 2**           | ⏳                     | ☐ **needed at all? works under OE?** |
+| 12  | DB25 breakout board                                      | ⏳                   | 1-2                  | ⏳                     | ☐                                    |
+| 13  | 4 mm banana ground leads                                 | generic             | ~6                   | —                     | ☐                                    |
+| 14  | Acquisition PC                                           | ⏳                   | **2** (KC confirmed) | ⏳                     | ☐ spec each? truly unavoidable?      |
+| —   | ⭐ **PACKAGE PRICE, all of the above, volume discounted** | —                   | 1                    | ⏳                     | ☐ **get this in writing**            |
 
 **Not on this build:** Intan C3442 splitter (cannot exceed the slot ceiling, and it defeats isolation) · Allego/Radiens licence (we are on the Open Ephys GUI).
 
