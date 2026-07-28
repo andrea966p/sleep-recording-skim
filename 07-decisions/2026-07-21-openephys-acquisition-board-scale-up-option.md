@@ -11,6 +11,9 @@ status: open
 ---
 # Open Ephys Acquisition Board — a Possible Scale-Up Path (16 mice)
 
+> [!tip] Part of the rig expansion program
+> Front door for all of this: **[[RIG-EXPANSION-HUB]]** (decision, vendor correspondence, wiring, open items).
+
 > [!abstract] TL;DR — for non-technical readers
 > **What this is.** A third candidate for our 16-mouse (→32) recording rig, alongside the XDAQ ONE+ and the Intan RHD Recording Controller. The **Open Ephys Acquisition Board** is fully open-source hardware that runs the same Intan RHD chips we already use, with **free** software (Open Ephys GUI) instead of the paid Allego license.
 > **Why it exists.** While checking whether Open Ephys could drive a new XDAQ license-free, we found that Open Ephys also sells its OWN acquisition board, and their repo contains a design for an **extension board** that could in principle reach 16 headstages / 1024 channels. That is exactly our scale-up target, at low cost and with no software license — so it is worth chasing down properly.

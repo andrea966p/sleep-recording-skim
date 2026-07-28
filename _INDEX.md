@@ -119,6 +119,12 @@ Production IPs, usernames, paths, and settings.
 - [[06-references/command-cheatsheet|Command Cheatsheet]]
 - [[06-references/video-parameters|Video Parameters]]
 
+### Rig Expansion (8 → 32 mice)
+- ⭐ [[07-decisions/RIG-EXPANSION-HUB|RIG EXPANSION HUB — 8 → 32 Mice]] — **START HERE.** Single entry point: the decision, all vendor correspondence, wiring, open items, superseded claims
+- [[07-decisions/2026-07-24-daq-32-mouse-final-comparison|DAQ 3-way comparison, 32 mice (XDAQ vs Open Ephys vs Intan)]] — the decision doc + professor summary
+- [[06-references/xdaq-32-mouse-wiring-and-channel-law|XDAQ 32-mouse wiring + the channel law]] — animals = channels ÷ 64; full power-to-mouse wiring
+- [[07-decisions/2026-07-29-kontex-kc-call-prep-rig-finalization|Kontex call prep, 2026-07-29 — rig finalization]] — 45 questions + live build checklist
+
 ### Decisions & Reviews
 - [[07-decisions/2026-05-01-llm-council-review|2026-05-01 LLM Council Review]] — full advisor responses, peer reviews, chairman synthesis, staged plan
 - [[07-decisions/2026-05-stabilization-sprint-week-1-plan|2026-05 Stabilization Sprint Week 1 — Plan + live status]] — single source of truth for sprint-item status

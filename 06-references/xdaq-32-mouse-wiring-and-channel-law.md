@@ -15,12 +15,15 @@ source: docs.kontex.io retrieved 2026-07-28 via curl + doc figure images
 ---
 # XDAQ 32-Mouse Wiring, End to End — and the Channel Law that Decides Everything
 
+> [!tip] Part of the rig expansion program
+> Front door for all of this: **[[RIG-EXPANSION-HUB]]** (decision, vendor correspondence, wiring, open items).
+
 > [!abstract] TL;DR — for non-technical readers
 > **What this is.** The complete, vendor-sourced answer to three questions: (1) exactly what cables and boxes are needed to run 32 mice on XDAQ, from the wall socket to the animal's head; (2) which XDAQ model can actually do it; and (3) whether the SPI splitter can push one box past 16 mice.
 > **The one rule to remember, "the channel law."** XDAQ's advertised channel count is not a channel count in any useful sense. It is a **mouse count in disguise**: the box reserves a fixed **64-channel slot per headstage**, regardless of how few channels that headstage actually uses. So **max mice = advertised recording channels ÷ 64.** Our 512-channel Core gives 512 ÷ 64 = 8 mice, which is exactly the 8 we run today. Our RHD2216 headstage uses only 16 of its 64-channel slot and the other 48 are simply thrown away. Buying "more channels" buys mice, not channels.
 > **Can the splitter get one box to 32? NO.** Three independent reasons, any one of which is fatal (§4). 32 mice on XDAQ means **two boxes, and they must be the 1024-channel tier.**
 > **The trap to avoid when ordering.** "XDAQ ONE+" is sold in two tiers, 512ch and 1024ch. The **512 tier records only 8 mice**, same as the Core we already own. Ordering the wrong tier halves the rig. The part must be specified as **ONE-R1024**.
-> **The unresolved risk.** Kontex's own compatibility table lists the Port Expander as working with **KonteX XR headstages (X3R32 / XeR64)**. It does **not** list Intan RHD2216, which is what all our mice use. If the Port Expander cannot drive our Intan headstages, XDAQ's per-animal ground isolation, the entire reason we are considering it, does not reach our animals. This is the single most important question to put to Kontex (§8).
+> **The risk that turned out fine.** Kontex's own compatibility table lists the Port Expander as working with **KonteX XR headstages (X3R32 / XeR64)** and does **not** list Intan RHD2216, which is what all our mice use. That would have meant buying 32 new headstages, or losing the isolation entirely. ✅ **Resolved 2026-07-28: KC Kong confirmed our Intan headstages can be used** (§8).
 
 > [!quote] Paper-ready
 > The XDAQ acquisition system allocates a fixed 64-channel data slot per recording headstage, so the maximum number of simultaneously monitored animals equals the system's nominal recording-channel capacity divided by 64, independent of the channel count of the headstage used. A 512-channel XDAQ CORE2 therefore supports eight animals and a 1024-channel XDAQ ONE+ supports sixteen, each headstage occupying one SPI MISO return line. Because the Intan RHD dual-headstage adapter consumes both MISO lines already present at a port rather than creating additional ones, per-port headstage splitting cannot raise a system above its slot ceiling; scaling to 32 animals requires two 1024-channel units synchronised by a shared clock.

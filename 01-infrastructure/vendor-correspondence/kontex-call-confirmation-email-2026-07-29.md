@@ -5,16 +5,19 @@ tags:
   - xdaq
   - scale-up
   - 32-mice
-  - draft
+  - sent
 created: 2026-07-28
-status: draft-ready-to-send
+status: sent
 recipient: KC Kong (KonteX Neuroscience)
 call_date: 2026-07-29
 ---
 # Email Draft — KC Kong, confirming the 2026-07-29 call + advance questions
 
+> [!tip] Part of the rig expansion program
+> Front door for all of this: **[[RIG-EXPANSION-HUB]]** (decision, vendor correspondence, wiring, open items).
+
 > [!info] Status
-> **Ready to send.** Drafted 2026-07-28 for a call on **2026-07-29 at 11:30 Taipei time (12:30 Korea time)**. Purpose is to confirm the time and give KC a heads up so he arrives prepared, since this is meant to be the call that finalizes the rig before purchase.
+> ✅ **SENT 2026-07-28.** Drafted 2026-07-28 for a call on **2026-07-29 at 11:30 Taipei time (12:30 Korea time)**. Purpose is to confirm the time and give KC a heads up so he arrives prepared, since this is meant to be the call that finalizes the rig before purchase.
 >
 > Written per [[feedback_no_dashes_in_emails]]: **no hyphens or em dashes anywhere in the body**, commas and parentheses instead.
 >
@@ -56,8 +59,7 @@ Andrea
 
 ## Notes (not part of the email)
 
-- ⏰ **Verify the time conversion before sending.** 11:30 Taipei (UTC+8) should be 12:30 Korea (UTC+9). Getting this wrong costs the meeting.
-- **On question 1, our own research says the answer is NO.** Every source we have says a splitter cannot be used on an EXP port: an EXP port carries one MISO line while the C3442 needs two, the 1024 channel budget is 16 slots of 64 channels each, and a splitter re-shares the very ground the Port Expander exists to separate. See [[xdaq-32-mouse-wiring-and-channel-law]] §4. The question is phrased to get a definitive answer quickly rather than to eat call time. **If KC says yes it is a very big deal**, since it would mean one box instead of two and would dissolve the SyncLink and 2 PC problem entirely.
+- **On question 1, our own research says the answer is NO**, on two legs of different strength. The **slot ceiling** (1024 ÷ 64 = 16 animals per box) is doc-sourced and binds on its own. The **one MISO line per EXP port** argument is our *inference*, since Kontex publishes no EXP-port pin map. Ask KC to confirm **both legs separately**; if he only addresses the MISO question, the slot ceiling is still unconfirmed and that is the leg that decides one box versus two. See [[xdaq-32-mouse-wiring-and-channel-law]] §4. The question is phrased to get a definitive answer quickly rather than to eat call time. **If KC says yes it is a very big deal**, since it would mean one box instead of two and would dissolve the SyncLink and 2 PC problem entirely.
 - **Question 2 carries a new fallback introduced by Andrea:** buy a single Allego license for the new recording room PC, drive one ONE+ with it, and let SyncLink carry the second. Worth watching whether Kontex holds to the earlier position that a second XDAQ needs a second Allego seat ([[2026-07-21-acquisition-device-16-32-mice-and-kontex-thread]]), or whether SyncLink changes that.
 - **Dropped from an earlier draft at Andrea's request:** asking for confirmation that per animal ground isolation is preserved. Already confirmed in the Kontex documentation, so it does not need to occupy call time.
 

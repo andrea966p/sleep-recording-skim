@@ -14,6 +14,9 @@ counterpart: KC Kong (KonteX Neuroscience)
 ---
 # Kontex Call Prep — KC Kong, 2026-07-29 — FINALIZING the 32-Mouse Rig
 
+> [!tip] Part of the rig expansion program
+> Front door for all of this: **[[RIG-EXPANSION-HUB]]** (decision, vendor correspondence, wiring, open items).
+
 > [!abstract] TL;DR — what this call is for
 > This is the **finalization call**. The last blocking unknown (can the Port Expander drive our Intan headstages) was answered YES by KC on 2026-07-28, so the XDAQ path is un-blocked. The goal tomorrow is to walk out with **every part number, quantity and cable length pinned down**, plus the answers to a handful of questions that change the build rather than just the price.
 >
@@ -95,11 +98,16 @@ KC has confirmed Intan headstages work. What we need now is the chain, part by p
 
 ## 4. 🅒 Linux, software, and record control
 
-We run Ubuntu. The ONE+ manual lists driver downloads for Windows and macOS, and for Linux it says only **"Contact us."** This is a hard requirement, not a nice-to-have.
+> [!success] NARROWED 2026-07-28 — our own vault already answers half of this, do not waste call time on it
+> [[kontex-developer-portal-notes]] establishes that **ONE+ / Core2 / AIO are Thunderbolt**, and the driver is the **standard Linux `thunderbolt` kernel module plus the `boltd` authorisation daemon**, not a proprietary blob. libxdaq's tested toolchain is **Ubuntu 24.04 + GCC 14.2.0**, which our host matches. So a Linux path exists.
+>
+> Separately, [[openephys-gui-setup-xdaq-sleep-eeg]] records that on **2026-07-23 we already ran the Open Ephys GUI on our XDAQ Core under Ubuntu**, one headstage detected, 32 channels. So "does OE work on Linux" is answered too.
+>
+> **Ask only the genuinely open questions below.** Question 12 was routed to KC back in May and never fully closed.
 
-12. **Is there a supported Linux driver for the ONE+?** Which distributions and kernel versions, and how is it distributed and updated?
-13. **Is the Open Ephys XDAQ plugin fully supported on Linux**, with the same feature set as Windows?
-14. Our current Gen-1 Core needed FrontPanel plus a `plugdev` udev rule on Ubuntu. **Does the ONE+ need equivalent setup?**
+12. **What is the exact Ubuntu 24.04 enrolment procedure for a ONE+?** Group membership, udev rules for the Thunderbolt character devices, and headless `boltd` setup, since these machines run without a desktop session. Which kernel and `boltd` versions does Kontex test against?
+13. ⭐ **A real packaging bug to report:** XDAQ-OE **v0.4.4-API10** is built for a non-versioned `shared/` folder, but Open Ephys GUI **1.1.0** uses `shared-api10/`. The plugin fails to load until two symlinks are created by hand, and the fix must be re-applied after every plugin reinstall. **Is a fixed build coming?** (Details and the workaround: [[openephys-gui-setup-xdaq-sleep-eeg]] §1.)
+14. Our current Gen-1 Core uses Opal Kelly USB with FrontPanel and a `plugdev` udev rule. **Confirm the ONE+ path is entirely different** (Thunderbolt, `boltd`) so we do not carry over stale setup assumptions.
 15. **Does the Open Ephys XDAQ plugin correctly enumerate a Port Expander**, showing the 4 isolated animals on a port as separate, identifiable streams? How are animals labelled so we can map stream → mouse reliably?
 16. **Does the plugin expose the DB25 signals** — `DAQ ON`, `Sample CLK`, DI-03…08, DO-03…08 — for our camera synchronisation?
 17. Open Ephys GUI has a **global** record start/stop. **Does the XDAQ plugin add any per-port or per-animal record control**, or is continuous recording plus offline slicing the only option?

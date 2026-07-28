@@ -15,6 +15,9 @@ followup_final: 2026-07-23
 ---
 # Open Ephys Inquiry — Acquisition Board scale-up to 16 (→32) mice
 
+> [!tip] Part of the rig expansion program
+> Front door for all of this: **[[RIG-EXPANSION-HUB]]** (decision, vendor correspondence, wiring, open items).
+
 > [!abstract] TL;DR
 > Draft email to Open Ephys to get the facts we are missing about the **Acquisition Board** and the **extension-board** design (16 headstages / 1024ch): status, price, lead time, Intan RHD2216 compatibility, per-animal grounding, multi-board sync, custom-build options, and a call. Context/decision doc: [[2026-07-21-openephys-acquisition-board-scale-up-option]].
 

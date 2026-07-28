@@ -15,6 +15,9 @@ resolved: 2026-07-18
 
 # HDMI/SPI Dual-Socket Adapter — TOP Socket Dead — Vendor Inquiry Drafts
 
+> [!tip] Part of the rig expansion program
+> Front door for all of this: **[[RIG-EXPANSION-HUB]]** (decision, vendor correspondence, wiring, open items).
+
 > [!success] RESOLVED 2026-07-18 — NeuroNexus (Jeff) replied. TOP SOCKET DEAD BY DESIGN, NOT A DEFECT. DO NOT RMA.
 > **Root cause (vendor, authoritative):** The HDMI port carries max 19 conductors. Intan neural channels are digitized+multiplexed in the chip, then grouped into blocks of up to 64ch transmitted over one **MISO pair** of wires. The **top socket of the SAdpt-XDAQ-OM12 has 4 wires wired to the MISO3 + MISO4 pairs** in the HDMI connector.
 > - **XDAQ Core (our Gen-1)** HDMI ports support only **2 MISO pairs = 128ch** (MISO1/MISO2). MISO3/MISO4 lines are **physically absent** in the Core's headstage ports → a headstage on the top socket has nothing to talk on → never detected. Correct, expected behavior for the Core.

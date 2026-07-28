@@ -15,6 +15,9 @@ supersedes: "[[2026-07-23-daq-ecosystem-comparison-xdaq-vs-openephys]]"
 ---
 # DAQ Ecosystem Comparison, FINAL, 3-Way for 32 Mice — XDAQ vs Open Ephys vs Intan
 
+> [!tip] Part of the rig expansion program
+> Front door for all of this: **[[RIG-EXPANSION-HUB]]** (decision, vendor correspondence, wiring, open items).
+
 > [!warning] CONFIDENTIAL PRICING, VAULT-ONLY
 > Contains Kontex quote 262024 pricing (do-not-publicly-disclose clause), plus Open Ephys and Intan list prices. Keep inside the vault. DO NOT publish as a web Artifact, paste into a public repo, or share the pricing outside the lab.
 

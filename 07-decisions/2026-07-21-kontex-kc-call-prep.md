@@ -12,6 +12,9 @@ status: open
 
 # Kontex Video Call Prep — KC Kong, 4 PM Today (2026-07-21)
 
+> [!tip] Part of the rig expansion program
+> Front door for all of this: **[[RIG-EXPANSION-HUB]]** (decision, vendor correspondence, wiring, open items).
+
 > [!abstract] TL;DR — what this call is for
 > You want a rig that records **16 mice at once** (and can grow to **32** later). Our current box (**XDAQ Core**) physically maxes out at **8 mice** — that is a hard wire limit, not a settings problem, so no adapter or trick fixes it. The plan is to buy a bigger box (**XDAQ ONE+** = 16), add **Port Expanders** for clean per-animal grounding, and later a second ONE+ + **SyncLink** for 32. Goal of the call: get **prices, a full parts list (quote), and confirm the Intan compatibility + PC/licensing questions** below. Prof. Kim Staci Jakyong is joining.
 

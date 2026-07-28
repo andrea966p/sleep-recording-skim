@@ -7,6 +7,9 @@ source: docs.kontex.io (retrieved 2026-07-21 via curl; raw HTML archived in atta
 
 # Kontex XDAQ Hardware Reference (models, Port Expander, SyncLink, SAdpt)
 
+> [!tip] Part of the rig expansion program
+> Front door for all of this: **[[RIG-EXPANSION-HUB]]** (decision, vendor correspondence, wiring, open items).
+
 > [!abstract] TL;DR — for non-technical readers
 > **What this is.** The real, from-the-vendor facts about the XDAQ models and the two accessories that decide how many mice we can record: the **Port Expander** (breaks one port into up-to-4 isolated animal ports) and **SyncLink** (locks multiple XDAQs to one clock). Transcribed straight from docs.kontex.io on 2026-07-21, with the raw HTML archived locally so this survives if the site changes.
 > **Why it exists.** We were reasoning from guesses and vendor emails and got the headstage-count logic wrong twice. This is the primary-source correction. Pairs with the physics note [[intan-rhd-spi-wiring-and-headstage-limits]] and the decision [[2026-07-21-acquisition-device-16-32-mice-and-kontex-thread]].
