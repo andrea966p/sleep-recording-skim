@@ -53,7 +53,7 @@ This was the confusing bit in Margarida's Open Ephys reply. She framed the dual-
 - An Intan RHD SPI cable carries 5 LVDS twisted pairs: CS, SCLK, MOSI, **MISO1, MISO2**. Two data-return lines.
 - The dual-headstage adapter (Intan **C3442**) wires each chip's data output to its OWN MISO line. MISO1 and MISO2 are electrically independent, each with its own termination resistor in the FPGA.
 - Two chips on one cable = **two independent data streams**, sampled on the SAME clock (perfectly time-aligned), appended in software as separate channel blocks. NOT two headstages fused into one stream on one animal. Intan's "128 channels on one animal" example is a USE-CASE CONVENTION (high-density probes), not an electrical rule.
-- CONCLUSION: two separate animals per port is real. Margarida's "same animal only / max 4 animals" was **grounding conservatism, not a hardware limit.**
+- CONCLUSION: two separate animals per port is real. The "same animal only / max 4 animals" framing was **grounding conservatism, not a hardware limit** — and ✅ **Open Ephys confirmed this in writing on 2026-07-28**: *"if your current setup is working reliably and you have not experienced any issues using the dual headstage adapter that way, I don't see a reason why you should not continue using it."* **One board = 8 separate mice.**
 
 **The grounding side (the caveat):**
 > [!warning] CORRECTED 2026-07-28 — where the splitter physically sits changes the mechanism

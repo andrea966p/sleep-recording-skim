@@ -45,7 +45,7 @@ Background docs: ⭐ [[xdaq-32-mouse-wiring-and-channel-law]] (the deep wiring +
 
 1. **A "channel" is really a mouse slot.** Every system reserves 64 channels per animal regardless of how few we use. So **mice = channels ÷ 64**. A 1024-channel box records **16 mice, not 64**. Our current 8-mouse ceiling is 512 ÷ 64 = 8, which was arithmetic all along.
 2. **32 mice always means two boxes**, in every ecosystem, at any price. No splitter or adapter changes this.
-3. **What we are actually buying is per-animal ground isolation.** Our current Core has **none** (vendor spec: "Signal Isolation: No", one power circuit for all 8 mice). That is the main technical upgrade on the table.
+3. **The Port Expander is mandatory to reach 16 mice per box** (vendor's own model table: the 16-animal figure is footnoted "Requires Port Expander"). It also adds per-animal ground isolation, which our current Core lacks entirely ("Signal Isolation: No", one power circuit for all 8 mice) — but that benefit is **unquantified**, and it is not the fix for our 60 Hz problem. See the caveat below.
 
 **The two alternatives, briefly.** Intan direct is comparable on price with a simpler signal chain, but its distributor is new, currently closed, has no Korean presence, and would need KAIST vendor registration. Open Ephys is far cheaper but **cannot provide per-animal isolation at any price**, so it is out on hardware, though its free software is what we will run either way.
 
@@ -91,7 +91,7 @@ Background docs: ⭐ [[xdaq-32-mouse-wiring-and-channel-law]] (the deep wiring +
 - Runs are **72 hours continuous**, live animals. Reliability outranks features.
 - Currently 8 mice on a Gen-1 XDAQ Core, fully maxed (8 × 64 = 512 ch).
 - Tether shortened to **22.5 cm including the slip ring** (2026-07-28), BUT the **analog electrode-to-headstage run is still ~36 cm**, against Intan's "ideally under 10 cm". Our slip ring sits on the **analog** side, before the headstage.
-- Long-running **60 Hz** problem; per-animal ground isolation is the main thing we are buying.
+- Long-running **60 Hz** problem. ⚠️ **Note the reframing (2026-07-28):** bipolar already gives per-animal *referencing*, our bench cleared the shared port ground, and our dominant term is a 53× electrode impedance imbalance. So the Port Expander is best justified as **mandatory port capacity for 16/box**, with ground isolation as an unquantified bonus.
 - Host PC runs **Ubuntu Linux**.
 
 ---
@@ -101,7 +101,8 @@ Background docs: ⭐ [[xdaq-32-mouse-wiring-and-channel-law]] (the deep wiring +
 KC has confirmed Intan headstages work. What we need now is the chain, part by part, so it can go on a quote and be wired without guesswork.
 
 1. **What is the exact chain from a Port Expander EXP port to an Intan RHD2216?** Part numbers in order. Is it `EXP port (HDMI) → SAdpt-XDAQ-OM12 → Intan SPI cable → RHD2216`, or a different adapter?
-2. **Is the per-animal ground/reference isolation preserved all the way to the Intan headstage?** The Port Expander's value to us is entirely this. If isolation stops at the adapter, we need to know.
+2. **Is the per-animal ground isolation preserved all the way to the Intan headstage?** If isolation stops at the adapter, we need to know.
+2b. ⭐⭐ **THE SHARPEST QUESTION ON THIS CALL: what does the Port Expander's ground isolation buy us, in microvolts?** Open Ephys confirmed in writing on 2026-07-28 that with a **bipolar** montage *"this would already be independent referencing per animal, because each electrode is referenced to a local electrode on the same animal."* Our RHD2216 has no reference pin, so **we already have per-animal referencing for free**. That leaves the Port Expander adding **ground** isolation only. Meanwhile our own bench **ruled out the splitter and its shared port ground** as a 60 Hz source, and a published 4-mouse shared-ground study measured inter-animal contamination at chance level. **So: is there a measured figure for what the ground isolation delivers on a bipolar rig, or is the honest answer that we should buy the Port Expander as a port multiplier and treat isolation as a bonus?**
 3. The SAdpt-XDAQ-OM12 has **two Omnetics sockets, P1 and P2**. An EXP port should carry only **one MISO line**. **When the adapter hangs off an EXP port, is only P1 live?** Confirm one mouse per EXP port.
 4. **Is one mouse per EXP port correct**, giving 4 per Port Expander and 16 per ONE+ R1024? (Sanity-check against the channel law: 1024 ÷ 64 = 16.)
 5. **Can we reuse our existing 8 RHD2216 headstages and existing SAdpt-XDAQ-OM12 units** on the new build, or are different revisions required?
@@ -254,7 +255,7 @@ Print this. Fill in the blanks live.
 |---|---|---|
 | 1 | ⭐ **A written package quotation**, volume discounted, delivered to KAIST, with lead time | The entire XDAQ price is currently an estimate. This is the top blocker |
 | 2 | **The exact EXP-port → Intan RHD2216 chain**, part by part | Cannot order or wire without it |
-| 3 | **Where the isolation barrier sits** (SYS GND is documented as bonded back to the XDAQ, so isolation must be downstream, per EXP port), and its capacitance if published | This is the thing we are buying. If the barrier is not where we think, the value proposition changes |
+| 3 | **What the ground isolation is worth in µV on a bipolar rig** (we already have per-animal referencing), plus **where the barrier sits** — SYS GND is documented as bonded back to the XDAQ, so isolation must be downstream per EXP port | Reframes the whole purchase. If isolation is unquantified, the Port Expander is justified as a **port multiplier** (mandatory for 16/box), not as the 60 Hz fix |
 | 4 | **Is SyncLink needed at all**, and if bought, exactly how it behaves under the Open Ephys GUI and what appears in the data | We must not buy hardware whose output the software cannot see |
 | 5 | **Why two PCs**, whether it is avoidable, and the specification of each | Thunderbolt ports cannot be retrofitted, so this decides the PC purchase |
 | 6 | ⭐ **Commutator pricing with the 32-unit volume discount**, STD vs PRO | Only relevant if the discount is compelling; we are otherwise keeping our slip rings |

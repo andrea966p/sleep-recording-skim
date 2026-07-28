@@ -107,7 +107,7 @@ Reply from **Margarida (Open Ephys Support)**. Full log + verbatim quotes: [[ope
 | Item | Answer |
 |---|---|
 | Base board | 4 ports × 2 RHD chips, 512ch, 30 kSps |
-| Animals per board | **OE says "max 4 animals"** (dual adapter = 2 headstages in the SAME animal). ⚠️ Conflicts with our MISO physics (8 chips = 8 MISO = 8 single-headstage mice). **Unresolved — must clarify.** |
+| Animals per board | ✅ **RESOLVED 2026-07-28 = 8 separate animals.** The earlier "max 4 animals" framing is RETIRED. Vendor verbatim: *"if your current setup is working reliably... I don't see a reason why you should not continue using it."* Board is rated "up to 8 RHD headstages on 4 tethers". → 16 mice needs **2 boards, not 4**. See [[openephys-inquiry-email]] §REPLY 2. |
 | Extension board (16 on one board) | **DEAD** — not developed, vendor disowns it |
 | Real path to 16 | **(a)** 4 acq boards synced via **I/O boards** (their SyncLink equiv), all on one PC/one GUI; **(b)** **custom 16-headstage board** built by OE **Atlanta team** (paid) |
 | RHD2216 support | ✅ **Fully supported** — bipolar in+/in−, "optimal for paired differential EEG/EMG" |
