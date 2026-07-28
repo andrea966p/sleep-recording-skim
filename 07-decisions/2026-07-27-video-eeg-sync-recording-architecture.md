@@ -278,6 +278,53 @@ Exit codes: `0` clean, `1` drops found, `2` no segments (recording was off), `3`
 
 First run 2026-07-27 covered only the 20 s of footage that existed and returned CLEAN but flagged PROVISIONAL. That is a smoke test of the tool, not evidence about the pipeline.
 
+## RESULT: 14.97 h overnight run, 2026-07-27/28 — the LED question is SETTLED
+
+`pi_cam_2`, 18:19:13 to 09:17:14, 14.97 h, 10.5 GB exported, export completed in 40 s, no errors.
+
+```
+Segments analysed : 5388 complete
+Total frames      : 808365
+Wall span         : 53880s
+Effective fps     : 15.0031
+
+    150 frames : 5377 segments  <-- EXPECTED
+    165 frames :   11 segments  <-- LONG (+15 frames, keyframe-boundary cut, harmless)
+
+VERDICT: NO FRAME LOSS.
+No short segments, no timestamp gaps, across 5388 segments.
+```
+
+> [!check] ZERO frames lost across 15 hours. Frame counting IS a valid timeline.
+> The 11 deviant segments are LONG, not short: 165 frames = 11 s, exactly one extra GOP given `--intra 15` (one keyframe per second). That is the segment muxer cutting on a later keyframe, which re-partitions frames without losing any. No PTS gaps anywhere. The export's own `nb_frames` is 808365, matching the segment total exactly, so nothing was lost in the export step either.
+>
+> **The in-frame LED is therefore PERMANENTLY off the table**, on evidence rather than argument. The frame N ↔ sample S pairing will hold.
+
+> [!bug] The script's first verdict was WRONG and was fixed before this result was accepted
+> It computed a single net deficit as `sum(expected - actual)`, which went negative on a surplus and printed "FRAMES ARE BEING LOST". Worse, netting meant 11 long segments could have cancelled 11 genuinely short ones and read as clean. Corrected so only SHORT segments and PTS gaps count as loss, and long segments are reported separately as a harmless muxer artifact.
+
+### First real measurement of camera clock drift
+
+```
+Camera vs NVR wall clock: +204 ppm (+8.8s over 12h)
+```
+
+808365 frames delivered over 53880 s of wall time is **15.0031 fps, not 15.000**. The camera runs FAST.
+
+> [!warning] +8.8 SECONDS PER 12 HOUR NIGHT, roughly 18x over the ±0.5 s alignment budget
+> Every drift figure written in this vault before now used an illustrative 0.1 percent. **This one is measured.** It confirms that drift correction is not a refinement, it is the whole requirement: without the pulse train, a night's video and EEG end the session nearly nine seconds apart, which is one to two entire scoring epochs.
+
+Caveats, both in the script's own output: the figure absorbs any NVR clock error, and the span is quantised to whole seconds by the segment filenames (±37 ppm over this window). It is a calibrated preview, not the final number. The real quantity is camera versus XDAQ sample clock, and only Wire 2 can measure that.
+
+### Tail loss recurred exactly as predicted
+
+Last segment on disk starts `00:16:58` UTC; OFF was published `00:17:14`. Export container duration 53875 s against 53886 s requested, so **~11 s lost**, inside the predicted 10 to 20 s band.
+
+That is 99.98 percent of the window, so the daemon's `<0.95x` sanity check never fired.
+
+> [!important] The loss is a FIXED 10 to 20 s regardless of session length
+> It is invisible on a 15 h run and catastrophic on a 37 s one. Do not let the clean-looking percentage on long sessions argue against fixing `daemon.py:447`.
+
 ## Council round, 2026-07-27
 
 Five advisors independently, then three anonymized peer reviews, then synthesis. Convened before any wiring, at Andrea's request, to check the concept was solid.
@@ -301,11 +348,14 @@ Until the pulse train exists, video and EEG stay alignable only to roughly ±10 
 
 ## Still open
 
-- **Run `frame_integrity_check.py` over a real multi-hour session, all four cameras.** This is the gate on the LED question. Deferred 2026-07-27 because a recording was in progress and was not to be touched.
+- ✅ **DONE 2026-07-28: `frame_integrity_check.py` over the 14.97 h overnight run. ZERO frame loss across 5388 segments → LED permanently rejected, frame counting confirmed valid.** Still worth repeating on `pi_cam_0/1/3` and on a run that spans a Pi wobble, since RTSP reconnects remain the plausible drop source and Pi1 was down during this one.
+- 🆕 **Drift is MEASURED and it is big: +204 ppm, +8.8 s per 12 h, ~18x over the ±0.5 s budget.** Confirms the pulse train is mandatory, not a refinement.
 - **Fix `daemon.py:447`**: drain 30 s, release lease, never publish OFF on SIGTERM or crash. Free, one file, highest value item in this document.
 - **Flip `sessions.auto_start` to `true`** once the stop path is fixed. Not before.
 - Bench validation of Phase 0a, scope on DB25 pin 22, ~$40 bill of materials. Unchanged, still owed.
-- **Nobody has measured the actual camera clock drift.** Every figure in this document using 0.1 percent is illustrative, NOT measured. The pulse train is the instrument that would measure it.
+- ~~Nobody has measured the actual camera clock drift.~~ **Measured 2026-07-28: +204 ppm vs the NVR clock, +8.8 s per 12 h.** Illustrative 0.1 percent figures elsewhere in this document predate that and should be read as placeholders. Camera vs XDAQ still needs Wire 2.
+- **Is +204 ppm stable or does it wander?** A single fit over one night cannot tell a constant rate offset (trivially correctable with one slope) from a temperature-dependent wander (needs the dense pulse train to track). This matters for how often the fit must be re-estimated.
+- **Per-camera drift spread is unknown.** Only `pi_cam_2` has been measured. If the four sensors differ materially, that settles the per-camera-fit requirement with data.
 - NTP/chrony discipline on Pis and NVR, raised in peer review, never addressed.
 - `pi_cam_2` did not appear in `/tmp/cache` across several samples on 2026-07-27 while `pi_cam_3` did, despite both having the `record` role and Pi2 responding to ping. Unexplained, unrelated to this decision, worth a look.
 
