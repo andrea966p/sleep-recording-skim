@@ -68,7 +68,7 @@ Production IPs, usernames, paths, and settings.
 - [[01-infrastructure/hardware-sync/literature-review|Literature Review]]
 
 **Vendor Correspondence:**
-- [[01-infrastructure/vendor-correspondence/kontex-call-confirmation-email-2026-07-29|⭐ Kontex — 2026-07-29 call confirmation + advance questions (DRAFT, ready to send)]]
+- [[01-infrastructure/vendor-correspondence/kontex-call-confirmation-email-2026-07-29|Kontex — 2026-07-29 call confirmation + advance questions (SENT 2026-07-28)]]
 - [[01-infrastructure/vendor-correspondence/neuronexus-inquiry-email|NeuroNexus / Kontex Inquiry & Replies]]
 - [[01-infrastructure/vendor-correspondence/openephys-inquiry-email|Open Ephys Inquiry & Reply (Margarida)]]
 
@@ -106,8 +106,8 @@ Production IPs, usernames, paths, and settings.
 - [[03-troubleshooting/incidents/|Incidents]]
 - [[03-troubleshooting/incidents/2026-02-23-session-daemon-radiens-auth-cors|2026-02-23 Session Daemon Auth + CORS]]
 
-### Journal
-- [[04-journal/|Daily Notes]]
+### 📓 Daily Journal
+- ⭐ [[04-journal/_JOURNAL-INDEX|Journal Index — chronological master navigator]] — **every day in date order.** The journal records what happened and links down into the detail notes. Start here to navigate by time rather than by topic.
 
 ### Experiments
 - [[05-experiments/completed/h265-encoding-failure|H.265 Failure (DO NOT USE)]]
