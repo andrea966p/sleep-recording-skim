@@ -30,10 +30,10 @@ note_type: map-of-content
 |---|---|
 | **Goal** | 32 mice recorded simultaneously, chronic sleep EEG/EMG, 72 h continuous runs |
 | **Current rig** | **8 mice**, XDAQ Core Gen-1, fully maxed (8 × 64 = 512 ch) |
-| **Leading choice** | **XDAQ: 2× ONE+ (R1024 tier) + 8× Port Expander + our Intan RHD2216 headstages** |
+| **Leading choice** | **XDAQ: 2× ONE+ (R1024 tier) + 8× Port Expander + our Intan RHD2216 headstages.** Known cost so far **$21,000** (8× PortExp @ $1,525 + 32× OM12 @ $275); **ONE+ unit price is the big unknown** |
 | **Software decision** | ✅ **No Allego licence.** Open Ephys GUI on whatever we buy |
 | **Decision state** | 🟡 **Not committed.** Gated on a Kontex quote and the 2026-07-29 call |
-| **Next action** | 📞 **Call with KC Kong, 2026-07-29, 11:30 Taipei / 12:30 Korea.** Email sent 2026-07-28 |
+| **Next action** | 📞 **CALL TODAY, 2026-07-29, 11:30 Taipei / 12:30 Korea** → [[2026-07-29-kontex-kc-call-prep-rig-finalization]] |
 | **⚠️ Overriding caveat** | **Surgical yield is still the real bottleneck.** Frontal electrodes open on every mouse, zero scoreable data to date ([[eeg-60hz-saga]]). No acquisition box fixes an open electrode. Buy deliberately, in parallel with fixing the surgery, not instead of it |
 
 ---
@@ -73,7 +73,7 @@ Everything below assumes the Open Ephys GUI on all three, so software cost is $0
 |---|---|---|
 | ⭐⭐ [[2026-07-28-daq-research-findings-primary-sources]] | **NEWEST. Primary-source research + 8 CORRECTIONS** to claims below. Read before relying on the older docs | live |
 | ⭐ [[2026-07-24-daq-32-mouse-final-comparison]] | 3-way comparison, priced BOMs, professor summary (§6). ⚠️ **partly superseded** by the 2026-07-28 findings | live |
-| ⭐ [[2026-07-29-kontex-kc-call-prep-rig-finalization]] | **Tomorrow's call.** 45 questions, live build checklist (§9) | live |
+| ⭐⭐ [[2026-07-29-kontex-kc-call-prep-rig-finalization]] | **THE CALL SHEET — 2026-07-29. Self-contained: professor brief, what's settled, 11 questions, build/money table, knowledge timeline.** Open only this during the call | live |
 | [[2026-07-21-acquisition-device-16-32-mice-and-kontex-thread]] | Where the 16→32 question started + the full Kontex email thread | open |
 | [[2026-07-21-openephys-acquisition-board-scale-up-option]] | The Open Ephys option, standalone | open |
 | [[2026-07-21-kontex-kc-call-prep]] | Prep for the **first** KC call (2026-07-21) | historical |

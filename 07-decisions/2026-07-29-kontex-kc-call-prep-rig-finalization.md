@@ -8,265 +8,177 @@ tags:
   - 32-mice
   - rig-finalization
 created: 2026-07-28
-status: open
+updated: 2026-07-29
+status: live
 call_date: 2026-07-29
 counterpart: KC Kong (KonteX Neuroscience)
+attendees: Andrea, Prof. Kim Staci Jakyong, KC Kong
 ---
-# Kontex Call Prep — KC Kong, 2026-07-29 — FINALIZING the 32-Mouse Rig
+# 📞 KONTEX CALL — 2026-07-29, 11:30 Taipei / 12:30 Korea
 
-> [!tip] Part of the rig expansion program
-> Front door for all of this: **[[RIG-EXPANSION-HUB]]** (decision, vendor correspondence, wiring, open items).
-
-> [!abstract] TL;DR — what this call is for
-> This is the **finalization call**. The last blocking unknown (can the Port Expander drive our Intan headstages) was answered YES by KC on 2026-07-28, so the XDAQ path is un-blocked. The goal tomorrow is to walk out with **every part number, quantity and cable length pinned down**, plus the answers to a handful of questions that change the build rather than just the price.
->
-> **Target build: 32 mice = 2× XDAQ ONE+ (R1024 tier) + 8× Port Expander + our existing Intan RHD2216 headstages.**
->
-> Priorities, in order: **(A) the exact EXP-port-to-mouse chain** and whether isolation survives it · **(D+E) the two-PC and SyncLink tangle**, now the main unresolved topic · **(F) commutator pricing with a volume discount**, the biggest money question on the call · **(C) Linux driver**, a hard requirement we run on today · **(B) cable lengths**, now mostly solved · **(G) the package quote**.
->
-> **Two things changed on 2026-07-28:** the tether was shortened to **22.5 cm including the slip ring** (note: the **analog run is still ~36 cm** and remains over spec, see §3). And **KC confirmed two PCs are needed** — but not why, whether it is truly unavoidable, or how SyncLink is supposed to work once everything runs under the Open Ephys GUI. §5 attacks that.
->
-> Print §8 and use it as the live checklist during the call.
-
-Background docs: ⭐ [[xdaq-32-mouse-wiring-and-channel-law]] (the deep wiring + channel law), [[2026-07-24-daq-32-mouse-final-comparison]] (the 3-way decision), [[intan-rhd-spi-wiring-and-headstage-limits]] (MISO physics), [[kontex-xdaq-hardware-reference]], [[eeg-60hz-saga]] (why isolation matters), [[2026-07-21-kontex-kc-call-prep]] (the previous call).
+> [!important] THIS IS THE ONLY DOCUMENT YOU NEED IN THE CALL.
+> Self-contained on purpose. Nothing here requires opening another note.
+> **§A** brief the professor · **§B** what is already settled, do not spend call time on it · **§C** the 11 questions that matter · **§D** the build and the money · **§E** what we must leave with · **§F** notes.
+> Everything we know and how we learned it is in the appendix (§G), not in the call flow.
 
 ---
 
-## 0. ⭐ BRIEFING — read this first, and share it with the professor before the call
+## §A. BRIEF THE PROFESSOR (send before the call)
 
-> [!important] The professor is joining this call. This section exists so nobody arrives cold.
-> Everything below is settled and does not need discussing on the call. The call is for the **open** items in §10.
+**What we are buying.** An acquisition system to record **32 mice simultaneously** for chronic sleep EEG/EMG in continuous 72-hour runs. We record 8 today and that rig is completely full.
 
-**What we are buying.** An acquisition system to record **32 mice at once** for chronic sleep EEG/EMG, in continuous 72-hour runs. We record 8 today and that rig is full.
+**Proposed build.** 2 × XDAQ ONE+ at the 1024-channel tier + 8 × Port Expander, reusing the Intan RHD2216 headstages we already own.
 
-**Proposed build.** 2 × XDAQ ONE+ at the 1024-channel tier, 8 × Port Expander, using the Intan RHD2216 headstages we already own. Roughly **\$57,000–71,000** for the acquisition hardware, but **the quotation is exactly what we are asking for on this call**, so treat that figure as an estimate.
+**Three facts that frame everything:**
 
-**Three facts that frame the whole decision:**
+1. **A "channel" is really a mouse slot.** Every system reserves 64 channels per animal no matter how few we use. **Mice = channels ÷ 64.** A 1024-channel box records **16 mice, not 64**. Our 8-mouse ceiling is 512 ÷ 64 = 8. It was arithmetic all along.
+2. **32 mice always means two boxes.** No splitter, adapter or configuration changes this, in any ecosystem, at any price.
+3. **The Port Expander is mandatory to reach 16 mice per box** — it is not an optional extra we can drop to save money.
 
-1. **A "channel" is really a mouse slot.** Every system reserves 64 channels per animal regardless of how few we use. So **mice = channels ÷ 64**. A 1024-channel box records **16 mice, not 64**. Our current 8-mouse ceiling is 512 ÷ 64 = 8, which was arithmetic all along.
-2. **32 mice always means two boxes**, in every ecosystem, at any price. No splitter or adapter changes this.
-3. **The Port Expander is mandatory to reach 16 mice per box** (vendor's own model table: the 16-animal figure is footnoted "Requires Port Expander"). It also adds per-animal ground isolation, which our current Core lacks entirely ("Signal Isolation: No", one power circuit for all 8 mice) — but that benefit is **unquantified**, and it is not the fix for our 60 Hz problem. See the caveat below.
+**Decisions already taken:**
+- **No Allego software licence** ($2,500–5,000/seat). It does not deliver the per-animal scheduling that justified it. The free Open Ephys GUI replaces it.
+- **No commutators in this purchase.** We keep our slip rings. At 32 units they would have been the single largest line in the budget.
+- **Recording start/stop will be global**, not per-mouse. No system offers per-animal scheduling at 16 animals. We record continuously and separate each user's data afterwards.
 
-**The two alternatives, briefly.** Intan direct is comparable on price with a simpler signal chain, but its distributor is new, currently closed, has no Korean presence, and would need KAIST vendor registration. Open Ephys is far cheaper but **cannot provide per-animal isolation at any price**, so it is out on hardware, though its free software is what we will run either way.
+**The caveat, stated honestly.** This purchase is **not** our current bottleneck. Frontal electrodes are open on every mouse implanted so far and we have no scoreable data yet. No acquisition box fixes an open electrode. Decide carefully, **in parallel with** fixing surgical yield.
 
-**Decisions already taken, for the professor's awareness:**
-- **We are not buying the Allego software licence** (\$2,500–5,000/seat). Re-checking the documentation showed it does not deliver the per-animal scheduling that justified it. The free Open Ephys GUI replaces it.
-- **Commutators are not in this purchase.** We are keeping our existing slip rings. At 32 units they would have been the largest line in the whole budget, so this matters.
-- **Recording start/stop will be global, not per-mouse.** No system offers per-animal scheduling at 16 animals. We will record continuously and separate each user's data afterwards.
-
-**The honest caveat.** This purchase is **not** our current bottleneck. Frontal electrodes are open on every mouse implanted so far and we have no scoreable data yet. No acquisition box fixes an open electrode. This decision should be made carefully **in parallel with** fixing surgical yield, not instead of it.
-
-**Full written comparison for the professor:** `~/Downloads/DAQ-comparison-32-mice.docx`.
+**Full written comparison:** `~/Downloads/DAQ-comparison-32-mice.docx`
 
 ---
 
-## 1. Where we stand going in
+## §B. SETTLED — DO NOT SPEND CALL TIME ON THESE
 
-**Settled, do not re-litigate:**
-
-| Fact | Status |
+| Fact | How we know |
 |---|---|
-| **Animals = XR recording channels ÷ 64** (64 ch reserved per headstage slot) | ✅ vendor docs, two independent figures |
-| CORE2 = 8 mice, ONE+ **R512 = 8**, ONE+ **R1024 = 16**, AIO = 16 | ✅ vendor docs |
-| **32 mice = 2 boxes.** No single-box option in any model | ✅ derived + vendor docs |
-| **SPI splitter (C3442) cannot exceed a box's ceiling** | ✅ on the **slot-ceiling** argument (1024 ÷ 64 = 16), which is doc-sourced and binds on its own · ⚠️ the **"EXP port carries 1 MISO"** argument is **our inference, not a vendor statement** (see note below) |
-| **Intan RHD2216 headstages ARE usable with the Port Expander** | ✅ **KC confirmed 2026-07-28** |
-| We are dropping Allego and running the **Open Ephys GUI** (free, Kontex-supported for XR mode) | ✅ our decision |
-| ONE+ has **Sys GND + Chassis GND** terminals; Kontex documents bonding them to ground a Faraday cage | ✅ vendor docs |
-
-> [!warning] Provenance check on "one EXP port = one MISO line" — this is INFERRED, not quoted
-> **Kontex does not publish an EXP-port pin map.** The claim is our reasoning from three sourced facts:
-> 1. MISO pairs per XDAQ headstage port: Core = 2, ONE/ONE+ = 4 (**vendor, but via Jeff/KC emails, not published docs** — see [[intan-rhd-spi-wiring-and-headstage-limits]]).
-> 2. Animals per XDAQ port: Core → EXP A+B only = 2, ONE+ R1024 → EXP A-D = 4 (**Kontex Port Expander figure**, plus *"Depending on the XDAQ models, port EXP C and EXP D might not be available"*).
-> 3. One RHD chip = one MISO line (**Intan SPI cable datasheet, verbatim**).
->
-> Since the active-EXP-port count matches the MISO-pair count exactly on both models, we infer EXP port ↔ MISO line, 1:1. The channel law corroborates it independently: 256 ch/port ÷ 64 = 4 slots on ONE+, 128 ÷ 64 = 2 on Core.
->
-> **What we cannot rule out from documents:** that an EXP port physically presents both MISO lines and Kontex simply uses one. If so, a splitter might physically mate. **This is precisely why the question is being asked rather than assumed.**
->
-> **Important: the conclusion does not depend on this inference.** The **slot ceiling** (1024 ÷ 64 = 16 animals per box) is doc-sourced and binds on its own, so the splitter cannot exceed 16 per box regardless. Ask KC to confirm both legs separately.
-
-**Our situation, for context when KC asks:**
-- Chronic mouse **sleep** EEG/EMG. Bipolar montage, RHD2216, ~4 channels used per mouse. Record-only (XR), never stimulation.
-- Runs are **72 hours continuous**, live animals. Reliability outranks features.
-- Currently 8 mice on a Gen-1 XDAQ Core, fully maxed (8 × 64 = 512 ch).
-- Tether shortened to **22.5 cm including the slip ring** (2026-07-28), BUT the **analog electrode-to-headstage run is still ~36 cm**, against Intan's "ideally under 10 cm". Our slip ring sits on the **analog** side, before the headstage.
-- Long-running **60 Hz** problem. ⚠️ **Note the reframing (2026-07-28):** bipolar already gives per-animal *referencing*, our bench cleared the shared port ground, and our dominant term is a 53× electrode impedance imbalance. So the Port Expander is best justified as **mandatory port capacity for 16/box**, with ground isolation as an unquantified bonus.
-- Host PC runs **Ubuntu Linux**.
+| Mice = XR channels ÷ 64. Core 512→8, ONE+ R1024→**16**, AIO→16 | Two independent Kontex figures |
+| 32 mice = 2 boxes. Splitter fills a box, never exceeds it | Kontex + Intan datasheets |
+| **Intan RHD2216 headstages work with the Port Expander** | **KC confirmed 28 Jul** |
+| Port Expander = **$1,525/unit** | Kontex quote 262024 |
+| SAdpt-XDAQ-OM12 = **$275/unit** | Kontex quote 262024 |
+| Port Expander is **mandatory** for 16/box | NNX manual: "16 X3R32*", footnote "* Requires Port Expander" |
+| Kontex officially supports the **Open Ephys GUI** for XR mode | kontex.io/software |
+| **Open Ephys GUI already runs on our XDAQ Core** (1 headstage, 32 ch, 23 Jul) | Our own bench |
+| A **Linux driver path exists** — Thunderbolt + stock `boltd`, libxdaq tested on Ubuntu 24.04 | Kontex developer portal |
+| ONE+ has **Sys GND + Chassis GND** with per-node ESD DIP earth-coupling switches | NNX manual p.22 |
+| Tether at 22.5 cm is fine on the digital side | KC's own 40 cm guidance |
+| Global recording start/stop | Confirmed by **both** Kontex and Open Ephys |
 
 ---
 
-## 2. 🅐 The EXP-port-to-mouse chain (highest priority)
+## §C. THE 11 QUESTIONS THAT MATTER
 
-KC has confirmed Intan headstages work. What we need now is the chain, part by part, so it can go on a quote and be wired without guesswork.
+### 🔴 Money — ask first, everything else is secondary
 
-1. **What is the exact chain from a Port Expander EXP port to an Intan RHD2216?** Part numbers in order. Is it `EXP port (HDMI) → SAdpt-XDAQ-OM12 → Intan SPI cable → RHD2216`, or a different adapter?
-2. **Is the per-animal ground isolation preserved all the way to the Intan headstage?** If isolation stops at the adapter, we need to know.
-2b. ⭐⭐ **THE SHARPEST QUESTION ON THIS CALL: what does the Port Expander's ground isolation buy us, in microvolts?** Open Ephys confirmed in writing on 2026-07-28 that with a **bipolar** montage *"this would already be independent referencing per animal, because each electrode is referenced to a local electrode on the same animal."* Our RHD2216 has no reference pin, so **we already have per-animal referencing for free**. That leaves the Port Expander adding **ground** isolation only. Meanwhile our own bench **ruled out the splitter and its shared port ground** as a 60 Hz source, and a published 4-mouse shared-ground study measured inter-animal contamination at chance level. **So: is there a measured figure for what the ground isolation delivers on a bipolar rig, or is the honest answer that we should buy the Port Expander as a port multiplier and treat isolation as a bonus?**
-3. The SAdpt-XDAQ-OM12 has **two Omnetics sockets, P1 and P2**. An EXP port should carry only **one MISO line**. **When the adapter hangs off an EXP port, is only P1 live?** Confirm one mouse per EXP port.
-4. **Is one mouse per EXP port correct**, giving 4 per Port Expander and 16 per ONE+ R1024? (Sanity-check against the channel law: 1024 ÷ 64 = 16.)
-5. **Can we reuse our existing 8 RHD2216 headstages and existing SAdpt-XDAQ-OM12 units** on the new build, or are different revisions required?
-6. Does anything change electrically when **all 4 EXP ports are populated**, versus one? Any per-port power budget to respect?
-6b. ⭐ **Where exactly does the isolation barrier sit?** Your figure says SYS GND *"should be connected to the GND pin of the XDAQ's HDMI port"*, so the Port Expander's internal common is bonded back to the XDAQ. Per-animal isolation must therefore be downstream, per EXP port. Confirm, and give the **barrier capacitance** if published, since that sets the residual common-mode floor.
-6c. **Does the Port Expander have an internal battery?** The March 2024 NeuroNexus manual says it is battery powered; the current Kontex page and front-panel figure say a 5 V 1 A USB-C mains adapter is required. **Which is correct for the current revision?** If there is no battery, the mains path remains, which matters for our 60 Hz work.
+**Q1. ⭐ The package quote.** Itemised, volume-discounted, delivered to KAIST Daejeon:
+`2 × ONE-R1024-SR64` · `8 × SAdpt-Port-EXP` · `32 × SAdpt-XDAQ-OM12` · `8 × KonteX HDMI cable` · optional `2 × SyncLink` · `DB25 breakout`.
+**We have Port Expander ($1,525) and OM12 ($275). What we do not have is the ONE+ unit price — that is the single biggest unknown in the whole decision.** Lead time, shipping, import duty and VAT handling.
 
----
+**Q2. Can the purchase be phased?** One ONE+ and 4 Port Expanders now for 16 mice, the second set later. Does phasing forfeit the volume discount?
 
-## 3. 🅑 Cable lengths and physical layout — ⚠️ ANALOG RUN STILL OVER SPEC
+**Q3. Commutators — price and discount only.** We are keeping our slip rings, so this is opportunistic: what would Standard and PRO cost at 32 units with a discount? Do they work with an Intan RHD2216 headstage?
 
-> [!warning] CORRECTED 2026-07-28 — the tether was shortened, the ANALOG RUN WAS NOT
-> The 22.5 cm figure is the **tether**. Andrea confirmed the **analog electrode-to-headstage run is still ~36 cm** (~30 cm brain to slip ring, plus ~6 cm slip ring to headstage). Intan's spec is *"ideally less than 10 cm"*, and KC previously called ~40 cm too long. **So we are still ~3.6× over spec on the segment that actually matters**, and this is NOT solved.
->
-> Context before raising it: [[headstage-shielding-faraday-foil]] establishes that lid-mounted headstages are a **legitimate published arrangement** (one published rig runs ~64 cm; IIIS Tsukuba uses headmount → cable → slip ring with no head preamp). It is the noisier of two valid designs, compensated by foil, grounding and matched contacts. The real fix is **head-mounted amplification** (Pinnacle uses a 100× preamp before the commutator), which is a rig redesign.
->
-> Worth asking KC directly: **given a 36 cm analog run, what does he recommend?** Does Kontex offer a head-mountable preamp or a shorter-run topology?
+### 🟠 What changes the build
 
-7. **The digital SPI side is fine at 22.5 cm.** The open question is the **36 cm analog run**: what does Kontex recommend for a lid-mounted headstage topology, and is there a head-mountable preamp option?
-8. The remaining long run is **rack to chamber**. Which link should carry it, and what length is supported? Two candidate layouts:
-   - **(a) Port Expanders at the rack, next to the XDAQ:** short KonteX HDMI cables from box to Port Expander, and a **long run from EXP port to the commutator**.
-   - **(b) Port Expanders up at the chamber tops:** a **long KonteX HDMI cable from XDAQ to Port Expander**, short runs below.
-   Layout (a) keeps 8 mains-powered Port Expanders together and tidy, so it is our default. **Which does Kontex recommend, and what is the maximum supported length on the link that has to be long?**
-9. **What KonteX HDMI cable lengths are available**, and what is the longest still specified for reliable operation?
-10. Any guidance on **Intan SPI cable length and gauge** on the Port Expander path?
-11. With **32 animals**, we have 2 boxes + 8 Port Expanders + 32 commutators. **Any recommended rack layout?** Specifically, keeping 8 separately-powered Port Expanders tidy and their grounds clean.
+**Q4. ⭐⭐ What does the Port Expander's ground isolation buy us, in microvolts?**
+Open Ephys confirmed in writing (28 Jul) that with a **bipolar** montage *"this would already be independent referencing per animal, because each electrode is referenced to a local electrode on the same animal."* Our RHD2216 has no reference pin, so **we already have per-animal referencing for free**. That leaves the Port Expander adding **ground** isolation only. Our own bench cleared the shared port ground as a 60 Hz source, and a published 4-mouse shared-ground study measured inter-animal contamination at chance level.
+**Is there a measured figure? Or is the honest answer that we buy it as a port multiplier and treat isolation as a bonus?**
+Related: your figure says **SYS GND should be bonded to the XDAQ HDMI ground**, so isolation must sit downstream, per EXP port. Where exactly is the barrier, and what is its capacitance?
 
----
+**Q5. ⭐ Why two PCs, and is SyncLink actually needed?**
+Three parts, and the first may dissolve the other two:
+- **(a)** Mice 1-16 on box A and 17-32 on box B are **different animals in different chambers**. Nothing in sleep scoring compares them sample-by-sample. What we need is each mouse aligned to its own video, which we already do with a TTL pulse train. **Do the two boxes need to be sample-locked at all?** If not, SyncLink comes out of the build.
+- **(b)** If two PCs are genuinely required, **why**? Is it the Open Ephys plugin enumerating one device per instance, or the driver, or Thunderbolt? Data rate is not the reason (31 MB/s at 30 kHz for all 32 mice).
+- **(c)** If SyncLink is bought, **how does it behave under the Open Ephys GUI, and what appears in the recorded data?** Do the two boxes share a sample clock so that sample N on box A equals sample N on box B? Open Ephys synchronises within a single GUI instance, so with two PCs the GUI cannot sync across them.
 
-## 4. 🅒 Linux, software, and record control
+**Q6. Ordering tier.** Confirm **ONE-R1024**, since R512 gives only 8 mice. Is **SR64 vs SR128** irrelevant to us (we never stimulate)? Is **R512 → R1024 a field firmware upgrade** or must it be specified at purchase?
 
-> [!success] NARROWED 2026-07-28 — our own vault already answers half of this, do not waste call time on it
-> [[kontex-developer-portal-notes]] establishes that **ONE+ / Core2 / AIO are Thunderbolt**, and the driver is the **standard Linux `thunderbolt` kernel module plus the `boltd` authorisation daemon**, not a proprietary blob. libxdaq's tested toolchain is **Ubuntu 24.04 + GCC 14.2.0**, which our host matches. So a Linux path exists.
->
-> Separately, [[openephys-gui-setup-xdaq-sleep-eeg]] records that on **2026-07-23 we already ran the Open Ephys GUI on our XDAQ Core under Ubuntu**, one headstage detected, 32 channels. So "does OE work on Linux" is answered too.
->
-> **Ask only the genuinely open questions below.** Question 12 was routed to KC back in May and never fully closed.
+**Q7. Exact part chain and quantities**, EXP port → Intan RHD2216, so we can put it on a purchase order without guessing. Can we reuse our existing 8 headstages and existing SAdpt-XDAQ-OM12 units?
 
-12. **What is the exact Ubuntu 24.04 enrolment procedure for a ONE+?** Group membership, udev rules for the Thunderbolt character devices, and headless `boltd` setup, since these machines run without a desktop session. Which kernel and `boltd` versions does Kontex test against?
-13. ⭐ **A real packaging bug to report:** XDAQ-OE **v0.4.4-API10** is built for a non-versioned `shared/` folder, but Open Ephys GUI **1.1.0** uses `shared-api10/`. The plugin fails to load until two symlinks are created by hand, and the fix must be re-applied after every plugin reinstall. **Is a fixed build coming?** (Details and the workaround: [[openephys-gui-setup-xdaq-sleep-eeg]] §1.)
-14. Our current Gen-1 Core uses Opal Kelly USB with FrontPanel and a `plugdev` udev rule. **Confirm the ONE+ path is entirely different** (Thunderbolt, `boltd`) so we do not carry over stale setup assumptions.
-15. **Does the Open Ephys XDAQ plugin correctly enumerate a Port Expander**, showing the 4 isolated animals on a port as separate, identifiable streams? How are animals labelled so we can map stream → mouse reliably?
-16. **Does the plugin expose the DB25 signals** — `DAQ ON`, `Sample CLK`, DI-03…08, DO-03…08 — for our camera synchronisation?
-17. Open Ephys GUI has a **global** record start/stop. **Does the XDAQ plugin add any per-port or per-animal record control**, or is continuous recording plus offline slicing the only option?
-18. Any known limitations of the Open Ephys plugin **compared with Radiens** that we should know about before committing to it?
+### 🟡 Operational
+
+**Q8. Ubuntu 24.04 headless setup.** A driver path exists; what we need is the **enrolment procedure** — group membership, udev rules for the Thunderbolt character devices, headless `boltd`. Which kernel and `boltd` versions does Kontex test against?
+
+**Q9. Open Ephys plugin specifics.** Does it (a) bind **two XDAQ devices** in one instance, (b) enumerate a **Port Expander** so the 4 animals on a port appear as separately identifiable streams, (c) expose the **DB25 signals** (`DAQ ON`, `Sample CLK`, DI/DO) for our camera sync?
+Also report: **XDAQ-OE v0.4.4-API10 has a packaging bug** — built for `shared/` while GUI 1.1.0 uses `shared-api10/`, so it fails to load until two symlinks are made by hand, and the fix must be re-applied after every reinstall. Is a fixed build coming?
+
+**Q10. Our 36 cm analog run.** The electrode-to-headstage run is still ~36 cm against Intan's "ideally under 10 cm". Headstages sit at the chamber top and our slip ring is on the **analog** side, before the headstage. **What does Kontex recommend for this topology? Is there a head-mountable preamp option?**
+
+**Q11. Physical layout.** With 2 boxes + 8 mains-powered Port Expanders + 32 chambers, the long run is rack-to-chamber. Our default is Port Expanders at the rack (short HDMI to the box, long run to the animal). **Which does Kontex recommend, and what is the maximum supported length on the long link?** What KonteX HDMI cable lengths exist?
+
+### ⚪ Only if time allows
+AIO vs ONE+ — what is the integrated video processor, does it hardware-timestamp frames against the neural clock, and what is the price delta? · Can our Gen-1 Core serve as a third unit (+8 mice), or is there a trade-in? · Any customer running 16+ animals continuously for multiple days? · Warranty and RMA turnaround from Korea.
 
 ---
 
-## 5. 🅓🅔 Two PCs and SyncLink — THE MAIN UNRESOLVED TOPIC
+## §D. THE BUILD AND THE MONEY — fill in live
 
-> [!warning] Status after 2026-07-28: **KC confirmed we need 2 PCs**, but it is not clear *why*, whether it is genuinely unavoidable, or how SyncLink fits once everything runs under the Open Ephys GUI. These three questions are entangled and should be worked as one topic.
+| # | Item | Part | Qty | Unit | Extended | ✓ |
+|---|---|---|---|---|---|---|
+| 1 | XDAQ ONE+, 1024 tier | ONE-R1024-SR64 | **2** | **⏳ THE UNKNOWN** | ⏳ | ☐ |
+| 2 | Port Expander | SAdpt-Port-EXP | **8** | **$1,525** | **$12,200** | ☐ |
+| 3 | Intan interface adapter | SAdpt-XDAQ-OM12(1) | **32** | **$275** | **$8,800** | ☐ |
+| 4 | KonteX HDMI cable, box → Port Expander | ⏳ | **8** | ⏳ | ⏳ | ☐ length? |
+| 5 | SyncLink | SyncLink | **0 or 2** | ⏳ | ⏳ | ☐ needed? |
+| 6 | DB25 breakout board | ⏳ | 1–2 | ⏳ | ⏳ | ☐ |
+| 7 | 200 W PSU + Thunderbolt cable | supplied | — | incl | — | ☐ |
+| 8 | Acquisition PC | — | **1 or 2** | — | — | ☐ spec? |
+| — | **PACKAGE PRICE, discounted** | — | — | — | **⏳ GET IN WRITING** | ☐ |
 
-### 5.1 First, the question that may dissolve the whole problem
+**Known so far: $21,000** (items 2 + 3). Everything else hinges on the ONE+ unit price.
 
-> [!important] Do we actually need the two boxes sample-locked at all?
-> Worth putting to KC directly, because the answer may make SyncLink unnecessary and 2 PCs harmless.
->
-> **Mice 1-16 sit on box A and mice 17-32 on box B. They are different animals in different chambers.** There is no scientific requirement to align mouse 3 to mouse 20 at sub-millisecond precision. Nothing in sleep staging compares two animals sample-by-sample.
->
-> What we genuinely need is:
-> 1. **Each mouse aligned to its own video**, which is a per-chamber TTL problem already solved by our camera pulse train, not a box-to-box problem.
-> 2. **A common wall-clock notion of "which mouse was recorded when"** for the session journal, which is a seconds-level requirement satisfied by NTP.
->
-> If that reading is right, **SyncLink is optional for us**, the two boxes may free-run, and the 2-PC requirement stops mattering. **Ask KC to sanity-check this reasoning** — if he agrees, it removes 2 units, their cabling and their cost from the build, and closes the topic.
-
-### 5.2 If two PCs really are required
-
-19. **Why exactly?** Is the limit that the **Open Ephys XDAQ plugin enumerates only one XDAQ device per GUI instance**, or is it something in the driver, the Thunderbolt stack, or the firmware? Knowing which tells us whether it might change in a future plugin release.
-20. Data rate is not the reason: 32 mice × 16 ch × 2 bytes is about **1 MB/s at 1 kHz** and **31 MB/s at 30 kHz**. **Confirm bandwidth is not the constraint.**
-21. If two PCs: **what specification does each need?** Is the **Mac Mini M4 Pro** reference configuration adequate for one box and 16 animals? Only one native Thunderbolt 3 port is then needed per machine, which widens our choices considerably.
-22. Is the *"each XDAQ to its own PC"* wording in the SyncLink manual a **SyncLink-specific** requirement, or general to two-box operation?
-23. If we ever did run both on one PC, is there a **stable serial number or persistent device ID** to bind each box to? (Open Ephys warns board ordering can depend on USB descriptors. For a 32-animal chronic study, mice silently swapping identity between sessions would be a serious data-integrity failure.)
-
-### 5.3 SyncLink under the Open Ephys GUI — how would it even work?
-
-This is the part that does not currently make sense to us, and it should be spelled out concretely.
-
-24. **Does the Open Ephys XDAQ plugin support SyncLink at all, or is SyncLink a Radiens-only feature?** If the plugin cannot see it, we would be buying hardware whose output never reaches our data.
-25. **With SyncLink fitted, what actually appears in the recorded data?** Concretely: do the two boxes share a sample clock such that **sample N on box A is simultaneous with sample N on box B**? If so, offline alignment becomes trivial indexing. If not, what does SyncLink give us that a shared TTL does not?
-26. Open Ephys performs its own online sync inside the Record Node using a shared TTL line, but **that only works within a single GUI instance**. With two PCs running two independent instances, **the GUI cannot sync anything across them** and alignment must happen offline. **Does KC agree?** If yes, then under the Open Ephys GUI the practical choice is: SyncLink for hardware-locked clocks, or a shared TTL recorded into both files and aligned offline.
-27. If we go the **shared-TTL** route: which input should carry the pulse train, a **BNC DI** or a **DB25 DI-03…08** line? Confirm the digital input is sampled at the headstage rate and lands in the recorded data on both boxes.
-28. Can **`DAQ ON`** (logic high at recording onset) and **`Sample CLK`** be used to cross-check alignment between the two boxes and our cameras? Is `Sample CLK` free-running or gated to acquisition?
-29. **Without SyncLink, what clock drift should we expect between the two boxes over a 72-hour run?** (For calibration: our cameras drift about **204 ppm**, which is roughly 8.8 s per 12 h, so we know to take drift seriously and measure rather than assume.)
-
-> [!note] One upside of two PCs, worth stating on the call
-> The Open Ephys GUI has a **single global record start/stop**. Two independent PCs therefore restore **independent start/stop for each group of 16 mice**, which a single-PC build would not have. For a multi-user rig that is a feature, not just a cost.
+**Not buying:** commutators (keeping slip rings) · Allego licence · C3442 splitters (cannot exceed the box ceiling and would undo the isolation).
 
 ---
 
-## 6. 🅕 Commutators, grounding, reliability
+## §E. WHAT WE MUST LEAVE WITH
 
-> [!important] ⭐ COMMUTATOR PRICING IS THE BIGGEST MONEY QUESTION ON THIS CALL
-> At **32 units** the commutators are the **largest single line in the entire rig**, plausibly larger than both XDAQ boxes combined. For reference, the Open Ephys torque-free SPI commutator lists at **€2,595 each, which is €83,040 for 32**. The STD-versus-PRO choice and the volume discount together move the budget more than the DAQ decision does.
-
-30. **List price for Commutator STD and Commutator PRO**, each, and lead time.
-31. ⭐ **What volume discount applies at 32 units?** Ask explicitly, and ask for it **as part of the full 32-mouse package** (2 boxes + 8 Port Expanders + 32 adapters + 32 commutators + all cabling) rather than line by line. **A package price for the whole build is what we want on paper.**
-32. Is there a **mixed option** — for example STD on most animals and PRO only where torque proves to be a problem — without losing the volume price?
-33. **Do KonteX commutators work with an Intan RHD2216 headstage?** The commutator pages list only KonteX headstages. If not, what does Kontex recommend for the Intan path?
-34. For **chronic 72-hour mouse sleep recording** with our **22.5 cm tether including slip ring**: is the passive **STD sufficient**, or is the motorised **PRO** genuinely needed? What is the breakaway torque, and what does the animal-side end weigh? (Our tether is short, which should favour the STD.)
-35. We already run slip rings on the current 8-mouse rig. **Is there any reason not to reuse them**, or a concrete reason the KonteX units would be better?
-36. **Grounding:** the ONE+ has Sys GND and Chassis GND terminals and the docs recommend bonding them and grounding the Faraday cage from that node. **With 8 Port Expanders providing per-animal isolation, does that recommendation still hold, or does it change?** We have a long-running 60 Hz problem and our current Gen-1 Core has no chassis terminal at all, which is why we could never properly ground our foil shielding.
-37. **Any customer running 16 or 32 animals continuously for multiple days on ONE+?** We need a reliability reference, ideally someone we can ask.
-38. Our Gen-1 Core has a history of **crashing on sensor/channel reconfiguration**. **Is that resolved on ONE+?**
-39. What is the **warranty and support arrangement in Korea**, and what are typical RMA turnaround times from KAIST?
+1. ⭐ **The ONE+ unit price and a written package quote** to KAIST, with lead time
+2. **Whether SyncLink is needed**, and if so how it behaves under the Open Ephys GUI
+3. **Why two PCs**, and each machine's specification
+4. **The exact part chain** EXP → RHD2216, with quantities
+5. **Confirmation of the R1024 tier** and whether it is field-upgradable
+6. **An answer on what the ground isolation is worth**, even if the answer is "unmeasured"
+7. **Ubuntu headless enrolment procedure**
+8. **A recommendation for the 36 cm analog run**
 
 ---
 
-## 7. 🅖 Commercial and model questions
+## §F. NOTES DURING THE CALL
 
-40. **Confirm the tier: we need ONE-R1024 for 16 animals; R512 gives only 8.** Is **SR64 versus SR128** irrelevant to us given that we never stimulate?
-41. **Is R512 → R1024 a field firmware upgrade**, or must the 1024 tier be specified at purchase? Same question for headstage-port licensing.
-42. **AIO versus ONE+:** both give 16 animals. AIO adds an integrated 4-channel video processor and a 4-channel optogenetics LED driver. **What exactly is the video processor** — what cameras, what format, and does it hardware-timestamp frames against the neural sample clock? We currently solve video sync with our own camera rig and a TTL pulse train, so if AIO does this natively it could be worth the difference. Price delta?
-43. **Can our existing Gen-1 Core be used as a third unit** alongside two ONE+ boxes, adding 8 more animals for 40 total? Or is there a **trade-in or upgrade path**?
-44. **Can the purchase be phased** — one ONE+ plus 4 Port Expanders now for 16 animals, the second set later — with no penalty and no compatibility risk between batches? If phasing costs us the volume discount, say so explicitly.
-45. ⭐ **Formal PACKAGE quote** for the full build (§8 table), delivered to **KAIST, Daejeon, Korea**: **whole-package price with volume discount**, plus unit prices for the record, lead time, shipping, import duty and VAT handling, and whether we buy direct or through a Korean distributor.
+*(blank — fill live)*
 
 ---
 
-## 8. THE BUILD — confirm every line on the call
+## §G. APPENDIX — what we learned, and when
 
-Print this. Fill in the blanks live.
+Kept out of the call flow deliberately. This is the audit trail, not the agenda.
 
-| #   | Item                                                     | Part number         | Qty                  | Unit                  | Confirmed?                           |
-| --- | -------------------------------------------------------- | ------------------- | -------------------- | --------------------- | ------------------------------------ |
-| 1   | XDAQ ONE+, **1024ch tier**                               | ONE-R1024-SR64      | **2**                | ⏳                     | ☐                                    |
-| 2   | 200 W DC power adapter                                   | supplied            | 2                    | incl                  | ☐                                    |
-| 3   | Thunderbolt 3 cable                                      | supplied            | 2                    | incl                  | ☐                                    |
-| 4   | Port Expander                                            | SAdpt-Port-EXP      | **8**                | $1,525 (quote 262024) | ☐                                    |
-| 5   | USB-PD adapter for Port Expander                         | supplied            | 8                    | incl                  | ☐                                    |
-| 6   | KonteX HDMI cable, XDAQ → Port Expander                  | ⏳                   | **8**                | ⏳                     | ☐ length?                            |
-| 7   | EXP → Intan interface adapter                            | SAdpt-XDAQ-OM12(1)? | **32**               | $275                  | ☐ **chain confirmed?**               |
-| 8   | Intan SPI cable, adapter → headstage                     | Intan C3213 / C3206 | 32                   | $415 / $295           | ☐ length?                            |
-| 9   | Commutator                                               | STD or PRO          | **32**               | ⏳                     | ☐ **STD vs PRO?**                    |
-| 10  | Intan RHD2216 headstage                                  | C3313               | **32**               | $820                  | ☐ we own 8, need ~24                 |
-| 11  | SyncLink                                                 | SyncLink            | **0 or 2**           | ⏳                     | ☐ **needed at all? works under OE?** |
-| 12  | DB25 breakout board                                      | ⏳                   | 1-2                  | ⏳                     | ☐                                    |
-| 13  | 4 mm banana ground leads                                 | generic             | ~6                   | —                     | ☐                                    |
-| 14  | Acquisition PC                                           | ⏳                   | **2** (KC confirmed) | ⏳                     | ☐ spec each? truly unavoidable?      |
-| —   | ⭐ **PACKAGE PRICE, all of the above, volume discounted** | —                   | 1                    | ⏳                     | ☐ **get this in writing**            |
-
-**Not on this build:** Intan C3442 splitter (cannot exceed the slot ceiling, and it defeats isolation) · Allego/Radiens licence (we are on the Open Ephys GUI).
-
----
-
-## 9. What we must leave the call with
-
-> [!important] If the call runs short, these EIGHT are the ones that change the build or the price. Everything else can go by email.
-
-| # | Must have | Why it matters |
+| Date | Learned | Source |
 |---|---|---|
-| 1 | ⭐ **A written package quotation**, volume discounted, delivered to KAIST, with lead time | The entire XDAQ price is currently an estimate. This is the top blocker |
-| 2 | **The exact EXP-port → Intan RHD2216 chain**, part by part | Cannot order or wire without it |
-| 3 | **What the ground isolation is worth in µV on a bipolar rig** (we already have per-animal referencing), plus **where the barrier sits** — SYS GND is documented as bonded back to the XDAQ, so isolation must be downstream per EXP port | Reframes the whole purchase. If isolation is unquantified, the Port Expander is justified as a **port multiplier** (mandatory for 16/box), not as the 60 Hz fix |
-| 4 | **Is SyncLink needed at all**, and if bought, exactly how it behaves under the Open Ephys GUI and what appears in the data | We must not buy hardware whose output the software cannot see |
-| 5 | **Why two PCs**, whether it is avoidable, and the specification of each | Thunderbolt ports cannot be retrofitted, so this decides the PC purchase |
-| 6 | ⭐ **Commutator pricing with the 32-unit volume discount**, STD vs PRO | Only relevant if the discount is compelling; we are otherwise keeping our slip rings |
-| 7 | **Ubuntu 24.04 enrolment procedure** for the ONE+ (headless `boltd`, groups, udev) | A driver path exists; the headless procedure is the open part |
-| 8 | **Recommendation for our 36 cm analog run**, and whether Kontex offers a head-mountable preamp | Our measured dominant noise term. Free or cheap if a solution exists |
+| 2026-05-28 | Linux/driver questions routed to KC; ONE+/Core2/AIO are Thunderbolt, driver = stock `thunderbolt` + `boltd` | Kontex developer portal |
+| 2026-07-14 | Dead top SPI socket is **by design** on the Core (MISO3/4 absent). Not a defect, do not RMA | NeuroNexus |
+| 2026-07-18 | The 8-headstage Core ceiling is a hard wire-count limit | Jeff, NeuroNexus |
+| **2026-07-21** | **First KC call.** Custom 4-socket adapter impossible · Port Expander recommended for per-mouse grounding · 2nd XDAQ = 2nd Allego seat · ~40 cm headstage run too long | KC Kong |
+| 2026-07-23 | **Quote 262024, $10,002.89** — Port Expander retrofit for the **current 8-mouse Core only**. Port Expander $1,525, SAdpt-XDAQ-OM12 $275, SAdpt-CORE-OM12 $350. Valid to 2026-08-20, confidential | Kontex |
+| 2026-07-23 | Open Ephys GUI **validated on our own XDAQ Core** (1 headstage, 32 ch). Found XDAQ-OE v0.4.4 packaging bug | Our bench |
+| 2026-07-23 | Open Ephys reply 1: extension board **dead**; framed board as "max 4 animals"; RHD2216 supported; software free; **no isolation product** | Margarida, Open Ephys |
+| **2026-07-28** | **KC confirms Intan headstages work with the Port Expander** → XDAQ un-blocked | KC Kong |
+| 2026-07-28 | **The channel law**: mice = channels ÷ 64. ONE+ sold in R512 (8 mice) and R1024 (16 mice) tiers; ports are licence-gated. **Port Expander mandatory for 16/box** | NNX manual (not on the Kontex website) |
+| 2026-07-28 | **Our Core has NO isolation at all** — "Signal Isolation: No", one power circuit for all 8 mice. Even ONE+ without an expander commons ports 2-4 | NNX manual p.9, p.22 |
+| 2026-07-28 | Vendor **hedges** its own isolation claim: *"In theory... however... it is best for users to experiment with various ground settings"* | NNX manual §4.3 |
+| 2026-07-28 | **Allego cannot schedule 16 animals independently** — per-port only, ports cap at 8, ONE+ has 4. "Split-ports mode" is documented nowhere → **do not buy the licence** | Radiens API docs |
+| 2026-07-28 | Intan **no longer sells directly**; White Mountain Systems is sole distributor, no Korea presence, closed until 2 Aug, 90-day warranty | intantech.com |
+| 2026-07-28 | Intan's isolation claim is **unspecified** — "isolated from the controller and from earth ground" names neither other ports; no barrier capacitance published | Intan user guide |
+| 2026-07-28 | Literature: 4 mice on one **shared-ground** Open Ephys board, 48 h chronic, inter-animal correlation **at chance** | eNeuro 2022 |
+| 2026-07-28 | Intan: analog electrode-to-headstage run **ideally under 10 cm**; headstage GND must **not** connect to the Faraday cage | Intan noise app note |
+| **2026-07-28** | **Open Ephys reply 2: bipolar already gives independent per-animal REFERENCING.** Port Expander therefore adds **ground** isolation only → justify it as a **port multiplier**, not the 60 Hz fix. Also: 8 animals per board confirmed; per-animal ground isolation impossible on their hardware; global start/stop confirmed | Open Ephys support |
+| 2026-07-29 | Port Expander is **mains powered** (5 V 1 A USB-C). The March 2024 manual's "battery powered" line describes an earlier revision | Kontex front-panel figure |
 
-**Secondary, worth asking if time allows:** R512 → R1024 field upgrade · AIO video processor and price delta · reuse of the Gen-1 Core as a third unit · phased purchase without losing the discount · the XDAQ-OE plugin packaging bug · Port Expander battery question (which revision).
-
-## 10. Notes to take during the call
-
-*(leave blank, fill live)*
-
-## Related
-- ⭐ [[xdaq-32-mouse-wiring-and-channel-law]] · [[2026-07-24-daq-32-mouse-final-comparison]] · [[2026-07-21-kontex-kc-call-prep]] · [[2026-07-21-acquisition-device-16-32-mice-and-kontex-thread]] · [[intan-rhd-spi-wiring-and-headstage-limits]] · [[eeg-60hz-saga]]
+### Corrections we made to our own earlier beliefs
+- ~~"Our 8 mice sit in isolated pairs"~~ → they share **one** power circuit across all four ports
+- ~~"The radiens API gives per-animal scheduling"~~ → per **port**, and 16 animals do not map onto 4 ports
+- ~~"Intan ports are confirmed isolated"~~ → implied, never stated port-to-port, no specification
+- ~~"The Port Expander is battery powered"~~ → mains powered on the current revision
+- ~~"Open Ephys board maxes at 4 animals"~~ → 8, vendor-confirmed in writing
+- ~~"Shortening the analog run is free"~~ → lid-mounting is a published design; the real fix is head-mounted amplification, a rig redesign
+- ~~"Proven on our own bench is a differentiator"~~ → dropped; all three products are built for this
