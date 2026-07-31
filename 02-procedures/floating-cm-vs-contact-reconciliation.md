@@ -19,6 +19,16 @@ priority: high
 
 ---
 
+> [!important] UPDATED 2026-07-31 — the equation still holds, but the "variable term" is mostly BINARY, not graded
+> The `common_mode × impedance_imbalance` framing below is still correct physics and I am not retracting it. What changed on 2026-07-31 is what the imbalance term actually IS on this rig.
+>
+> - **The common-mode floor is NOT large any more.** 128 internally tied control pins sat at a median of **7.2 µV** of mains hum, and all 8 animal grounds were good. The amplifier floor here is about 7 µV. There is no large floating common mode left to reject.
+> - **The imbalance term is mostly a BINARY connected-or-not**, not a continuum of contact quality. 22 of 32 legs were statistically indistinguishable from an amplifier input with NO WIRE ATTACHED (5.329 MΩ legs vs 5.233 MΩ no-wire control).
+> - **And it FLIPS ON ITS OWN**, 522× in 0.5 s, 102× in 11 minutes.
+> - A well-made pair still rejects hum beautifully, exactly as this page predicts: C1's bipolar EEG sat at **11.7 µV** of mains with 0.00 % clipping.
+>
+> So "usability was governed by electrode-impedance balance" remains true, but in practice it reads as "usability is governed by whether each leg happens to be CONNECTED at that moment". See [[electrode-connection-state-test]] and [[2026-07-31-contact-intermittency-no-wire-control]].
+
 ## The doubt
 
 The 60 Hz hum on 2026-07-15 was traced to a floating acquisition system plus per-electrode contact problems. But the system was floating (no earth wire on the XDAQ) for ALL of the early work too. So how did we ever conclude anything back then, map channels, decide one mouse per headstage, and get "5 of 8 mice usable" on 2026-07-05, without the earth wire?

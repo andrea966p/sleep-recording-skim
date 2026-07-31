@@ -87,6 +87,7 @@ Production IPs, usernames, paths, and settings.
 - [[03-troubleshooting/emergency-runbook|Emergency Runbook — first 10 min]]
 
 ### Procedures
+- 🔴⭐ [[02-procedures/electrode-connection-state-test|Electrode connection state test — OPEN vs SHORTED vs WORKING]] — **the no-wire control method (2026-07-31).** Read before judging any electrode by impedance again.
 - [[02-procedures/installation/new-pi-setup|New Pi Setup]]
 - [[02-procedures/session-recording-workflow|Session Recording Workflow]]
 - [[02-procedures/hardware-sync-setup|Hardware Sync Setup Procedure]]
@@ -126,6 +127,7 @@ Production IPs, usernames, paths, and settings.
 - [[07-decisions/2026-07-29-kontex-kc-call-prep-rig-finalization|Kontex call prep, 2026-07-29 — rig finalization]] — 45 questions + live build checklist
 
 ### Decisions & Reviews
+- 🔴⭐ [[07-decisions/2026-07-31-contact-intermittency-no-wire-control|2026-07-31 — Legs are OPEN, not high-impedance, and state FLIPS on its own]] — **overturns "make new mice". DO NOT schedule surgeries on the old conclusion.**
 - [[07-decisions/2026-05-01-llm-council-review|2026-05-01 LLM Council Review]] — full advisor responses, peer reviews, chairman synthesis, staged plan
 - [[07-decisions/2026-05-stabilization-sprint-week-1-plan|2026-05 Stabilization Sprint Week 1 — Plan + live status]] — single source of truth for sprint-item status
 

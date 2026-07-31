@@ -117,6 +117,11 @@ Per mouse, before streaming:
 
 **Electrodes tab — each port A, B, C, D:** Headstage = `Passthrough 64`, Probe = `Default 8x8`, Apply. (No "Use local devices" / custom file.)
 
+> [!note] RECONCILED 2026-07-31 — this and [[allego-electrode-setup-sleep64]] give the SAME result
+> [[allego-electrode-setup-sleep64]] tells you to use `usrdef_sleep64` + `usrdef_sleep64_probe` and says not to pick anything else. Both pages are right. The two headstage files contain **the exact same 64 native to site pairs**, both pure passthrough (site = native + 1); the md5 differs only because one writes floats and the other ints. Either choice records identical data. Details in [[2026-07-31-contact-intermittency-no-wire-control]] §9.
+>
+> **No splitter, one headstage per port** (port reports 32 ch): use **`Passthrough 32` + `Default 4x8`**, and select only `/1, /2, /3, /4` per port. The second mouse's `/33-/36` range does not exist in that configuration, and a headstage plugged straight into the port lands on natives 0-3 whichever animal it was before.
+
 **Select channels (System tab → Signals) — per port:**
 - On each port row, **DESELECT ALL**, then tick: **`/1, /2, /3, /4`** (HS-A mouse) **+ `/33, /34, /35, /36`** (HS-B mouse).
 - Do all 4 ports → **32 channels total** (8 mice).
@@ -131,7 +136,7 @@ Per mouse, before streaming:
 1. **Signal Map** (System tab): every selected channel has a real Headstage/Probe (passthrough), no blanks.
 2. **Floor quiet** = grounded (§4.4): HS-A floor natives 16–31, HS-B floor 48–63 read ~5–40 µV.
 3. **Tap test:** nudge a mouse's EMG lead → its EMG channel (`/3` or `/35`) jumps. Wrong channel jumps ⇒ wiring ≠ map.
-4. **Signal Metrics:** background RMS tens of µV = good; ~thousands of µV (railing) = **open electrode contact** (surgical, not the rig).
+4. **Signal Metrics:** background RMS tens of µV = good; ~thousands of µV (railing) = **open electrode contact**. ⚠️ **CORRECTED 2026-07-31: this is NOT necessarily surgical.** On 2026-07-31, 22 of 32 legs matched a no-wire open-circuit control, and contact state was observed FLIPPING SPONTANEOUSLY (522× in 0.5 s, 102× in 11 minutes). "Open" means "not connected right now", and the break can be anywhere from the implant to the headstage pad. **DO NOT conclude bad surgery from a railing channel.** See [[electrode-connection-state-test]] and [[2026-07-31-contact-intermittency-no-wire-control]].
 5. **Bipolar pair check:** EEG = `/1`−`/2` (or `/33`−`/34`); EMG = `/3`−`/4` (or `/35`−`/36`). A scoreable mouse needs a clean EEG pair **and** a working EMG pair.
 
 Record only mice that pass. A single clean leg is not scoreable.

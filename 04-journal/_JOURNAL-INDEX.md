@@ -14,6 +14,7 @@
 
 | Date | Day | What happened |
 |---|---|---|
+| [[2026-07-31]] | Fri | 🔴⭐ Earth did nothing; splitter excluded; **legs are OPEN not bad implants**, state flips on its own; **first clean unclipped EEG (C1)**; DO NOT make new mice |
 | [[2026-07-29]] | Wed | Kontex finalization call; call sheet rebuilt; vault reorganised |
 | [[2026-07-28]] | Tue | Overnight run checked, LED question settled, daemon stop-path fixed |
 | [[2026-07-27]] | Mon | Video-EEG sync architecture finalized; the recording toggle root-caused |

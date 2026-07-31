@@ -10,12 +10,20 @@ tags:
   - B1
 created: 2026-07-22
 status: TO DO — not yet run
-priority: high
+priority: critical
 ---
 
 # EXPERIMENT TO DO — ground pad 7 floating input on B1, does the clean-leg 60 Hz floor drop?
 
 > [!warning] STATUS: NOT YET RUN. This is a planned experiment, not a result. Marked as a to do 2026-07-22.
+
+> [!important] PRIORITY RAISED 2026-07-31 — B1 is the mouse that CHATTERED
+> On 2026-07-31, `B1 frontal` spent 55 continuous seconds bouncing between roughly 10 µV and 4400 µV, and separately collapsed 1.717 MΩ → 0.027 MΩ (64×, connected to dead short) over about an hour. B1 is also the ONE animal with a known unconnected slip ring wire sitting in a live amplifier input (pad 7). That is exactly the antenna this experiment was written to test, on exactly the animal that is misbehaving most.
+>
+> ⚠️ Also note: this page calls B1 parietal "the BEST electrode contact this project has ever had" at 0.206 MΩ. **On 2026-07-31 that same leg read 5.465 MΩ and then 6.695 MΩ, which is OPEN.** Impedance snapshots on this rig are not stable, see [[electrode-connection-state-test]].
+>
+> Context: [[2026-07-31-contact-intermittency-no-wire-control]]
+
 
 ## TL;DR
 

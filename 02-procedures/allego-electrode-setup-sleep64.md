@@ -15,7 +15,18 @@ status: complete
 > - **Mouse A → channels 1, 2, 3, 4**
 > - **Mouse B → channels 33, 34, 35, 36**
 >
-> That's it. Do NOT pick any other headstage or probe. If you see channels 1-8 instead of 33-36, you loaded the WRONG map, switch back to `usrdef_sleep64`.
+> That's it. If you see channels 1-8 instead of 33-36, you loaded the WRONG map, switch back to `usrdef_sleep64`.
+
+> [!note] RECONCILED 2026-07-31 — `Passthrough 64` is EQUALLY correct, the two procedures never actually disagreed
+> This page used to say "do NOT pick any other headstage or probe", which conflicted with [[eight-mouse-acquisition-setup]] telling you to use the built-in `Passthrough 64` + `Default 8x8`. I diffed the files on 2026-07-31: `hstg__usrdef_sleep64.hstg` and `hstg__passthrough_64.hstg` contain **the exact same 64 native to site pairs**, both pure passthrough where site = native + 1. The md5 sums differ ONLY because passthrough writes floats (`0.0`) and sleep64 writes ints (`0`).
+>
+> **Either choice is correct and the recorded data is identical.** The original warning was aimed at the ARCHIVED repacking maps (`usrdef_2mice32`, `usrdef_dual_mouse_c3442`, etc), which really do renumber channels. It was never about `Passthrough 64`.
+>
+> **Practical advice:** the built-ins need no "Use local devices" tick and cannot go missing from the dropdown, so they have one less failure mode. Use `Passthrough 64` + `Default 8x8` unless you specifically want the custom map.
+>
+> **With ONE headstage per port and NO splitter** (port reports 32 ch, not 64), the equivalent is **`Passthrough 32` + `Default 4x8`**, verified pure passthrough and confirmed as what Allego selects by itself in that configuration.
+>
+> See [[2026-07-31-contact-intermittency-no-wire-control]] §9.
 
 ## Why this exists
 We made a pile of custom maps during setup (`2mice32`, `single_mouse`, `mouse_4ch`, `dual_mouse_c3442`…). They REPACK the channel numbers in confusing ways (e.g. Mouse B shows up as 5-8 instead of 33-36), and Allego does NOT auto-pick a matching probe, so everyone guessed. That's fixed now. There is ONE map to use: **`sleep64`**. The confusing old ones are archived (see bottom).
