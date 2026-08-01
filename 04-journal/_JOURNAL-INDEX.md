@@ -14,7 +14,8 @@
 
 | Date | Day | What happened |
 |---|---|---|
-| [[2026-08-01]] | Sat | 🔴⭐ 27.9 h run analysed: grounds perfect 28 h; **78 % of leg-time OPEN**; two failure modes (one-way vs chattering); **C1 clean but NO sleep structure**; yield 3.9 % |
+| [[2026-08-01]] | Sat | ⭐⭐ **CHANNEL MAP WAS WRONG — EMG always worked; FIRST REAL SLEEP ARCHITECTURE (C1: W 66.8 / NREM 29.3 / REM 3.9 %)**; 21 scoreable mouse-hours, not zero |
+| [[2026-08-01]] | Sat | 🔴⭐ (earlier, wrong-map) 27.9 h run analysed: grounds perfect 28 h; **78 % of leg-time OPEN**; two failure modes (one-way vs chattering); **C1 clean but NO sleep structure**; yield 3.9 % |
 
 ## July 2026
 

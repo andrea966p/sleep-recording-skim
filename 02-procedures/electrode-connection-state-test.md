@@ -68,6 +68,22 @@ With ONE headstage per port and no splitter (32 channels per port), the same log
 >
 > **2. DO NOT use the impedance PHASE.** It is not reproducible between runs on this rig. Same legs, same physical state, phase went 140.4° → 33.3°, 36.4° → 140.1°, 144.7° → 17.5°, 172.1° → 11.3°. **Use magnitude alone.**
 
+> [!danger] ⚠️ THE SHORTED TRAP CAUGHT US A SECOND TIME (2026-08-01) — hum alone CANNOT select scoreable windows
+> On 2026-08-01, C2 looked "connected" (low hum) at 18:00-19:00 and 05:21-05:57 and was nearly scored as light-phase data. Those windows are **SHORTED**:
+>
+> | C2 window | EEG rms | apparent WAKE | persistence @1 min |
+> | --- | --- | --- | --- |
+> | genuinely working | **68.7 µV** | 34.1 % | **+0.747** |
+> | shorted | 20.9 µV | 99.7 % | −0.003 |
+> | shorted | 16.1 µV | 99.8 % | −0.002 |
+>
+> **GATE SCOREABLE WINDOWS ON THREE THINGS, NOT ONE:**
+> 1. low mains (not open), **AND**
+> 2. **EEG rms in the physiological range (~50-90 µV here; <25 µV means dead)**, **AND**
+> 3. **temporal structure present** (sleep/wake persistence r ≫ 0 at 1 min).
+>
+> A dead channel scores as ~100 % WAKE with no persistence. That is the tell.
+
 ## How to measure the hum correctly
 
 ⚠️ **Use the 55 to 65 Hz BAND power, NOT a single 60.00 Hz FFT bin.** Mains is not exactly 60.00 Hz and it drifts, so the energy smears across neighbouring bins. Reading a single bin understates the hum by 4 to 5×. I made this mistake on 2026-07-31 and had to correct it mid analysis.

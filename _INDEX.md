@@ -127,6 +127,7 @@ Production IPs, usernames, paths, and settings.
 - [[07-decisions/2026-07-29-kontex-kc-call-prep-rig-finalization|Kontex call prep, 2026-07-29 — rig finalization]] — 45 questions + live build checklist
 
 ### Decisions & Reviews
+- ⭐⭐🔴 [[07-decisions/2026-08-01-channel-mapping-correction-first-sleep|2026-08-01 ⭐ CHANNEL MAP WAS WRONG — EMG always worked, FIRST REAL SLEEP ARCHITECTURE]] — `/1`=EEG `/2`=EMG already bipolar, `/3`,`/4` empty pads. Read before trusting any earlier EEG/EMG analysis.
 - 🔴⭐ [[07-decisions/2026-08-01-28h-contact-duty-cycle-and-c1-negative|2026-08-01 — 27.9 h run: 78 % of leg-time OPEN, grounds perfect, C1's clean EEG has NO sleep]] — duty cycle, two failure modes, full methods
 - 🔴⭐ [[07-decisions/2026-07-31-contact-intermittency-no-wire-control|2026-07-31 — Legs are OPEN, not high-impedance, and state FLIPS on its own]] — **overturns "make new mice". DO NOT schedule surgeries on the old conclusion.**
 - [[07-decisions/2026-05-01-llm-council-review|2026-05-01 LLM Council Review]] — full advisor responses, peer reviews, chairman synthesis, staged plan

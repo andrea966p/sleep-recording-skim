@@ -304,3 +304,15 @@ curl http://127.0.0.1:8585/api/storage
 
 **Last validated:** 2026-04-02
 **System status:** Operational (Pi streaming + Frigate recording + MQTT + Session daemon + Storage monitoring + Netdata alerts + Uptime Kuma monitoring + Slack alerting)
+
+## ⚠️ MISSING — animal room light cycle (flagged 2026-08-01)
+
+**The light schedule is not recorded anywhere in this vault.** Every circadian and sleep-architecture claim depends on it, and on 2026-08-01 it could not be confirmed when analysing a 27.9 h recording.
+
+**TO FILL IN:**
+- Lights ON time: `______`
+- Lights OFF time: `______`
+- Cycle (e.g. 12:12): `______`
+- ZT0 (= lights on) corresponds to clock time: `______`
+
+Until this is filled in, label recordings by clock time only and do NOT assert light/dark phase. See [[2026-08-01-channel-mapping-correction-first-sleep]].

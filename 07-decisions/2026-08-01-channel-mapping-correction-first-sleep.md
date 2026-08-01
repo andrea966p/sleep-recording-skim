@@ -14,7 +14,7 @@ priority: critical
 
 ## TL;DR
 
-- ⭐ **C1's 8.7 h window contains real, textbook mouse sleep architecture: WAKE 66.8 %, NREM 29.3 %, REM 3.9 %.** All physiological checks correct. This is the project's **first genuine sleep result**.
+- ⭐ **REAL SLEEP ARCHITECTURE, REPLICATED ON 3 MICE.** C1 (8.7 h): WAKE 66.8 / NREM 29.3 / REM 3.9 %. D2 (5.2 h): 80.8 / 18.6 / 0.6 %. C2 (3.0 h): 37.9 / 52.2 / 9.9 %. **Physiology ordering correct in all three independently.** The project's **first genuine sleep result**.
 - ✅ **EMG was never broken. It works on 5 of 8 mice** (A1, C1, C2, D1, D2 at 0.0-4.2 % open). The surgeries were fine.
 - 🔴 **The real problem is the EEG channel (`/1`), open 61.8-100 % on every mouse.** One failing channel type, not two.
 - 📈 **21.0 scoreable mouse-hours**, not zero: C1 8.7 h, C2 7.0 h, D2 5.3 h.
@@ -116,11 +116,48 @@ Random expectation is 8 s. WAKE and NREM clearly exceed it.
 Sleep-rich at hours 0 and 2, near-continuous wake at 4 and 7. Real structure.
 
 > [!warning] Honest caveats — do NOT let this become another 2026-07-15
-> - **n = 1 mouse, 8.7 h, dark phase only.** Needs replication.
+> - ~~n = 1 mouse~~ **REPLICATED on n=3 (C1, D2, C2)** — but all from ONE recording, and all from the DARK phase.
+>   ⚠️ **Precisely:** the recording spans 27.9 h and DOES cover a full light phase. But every window in which the EEG channel was alive falls in the dark phase (C1 18:06→02:50, D2 18:06→23:24, C2 20:01→21:07). The EEG electrodes had already failed before the light phase began. **A light-phase test is still owed** — NREM should dominate, which is a strong independent check.
+>   ⚠️ **A connection filter based on hum ALONE is not sufficient to select scoreable windows.** C2 appeared "connected" at 18:00-19:00 the next evening and at 05:21-05:57, but those windows are SHORTED: EEG rms 20.9 and 16.1 µV against 68.7 µV when genuinely working, WAKE 99.7-99.8 %, and persistence r = −0.003 / −0.002 (no structure at all). **Gate scoreable windows on EEG amplitude AND temporal structure, not just low mains.** This is the "shorted looks quieter than good" trap from [[electrode-connection-state-test]], and it caught me a second time.
+> - ⚠️ **THE ANIMAL ROOM LIGHT SCHEDULE IS NOT DOCUMENTED ANYWHERE IN THIS VAULT.** Every circadian claim depends on it. Record lights-on/lights-off in `00-config/production-values.md`.
 > - **Thresholds are data-driven** (EMG dip at 25 µV; theta/delta at the 80th percentile), **not validated against a human scorer**. The state percentages carry real uncertainty.
 > - **REM bouts average only 8.6 s**, which suggests the REM threshold is catching transitional epochs a human scorer would merge. Treat REM % as provisional.
 > - The positive-control validation demanded by the [[2026-08-01-council-eeg-pipeline-review|council]] is still owed: run the pipeline on a public, human-scored mouse dataset and confirm it detects sleep there.
 > - What is NOT threshold-dependent: the physiology table and the persistence numbers.
+
+## 3b. ⭐ REPLICATION — n=3, all physiology correct
+
+Same script, same parameters, two more animals:
+
+| mouse | window | clean | WAKE | NREM | REM |
+| --- | --- | --- | --- | --- | --- |
+| **C1** | 8.70 h | 99.9 % | 66.8 % | 29.3 % | 3.9 % |
+| **D2** | 5.20 h | 99.8 % | 80.8 % | 18.6 % | 0.6 % |
+| **C2** | 3.00 h | 83.0 % | 37.9 % | 52.2 % | 9.9 % |
+
+**Physiology check — the ordering is correct in ALL THREE, independently:**
+
+| mouse | | EMG | EEG rms | delta % | theta/delta |
+| --- | --- | --- | --- | --- | --- |
+| **D2** | WAKE | **87.2** | 56.9 | 28.2 | 0.55 |
+| | NREM | 10.0 | **72.6** | **41.3** | 0.32 |
+| | REM | **7.8** | 54.8 | 17.6 | **1.69** |
+| **C2** | WAKE | **68.3** | 69.3 | 14.9 | 1.21 |
+| | NREM | 16.7 | **86.2** | **21.8** | 0.69 |
+| | REM | **16.1** | 80.2 | 9.6 | **3.45** |
+
+In every animal: WAKE has the highest muscle tone, NREM the most delta and the biggest amplitude, REM the highest theta/delta and the lowest muscle tone.
+
+**Persistence, all three well above shuffle:**
+
+| mouse | 1 min | 10 min | shuffle |
+| --- | --- | --- | --- |
+| C1 | +0.803 | +0.484 | +0.014 |
+| D2 | +0.702 | +0.258 | −0.025 |
+| C2 | +0.738 | +0.198 | +0.032 |
+
+**n=3. The result replicates.** State percentages differ between animals and windows, as expected for different mice at different times of night, but the physiological structure is identical every time. That is what a real signal looks like.
+
 
 ## 4. Corrected fleet numbers
 
@@ -161,6 +198,29 @@ Sleep-rich at hours 0 and 2, near-continuous wake at 4 and 7. Real structure.
 4. 🛑 **Still no new surgeries** — the implants are not implicated; this is a connection and a mapping problem.
 5. ➡️ **Re-analyse C2 (7.0 h) and D2 (5.3 h)** with the corrected map. If their sleep architecture matches C1's, n=3 and the result is solid.
 6. ⏳ Still owed: positive-control validation on a public scored dataset; the 1 MΩ resistor check of the Allego impedance function.
+
+## 7b. Why this survived so long — the post-mortem
+
+Six causes stacked. None alone would have done it.
+
+1. **The error was written down as TRUE.** [[eight-mouse-acquisition-setup]] (2026-07-04) says *"EEG signal = pad 0 − pad 1"*. That sentence is **correct** — it describes what the CHIP does internally — but it was implemented as a SOFTWARE subtraction. The phrasing reads correctly under both interpretations, which is exactly why it survived every review.
+2. **Everything downstream inherited it.** Once `EEG = native0 − native1` entered [[04-processing-guidelines]], no later analysis re-derived it from the hardware.
+3. **The chip metadata is EMPTY in the `.xdat`** (`port_map` all null, no `input_mode`, no chip name), so nothing ever contradicted the assumption automatically.
+4. **The 60 Hz crisis masked it.** With the EEG channel open and railing, everything looked broken, so "EMG is broken too" FITTED the prevailing story rather than contradicting it.
+5. **The key fact was known and never followed through.** The project memory recorded "chip = RHD2216 **bipolar**, REF empty by design" from early on. Nobody joined it to "therefore two pads make one channel". **The empty `REF` pin was itself the clue** — bipolar channels do not need a shared reference.
+6. **The vault was taken at face value** rather than verified against the signals, despite a standing instruction to verify operational details rather than assume.
+
+**What would have caught it in ten seconds:** correlate two adjacent channels. Frontal and parietal electrodes millimetres apart CANNOT give r = 0.000.
+
+**And the uncomfortable part: the rigour made it worse.** The no-wire controls, duty-cycle tables, threshold sensitivity sweeps and a 5-advisor council review were all methodologically sound, and all built on an unverified premise. Careful work on a wrong assumption produces a wrong conclusion that looks thoroughly evidenced. **The only thing that broke it was a human saying "that cannot be true".**
+
+> [!danger] THE STANDING RULE THIS BUYS
+> **Before any analysis of a new rig or montage, VERIFY THE CHANNEL MAP AGAINST THE SIGNALS:**
+> 1. **Correlate adjacent channels.** Electrodes physically near each other must correlate. r ≈ 0 means they are independent channels, not a montage pair.
+> 2. **Count wires against channels.** A bipolar chip channel consumes TWO wires. 4 wires per mouse = 2 channels, not 4.
+> 3. **Check the spectral character.** EEG is stationary and delta-dominant; EMG is bursty with 70-300 Hz power.
+> 4. **Test the EEG/EMG relationship.** Muscle power must ANTI-correlate with delta. If it does not, one of the two channels is not what you think.
+
 
 ## 7. The lesson worth keeping
 
