@@ -7,6 +7,11 @@ priority: high
 
 # How to tell OPEN from SHORTED from WORKING — the no wire control method
 
+> [!warning] ⚠️ CHANNEL-MAP CORRECTION 2026-08-01 — this method is sound, but it was applied to the WRONG channels
+> This page originally called sites `/1 /2 /3 /4` (and `/33-/36`) "the four mouse legs". **Wrong.** The RHD2216 is bipolar: **`/1` is the EEG and `/2` is the EMG, both already differential. `/3` and `/4` have no wire on them by design.**
+>
+> The method itself was RIGHT — and it is what exposed the error, because `/3`,`/4` matched the no-wire controls perfectly. They matched **because they ARE no-wire channels**. Apply the classifier to `/1` and `/2` only. See [[2026-08-01-channel-mapping-correction-first-sleep]].
+
 > [!abstract] TL;DR — for non-technical readers
 > **What this is.** A way to answer one question honestly: is this electrode actually connected to the mouse, or is it connected to nothing? For months we could not tell the difference, because a badly implanted electrode and a wire that is simply not attached produce almost the same number. See [[01-infrastructure/system-overview]] for the big picture.
 >
@@ -32,7 +37,8 @@ With the standard 64 channel per port setup (two RHD2216 headstages on a C3442 s
 
 | population | sites | what it is | how many |
 | --- | --- | --- | --- |
-| **LEGS** | 1 to 4, 33 to 36 | your real mouse electrodes | 8 per port |
+| **REAL CHANNELS** | **1, 2 and 33, 34** | **`/1`=EEG, `/2`=EMG (both already bipolar)** | **4 per port** |
+| ~~"legs" 3, 4, 35, 36~~ | 3, 4, 35, 36 | ⚠️ **EMPTY PADS, NOT ELECTRODES** (corrected 2026-08-01) — treat as extra no-wire controls | 4 per port |
 | **CONTROL A, NO WIRE** | 5 to 16, 37 to 48 | real amplifier channels, pad present, nothing soldered to it | 24 per port |
 | **CONTROL B, TIED** | 17 to 32, 49 to 64 | the internally tied empty half of each RHD2216 | 32 per port |
 

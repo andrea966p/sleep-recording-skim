@@ -21,8 +21,30 @@ Allego's Signal Processing filters at the **Visualization** stage are display-on
 ## 2. Referencing — bipolar, no CAR
 
 The chip (RHD2216) is **bipolar**: each pair self-references. So:
-- **EEG = `native0 − native1`** (left frontal − left parietal). This is the sleep EEG.
-- **EMG = `native2 − native3`** (neck L − neck R).
+> [!danger] ⚠️ CORRECTED 2026-08-01 — THE OLD MAPPING BELOW WAS WRONG. READ THIS BOX.
+> The two lines struck through below said `EEG = native0 − native1` and `EMG = native2 − native3`. **THAT IS WRONG and it cost this project weeks.** The RHD2216 is a **BIPOLAR** amplifier: every channel has its own `+` and `−` pin and already reports the DIFFERENCE between them. Your 4 mouse wires land on the `+`/`−` pins of just TWO channels, not four.
+>
+> | native | Allego site (mouse A / mouse B) | what it ACTUALLY carries |
+> | --- | --- | --- |
+> | 0 / 32 | **`/1` / `/33`** | **EEG**, frontal vs parietal, ALREADY BIPOLAR |
+> | 1 / 33 | **`/2` / `/34`** | **EMG**, neck pair, ALREADY BIPOLAR |
+> | 2, 3 / 34, 35 | `/3`, `/4` / `/35`, `/36` | **NOTHING — empty pads, no wire by design** |
+>
+> **CORRECT USAGE:**
+> ```
+> EEG = native0          (do NOT subtract anything)
+> EMG = native1          (do NOT subtract anything)
+> natives 2 and 3        IGNORE — they are empty pads
+> ```
+>
+> **Consequences of the old wrong mapping:** "EEG" was computed as `EEG − EMG`, which is meaningless; the empty pads `/3`,`/4` were measured and reported as 24 FAILED EMG SURGERIES when no wire was ever attached to them; and C1's genuine sleep architecture was invisible. Corrected on 2026-08-01, after the point was raised that it is not credible for every EMG implant to fail. See [[2026-08-01-channel-mapping-correction-first-sleep]].
+>
+> **Evidence (no assumption about pins required):** `/1` and `/2` are completely uncorrelated (r = 0.000 raw and in-band) — two single-ended electrodes millimetres apart on one hemisphere could not be; `/1` is stationary and delta-dominant while `/2` is bursty (70-300 Hz envelope CV 0.79 vs 0.21); `/2`'s muscle-band power ANTI-correlates with `/1`'s delta (ρ = −0.285); and `/3`,`/4` are statistically identical to channels known to have no wire attached.
+>
+> **In Allego, select only `/1, /2` and `/33, /34` per port** — 16 channels for 8 mice, not 32.
+
+- ~~**EEG = `native0 − native1`** (left frontal − left parietal)~~ **← WRONG, see box above. EEG = `native0` alone.**
+- ~~**EMG = `native2 − native3`** (neck L − neck R)~~ **← WRONG, see box above. EMG = `native1` alone; natives 2/3 are empty pads.**
 - **Do NOT use Common Average Reference (CAR)** — it mixes the ± pairs and cross-contaminates. The scripts never apply CAR.
 - `copper` (native 6) is an **environmental-noise** channel (cut shield), not a brain reference; optionally subtract it from EEG if mains noise is bad, but it is not a montage reference.
 

@@ -45,8 +45,25 @@ Each mouse uses **4 electrodes on C3410 pads 0,1,2,3**, plus a **ground** on the
 | `GND` bus | green | parietal-R dura | **animal ground** (not recorded) |
 | `REF` | — | — | **empty, leave unconnected** |
 
-- **EEG signal = pad 0 − pad 1** (frontal − parietal).
-- **EMG signal = pad 2 − pad 3** (left − right).
+> [!danger] ⚠️ CORRECTED 2026-08-01 — pads are NOT channels. Two pads make ONE channel.
+> The table above is correct about the WIRING, and it contains the answer we missed for weeks. The RHD2216 is **bipolar**, so its `+` and `−` columns are the two pins of a **single amplifier channel**:
+>
+> | C3410 pads | amplifier channel | Allego site (mouse A / B) | signal |
+> | --- | --- | --- | --- |
+> | pad 0 (`EEG +`) + pad 1 (`EEG −`) | **native 0** | **`/1` / `/33`** | **EEG, already bipolar** |
+> | pad 2 (`EMG +`) + pad 3 (`EMG −`) | **native 1** | **`/2` / `/34`** | **EMG, already bipolar** |
+> | — | natives 2, 3 | `/3`,`/4` / `/35`,`/36` | **EMPTY PADS, no wire** |
+>
+> **4 pads → 2 channels, NOT 4 channels.** The subtraction happens INSIDE THE CHIP. Do not subtract again in software.
+>
+> ```
+> EEG = native0 = /1     (do NOT compute /1 − /2)
+> EMG = native1 = /2
+> ```
+> See [[2026-08-01-channel-mapping-correction-first-sleep]].
+
+- ~~**EEG signal = pad 0 − pad 1** (frontal − parietal)~~ → **done in hardware; read `native0` = `/1` directly.**
+- ~~**EMG signal = pad 2 − pad 3** (left − right)~~ → **done in hardware; read `native1` = `/2` directly.**
 - Ground green wire → the board's `GND` bus (its own per mouse — see §4).
 
 ---
@@ -69,7 +86,11 @@ Each mouse uses **4 electrodes on C3410 pads 0,1,2,3**, plus a **ground** on the
 | **M7** | D / HS-A | 0–3 | 0–3   | **D/1–D/4** |
 | **M8** | D / HS-B | 0–3 | 32–35 | **D/33–D/36** |
 
-**Total recorded = 8 mice × 4 = 32 channels. Same block every port: `/1,/2,/3,/4` + `/33,/34,/35,/36`.**
+~~**Total recorded = 8 mice × 4 = 32 channels.**~~
+
+> [!danger] ⚠️ CORRECTED 2026-08-01 — it is 2 channels per mouse, not 4
+> **Total = 8 mice × 2 = 16 channels. Per port: `/1, /2` + `/33, /34`.**
+> The "pad→signal" column in the table above should read **`0,1 → EEG (native 0)` and `2,3 → EMG (native 1)`**. The `/3, /4, /35, /36` entries are EMPTY PADS. On 2026-07-31 they were measured and reported as 24 failed EMG surgeries; they never had a wire on them. See [[2026-08-01-channel-mapping-correction-first-sleep]].
 
 > [!note] Offline decode (analysis)
 > Allego records **all** primary channels of every enumerated port, not just the selected ones (selection is display/QC only). In `get_signals` / the `.xdat` file the rows are per-port blocks of 64: **Port A = rows 0–63, B = 64–127, C = 128–191, D = 192–255**. Each mouse's 4 channels are at offset **0–3** (HS-A) or **32–35** (HS-B) inside its port block. The analysis channel-name map needs an 8-mouse version before scoring (TODO — the old `2mice32` decode map is deprecated).
@@ -121,6 +142,11 @@ Per mouse, before streaming:
 > [[allego-electrode-setup-sleep64]] tells you to use `usrdef_sleep64` + `usrdef_sleep64_probe` and says not to pick anything else. Both pages are right. The two headstage files contain **the exact same 64 native to site pairs**, both pure passthrough (site = native + 1); the md5 differs only because one writes floats and the other ints. Either choice records identical data. Details in [[2026-07-31-contact-intermittency-no-wire-control]] §9.
 >
 > **No splitter, one headstage per port** (port reports 32 ch): use **`Passthrough 32` + `Default 4x8`**, and select only `/1, /2, /3, /4` per port. The second mouse's `/33-/36` range does not exist in that configuration, and a headstage plugged straight into the port lands on natives 0-3 whichever animal it was before.
+
+> [!danger] ⚠️ CORRECTED 2026-08-01 — you only need `/1, /2` and `/33, /34`
+> The RHD2216 is BIPOLAR. **`/1` is already the EEG** (frontal vs parietal on its `+`/`−` pins) and **`/2` is already the EMG**. **`/3`, `/4`, `/35`, `/36` are EMPTY PADS with no wire on them.** Selecting them records nothing and — as happened on 2026-07-31 — invites reading empty pads as failed EMG surgeries.
+>
+> **Select `/1, /2, /33, /34` per port = 16 channels for 8 mice.** The `+32` trap below is still correct for finding the second mouse. See [[2026-08-01-channel-mapping-correction-first-sleep]].
 
 **Select channels (System tab → Signals) — per port:**
 - On each port row, **DESELECT ALL**, then tick: **`/1, /2, /3, /4`** (HS-A mouse) **+ `/33, /34, /35, /36`** (HS-B mouse).

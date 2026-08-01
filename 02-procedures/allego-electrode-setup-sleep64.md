@@ -37,7 +37,15 @@ We made a pile of custom maps during setup (`2mice32`, `single_mouse`, `mouse_4c
   - **Mouse A** = first headstage = native 0,1,2,3 = **channels 1,2,3,4**
   - **Mouse B** = second headstage = native 32,33,34,35 = **channels 33,34,35,36**
 
-### What each channel is (per mouse)
+> [!danger] ⚠️ CORRECTED 2026-08-01 — the per-channel table below is WRONG
+> The RHD2216 is BIPOLAR, so each channel already reports the difference of its own `+`/`−` pins. The 4 mouse wires land on **two** channels, not four:
+> - **`/1` (mouse A) or `/33` (mouse B) = EEG**, frontal vs parietal, already bipolar
+> - **`/2` or `/34` = EMG**, neck pair, already bipolar
+> - **`/3`, `/4`, `/35`, `/36` = EMPTY PADS, no wire by design**
+>
+> Do NOT subtract `/1 − /2` — that computes EEG minus EMG. See [[2026-08-01-channel-mapping-correction-first-sleep]].
+
+### What each channel is (per mouse) — ⚠️ SUPERSEDED, see box above
 | Channel (Mouse A / Mouse B) | Signal |
 | --- | --- |
 | 1 / 33 | EEG (frontal) |

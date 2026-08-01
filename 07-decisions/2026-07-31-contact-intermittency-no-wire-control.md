@@ -7,6 +7,21 @@ priority: critical
 
 # 2026-07-31 — Electrode legs are OPEN, not high impedance, and the state FLIPS on its own. Do not schedule new surgeries.
 
+> [!danger] ⚠️ MAJOR RETRACTION 2026-08-01 — THE CHANNEL MAP USED HERE WAS WRONG
+> This document was written using `EEG = native0 − native1` and `EMG = native2 − native3`. **Both are wrong.** The RHD2216 is BIPOLAR: `native0` (Allego `/1`) is ALREADY the EEG, `native1` (`/2`) is ALREADY the EMG, and natives 2/3 (`/3`,`/4`) are **empty pads with no wire on them by design**.
+>
+> **What is RETRACTED from this document:**
+> - ❌ "EMG failed 23/24 / 16/16 legs" — those were **empty pads**, never electrodes. **EMG works on 5 of 8 mice.** The surgeries were fine.
+> - ❌ "ZERO scoreable mice / zero scoreable data" — there are **21.0 scoreable mouse-hours** (C1 8.7 h, C2 7.0 h, D2 5.3 h).
+> - ❌ "C1 shows NO sleep structure" — C1 shows **textbook sleep architecture**: WAKE 66.8 %, NREM 29.3 %, REM 3.9 %, all physiology correct, persistence r=+0.80 at 1 min.
+> - ❌ Duty cycle "78.7 % open" — **61.6 %** on the 16 real channels.
+> - ❌ The "frontal vs parietal" framing — it was **EEG vs EMG channels**.
+>
+> **What STANDS:** the no-wire control method, the grounds result (2.8 µV, no drift over 27.9 h), environmental causes closed, and contact intermittency / one-way degradation — though it is the **EEG** channel that fails, on 8 of 8 mice.
+>
+> Full correction: [[2026-08-01-channel-mapping-correction-first-sleep]]
+
+
 > [!danger] THIS OVERTURNS THE STANDING GUIDANCE
 > The standing conclusion in [[eeg-60hz-saga]] and the memory index was: frontal electrodes are open on every mouse, implants CANNOT be reseated, therefore surgical yield is the critical path, therefore make new mice. **Today's evidence does not support that.** One mouse (C1) produced a clean, unclipped, physiological EEG pair, and it held steady through direct mechanical provocation. Meanwhile electrode legs were observed changing state SPONTANEOUSLY, mid recording, in half a second. **DO NOT schedule new surgeries on the old conclusion.**
 
