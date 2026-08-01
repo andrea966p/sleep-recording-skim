@@ -111,6 +111,7 @@ Production IPs, usernames, paths, and settings.
 - ⭐ [[04-journal/_JOURNAL-INDEX|Journal Index — chronological master navigator]] — **every day in date order.** The journal records what happened and links down into the detail notes. Start here to navigate by time rather than by topic.
 
 ### Experiments
+- ⏳⭐ [[05-experiments/active/2026-08-02-run2-preregistration|RUN 2 — pre-registered predictions (RUNNING)]] — predictions written before the data; fill in HIT/MISS when it stops
 - [[05-experiments/completed/h265-encoding-failure|H.265 Failure (DO NOT USE)]]
 - [[05-experiments/completed/2026-02-11-mpegts-container-test|MPEG-TS Container Test (adopted v5.2)]]
 - [[05-experiments/active/|Active Experiments]]
