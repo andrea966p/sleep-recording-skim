@@ -14,7 +14,7 @@ priority: critical
 
 ## TL;DR
 
-- ⭐ **REAL SLEEP ARCHITECTURE, REPLICATED ON 3 MICE.** C1 (8.7 h): WAKE 66.8 / NREM 29.3 / REM 3.9 %. D2 (5.2 h): 80.8 / 18.6 / 0.6 %. C2 (3.0 h): 37.9 / 52.2 / 9.9 %. **Physiology ordering correct in all three independently.** The project's **first genuine sleep result**.
+- ⭐ **REAL SLEEP ARCHITECTURE — replication n=2 after the full 8-mouse rescore (§3c).** C1 (8.73 h): WAKE 64.4 / NREM 31.2 / REM 4.4 %, physiology PASS. C2 (4.02 h): 56.3 / 35.7 / 8.1 %, PASS. ⚠️ **D2 WITHDRAWN — physiology FAIL under the stricter gate.** 5 of 8 mice have ZERO scoreable EEG time. The project's **first genuine sleep result**, on C1 strongly and C2 moderately.
 - ✅ **EMG was never broken. It works on 5 of 8 mice** (A1, C1, C2, D1, D2 at 0.0-4.2 % open). The surgeries were fine.
 - 🔴 **The real problem is the EEG channel (`/1`), open 61.8-100 % on every mouse.** One failing channel type, not two.
 - 📈 **21.0 scoreable mouse-hours**, not zero: C1 8.7 h, C2 7.0 h, D2 5.3 h.
@@ -157,6 +157,68 @@ In every animal: WAKE has the highest muscle tone, NREM the most delta and the b
 | C2 | +0.738 | +0.198 | +0.032 |
 
 **n=3. The result replicates.** State percentages differ between animals and windows, as expected for different mice at different times of night, but the physiological structure is identical every time. That is what a real signal looks like.
+
+
+## 3c. ⚠️ FULL 8-MOUSE RESCORE (2026-08-02) — D2 WITHDRAWN, replication is n=2
+
+Rescored all 8 mice over the full 27.9 h with the corrected map, a **three-part gate** (not open AND not shorted AND not clipped), **Otsu-derived** per-animal EMG thresholds instead of a hand-picked 25 µV, and a **structure check before any hypnogram is reported**. Scripts `score_all_mice.py` + `gate_and_score_all.py`.
+
+| mouse | scoreable | WAKE | NREM | REM | r@1min | shuffle | verdict |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| **C1** | **8.73 h** | 64.4 % | 31.2 % | 4.4 % | +0.746 | −0.003 | **SCOREABLE, physiology PASS** |
+| **C2** | **4.02 h** | 56.3 % | 35.7 % | 8.1 % | +0.648 | +0.015 | **SCOREABLE, physiology PASS** |
+| D2 | 4.22 h | 64.0 % | 30.5 % | 5.4 % | +0.538 | +0.005 | ⚠️ **physiology FAIL — states NOT reported** |
+| A1, A2, B1, B2, D1 | 0.00-0.07 h | — | — | — | — | — | INSUFFICIENT |
+
+> [!warning] ⚠️ D2 IS WITHDRAWN FROM THE REPLICATION — the 2026-08-01 "n=3" was optimistic
+> D2's WAKE epochs have HIGHER EEG amplitude than its NREM (75.9 vs 72.3 µV) and essentially the SAME delta (41.6 % vs 42.1 %), and its REM has HIGHER muscle tone than NREM (27.4 vs 12.4 µV). That ordering is physiologically wrong.
+>
+> On 2026-08-01 D2 looked like a clean replication because it was scored on a hand-picked window with C1's hand-picked 25 µV EMG threshold. Under a per-animal Otsu threshold plus the amplitude gate it does not hold. **The replication is n=2 (C1 strong, C2 moderate), not n=3.**
+>
+> C2 passes but its NREM/WAKE delta separation is weak (19.6 % vs 17.9 %). **C1 remains the only strong case.**
+
+### Physiology check
+
+| mouse | state | EMG | EEG rms | delta % | th/de | |
+| --- | --- | --- | --- | --- | --- | --- |
+| **C1** | WAKE | 49.2 | 50.5 | 26.5 | 0.74 | **PASS** |
+| | NREM | 15.5 | **68.0** | **41.0** | 0.32 | |
+| | REM | 14.4 | 52.2 | 17.8 | **1.85** | |
+| **C2** | WAKE | 72.2 | 64.3 | 17.9 | 0.61 | **PASS** |
+| | NREM | 26.5 | **85.7** | **19.6** | 0.59 | |
+| | REM | 20.0 | 80.8 | 9.7 | **2.35** | |
+| D2 | WAKE | 105.1 | **75.9** | 41.6 | 0.29 | **FAIL** |
+| | NREM | 12.4 | 72.3 | 42.1 | 0.30 | |
+| | REM | **27.4** | 51.4 | 19.5 | 1.41 | |
+
+### ⭐ Why the other five failed — and where the lost data is
+
+| mouse | EEG OPEN | EEG shorted | **EEG good** | EMG ok |
+| --- | --- | --- | --- | --- |
+| A1 | 27.9 h | 0 | **0.0 h** | **27.9 h** |
+| A2 | 27.9 h | 0 | 0.0 h | 0.0 h |
+| **B1** | 16.1 h | 0 | **11.8 h** ⭐ | **0.2 h** ⚠️ |
+| B2 | 27.9 h | 0 | 0.0 h | 1.4 h |
+| C1 | 19.2 h | 0 | 8.7 h | 27.9 h |
+| C2 | 20.5 h | 3.2 h | 4.2 h | 26.8 h |
+| D1 | 27.9 h | 0 | 0.0 h | 27.9 h |
+| D2 | 22.6 h | 1.1 h | 4.2 h | 27.8 h |
+
+> [!important] ⭐ B1 HAS THE BEST EEG IN THE FLEET AND IS UNSCOREABLE FOR WANT OF AN EMG
+> **B1: 11.8 h of good EEG at a median 66.7 µV** — more than C1 — **blocked by a dead EMG channel (0.2 h).** That is 11.8 hours of usable data sitting on disk behind ONE channel.
+>
+> The complementary pattern is the actionable one: **A1 and D1 have PERFECT EMG for the full 27.9 h and ZERO EEG. B1 has excellent EEG and no EMG.** Fix either side on those three animals and scoreable time roughly DOUBLES.
+
+- EEG failures are almost entirely **OPEN**, not shorted (shorted totals only 4.3 h across all 8 mice) ⇒ a disconnection problem.
+- **28.9 h of good EEG exists** across 4 mice; only **17.0 h** overlaps working EMG; **12.75 h** passes physiology.
+- **Every scoreable window lies between 18:06 and 02:50.** Still NO light-phase data with a living EEG.
+
+### Method hardening applied in this rescore
+
+1. **Three-part gate** — not open (mains <300 µV both channels) AND not shorted (EEG rms ≥25 µV) AND not clipped. Hum alone let shorted windows through on 2026-08-01.
+2. **Otsu threshold per animal** on the log-EMG histogram, replacing the hand-picked 25 µV constant the council flagged as arbitrary.
+3. **Structure verified BEFORE reporting states.** If persistence at 1 min is not clearly above a shuffle control, the animal is reported as "NO STRUCTURE", not given a hypnogram. A dead channel will always yield *some* split if you insist on asking.
+4. **Automatic physiology PASS/FAIL** per animal. This is what caught D2.
 
 
 ## 4. Corrected fleet numbers
