@@ -94,7 +94,36 @@ With ONE headstage per port and no splitter (32 channels per port), the same log
 - **This is a useful trick in general:** to test whether any display filter touches the data, park it on a frequency where nothing real lives and look for the null.
 - Units are `micro-volts` for primary channels, per the file metadata. The rail is ±6390 µV, so use ±6300 as a clipping threshold.
 
-## ⚠️ Impedance snapshots are not a go or no go gate
+## ✅ IMPEDANCE IS A VALID PRE-FLIGHT GATE — corrected 2026-08-02
+
+> [!success] REVERSED. The earlier "impedance is useless" verdict was an artifact of the WRONG CHANNEL MAP.
+> Re-read against ground truth from the 27.9 h recording, using only the REAL channels (`/1`=EEG, `/2`=EMG) and ignoring the empty pads `/3`,`/4`:
+>
+> **Spearman ρ = −0.941, p = 5.7e-08** between impedance magnitude and hours-of-usable-data — from a sweep taken ~2 h BEFORE the recording began.
+>
+> | threshold | classification accuracy |
+> | --- | --- |
+> | Z < 0.9 MΩ | 13/16 |
+> | **Z < 2.0 MΩ** | **14/16** |
+> | Z < 3.0 MΩ | 14/16 |
+>
+> **USE Z < 2 MΩ = CONNECTED, Z > 3 MΩ = OPEN, on sites `/1, /2, /33, /34` only.** A mouse needs BOTH `/1` and `/2` under threshold to be scoreable.
+>
+> **The classification is STABLE across repeat sweeps even though the values wobble:**
+> ```
+> B1 EEG   0.222 -> 0.623  (2.8x)   CONN -> CONN   STABLE
+> B1 EMG   0.329 -> 0.026  (0.08x)  CONN -> CONN   STABLE
+> pad /3   5.380 -> 3.626           OPEN -> OPEN   STABLE
+> pad /4   8.140 -> 4.887           OPEN -> OPEN   STABLE
+> ```
+> Even the notorious **102× swing was real information**: that channel was B2's EMG, and B2's EMG worked only 1.4 h out of 27.9 h in the recording. The sweep was correctly flagging a FLAKY channel; it was misread as instrument noise.
+>
+> **Independent confirmation of the bipolar map:** empty pads `/3,/4` median **5.902 MΩ** vs no-wire control **5.557 MΩ** — statistically identical. The impedance data independently says those pads have no wire.
+
+### ⚠️ What still holds
+Read only `/1, /2, /33, /34`. Including the empty pads `/3, /4` in any impedance summary is what made the measurement look worthless — half the "electrodes" being scored were bare pads. Values still wobble severalfold between sweeps, so **classify, do not quote the number**; and a channel whose CLASS flips between back-to-back sweeps is genuinely intermittent, which is itself the finding.
+
+## ~~Impedance snapshots are not a go or no go gate~~ (SUPERSEDED, see above)
 
 Contact state on this rig FLIPS ON ITS OWN. Documented instances: one leg moved 102× in eleven minutes, another stepped 522× in 0.5 seconds mid recording with nobody touching the rig, a third collapsed 64× over an hour.
 

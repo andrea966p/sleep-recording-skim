@@ -221,6 +221,38 @@ Rescored all 8 mice over the full 27.9 h with the corrected map, a **three-part 
 4. **Automatic physiology PASS/FAIL** per animal. This is what caught D2.
 
 
+## 3d. ✅ IMPEDANCE RE-READ (2026-08-02) — it was working all along
+
+The 2026-07-31 verdict "impedance snapshots are NOT a go/no-go gate" is **REVERSED**. It was an artifact of the wrong channel map: half the "electrodes" being scored were bare pads.
+
+Re-read using only `/1`=EEG and `/2`=EMG, against hours-of-usable-data from the 27.9 h recording:
+
+| mouse | EEG `/1` | pred | actual | | EMG `/2` | pred | actual | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| A1 | 6.757 | OPEN | 0.0 h | ✅ | 0.087 | CONN | 27.9 h | ✅ |
+| A2 | 7.644 | OPEN | 0.0 h | ✅ | 5.849 | OPEN | 0.0 h | ✅ |
+| B1 | 1.717 | OPEN | 11.8 h | ✗ | 5.465 | OPEN | 0.2 h | ✅ |
+| B2 | 7.110 | OPEN | 0.0 h | ✅ | 5.663 | OPEN | 1.4 h | ✗ |
+| C1 | 0.465 | CONN | 8.7 h | ✅ | 0.190 | CONN | 27.9 h | ✅ |
+| C2 | 4.418 | OPEN | 4.2 h | ✗ | 0.139 | CONN | 26.8 h | ✅ |
+| D1 | 6.300 | OPEN | 0.0 h | ✅ | 0.335 | CONN | 27.9 h | ✅ |
+| D2 | 0.660 | CONN | 4.2 h | ✅ | 0.286 | CONN | 27.8 h | ✅ |
+
+**Spearman ρ = −0.941, p = 5.7e-08**, from a sweep taken ~2 h BEFORE recording started. The three "misses" are marginal: B2's EMG (1.4 h of 27.9) and C2's EEG (4.2 h of 27.9) were mostly open, so the snapshot had the dominant state right. Only B1's EEG at 1.717 MΩ is a true threshold miss.
+
+**Use Z < 2 MΩ (14/16) rather than the 0.9 MΩ proposed on 2026-07-31 (13/16).**
+
+**Empty pads `/3,/4` median 5.902 MΩ vs no-wire control 5.557 MΩ** — independent impedance-side confirmation of the bipolar map.
+
+> [!tip] ⭐ PRE-FLIGHT CHECK — do this BEFORE every recording
+> Sweep impedance, read ONLY `/1, /2, /33, /34`:
+> - **Z < 2 MΩ → connected**, expect usable data
+> - **Z > 3 MΩ → open**, that channel will give nothing
+> - A mouse needs **BOTH** `/1` and `/2` under threshold to be scoreable
+>
+> This predicts yield in advance instead of after 28 hours.
+
+
 ## 4. Corrected fleet numbers
 
 | | previously reported | actually |
