@@ -78,9 +78,54 @@ Nothing was deliberately done to any of them. **Contact state moves in BOTH dire
 
 ## 4. What was NOT done, and why it matters
 
-I recommended reseating the head connectors on B1 (EMG), A1, C1 and D1 (EEG) before starting — each is ONE channel short of being fully scoreable, and the swings above show recovery is plausible. **That was not done; the run was started as-is.**
+> [!danger] ⚠️ CORRECTED 2026-08-02 — "RESEAT THE HEAD CONNECTOR" IS NOT A THING. I WAS WRONG.
+> **You CANNOT reseat an electrode or an EMG wire after implantation.** They are implanted. The only animal-side intervention is **changing the tether**, and that requires **isoflurane** — which stresses the animal and **ruins the batch if an experiment is running**. It must never be done casually or "to see if it helps".
+>
+> **THE INTERVENTION HIERARCHY, by real cost:**
+>
+> | tier | what | cost | examples |
+> | --- | --- | --- | --- |
+> | **1. FREE** | everything on the RIG side of the slip ring | no animal contact at all | swap headstage · swap port · inspect/resolder C3410 pads · DMM the slip-ring wires · swap boards between animals |
+> | **2. EXPENSIVE** | change the tether | **isoflurane, animal stress, RUINS THE BATCH mid-experiment** | only with a clear, pre-argued reason |
+> | **3. IMPOSSIBLE** | implanted wires and electrodes | requires new mice | not an option for existing animals |
+>
+> **Everything I previously filed as "reseat" belongs in tier 1 or is not possible at all.** Plan interventions from tier 1 only, unless there is a specific argued reason to spend an animal.
 
-This is a legitimate call (a long run on C2 alone still delivers the never-yet-obtained light phase), but it means the expected yield is **1 mouse**, and the reseat experiment remains outstanding. If run 2 confirms ~1 scoreable mouse, the reseat becomes the highest-value next action.
+I previously recommended "reseating the head connectors" on B1 (EMG) and A1, C1, D1 (EEG). **That recommendation was invalid and is withdrawn** — see the box above. Nothing was owed before this run started, and the run being started as-is was correct.
+
+Expected yield remains **1 mouse (C2)**. The genuinely available next action is the tier-1 bench test below, which costs nothing and touches no animal.
+
+## ⭐ THE RIGHT NON-INVASIVE TEST — bench the accessible chain on A1 and D1
+
+**A1 and D1 are near-perfect diagnostic cases and cost nothing to investigate.**
+
+Each has **EMG connected for the full 27.9 h (0.087 and 0.202 MΩ)** and **EEG open the entire time (4.446 and 3.980 MΩ)**. Both signals travel through **the same tether, the same slip ring, the same C3410 board, the same headstage, the same port**.
+
+⇒ **The shared infrastructure on those two animals is PROVEN GOOD by their own working EMG.** Whatever kills their EEG must be in something that differs between the two channels:
+
+| differs between EEG and EMG | accessible without the animal? |
+| --- | --- |
+| C3410 **pads 0/1 solder joints** (EEG) vs pads 2/3 (EMG) | ✅ **YES — inspect and resolder** |
+| the two **slip-ring wires** carrying EEG | ✅ **YES — DMM continuity** |
+| the **slip ring contacts** for those two lines | ✅ **YES** |
+| head-connector pins for EEG | ❌ animal side |
+| implanted EEG wires / electrodes | ❌ requires new mice |
+
+**Three of the five candidates are free to test.** And the test has a built-in control: pads 2/3 on the same board, through the same slip ring, are demonstrably working.
+
+> [!important] This is why the EEG/EMG asymmetry does NOT prove an implant fault
+> It is tempting to read "EMG fine, EEG dead, same animal" as proof that the EEG *implant* failed. **It is not.** A cold solder joint on pad 0 or 1, or one broken slip-ring wire, produces exactly the same pattern — and both are fixable at the bench without touching the mouse.
+>
+> **Rule out the free tier before concluding anything about the implants, and long before anyone schedules surgery.**
+
+**Procedure (no animal contact, ~30 min):**
+1. With the animal disconnected at the slip ring (rig side only), DMM continuity from **C3410 pad 0** and **pad 1** back through the slip-ring wiring. Compare against **pads 2 and 3**, which are known good.
+2. Inspect the pad 0/1 solder joints under magnification. Reflow anything suspect.
+3. Swap that animal's **headstage** to a known-good one; re-sweep impedance.
+4. Swap the **port**; re-sweep.
+5. Only if all four come back clean is the fault upstream of the slip ring — i.e. tether or implant — and only then is a tier-2 tether change worth arguing for.
+
+
 
 ## 5. Analysis plan — fixed in advance
 
