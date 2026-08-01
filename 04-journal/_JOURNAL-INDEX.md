@@ -7,8 +7,14 @@
 >
 > Read a day here, then follow its links down. **Detail belongs in the linked notes, not in the journal.**
 
-**59 entries.** Dates with no entry had no vault activity, mostly weekends.
+**61 entries.** Dates with no entry had no vault activity, mostly weekends.
 
+
+## August 2026
+
+| Date | Day | What happened |
+|---|---|---|
+| [[2026-08-01]] | Sat | 🔴⭐ 27.9 h run analysed: grounds perfect 28 h; **78 % of leg-time OPEN**; two failure modes (one-way vs chattering); **C1 clean but NO sleep structure**; yield 3.9 % |
 
 ## July 2026
 

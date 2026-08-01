@@ -218,6 +218,14 @@ For one headstage per port with no splitter, the equivalent pair is **`Passthrou
 
 ---
 
+> [!success] ANSWERED 2026-08-01 by the 27.9 h run — see [[2026-08-01-28h-contact-duty-cycle-and-c1-negative]]
+> - ✅ **Whether C1 holds for hours: NO.** Connected 0 → 8.73 h, then OPEN for 1149 min and never recovers. The 101 s wiggle test was inside a genuinely good interval, but that interval ended.
+> - ✅ **Flip rate and duty cycle: 78.7 % of all leg-time OPEN.** Yield = 8.7 usable EEG-pair hours from 223 mouse-hours = **3.9 %**, and **ZERO scoreable mice** because no animal had a working EMG pair at any moment.
+> - ✅ **Do flips cluster or scatter: BOTH, and they are TWO DISTINCT MODES.** One-way irreversible degradation (C1 frontal, D2 frontal) versus chattering (B1 frontal ≥372 flips). Different faults, probably different fixes.
+> - ✅ **Grounds hold for a full day:** 16 control pins, median 2.8 µV, max 5.3 over 27.9 h, no drift. Environmental causes CLOSED.
+> - ⚠️ **NEW negative:** C1's clean window (99.9 % unclipped epochs) shows **NO sleep structure** — no bimodality, bout lengths identical to random, flat hourly profile. Still zero scoreable data.
+> - ❌ Still NOT done: the 1 MΩ resistor validation of the Allego impedance check.
+
 ## 10. Still open
 
 - **What causes the flips.** Micro motion inside the connector, thermal cycling, or something at the electrode tissue interface. I cannot separate these yet. A 0.5 s 522× step is hard to explain with tissue, but I have NO positive evidence pointing outside the head either.
