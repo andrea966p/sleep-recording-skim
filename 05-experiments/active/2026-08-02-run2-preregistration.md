@@ -1,11 +1,11 @@
 ---
 tags: [experiment, active, eeg, emg, preregistration, prediction, contact-intermittency]
 created: 2026-08-02
-status: RUNNING — analyse when stopped
+status: COMPLETE — analysed 2026-08-03
 priority: critical
 ---
 
-# ⏳ RUN 2 — PRE-REGISTERED PREDICTIONS (written BEFORE the data exists)
+# ✅ RUN 2 — PRE-REGISTERED PREDICTIONS (written BEFORE the data existed; scored 2026-08-03)
 
 > [!abstract] TL;DR — for non-technical readers
 > **What this is.** A set of predictions written down *before* a recording was analysed, so that tomorrow's result is a real test rather than a story fitted to whatever we find. See [[01-infrastructure/system-overview]] for the big picture.
@@ -63,14 +63,24 @@ Nothing was deliberately done to any of them. **Contact state moves in BOTH dire
 
 | # | prediction | actual | HIT/MISS |
 | --- | --- | --- | --- |
-| **P1** | **C2 will be fully scoreable** (EEG + EMG, physiology PASS) | | |
-| **P2** | **A2 and B2 will yield nothing** | | |
-| **P3** | **B1 will have good EEG and no EMG** | | |
-| **P4** | **A1, C1, D1 will have good EMG and no EEG** | | |
-| **P5** | **1 to 2 mice fully scoreable** (C2, possibly D2) | | |
-| **P6** | Impedance→yield rank correlation will again be strong (ρ < −0.7) | | |
-| **P7** | At least one channel will CHANGE STATE during the run (as C1 did at 8.73 h and D2 at 5.30 h in run 1) | | |
-| **P8** | If the run exceeds ~29 h, **at least one mouse will produce LIGHT-PHASE data**, and its NREM % will be **HIGHER** than its dark-phase NREM % | | |
+| **P1** | **C2 will be fully scoreable** (EEG + EMG, physiology PASS) | 0.74 h gated but only **0.06 h** inside testable blocks; 250 fragments, median **4 s**; longest block 3.7 min → **INSUFFICIENT** | **MISS** |
+| **P2** | **A2 and B2 will yield nothing** | both 0.00 h; EEG gate 0 %, EMG ≤ 0.2 % | **HIT** |
+| **P3** | **B1 will have good EEG and no EMG** | EEG best in fleet (14.0 % of epochs, lowest hum 2802 µV); EMG **0.0 %** | **HIT** |
+| **P4** | **A1, C1, D1 will have good EMG and no EEG** | EMG 99.9 / 97.1 / 100 %; EEG **0.0 %** on all three | **HIT** |
+| **P5** | **1 to 2 mice fully scoreable** (C2, possibly D2) | **0 mice** | **MISS** |
+| **P6** | Impedance→yield rank correlation will again be strong (ρ < −0.7) | **ρ = −0.452**, and degenerate (only 1 non-zero yield) | **MISS** |
+| **P7** | At least one channel will CHANGE STATE during the run | C2 EEG gate pass **11.2 % → 0.4 % → 0.7 %** by thirds; impedance 1.146 → 2.507 MΩ | **HIT** |
+| **P8** | If the run exceeds ~29 h, light-phase NREM higher | run was **21.74 h** (< 29 h), and the light schedule is still undocumented | **VOID** |
+
+**Score: 4 HIT, 3 MISS, 1 VOID.**
+
+> [!check] What the misses actually tell us — the screen predicts CLASS, not YIELD
+> P2, P3 and P4 all hit: the pre-flight sweep called **which channel works on which animal** correctly every time. P1, P5 and P6 all missed: it did **not** predict usable hours. A channel can read 1.146 MΩ at rest and still chatter into uselessness under load, which is exactly what C2 did.
+>
+> This qualifies the earlier ρ = −0.941 claim. **Keep the sweep as a go/no-go on which animals are worth running; stop treating it as a yield forecast.**
+
+> [!warning] P1 was re-evaluated after a scoring bug was found (2026-08-03)
+> The first pass scored C2 at 0.74 h with `r@1min = +0.078` and called it "NO STRUCTURE". That statistic was invalid: it correlated across time gaps, and with 250 fragments of median 4 s it was **impossible to pass**, not failed. Under the corrected within-block statistic C2 has only 0.06 h inside testable blocks, so the honest verdict is **INSUFFICIENT** — the question could not be asked, rather than answered negatively. The P1 verdict is MISS either way. See [[2026-08-03-data-quality-report-for-professor]] §3.2.
 
 **P8 is the scientifically important one.** No light-phase data with a living EEG exists yet. A higher NREM fraction in the light phase is the strongest independent confirmation available that we are measuring real sleep and not an artifact.
 
