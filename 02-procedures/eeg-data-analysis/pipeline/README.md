@@ -199,6 +199,31 @@ producing an asymmetric range and a fractional-LSB bias on every sample.)
 > 3. **The scorer is told which windows to score**, with start/end times, so the
 >    excluded stretches are not mistaken for flat physiology.
 
+## Cohort packaging — several runs of the same animals, together
+
+`cohort_summary.py`. The per-day folders are per *recording*; this builds one
+view across a whole cohort.
+
+```bash
+python3 cohort_summary.py --out /home/skimlab/eeg-processed/COHORT-2026-07 \
+    2026-07-31 2026-08-02
+```
+
+Produces:
+
+```
+COHORT-2026-07/
+├── README.txt              per-animal-per-run table, what is scoreable, why the rest failed
+├── cohort_animals.csv      one row per animal per run (QC + staging outcome)
+├── cohort_impedance.csv    every sweep, per electrode, across all runs
+└── to-score/               every EDF+, scorer note, hypnogram and summary in one place
+```
+
+The README carries the interpretation caveats with the data, so the numbers
+cannot travel without them: the commissioning-test timeline, "signals are already
+bipolar", "score only inside the listed windows", "do not report a REM
+percentage".
+
 ## Thresholds and where they come from
 
 All in `qc_thresholds.py`, each with its provenance. No magic numbers anywhere

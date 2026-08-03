@@ -257,6 +257,7 @@ Rescored all 8 mice over the full 27.9 h with the corrected map, a **three-part 
 ### Method hardening applied in this rescore
 
 1. **Three-part gate** — not open (mains <300 µV both channels) AND not shorted (EEG rms ≥25 µV) AND not clipped. Hum alone let shorted windows through on 2026-08-01.
+   ⚠️ *Thresholds superseded 2026-08-03: open is now **150 µV** (the measured valley of the bimodal distribution is 134 µV), and the single 25 µV "shorted" rule is split into an epoch-level dropout test (**11 µV**) and a channel-level dead-electrode test (**20 µV** median), because a short is a property of the channel rather than of an epoch. See [[2026-08-03-analysis-methods-procedure]].*
 2. **Otsu threshold per animal** on the log-EMG histogram, replacing the hand-picked 25 µV constant the council flagged as arbitrary.
 3. **Structure verified BEFORE reporting states.** If persistence at 1 min is not clearly above a shuffle control, the animal is reported as "NO STRUCTURE", not given a hypnogram. A dead channel will always yield *some* split if you insist on asking.
 4. **Automatic physiology PASS/FAIL** per animal. This is what caught D2.

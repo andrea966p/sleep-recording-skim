@@ -38,6 +38,20 @@ Supersedes the per-run numbers in
 > runs should be quoted as the rig's performance.** See
 > [[2026-08-03-literature-check-impedance-and-electrode-failure]] §6.
 
+> [!success] The prepared data lives in one place
+> **`/home/skimlab/eeg-processed/COHORT-2026-07/`** — both runs, all 8 mice,
+> 16 animal-recordings, packaged together.
+>
+> ```
+> README.txt              per-animal-per-run table + the caveats, travels with the data
+> cohort_animals.csv      one row per animal per run
+> cohort_impedance.csv    every sweep, per electrode, across both runs
+> to-score/               3 EDF+ files + scorer notes, hypnograms, summaries
+> ```
+>
+> Built with `pipeline/cohort_summary.py`. Method:
+> [[2026-08-03-analysis-methods-procedure]].
+
 ## The two runs
 
 | | **Run 1** | **Run 2** |

@@ -437,7 +437,7 @@ SCORE ONLY INSIDE THESE WINDOWS
 
 All scripts below live in the vault under `02-procedures/eeg-data-analysis/scripts/`.
 
-### 7.1 `rescore-v2-2026-08-03/rescore_v2.py` — **the current scorer, use this one**
+### 7.1 `rescore-v2-2026-08-03/rescore_v2.py` — the scorer that produced this report (SUPERSEDED by the pipeline in §6.5)
 
 Single self-contained tool, two passes.
 
