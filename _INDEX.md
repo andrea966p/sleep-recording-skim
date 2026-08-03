@@ -103,6 +103,7 @@ Production IPs, usernames, paths, and settings.
 - [[03-troubleshooting/symptoms/system-freeze-ssh-hang|System freeze / SSH hang]]
 - [[03-troubleshooting/symptoms/frigate-high-cpu|Frigate 100% CPU]]
 - [[03-troubleshooting/symptoms/docker-memory-crash|Docker memory crash]]
+- [[03-troubleshooting/symptoms/allego-iir-filter-design-errors|Allego IIR filter design errors on Monitor band change]] — cosmetic, DEFERRED, does not affect recording
 
 **Incident Log:**
 - [[03-troubleshooting/incidents/|Incidents]]
