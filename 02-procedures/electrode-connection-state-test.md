@@ -94,6 +94,11 @@ With ONE headstage per port and no splitter (32 channels per port), the same log
 - **This is a useful trick in general:** to test whether any display filter touches the data, park it on a frequency where nothing real lives and look for the null.
 - Units are `micro-volts` for primary channels, per the file metadata. **The rail is 6389.6 µV = `0.195 µV/LSB × 32767`, the 16-bit ADC full scale.** Confirmed by direct measurement 2026-08-03: `max|sample|` is 6389.8 µV, identical to four significant figures on all 8 channels. Use **6376.8 µV (99.8% of full scale)** as the clipping threshold; the older ±6300 figure was a guess that happened to be safe.
 
+> [!note] Every sweep we have taken is catalogued in [[impedance-sweep-register]]
+> Files were renamed 2026-08-03 so the name carries the date, time,
+> configuration and which run it brackets. The pre-run-1 sweep is the **17:34**
+> file, not the 17:51 one, which was taken in a different configuration.
+
 ## 🔴🔴 WE HAVE ONLY EVER MEASURED HALF OF EACH ELECTRODE PAIR — found 2026-08-03
 
 > [!danger] Every impedance number in this project is one input of a two-input pair

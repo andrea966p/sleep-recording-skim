@@ -100,7 +100,9 @@ def parse_impedance(path):
                 continue
             if not np.isfinite(mag):
                 continue
+            sd, st_, slabel = sweep_identity(path)
             rows.append(dict(
+                sweep_date=sd, sweep_time=st_, sweep_label=slabel,
                 port=port, slot=slot, mouse=f"{port}{slot}", site=ch,
                 kind="EEG" if ch in (1, 33) else "EMG",
                 magnitude_mohm=mag, phase_deg=pha,
@@ -110,6 +112,25 @@ def parse_impedance(path):
     return rows
 
 
+IMP_NAME_RE = re.compile(r"^imp_(\d{4}-\d{2}-\d{2})_(\d{4})_(.+)\.csv$")
+
+
+def sweep_identity(path):
+    """(date, HHMM, label) for a sweep, from its FILENAME where possible.
+
+    Sweeps are named `imp_YYYY-MM-DD_HHMM_<config>_<context>.csv` (renamed
+    2026-08-03; see RENAME-MANIFEST.csv next to them). Reading the identity from
+    the name rather than the file mtime means a copied, synced or restored file
+    keeps its true identity -- mtime does not survive those operations.
+    """
+    b = os.path.basename(path)
+    m = IMP_NAME_RE.match(b)
+    if m:
+        return m.group(1), m.group(2), m.group(3)
+    mt = dt.datetime.fromtimestamp(os.path.getmtime(path))
+    return mt.strftime("%Y-%m-%d"), mt.strftime("%H%M"), "unlabelled (mtime)"
+
+
 def collect_impedance(day, out_dir, explicit=None):
     """Copy the impedance sweeps belonging to this day into the day folder."""
     os.makedirs(out_dir, exist_ok=True)
@@ -117,10 +138,13 @@ def collect_impedance(day, out_dir, explicit=None):
     if not files and os.path.isdir(IMP_DIR):
         target = dt.datetime.strptime(day, "%Y-%m-%d").date()
         for f in sorted(glob.glob(os.path.join(IMP_DIR, "*.csv"))):
-            mtime = dt.date.fromtimestamp(os.path.getmtime(f))
+            if os.path.basename(f).startswith("RENAME-MANIFEST"):
+                continue
+            d, _, _ = sweep_identity(f)
+            sweep = dt.datetime.strptime(d, "%Y-%m-%d").date()
             # a sweep taken the evening before or the morning after a run still
             # belongs to that run
-            if abs((mtime - target).days) <= 1:
+            if abs((sweep - target).days) <= 1:
                 files.append(f)
     rows = []
     for f in files:
@@ -315,11 +339,22 @@ def _write_readme(day_dir, qc, written, imp_files, imp_rows):
             lines.append("  " + os.path.basename(f))
         lines.append(f"  sites read: {len(imp_rows)} (only /1,/2 = slot 1 and "
                      f"/33,/34 = slot 2 -- /3,/4 are empty pads)")
-        for r in sorted(imp_rows, key=lambda x: (x["source"], x["mouse"], x["site"])):
-            lines.append(f"    {r['mouse']} {r['kind']:3} {r['magnitude_mohm']:8.3f} MOhm"
-                         f"  phase {r['phase_deg']:7.2f}"
-                         f"  {'CONNECTED' if r['connected'] else 'open':>9}"
-                         f"   [{r['source']}]")
+        by_sweep = {}
+        for r in imp_rows:
+            by_sweep.setdefault(r["source"], []).append(r)
+        for src in sorted(by_sweep, key=lambda s: (by_sweep[s][0]["sweep_date"],
+                                                   by_sweep[s][0]["sweep_time"])):
+            rs = by_sweep[src]
+            h = rs[0]
+            lines.append("")
+            lines.append(f"  === {h['sweep_date']} {h['sweep_time'][:2]}:"
+                         f"{h['sweep_time'][2:]}  {h['sweep_label']}")
+            lines.append(f"      file: {src}")
+            for r in sorted(rs, key=lambda x: (x["mouse"], x["site"])):
+                lines.append(f"      {r['mouse']} {r['kind']:3} /{r['site']:<3}"
+                             f" {r['magnitude_mohm']:8.3f} MOhm"
+                             f"  phase {r['phase_deg']:7.2f}"
+                             f"  {'CONNECTED' if r['connected'] else 'open':>9}")
         lines.append(f"  connected (< {T.IMP_CONNECTED_MOHM} MOhm): "
                      f"{n_conn}/{len(imp_rows)}")
         lines.append(f"  at literature quality (<= {T.IMP_GOOD_MOHM} MOhm = "

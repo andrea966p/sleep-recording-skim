@@ -138,6 +138,8 @@ the pre-run impedance sweep — all rank the animals identically.
 
 Three sweeps bracket the runs: **pre-run1** (07-31 17:34, 32 min before Run 1),
 **pre-run2** (08-02 01:44, 2 min before Run 2), **post-run2** (08-02 23:34).
+Full catalogue, file names and the complete three-point table:
+[[impedance-sweep-register]].
 
 ### EEG impedance across Run 2 — every channel, no exceptions
 
