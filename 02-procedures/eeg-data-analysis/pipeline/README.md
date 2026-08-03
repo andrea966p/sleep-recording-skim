@@ -37,6 +37,9 @@ python3 stage2_split.py allego_1__uid0731-18-06-37
 
 # 3. sleep features for every mouse in that day folder
 python3 stage3_features.py /home/skimlab/eeg-processed/2026-07-31
+
+# 4. EDF+ export so a HUMAN can score it
+python3 stage4_export_edf.py /home/skimlab/eeg-processed/2026-07-31
 ```
 
 Stage 1 reads the raw file once (minutes to ~15 min) and caches per-epoch
@@ -169,6 +172,32 @@ Supporting evidence, not a gate: REM entered from NREM (expect >70%).
 > Calibration of `r@1min` on synthetic data through this same code path:
 > noise −0.035 | 30 s bouts +0.112 | 2 min +0.214 | 4 min +0.510 | 10 min +0.703.
 > So `r > 0.30` means consolidated bouts of roughly **3 min or longer**.
+
+## Stage 4 — EDF+ for the human scorer
+
+`stage4_export_edf.py`. Writes a two-signal (EEG, EMG) **EDF+C** file per mouse,
+plus a plain-language `_SCORER-README.txt` listing the windows worth scoring.
+
+No third-party dependency — EDF is written directly. The archived
+`xdat_to_edf.py` needed `pyedflib` **and** computed bipolar derivations, i.e. the
+retracted pre-2026-08-01 model; do not resurrect it.
+
+Physical range is pinned to the true ADC rail, **±6389.56 µV**, so the EDF
+digital step equals the hardware LSB of 0.195 µV. Verified by round-trip:
+maximum error **0.195 µV = exactly one LSB**, i.e. pure quantisation, no scaling
+bug. (6389.56 rather than the exact 6389.565 because EDF header fields are 8
+ASCII characters — `-6389.565` gets truncated while the positive field does not,
+producing an asymmetric range and a fractional-LSB bias on every sample.)
+
+> [!important] Three deliberate choices
+> 1. **The automatic hypnogram is NOT written into the EDF.** A scorer who sees
+>    our labels cannot un-see them. Score blind, then compare with
+>    `*_hypnogram.csv`.
+> 2. **Rejected epochs are left in place, not cut out.** Splicing discontinuous
+>    time into a continuous file would destroy the scorer's sense of bout length
+>    — the same class of error as the persistence bug.
+> 3. **The scorer is told which windows to score**, with start/end times, so the
+>    excluded stretches are not mistaken for flat physiology.
 
 ## Thresholds and where they come from
 

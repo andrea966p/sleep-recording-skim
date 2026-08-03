@@ -49,8 +49,22 @@ audience: PI / lab meeting
 > rules land far above it, so **REM is not reliably separable with this
 > montage.** Report WAKE vs NREM, plus REM's *order* (entered from NREM).
 >
-> The analysis path is now a documented three-stage pipeline —
-> [[pipeline/README]] — replacing the ad-hoc scripts this report describes.
+> **6. The timeline changes how these runs should be judged.** Surgery 21–23 July,
+> tethered 30 July, so Run 1 is **day 8–10 post-implant with ~28 h of tethering**
+> and Run 2 is day 10–12. Our own protocol asks for **≥14 days post-implant and
+> ≥7 days of cage acclimatisation** ([[tsukuba-sleep-recording-method]]). **Both
+> runs were rig commissioning tests taken early.** So the "~6% yield" figure
+> below describes an under-habituated cohort during commissioning and **must not
+> be quoted as the rig's performance**. It also makes C1 more impressive, not
+> less: it reached 66.9% light-phase sleep on its *second day* tethered.
+>
+> **7. Channel selection is settled** — `/1`, `/2`, `/33`, `/34` per port, proven
+> from the datasheet, the recorded metadata, and a measurement of all 64 slots on
+> all four ports: [[CANONICAL-allego-channel-selection]].
+>
+> The analysis path is now a documented **four-stage pipeline** ending in an EDF+
+> file a person can score — **see the new §6.5** — replacing the ad-hoc scripts
+> described in §7. [[pipeline/README]].
 
 ---
 
@@ -318,9 +332,213 @@ Animals A1, C1 and D1 are the ideal test cases — their EMG works perfectly thr
 
 ---
 
+## 6.5 ⭐ The procedure: from a raw recording to a file a person can score
+
+This is the operational answer to "what do we actually *do* with a recording".
+Every step says **what**, **why**, and **which code and which source** it comes
+from. Code: `02-procedures/eeg-data-analysis/pipeline/`. Full operating manual:
+[[pipeline/README]]. Every constant lives in one file, `qc_thresholds.py`, with
+its justification attached — there are no magic numbers anywhere else.
+
+```
+raw .xdat  ──1──►  layout  ──2──►  filter/epoch  ──3──►  QC gate
+                                                            │
+   EDF+ for the scorer  ◄──6──  per-mouse files  ◄──5──  ◄──4── worth scoring?
+```
+
+Run it end to end:
+
+```bash
+python3 stage1_qc.py       allego_1__uid0731-18-06-37 --json qc.json
+python3 stage2_split.py    allego_1__uid0731-18-06-37
+python3 stage3_features.py /home/skimlab/eeg-processed/2026-07-31
+python3 stage4_export_edf.py /home/skimlab/eeg-processed/2026-07-31
+```
+
+Use the **system `python3`**, not the `/opt/neurosurveillance` venv (that venv
+has a numpy/scipy ABI mismatch and fails on import).
+
+### Step 0 — record the things the data cannot tell you
+
+**What.** Implant date, tethering date, animal ID per port and slot, and the
+light schedule.
+**Why.** None of these are in the file, and without them the recording cannot be
+interpreted. Both 8-mouse runs turned out to be **8–12 days post-implant with
+~1 day of tethering**, against our own protocol of ≥14 days and ≥7 days
+([[tsukuba-sleep-recording-method]]) — which changes how every sleep number
+should be read. The light schedule was missing until 2026-08-03, and without it
+no circadian check is possible.
+**Source.** Oishi et al. *JoVE* 2016 (habituate 2–3 days);
+[[tsukuba-sleep-recording-method]]. **Currently logged nowhere — start doing it.**
+
+### Step 1 — work out which channel is which, from the file itself
+
+**What.** Read `sapiens_base.sensors_by_port`; take `connection_ntv_idx` as the
+port's base; the animal in splitter slot 1 is at base+0 (EEG) and base+1 (EMG),
+slot 2 at base+32 and base+33.
+**Why.** The RHD2216 is **bipolar**: each amplifier has two electrode pins and
+outputs their difference *in hardware*. Your four wires (C3410 pads 0–3) are
+therefore **two channels, not four**. Layouts also vary between recordings
+(32 ch/port, 64 ch/port, mixed), so assuming one mis-maps the older files.
+**Code.** `pipeline_common.derive_layout()`.
+**Source.** Intan RHD2000 datasheet p1 — *"16 amplifiers having independently
+accessible differential inputs (in0+, in0–, in1+, in1–, …)"* — and p20 —
+*"Only channels 0-15 are active in the RHD2216"*, which is why a port shows 32
+slots per chip. Verified against the recorded metadata and by measuring all 64
+slots on all four ports: [[CANONICAL-allego-channel-selection]].
+
+> [!danger] The two mistakes this step exists to prevent
+> **Never subtract `/1 − /2`** — that computes EEG minus EMG. And **never treat
+> `/3`,`/4` as EMG** — they are amplifiers with no wires on their inputs. Doing
+> both cost this project weeks and produced 24 phantom "failed EMG surgeries".
+
+### Step 2 — filter and epoch
+
+**What.** Zero-phase 4th-order Butterworth: **EEG 0.5–30 Hz**, **EMG 10–300 Hz**,
+plus a **55–65 Hz** band kept separately as the noise measure. Cut into **4 s
+epochs**. Welch PSD with **`nperseg = 2048`**.
+**Why.** Sleep EEG content sits below 30 Hz; muscle tone is broadband. Zero-phase
+filtering avoids shifting events in time. 4 s is the fine end of the accepted
+rodent range and suits mouse sleep, which is far more fragmented than human.
+**Code.** `stage1_qc.extract_features()`.
+**Source.** Oishi 2016 uses EEG 0.5–64 Hz / EMG 16–64 Hz and 10 s epochs;
+Kim et al. *Sci Data* 2022 uses 0.3–100 Hz and 10 s; the 2026 needle-electrode
+preprint uses 5 s. Delta 0.5–4 Hz and theta 6–9 Hz follow the rodent convention
+(Kostin 2025 warns against putting 7 Hz on a band boundary).
+
+> [!danger] `nperseg = 2048` — do not lower it
+> Resolution is `fs/nperseg` = 0.49 Hz. At `nperseg = 512` it becomes 1.95 Hz,
+> the 6–9 Hz theta band collapses to a **single FFT bin**, and integrating over
+> one point returns **exactly zero** — silently destroying every REM measurement
+> with no error raised.
+
+> [!note] Why we do NOT notch out the mains during acquisition
+> Kim 2022 applies a 60 Hz hardware notch at acquisition. We deliberately do not:
+> **the hum amplitude is our contact measurement.** A connected electrode sits at
+> 6–20 µV in the 55–65 Hz band, an open one at 1000–4700 µV — cleanly bimodal,
+> ~100× apart. Notching at acquisition would throw that away. Notch at analysis
+> time if a figure needs it. (Verified 2026-07-31 that Allego's notch is
+> display-only and never reaches the saved `.xdat`.)
+
+### Step 3 — decide which epochs are usable (the QC gate)
+
+An epoch must pass **all** of these. Rejection reason is always recorded.
+
+| test | rule | why, and where the number comes from |
+| --- | --- | --- |
+| **OPEN** | 55–65 Hz < **150 µV** on EEG *and* EMG | electrode not in contact. **Measured**: the pooled distribution over 1,137,955 epochs is bimodal in log space — connected mode 84 µV, open mode 3731 µV, **valley at 134 µV**. The previous 300 µV sat on the open mode's flank and was permissive |
+| **FLAT** | EEG rms ≥ **11 µV** | momentary dropout. **Measured**: local minimum separating the amplifier noise floor from real signal |
+| **DEAD** | channel median rms ≥ **20 µV** over the whole recording | a short is a property of the **channel**, not of an epoch, so it is tested once per channel |
+| **CLIPPED** | **zero** railed samples, rail = **6389.6 µV** | a saturated amplifier makes band powers undefined. **Measured**: `max\|sample\|` is 6389.8 µV, identical on all 8 channels = `0.195 µV/LSB × 32767`, the 16-bit ADC full scale |
+| **FINITE** | delta, theta, EMG rms all > 0 | degenerate epochs |
+
+**Code.** `stage1_qc.gate()`.
+**Why these and not the literature's:** published rodent pipelines assume the
+electrode works and reject *artefacts* (Kostin 2025 uses mean ± 4 SD on RMS).
+Our dominant failure is not an artefact, it is **no electrical contact at all**,
+which no published gate tests for. So these thresholds are derived from our own
+pooled data, and each is stated with its measurement.
+
+> [!important] Sensitivity was checked, and the conclusions do not depend on these numbers
+> Every threshold was swept across its plausible range. **C1 is invariant**
+> (`r = 0.74`, 8.7 h) in *every* variant tested; C2 survives every variant.
+> Clipping is not load-bearing at all. A conclusion that moved when a threshold
+> moved would not be reportable.
+
+### Step 4 — group into unbroken blocks, and decide if it is worth scoring
+
+**What.** Concatenate consecutive passing epochs into **blocks**; keep blocks
+≥ **124 s** (31 epochs). Then require: ≥15 min inside blocks, within-block
+persistence `r@1min > 0.30`, the physiology check, and wake fraction 15–90%.
+**Why blocks.** Contact is intermittent, so the passing epochs are **fragments
+scattered through time**. Any statistic computed over the concatenated array
+compares epochs that may be hours apart. That is precisely the bug found on
+2026-08-03, and it failed in both directions: it invented the project's largest
+false positive (+0.854 on a stretch that is 39 minutes of pure wake) and hid a
+real result (+0.078 on data that could not possibly have passed).
+**Code.** `pipeline_common.blocks_of()`, `within_block_persistence()`.
+**Calibration** on synthetic data through the identical code path: pure noise
+−0.035 · 30 s bouts +0.112 · 2 min +0.214 · 4 min +0.510 · 10 min +0.703. So
+`r > 0.30` means **consolidated bouts of roughly 3 minutes or longer**.
+
+### Step 5 — split into one file per mouse, organised by day
+
+**What.** Anti-aliased decimation to **250 Hz**, one `.npz` per animal, named
+`port{PORT}-slot{SLOT}_{DATE}_{HHMMSS}_{DURATION}.npz`, in a per-day folder that
+also carries the impedance sweeps and the QC summary.
+**Why 250 Hz.** Keeps the full 0.5–30 Hz EEG band and 10–100 Hz of EMG with
+large margin, and shrinks the file 4× from the 1 kHz raw rate. Kim 2022 records
+at 500 Hz; Oishi 2016 digitises at 128 Hz.
+**Why keep raw.** The `.xdat` is the master and is never modified — everything
+is re-derivable.
+**Code.** `stage2_split.py`. Day folder date comes from the metadata **UTC**
+`start_time` converted to KST; the `uidMMDD-HH-MM-SS` filename token is *already
+local*, and mixing the two files a recording under the wrong day and shifts every
+ZT by 9 hours.
+
+### Step 6 — export EDF+ so a human can score it
+
+**What.** `stage4_export_edf.py` writes a two-signal (EEG, EMG) **EDF+C** file
+plus a plain-language `_SCORER-README.txt` listing the time windows that are
+worth scoring.
+**Why EDF+.** It is the portable format every scoring tool imports, and the
+agreed hand-off to the IIIS scorer.
+**Implementation note.** Written with no third-party dependency — the archived
+`xdat_to_edf.py` needed `pyedflib` *and* computed bipolar derivations, i.e. the
+retracted pre-2026-08-01 model. Physical range is fixed at the true ADC rail
+(±6389.56 µV) so the EDF step equals the hardware LSB of 0.195 µV and no
+requantisation error is added; verified by round-trip at **0.195 µV = exactly one
+LSB**.
+
+Three deliberate choices in this step:
+
+1. **The automatic hypnogram is NOT written into the EDF.** A scorer who sees our
+   labels cannot un-see them, and this project's recurring failure has been
+   believing its own automatic output. Score blind, then compare against
+   `*_hypnogram.csv`.
+2. **Rejected epochs are left in place, not cut out.** Deleting them would splice
+   discontinuous time into a continuous file and destroy the scorer's sense of
+   bout length — the same class of error as the persistence bug.
+3. **The scorer is told which windows to score**, with start and end times, so
+   the excluded stretches are not mistaken for flat physiology.
+
+### What the scorer receives, per animal
+
+```
+portC-slot1_2026-07-31_180637_27h54m.edf                 <- open this
+portC-slot1_2026-07-31_180637_27h54m_SCORER-README.txt   <- read this first
+portC-slot1_2026-07-31_180637_27h54m_hypnogram.csv       <- compare AFTER scoring
+portC-slot1_2026-07-31_180637_27h54m_summary.txt
+../impedance/   ../qc/qc_summary.csv   ../README.txt
+```
+
+Real example, C1:
+
+```
+SCORE ONLY INSIDE THESE WINDOWS
+    from (h:mm:ss)      to (h:mm:ss)    minutes
+           0:00:00           8:05:44      485.7
+           8:06:08           8:43:56       37.8
+```
+
+> [!warning] Where this stops
+> Steps 1–6 make a recording **scorable**. They do not make it **good**. Of
+> everything recorded to date only three animals reach step 6 at all, and only
+> two of those are scoreable. The bottleneck is upstream of every line of this
+> code: **the electrode has to be in contact.**
+
+---
+
 ## 7. The analysis code — what each piece does and why
 
-All scripts live in the vault under `02-procedures/eeg-data-analysis/scripts/`.
+> [!warning] Superseded by §6.5 — read this section for the reasoning, not for what to run
+> The scripts described below produced the numbers in this report and are kept so
+> those numbers can be reproduced. **For any new work use the pipeline in §6.5**
+> (`02-procedures/eeg-data-analysis/pipeline/`), which fixes three wrong
+> thresholds, adds the channel-level dead-electrode test, and adds the EDF+
+> export. See [[pipeline/README]].
+
+All scripts below live in the vault under `02-procedures/eeg-data-analysis/scripts/`.
 
 ### 7.1 `rescore-v2-2026-08-03/rescore_v2.py` — **the current scorer, use this one**
 

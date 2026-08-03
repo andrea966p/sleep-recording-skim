@@ -26,5 +26,6 @@ done
 for day in $(ls -1d "$ROOT"*/ 2>/dev/null); do
     if compgen -G "${day}port*.npz" > /dev/null; then
         python3 stage3_features.py "$day"
+        python3 stage4_export_edf.py "$day"
     fi
 done
