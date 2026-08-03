@@ -6,9 +6,9 @@
 # Use the SYSTEM python3. The /opt/neurosurveillance venv has a numpy/scipy ABI
 # mismatch and dies with "numpy.core.multiarray failed to import".
 #
-# Stage 2 buffers every kept animal at the full sample rate, so do not run two
-# recordings concurrently on this machine -- 30 GB of RAM with the page cache
-# full is not enough, and the split gets OOM-killed silently (2026-08-03).
+# Stage 2 buffers every kept animal at the full sample rate (~2.4 GB for three
+# mice over 28 h), so do not run two recordings concurrently on this machine --
+# 30 GB of RAM with the page cache full pushes it into swap.
 set -euo pipefail
 
 cd "$(dirname "$0")"

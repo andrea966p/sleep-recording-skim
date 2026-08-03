@@ -11,6 +11,49 @@ audience: PI / lab meeting
 
 ---
 
+> [!important] ADDENDUM, same day — read this before the numbers below
+> Four things changed after this report was first written. **The conclusions
+> below all survive**, but some numbers shifted slightly and two claims are now
+> stronger, one weaker.
+>
+> **1. The light schedule was recorded: lights ON 09:00, OFF 21:00 KST, ZT0 =
+> 09:00.** This unlocked a check that is *completely independent of every
+> threshold we chose*, because nothing in the analysis knows about the clock.
+>
+> **2. C1 now has external validation.** In the light phase C1 is **66.9%
+> asleep**; published C57BL/6 values are **~70% asleep in the light phase (NREM
+> 62.0 ± 7.8 %/12 h)**. It is inside one standard deviation, and the light/dark
+> contrast runs the right way (33.1% wake in the light, 82.2% in the dark).
+> Three independent lines — persistence, physiology, circadian timing — now rank
+> the animals identically: C1 strong, C2 real, D2 fails.
+>
+> **3. The 06-29 animal is explained.** That recording sits entirely in the light
+> phase, when a mouse should be ~70% asleep, and the animal was 95% awake on
+> technically flawless data. That is not an artefact — it is an animal that was
+> not sleeping, consistent with first-tethering acclimatisation.
+>
+> **4. The thresholds in §5 were partly guesses and have been re-derived from
+> 1,137,955 pooled epochs.** `RAIL` is now 6389.6 µV (= 0.195 µV/LSB × 32767,
+> measured identical on all 8 channels — the ADC full scale); `OPEN` moved
+> 300 → 150 µV (the mains distribution is bimodal with its valley at 134 µV);
+> and the old 25 µV "shorted" rule **was wrong** — it discarded 9.5% of all
+> epochs including real low-amplitude wake, and it was the only constant whose
+> value moved a verdict. It is now split into an epoch-level dropout test
+> (11 µV) and a channel-level dead-electrode test (20 µV median). A full
+> sensitivity sweep confirms **C1 is invariant** — `r = 0.74`, 8.7 h, in every
+> variant tested.
+>
+> **5. Weaker claim: do not report a REM percentage at all.** §5 already warned
+> that the 80th-percentile rule fixes REM by construction. An independent Otsu
+> cut gives 24–48% of sleep, and the literature value for mice is **<10%**. Both
+> rules land far above it, so **REM is not reliably separable with this
+> montage.** Report WAKE vs NREM, plus REM's *order* (entered from NREM).
+>
+> The analysis path is now a documented three-stage pipeline —
+> [[pipeline/README]] — replacing the ad-hoc scripts this report describes.
+
+---
+
 ## 1. Executive summary
 
 > [!abstract] The one-paragraph version

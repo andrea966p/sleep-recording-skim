@@ -200,7 +200,13 @@ def analyse(npz_path):
         if n_sleep_otsu else None,
         nrem_pct=round(100 * float((lab_otsu[sel] == NREM).sum()) / tot_ep, 1),
         method="Otsu split of log theta/delta among non-wake epochs",
-        literature_rem_pct_of_sleep="<10 for mouse")
+        literature_rem_pct_of_sleep_mouse=10.0,
+        reliable=False,
+        caveat=("REM is NOT reliably separable with this montage. Both the "
+                "percentile rule and the Otsu cut put REM far above the "
+                "literature value of <10% of sleep, so neither is a "
+                "measurement. Report WAKE vs NREM, plus the ORDER property "
+                "that REM is entered from NREM. Do not report a REM share."))
 
     bt = {}
     for v, nm in NAMES.items():
@@ -318,11 +324,15 @@ def _summary(r):
         L.append(f"  {nm:<5} n={b['n']:<6} median {b['median_s']:>5} s   "
                  f"mean {b['mean_s']:>7.1f} s   max {b['max_s']:>6} s")
     rm = r["rem_measured"]
-    L += ["", "REM measured independently (Otsu on theta/delta, NOT the "
+    L += ["", "REM cross-check (Otsu on theta/delta, independent of the "
               "percentile rule)",
           f"  REM {rm['rem_pct_of_recording']}% of scored time, "
-          f"{rm['rem_pct_of_sleep']}% of sleep   "
-          f"(literature for mouse: {rm['literature_rem_pct_of_sleep']}% of sleep)"]
+          f"{rm['rem_pct_of_sleep']}% of sleep",
+          f"  literature for mouse: REM is "
+          f"<{rm['literature_rem_pct_of_sleep_mouse']:.0f}% of total sleep",
+          "  >> REM IS NOT RELIABLY SEPARABLE HERE. Both rules land far above",
+          "     the literature value, so neither is a measurement. Report WAKE",
+          "     vs NREM and REM's ORDER only. Do not report a REM share."]
     L += ["", "by light phase (ZT0 = lights on)"]
     for nm in ("light", "dark"):
         p = r["by_light_phase"].get(nm)

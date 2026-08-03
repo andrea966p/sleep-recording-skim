@@ -70,21 +70,39 @@ def parse_impedance(path):
     """
     rows = []
     with open(path, newline="", encoding="utf-8-sig") as fh:
-        for r in csv.DictReader(fh):
-            site = (r.get("SITE") or "").strip()
+        rd = csv.DictReader(fh)
+        # Locate columns by PREFIX, never by exact header text. The ohm sign
+        # exists as two different code points (U+03A9 GREEK CAPITAL OMEGA and
+        # U+2126 OHM SIGN) and Allego's export is not guaranteed to use the same
+        # one as this source file. Matching the literal header silently yields
+        # NaN for every row, which then reads as "nothing is connected".
+        fields = rd.fieldnames or []
+        col_site = next((c for c in fields if c.strip().upper().startswith("SITE")), None)
+        col_mag = next((c for c in fields if c.strip().upper().startswith("MAGNITUDE")), None)
+        col_pha = next((c for c in fields if c.strip().upper().startswith("PHASE")), None)
+        if not (col_site and col_mag):
+            raise ValueError(f"{path}: cannot find SITE/MAGNITUDE columns in {fields}")
+        for r in rd:
+            site = (r.get(col_site) or "").strip()
             m = re.match(r"^([A-H])/(\d+)$", site)
             if not m:
                 continue
             port, ch = m.group(1), int(m.group(2))
-            if ch not in (1, 2):
+            # /1,/2 = slot-1 animal; /33,/34 = slot-2 animal behind a splitter.
+            # Everything else is an empty pad or the unused floor.
+            if ch not in (1, 2, 33, 34):
                 continue
+            slot = 1 if ch <= 2 else 2
             try:
-                mag = float(r.get("MAGNITUDE (MΩ)", "nan"))
-                pha = float(r.get("PHASE (°)", "nan"))
+                mag = float(r.get(col_mag) or "nan")
+                pha = float(r.get(col_pha) or "nan") if col_pha else float("nan")
             except ValueError:
                 continue
+            if not np.isfinite(mag):
+                continue
             rows.append(dict(
-                port=port, site=ch, kind="EEG" if ch == 1 else "EMG",
+                port=port, slot=slot, mouse=f"{port}{slot}", site=ch,
+                kind="EEG" if ch in (1, 33) else "EMG",
                 magnitude_mohm=mag, phase_deg=pha,
                 connected=bool(mag < T.IMP_CONNECTED_MOHM),
                 literature_good=bool(mag <= T.IMP_GOOD_MOHM),
@@ -152,9 +170,10 @@ def _read_columns(base, N, NC, fs, eeg_cols, emg_cols):
         step = fs * 600             # ten minutes at a time
         for s in range(0, N, step):
             e = min(s + step, N)
-            # index the columns directly. `mm[s:e, :][:, cols]` would first
+            # Index the columns directly. `mm[s:e, :][:, cols]` would first
             # materialise ALL columns for the chunk -- 1.8 GB per hour at 128
-            # channels -- which OOM-killed this script on 2026-08-03.
+            # channels -- before throwing almost all of it away. On a 30 GB box
+            # with the page cache full that drove the machine deep into swap.
             buf[:, s:e] = mm[s:e, cols].T
             print(f"  read {100 * e / N:5.1f}%", end="\r", flush=True)
     finally:
@@ -294,14 +313,27 @@ def _write_readme(day_dir, qc, written, imp_files, imp_rows):
     if imp_files:
         for f in imp_files:
             lines.append("  " + os.path.basename(f))
-        lines.append(f"  sites read: {len(imp_rows)} (only /1 and /2 -- "
-                     f"/3 and /4 are empty pads)")
+        lines.append(f"  sites read: {len(imp_rows)} (only /1,/2 = slot 1 and "
+                     f"/33,/34 = slot 2 -- /3,/4 are empty pads)")
+        for r in sorted(imp_rows, key=lambda x: (x["source"], x["mouse"], x["site"])):
+            lines.append(f"    {r['mouse']} {r['kind']:3} {r['magnitude_mohm']:8.3f} MOhm"
+                         f"  phase {r['phase_deg']:7.2f}"
+                         f"  {'CONNECTED' if r['connected'] else 'open':>9}"
+                         f"   [{r['source']}]")
         lines.append(f"  connected (< {T.IMP_CONNECTED_MOHM} MOhm): "
                      f"{n_conn}/{len(imp_rows)}")
         lines.append(f"  at literature quality (<= {T.IMP_GOOD_MOHM} MOhm = "
                      f"100 kOhm): {n_good}/{len(imp_rows)}")
         lines.append("  NOTE resting impedance predicts WHICH channel is "
                      "connected, not how many usable hours it yields.")
+        lines.append("  NOTE the mouse label is derived from port+site. In an "
+                     "ad-hoc sweep of a SINGLE animal moved onto another port "
+                     "(e.g. 'imp B2 ... now alone.csv') that label is the PORT "
+                     "it sat on, not the animal. Trust the source filename.")
+        lines.append(f"  Literature: epidural screws are 5-50 kOhm at 1 kHz and "
+                     f"<=10 kOhm confirms contact. Our {T.IMP_CONNECTED_MOHM} "
+                     f"MOhm bar is ~40x looser -- it is an OPEN-CIRCUIT "
+                     f"DETECTOR, not a quality bar.")
     else:
         lines.append("  none found for this day")
     open(os.path.join(day_dir, "README.txt"), "w").write("\n".join(lines) + "\n")
