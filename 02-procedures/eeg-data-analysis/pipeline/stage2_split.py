@@ -207,12 +207,22 @@ def _read_columns(base, N, NC, fs, eeg_cols, emg_cols):
 
 
 def split_recording(base, root=DEFAULT_ROOT, clean_only=False,
-                    impedance=None, force=False):
+                    impedance=None, force=False, all_verdicts=False):
     qc = S1.qc_recording(base)
     if qc is None:
         raise SystemExit(f"{base}: no animals in layout")
 
-    keep = {"CLEAN"} if clean_only else set(KEEP_VERDICTS)
+    if all_verdicts:
+        # Archival split: write every mouse the layout knows about, whatever
+        # stage 1 said. The verdict still travels with the file, in meta["qc"]
+        # and in the README, so an OPEN animal cannot be mistaken for a
+        # scoreable one. Use this to hand a colleague the complete per-mouse
+        # set, or to inspect a failure; do NOT use it to pick data for analysis.
+        keep = None
+    elif clean_only:
+        keep = {"CLEAN"}
+    else:
+        keep = set(KEEP_VERDICTS)
     day_dir = P.day_folder(root, dt.datetime.fromisoformat(qc["start_local"]))
     os.makedirs(day_dir, exist_ok=True)
     os.makedirs(os.path.join(day_dir, "qc"), exist_ok=True)
@@ -240,7 +250,7 @@ def split_recording(base, root=DEFAULT_ROOT, clean_only=False,
     todo = []
     for i, lab in enumerate(labels):
         a = qc["animals"][i]
-        if a["verdict"] not in keep:
+        if keep is not None and a["verdict"] not in keep:
             print(f"  skip {a['name']}: {a['verdict']} -- {a['reason']}")
             continue
         fn = P.mouse_filename(lab["port"], lab["slot"], local, info["hours"], ".npz")
@@ -380,6 +390,9 @@ def main():
     ap.add_argument("--root", default=DEFAULT_ROOT)
     ap.add_argument("--clean-only", action="store_true",
                     help="write only CLEAN animals (drops usable DIRTY ones)")
+    ap.add_argument("--all-verdicts", action="store_true",
+                    help="write EVERY mouse regardless of verdict (archival "
+                         "hand-off; OPEN/DEAD animals carry no scoreable data)")
     ap.add_argument("--impedance", nargs="*", default=None)
     ap.add_argument("--force", action="store_true")
     a = ap.parse_args()
@@ -387,7 +400,8 @@ def main():
         print(f"\n=== {b}")
         day_dir, written = split_recording(
             b, root=a.root, clean_only=a.clean_only,
-            impedance=a.impedance, force=a.force)
+            impedance=a.impedance, force=a.force,
+            all_verdicts=a.all_verdicts)
         print(f"  -> {day_dir}  ({len(written)} mouse files)")
 
 
