@@ -77,8 +77,50 @@ Use it as a **software re-reference / spare cortical trace**: record pad 4, then
 
 ### 2.2 Build / select notes
 
-- **Recorded pads = 0,1,2,3,4,6.** Pad 5 (purple) carries nothing → **deselect.** So the recorded set is non-contiguous (skips 5) → **select pads explicitly** in channel-select, don't rely on a contiguous range (see [[signal-mapping-guide]]).
-- Differential pairs in software: **0−1 = left EEG**, **2−3 = EMG**. Pad 4 (right-frontal) stands alone as the optional re-reference. Pad 6 (copper) = env-noise subtract.
+> [!danger] 🔴 CORRECTED 2026-08-03 — pads are NOT channels. Two pads make ONE channel.
+> The two bullets below were written before the bipolar correction and are wrong
+> in a way that matters. **You do not select pads in Allego — you select
+> amplifiers**, and on the RHD2216 each amplifier consumes **two adjacent pads**
+> as its `+` and `−` inputs (datasheet: *"16 amplifiers having independently
+> accessible differential inputs (in0+, in0–, in1+, in1–, …)"*). The `+`/`−`
+> labels already present in the §2 table are exactly that pairing.
+>
+> | pads | chip pins | amplifier | Allego | what it actually is |
+> | --- | --- | --- | --- | --- |
+> | **0, 1** | `in0+`, `in0−` | amp 0 | **`/1`** | **left EEG**, frontal-L − parietal-L — already bipolar |
+> | **2, 3** | `in1+`, `in1−` | amp 1 | **`/2`** | **EMG**, L − R — already bipolar |
+> | 4, 5 | `in2+`, `in2−` | amp 2 | `/3` | dura frontal-R vs **nothing** — half-open |
+> | 6, 7 | `in3+`, `in3−` | amp 3 | `/4` | copper env-ref vs **nothing** — half-open |
+>
+> **Select `/1` and `/2` only** (plus `/33`, `/34` for the second animal on a
+> splitter port). That is the entire montage in two channels.
+>
+> **Do NOT subtract anything in software.** The chip already did it.
+> `0−1` and `2−3` are performed in hardware, before the ADC.
+
+- ~~**Recorded pads = 0,1,2,3,4,6.** Pad 5 (purple) carries nothing → **deselect.** So the recorded set is non-contiguous (skips 5) → **select pads explicitly** in channel-select, don't rely on a contiguous range (see [[signal-mapping-guide]]).~~
+- ~~Differential pairs in software: **0−1 = left EEG**, **2−3 = EMG**. Pad 4 (right-frontal) stands alone as the optional re-reference. Pad 6 (copper) = env-noise subtract.~~
+
+> [!important] On THIS single-mouse 8-pin rig, `/3` and `/4` are HALF-wired, not empty
+> ⚠️ **Scope: this applies to the single-mouse 8-pin configuration described on
+> this page, NOT to the current 8-mouse rig.** On the 8-mouse rig only four
+> electrode wires plus ground are fitted per animal, so `/3` and `/4` genuinely
+> have nothing on either input — see [[eight-mouse-acquisition-setup]] §2, and the
+> impedance sweeps confirm it (`/3`,`/4` read the same as the no-wire control).
+>
+> On the single-mouse rig with brown and orange fitted:
+>
+> - **Pad 4 (brown) is a real right-frontal dura electrode** on `in2+`, with
+>   `in2−` (pad 5, purple) **open** → `/3` is a genuine brain electrode wired
+>   against nothing, which is why it floats and rails.
+> - **Pad 6 (orange) is the copper environmental-noise coil** on `in3+`, with
+>   `in3−` open. Same situation.
+>
+> Neither is usable as-is: a differential amplifier with one open input produces
+> noise regardless of what sits on the other input. **To use either, its negative
+> input must be wired to something** — a second dura point for pad 5, or a local
+> return for pad 7. Given that mains hum is our dominant problem, pairing the
+> copper coil properly is worth considering for a future build.
 - Ground (green) and `REF` are not recorded channels.
 
 ---

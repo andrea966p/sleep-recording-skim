@@ -93,6 +93,31 @@ Open Ephys confirmed in writing (28 Jul) that with a **bipolar** montage *"this 
 **Is there a measured figure? Or is the honest answer that we buy it as a port multiplier and treat isolation as a bonus?**
 Related: your figure says **SYS GND should be bonded to the XDAQ HDMI ground**, so isolation must sit downstream, per EXP port. Where exactly is the barrier, and what is its capacitance?
 
+**Q4b. 🔴⭐ ADDED 2026-08-03 — expose `Zcheck pol sel` so we can measure BOTH electrodes of a bipolar pair.**
+The RHD2216 is bipolar: each amplifier has two electrode pins, `inX+` and `inX−`,
+and **both are real electrodes in the animal**. The Intan datasheet provides a
+dedicated register bit, **`Zcheck pol sel`** (Register 5), precisely so each can be
+impedance-tested separately — 0 selects `inX+`, 1 selects `inX−`.
+
+**Radiens exposes no way to reach it.** Verified at source level in
+`radiens-core` 0.0.8: `get_intan_impedance(port)` is the only impedance method,
+`ImpedanceRequest` carries only a port, `ImpedanceValue` carries only
+`ntv_chan_idx / magnitude_ohm / phase_deg`, and the only register-access methods
+(`load_all_mosi`, `transmit_mosi`, `read_wire_out`, `flash_sinaps`) are
+**Sinaps-probe specific** and cannot address the RHD chip.
+
+**Consequence for us:** every impedance sweep this project has ever taken measures
+**one electrode of each pair**. The other has never been measured. That is not a
+cosmetic gap — the hum that tells us an electrode is open is driven by the
+*imbalance* between the two inputs, so the quantity that predicts data quality has
+been unmeasurable throughout. It already produced one concrete false reading: a
+channel read 0.133 MΩ, the best in our fleet, and then recorded nothing but hum
+for 21.7 hours.
+
+**Ask:** can `Zcheck pol sel` be exposed in Allego and/or the Python API — as a
+polarity argument to `get_intan_impedance`, or as a second value per channel? It
+is a single bit you already drive. Is there any existing route we have missed?
+
 **Q5. ⭐ Why two PCs, and is SyncLink actually needed?**
 Three parts, and the first may dissolve the other two:
 - **(a)** Mice 1-16 on box A and 17-32 on box B are **different animals in different chambers**. Nothing in sleep scoring compares them sample-by-sample. What we need is each mouse aligned to its own video, which we already do with a TTL pulse train. **Do the two boxes need to be sample-locked at all?** If not, SyncLink comes out of the build.

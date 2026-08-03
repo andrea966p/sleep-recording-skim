@@ -148,6 +148,32 @@ With ONE headstage per port and no splitter (32 channels per port), the same log
 > very likely, but is not separately confirmed — it could in principle be a fixed
 > choice of `inX−`. Either way we see exactly one of the two electrodes.)*
 
+### Which electrode, specifically, each number refers to
+
+Combining the pad map ([[grounding-reference-noise-concepts]] §2) with
+`pol sel = 0`:
+
+| Allego channel | amplifier | impedance number is | **never measured** |
+| --- | --- | --- | --- |
+| **`/1`** ("EEG") | amp 0 | **EEG frontal-L** (pad 0, `in0+`) | **EEG parietal-L** (pad 1, `in0−`) |
+| **`/2`** ("EMG") | amp 1 | **EMG L** (pad 2, `in1+`) | **EMG R** (pad 3, `in1−`) |
+
+So "the EEG impedance was 6.7 MΩ" has always meant **the frontal electrode
+specifically**, and the parietal electrode on the other half of the same
+amplifier has never been measured once.
+
+> [!note] This probably reconciles the old "frontal open, parietal fine" observation
+> Earlier work reported frontal legs at 3.9–8.7 MΩ while "parietal on the same
+> wire" read 0.2–1.1 MΩ, and built the frontal-sinus hypothesis on it. Under the
+> corrected map those two numbers are far more likely to have been **`/1` and
+> `/2`** — i.e. the **EEG amplifier's `+` input vs the EMG amplifier's `+`
+> input** — mislabelled as frontal vs parietal by the wrong channel map.
+>
+> That is exactly our current finding stated in different words: **EEG open, EMG
+> working.** Same data, same rig, wrong labels. Strong inference, not proven —
+> but it removes the last piece of evidence that ever supported the frontal-sinus
+> story.
+
 ### Why this matters more than it sounds
 
 **It explains our biggest anomaly.** B1's EEG read **0.133 MΩ** before Run 2 — the
