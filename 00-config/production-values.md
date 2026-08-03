@@ -305,14 +305,26 @@ curl http://127.0.0.1:8585/api/storage
 **Last validated:** 2026-04-02
 **System status:** Operational (Pi streaming + Frigate recording + MQTT + Session daemon + Storage monitoring + Netdata alerts + Uptime Kuma monitoring + Slack alerting)
 
-## ⚠️ MISSING — animal room light cycle (flagged 2026-08-01)
+## ✅ Animal room light cycle (recorded 2026-08-03)
 
-**The light schedule is not recorded anywhere in this vault.** Every circadian and sleep-architecture claim depends on it, and on 2026-08-01 it could not be confirmed when analysing a 27.9 h recording.
+- Lights ON time: `09:00 KST`
+- Lights OFF time: `21:00 KST`
+- Cycle: `12:12 LD`
+- ZT0 (= lights on) corresponds to clock time: `09:00 KST`
 
-**TO FILL IN:**
-- Lights ON time: `______`
-- Lights OFF time: `______`
-- Cycle (e.g. 12:12): `______`
-- ZT0 (= lights on) corresponds to clock time: `______`
+Light phase = ZT0–ZT12 = 09:00–21:00. Dark phase = ZT12–ZT24 = 21:00–09:00.
+A normal mouse sleeps most in the LIGHT phase.
 
-Until this is filled in, label recordings by clock time only and do NOT assert light/dark phase. See [[2026-08-01-channel-mapping-correction-first-sleep]].
+Encoded in `02-procedures/eeg-data-analysis/pipeline/qc_thresholds.py`
+(`LIGHTS_ON_HOUR`, `LIGHTS_OFF_HOUR`, `TZ_OFFSET_HOURS`) and stamped into every
+pipeline output. Stage 3 reports sleep architecture split by light and dark phase.
+
+> [!warning] Allego timestamps are UTC; the filename is not
+> The `start_time` field in `*.xdat.json` is **UTC**. The `uidMMDD-HH-MM-SS`
+> token in the filename is already **local (KST)**. Converting one and not the
+> other puts a recording in the wrong day folder and shifts every ZT value by
+> 9 hours. The pipeline uses the metadata UTC value and records which source it
+> used as `start_source`.
+
+Was blank from 2026-08-01 to 2026-08-03; analyses written in that window label
+recordings by clock time only. See [[2026-08-01-channel-mapping-correction-first-sleep]].
