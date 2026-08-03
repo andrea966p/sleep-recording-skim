@@ -52,6 +52,7 @@ Production IPs, usernames, paths, and settings.
 - [[02-procedures/eeg-emg-data-guide|EEG/EMG Data Guide — read by eye first, then analyze in Python]]
 - [[02-procedures/rig-assembly-guide|Rig Assembly Guide — connect the full recording chain]]
 - [[02-procedures/multimeter-guide|Multimeter Guide (Harden 661002) — power/continuity/short tests]]
+- ⏳⭐ [[02-procedures/dmm-eeg-path-continuity-test|DMM continuity test on the EEG path — THE FREE TIER-1 BENCH TEST]] — **owed since 2026-08-02, run it before concluding anything about the implants.** No animal contact. Pads 2/3 (EMG) are the built-in control; includes the **slip-ring rotation test** that a static probe cannot replace
 - [[02-procedures/allego-monitor-guide|Allego Monitor Tab Guide]]
 - [[02-procedures/allego-sampling-rate|Allego Sampling Rate — 1 kHz min; 128–256 Hz = offline decimate]]
 - [[02-procedures/allego-presets-workspace|Allego Presets & Save Workspace]]

@@ -139,6 +139,47 @@ Also report: **XDAQ-OE v0.4.4-API10 has a packaging bug** — built for `shared/
 
 **Q11. Physical layout.** With 2 boxes + 8 mains-powered Port Expanders + 32 chambers, the long run is rack-to-chamber. Our default is Port Expanders at the rack (short HDMI to the box, long run to the animal). **Which does Kontex recommend, and what is the maximum supported length on the long link?** What KonteX HDMI cable lengths exist?
 
+**Q12. ⭐ Impedance polarity on the bipolar RHD2216 — we can only ever measure HALF of each electrode pair.** Added 2026-08-03, to send with the next batch.
+
+The RHD2216 is bipolar: every amplifier takes two electrodes (`in0+`, `in0−`) and reports one difference. The chip **can** test either pin — Register 5 carries `Zcheck pol sel` precisely for this. But **neither piece of software we have exposes it**:
+
+- **Radiens / Allego:** the gRPC impedance call is `ImpedanceRequest{port}` and returns one `zMag`/`zPhase` per channel. No polarity parameter anywhere in the API.
+- **Open Ephys XDAQ-OE v0.4.4:** verified in the shipped binary. `Rhd2000Registers::setZcheckPolarity` **is compiled in** (`0x7a420`) but has **zero call sites**, while `setZcheckScale` (3), `setZcheckChannel` (1) and `enableZcheck` (1) are all called out of line from the impedance path. Its XML export carries one magnitude per amplifier and no polarity dimension.
+
+⇒ Every impedance number this project owns is the **positive** input only. Our frontal EEG electrodes have been measured many times; **the parietal electrodes have never been measured at all.** This is not academic: B1 read 0.133 MΩ before Run 2, the best in the fleet, then ran fully open for 21.7 hours. An unmeasured negative electrode is a live candidate for that.
+
+**The ask, in order of preference:**
+1. Expose polarity in the **XDAQ-OE plugin** — run the existing pass twice with `setZcheckPolarity(ZcheckNegativeInput)` on the second, emit two values per amplifier. Small change to a plugin Kontex maintains.
+2. If not the plugin, is there **any supported path** to reach Register 5 on our hardware (libxdaq, pylibxdaq, a scriptable register write)?
+3. Failing both, confirm our reading of the chip so we can document the limitation honestly: on the RHD2216, does `Zcheck pol sel` select which of `inX+` / `inX−` the test DAC drives, and is the default the positive input?
+
+Detail and evidence: [[impedance-sweep-register]], last section.
+
+**Q13. Allego floods the log with IIR filter design errors whenever the Monitor band filter is changed.** Cosmetic as far as we can tell, but constant, and we would like it gone. Routing note: this one is Radiens/Allego, so it may belong with NeuroNexus rather than Kontex — worth asking Kontex anyway since XDAQ plus Allego is the bundle.
+
+Three strings, from `~/.local/state/radiens/logs/radix.log` and `allegoserver.log`:
+
+```
+radix.py_bridge - ERROR - IirFilterDesign - py_bridge.dsp: Failed to design iir filter:
+    Digital filter critical frequencies must be 0 < Wn < 1            (1142 in 77 min)
+py_bridge.dsp: Failed to design iir filter:
+    filter critical frequencies must be greater than 0                (208 in 42 s)
+[KNL:cd14] failed to set dsp group  module=spikesorter
+    error="DSP scraper/stage spike-sorter, fs=1000 - set DSP failed"   (40)
+```
+
+Root cause is visible one line earlier in the server log:
+
+```
+Created DSP ok  spec="DSP flow-thru [Port A/stage spike-sorter ()]  bandpass  fs=3e+04, f_cut=[3e+02, 6e+03]"
+```
+
+A **spike sorter** stage carries a hard-wired 300 to 6000 Hz band written for 30 kHz sampling. We run at 1 kHz, so it re-designs as `Wn = 6000 / 500 = 12`, which is illegal, and it fails on every filter change. **We do not use spike sorting at all — we record sleep EEG.**
+
+**The ask:** can the spike-sorter stage be disabled, or suppressed for a sub-2 kHz configuration, so the log stops filling? We could not find a switch in the Signal Processing tab or the workspace file.
+
+We have already established on our own bench that this does **not** touch the data: display band confirmed to apply (0.5 to 5 Hz test, trace visibly changes ⇒ rejection is per stage, not per group), and Allego filters never reach the saved `.xdat` (notch parked at 50 Hz, saved spectrum flat across 47 to 53 Hz). So this is log tidiness, not a data-integrity report. Detail: [[allego-iir-filter-design-errors]].
+
 ### ⚪ Only if time allows
 AIO vs ONE+ — what is the integrated video processor, does it hardware-timestamp frames against the neural clock, and what is the price delta? · Can our Gen-1 Core serve as a third unit (+8 mice), or is there a trade-in? · Any customer running 16+ animals continuously for multiple days? · Warranty and RMA turnaround from Korea.
 
@@ -174,6 +215,112 @@ AIO vs ONE+ — what is the integrated video processor, does it hardware-timesta
 6. **An answer on what the ground isolation is worth**, even if the answer is "unmeasured"
 7. **Ubuntu headless enrolment procedure**
 8. **A recommendation for the 36 cm analog run**
+9. ⭐ **A yes or no on impedance polarity** (Q12) — whether we will ever be able to measure the second electrode of each bipolar pair in software. If the answer is no, we document it as a permanent limitation and rely on the multimeter instead
+10. **A route to silencing the spike-sorter filter errors** (Q13), or confirmation that it belongs with NeuroNexus
+
+---
+
+## 📤 TO SEND 2026-08-04 — paste-ready
+
+Two software asks, added 2026-08-03, to go out with the rest of the batch. Both
+are written so they can be pasted straight into the email body.
+
+> [!note] Routing
+> **The polarity ask goes to Kontex** (their plugin, their hardware access path).
+> **The Allego log ask is Radiens software**, so NeuroNexus may be the right
+> owner, but send it to Kontex too since XDAQ plus Allego is the bundle they
+> sell us. If Kontex bounces it, forward that one to NeuroNexus unchanged.
+
+### Item 1 — impedance polarity on the bipolar RHD2216
+
+```text
+We use the RHD2216, which is a bipolar chip: each amplifier takes two electrodes
+(in0+ and in0 minus) and reports their difference. For our sleep montage that
+means one amplifier carries the frontal and parietal EEG pair, and another
+carries the left and right neck EMG pair.
+
+Our problem is that we can only ever measure one electrode of each pair. The
+chip itself supports both: Register 5 carries a Zcheck polarity select bit,
+which chooses whether the test current is driven into the positive or the
+negative input. Neither piece of software we have exposes it.
+
+In Radiens, the impedance call takes a port and returns one magnitude and one
+phase per channel, with no polarity parameter in the API.
+
+In the Open Ephys XDAQ plugin (XDAQ OE v0.4.4, API10) we checked the shipped
+binary directly. Rhd2000Registers::setZcheckPolarity is compiled in, but it has
+zero call sites, while setZcheckScale, setZcheckChannel and enableZcheck are all
+called from the impedance path. The XML the plugin exports carries one magnitude
+per amplifier and no polarity field. So the polarity bit is left at its default
+and the same input is measured every time.
+
+The consequence for us is concrete. Every impedance number in our records is the
+positive input. Our frontal EEG electrodes have been measured many times, and
+our parietal electrodes have never been measured at all. One animal read 0.133
+megaohm before a run, the best value in the whole set, and then recorded an open
+electrode for the full 21.7 hours. An unmeasured second electrode is a live
+explanation for that, and at the moment we have no way to check it.
+
+Three requests, in order of preference:
+
+1. Could the XDAQ Open Ephys plugin expose polarity? Functionally this is
+   running the existing measurement pass a second time with the polarity bit set
+   to the negative input, and reporting two values per amplifier instead of one.
+
+2. If not through the plugin, is there any supported way to reach Register 5 on
+   our hardware, for example through libxdaq, pylibxdaq, or a scriptable
+   register write?
+
+3. If neither is possible, could you confirm our reading of the chip so that we
+   can document the limitation accurately in our methods: on the RHD2216, does
+   the Zcheck polarity bit select which of in0+ and in0 minus receives the test
+   current, and is the power on default the positive input?
+
+We are happy to test any build on our own Core.
+```
+
+### Item 2 — Allego IIR filter design errors
+
+```text
+Whenever we change the visualization band filter in the Allego Monitor tab, the
+Radiens logs fill with filter design errors. Over one 77 minute session we
+counted 1142 of them.
+
+The three strings, from radix.log and allegoserver.log:
+
+  radix.py_bridge ERROR IirFilterDesign, py_bridge.dsp: Failed to design iir
+  filter: Digital filter critical frequencies must be 0 < Wn < 1
+
+  py_bridge.dsp: Failed to design iir filter: filter critical frequencies must
+  be greater than 0
+
+  [KNL:cd14] failed to set dsp group, module=spikesorter, error="DSP
+  scraper/stage spike sorter, fs=1000, set DSP failed"
+
+The cause appears one line earlier in the server log:
+
+  Created DSP ok spec="DSP flow-thru [Port A/stage spike sorter ()] bandpass
+  fs=3e+04, f_cut=[3e+02, 6e+03]"
+
+There is a spike sorter stage in the chain carrying a fixed 300 to 6000 hertz
+band that was written for a 30 kilohertz sample rate. We acquire at 1 kilohertz,
+so on redesign that band works out to a normalised frequency of 12, which is not
+a legal filter, and the stage fails every time any filter is touched.
+
+We do not use spike sorting at all. We record sleep EEG and EMG at 1 kilohertz.
+
+Our question: can the spike sorter stage be disabled, or suppressed for a
+configuration below 2 kilohertz, so that the log stops filling? We could not
+find a switch for it in the Signal Processing tab or in the workspace file.
+
+For completeness, we have already satisfied ourselves that this does not affect
+our data, so please treat it as log tidiness rather than a data integrity
+report. We confirmed on our own bench that the display band still applies (we
+parked the Monitor band at 0.5 to 5 hertz and the trace visibly changed, so the
+rejection is per stage and not per group), and that Allego filters never reach
+the saved file (we parked the notch at 50 hertz, where nothing real lives, and
+the saved spectrum is flat across 47 to 53 hertz).
+```
 
 ---
 
