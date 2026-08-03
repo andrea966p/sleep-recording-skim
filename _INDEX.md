@@ -130,6 +130,7 @@ Production IPs, usernames, paths, and settings.
 
 ### Decisions & Reviews
 - ⭐⭐🔴 [[07-decisions/2026-08-01-channel-mapping-correction-first-sleep|2026-08-01 ⭐ CHANNEL MAP WAS WRONG — EMG always worked, FIRST REAL SLEEP ARCHITECTURE]] — `/1`=EEG `/2`=EMG already bipolar, `/3`,`/4` empty pads. Read before trusting any earlier EEG/EMG analysis.
+- ⭐⭐ [[07-decisions/2026-08-03-analysis-methods-procedure|2026-08-03 ⭐ METHODS — how a recording becomes scorable, step by step]] — **the one to hand to the professor.** Ordered procedure, reasoning, code and published source per step, plus an explicit table of what is standard practice and what we added.
 - ⭐⭐🔴 [[07-decisions/2026-08-03-two-8-mouse-runs|2026-08-03 ⭐ THE TWO 8-MOUSE RUNS — Run 1 is everything we have, Run 2 is a total loss]] — **START HERE for current EEG status.** C1 8.73 h + C2 2.34 h scoreable, validated against circadian norms; Run 2 = 0/8. EEG degradation is directional (8/8 worse) and EEG-specific.
 - ⭐⭐🔴 [[07-decisions/2026-08-03-literature-check-impedance-and-electrode-failure|2026-08-03 ⭐ LITERATURE CHECK — 82% of epidural electrodes fail in 3 weeks]] — six primary papers vs our data. **Weakens the "EMG works so it must be our solder" argument**; our best channel is poor by published standards; drops the frontal-sinus hypothesis.
 - ⭐ [[02-procedures/eeg-data-analysis/pipeline/README|EEG analysis pipeline — raw recording → QC → per-mouse files → sleep features]] — THE analysis path; every threshold with its provenance
