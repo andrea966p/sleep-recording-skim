@@ -291,15 +291,15 @@ Median EEG hum across **41 animal-recordings**:
 
 This is important, because it tells us where *not* to spend effort:
 
-| suspect | verdict | evidence |
-| --- | --- | --- |
-| mains earth / building ground | **exonerated** | no benefit on direct test, twice |
-| the splitter | **exonerated** | tested directly without it |
-| slip-ring rotation | **exonerated** | hum does not track rotation |
-| grounded power brick | **exonerated** | direct test |
-| animal ground electrodes | **good, 8/8** | measured |
-| the environment generally | **exonerated** | no-wire control pins read **2.8 µV** with zero drift across a full light/dark cycle |
-| aluminium foil shielding | **works** | dropped the floor to 12–89 µV per leg. **Do not ground the foil** — that was tried 2026-07-16 and made things worse; the Gen-1 XDAQ Core has no chassis terminal. |
+| suspect                       | verdict        | evidence                                                                                                                                                          |
+| ----------------------------- | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| mains earth / building ground | **exonerated** | no benefit on direct test, twice                                                                                                                                  |
+| the splitter                  | **exonerated** | tested directly without it                                                                                                                                        |
+| slip-ring rotation            | **exonerated** | hum does not track rotation                                                                                                                                       |
+| grounded power brick          | **exonerated** | direct test                                                                                                                                                       |
+| animal ground electrodes      | **good, 8/8**  | measured                                                                                                                                                          |
+| the environment generally     | **exonerated** | no-wire control pins read **2.8 µV** with zero drift across a full light/dark cycle                                                                               |
+| aluminium foil shielding      | **works**      | dropped the floor to 12–89 µV per leg. **Do not ground the foil** — that was tried 2026-07-16 and made things worse; the Gen-1 XDAQ Core has no chassis terminal. |
 
 > [!check] The rig itself is capable of excellent data — this is proven
 > Recording `allego_1__uid0629-12-05-09` (2026-06-29, one animal): EEG hum **9 µV**, **100% of epochs passed all three gates**, zero open, zero shorted, zero clipped, across **4.55 hours of unbroken contact**. That is a technically flawless recording.
@@ -382,15 +382,15 @@ raw .xdat  ──1──►  layout  ──2──►  filter, epoch  ──3─
     EDF+ for the scorer  ◄──6──  per mouse files  ◄──5──  ◄──4── worth scoring?
 ```
 
-| Step | What | Why | Code |
-| --- | --- | --- | --- |
-| **0** | Log implant date, tethering date, animal identity, light schedule | None of it is in the file, and without it the data cannot be interpreted. **Currently logged nowhere** | — |
-| **1** | Derive the channel layout from the file's own `sensors_by_port`; select `/1`, `/2`, `/33`, `/34` | The chip is bipolar, so four wires are **two channels, not four**. Layouts also vary between recordings, so assuming one mis maps the older files | `pipeline_common.derive_layout()` |
-| **2** | Band pass, four second epochs, Welch spectra with `nperseg = 2048` | Sleep content is below thirty hertz, muscle tone is broadband. **At `nperseg = 512` the theta band collapses to one bin and integrates to exactly zero**, silently destroying every REM measurement | `stage1_qc.extract_features()` |
-| **3** | Quality gate: open, flat, dead channel, clipped | Our dominant failure is not an artefact, it is **no electrical contact**. Thresholds measured from 1,137,955 pooled epochs, and swept for sensitivity: **C1 is invariant in every variant tested** | `stage1_qc.gate()` |
-| **4** | Group into unbroken blocks of at least 124 seconds, then judge | Passing epochs are fragments scattered through time. Computing any statistic across the gaps compares epochs hours apart, which is the bug that produced a false plus 0.854 on thirty nine minutes of pure wake | `pipeline_common.within_block_persistence()` |
-| **5** | Split per mouse, decimate to 250 hertz, day folder with impedance | Keeps the whole analysis band with margin, four times smaller. The raw `.xdat` is never modified, so anything can be re derived | `stage2_split.py` |
-| **6** | Export EDF+ plus a scorer note listing the windows worth scoring | The portable format every scoring tool imports, and the agreed hand off to the IIIS scorer | `stage4_export_edf.py` |
+| Step  | What                                                                                             | Why                                                                                                                                                                                                             | Code                                         |
+| ----- | ------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
+| **0** | Log implant date, tethering date, animal identity, light schedule                                | None of it is in the file, and without it the data cannot be interpreted. **Currently logged nowhere**                                                                                                          | —                                            |
+| **1** | Derive the channel layout from the file's own `sensors_by_port`; select `/1`, `/2`, `/33`, `/34` | The chip is bipolar, so four wires are **two channels, not four**. Layouts also vary between recordings, so assuming one mis maps the older files                                                               | `pipeline_common.derive_layout()`            |
+| **2** | Band pass, four second epochs, Welch spectra with `nperseg = 2048`                               | Sleep content is below thirty hertz, muscle tone is broadband. **At `nperseg = 512` the theta band collapses to one bin and integrates to exactly zero**, silently destroying every REM measurement             | `stage1_qc.extract_features()`               |
+| **3** | Quality gate: open, flat, dead channel, clipped                                                  | Our dominant failure is not an artefact, it is **no electrical contact**. Thresholds measured from 1,137,955 pooled epochs, and swept for sensitivity: **C1 is invariant in every variant tested**              | `stage1_qc.gate()`                           |
+| **4** | Group into unbroken blocks of at least 124 seconds, then judge                                   | Passing epochs are fragments scattered through time. Computing any statistic across the gaps compares epochs hours apart, which is the bug that produced a false plus 0.854 on thirty nine minutes of pure wake | `pipeline_common.within_block_persistence()` |
+| **5** | Split per mouse, decimate to 250 hertz, day folder with impedance                                | Keeps the whole analysis band with margin, four times smaller. The raw `.xdat` is never modified, so anything can be re derived                                                                                 | `stage2_split.py`                            |
+| **6** | Export EDF+ plus a scorer note listing the windows worth scoring                                 | The portable format every scoring tool imports, and the agreed hand off to the IIIS scorer                                                                                                                      | `stage4_export_edf.py`                       |
 
 Three deliberate choices in step 6: the automatic staging is **not** written into
 the EDF, so the scorer is not anchored by our labels; rejected epochs are **left
