@@ -14,6 +14,14 @@ status: complete
 
 # Signal Mapping Guide — Telling Allego Which Channel Is Which Electrode
 
+> [!success] ⭐ Channel selection is settled — see [[CANONICAL-allego-channel-selection]]
+> **Select `/1`, `/2`, `/33`, `/34` per port. 16 channels for 8 mice.**
+> `/1`=EEG and `/2`=EMG are ALREADY bipolar — never subtract them.
+> Proven 2026-08-03 from the datasheet, the recorded metadata, and a
+> measurement of all 64 slots on all four ports. **If anything below
+> disagrees with that page, that page is right.**
+
+
 > [!abstract] TL;DR — for non-technical readers
 > **What this is.** A plain-language, click-by-click guide to **signal mapping**: teaching the recording software (Allego) which of its numbered channels corresponds to which real electrode on which mouse, and what each one is (EEG or EMG).
 >

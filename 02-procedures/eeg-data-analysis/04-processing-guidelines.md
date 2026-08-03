@@ -6,6 +6,14 @@ status: complete
 
 # 04 — Processing Guidelines (the science)
 
+> [!success] ⭐ Channel selection is settled — see [[CANONICAL-allego-channel-selection]]
+> **Select `/1`, `/2`, `/33`, `/34` per port. 16 channels for 8 mice.**
+> `/1`=EEG and `/2`=EMG are ALREADY bipolar — never subtract them.
+> Proven 2026-08-03 from the datasheet, the recorded metadata, and a
+> measurement of all 64 slots on all four ports. **If anything below
+> disagrees with that page, that page is right.**
+
+
 > [!abstract] TL;DR
 > The decisions behind the scripts: which bipolar pair, which filters, why decimate to 256 Hz, how to flag artifacts, and the pass/fail criteria for "is this recording usable". Follow these so results are consistent and publishable. Hub: [[_eeg-analysis-hub]].
 

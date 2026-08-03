@@ -6,6 +6,14 @@ status: complete
 
 # Allego Electrode Setup — the `sleep64` map (READ THIS, ignore the rest)
 
+> [!success] ⭐ Channel selection is settled — see [[CANONICAL-allego-channel-selection]]
+> **Select `/1`, `/2`, `/33`, `/34` per port. 16 channels for 8 mice.**
+> `/1`=EEG and `/2`=EMG are ALREADY bipolar — never subtract them.
+> Proven 2026-08-03 from the datasheet, the recorded metadata, and a
+> measurement of all 64 slots on all four ports. **If anything below
+> disagrees with that page, that page is right.**
+
+
 > [!tip] THE WHOLE THING ON ONE CARD
 > In Allego, **Electrodes tab**, for EVERY port that has mice:
 > - **Headstage:** `usrdef_sleep64`

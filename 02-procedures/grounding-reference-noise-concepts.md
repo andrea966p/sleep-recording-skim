@@ -14,6 +14,14 @@ status: complete
 
 # Grounding vs Reference vs Tissue Noise vs Environmental Noise — concepts + the slip-ring color defect
 
+> [!success] ⭐ Channel selection is settled — see [[CANONICAL-allego-channel-selection]]
+> **Select `/1`, `/2`, `/33`, `/34` per port. 16 channels for 8 mice.**
+> `/1`=EEG and `/2`=EMG are ALREADY bipolar — never subtract them.
+> Proven 2026-08-03 from the datasheet, the recorded metadata, and a
+> measurement of all 64 slots on all four ports. **If anything below
+> disagrees with that page, that page is right.**
+
+
 > [!abstract] Why this page exists
 > These four words get mixed up constantly, and mixing them up has already cost us days (a "grounding" fix that was really a floating animal; a "reference" pad that our chip doesn't even use). This page nails each term, maps it to **our** rig (RHD2216 bipolar, single/2-mouse), and documents the **slip-ring color-swap defect** that currently sends the animal ground **into nothing**. Read [[signal-quality-and-grounding]] and [[signal-mapping-guide]] alongside this.
 > Created 2026-06-27.

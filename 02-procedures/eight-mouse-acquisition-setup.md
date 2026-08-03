@@ -6,6 +6,14 @@ status: active
 
 # 8-Mouse Acquisition Setup — Signal Map + Sensor Files + Channel Selection
 
+> [!success] ⭐ Channel selection is settled — see [[CANONICAL-allego-channel-selection]]
+> **Select `/1`, `/2`, `/33`, `/34` per port. 16 channels for 8 mice.**
+> `/1`=EEG and `/2`=EMG are ALREADY bipolar — never subtract them.
+> Proven 2026-08-03 from the datasheet, the recorded metadata, and a
+> measurement of all 64 slots on all four ports. **If anything below
+> disagrees with that page, that page is right.**
+
+
 > [!abstract] What this is
 > Everything ready to **plug in 8 mice and start recording**: the definitive signal map (which Allego channel is which mouse/electrode), the pre-built Allego **headstage + probe** files, the grounding rule, and the exact channel selection to click. Beginner, step-by-step. Builds on [[signal-mapping-guide]] (the concepts) and [[signal-quality-and-grounding]] (grounding/quality). Validated topology from [[2026-07-01]] + [[2026-07-03]].
 
