@@ -94,6 +94,88 @@ With ONE headstage per port and no splitter (32 channels per port), the same log
 - **This is a useful trick in general:** to test whether any display filter touches the data, park it on a frequency where nothing real lives and look for the null.
 - Units are `micro-volts` for primary channels, per the file metadata. **The rail is 6389.6 µV = `0.195 µV/LSB × 32767`, the 16-bit ADC full scale.** Confirmed by direct measurement 2026-08-03: `max|sample|` is 6389.8 µV, identical to four significant figures on all 8 channels. Use **6376.8 µV (99.8% of full scale)** as the clipping threshold; the older ±6300 figure was a guess that happened to be safe.
 
+## 🔴🔴 WE HAVE ONLY EVER MEASURED HALF OF EACH ELECTRODE PAIR — found 2026-08-03
+
+> [!danger] Every impedance number in this project is one input of a two-input pair
+> The RHD2216 is bipolar: each amplifier has **two independent electrode pins**,
+> `inX+` and `inX−`. Both are real electrodes in the animal. The signal is their
+> difference.
+>
+> **The chip CAN measure them separately.** Datasheet Register 5 has a dedicated
+> bit, `Zcheck pol sel`:
+>
+> > "The RHD2216 has two independent input pins for each amplifier, so an extra
+> > register called **Zcheck pol sel** is provided to select between the positive
+> > and negative amplifier input pins during electrode impedance testing. When
+> > Zcheck pol sel is set to zero, Zcheck en connects the on-chip current
+> > generator and elec_test to the **positive input terminal (inX+)**… When set to
+> > one, the impedance testing circuitry is connected to the **negative input
+> > terminal (inX−)**."
+>
+> **Radiens does not expose it.** Checked exhaustively 2026-08-03 across four
+> independent sources — the installed `radiens` package, the Radiens Technical
+> Documentation PDF, the online `radiens-core` API reference, and the
+> **`radiens-core` 0.0.8 wheel source itself**:
+>
+> ```python
+> # radiens_core/_converters/_impedance.py
+> ImpedanceRequest(port=port_to_proto(p))            # port is the ONLY field
+>
+> # radiens_core/models/impedance.py
+> class ImpedanceValue(BaseModel):
+>     ntv_chan_idx: int
+>     magnitude_ohm: float
+>     phase_deg: float                                # three fields. no polarity.
+>
+> # radiens_core/allego_client.py
+> def get_intan_impedance(self, port: FlexPort) -> Impedance:   # the ONLY impedance method
+> ```
+>
+> - **One impedance method on the whole `AllegoClient` surface**, and it takes a
+>   port and nothing else.
+> - **No polarity field** anywhere in the request, the response, or the protobuf.
+> - **No Intan register-write path at all.** The only register methods
+>   (`load_all_mosi`, `transmit_mosi`, `read_wire_out`, `flash_sinaps`) are
+>   **Sinaps-probe specific** and cannot reach the RHD chip. There is no back door.
+> - The GUI Impedance tab offers only Magnitude / Phase / Run.
+>
+> With the chip default being `pol sel = 0`, our readings are **the positive
+> input, and the negative electrode of every pair has never been measured.**
+>
+> *(Inference level: it is **proven at source level** that Radiens offers no way
+> to select, set, or distinguish polarity, and no way to reach the register. That
+> the reported value is specifically `inX+` follows from the chip default and is
+> very likely, but is not separately confirmed — it could in principle be a fixed
+> choice of `inX−`. Either way we see exactly one of the two electrodes.)*
+
+### Why this matters more than it sounds
+
+**It explains our biggest anomaly.** B1's EEG read **0.133 MΩ** before Run 2 — the
+best EEG impedance in the fleet — and then ran fully open, 2802 µV hum, for all
+21.7 h. If that number is `inX+` only, then `inX−` could have been open the whole
+time and the sweep would look perfect. **A differential amplifier with one open
+input produces exactly what we saw.**
+
+**It means we have never been able to compute the quantity that actually predicts
+hum.** Our own relation is `differential_60Hz ≈ common_mode × electrode_Z_imbalance`
+— an *imbalance* between the two inputs. We have only ever seen one of them, so
+the imbalance has never been measurable. That is a large part of why impedance
+predicted class but not yield.
+
+### How to actually see both electrodes
+
+| method | cost | what it gives |
+| --- | --- | --- |
+| **DMM at the C3410 pads, each pad vs the animal `GND` pad** | **free, no animal contact** | DC continuity per **individual** electrode, including every negative one. Not 1 kHz Z, but decisive for open vs connected — which is our whole question |
+| **Ask NeuroNexus/Kontex to expose `Zcheck pol sel`** | one vendor email | proper per-electrode 1 kHz Z. **It is a single register bit they already drive**, and the API has no way to reach it — this is a genuine feature gap, not a usage error on our side. Worth raising on the Kontex thread |
+| Check whether the Open Ephys GUI exposes polarity | an afternoon | unverified — worth testing, OE drives the same chip |
+| Temporarily rewire a suspect electrode onto a positive pad | bench work | per-electrode Z for one channel at a time |
+
+> [!important] This raises the value of the tier-1 bench test
+> The DMM check was already the cheapest action available. It is now also the
+> **only way we currently have to see the negative electrodes at all.** Probe each
+> C3410 pad against the animal ground pad and record continuity per pad.
+
 ## ⚠️ IMPEDANCE PREDICTS CLASS, NOT YIELD — narrowed 2026-08-03
 
 > [!warning] The ρ = −0.941 result below did NOT replicate. Read this box before the one under it.

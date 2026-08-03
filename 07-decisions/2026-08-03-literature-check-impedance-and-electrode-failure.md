@@ -183,28 +183,103 @@ testing offline on C1 — it would reduce mains contamination of the EMG channel
 which currently participates in our OPEN test. Cheap to check, no re-recording
 needed.
 
-## 6. ❓ Habituation — an open question we cannot answer from the data
+## 6. ✅ ANSWERED — the timeline, and what it does to the yield number
 
-Oishi 2016 specifies **habituate the mouse 2–3 days in the recording chamber**
-before recording. Our own [[tsukuba-sleep-recording-method]] is stricter:
-**recover ≥5 days, acclimate to the recording cage ≥7 days, ≥14 days from implant
-to recording.**
+Supplied 2026-08-03: **surgery 21–23 July. Tethered Thursday 30 July. Both runs
+were rig tests.**
 
-Two things follow, and both need an answer from the bench, not from me:
+| event | date | days post-op | days tethered |
+| --- | --- | --- | --- |
+| surgery | 21–23 Jul | 0 | — |
+| tethered | Thu 30 Jul | 7–9 | 0 |
+| **Run 1** | Fri 31 Jul 18:06 | **8–10** | **~1 (28 h)** |
+| **Run 2** | Sun 2 Aug 01:46 | **10–12** | ~2.5 |
 
-1. **Was the habituation schedule followed for Runs 1 and 2?** If recording began
-   sooner, the sleep numbers are depressed by stress and the 2026-06-29 animal
-   (95% awake, 2.56 h continuous wake bout) is fully explained rather than
-   "probably acclimatisation".
-2. **How many days post-implant were these runs?** Hsieh 2024 puts peak
-   dislodgement probability in **week 1**. If we are recording inside that window,
-   we are sampling exactly when electrodes are most likely to fail — which would
-   explain the degradation without invoking any rig fault at all.
+Against protocol:
 
-Neither is recorded anywhere in the vault. **Start logging implant date and
-tethering date per animal.**
+| requirement | source | met? |
+| --- | --- | --- |
+| recover ≥ 5 days | [[tsukuba-sleep-recording-method]] | ✅ 8–10 days |
+| habituate 2–3 days in the recording chamber | Oishi 2016 | ❌ Run 1 ~1 day · ⚠️ Run 2 ~2.5 days |
+| acclimate to recording cage ≥ 7 days | [[tsukuba-sleep-recording-method]] | ❌ ~1–2.5 days |
+| **≥ 14 days implant → recording** | [[tsukuba-sleep-recording-method]] | ❌ **8–12 days, 2–6 days early** |
 
-## 7. What survives, what changes
+> [!important] These were commissioning runs, not experiments — and the yield figure must say so
+> Both runs were done **to test the rig**, **4–6 days earlier than our own SOP
+> allows**, with **~1 day of habituation against a 7-day requirement**.
+>
+> **The "~6% yield / 11.1 scoreable hours out of 174" statistic should not be
+> quoted as the rig's performance.** It is the performance of an under-habituated
+> cohort recorded early during commissioning. Reporting it as a yield figure is
+> unfair to the rig and to the surgeon, and it would be wrong in a paper.
+
+**Three consequences, all of which make the data look better, not worse:**
+
+1. **The high wake fractions are partly expected.** One day of tethering against a
+   7-day requirement depresses sleep and inflates wake. Run 1's wake fractions
+   (C1 65.9%, C2 67.8%, D2 65.0%) are exactly what an under-habituated animal
+   should look like.
+2. **C1 becomes more impressive, not less.** It reached **66.9% asleep in the
+   light phase — inside one SD of the published ~70%** — on its *second day* of
+   tethering. That is a well-habituated animal's number produced by an
+   un-habituated one.
+3. **06-29 is now fully explained.** First tethering, 95% awake, entirely in the
+   light phase. That is the textbook acclimatisation response, not an anomaly.
+
+**On the electrodes:** days 8–12 post-op sits just past Hsieh 2024's peak
+week-1 dislodgement window but well inside the period over which they accumulate
+82% loss by week 3. So recording early neither rescues nor condemns the
+electrodes — but it does mean **we have never yet recorded from a cohort at the
+protocol-specified ≥14 days**, so we do not know what this rig does under correct
+conditions.
+
+> [!quote] Paper-ready
+> Both recordings were commissioning tests performed 8–12 days after implantation
+> and within 1–3 days of tethering, short of the laboratory's own protocol of ≥14
+> days post-implantation and ≥7 days of cage acclimatisation. Sleep quantities
+> from these recordings are therefore not representative of baseline sleep.
+
+**The single most informative next experiment is cheap:** run the *existing*
+animals again at ≥14 days post-op with ≥7 days tethered. If yield stays at zero,
+the electrodes are gone and the electrode-design question is settled. If it
+recovers, the protocol deviation was the dominant term all along.
+
+## 7. 🔴 We have only ever measured half of each electrode pair
+
+Full detail and the fix: [[electrode-connection-state-test]].
+
+The RHD2216 is bipolar — each amplifier has **two** electrode pins, `inX+` and
+`inX−`, both real electrodes in the animal. The datasheet provides a dedicated
+register bit, **`Zcheck pol sel`**, to test either one.
+
+**Radiens does not expose it.** Verified across four independent sources: the
+installed `radiens` package, the Radiens Technical Documentation PDF, the online
+`radiens-core` API reference, and the **`radiens-core` 0.0.8 wheel source**.
+`get_intan_impedance(port)` is the *only* impedance method on the entire
+`AllegoClient`; `ImpedanceRequest` carries **only a port**; `ImpedanceValue` has
+**only** `ntv_chan_idx`, `magnitude_ohm`, `phase_deg`. There is also **no Intan
+register-write path at all** — the register methods that exist
+(`load_all_mosi`, `transmit_mosi`, `read_wire_out`, `flash_sinaps`) are
+Sinaps-probe specific and cannot reach the RHD chip.
+
+With the chip default `pol sel = 0`, our numbers are the **positive** input and
+**the negative electrode of every pair has never been measured.**
+
+**This explains B1.** It read 0.133 MΩ — best EEG impedance in the fleet — and
+then ran fully open for 21.7 h. If that is `inX+` alone, `inX−` could have been
+open throughout and the sweep would still look perfect.
+
+**And it explains why impedance predicted class but not yield.** Our own relation
+is `differential_60Hz ≈ common_mode × electrode_Z_imbalance`. The imbalance is
+between the two inputs. We have only ever seen one of them, so the predictive
+quantity was never measurable.
+
+**Fix, cheapest first:** DMM each C3410 pad against the animal `GND` pad (free,
+gives per-electrode continuity including every negative one) → ask
+NeuroNexus/Kontex to expose `Zcheck pol sel` (one register bit they already
+drive) → check whether the Open Ephys GUI exposes polarity.
+
+## 8. What survives, what changes
 
 **Survives unchanged**
 - C1 is real sleep. Nothing in these papers weakens it; Choi 2010's "mouse EEG
@@ -224,10 +299,18 @@ tethering date per animal.**
 - ⚠️ **Do not cite Kappenman for the hum result.** Different impedance regime.
 
 **New actions**
-1. **Tier-1 bench test** — unchanged in priority, now also a discriminator between
-   the two hypotheses rather than a confirmation of one.
-2. **Record implant date and tethering date per animal.** Cannot interpret
-   degradation without them.
+1. **Tier-1 DMM bench test** — now the top action by a distance. It is a
+   discriminator between the solder and electrode hypotheses **and** the only way
+   we currently have to see the negative electrodes at all.
+2. **Re-run the existing animals at ≥14 days post-op with ≥7 days tethered.**
+   Both runs were commissioning tests taken 2–6 days early with ~1 day of
+   habituation. Until one recording meets our own protocol we do not know what
+   this rig does under correct conditions. Cheapest decisive experiment available.
+3. **Stop quoting "~6% yield".** It describes an under-habituated cohort recorded
+   early during rig commissioning, not the rig's performance.
+4. **Ask Kontex/NeuroNexus to expose `Zcheck pol sel`** so per-electrode 1 kHz
+   impedance becomes possible.
+5. **Record implant date and tethering date per animal** as routine metadata.
 3. **Consider a different electrode for the next cohort** — 1.0 mm epidural rather
    than fine pins, per Hsieh 2024. This is the literature's own answer to our
    exact failure, and it is a design change, not a surgical-skill issue.

@@ -24,6 +24,20 @@ Supersedes the per-run numbers in
 [[2026-08-01-28h-contact-duty-cycle-and-c1-negative]]. Method:
 [[pipeline/README]]. Scored with `pipeline/stage1_qc.py` + `stage3_features.py`.
 
+> [!important] Both runs were COMMISSIONING TESTS, taken early. Read every number here in that light.
+> Surgery **21–23 July**. Tethered **Thursday 30 July**. Run 1 is therefore
+> **day 8–10 post-op with ~28 h of tethering**; Run 2 is day 10–12.
+>
+> Our own [[tsukuba-sleep-recording-method]] requires **≥14 days implant →
+> recording** and **≥7 days cage acclimatisation**; Oishi 2016 requires 2–3 days
+> of habituation. **Both runs miss all three.** They were done to test the rig.
+>
+> Consequences: the high wake fractions are partly expected; **C1's result
+> becomes more impressive, not less** (it hit 66.9% light-phase sleep on its
+> second day tethered); and **no scoreable-hours or "yield" figure from these
+> runs should be quoted as the rig's performance.** See
+> [[2026-08-03-literature-check-impedance-and-electrode-failure]] §6.
+
 ## The two runs
 
 | | **Run 1** | **Run 2** |
