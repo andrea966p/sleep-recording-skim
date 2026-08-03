@@ -74,7 +74,14 @@ Use `state_scan.py` or a single ended 60 Hz decomposition (same method as the 20
 
 Even if pad 7 grounding works perfectly, it does NOT make B1 scoreable:
 
-- B1 frontal is OPEN (7.641 MΩ, nonphysical phase, surgical / frontal sinus hypothesis) → no working bipolar EEG pair. Fixed only in the next surgical cohort.
+- ~~B1 frontal is OPEN (7.641 MΩ, nonphysical phase, surgical / frontal sinus hypothesis) → no working bipolar EEG pair. Fixed only in the next surgical cohort.~~
+  ⚠️ **Corrected 2026-08-03.** There is no "frontal" channel and no bipolar pair to
+  form — the RHD2216 is bipolar, so `/1` **is** the EEG. The frontal-sinus
+  hypothesis came from the wrong channel map and is dropped. B1's EEG later read
+  **0.133 MΩ** (best in the fleet) yet still ran fully open for 21.7 h, so this is
+  intermittent contact, not a fixed anatomical miss. "Fixed only in the next
+  surgical cohort" does not follow — see
+  [[2026-08-03-literature-check-impedance-and-electrode-failure]].
 - B1 EMG is likely DEAD (floor 28 µV on 07-15, 45 µV on 07-16) → no REM / atonia read.
 
 So this experiment is a MECHANISM check plus clean leg headroom for FUTURE good mice, NOT a way to get data out of B1. The real wall is still open frontal electrodes, next cohort.

@@ -107,12 +107,30 @@ With ONE headstage per port and no splitter (32 channels per port), the same log
 > EEG impedance in the entire fleet — then ran at 2802 µV hum, fully open, for
 > all 21.7 h. Resting impedance is not contact under load.
 >
-> **Second, harder limit.** The literature for chronic rodent epidural screws is
-> **5–50 kΩ at 1 kHz**, with **≤10 kΩ** the usual confirmation of proper
-> contact. **Our best channel in the whole fleet is 73 kΩ.** So `Z < 2 MΩ` is
-> roughly **40× looser than the published norm** — it is an **open-circuit
-> detector, not a quality bar**. A channel at 0.5–2 MΩ is a poor electrode that
-> merely is not fully open, and calling it "CONNECTED" oversells it.
+> **Second, harder limit — now checked against six primary papers (2026-08-03).**
+>
+> | source | electrode | impedance @ 1 kHz |
+> | --- | --- | --- |
+> | Choi 2010 | skull screw | < 100 kΩ (at 30 Hz) |
+> | Hsieh 2024 | epidural 0.1 mm / MXene, in use | 10–29 kΩ |
+> | Kim 2022 | stainless screw 0.8 mm | 10–50 kΩ |
+> | Kim 2022 | HD contact, chronic | ~100 kΩ |
+> | **ours, best in fleet** | dura pin | **73 kΩ** |
+> | **ours, C1 (our best animal)** | dura pin | **465 kΩ** |
+>
+> **Our single best channel sits at the literature's worst acceptable value, and
+> everything else is worse than anything published.** So `Z < 2 MΩ` is roughly
+> **40× looser than the published norm** — it is an **open-circuit detector, not a
+> quality bar**. A channel at 0.5–2 MΩ is a poor electrode that merely is not
+> fully open, and calling it "CONNECTED" oversells it.
+>
+> ⚠️ **Do not cite Kappenman & Luck 2010 in support of our hum-vs-contact
+> result.** They found *no* detectable effect of impedance on 60 Hz line noise —
+> but they compared 5 kΩ vs 50 kΩ (two connected electrodes) in a well-shielded
+> room, and say so explicitly. We are comparing connected vs **open circuit**, a
+> different regime. Our bimodal 9–90 µV / 1000–4700 µV separation is our own
+> empirical finding, not a replication of theirs.
+> Full evaluation: [[2026-08-03-literature-check-impedance-and-electrode-failure]].
 >
 > **What to use it for:** deciding which animals are worth running, and which
 > channel to expect signal on. **Not** for forecasting yield, and never as

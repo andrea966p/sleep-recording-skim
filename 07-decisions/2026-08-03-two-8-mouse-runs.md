@@ -130,8 +130,15 @@ Three sweeps bracket the runs: **pre-run1** (07-31 17:34, 32 min before Run 1),
 > Same tether, same slip ring, same headstages, same board, same session, same
 > animals. **A shared-path fault or an environmental cause cannot degrade one
 > channel type and leave the other alone.** The fault is specific to the EEG
-> side of the connection — which is exactly the path the free tier-1 bench test
-> interrogates.
+> side of the connection.
+>
+> ⚠️ **"EEG side" includes the electrode itself, not just our wiring.** EEG uses a
+> **dura pin**; EMG uses a **wire anchored in muscle**. Hsieh et al. 2024 report
+> that **82% of epidural preparations lose at least one electrode within three
+> weeks**, with peak dislodgement in week 1 — muscle wires have no comparable
+> published failure rate. So this asymmetry narrows the fault to the EEG segment
+> but does **not** by itself point at the solder.
+> See [[2026-08-03-literature-check-impedance-and-electrode-failure]].
 
 ### C1's EEG died between the runs and never came back
 
@@ -180,10 +187,14 @@ it across the next run rather than acting on it.
    working. Waiting will not help; each additional run costs contact.
 3. **The rig is not the problem.** Same rig produced 9 µV hum and a 100 % gate
    pass on 2026-06-29. EMG works through the identical physical path throughout.
-4. **A1 and D1 remain the free diagnostic.** Perfect EMG, zero EEG, both runs,
-   through the same tether, slip ring, board, headstage and port. That proves
-   the shared path good and isolates the fault to the C3410 pads 0/1 solder or
-   the two EEG slip-ring wires. Bench only, no animal contact, no isoflurane.
+4. **A1 and D1 remain the free diagnostic — but it discriminates, it does not
+   confirm.** Perfect EMG, zero EEG, both runs, through the same tether, slip
+   ring, board, headstage and port. That proves the **shared path** good. It does
+   **not** prove the fault is in our wiring, because EEG and EMG do not share an
+   electrode: EEG is a dura pin, EMG is a wire anchored in muscle, and the
+   published 3-week loss rate for epidural electrodes is **82%**
+   ([[2026-08-03-literature-check-impedance-and-electrode-failure]]). Run the
+   bench test to separate the two hypotheses. Bench only, no animal contact.
 
 ## Still open
 

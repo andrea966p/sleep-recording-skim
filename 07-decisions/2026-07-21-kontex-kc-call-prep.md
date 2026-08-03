@@ -232,7 +232,23 @@ differential_60Hz_at_amp  ≈  common_mode(mains floor)  ×  electrode_impedance
 
 **Shielding (foil):** wrapping the headstages in aluminium foil dropped single-ended 60 Hz pickup by up to ~450× (3604 → 8 µV) — the single biggest win. Mechanism: gives the coupling capacitance somewhere else to drain. **Foil stays ON but stays FLOATING** — grounding it was dropped 2026-07-16 (no headroom left; a global shield can't fix one open leg among balanced neighbours; Gen-1 Core has no chassis-ground terminal anyway). Foil blocks *electric* fields, NOT magnetic — magnetic fix is geometry: twist each +/− pair, keep the analog run short (applies only to the pre-headstage analog stretch).
 
-**The root cause right now:** **every frontal EEG electrode is open on every mouse (3/3)** — 3.9–8.7 MΩ with nonphysical positive phase (a real electrode-tissue interface is capacitive → phase ≤ 0). An electrode floating in air reads 2.5–7 MΩ. Frontal and parietal are the same wire electrically, so the failure is **anatomical/surgical** — lead hypothesis: the **frontal sinus** (air cavity, pin lands in air). **Implants can't be reseated — you make new mice.** Surgical yield is the critical path, not electronics.
+~~**The root cause right now:** **every frontal EEG electrode is open on every mouse (3/3)** — 3.9–8.7 MΩ with nonphysical positive phase (a real electrode-tissue interface is capacitive → phase ≤ 0). An electrode floating in air reads 2.5–7 MΩ. Frontal and parietal are the same wire electrically, so the failure is **anatomical/surgical** — lead hypothesis: the **frontal sinus** (air cavity, pin lands in air). **Implants can't be reseated — you make new mice.** Surgical yield is the critical path, not electronics.~~
+
+> [!danger] 🔴 RETRACTED — the premise, the hypothesis and the conclusion are all wrong
+> - **There is no frontal-vs-parietal asymmetry.** That came from the wrong
+>   channel map (corrected 2026-08-01). What fails is the **EEG channel `/1`**;
+>   the **EMG channel `/2`** works on most animals.
+> - **The frontal-sinus hypothesis was built entirely on the mis-mapping** and
+>   has no evidence behind it. Drop it.
+> - **"You make new mice" does not follow.** The high-impedance open-circuit
+>   readings still stand, but Hsieh et al. (*eNeuro* 2024) report **82% of
+>   epidural preparations lose ≥1 electrode within 3 weeks** — this is the known
+>   baseline for the electrode type, not a surgical-skill problem. Their own fix
+>   is a **different electrode design** (1.0 mm epidural, or MXene: 82% → 18%).
+> - The free rig-side bench test has **still not been done**.
+>
+> See [[2026-08-03-literature-check-impedance-and-electrode-failure]] and
+> [[2026-08-03-two-8-mouse-runs]].
 
 **Go/No-Go impedance gate (screen in Allego GUI BEFORE every run):** both legs 0.1–1 MΩ, phase ≤ 0, pair imbalance ≤ 2–3×, reject anything in the 2.5–7 MΩ floating band.
 

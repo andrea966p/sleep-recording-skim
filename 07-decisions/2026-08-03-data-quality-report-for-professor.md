@@ -294,9 +294,27 @@ This is important, because it tells us where *not* to spend effort:
 
 ### 6.4 The remaining open question on noise
 
-The frontal EEG electrode is open on nearly every animal while the parietal electrode on the same wire reads fine. The leading hypothesis is the **frontal sinus**: an air cavity beneath the skull at the frontal position, so the screw tip lands in air rather than on dura.
+> [!danger] The paragraph below used the retracted frontal-vs-parietal framing. Corrected 2026-08-03.
+> There is no frontal-vs-parietal asymmetry. That reading came from the wrong
+> channel map. What is actually open is the **EEG channel `/1`**, while the
+> **EMG channel `/2`** works. The frontal-sinus hypothesis was built on the
+> mis-mapping and **has no evidence behind it**; it should not be repeated.
 
-**This has not been confirmed**, and there is a competing explanation that is free to test and has not yet been ruled out: a **cold solder joint on C3410 pads 0/1**, or a broken slip-ring wire, would produce exactly the same pattern. Animals A1, C1 and D1 are the ideal test cases — their EMG works perfectly through the *same* tether, slip ring, board, headstage and port, which proves that shared infrastructure is good and isolates the fault to something that differs between the two channels.
+The **EEG channel is open on nearly every animal, while the EMG channel on the same connector works**. There are now **three** candidate explanations, and our data does not yet separate them:
+
+1. **A cold solder joint on C3410 pads 0/1**, or a broken EEG slip-ring wire. Free to test, not yet done.
+2. **The dura pins have dislodged.** This is the literature's default expectation: Hsieh et al. (*eNeuro* 2024) report that **82% of epidural preparations lose at least one electrode within three weeks**, with peak dislodgement in week 1. Our measured one-way, irreversible degradation (EEG impedance rose on 8 of 8 animals across Run 2, none improved) is exactly that failure's shape.
+3. Some combination of the two.
+
+Animals A1, C1 and D1 are the ideal test cases — their EMG works perfectly through the *same* tether, slip ring, board, headstage and port, which proves that **shared infrastructure** is good.
+
+> [!warning] What that proof does and does not buy us
+> It isolates the fault to the EEG-specific segment. It does **not** identify the
+> solder, because EEG and EMG do not share an electrode: **EEG is a dura pin, EMG
+> is a wire anchored in muscle**, and only the former has a published failure rate
+> — a very high one. The bench test is still the right next step, but treat it as
+> a **discriminator between hypotheses 1 and 2**, not as confirmation of 1.
+> Full analysis: [[2026-08-03-literature-check-impedance-and-electrode-failure]].
 
 ---
 
