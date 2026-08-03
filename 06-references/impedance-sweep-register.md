@@ -91,7 +91,8 @@ EMG went 3 better, 3 unchanged, 2 worse. Full analysis:
    the chip's `Zcheck pol sel` register selects which input is tested, but
    Radiens exposes no way to reach it. By chip default we get the positive input,
    so "the EEG impedance" is the **frontal** electrode and the parietal one has
-   never been measured. See [[electrode-connection-state-test]].
+   never been measured. See [[electrode-connection-state-test]]. **Open Ephys
+   does not fix this either** — see the section below.
 2. **`Z < 2 MΩ` means "not open", not "good".** Published epidural electrodes sit
    at 10–50 kΩ; our best channel in the whole fleet is 73 kΩ.
    See [[electrode-failure-and-impedance-literature]].
@@ -103,3 +104,78 @@ EMG went 3 better, 3 unchanged, 2 worse. Full analysis:
 > In the 16:11 and 16:13 sweeps a single animal was moved onto port B, so both
 > files report their readings under the label `B1` (derived from port + site).
 > The animal identity is in the filename, not the label. Trust the filename.
+
+## ❌ Can the Open Ephys GUI measure each electrode separately? No, not as shipped
+
+**Asked and answered 2026-08-03, by inspecting the installed plugin binary.**
+
+The hope was that the Open Ephys GUI, being open source, might expose the
+`Zcheck pol sel` register that Radiens hides, and so finally measure the
+**negative** electrode of each bipolar pair. It does not.
+
+### What was checked
+
+`~/.config/open-ephys/plugins-api10/XDAQ-OE.so`, the XDAQ-OE v0.4.4 plugin that
+is actually installed and working on this machine ([[openephys-gui-setup-xdaq-sleep-eeg]]).
+
+The plugin embeds Intan's `Rhd2000Registers` class, and the polarity setter **is
+compiled in**:
+
+```
+_ZN16Rhd2000Registers17setZcheckPolarityENS_14ZcheckPolarityE   @ 0x7a420
+```
+
+But it is **never called**. Counting call sites in the disassembly:
+
+| register setter | call sites in the shipped plugin |
+| --- | --- |
+| `setZcheckScale` | 3 |
+| `setZcheckChannel` | 1 |
+| `enableZcheck` | 1 |
+| `setZcheckDacPower` | 0 |
+| **`setZcheckPolarity`** | **0** |
+
+The other three setters *are* called out of line from the impedance path, so the
+absence of a call to the polarity setter is meaningful and not an inlining
+artefact. The function is dead code, carried along because
+`Rhd2000Registers.cpp` is compiled whole.
+
+Result: the plugin leaves `Zcheck pol sel` at its power-on default and measures
+**the same pin Radiens measures**. Confirmed by the shape of its own export,
+`~/Downloads/OE imp with mouse split ground` — exactly **one** magnitude and
+phase per amplifier, with no polarity dimension anywhere:
+
+```xml
+<CHANNEL name="CH1" number="0" magnitude="585478.75" phase="-61.93849945068359"/>
+<CHANNEL name="CH2" number="1" magnitude="2.090344875e6" phase="1.613905072212219"/>
+```
+
+> [!important] Switching acquisition software does not buy you this measurement
+> Allego and the Open Ephys XDAQ plugin are equally blind to the negative
+> electrode. This is a **software** gap in both, not a chip limitation: the
+> RHD2216 can test either pin, and that register bit exists precisely for
+> bipolar chips.
+
+### What actually would work, cheapest first
+
+1. **Multimeter on each C3410 pad against the GND pad. Free, today, and it sees
+   both sides.** It is a DC continuity check rather than a 1 kHz impedance, so
+   the number is not comparable to a sweep, but the question we need answered is
+   "is this electrode connected at all", and that it answers. This remains the
+   recommended next step. See [[multimeter-guide]].
+2. **Patch the plugin.** Open Ephys and the XDAQ plugin are open source. The
+   change is small: run the existing measurement pass twice, calling
+   `setZcheckPolarity(ZcheckNegativeInput)` before the second, and emit a second
+   value per amplifier. The cost is not the code, it is building and installing
+   an unofficial plugin on a live production rig, and then owning it at every
+   upgrade.
+3. **Ask Kontex for it.** This is a small, concrete, well-specified feature
+   request against a plugin they maintain, and there is an open thread already.
+   Cheapest path to a *supported* fix. Vendor thread:
+   `01-infrastructure/vendor-correspondence/`.
+
+> [!quote] Paper-ready
+> Impedance was measured at the positive input of each bipolar amplifier;
+> neither acquisition package exposes the chip register that selects the
+> negative input, so the second electrode of each pair was verified by direct
+> continuity measurement rather than by impedance sweep.
