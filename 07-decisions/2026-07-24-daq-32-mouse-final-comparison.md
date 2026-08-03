@@ -11,7 +11,7 @@ tags:
 created: 2026-07-24
 updated: 2026-07-28
 status: open
-supersedes: "[[2026-07-23-daq-ecosystem-comparison-xdaq-vs-openephys]]"
+supersedes: "[[daq-ecosystem-comparison-xdaq-vs-openephys]]"
 ---
 # DAQ Ecosystem Comparison, FINAL, 3-Way for 32 Mice — XDAQ vs Open Ephys vs Intan
 
@@ -41,7 +41,7 @@ supersedes: "[[2026-07-23-daq-ecosystem-comparison-xdaq-vs-openephys]]"
 > [!quote] Paper-ready
 > Three acquisition ecosystems were costed for a chronic 32-animal mouse EEG/EMG rig, all interfacing the same Intan RHD2216 bipolar amplifier over SPI and all operated under the open-source Open Ephys GUI: the XDAQ system (KonteX), the Open Ephys Acquisition Board, and the Intan RHD Recording Controller. Because one RHD chip occupies one SPI MISO data line irrespective of channel count, animal capacity is set by MISO-line count, not channel count. A dual-headstage adapter placed at the acquisition port drives two independent chips over the port's two MISO lines, each on its own interface cable, permitting two separate animals per port at the cost of a common port-level ground and reference domain; for differential bipolar montages this shared ground is rejected as common mode, so per-port headstage doubling is electrically acceptable, whereas port-level galvanic isolation of each headstage preserves true per-animal grounding at higher hardware cost. With acquisition software held constant and free across all three systems, the dominant capital cost of the complete rig is the per-animal tether chain (commutator and SPI cabling) rather than the acquisition hardware itself.
 
-Companion docs: [[2026-07-23-daq-ecosystem-comparison-xdaq-vs-openephys]] (16-mouse 2-way predecessor, superseded), [[2026-07-21-acquisition-device-16-32-mice-and-kontex-thread]] (XDAQ/Kontex thread + quote 262024), [[2026-07-21-openephys-acquisition-board-scale-up-option]], [[openephys-inquiry-email]], [[intan-rhd-spi-wiring-and-headstage-limits]] (MISO physics), [[kontex-xdaq-hardware-reference]], [[eeg-60hz-saga]] (the grounding history that makes isolation matter).
+Companion docs: [[daq-ecosystem-comparison-xdaq-vs-openephys]] (16-mouse 2-way predecessor, superseded), [[2026-07-21-acquisition-device-16-32-mice-and-kontex-thread]] (XDAQ/Kontex thread + quote 262024), [[2026-07-21-openephys-acquisition-board-scale-up-option]], [[openephys-inquiry-email]], [[intan-rhd-spi-wiring-and-headstage-limits]] (MISO physics), [[kontex-xdaq-hardware-reference]], [[eeg-60hz-saga]] (the grounding history that makes isolation matter).
 
 ---
 
@@ -424,5 +424,5 @@ None of this is the current bottleneck. **The frontal electrodes are open on eve
 
 ## Related
 - ⭐ [[xdaq-32-mouse-wiring-and-channel-law]] — **the deep XDAQ wiring note (power supply → mouse), the channel law, and why the splitter cannot reach 32**
-- [[2026-07-23-daq-ecosystem-comparison-xdaq-vs-openephys]] (superseded predecessor) · [[2026-07-21-acquisition-device-16-32-mice-and-kontex-thread]] · [[2026-07-21-openephys-acquisition-board-scale-up-option]] · [[openephys-inquiry-email]]
+- [[daq-ecosystem-comparison-xdaq-vs-openephys]] (superseded predecessor) · [[2026-07-21-acquisition-device-16-32-mice-and-kontex-thread]] · [[2026-07-21-openephys-acquisition-board-scale-up-option]] · [[openephys-inquiry-email]]
 - [[intan-rhd-spi-wiring-and-headstage-limits]] · [[kontex-xdaq-hardware-reference]] · [[eeg-60hz-saga]] · [[project_multiuser_recording_schedules]] (⚠️ overturned by §2.4)

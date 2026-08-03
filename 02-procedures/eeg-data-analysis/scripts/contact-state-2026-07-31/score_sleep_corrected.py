@@ -9,7 +9,7 @@ THE MAP (RHD2216 is BIPOLAR — each channel already reports its own +/- differe
 
 The old pipeline computed EEG = native0 - native1, which is EEG minus EMG, and
 treated the empty pads /3,/4 as failed EMG electrodes. See
-07-decisions/2026-08-01-channel-mapping-correction-first-sleep.md
+05-experiments/completed/2026-08-01-channel-mapping-correction-first-sleep.md
 
 Usage:  python3 score_sleep_corrected.py <recording_base> <port_index> <mouse:1|2> <start_h> <end_h>
    e.g. python3 score_sleep_corrected.py allego_1__uid0731-18-06-37 2 1 0 8.70   # C1

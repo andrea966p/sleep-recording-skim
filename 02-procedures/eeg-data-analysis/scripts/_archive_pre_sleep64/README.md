@@ -11,7 +11,7 @@ never gating the verdict). `eeg_pipeline.py` also collapsed the EMG band to
 
 **Current codebase:** `Monitoring_project/eeg-emg-analysis/` (QC / convert / sleep,
 8-mouse map derived-and-validated from metadata). See its `README.md` and the
-checkpoint in `07-decisions/2026-07-18-eeg-emg-analysis-checkpoint.md`.
+checkpoint in `99-archive/2026-07-18-eeg-emg-analysis-checkpoint.md`.
 
 The good parts that carried forward: the XDAT reader (`xdat_io.py`),
 `state_scan.py`'s metadata-derived layout + biology tests, and the filter

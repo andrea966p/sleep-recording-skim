@@ -15,7 +15,7 @@ status: draft-validated-1-headstage
 
 > [!abstract] TL;DR — for non-technical readers
 > **What this is.** Step by step for driving our existing NeuroNexus/Kontex **XDAQ Core** from the free, open-source **Open Ephys GUI** instead of paid Allego, for chronic sleep EEG/EMG with our Intan **RHD2216** headstages. We validated on 2026-07-23 that OE fully enumerates and controls the Core (one headstage on port B detected, 32 channels), so this is a real license-free path.
-> **Why it exists.** Part of the 16→32 mouse DAQ decision ([[2026-07-23-daq-ecosystem-comparison-xdaq-vs-openephys]]). OE software is $0 and could give us per-animal record control we cannot get in Allego. This guide is the hands-on setup so anyone can rebuild the workflow.
+> **Why it exists.** Part of the 16→32 mouse DAQ decision ([[daq-ecosystem-comparison-xdaq-vs-openephys]]). OE software is $0 and could give us per-animal record control we cannot get in Allego. This guide is the hands-on setup so anyone can rebuild the workflow.
 > **How to read it.** §1 install + the one-time fix that makes the plugin load. §2 build the signal chain. §3 configure the source for sleep. §4 impedance check. §5 recording (and the per-animal-record win). §6 the 60 Hz reality check. §7 gotchas.
 
 > [!warning] Only one program can own the XDAQ at a time
@@ -92,7 +92,7 @@ Port naming in OE: **P1=port A, P2=port B, P3=C, P4=D**; slots 1–4 per port (C
 **Record Node basics:**
 - Set the save directory via the **button at top-right** of the Record Node editor (shows a live disk-space monitor).
 - Channel select: click the **vertical bars on the left** (stream buffer monitor) → `ALL` / `NONE` / `RANGE` ("1:16" Matlab-style). **Channels not selected when recording starts cannot be recovered.**
-- **Format:** default **Binary**; **Open Ephys** and **NWB** formats installable via Plugin Installer. (Only one NWB Record Node at a time.) Binary is the simplest for our analysis migration — see the format question in [[2026-07-23-daq-ecosystem-comparison-xdaq-vs-openephys]].
+- **Format:** default **Binary**; **Open Ephys** and **NWB** formats installable via Plugin Installer. (Only one NWB Record Node at a time.) Binary is the simplest for our analysis migration — see the format question in [[daq-ecosystem-comparison-xdaq-vs-openephys]].
 
 > [!tip] Independent per-animal recording (the thing Allego cannot do)
 > Each headstage = its own **data stream**. With multiple headstages you can either (a) use **one Record Node and enable/disable per stream**, or (b) drop **one Record Node per animal**, each to its own directory, started/stopped independently. That is the per-mouse start/stop control our current Allego + daemon setup can't do (one global R_ON, see [[project_multiuser_recording_schedules]]). This is a genuine reason OE could beat Allego for staggered multi-mouse schedules — validate it when we have 2+ headstages.
@@ -140,4 +140,4 @@ Two software tools exist, but be honest about limits:
 > 1. **Sample rate did NOT stick at 1 kHz — it recorded at 10 kHz** (`structure.oebin: sample_rate 10000`). That is **~28 GB/day/mouse** vs ~2.8 GB at 1 kHz. Set the rate AND confirm `structure.oebin` reads `1000` before trusting a run.
 > 2. **Record Node was at the END of the chain → recorded bandpass-FILTERED data** (channel `history: XDAQ → Channel Map → Bandpass Filter → LFP Viewer → Record Node`). Put a Record Node **immediately after XDAQ** to keep raw.
 
-- ⏳ Still to do: montage-mapped impedance read; **multi-headstage per-animal record test** (the Allego-beating feature); confirm 1 kHz sticks; firmware "Legacy" warning follow-up with Kontex (do NOT reflash the production Core without checking KC); decide OE-Binary vs XDAT for the analysis pipeline ([[2026-07-23-daq-ecosystem-comparison-xdaq-vs-openephys]]).
+- ⏳ Still to do: montage-mapped impedance read; **multi-headstage per-animal record test** (the Allego-beating feature); confirm 1 kHz sticks; firmware "Legacy" warning follow-up with Kontex (do NOT reflash the production Core without checking KC); decide OE-Binary vs XDAT for the analysis pipeline ([[daq-ecosystem-comparison-xdaq-vs-openephys]]).

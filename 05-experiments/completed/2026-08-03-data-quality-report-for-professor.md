@@ -328,13 +328,13 @@ Animals A1, C1 and D1 are the ideal test cases — their EMG works perfectly thr
 > is a wire anchored in muscle**, and only the former has a published failure rate
 > — a very high one. The bench test is still the right next step, but treat it as
 > a **discriminator between hypotheses 1 and 2**, not as confirmation of 1.
-> Full analysis: [[2026-08-03-literature-check-impedance-and-electrode-failure]].
+> Full analysis: [[electrode-failure-and-impedance-literature]].
 
 ---
 
 ## 6.5 ⭐ The procedure: from a raw recording to a file a person can score
 
-> [!success] Full standalone version: [[2026-08-03-analysis-methods-procedure]]
+> [!success] Full standalone version: [[analysis-methods-and-justification]]
 > That page is written to be read on its own, or lifted into a methods section.
 > It gives each step with its reasoning, the code that implements it, and the
 > published source it comes from. This section is the short version.

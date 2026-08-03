@@ -342,7 +342,7 @@ from wake, which is a real and checkable feature.
 
 Papers are in `~/Desktop/andrea/papers/`. The full evaluation of them against our
 own data is in
-[[2026-08-03-literature-check-impedance-and-electrode-failure]].
+[[electrode-failure-and-impedance-literature]].
 
 ---
 

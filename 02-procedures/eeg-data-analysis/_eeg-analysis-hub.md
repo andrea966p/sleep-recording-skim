@@ -1,128 +1,240 @@
 ---
 tags: [procedure, eeg, analysis, hub, onboarding, python]
 created: 2026-06-30
-status: complete
+updated: 2026-08-03
+status: active
 ---
 
-# EEG Data Analysis — Hub
-
-> [!danger] ⭐ SUPERSEDED AGAIN 2026-08-03 — go to [[pipeline/README]]
-> The current analysis path is **`02-procedures/eeg-data-analysis/pipeline/`**,
-> in this vault, and it replaces both the archived scripts below *and* the
-> `eeg-emg-analysis/` codebase referenced in the next box.
->
-> ```
-> stage1_qc.py       raw .xdat -> CLEAN / DIRTY / OPEN / DEAD / CLIPPED / INSUFFICIENT
-> stage2_split.py    -> /home/skimlab/eeg-processed/YYYY-MM-DD/ one file per mouse
-> stage3_features.py -> hypnogram + sleep features
-> qc_thresholds.py   every constant with its provenance
-> ```
->
-> Why it exists: two statistics bugs and three wrong QC thresholds survived in
-> the older tooling for weeks. Everything is now in one place with the
-> justification attached. **The science below (bands, filters, epoching) still
-> holds** — it is the channel map, the thresholds and the persistence statistic
-> that changed.
->
-> Use the **system `python3`**, not the `/opt/neurosurveillance` venv (numpy/scipy
-> ABI mismatch → `numpy.core.multiarray failed to import`).
-
-> [!warning] Superseded 2026-07-18 — code moved out of the vault
-> The runnable scripts here predate the **sleep64 8-headstage** rig and are
-> **archived** under `scripts/_archive_pre_sleep64/`. The current, clean codebase
-> lives in its own project folder: **`Monitoring_project/eeg-emg-analysis/`**
-> (QC / convert / sleep, with the 8-mouse channel map derived-and-validated from
-> metadata). Start at its `README.md`. Rationale + fact-check citations:
-> `07-decisions/2026-07-18-eeg-emg-analysis-checkpoint.md`. The science below
-> (bands, filters, referencing in `04-processing-guidelines`) still holds.
+# EEG data analysis — START HERE
 
 > [!abstract] TL;DR — for non-technical readers
-> **What this is.** The start-here page for everything *after* a recording is made: where the files are, how to read them, how to filter/score-prep the EEG, and the Python scripts you run yourself. The acquisition side (plugging the mouse, Allego, grounding) lives elsewhere — this section begins the moment an XDAT recording exists on disk.
-> **Why it exists.** The raw recording (`.xdat`) is not directly readable by eye or by most tools. You need a small, repeatable toolkit to turn it into clean EEG, summary features, and portable formats (CSV, EDF). This section is that toolkit, with every script already tested on a real recording.
-> **How to read this page.** Do [[01-environment-setup]] once. Then the workflow below, top to bottom. Each script has a one-line command. Scoring-tool export (`.3eg`) is deliberately out of scope here.
-
-The rig + acquisition side: [[sleep-recording-operator-manual]], [[signal-mapping-guide]], [[grounding-reference-noise-concepts]].
-
----
-
-## The 30-second mental model
-
-```
-Allego  ->  <base>_data.xdat (+ _timestamp.xdat + .xdat.json)   = the MASTER (raw, 1 kHz, uV)
-                                  |
-                                  |  Python (analysis venv)
-                                  v
-        +----------------+----------------+------------------+
-        | qc_report.py   | eeg_pipeline.py| xdat_to_edf.py   |
-        | (is it good?)  | (features)     | xdat_to_csv.py   |
-        +----------------+----------------+------------------+
-        overview PNG      _features.csv     .edf / .csv  (share with others)
-```
-
-- The **XDAT is the master**. Never edit it. Everything is derived from it; you can always re-derive.
-- All processing is **offline in Python**. Allego only acquires — it cannot re-process a saved file.
-- Values are **microvolts (uV)** already (float32). No gain math needed.
+> **What this is.** The one entry point for everything that happens *after* a
+> recording exists on disk. It takes you from the raw file Allego wrote to a
+> file a person can score by hand, in four commands.
+>
+> **Why it exists.** There used to be three competing sets of instructions in
+> this folder and two of them were wrong. This page is now the only one that
+> describes what to actually run. Everything else here is either a deeper
+> reference or an archive, and each is labelled as such at the bottom.
+>
+> **How to read this page.** Run *The four commands*. If something misbehaves,
+> go to [[eeg-analysis-problems]]. If a word blocks you, go to
+> [[eeg-analysis-glossary]]. Do not follow the archived pages unless you are
+> reproducing a historical number.
+>
+> Big picture: [[01-infrastructure/system-overview]].
+> Acquisition side, everything before the file exists:
+> [[sleep-recording-operator-manual]].
 
 ---
 
-## Workflow (in order)
+## The map — four pages, and that is all
 
-| Step | Do | Script / doc | Output |
-|---|---|---|---|
-| 0 | Set up the venv (once) | [[01-environment-setup]] | `/home/skimlab/eeg-analysis-venv` |
-| 1 | Know your file set | [[02-file-formats-reference]] | — |
-| 2 | **QC** — is the recording good? | `qc_report.py` | `_qc_overview.png` + table |
-| 3 | **Process** — clean + features | `eeg_pipeline.py` | `_features.csv` |
-| 4 | **Export** — portable formats | `xdat_to_edf.py`, `xdat_to_csv.py` | `.edf`, `.csv` |
-| — | Science guidelines (bands, filters, referencing) | [[04-processing-guidelines]] | — |
-| — | Every script's options + examples | [[03-scripts-and-usage]] | — |
+| I want to | Read |
+| --- | --- |
+| **run the analysis** | this page, then [[pipeline/README]] for detail on each stage |
+| **know why each step is done, and what a reviewer will ask** | [[analysis-methods-and-justification]] |
+| **look up a term or parameter** (`nperseg`, `r@1min`, `DIRTY`, `ZT`) | [[eeg-analysis-glossary]] |
+| **fix something that misbehaved** | [[eeg-analysis-problems]] |
 
-One-liners (analysis venv; scripts live in `02-procedures/eeg-data-analysis/scripts/`):
+---
+
+## The mental model, in 30 seconds
+
+```
+Allego writes        <base>_data.xdat  +  _timestamp.xdat  +  .xdat.json
+                     raw, wideband, 1000 Hz, microvolts, ALL 8 mice in one file
+                                   |
+  stage 1  QC        is each mouse scoreable at all?      -> verdict + reason
+                                   |
+  stage 2  split     one .npz per mouse, per day folder   -> 250 Hz, gated
+                                   |
+  stage 3  features  automatic hypnogram + sleep stats    -> SCOREABLE or not
+                                   |
+  stage 4  export    EDF+ for a HUMAN scorer              -> .edf + scorer note
+```
+
+Three facts that everything else follows from:
+
+1. **The `.xdat` is the master. Never edit it.** Every output is re-derivable.
+   All filtering happens offline, so nothing irreversible is ever baked in.
+2. **One recording contains all 8 mice.** Splitting per mouse is stage 2's whole
+   job, and which channel belongs to which mouse is *derived from the file's own
+   metadata*, never assumed.
+3. **Quality control comes first, not last.** Most of our recordings have no
+   usable EEG, so asking "is this scoreable" before measuring anything is what
+   stops us measuring noise.
+
+---
+
+## The four commands
+
+Use the **system `python3`**, not the `/opt/neurosurveillance` virtual
+environment. That one has a numpy and scipy version clash and fails with
+`numpy.core.multiarray failed to import`.
 
 ```bash
-PY=/home/skimlab/eeg-analysis-venv/bin/python
-cd ~/Monitoring_project/.../02-procedures/eeg-data-analysis/scripts   # for imports
-REC=/home/skimlab/radix/data/allego_1__uid0629-12-05-09               # base, no _data.xdat
+cd ~/Monitoring_project/Monitoring_project_obsidian_vault/02-procedures/eeg-data-analysis/pipeline
 
-$PY qc_report.py    $REC                 # signal quality + overview plot
-$PY eeg_pipeline.py $REC                 # filter -> 256 Hz -> 4s epochs -> band power
-$PY xdat_to_edf.py  $REC                 # -> <base>.edf  (for EDFbrowser / EEG tools)
-$PY xdat_to_csv.py  $REC --target-fs 256 --bipolar   # -> <base>_256hz.csv
+REC=allego_1__uid0731-18-06-37          # the recording base name, no _data.xdat
+DAY=/home/skimlab/eeg-processed/2026-07-31
+
+# 1. is each mouse scoreable?           (one pass over the raw file, up to ~15 min)
+python3 stage1_qc.py $REC --json qc.json
+
+# 2. split into one file per mouse      (fast, reuses stage 1's cache)
+python3 stage2_split.py $REC
+
+# 3. automatic scoring + sleep features
+python3 stage3_features.py $DAY
+
+# 4. EDF+ export, so a person can score it by hand
+python3 stage4_export_edf.py $DAY
 ```
 
+Several recordings of the same animals together:
+
+```bash
+python3 cohort_summary.py --out /home/skimlab/eeg-processed/COHORT-2026-07 2026-07-31 2026-08-02
+```
+
+### What each command actually decides
+
+| Stage | The question it answers | The output you read |
+| --- | --- | --- |
+| 1 | Is this mouse's electrode connected enough to score? | a **verdict** and a **reason** per mouse |
+| 2 | Which samples belong to which mouse, and which are usable? | one `.npz` per mouse, `README.txt`, `qc_summary.csv` |
+| 3 | When was it asleep, and is that believable? | `*_hypnogram.csv`, `*_summary.txt`, SCOREABLE or not |
+| 4 | Can a human check our answer? | `*.edf` + `*_SCORER-README.txt` |
+
+> [!important] Read the reason, not just the verdict
+> Stage 1 prints why it decided what it decided. `DIRTY` and `OPEN` are very
+> different situations and the word alone does not tell you which one you have.
+
+### Useful flags
+
+| Flag | Stage | Use it when |
+| --- | --- | --- |
+| `--force` | 1, 2 | you changed a threshold, or want to overwrite existing output |
+| `--all-verdicts` | 2 | handing over a **complete** set of mice, failures included |
+| `--clean-only` | 2 | almost never, see the warning below |
+| `--json FILE` | 1 | you want the full QC output rather than the printed table |
+
 ---
 
-## Channel guidelines (single-mouse config)
+## What the verdicts mean
 
-`D/n` (Allego UI) = native + 1. With the passthrough map, **native index = C3410 pad**.
+| verdict | meaning | usable? |
+| --- | --- | --- |
+| `CLEAN` | ≥90% of epochs pass, most usable time in long blocks | yes |
+| `DIRTY` | usable data exists, but fragmented or partly contaminated | **yes** |
+| `OPEN` | electrode not electrically connected for >95% of the recording | no |
+| `DEAD` | channel never carried EEG at all | no |
+| `CLIPPED` | amplifier saturated for >95% of the recording | no |
+| `INSUFFICIENT` | under 15 minutes of usable continuous data | no |
 
-| native | label | what it is | use |
-|---|---|---|---|
-| 0 | EEG_F_L | left frontal EEG (+) | **EEG = bipolar 0 − 1** |
-| 1 | EEG_P_L | left parietal EEG (−) | (the pair) |
-| 2 | EMG_L | neck EMG (+) | **EMG = bipolar 2 − 3** |
-| 3 | EMG_R | neck EMG (−) | (the pair) |
-| 4 | dura_FR | right-frontal dura | spare / re-reference |
-| 6 | copper | cut cable shield | environmental-noise ref (NOT brain) |
-| 5 | — | purple = nothing | DESELECT, never record |
-| 7–31 | — | unwired | ignore |
-
-- **The sleep EEG is the bipolar derivation `EEG_bip = native0 − native1`** (left frontal–parietal). Raw singles are kept too, but you score on the bipolar.
-- The 2-mice-per-headstage map (`2mice32`) is also supported by every script via `--config 2mice32` (M1 = natives 0–3, M2 = natives 8–11). See [[signal-mapping-guide]].
-- These maps are defined once in `scripts/xdat_io.py` (`CHANNEL_MAPS`) — edit there if the rig changes, and every script follows.
-
-> [!warning] Allego saves ALL 32 primary channels, not just your 6 wired pads
-> The XDAT always contains 32 `pri` channels (+ aux/din/dout = 38 total). The unwired ones are noise/float — the channel map tells the scripts which natives are real. Don't be alarmed by 32 channels in the file.
+> [!warning] Two verdicts are routinely misread
+> **`DIRTY` does not mean bad.** C1 on 2026-07-31 is the best animal in the
+> project and it is `DIRTY`, because the surrounding 19 hours are open. Never
+> default to `--clean-only`.
+>
+> **`INSUFFICIENT` is not a negative result.** It means the question could not
+> be asked, not "this mouse did not sleep". Writing it up as a finding is a
+> category error.
 
 ---
 
-## Section contents
-- [[01-environment-setup]] — the one analysis venv (numpy/scipy/matplotlib/pandas/pyedflib)
-- [[02-file-formats-reference]] — XDAT (master), CSV, EDF; sizes; what opens what
-- [[03-scripts-and-usage]] — all 5 scripts: purpose, options, tested example output
-- [[04-processing-guidelines]] — bands, filters, referencing, decimation, artifacts, QC pass criteria
+## The four rules you must not break
+
+> [!danger] 1. The signals are already bipolar. Never subtract them.
+> The RHD2216 chip subtracts each electrode pair internally, before the
+> converter. `/1` is EEG (frontal minus parietal) and `/2` is EMG (left minus
+> right neck), each **already a difference**. Do not subtract EMG from EEG and
+> do not re-reference. The old `EEG = native0 − native1` rule computed
+> EEG-minus-EMG, and it is why 24 working EMG implants were once recorded as
+> failed surgeries. Canonical page: [[CANONICAL-allego-channel-selection]].
+
+> [!danger] 2. Analyse inside blocks, never across them.
+> A **block** is an unbroken run of passing epochs. Because contact is
+> intermittent, two epochs that sit next to each other after the failing ones
+> are dropped can be **hours apart in real time**. Anything with a time lag in
+> it — autocorrelation, bout length, transition probability — must be computed
+> inside one block and then averaged across blocks. Ignoring this produced this
+> project's largest false positive, `r = +0.854` on 39 minutes of pure wake.
+
+> [!danger] 3. Never report a REM percentage.
+> REM is defined here as the top 20% of theta-over-delta among non-wake epochs,
+> so its share is fixed by the rule rather than measured. The output field is
+> deliberately named `rem_pct_CONSTRUCTED`. Report wake against non-REM, and
+> report REM's **order**, that it is entered from non-REM rather than from wake.
+
+> [!danger] 4. Every constant lives in one file.
+> `pipeline/qc_thresholds.py`, each with its provenance written next to it.
+> There are no magic numbers anywhere else in the pipeline. If you change one,
+> re-run stage 1 with `--force`, or you will get the old verdicts back from
+> cache and conclude the change did nothing.
+
+---
+
+## Where the outputs land
+
+```
+/home/skimlab/eeg-processed/2026-07-31/
+├── portC-slot1_2026-07-31_180637_27h54m.npz      one mouse: eeg, emg, blocks, zt, meta
+├── portC-slot1_..._hypnogram.csv                 automatic scoring, epoch by epoch
+├── portC-slot1_..._features.json / _summary.txt  one number per mouse / plain English
+├── portC-slot1_....edf                           for a human scorer
+├── portC-slot1_..._SCORER-README.txt             which windows are worth scoring
+├── impedance/                                    the sweeps for that day
+├── qc/qc_summary.csv                             one row per animal
+└── README.txt                                    verdicts + caveats, so they travel with the data
+```
+
+Filename is `port{PORT}-slot{SLOT}_{DATE}_{HHMMSS}_{DURATION}`. Slot is the
+position on the splitter: slot 1 = `/1`,`/2`; slot 2 = `/33`,`/34`.
+
+Opening an `.npz` in Python, and the meaning of every array inside it, is in
+[[eeg-analysis-glossary]] section 5. There is a ready-made loader at
+`/home/skimlab/Desktop/andrea/eeg-per-mouse/load_mouse.py`, with a companion
+`HOW-TO-USE.md` written for a colleague receiving the data.
+
+---
+
+## Supporting pages in this folder
+
+**Current:**
+- [[pipeline/README]] — the operating manual: every stage, every threshold, why
+- [[analysis-methods-and-justification]] — standard versus ours, with citations.
+  Read this before writing a methods section or presenting to the PI
+- [[02-file-formats-reference]] — XDAT, CSV and EDF format specs, byte layouts, sizes
+- [[01-environment-setup]] — the older dedicated analysis venv. Optional: the
+  current pipeline needs only numpy and scipy, so system `python3` is enough
+
+**Historical, do not follow:**
+- [[03-scripts-and-usage]] — **superseded.** Describes the archived pre-sleep64
+  scripts, which carry the wrong channel map
+- [[04-processing-guidelines]] — the science behind the choices, still broadly
+  correct, but its channel guidance is superseded by
+  [[CANONICAL-allego-channel-selection]]
+- `scripts/_archive_pre_sleep64/` — wrong channel map, wrong bipolar rule
+- `scripts/contact-state-2026-07-31/` — contains `gate_and_score_all.py`, whose
+  persistence statistic crossed contact gaps. Kept only to reproduce historical
+  numbers
+- `scripts/rescore-v2-2026-08-03/` — the corrected persistence statistic, since
+  folded into `stage3_features.py`
+
+> [!quote] Paper-ready
+> Recordings were acquired wideband at 1 kilohertz and processed offline: each
+> animal's channels were derived from the acquisition metadata, quality
+> controlled per 4 second epoch, split into per-animal records, and scored into
+> wake, non rapid eye movement and rapid eye movement sleep using delta power,
+> the theta to delta ratio and electromyogram tone with per-animal thresholds.
 
 ## Related
-- [[eeg-emg-data-guide]] — earlier reference on reading EEG/EMG by eye + sleep-stage signatures
-- [[sleep-recording-operator-manual]] — the acquisition side (everything before the XDAT exists)
-- [[2026-06-29]] / [[2026-06-30]] — the first recording + first run of this toolkit
+- [[eeg-analysis-glossary]] — every term and parameter in plain words
+- [[eeg-analysis-problems]] — symptom lookup for the analysis side
+- [[CANONICAL-allego-channel-selection]] — which channel is which. If anything
+  disagrees with that page, that page is right
+- [[sleep-recording-operator-manual]] — the acquisition side
+- [[eeg-emg-data-guide]] — reading EEG and EMG by eye, sleep stage signatures
+- [[2026-08-03-data-quality-report-for-professor]] — what the analysis found

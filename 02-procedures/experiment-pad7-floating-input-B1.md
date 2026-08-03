@@ -81,7 +81,7 @@ Even if pad 7 grounding works perfectly, it does NOT make B1 scoreable:
   **0.133 MΩ** (best in the fleet) yet still ran fully open for 21.7 h, so this is
   intermittent contact, not a fixed anatomical miss. "Fixed only in the next
   surgical cohort" does not follow — see
-  [[2026-08-03-literature-check-impedance-and-electrode-failure]].
+  [[electrode-failure-and-impedance-literature]].
 - B1 EMG is likely DEAD (floor 28 µV on 07-15, 45 µV on 07-16) → no REM / atonia read.
 
 So this experiment is a MECHANISM check plus clean leg headroom for FUTURE good mice, NOT a way to get data out of B1. The real wall is still open frontal electrodes, next cohort.

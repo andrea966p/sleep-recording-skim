@@ -119,4 +119,4 @@ Deliverable guide: [[allego-settings-save-restore]]. Key facts:
 - [[60hz-mains-hum-discovery]] — the original 60 Hz mains discovery
 - [[signal-quality-and-grounding]] — signal evaluation (note: its "two mice per headstage" framing is superseded)
 - [[signal-mapping-guide]] — channel map
-- `07-decisions/2026-07-02-eeg-recording-checkpoint.md` — prior checkpoint
+- `05-experiments/completed/2026-07-02-eeg-recording-checkpoint.md` — prior checkpoint

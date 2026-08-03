@@ -247,7 +247,7 @@ differential_60Hz_at_amp  ≈  common_mode(mains floor)  ×  electrode_impedance
 >   is a **different electrode design** (1.0 mm epidural, or MXene: 82% → 18%).
 > - The free rig-side bench test has **still not been done**.
 >
-> See [[2026-08-03-literature-check-impedance-and-electrode-failure]] and
+> See [[electrode-failure-and-impedance-literature]] and
 > [[2026-08-03-two-8-mouse-runs]].
 
 **Go/No-Go impedance gate (screen in Allego GUI BEFORE every run):** both legs 0.1–1 MΩ, phase ≤ 0, pair imbalance ≤ 2–3×, reject anything in the 2.5–7 MΩ floating band.

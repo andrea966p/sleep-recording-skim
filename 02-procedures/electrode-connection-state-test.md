@@ -243,7 +243,7 @@ predicted class but not yield.
 > room, and say so explicitly. We are comparing connected vs **open circuit**, a
 > different regime. Our bimodal 9–90 µV / 1000–4700 µV separation is our own
 > empirical finding, not a replication of theirs.
-> Full evaluation: [[2026-08-03-literature-check-impedance-and-electrode-failure]].
+> Full evaluation: [[electrode-failure-and-impedance-literature]].
 >
 > **What to use it for:** deciding which animals are worth running, and which
 > channel to expect signal on. **Not** for forecasting yield, and never as

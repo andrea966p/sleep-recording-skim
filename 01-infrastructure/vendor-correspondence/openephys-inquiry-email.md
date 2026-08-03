@@ -129,7 +129,7 @@ Best regards,
 ## FOLLOW-UP EMAIL (drafted 2026-07-23 — reply to Margarida)
 
 > [!info] Purpose
-> Tight, table-driven reply that fills the ⏳ Open Ephys cells in [[2026-07-23-daq-ecosystem-comparison-xdaq-vs-openephys]]. **OE-facing only — deliberately does NOT mention Kontex/NeuroNexus or that we are comparing vendors.** User sends it; not yet marked sent.
+> Tight, table-driven reply that fills the ⏳ Open Ephys cells in [[daq-ecosystem-comparison-xdaq-vs-openephys]]. **OE-facing only — deliberately does NOT mention Kontex/NeuroNexus or that we are comparing vendors.** User sends it; not yet marked sent.
 
 **Subject:** Re: Acquisition Board for 16-animal EEG/EMG — clarifications + Atlanta custom team
 
@@ -156,7 +156,7 @@ Thanks again,
 Prof. Kim Staci Jakyong lab, KAIST
 
 ### Internal — question → comparison-table cell (do NOT send)
-Q1 → row 1 (animals/box) · Q2 → row 4 (isolation) · Q3 → rows 2/13/14 (custom/openness) · Q4 → row 11 (price) · Q5 → row 10 (reliability) + row 9 (host PC) · Q6 → row 3 (scale to 32) + row 7 (data format). Optional commutator question → row 9. Table: [[2026-07-23-daq-ecosystem-comparison-xdaq-vs-openephys]].
+Q1 → row 1 (animals/box) · Q2 → row 4 (isolation) · Q3 → rows 2/13/14 (custom/openness) · Q4 → row 11 (price) · Q5 → row 10 (reliability) + row 9 (host PC) · Q6 → row 3 (scale to 32) + row 7 (data format). Optional commutator question → row 9. Table: [[daq-ecosystem-comparison-xdaq-vs-openephys]].
 
 ---
 
@@ -192,7 +192,7 @@ Thanks again,
 Prof. Kim Staci Jakyong lab, KAIST
 
 ### Internal — question → comparison-table cell (do NOT send)
-Q1 → row 1 (animals/box) + row 4 (shared-ground on dual adapter) · Q2 → row 4 (isolation) · Q3 → **row 15 NEW (independent record control)** · Q4 → rows 2/13/14 · Q5 → row 11 (price) · Q6 → row 10 (reliability) + row 9 (host PC) · Q7 → row 3 (32 ceiling) + row 7 (data format). Table: [[2026-07-23-daq-ecosystem-comparison-xdaq-vs-openephys]].
+Q1 → row 1 (animals/box) + row 4 (shared-ground on dual adapter) · Q2 → row 4 (isolation) · Q3 → **row 15 NEW (independent record control)** · Q4 → rows 2/13/14 · Q5 → row 11 (price) · Q6 → row 10 (reliability) + row 9 (host PC) · Q7 → row 3 (32 ceiling) + row 7 (data format). Table: [[daq-ecosystem-comparison-xdaq-vs-openephys]].
 
 ---
 
@@ -205,13 +205,13 @@ Q1 → row 1 (animals/box) + row 4 (shared-ground on dual adapter) · Q2 → row
 ### Answers, question by question
 
 - **Q1 — two separate animals on one dual adapter: ✅ SOFT GREEN LIGHT.** Verbatim: *"The dual headstage adapter was designed to allow two RHD headstages to share a single SPI interface cable and to position the headstages in different configurations, and not to run two animals from the same port."* Then, crucially: *"That said, if your current setup is working reliably and you have not experienced any issues using the dual headstage adapter that way, I don't see a reason why you should not continue using it."*
-  → **No engineering objection, only a statement of design intent.** This retires the 2026-07-23 *"maximum of four animals"* framing as a usage convention, not a hardware limit, and confirms the vault's own correction in [[2026-07-28-daq-research-findings-primary-sources]] §1. **One board = 8 separate mice → 16 mice needs 2 boards, not 4.**
+  → **No engineering objection, only a statement of design intent.** This retires the 2026-07-23 *"maximum of four animals"* framing as a usage convention, not a hardware limit, and confirms the vault's own correction in [[daq-research-findings-primary-sources]] §1. **One board = 8 separate mice → 16 mice needs 2 boards, not 4.**
 - **⚠️ NEW BENCH ITEM — dual adapter orientation.** They specify the Intan-recommended wiring, with a diagram: **the SPI cable plugs into the CENTER connector, and the headstages connect to the LEFT and RIGHT connectors.** Referred to the Intan dual headstage adapter datasheet. **Our own C3442 orientation is not documented anywhere in this vault — verify it on the bench.**
 - **Q2 — per-animal ground isolation: ❌ IMPOSSIBLE, now first-party verbatim.** *"It is not possible to have an electrically isolated ground for each individual animal within the same acquisition system as the same ground is shared by all the components of the acquisition system."* And specifically for the splitter: *"the SPI tether (and headstage port) has one common ground wire for both headstages, which is in turn connected to the acquisition board ground when the cable is connected."*
-  → Confirms the cable-level fact in [[2026-07-28-daq-research-findings-primary-sources]] §4 (12 conductors, one ground) and §5 (OE has no isolation in any configuration). Nothing new in substance, but it is now stated by the vendor rather than inferred by us.
+  → Confirms the cable-level fact in [[daq-research-findings-primary-sources]] §4 (12 conductors, one ground) and §5 (OE has no isolation in any configuration). Nothing new in substance, but it is now stated by the vendor rather than inferred by us.
 - **🔑 Q2, THE ACTUALLY NEW PART — bipolar is already per-animal referencing.** Verbatim: *"Although the acquisition system uses a common ground for all connected headstages, **each headstage can use its own independent reference electrode**, depending on the configuration you choose."* And for our configuration: *"**Essentially, this would already be independent referencing per animal, because each electrode is referenced to a local electrode on the same animal.**"*
   The unipolar caveat does **not** apply to us: in unipolar headstages REF and GND are tied by an **R0 0-ohm jumper** that must be physically removed for independent per-animal referencing. The RHD2216 has no REF pin at all ([[intan-rhd2216-reference]]), so there is nothing to cut.
-  → **Consequence for the purchase:** the reference half of "per-animal isolation" is already ours for free. Any Port Expander buys **ground** isolation only. Set against our own measurement that `differential_60Hz ≈ common_mode(floor) × electrode_Z_imbalance` with a measured 53× impedance ratio ([[eeg-60hz-saga]]), and against eNeuro 2022's negligible bleed-through on a shared board ground ([[2026-07-28-daq-research-findings-primary-sources]] §3), **the Port Expander should be justified as a port multiplier (mandatory for 16/box, NNX manual p.9) and NOT priced as the 60 Hz fix.**
+  → **Consequence for the purchase:** the reference half of "per-animal isolation" is already ours for free. Any Port Expander buys **ground** isolation only. Set against our own measurement that `differential_60Hz ≈ common_mode(floor) × electrode_Z_imbalance` with a measured 53× impedance ratio ([[eeg-60hz-saga]]), and against eNeuro 2022's negligible bleed-through on a shared board ground ([[daq-research-findings-primary-sources]] §3), **the Port Expander should be justified as a port multiplier (mandatory for 16/box, NNX manual p.9) and NOT priced as the 60 Hz fix.**
 - **Q3 — independent recording control: ❌ GLOBAL, confirmed.** *"Acquisition and recording start at the same time for all connected headstages. While it is possible to record only a selected subset of channels, there is currently no flexible way to change this dynamically. If you require more advanced or customized recording settings, this would need to be implemented by modifying the plugin, which is fully customizable."* Referred to `gui@open-ephys.org` for customization guidance.
   → Subset selection is **static**, not per-session schedulable. Per-animal start/stop = a plugin fork. **Same answer as XDAQ** (radiens' per-port arguments are "only meaningful in split-ports mode", a mode documented nowhere). **Independent per-mouse scheduling is now dead on both vendors** → the "record continuously, slice per user offline" plan in [[RIG-EXPANSION-HUB]] §7 stands, confirmed from both sides.
 - **Q4 — custom 16-headstage board: 🟡 PUNTED, with a capacity hedge.** *"I'm not sure whether the team currently has the capacity to take on a custom design like this, but you're welcome to contact **Jon Newman (jpn@open-ephys.org)** directly."* Jon is named as the main point of contact for custom design requests; they ask for as much detail as possible on requirements. **Second vendor-side hedge on the same idea** (after the extension board being dead). Treat the single-board 16-animal route as vapor unless Jon says otherwise.
@@ -249,7 +249,7 @@ Still open on OE, if anyone pursues it: itemized quote, 32-animal ceiling, recor
 - *"Ensure you have a good GND screw making good contact with the animal. You could even attempt to measure the impedance of the ground screw to ensure it is low"*
 
 > [!warning] Their grounding advice conflicts with Intan's, and with our own bench result
-> "Use a Faraday cage and verify shield connections" reads as *ground the foil*. **We tested that and dropped it on 2026-07-16** — no headroom left, and the Gen-1 Core has no chassis terminal. Intan's own Noise Reduction app note says the headstage GND *"should not be connected to the Faraday cage or to any external ground"* ([[2026-07-28-daq-research-findings-primary-sources]] §2). Earth was exonerated as a source in [[eeg-60hz-saga]]. **Do not re-chase this.**
+> "Use a Faraday cage and verify shield connections" reads as *ground the foil*. **We tested that and dropped it on 2026-07-16** — no headroom left, and the Gen-1 Core has no chassis terminal. Intan's own Noise Reduction app note says the headstage GND *"should not be connected to the Faraday cage or to any external ground"* ([[daq-research-findings-primary-sources]] §2). Earth was exonerated as a source in [[eeg-60hz-saga]]. **Do not re-chase this.**
 >
 > The last bullet is the one worth keeping: **measure the impedance of the animal ground screw.** That is cheap, and it is the same impedance-imbalance term that dominates our hum.
 

@@ -10,7 +10,7 @@ created: 2026-07-02
 status: active
 audience: team
 supersedes-status-in:
-  - 07-decisions/2026-06-28-eeg-recording-troubleshooting-report.md
+  - 03-troubleshooting/incidents/2026-06-28-eeg-recording-troubleshooting-report.md
 ---
 
 # EEG Recording — Checkpoint & Council Review (2026-07-02)

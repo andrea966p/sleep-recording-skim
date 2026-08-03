@@ -94,7 +94,7 @@ EMG went 3 better, 3 unchanged, 2 worse. Full analysis:
    never been measured. See [[electrode-connection-state-test]].
 2. **`Z < 2 MΩ` means "not open", not "good".** Published epidural electrodes sit
    at 10–50 kΩ; our best channel in the whole fleet is 73 kΩ.
-   See [[2026-08-03-literature-check-impedance-and-electrode-failure]].
+   See [[electrode-failure-and-impedance-literature]].
 3. **Impedance predicts class, not yield.** It tells you which channel may work,
    never for how long. B1 read 0.133 MΩ before Run 2, the best in the fleet, then
    ran fully open for 21.7 hours.

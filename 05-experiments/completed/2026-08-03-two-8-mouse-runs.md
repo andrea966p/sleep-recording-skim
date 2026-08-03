@@ -36,7 +36,7 @@ Supersedes the per-run numbers in
 > becomes more impressive, not less** (it hit 66.9% light-phase sleep on its
 > second day tethered); and **no scoreable-hours or "yield" figure from these
 > runs should be quoted as the rig's performance.** See
-> [[2026-08-03-literature-check-impedance-and-electrode-failure]] §6.
+> [[electrode-failure-and-impedance-literature]] §6.
 
 > [!success] The prepared data lives in one place
 > **`/home/skimlab/eeg-processed/COHORT-2026-07/`** — both runs, all 8 mice,
@@ -50,7 +50,7 @@ Supersedes the per-run numbers in
 > ```
 >
 > Built with `pipeline/cohort_summary.py`. Method:
-> [[2026-08-03-analysis-methods-procedure]].
+> [[analysis-methods-and-justification]].
 
 ## The two runs
 
@@ -168,7 +168,7 @@ Full catalogue, file names and the complete three-point table:
 > weeks**, with peak dislodgement in week 1 — muscle wires have no comparable
 > published failure rate. So this asymmetry narrows the fault to the EEG segment
 > but does **not** by itself point at the solder.
-> See [[2026-08-03-literature-check-impedance-and-electrode-failure]].
+> See [[electrode-failure-and-impedance-literature]].
 
 ### C1's EEG died between the runs and never came back
 
@@ -223,7 +223,7 @@ it across the next run rather than acting on it.
    **not** prove the fault is in our wiring, because EEG and EMG do not share an
    electrode: EEG is a dura pin, EMG is a wire anchored in muscle, and the
    published 3-week loss rate for epidural electrodes is **82%**
-   ([[2026-08-03-literature-check-impedance-and-electrode-failure]]). Run the
+   ([[electrode-failure-and-impedance-literature]]). Run the
    bench test to separate the two hypotheses. Bench only, no animal contact.
 
 ## Still open

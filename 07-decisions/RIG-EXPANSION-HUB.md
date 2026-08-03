@@ -71,13 +71,13 @@ Everything below assumes the Open Ephys GUI on all three, so software cost is $0
 
 | Doc | What it owns | Status |
 |---|---|---|
-| ⭐⭐ [[2026-07-28-daq-research-findings-primary-sources]] | **NEWEST. Primary-source research + 8 CORRECTIONS** to claims below. Read before relying on the older docs | live |
+| ⭐⭐ [[daq-research-findings-primary-sources]] | **NEWEST. Primary-source research + 8 CORRECTIONS** to claims below. Read before relying on the older docs | live |
 | ⭐ [[2026-07-24-daq-32-mouse-final-comparison]] | 3-way comparison, priced BOMs, professor summary (§6). ⚠️ **partly superseded** by the 2026-07-28 findings | live |
 | ⭐⭐ [[2026-07-29-kontex-kc-call-prep-rig-finalization]] | **THE CALL SHEET — 2026-07-29. Self-contained: professor brief, what's settled, 11 questions, build/money table, knowledge timeline.** Open only this during the call | live |
 | [[2026-07-21-acquisition-device-16-32-mice-and-kontex-thread]] | Where the 16→32 question started + the full Kontex email thread | open |
 | [[2026-07-21-openephys-acquisition-board-scale-up-option]] | The Open Ephys option, standalone | open |
 | [[2026-07-21-kontex-kc-call-prep]] | Prep for the **first** KC call (2026-07-21) | historical |
-| [[2026-07-23-daq-ecosystem-comparison-xdaq-vs-openephys]] | 2-way, 16-mouse predecessor | 🚫 **superseded** by the 2026-07-24 doc |
+| [[daq-ecosystem-comparison-xdaq-vs-openephys]] | 2-way, 16-mouse predecessor | 🚫 **superseded** by the 2026-07-24 doc |
 
 ### 4.2 Physics and hardware references (`06-references/`)
 
@@ -173,7 +173,7 @@ Found while consolidating. Both narrow questions we were about to ask cold.
 
 ## 8. Superseded or corrected, so nobody re-chases it
 
-- 🚫 [[2026-07-23-daq-ecosystem-comparison-xdaq-vs-openephys]] — the 2-way 16-mouse comparison. Use the 2026-07-24 3-way doc.
+- 🚫 [[daq-ecosystem-comparison-xdaq-vs-openephys]] — the 2-way 16-mouse comparison. Use the 2026-07-24 3-way doc.
 - 🚫 **"More channels means more mice."** No: channels ÷ 64 = mice. A 1024-channel box records 16.
 - 🚫 **"A splitter can double a Port Expander to 32 per box."** No, on the slot ceiling alone. (The supporting MISO-line argument is our inference, not a vendor statement; the slot ceiling is doc-sourced and binds independently.)
 - 🚫 **"Two mice per port share one SPI cable."** Corrected 2026-07-28: we place the splitter **at the XDAQ port**, so **each animal has its own cable**. They share the port's ground *domain*, not a conductor.

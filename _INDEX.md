@@ -58,6 +58,13 @@ Production IPs, usernames, paths, and settings.
 - [[02-procedures/intan-headstage-troubleshooting|Intan Headstage Troubleshooting — symptom → cause → fix]]
 - [[02-procedures/first-headstage-connection|First Headstage Connection — bring-up + channel map]] ✅ resolved 2026-06-19
 
+**EEG data analysis (everything AFTER the recording exists):**
+- ⭐⭐ [[02-procedures/eeg-data-analysis/_eeg-analysis-hub|START HERE — EEG data analysis]] — the four commands, what each stage decides, the four rules you must not break. **The only page that says what to run.**
+- ⭐ [[02-procedures/eeg-data-analysis/pipeline/README|Pipeline operating manual]] — every stage in detail, every threshold with its provenance
+- ⭐ [[02-procedures/eeg-data-analysis/analysis-methods-and-justification|Methods and justification]] — what is standard practice and what we added, with citations. **The one to hand to the professor.**
+- 📖 [[06-references/eeg-analysis-glossary|Analysis glossary — every term and parameter in plain words]] — `nperseg`, `r@1min`, `Wn`, `DIRTY`, `ZT`, Otsu, block, rms, EDF. Search it when a word blocks you.
+- 🔧 [[03-troubleshooting/symptoms/eeg-analysis-problems|Analysis troubleshooting — symptom lookup]] — including the failures that are **silent** (theta zeroed by `nperseg`, persistence measured across contact gaps)
+
 **Hardware Sync (XDAQ GPIO):**
 - [[01-infrastructure/hardware-sync/xdaq-core-gen1-ubuntu-driver|⭐ XDAQ Core (Gen-1) — Ubuntu Driver Setup + Verified State (2026-05-29)]] — **current source of truth; supersedes Core2 assumptions below**
 - [[01-infrastructure/hardware-sync/overview|Overview & Architecture]] ⚠️ Core2-era
@@ -104,6 +111,7 @@ Production IPs, usernames, paths, and settings.
 - [[03-troubleshooting/symptoms/frigate-high-cpu|Frigate 100% CPU]]
 - [[03-troubleshooting/symptoms/docker-memory-crash|Docker memory crash]]
 - [[03-troubleshooting/symptoms/allego-iir-filter-design-errors|Allego IIR filter design errors on Monitor band change]] — cosmetic, DEFERRED, does not affect recording
+- ⭐ [[03-troubleshooting/symptoms/eeg-analysis-problems|EEG analysis problems — symptom lookup]] — wrong Python, missing mice, wrong day folder, blank EDF, **plus the two SILENT failures**: `nperseg` zeroing theta, and persistence measured across contact gaps
 
 **Incident Log:**
 - [[03-troubleshooting/incidents/|Incidents]]
@@ -113,12 +121,26 @@ Production IPs, usernames, paths, and settings.
 - ⭐ [[04-journal/_JOURNAL-INDEX|Journal Index — chronological master navigator]] — **every day in date order.** The journal records what happened and links down into the detail notes. Start here to navigate by time rather than by topic.
 
 ### Experiments
-- ⏳⭐ [[05-experiments/active/2026-08-02-run2-preregistration|RUN 2 — pre-registered predictions (RUNNING)]] — predictions written before the data; fill in HIT/MISS when it stops
+**EEG runs and results — read these for the current scientific picture:**
+- ⭐⭐🔴 [[05-experiments/completed/2026-08-03-two-8-mouse-runs|2026-08-03 ⭐ THE TWO 8-MOUSE RUNS — Run 1 is everything we have, Run 2 is a total loss]] — **START HERE for current EEG status.** C1 8.73 h + C2 2.34 h scoreable, validated against circadian norms; Run 2 = 0/8. EEG degradation is directional (8/8 worse) and EEG-specific.
+- ⭐⭐🔴 [[05-experiments/completed/2026-08-01-channel-mapping-correction-first-sleep|2026-08-01 ⭐ CHANNEL MAP WAS WRONG — EMG always worked, FIRST REAL SLEEP ARCHITECTURE]] — `/1`=EEG `/2`=EMG already bipolar, `/3`,`/4` empty pads. Read before trusting any earlier EEG/EMG analysis.
+- ⭐ [[05-experiments/completed/2026-08-03-data-quality-report-for-professor|2026-08-03 — data quality report for the professor]] — the full rescore of every recording
+- 🔴⭐ [[05-experiments/completed/2026-07-31-contact-intermittency-no-wire-control|2026-07-31 — Legs are OPEN, not high-impedance, and state FLIPS on its own]] — **overturns "make new mice". DO NOT schedule surgeries on the old conclusion.**
+- 🔴⭐ [[05-experiments/completed/2026-08-01-28h-contact-duty-cycle-and-c1-negative|2026-08-01 — 27.9 h run: duty cycle, grounds perfect, two failure modes]] — ⚠️ **its title and its "C1 has NO sleep" conclusion are RETRACTED** (C1 is the project's best result); read for the no-wire method and the grounds data only
+- [[05-experiments/completed/2026-07-13-72h-4mouse-recording-audit|2026-07-13 — 72 h 4-mouse recording audit]]
+- [[05-experiments/completed/2026-07-02-eeg-recording-checkpoint|2026-07-02 — EEG recording checkpoint]]
+- ⏳⭐ [[05-experiments/active/2026-08-02-run2-preregistration|RUN 2 — pre-registered predictions]] — predictions written before the data
+
+**Video / encoding:**
 - [[05-experiments/completed/h265-encoding-failure|H.265 Failure (DO NOT USE)]]
 - [[05-experiments/completed/2026-02-11-mpegts-container-test|MPEG-TS Container Test (adopted v5.2)]]
 - [[05-experiments/active/|Active Experiments]]
 
 ### References
+- 📖 [[06-references/eeg-analysis-glossary|⭐ EEG analysis glossary]] — every term and parameter in plain words (`nperseg`, `r@1min`, `Wn`, `DIRTY`, `ZT`, Otsu, block, rms, EDF)
+- ⭐⭐🔴 [[06-references/electrode-failure-and-impedance-literature|Electrode failure + impedance literature — 82% of epidural electrodes fail in 3 weeks]] — six primary papers vs our data. **Weakens the "EMG works so it must be our solder" argument**; our best channel is poor by published standards; drops the frontal-sinus hypothesis.
+- 🔴⭐ [[06-references/daq-research-findings-primary-sources|DAQ research findings — primary sources]] — 8 corrections; read before trusting older DAQ notes
+- [[06-references/daq-ecosystem-comparison-xdaq-vs-openephys|DAQ ecosystem comparison — XDAQ vs Open Ephys vs Intan]] — priced BOMs (confidential, vault only)
 - [[06-references/monitoring-diagnostics|Monitoring Diagnostics]] — Netdata/Uptime Kuma query commands for troubleshooting
 - [[06-references/command-cheatsheet|Command Cheatsheet]]
 - [[06-references/video-parameters|Video Parameters]]
@@ -127,16 +149,22 @@ Production IPs, usernames, paths, and settings.
 - ⭐ [[07-decisions/RIG-EXPANSION-HUB|RIG EXPANSION HUB — 8 → 32 Mice]] — **START HERE.** Single entry point: the decision, all vendor correspondence, wiring, open items, superseded claims
 - [[07-decisions/2026-07-24-daq-32-mouse-final-comparison|DAQ 3-way comparison, 32 mice (XDAQ vs Open Ephys vs Intan)]] — the decision doc + professor summary
 - [[06-references/xdaq-32-mouse-wiring-and-channel-law|XDAQ 32-mouse wiring + the channel law]] — animals = channels ÷ 64; full power-to-mouse wiring
-- [[07-decisions/2026-07-29-kontex-kc-call-prep-rig-finalization|Kontex call prep, 2026-07-29 — rig finalization]] — 45 questions + live build checklist
+- [[01-infrastructure/vendor-correspondence/2026-07-29-kontex-kc-call-prep-rig-finalization|Kontex call prep, 2026-07-29 — rig finalization]] — 45 questions + live build checklist
 
 ### Decisions & Reviews
-- ⭐⭐🔴 [[07-decisions/2026-08-01-channel-mapping-correction-first-sleep|2026-08-01 ⭐ CHANNEL MAP WAS WRONG — EMG always worked, FIRST REAL SLEEP ARCHITECTURE]] — `/1`=EEG `/2`=EMG already bipolar, `/3`,`/4` empty pads. Read before trusting any earlier EEG/EMG analysis.
-- ⭐⭐ [[07-decisions/2026-08-03-analysis-methods-procedure|2026-08-03 ⭐ METHODS — how a recording becomes scorable, step by step]] — **the one to hand to the professor.** Ordered procedure, reasoning, code and published source per step, plus an explicit table of what is standard practice and what we added.
-- ⭐⭐🔴 [[07-decisions/2026-08-03-two-8-mouse-runs|2026-08-03 ⭐ THE TWO 8-MOUSE RUNS — Run 1 is everything we have, Run 2 is a total loss]] — **START HERE for current EEG status.** C1 8.73 h + C2 2.34 h scoreable, validated against circadian norms; Run 2 = 0/8. EEG degradation is directional (8/8 worse) and EEG-specific.
-- ⭐⭐🔴 [[07-decisions/2026-08-03-literature-check-impedance-and-electrode-failure|2026-08-03 ⭐ LITERATURE CHECK — 82% of epidural electrodes fail in 3 weeks]] — six primary papers vs our data. **Weakens the "EMG works so it must be our solder" argument**; our best channel is poor by published standards; drops the frontal-sinus hypothesis.
-- ⭐ [[02-procedures/eeg-data-analysis/pipeline/README|EEG analysis pipeline — raw recording → QC → per-mouse files → sleep features]] — THE analysis path; every threshold with its provenance
-- 🔴⭐ [[07-decisions/2026-08-01-28h-contact-duty-cycle-and-c1-negative|2026-08-01 — 27.9 h run: duty cycle, grounds perfect, two failure modes]] — ⚠️ **its title and its "C1 has NO sleep" conclusion are RETRACTED** (C1 is the project's best result); read for the no-wire method and the grounds data only
-- 🔴⭐ [[07-decisions/2026-07-31-contact-intermittency-no-wire-control|2026-07-31 — Legs are OPEN, not high-impedance, and state FLIPS on its own]] — **overturns "make new mice". DO NOT schedule surgeries on the old conclusion.**
+`07-decisions/` holds **decisions only** — architecture choices, council reviews,
+sprint plans. Trimmed 2026-08-03 from 26 files to 9; results moved to
+`05-experiments/completed/`, literature and comparisons to `06-references/`,
+procedures to `02-procedures/`, vendor call prep to
+`01-infrastructure/vendor-correspondence/`.
+
+- ⭐ [[07-decisions/RIG-EXPANSION-HUB|RIG EXPANSION HUB — 8 → 32 mice]] — the entry point for the expansion decision
+- [[07-decisions/2026-07-27-video-eeg-sync-recording-architecture|2026-07-27 — video/EEG sync + recording architecture]] — the alignment plan; no clocks, pulse train mandatory
+- [[07-decisions/2026-07-24-daq-32-mouse-final-comparison|2026-07-24 — DAQ 3-way comparison, 32 mice]]
+- [[07-decisions/2026-07-21-acquisition-device-16-32-mice-and-kontex-thread|2026-07-21 — acquisition device for 16-32 mice]]
+- [[07-decisions/2026-07-21-openephys-acquisition-board-scale-up-option|2026-07-21 — Open Ephys scale-up option]]
+- [[07-decisions/2026-07-16-camera-node-scale-up|2026-07-16 — camera node scale-up]]
+- [[07-decisions/2026-07-15-earth-and-sleep-council|2026-07-15 — earth and sleep council]] ⚠️ its "first sleep biology" result is **RETRACTED** (clipping artefact)
 - [[07-decisions/2026-05-01-llm-council-review|2026-05-01 LLM Council Review]] — full advisor responses, peer reviews, chairman synthesis, staged plan
 - [[07-decisions/2026-05-stabilization-sprint-week-1-plan|2026-05 Stabilization Sprint Week 1 — Plan + live status]] — single source of truth for sprint-item status
 

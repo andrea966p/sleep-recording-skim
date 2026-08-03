@@ -37,6 +37,21 @@ _templates/            # Templater plugin templates
 
 Daily journals link forward to these; the decision docs link back. When the user asks "what was the council verdict" or "what's left from the sprint", the answer is in `07-decisions/`, not scattered across `04-journal/`.
 
+> **Filing rule, enforced 2026-08-03.** `07-decisions/` had grown to 26 files, most of which were not decisions. It was trimmed to 9. A document belongs there only if it records **a choice between options**. Everything else goes where it belongs:
+>
+> | If the document is… | It goes in |
+> |---|---|
+> | a choice between options, a council, a sprint plan | `07-decisions/` |
+> | a run, an audit, a result, a report on data | `05-experiments/completed/` |
+> | literature, a vendor/product comparison, a spec, a glossary | `06-references/` |
+> | steps someone follows to do a thing | `02-procedures/` |
+> | a symptom and its fix | `03-troubleshooting/symptoms/` |
+> | a failure that already happened, with a date | `03-troubleshooting/incidents/` |
+> | vendor emails, call prep, quotes | `01-infrastructure/vendor-correspondence/` |
+> | done and no longer followed | `99-archive/` |
+>
+> "It is important" is not a reason to file something under `07-decisions/`. Add an `_INDEX.md` line instead — that is what makes a document findable.
+
 ### Critical Files
 
 - **`00-config/production-values.md`**: Single source of truth for all production values

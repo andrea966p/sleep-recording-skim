@@ -2,7 +2,7 @@
 Per-leg connection-state summary + state timelines from longrun_coarse.npz.
 
 Produces the duty-cycle table and the OPEN/CONNECTED segment lists reported in
-07-decisions/2026-08-01-28h-contact-duty-cycle-and-c1-negative.md
+05-experiments/completed/2026-08-01-28h-contact-duty-cycle-and-c1-negative.md
 
 Usage:  python3 summarize_states.py [path/to/longrun_coarse.npz]
 """
