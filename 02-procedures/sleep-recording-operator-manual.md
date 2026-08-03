@@ -32,7 +32,16 @@ mouse 4-pin dura electrode → tether → slip ring → **C3410** adapter → **
 ---
 
 ## Phase 0 — Understand before you touch (recommended once)
-- **Read:** [[intan-rhd2216-reference]] (why bipolar, ±5 mV rail, no reference electrode), [[grounding-reference-noise-concepts]] (ground vs reference vs noise), [[eeg-emg-data-guide]] Part 1 (what EEG/EMG look like by eye).
+- **Read:** [[intan-rhd2216-reference]] (why bipolar, ±5 mV linear range / ±6389.6 µV data rail, no reference electrode), [[grounding-reference-noise-concepts]] (ground vs reference vs noise), [[eeg-emg-data-guide]] Part 1 (what EEG/EMG look like by eye).
+
+> [!danger] Before you analyse anything: the chip already does the subtraction
+> `/1` **is** the EEG and `/2` **is** the EMG — both already bipolar. **Do not
+> subtract them from each other**, and do not measure `/3`,`/4` (empty pads, no
+> wire). Getting this wrong cost this project several weeks and produced 24
+> phantom "failed EMG surgeries". Select only `/1,/2` and `/33,/34` per port.
+>
+> Analysis path: **[[pipeline/README]]**. Current EEG status:
+> [[2026-08-03-two-8-mouse-runs]].
 - **Pass criterion:** you can say in one sentence each what *ground*, *reference*, *tissue noise*, *environmental noise* are, and why our `REF` pad stays empty.
 
 ## Phase 1 — Assemble the hardware

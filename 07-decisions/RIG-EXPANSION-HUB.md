@@ -34,7 +34,7 @@ note_type: map-of-content
 | **Software decision** | ✅ **No Allego licence.** Open Ephys GUI on whatever we buy |
 | **Decision state** | 🟡 **Not committed.** Gated on a Kontex quote and the 2026-07-29 call |
 | **Next action** | 📞 **CALL TODAY, 2026-07-29, 11:30 Taipei / 12:30 Korea** → [[2026-07-29-kontex-kc-call-prep-rig-finalization]] |
-| **⚠️ Overriding caveat** | **Surgical yield is still the real bottleneck.** Frontal electrodes open on every mouse, zero scoreable data to date ([[eeg-60hz-saga]]). No acquisition box fixes an open electrode. Buy deliberately, in parallel with fixing the surgery, not instead of it |
+| **⚠️ Overriding caveat** | **Electrical contact is still the real bottleneck — but it is NOT established that surgery is the cause.** Updated 2026-08-03: we now have **11.1 scoreable mouse-hours** (not zero), the failure is the **EEG channel `/1`** (not "frontal electrodes"), and **EMG works through the same implant, tether and slip ring on most animals** — which argues the surgery is fine and the fault is on the EEG side of the connection. The free rig-side checks (C3410 pad 0/1 solder, the two EEG slip-ring wires) have **not been done yet**. No acquisition box fixes an open electrode either way. Buy deliberately, in parallel with fixing contact — and **do the free bench test before scheduling any surgery.** See [[2026-08-03-two-8-mouse-runs]] |
 
 ---
 

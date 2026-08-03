@@ -40,7 +40,16 @@ attendees: Andrea, Prof. Kim Staci Jakyong, KC Kong
 - **No commutators in this purchase.** We keep our slip rings. At 32 units they would have been the single largest line in the budget.
 - **Recording start/stop will be global**, not per-mouse. No system offers per-animal scheduling at 16 animals. We record continuously and separate each user's data afterwards.
 
-**The caveat, stated honestly.** This purchase is **not** our current bottleneck. Frontal electrodes are open on every mouse implanted so far and we have no scoreable data yet. No acquisition box fixes an open electrode. Decide carefully, **in parallel with** fixing surgical yield.
+**The caveat, stated honestly.** This purchase is **not** our current bottleneck. Electrical contact is. No acquisition box fixes an open electrode. Decide carefully, **in parallel with** fixing contact.
+
+> [!history] Updated 2026-08-03 — the caveat stands, its diagnosis does not
+> This paragraph originally read "frontal electrodes are open on every mouse …
+> we have no scoreable data yet … fixing surgical yield". Three corrections:
+> we have **11.1 scoreable mouse-hours**; the failure is the **EEG channel
+> `/1`**, not a frontal-vs-parietal distinction; and **EMG works through the
+> identical implant, tether and slip ring on most animals**, so surgery is not
+> demonstrated to be the cause. The free rig-side checks come first.
+> See [[2026-08-03-two-8-mouse-runs]].
 
 **Full written comparison:** `~/Downloads/DAQ-comparison-32-mice.docx`
 

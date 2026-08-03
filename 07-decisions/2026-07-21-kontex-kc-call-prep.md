@@ -255,7 +255,7 @@ differential_60Hz_at_amp  ≈  common_mode(mains floor)  ×  electrode_impedance
 - **16.8 Mbit/s per-chip** figure is derived arithmetic (1.05 MHz × 16 bit), not a quoted line.
 - **Does the Port Expander's isolation actually drive Intan RHD2216 grounds** (vs Kontex XR only)? — unconfirmed; this is the #1 must-ask.
 - **Frontal-sinus hypothesis** fits the pattern but is unproven at surgery.
-- **Still ZERO scoreable sleep recordings** — circadian test can't run meaningfully until frontal electrodes work.
+- ~~**Still ZERO scoreable sleep recordings** — circadian test can't run meaningfully until frontal electrodes work.~~ ⚠️ **Superseded 2026-08-03:** we have **11.1 scoreable mouse-hours**, and the **circadian test has run and passed** on C1 (66.9 % asleep in the light phase vs a published ~70 %). The failing channel is the **EEG `/1`**, not "frontal electrodes" — that framing came from the wrong channel map. See [[2026-08-03-two-8-mouse-runs]].
 
 ## 6.6 One-line glossary
 - **DAQ** — data-acquisition box (the XDAQ).

@@ -106,7 +106,14 @@ Two software tools exist, but be honest about limits:
 - **Notch Filter** processor — add for a 60 Hz notch to clean the live view.
 
 > [!important] Software will not fix our 60 Hz — the electrodes will
-> Per [[eeg-60hz-saga]], our differential 60 Hz ≈ common-mode floor × electrode-Z imbalance, driven by **open frontal electrodes**. A notch/CAR is cosmetic for viewing; it does not recover a bad electrode. OE does not change that physics. Use OE's impedance tool (§4) up front; the real fix stays surgical yield.
+> Our differential 60 Hz ≈ common-mode floor × electrode-Z imbalance, driven by **open EEG electrodes** (the `/1` channel — *not* a frontal-vs-parietal distinction; corrected 2026-08-01). A notch/CAR is cosmetic for viewing; it does not recover a bad electrode. OE does not change that physics.
+>
+> **The hum amplitude IS the contact measurement** and is more useful than an
+> impedance snapshot: connected channels sit at **9–90 µV** in the 55–65 Hz
+> band, open ones at **1000–4700 µV**, cleanly bimodal with the valley at
+> 134 µV. Impedance predicts *which channel is connected*, never *for how long*.
+> The real fix is electrical contact; **the free rig-side checks come before any
+> surgical conclusion.** See [[2026-08-03-two-8-mouse-runs]].
 
 ---
 

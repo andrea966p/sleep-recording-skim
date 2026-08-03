@@ -12,7 +12,7 @@ priority: critical
 >
 > **What is RETRACTED from this document:**
 > - ❌ "EMG failed 23/24 / 16/16 legs" — those were **empty pads**, never electrodes. **EMG works on 5 of 8 mice.** The surgeries were fine.
-> - ❌ "ZERO scoreable mice / zero scoreable data" — there are **21.0 scoreable mouse-hours** (C1 8.7 h, C2 7.0 h, D2 5.3 h).
+> - ❌ "ZERO scoreable mice / zero scoreable data" — there are **21.0 scoreable mouse-hours** (C1 8.7 h, C2 7.0 h, D2 5.3 h). ⚠️ *Updated 2026-08-03: that replacement figure is itself superseded — persistence had been measured across contact gaps. The correct total is **~11.1 h: C1 8.73 h + C2 2.34 h**, with **D2 rejected**. The direction of the retraction stands; the number does not. See [[2026-08-03-two-8-mouse-runs]].*
 > - ❌ "C1 shows NO sleep structure" — C1 shows **textbook sleep architecture**: WAKE 66.8 %, NREM 29.3 %, REM 3.9 %, all physiology correct, persistence r=+0.80 at 1 min.
 > - ❌ Duty cycle "78.7 % open" — **61.6 %** on the 16 real channels.
 > - ❌ The "frontal vs parietal" framing — it was **EEG vs EMG channels**.

@@ -48,7 +48,11 @@ priority: critical
 > - ✅ **Animal grounds and amplifier floor were FLAWLESS for 27.9 h.** 16 control pins, median 2.8 µV, max 5.3. Zero drift across a full light/dark cycle. The rig and the room are settled, permanently.
 > - 🔴 **78.7 % of all leg-time was OPEN.** Every frontal leg and all 16 EMG legs spent most or all of the run disconnected.
 > - 🔴 **TWO failure modes**, and the quiet one is more worrying: **one-way degradation** (C1 frontal connected 0 → 8.73 h then open for the remaining 19 h, never recovers; D2 frontal the same at 5.30 h) versus **chattering** (B1 frontal flipped 372 times).
-> - ⚠️ **C1's 8.7 h window is genuinely clean — 99.9 % of epochs have ZERO clipped samples — but it shows NO SLEEP STRUCTURE.** No bimodality, bout lengths identical to random, flat hourly profile. **The project still has ZERO scoreable data.**
+> - ~~⚠️ **C1's 8.7 h window is genuinely clean — 99.9 % of epochs have ZERO clipped samples — but it shows NO SLEEP STRUCTURE.** No bimodality, bout lengths identical to random, flat hourly profile. **The project still has ZERO scoreable data.**~~
+>   🔴 **RETRACTED.** C1 is the best-validated result in the project: `r@1min
+>   +0.761`, physiology 5/5, and 66.9 % asleep in the light phase against a
+>   published ~70 %. The "no structure" reading came from the wrong channel map
+>   (this was EEG−EMG, not EEG). See [[2026-08-03-two-8-mouse-runs]].
 > - **Yield: 8.7 usable EEG-pair hours out of 223 mouse-hours recorded. Zero scoreable mice**, because no animal had a working EMG pair at any moment.
 
 ---
@@ -303,7 +307,24 @@ Amplitude rises with delta content, the correct physiological direction — sync
 
 ### 4.6 Verdict on the biology
 
-**Clean, physiological-looking EEG. NOT a demonstration of sleep. The project still has ZERO scoreable data.**
+~~**Clean, physiological-looking EEG. NOT a demonstration of sleep. The project still has ZERO scoreable data.**~~
+
+> [!danger] 🔴 THIS VERDICT IS RETRACTED — it is the exact opposite of the truth
+> Everything in §4.6 was computed on `native0 − native1`, i.e. **EEG minus EMG**.
+> Read correctly (`/1` alone), C1 shows textbook sleep: **`r@1min` +0.761**
+> (shuffle +0.011), decaying smoothly to +0.493 at 10 min; physiology 5/5;
+> **66.9 % asleep in the light phase against a published ~70 %.**
+>
+> Both "honest caveats" below also fail:
+> 1. C1's **EMG was never open** — `/2` works; the channels measured as "EMG
+>    legs" were `/3`,`/4`, which are **empty pads with no wire**.
+> 2. **18:06 → 02:50 is not all dark phase.** Lights go off at **21:00**, so the
+>    first 2.9 h are light phase — and that is precisely where C1's NREM
+>    concentrates (58.1 % NREM in light vs 15.9 % in dark).
+>
+> The "flat hourly profile" is what averaging a real light/dark transition looks
+> like when you do not know where the transition is. See
+> [[2026-08-03-two-8-mouse-runs]].
 
 Two honest caveats on the negative:
 1. **C1's EMG legs were open 100 % of the run.** Sleep cannot be scored from EEG alone; delta/theta by itself is a weak classifier. The montage ([[allego-electrode-setup-sleep64]], Iwasaki/Funato/Yanagisawa 2021) requires EEG **and** EMG.

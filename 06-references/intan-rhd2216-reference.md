@@ -57,6 +57,28 @@ The RHD2216 "contains an array of 16 amplifiers having **independently accessibl
 > [!warning] This ±5 mV is the hard ceiling behind every "railed channel"
 > The amplifier physically cannot see signal beyond **±5 mV** (≈10 mV peak-to-peak). When the animal is not tied to the chip ground, the whole animal's potential drifts out of this window and **every channel pegs at the rail** — the exact floating-animal signature in [[signal-quality-and-grounding]] §2 and the bug chased in [[2026-06-27]]. Datasheet Figure 1 (p8) shows a clean ±5.0 mV triangle at the edge of linearity.
 
+> [!important] There are TWO ceilings, and the SAVED DATA rails at the higher one
+> Added 2026-08-03 after measuring it. The ±5 mV above is the amplifier's
+> **linear range**. The number you actually observe in a `.xdat` file is the
+> **ADC full scale**, which follows from two values already on this page:
+>
+> ```
+> V_LSB × (2^15 − 1)  =  0.195 µV × 32767  =  6389.6 µV  ≈  ±6.4 mV
+> ```
+>
+> **Measured:** `max|sample|` = **6389.8 µV, identical to four significant
+> figures on all 8 channels** of the 2026-07-31 recording. So:
+>
+> | | value | meaning |
+> | --- | --- | --- |
+> | ±5.0 mV | datasheet | edge of **linearity** — past this the amplifier is nonlinear |
+> | **±6389.6 µV** | derived + measured | **hard digital ceiling** — samples cannot exceed it |
+>
+> Practical consequence: a channel at 11 mV peak-to-peak is badly misbehaving but
+> is **not** yet pegged; true saturation is ~12.8 mV pk-pk. Analysis counts a
+> sample as railed at **≥ 6376.8 µV** (99.8 % of full scale). See
+> `02-procedures/eeg-data-analysis/pipeline/qc_thresholds.py`.
+
 ### 2.2 Gain, ADC, resolution
 | Parameter | Value | Page |
 |---|---|---|

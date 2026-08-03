@@ -6,6 +6,27 @@ status: complete
 
 # EEG Data Analysis — Hub
 
+> [!danger] ⭐ SUPERSEDED AGAIN 2026-08-03 — go to [[pipeline/README]]
+> The current analysis path is **`02-procedures/eeg-data-analysis/pipeline/`**,
+> in this vault, and it replaces both the archived scripts below *and* the
+> `eeg-emg-analysis/` codebase referenced in the next box.
+>
+> ```
+> stage1_qc.py       raw .xdat -> CLEAN / DIRTY / OPEN / DEAD / CLIPPED / INSUFFICIENT
+> stage2_split.py    -> /home/skimlab/eeg-processed/YYYY-MM-DD/ one file per mouse
+> stage3_features.py -> hypnogram + sleep features
+> qc_thresholds.py   every constant with its provenance
+> ```
+>
+> Why it exists: two statistics bugs and three wrong QC thresholds survived in
+> the older tooling for weeks. Everything is now in one place with the
+> justification attached. **The science below (bands, filters, epoching) still
+> holds** — it is the channel map, the thresholds and the persistence statistic
+> that changed.
+>
+> Use the **system `python3`**, not the `/opt/neurosurveillance` venv (numpy/scipy
+> ABI mismatch → `numpy.core.multiarray failed to import`).
+
 > [!warning] Superseded 2026-07-18 — code moved out of the vault
 > The runnable scripts here predate the **sleep64 8-headstage** rig and are
 > **archived** under `scripts/_archive_pre_sleep64/`. The current, clean codebase

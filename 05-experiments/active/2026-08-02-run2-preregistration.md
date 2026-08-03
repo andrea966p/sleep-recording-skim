@@ -166,7 +166,7 @@ Each has **EMG connected for the full 27.9 h (0.087 and 0.202 MΩ)** and **EEG o
 ## 5. Analysis plan — fixed in advance
 
 1. `score_all_mice.py` then `gate_and_score_all.py` (both in `02-procedures/eeg-data-analysis/scripts/contact-state-2026-07-31/`), unchanged.
-2. Three-part gate: not open AND **not shorted (EEG rms ≥ 25 µV)** AND not clipped.
+2. Three-part gate: not open AND **not shorted (EEG rms ≥ 25 µV)** AND not clipped. ⚠️ *Thresholds superseded 2026-08-03 — the 25 µV rule discarded 9.5 % of all epochs including real low-amplitude wake, and is now split into an epoch-level dropout test (11 µV) and a channel-level dead-electrode test (20 µV median). Verdicts above are unchanged. See [[pipeline/README]].*
 3. Otsu EMG threshold **per animal**. **Never reuse one animal's threshold on another** — that is what wrongly passed D2 on 2026-08-01.
 4. Report a hypnogram ONLY if persistence at 1 min clears a shuffle control, and ONLY if the physiology ordering PASSES.
 5. **Take a SECOND impedance sweep the moment the run stops.** Two sweeps bracketing a long recording is what distinguishes progressive degradation from random flipping — connector problem vs implant problem.
