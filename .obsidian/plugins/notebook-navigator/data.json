@@ -118,7 +118,7 @@
   "homepage": null,
   "mobileHomepage": null,
   "useMobileHomepage": false,
-  "dualPane": true,
+  "dualPane": false,
   "dualPaneOrientation": "horizontal",
   "showTooltips": false,
   "showTooltipPath": true,
@@ -473,17 +473,12 @@
   "folderSortOverrides": {
     "04-journal": "created-desc",
     "04-journal/2026-02": "created-desc",
-    "04-journal/2026-05": "created-desc",
-    "04-journal/2026-06": "created-desc",
-    "04-journal/2026-07": "filename-desc"
+    "04-journal/2026-05": "created-desc"
   },
   "folderTreeSortOverrides": {},
   "folderAppearances": {
     "04-journal": {
       "groupBy": "folder"
-    },
-    "04-journal/2026-06": {
-      "previewRows": 2
     }
   },
   "tagIcons": {},
