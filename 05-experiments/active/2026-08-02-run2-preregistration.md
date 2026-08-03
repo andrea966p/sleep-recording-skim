@@ -72,6 +72,32 @@ Nothing was deliberately done to any of them. **Contact state moves in BOTH dire
 | **P7** | At least one channel will CHANGE STATE during the run | C2 EEG gate pass **11.2 % → 0.4 % → 0.7 %** by thirds; impedance 1.146 → 2.507 MΩ | **HIT** |
 | **P8** | If the run exceeds ~29 h, light-phase NREM higher | run was **21.74 h** (< 29 h), and the light schedule is still undocumented | **VOID** |
 
+> [!note] P8 revisited 2026-08-03 — still VOID, but for a different reason
+> The light schedule is now documented (**on 09:00 / off 21:00 KST, ZT0 = 09:00**
+> — [[production-values]]). Run 2 ran 01:46 → ~23:30, so it **did** span a full
+> light phase, and the "< 29 h" condition was the wrong gate. P8 nonetheless
+> stays VOID because Run 2 produced **zero usable epochs in any phase** — the
+> prediction could not be evaluated at all.
+>
+> The light-phase test was instead settled on **Run 1's C1**, which straddles the
+> 21:00 boundary: **33.1 % wake in the light phase vs 82.2 % in the dark**, i.e.
+> 66.9 % asleep in the light against a published ~70 %. See
+> [[2026-08-03-two-8-mouse-runs]].
+
+> [!warning] Rescored 2026-08-03 under corrected thresholds — every verdict holds
+> The numbers in the "actual" column were produced with the pre-2026-08-03 gate
+> (open 300 µV, shorted 25 µV, rail 6300). Re-run under the corrected gate
+> (open 150 µV, flat 11 µV / dead-channel 20 µV, rail 6376.8 µV), **Run 2 is
+> 8/8 OPEN with 0.00 h usable in blocks for every animal** — so P1–P7 keep their
+> HIT/MISS marks unchanged. Only the fine-grained percentages move.
+>
+> **P6 is the one that matters most.** It was pre-registered and it MISSED:
+> impedance→yield gave ρ = −0.452, not the ρ = −0.941 fitted on Run 1. The
+> decisive counterexample is B1, which read **0.133 MΩ** — the best EEG
+> impedance in the fleet — and then ran fully open for 21.7 h. Impedance
+> predicts **class, not yield**; [[electrode-connection-state-test]] is narrowed
+> accordingly.
+
 **Score: 4 HIT, 3 MISS, 1 VOID.**
 
 > [!check] What the misses actually tell us — the screen predicts CLASS, not YIELD

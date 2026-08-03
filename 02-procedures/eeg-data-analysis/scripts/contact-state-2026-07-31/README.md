@@ -8,6 +8,19 @@ status: active
 
 Reproduces every number in [[2026-08-01-28h-contact-duty-cycle-and-c1-negative]] from the raw `.xdat`.
 
+> [!danger] DO NOT USE FOR NEW WORK — two separate bugs, both since fixed elsewhere
+> These scripts are kept **only** to reproduce historical numbers. They contain:
+>
+> 1. **The wrong channel map** (`EEG = native0 − native1`, and `/3`,`/4` treated
+>    as electrodes). The RHD2216 is bipolar — corrected 2026-08-01.
+> 2. **`gate_and_score_all.py` measures persistence ACROSS CONTACT GAPS.**
+>    `np.correlate(...)[15]` is a 60 s lag only if the epochs are contiguous;
+>    they are not. This produced both the project's largest false positive
+>    (+0.854 on a stretch that is 39 min of pure wake) and a false negative
+>    (+0.078 on data that could not possibly have passed).
+>
+> **Use `02-procedures/eeg-data-analysis/pipeline/` instead.**
+
 ## Run order
 
 ```bash

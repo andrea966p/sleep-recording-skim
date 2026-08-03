@@ -4,10 +4,28 @@ created: 2026-08-03
 status: active
 ---
 
-# Sleep scoring — v2 (current)
+# Sleep scoring — v2 (SUPERSEDED same day)
+
+> [!warning] Superseded 2026-08-03 by [[pipeline/README]]
+> `rescore_v2.py` fixed the persistence bug documented below and that fix is
+> correct — it was carried forward unchanged. But its **QC thresholds were
+> guesses**, and three of them were wrong:
+>
+> | | here | corrected | why |
+> | --- | --- | --- | --- |
+> | rail | 6300 µV | **6376.8 µV** | true rail is `0.195 × 32767` = 6389.6 µV, measured |
+> | open | 300 µV | **150 µV** | mains is bimodal; the valley is at 134 µV, so 300 sat on the OPEN flank |
+> | shorted | 25 µV | **split 11 / 20** | discarded 9.5 % of ALL epochs including real low-amplitude wake; a short is a CHANNEL property, not an epoch one |
+>
+> It also has a cosmetic reporting bug: animals whose verdict is set on an early
+> return are written to the JSON but **omitted from the printed table**, so the
+> console silently under-reports (caught on 2026-06-29/D1).
+>
+> **Use `02-procedures/eeg-data-analysis/pipeline/` for all new work.** Keep this
+> only to reproduce numbers published between 2026-08-03 morning and the pipeline.
 
 Supersedes `../contact-state-2026-07-31/gate_and_score_all.py`, which contains a
-statistics bug (see below). **Use `rescore_v2.py` for all new work.**
+statistics bug (see below).
 
 Full explanation of everything here, written for a non-specialist reader:
 [[2026-08-03-data-quality-report-for-professor]].

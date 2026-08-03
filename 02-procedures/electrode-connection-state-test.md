@@ -92,11 +92,34 @@ With ONE headstage per port and no splitter (32 channels per port), the same log
 
 - **The Allego notch filter does NOT reach the saved data.** Verified 2026-07-31 by parking the notch at 50 Hz, where nothing real lives, and checking the saved spectrum. 1 Hz bins across 47 to 53 Hz came out 2.457, 2.504, 2.354, 2.401, 2.365, 2.462, perfectly flat, no null. The `.xdat` primary data is RAW, hardware bandpass only. The notch is display side.
 - **This is a useful trick in general:** to test whether any display filter touches the data, park it on a frequency where nothing real lives and look for the null.
-- Units are `micro-volts` for primary channels, per the file metadata. The rail is ±6390 µV, so use ±6300 as a clipping threshold.
+- Units are `micro-volts` for primary channels, per the file metadata. **The rail is 6389.6 µV = `0.195 µV/LSB × 32767`, the 16-bit ADC full scale.** Confirmed by direct measurement 2026-08-03: `max|sample|` is 6389.8 µV, identical to four significant figures on all 8 channels. Use **6376.8 µV (99.8% of full scale)** as the clipping threshold; the older ±6300 figure was a guess that happened to be safe.
 
-## ✅ IMPEDANCE IS A VALID PRE-FLIGHT GATE — corrected 2026-08-02
+## ⚠️ IMPEDANCE PREDICTS CLASS, NOT YIELD — narrowed 2026-08-03
+
+> [!warning] The ρ = −0.941 result below did NOT replicate. Read this box before the one under it.
+> The claim "impedance predicts hours-of-usable-data" was fitted on a single
+> recording (2026-07-31) and **pre-registered against Run 2 (2026-08-02), where
+> it scored 4 HIT / 3 MISS / 1 VOID**. Every hit was *which channel is connected
+> on which mouse*; every miss was *how many usable hours you get*. On Run 2 the
+> yield correlation was **ρ = −0.452**, not −0.941.
+>
+> **The decisive counterexample:** B1 read **0.133 MΩ** before Run 2 — the best
+> EEG impedance in the entire fleet — then ran at 2802 µV hum, fully open, for
+> all 21.7 h. Resting impedance is not contact under load.
+>
+> **Second, harder limit.** The literature for chronic rodent epidural screws is
+> **5–50 kΩ at 1 kHz**, with **≤10 kΩ** the usual confirmation of proper
+> contact. **Our best channel in the whole fleet is 73 kΩ.** So `Z < 2 MΩ` is
+> roughly **40× looser than the published norm** — it is an **open-circuit
+> detector, not a quality bar**. A channel at 0.5–2 MΩ is a poor electrode that
+> merely is not fully open, and calling it "CONNECTED" oversells it.
+>
+> **What to use it for:** deciding which animals are worth running, and which
+> channel to expect signal on. **Not** for forecasting yield, and never as
+> evidence that an electrode is good.
 
 > [!success] REVERSED. The earlier "impedance is useless" verdict was an artifact of the WRONG CHANNEL MAP.
+> *(Kept for the reasoning and the sweep data. The yield claim in it is narrowed by the box above.)*
 > Re-read against ground truth from the 27.9 h recording, using only the REAL channels (`/1`=EEG, `/2`=EMG) and ignoring the empty pads `/3`,`/4`:
 >
 > **Spearman ρ = −0.941, p = 5.7e-08** between impedance magnitude and hours-of-usable-data — from a sweep taken ~2 h BEFORE the recording began.
@@ -108,6 +131,11 @@ With ONE headstage per port and no splitter (32 channels per port), the same log
 > | Z < 3.0 MΩ | 14/16 |
 >
 > **USE Z < 2 MΩ = CONNECTED, Z > 3 MΩ = OPEN, on sites `/1, /2, /33, /34` only.** A mouse needs BOTH `/1` and `/2` under threshold to be scoreable.
+>
+> ⚠️ 2026-08-03: "CONNECTED" here means **not open**, not **good** — see the
+> narrowing box above. The rule held up as a *classifier* on Run 2 (C1 was the
+> only mouse with both channels connected, and the only one that produced
+> defensible sleep), but it does **not** predict how long that lasts.
 >
 > **The classification is STABLE across repeat sweeps even though the values wobble:**
 > ```

@@ -129,7 +129,9 @@ Production IPs, usernames, paths, and settings.
 
 ### Decisions & Reviews
 - ⭐⭐🔴 [[07-decisions/2026-08-01-channel-mapping-correction-first-sleep|2026-08-01 ⭐ CHANNEL MAP WAS WRONG — EMG always worked, FIRST REAL SLEEP ARCHITECTURE]] — `/1`=EEG `/2`=EMG already bipolar, `/3`,`/4` empty pads. Read before trusting any earlier EEG/EMG analysis.
-- 🔴⭐ [[07-decisions/2026-08-01-28h-contact-duty-cycle-and-c1-negative|2026-08-01 — 27.9 h run: 78 % of leg-time OPEN, grounds perfect, C1's clean EEG has NO sleep]] — duty cycle, two failure modes, full methods
+- ⭐⭐🔴 [[07-decisions/2026-08-03-two-8-mouse-runs|2026-08-03 ⭐ THE TWO 8-MOUSE RUNS — Run 1 is everything we have, Run 2 is a total loss]] — **START HERE for current EEG status.** C1 8.73 h + C2 2.34 h scoreable, validated against circadian norms; Run 2 = 0/8. EEG degradation is directional (8/8 worse) and EEG-specific.
+- ⭐ [[02-procedures/eeg-data-analysis/pipeline/README|EEG analysis pipeline — raw recording → QC → per-mouse files → sleep features]] — THE analysis path; every threshold with its provenance
+- 🔴⭐ [[07-decisions/2026-08-01-28h-contact-duty-cycle-and-c1-negative|2026-08-01 — 27.9 h run: duty cycle, grounds perfect, two failure modes]] — ⚠️ **its title and its "C1 has NO sleep" conclusion are RETRACTED** (C1 is the project's best result); read for the no-wire method and the grounds data only
 - 🔴⭐ [[07-decisions/2026-07-31-contact-intermittency-no-wire-control|2026-07-31 — Legs are OPEN, not high-impedance, and state FLIPS on its own]] — **overturns "make new mice". DO NOT schedule surgeries on the old conclusion.**
 - [[07-decisions/2026-05-01-llm-council-review|2026-05-01 LLM Council Review]] — full advisor responses, peer reviews, chairman synthesis, staged plan
 - [[07-decisions/2026-05-stabilization-sprint-week-1-plan|2026-05 Stabilization Sprint Week 1 — Plan + live status]] — single source of truth for sprint-item status

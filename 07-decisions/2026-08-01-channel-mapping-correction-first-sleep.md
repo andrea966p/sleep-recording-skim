@@ -12,6 +12,26 @@ priority: critical
 >
 > Consequences: our "EEG" was actually `EEG − EMG` (meaningless); we measured empty pads and reported them as **24 failed EMG surgeries**; and we declared **zero scoreable data** when we in fact had **21 scoreable mouse-hours** and textbook sleep architecture sitting in the file.
 
+> [!warning] NUMBERS ON THIS PAGE ARE SUPERSEDED — the headline conclusion is not
+> Two later corrections change every hour-count and every REM figure below.
+> **The core finding (the channel map was wrong; C1 has real sleep) survives and
+> is now stronger.** What changed:
+>
+> 1. **2026-08-03, persistence bug.** `r@1min` was computed across contact gaps,
+>    so it both hid real sleep and invented fake sleep. Recomputed within
+>    unbroken blocks only. **"21.0 scoreable mouse-hours" is wrong — the correct
+>    total is ~11.1 h** (C1 8.73 h + C2 2.34 h), and **D2 is rejected**.
+> 2. **2026-08-03, thresholds re-derived** from 1,137,955 pooled epochs. C1's
+>    figures under the current gate: **WAKE 65.9 / NREM 29.8 %, r@1min +0.761**.
+>
+> 🔴 **Do not quote any REM percentage from this page.** REM is fixed by
+> construction (the 80th-percentile rule forces 20% of sleep); an independent
+> Otsu cut gives 24–48%; the literature value for mice is **<10%**. REM is not
+> reliably separable with this montage. Report WAKE vs NREM and REM's *order*
+> (entered from NREM) only.
+>
+> Current numbers: [[2026-08-03-two-8-mouse-runs]] · method: [[pipeline/README]].
+
 ## TL;DR
 
 - ⭐ **REAL SLEEP ARCHITECTURE — replication n=2 after the full 8-mouse rescore (§3c).** C1 (8.73 h): WAKE 64.4 / NREM 31.2 / REM 4.4 %, physiology PASS. C2 (4.02 h): 56.3 / 35.7 / 8.1 %, PASS. ⚠️ **D2 WITHDRAWN — physiology FAIL under the stricter gate.** 5 of 8 mice have ZERO scoreable EEG time. The project's **first genuine sleep result**, on C1 strongly and C2 moderately.
@@ -118,6 +138,27 @@ Sleep-rich at hours 0 and 2, near-continuous wake at 4 and 7. Real structure.
 > [!warning] Honest caveats — do NOT let this become another 2026-07-15
 > - ~~n = 1 mouse~~ **REPLICATED on n=3 (C1, D2, C2)** — but all from ONE recording, and all from the DARK phase.
 >   ⚠️ **Precisely:** the recording spans 27.9 h and DOES cover a full light phase. But every window in which the EEG channel was alive falls in the dark phase (C1 18:06→02:50, D2 18:06→23:24, C2 20:01→21:07). The EEG electrodes had already failed before the light phase began. **A light-phase test is still owed** — NREM should dominate, which is a strong independent check.
+>
+> > [!success] ✅ SUPERSEDED 2026-08-03 — THE LIGHT-PHASE TEST IS DONE AND C1 PASSES
+> > The claim above is **wrong**, because the light schedule was unknown when it
+> > was written and the phase boundary was guessed. The cycle is **lights ON
+> > 09:00, OFF 21:00 KST (ZT0 = 09:00)**. The recording starts at **18:06**, so
+> > its first **2.9 hours are LIGHT phase**, not dark.
+> >
+> > C1's alive window therefore straddles both phases, and the split is textbook:
+> >
+> > | phase | duration | WAKE | NREM |
+> > | --- | --- | --- | --- |
+> > | light (18:06–21:00) | 2.89 h | **33.1%** | 58.1% |
+> > | dark (21:00–02:50) | 5.84 h | **82.2%** | 15.9% |
+> >
+> > **C1 is 66.9% asleep in the light phase. Published C57BL/6 values are ~70%
+> > asleep in the light phase, NREM 62.0 ± 7.8 %/12 h — C1 lands inside one
+> > standard deviation**, with the light/dark contrast in the correct direction.
+> >
+> > This is the strongest evidence in the project, because **nothing in the QC
+> > gate or the persistence statistic knows about the clock** — it is a genuinely
+> > external check. See [[2026-08-03-two-8-mouse-runs]] and [[pipeline/README]].
 >   ⚠️ **A connection filter based on hum ALONE is not sufficient to select scoreable windows.** C2 appeared "connected" at 18:00-19:00 the next evening and at 05:21-05:57, but those windows are SHORTED: EEG rms 20.9 and 16.1 µV against 68.7 µV when genuinely working, WAKE 99.7-99.8 %, and persistence r = −0.003 / −0.002 (no structure at all). **Gate scoreable windows on EEG amplitude AND temporal structure, not just low mains.** This is the "shorted looks quieter than good" trap from [[electrode-connection-state-test]], and it caught me a second time.
 > - ⚠️ **THE ANIMAL ROOM LIGHT SCHEDULE IS NOT DOCUMENTED ANYWHERE IN THIS VAULT.** Every circadian claim depends on it. Record lights-on/lights-off in `00-config/production-values.md`.
 > - **Thresholds are data-driven** (EMG dip at 25 µV; theta/delta at the 80th percentile), **not validated against a human scorer**. The state percentages carry real uncertainty.

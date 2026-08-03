@@ -21,6 +21,26 @@ priority: critical
 >
 > Full correction: [[2026-08-01-channel-mapping-correction-first-sleep]]
 
+> [!warning] SECOND-LAYER UPDATE 2026-08-03 — the retraction above is right in direction, but its replacement numbers are themselves superseded
+> The title of this document is still wrong and the corrected figures quoted in
+> the retraction have since changed again.
+>
+> - ❌ "21.0 scoreable mouse-hours (C1 8.7, C2 7.0, D2 5.3)" → the persistence
+>   statistic was measured **across contact gaps**. Correct total is **~11.1 h**:
+>   **C1 8.73 h and C2 2.34 h. D2 is rejected** (`r = 0.25`).
+> - ❌ "persistence r = +0.80 at 1 min" → computed within unbroken blocks only,
+>   C1 is **r@1min = +0.761** (shuffle +0.011), decaying smoothly to +0.493 at
+>   10 min. Still a strong positive, just not that number.
+> - ❌ "REM 3.9 %" → **never quote a REM percentage.** It is fixed by
+>   construction; REM is not reliably separable with this montage.
+> - ✅ **"C1 shows NO sleep structure" remains firmly retracted, and C1 is now
+>   the best-validated result in the project** — it additionally matches
+>   published C57BL/6 circadian norms (66.9 % asleep in the light phase vs
+>   ~70 % expected), a check that uses none of our thresholds.
+>
+> Current numbers and the two-run comparison: [[2026-08-03-two-8-mouse-runs]].
+> Method: [[pipeline/README]].
+
 
 > [!abstract] TL;DR
 > First multi-hour run since the contact problem was understood. `allego_1__uid0731-18-06-37`, **27.9 h**, 105 GB, 8 mice, 32 legs, started 2026-07-31 18:06 KST.

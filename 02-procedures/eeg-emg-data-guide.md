@@ -40,16 +40,48 @@ Both are tiny voltages picked up by electrodes on/in the mouse, amplified by the
 | Sleep-staging role | the *shape* of the wave (slow vs fast) | the *level* (high tone = awake, flat = REM) |
 
 > [!note] These ranges are this rig's verified working numbers
-> The bands (EEG 0.5–30 Hz, EMG 10–300 Hz), amplitudes (EEG 20–300 µV; EMG ~10–50 µV rest, ~1 mV moving), the **noise floor ≈ 2–5 µV RMS** and the **amplifier rail = ±5 mV (≈ 10 mV pk-pk = saturated)** are all from [[signal-quality-and-grounding]] §3b. Reuse them; do not re-derive.
+> The bands (EEG 0.5–30 Hz, EMG 10–300 Hz), amplitudes (EEG 20–300 µV; EMG ~10–50 µV rest, ~1 mV moving), the **noise floor ≈ 2–5 µV RMS** and the **data rail = ±6389.6 µV (≈ 12.8 mV pk-pk = saturated)** are all from [[signal-quality-and-grounding]] §3b. Reuse them; do not re-derive.
+>
+> ⚠️ The rail figure was corrected 2026-08-03: the amplifier's *linear range* is
+> ±5 mV, but the saved data rails at the **ADC full scale, 6389.6 µV**.
 
 ### Each channel is a *pair* (bipolar)
 The RHD2216 is a **bipolar** amplifier: every recorded channel is already the **difference** of a `+` and a `−` wire.
 - **EEG = EEG+ − EEG−**
 - **EMG = EMG+ − EMG−**
 
-A single wire alone carries mostly shared junk (drift, hum); the difference cancels that and leaves the real signal. In Allego this is **Paired Reference** (manual p70); in Part 2 it is one subtraction. There is **no separate reference electrode** on this chip — see [[grounding-reference-noise-concepts]].
+A single wire alone carries mostly shared junk (drift, hum); the difference cancels that and leaves the real signal. There is **no separate reference electrode** on this chip — see [[grounding-reference-noise-concepts]].
 
-> [!note] Channel numbering (recap from [[signal-mapping-guide]])
+> [!danger] The chip does the subtraction. YOU DO NOT.
+> This is the single most expensive mistake made on this project. Because the
+> RHD2216 is bipolar, **the channel you read is already the difference**:
+>
+> ```
+> /1  =  EEG   <- use it directly
+> /2  =  EMG   <- use it directly
+> /3, /4       <- EMPTY PADS, no wire attached, by design
+> ```
+>
+> Subtracting `/1 − /2` computes **EEG minus EMG**, which is meaningless, and
+> measuring `/3`,`/4` reports empty solder pads as failed surgeries. Both
+> happened, for weeks: 24 "failed EMG implants" were bare pads, and C1's real
+> sleep architecture was invisible until 2026-08-01.
+>
+> In Allego, **select only `/1, /2` and `/33, /34` per port** — 16 channels for
+> 8 mice, not 32. See [[2026-08-01-channel-mapping-correction-first-sleep]].
+
+> [!history] Channel numbering — corrected 2026-08-01
+> The mapping below is the **legacy two-mice-on-one-headstage layout** and no
+> longer describes the rig. It is kept because older recordings were made under
+> it and their files must still be read.
+>
+> **Current rig:** one mouse per headstage; on a 64-channel splitter port,
+> slot 1 = `/1`,`/2` (native base + 0, +1) and slot 2 = `/33`,`/34` (base + 32,
+> +33). **Never assume the layout** — derive it from the file's own
+> `sapiens_base.sensors_by_port`, because recordings exist at 32 ch/port,
+> 64 ch/port and mixed (`A:64@0 B:32@64 C:64@96 D:64@160`).
+
+> [!note] Channel numbering (legacy 2-mice layout — see box above)
 > `D/n` (Allego on-screen, 1-indexed) **= native channel `n−1` = `pri_(n−1)`**, and the **C3410 board pad = the native channel**. Our 8 recorded channels: M1 EEG±/EMG± = `D/1–D/4` (native 0–3); M2 EEG±/EMG± = `D/9–D/12` (native 8–11). In analysis we name them **by native index**, since data files store `pri_N`.
 
 ### What they look like (ASCII)
