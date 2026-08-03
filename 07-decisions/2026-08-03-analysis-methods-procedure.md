@@ -37,18 +37,18 @@ unexplained numbers anywhere else in the codebase.
 
 I want this table read first, because it is the question a reviewer will ask.
 
-| Part of the analysis | Standard, or ours? | Note |
-| --- | --- | --- |
-| Record wide band, filter offline | **Standard** | Intan, Open Ephys and Radiens all default to this. Filtering is irreversible, so it is done as late as possible |
-| Band pass EEG 0.5 to 30 hertz, EMG 10 to 300 hertz | **Standard** | Oishi 2016 uses 0.5 to 64 and 16 to 64, Kim 2022 uses 0.3 to 100 |
-| Four second epochs | **Standard** | Published rodent work spans 4, 5, 10 and 20 seconds |
-| Delta 0.5 to 4 hertz, theta 6 to 9 hertz, theta over delta ratio | **Standard** | The conventional rodent discriminator |
-| EMG tone separates wake, threshold per animal | **Standard** | Oishi 2016, and every automatic scorer |
-| Reject saturated epochs | **Standard** | Universal in EEG preprocessing |
-| **Reject epochs where the electrode is disconnected, using mains amplitude** | **Standard method, our threshold** | Line noise is a recognised bad channel metric (PREP pipeline, EEGLAB `clean_rawdata`). Bad channel thresholds are always data derived, ours came from our own recordings |
-| Check the three states behave like wake, non rapid eye movement (NREM) and rapid eye movement (REM) should | **Standard** | Basic sanity checking |
-| Compare sleep amount against published C57BL/6 values for the light phase | **Standard** | The strongest external check we have |
-| **Persistence statistic `r@1min`** | **OURS. It is a validity check, not a scoring method** | We added it to test whether the states are real or noise. It does not assign any epoch to a stage. Treat it as extra scrutiny, not as part of the staging |
+| Part of the analysis                                                                                       | Standard, or ours?                                     | Note                                                                                                                                                                     |
+| ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Record wide band, filter offline                                                                           | **Standard**                                           | Intan, Open Ephys and Radiens all default to this. Filtering is irreversible, so it is done as late as possible                                                          |
+| Band pass EEG 0.5 to 30 hertz, EMG 10 to 300 hertz                                                         | **Standard**                                           | Oishi 2016 uses 0.5 to 64 and 16 to 64, Kim 2022 uses 0.3 to 100                                                                                                         |
+| Four second epochs                                                                                         | **Standard**                                           | Published rodent work spans 4, 5, 10 and 20 seconds                                                                                                                      |
+| Delta 0.5 to 4 hertz, theta 6 to 9 hertz, theta over delta ratio                                           | **Standard**                                           | The conventional rodent discriminator                                                                                                                                    |
+| EMG tone separates wake, threshold per animal                                                              | **Standard**                                           | Oishi 2016, and every automatic scorer                                                                                                                                   |
+| Reject saturated epochs                                                                                    | **Standard**                                           | Universal in EEG preprocessing                                                                                                                                           |
+| **Reject epochs where the electrode is disconnected, using mains amplitude**                               | **Standard method, our threshold**                     | Line noise is a recognised bad channel metric (PREP pipeline, EEGLAB `clean_rawdata`). Bad channel thresholds are always data derived, ours came from our own recordings |
+| Check the three states behave like wake, non rapid eye movement (NREM) and rapid eye movement (REM) should | **Standard**                                           | Basic sanity checking                                                                                                                                                    |
+| Compare sleep amount against published C57BL/6 values for the light phase                                  | **Standard**                                           | The strongest external check we have                                                                                                                                     |
+| **Persistence statistic `r@1min`**                                                                         | **OURS. It is a validity check, not a scoring method** | We added it to test whether the states are real or noise. It does not assign any epoch to a stage. Treat it as extra scrutiny, not as part of the staging                |
 
 > [!important] On the persistence statistic
 > I want to be explicit, because it would be easy to present this as if it were a
