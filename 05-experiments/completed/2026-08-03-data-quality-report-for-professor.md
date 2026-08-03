@@ -360,7 +360,7 @@ None of that is invented to suit our rig.
 
 ### On the sixty hertz notch, since it comes up
 
-**Yes, turn it on in Allego.** It is display only. We confirmed on 2026-07-31 by
+**Turn it on in Allego.** It is display only. We confirmed on 2026-07-31 by
 parking it at fifty hertz, where nothing real lives, and finding the saved
 spectrum perfectly flat there, no null. It never reaches the saved file.
 
