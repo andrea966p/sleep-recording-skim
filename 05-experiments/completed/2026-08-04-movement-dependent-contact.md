@@ -4,7 +4,33 @@ created: 2026-08-04
 status: completed
 ---
 
-# 2026-08-04 — The electrodes are fine. Movement breaks the contact.
+# 2026-08-04 — The electrodes are fine. Contact is intermittent. Movement is NOT the proven trigger.
+
+> [!danger] ⭐⭐⭐ READ FIRST — the movement hypothesis FAILED its replication, same day
+> A pre-registered test was run within the hour: an 8 mouse sweep with B1, B2 and
+> C1 moving and the other five still. **The prediction failed completely.**
+>
+> | | connected | open | rate |
+> | --- | --- | --- | --- |
+> | **MOVED** (B1, B2, C1) | 3 | 3 | **50%** |
+> | **STILL** (A1, A2, C2, D1, D2) | 5 | 5 | **50%** |
+>
+> Identical. Individual cases are worse than the aggregate: **B1 moving read
+> 0.177 MΩ CONNECTED**, having read 8.649 MΩ moving two sweeps earlier. **C1
+> moving read connected on both channels.** **D1 still read open on both**, having
+> read 0.688 MΩ alone an hour before. File: `imp_8mice_b1b2c1moved.csv`.
+>
+> **A sweep takes about 20 seconds**, so the animal's state held for the whole
+> measurement. This is a clean test with a clean null, not a noisy one.
+>
+> **What survives:** the contact is intermittent, flipping in both directions on a
+> timescale of minutes, and **the electrodes and implants are good** — 0.052 MΩ
+> happened and cannot be produced by a bad electrode. **What does NOT survive:**
+> that movement is the trigger. Cause remains unidentified.
+>
+> Everything below is preserved as written, because the single animal measurement
+> in §1 is real and still needs explaining. Read it as **one striking observation
+> that did not replicate**, not as a root cause.
 
 > [!abstract] TL;DR
 > **What I found.** I measured the same mouse, on the same port, in the same
@@ -161,14 +187,41 @@ later.
    would cost about ten minutes to get.
 2. **"Moving" and "still" were judged by eye**, not scored from video. There is
    no timestamped movement trace aligned to the sweeps.
-3. **Impedance sweeps are not instantaneous.** Each sweep takes time to step
-   through sites, so a "moving" sweep is a mix of postures, which if anything
-   makes the measured effect an **underestimate**.
+3. ~~Impedance sweeps are not instantaneous, so a "moving" sweep mixes postures.~~
+   **WRONG, corrected same day: a full 8 mouse sweep takes about 20 seconds.** The
+   animal's state holds for the whole measurement. This removes the excuse for the
+   failed replication above — that test was clean and it returned a clean null.
 4. Only the **positive** input of each bipolar pair is measured, as always. See
    [[impedance-sweep-register]].
 5. **No photographs** of the boards under magnification were taken, by choice, on
    2026-08-04. The DMM test and visual inspection results are recorded, but there
    is no image record of the pre intervention pad state.
+
+## 6b. The replication, in full — run within the hour, prediction registered first
+
+`imp_8mice_b1b2c1moved.csv`, 8 mice, 64 ch/port. Stated before the sweep: B1, B2
+and C1 were moving, the other five were still.
+
+| animal | state | EEG | EMG |
+| --- | --- | --- | --- |
+| B1 | **MOVED** | **0.177 @ 1.0° CONNECTED** | 8.693 open |
+| B2 | **MOVED** | 5.406 open | 7.765 open |
+| C1 | **MOVED** | **0.584 CONNECTED** | **0.644 CONNECTED** |
+| A1 | still | 5.989 open | **0.327 CONNECTED** |
+| A2 | still | 6.221 open | 3.639 open |
+| C2 | still | **0.411 CONNECTED** | **0.122 CONNECTED** |
+| D1 | still | 4.926 open | 5.557 open |
+| D2 | still | **0.400 CONNECTED** | **0.088 CONNECTED** |
+
+Moved 3 of 6 connected. Still 5 of 10 connected. **50% against 50%.**
+
+**B1's EEG has read 0.052, 8.649, 6.236 and 0.177 MΩ in a single afternoon.** No
+hypothesis about a fixed condition of that electrode can survive that. The
+contact is intermittent on a timescale of minutes and the trigger is not gross
+movement.
+
+Note also that **animals that were definitely still went open** (A2 both, D1
+both). Whatever flips the contact is not gated on movement at all.
 
 ## 7. What to do next
 

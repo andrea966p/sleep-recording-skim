@@ -49,6 +49,7 @@ name and falls back to mtime only for unlabelled files.
 | 2026-08-04 | — | B1 alone, **port D**, no splitter | port swap control | 32 | `B1_only_portD.csv` |
 | **2026-08-04** | — | **B1 alone, port B, no splitter** | ⭐⭐ **MOUSE STILL** | 32 | `B1_only_portB_mousestill.csv` |
 | **2026-08-04** | — | **B1 alone, port B, no splitter** | ⭐⭐ **MOUSE MOVING** | 32 | `B1_only_portB_moving.csv` |
+| **2026-08-04** | — | **8 mice, 64 ch/port** | ⭐⭐ **replication: B1, B2, C1 MOVING, other five STILL. Prediction FAILED, 50% vs 50%** | 256 | `imp_8mice_b1b2c1moved.csv` |
 
 > [!warning] The 2026-08-04 files do not follow the naming convention
 > They were written during a live diagnostic session and kept under the names
@@ -100,9 +101,11 @@ EMG went 3 better, 3 unchanged, 2 worse. Full analysis:
 
 > [!danger] ⭐⭐ Read this before drawing ANY trend from the table above
 > **Overturned 2026-08-04.** These numbers do not measure electrode condition.
-> They measure **whether the animal happened to be moving during the sweep**. The
-> same animal, on the same port, minutes apart, read **0.052 MΩ still** and
-> **8.649 MΩ moving**. See [[2026-08-04-movement-dependent-contact]].
+> They are **snapshots of a contact that flips within minutes**: B1's EEG read
+> **0.052, 8.649, 6.236 and 0.177 MΩ in a single afternoon**. A movement
+> explanation was proposed and **failed its same-day replication**, so the trigger
+> is still unknown. Each sweep takes about **20 seconds**.
+> See [[2026-08-04-movement-dependent-contact]].
 >
 > Consequences for this register:
 > - **The "8 of 8 EEG got worse across Run 2" trend is not a degradation trend.**
@@ -166,9 +169,10 @@ contact, and 2026-08-04 identified the variable that flips them.
    never for how long. B1 read 0.133 MΩ before Run 2, the best in the fleet, then
    ran fully open for 21.7 hours. **As of 2026-08-04 we know why**: the sweep
    caught a good posture and the run caught the animal moving.
-4. ⭐ **A sweep is a snapshot of posture, not of hardware.** Record whether the
-   animal was moving. An unlabelled sweep is close to uninterpretable, and every
-   sweep in this register above 2026-08-04 is unlabelled in that respect.
+4. ⭐ **A sweep is a 20 second snapshot of a flipping contact, not of hardware.**
+   Two sweeps of the same channel on different days compare two moments, not two
+   conditions. Record what the animal was doing anyway, so the correlate can be
+   found later.
 5. **`Z < 2 MΩ` no longer means the electrode is mediocre.** B1 EEG reads
    **0.052 MΩ** when the animal is still, which is in the published 10 to 50 kΩ
    band. Our electrodes are good. Our contact is intermittent.

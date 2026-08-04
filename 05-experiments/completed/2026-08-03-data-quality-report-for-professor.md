@@ -11,30 +11,31 @@ audience: PI / lab meeting
 
 ---
 
-> [!danger] ⭐⭐⭐ ADDENDUM 2026-08-04 — the root cause is now known, and this report's framing is out of date
-> **The electrodes and implants are good. The fault is a movement dependent
-> mechanical contact.** The same animal, same port, same session, read
-> **0.052 MΩ while holding still and 8.649 MΩ while moving**. 0.052 MΩ is the
-> best impedance ever recorded on this rig and sits inside the published
-> 10 to 50 kΩ band.
+> [!note] Version note
+> **The copy already sent to the PI does not contain the addendum below.** It was
+> sent as originally written on 2026-08-03. Nothing incorrect was transmitted on
+> 2026-08-04. This vault copy is annotated for our own record only.
+
+> [!warning] ⭐⭐ ADDENDUM 2026-08-04 — this report's electrode-failure framing is questionable, but the replacement is NOT yet established
+> **What is now solid:** the **electrodes and implants are good**. One channel read
+> **0.052 MΩ**, the best on this rig and inside the published 10 to 50 kΩ band. A
+> failed or degraded electrode cannot produce that number. The contact is
+> **intermittent**, flipping in both directions within minutes: B1's EEG read
+> 0.052, 8.649, 6.236 and 0.177 MΩ in one afternoon.
 >
-> **This is much better news than the report below suggests**, and the report
-> should be rewritten around it before it goes to the PI:
-> - Wherever this report explains poor yield in terms of electrode quality,
->   electrode failure or the 82% epidural failure literature, that explanation is
->   **wrong**. Those numbers were measuring posture.
-> - The impedance screen does not screen electrodes. It screens **whether the
->   animal was moving during the sweep**.
-> - Yield tracks **immobility**, which is why our one good recording is a single
->   8.1 hour unbroken sleep block. For a sleep study that is close to the best
->   possible failure mode: the signal is present exactly when we need it.
-> - The remaining work is **mechanical** — strain relief and tether load — not
->   surgical and not electrode replacement.
+> **What that does to this report:** wherever it explains poor yield in terms of
+> electrode quality, electrode failure or the 82% epidural failure literature,
+> that explanation is at best incomplete. An impedance sweep is a **snapshot of a
+> flipping contact**, not a measure of electrode condition, so single sweeps
+> cannot rank or screen channels.
 >
-> Honest caveat to carry into any presentation: the still versus moving
-> comparison was run once, on one animal, and was not replicated.
+> **What is NOT established:** the cause of the flipping. A movement hypothesis
+> was proposed and **failed its replication the same day** — an 8 mouse sweep with
+> three animals moving gave 50% connected in both the moving and the still group.
+> Do not present movement as the explanation.
 >
-> Full result: [[2026-08-04-movement-dependent-contact]].
+> Full detail, including the failed replication:
+> [[2026-08-04-movement-dependent-contact]].
 
 > [!important] ADDENDUM, same day — read this before the numbers below
 > Four things changed after this report was first written. **The conclusions
