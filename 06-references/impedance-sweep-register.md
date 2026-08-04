@@ -98,6 +98,59 @@ Bold = below the 2 MΩ open-circuit threshold. Values in MΩ at 1 kHz.
 EMG went 3 better, 3 unchanged, 2 worse. Full analysis:
 [[2026-08-03-two-8-mouse-runs]].
 
+> [!danger] ⭐⭐ Read this before drawing ANY trend from the table above
+> **Overturned 2026-08-04.** These numbers do not measure electrode condition.
+> They measure **whether the animal happened to be moving during the sweep**. The
+> same animal, on the same port, minutes apart, read **0.052 MΩ still** and
+> **8.649 MΩ moving**. See [[2026-08-04-movement-dependent-contact]].
+>
+> Consequences for this register:
+> - **The "8 of 8 EEG got worse across Run 2" trend is not a degradation trend.**
+>   Post-run sweeps were taken with animals awake and active.
+> - **A single sweep cannot classify a channel.** Comparing two sweeps of the same
+>   channel taken on different days compares two postures, not two conditions.
+> - The channel-to-channel *ranking* within one sweep is equally unsafe, because
+>   the eight animals were not all moving at the same instant.
+>
+> The register is still worth keeping, as a record of what was measured and when.
+> It is no longer evidence about electrodes.
+
+## The 2026-08-04 8-mouse sweep, and why the numbers churn
+
+| Mouse | | PRE-run1 | PRE-run2 | POST-run2 | 2026-08-04 |
+| --- | --- | --- | --- | --- | --- |
+| A1 | EEG | 6.757 | 4.446 | 8.284 | 6.078 |
+| A1 | EMG | **0.087** | **0.087** | **0.073** | **0.252** |
+| A2 | EEG | 7.644 | 5.962 | 6.917 | **1.966** |
+| A2 | EMG | 5.849 | 4.851 | **1.746** | 8.195 |
+| B1 | EEG | **1.717** | **0.133** | **0.732** | 6.236 |
+| B1 | EMG | 5.465 | 7.099 | 6.375 | 6.660 |
+| B2 | EEG | 7.110 | 5.771 | 7.336 | **0.879** |
+| B2 | EMG | 5.663 | 6.287 | 2.695 | 7.765 |
+| C1 | EEG | **0.465** | 5.720 | 7.929 | 4.323 |
+| C1 | EMG | **0.190** | **0.051** | **0.270** | **0.323** |
+| C2 | EEG | 4.418 | **1.146** | 2.507 | 5.137 |
+| C2 | EMG | **0.139** | **0.168** | **0.111** | **0.318** |
+| D1 | EEG | 6.300 | 3.980 | 7.504 | **1.172** |
+| D1 | EMG | **0.335** | **0.202** | **0.279** | 8.203 |
+| D2 | EEG | **0.660** | 2.114 | 9.200 | **0.352** |
+| D2 | EMG | **0.286** | **0.023** | **1.273** | **0.233** |
+
+Count below 1 MΩ: **7 → 6 → 5 → 6 of 16**. Flat. But the **membership changes
+almost completely** between sweeps.
+
+- Connected in all four sweeps: **A1 EMG, C1 EMG, C2 EMG.** Three channels.
+- The other 13 flip. Volatility as max/min across the four sweeps: **D2 EMG 55×,
+  B1 EEG 47×, D1 EMG 41×, D2 EEG 26×, C1 EEG 17×.**
+
+Channels do not drift. **They flip.** That is the fingerprint of a mechanical
+contact, and 2026-08-04 identified the variable that flips them.
+
+> [!note] D1's EMG never broke
+> It reads 8.203 MΩ in the 2026-08-04 8-mouse sweep, which looked like a working
+> control channel dying during the DMM work. Measured alone an hour later it
+> reads **0.688 MΩ**. Nothing broke. The animal moved.
+
 ## Three things to remember when reading any of these numbers
 
 1. **Only one electrode of each pair is measured.** The RHD2216 is bipolar, and
@@ -111,7 +164,14 @@ EMG went 3 better, 3 unchanged, 2 worse. Full analysis:
    See [[electrode-failure-and-impedance-literature]].
 3. **Impedance predicts class, not yield.** It tells you which channel may work,
    never for how long. B1 read 0.133 MΩ before Run 2, the best in the fleet, then
-   ran fully open for 21.7 hours.
+   ran fully open for 21.7 hours. **As of 2026-08-04 we know why**: the sweep
+   caught a good posture and the run caught the animal moving.
+4. ⭐ **A sweep is a snapshot of posture, not of hardware.** Record whether the
+   animal was moving. An unlabelled sweep is close to uninterpretable, and every
+   sweep in this register above 2026-08-04 is unlabelled in that respect.
+5. **`Z < 2 MΩ` no longer means the electrode is mediocre.** B1 EEG reads
+   **0.052 MΩ** when the animal is still, which is in the published 10 to 50 kΩ
+   band. Our electrodes are good. Our contact is intermittent.
 
 > [!note] The mouse label on single-port sweeps is the PORT, not the animal
 > In the 16:11 and 16:13 sweeps a single animal was moved onto port B, so both

@@ -11,6 +11,31 @@ audience: PI / lab meeting
 
 ---
 
+> [!danger] ⭐⭐⭐ ADDENDUM 2026-08-04 — the root cause is now known, and this report's framing is out of date
+> **The electrodes and implants are good. The fault is a movement dependent
+> mechanical contact.** The same animal, same port, same session, read
+> **0.052 MΩ while holding still and 8.649 MΩ while moving**. 0.052 MΩ is the
+> best impedance ever recorded on this rig and sits inside the published
+> 10 to 50 kΩ band.
+>
+> **This is much better news than the report below suggests**, and the report
+> should be rewritten around it before it goes to the PI:
+> - Wherever this report explains poor yield in terms of electrode quality,
+>   electrode failure or the 82% epidural failure literature, that explanation is
+>   **wrong**. Those numbers were measuring posture.
+> - The impedance screen does not screen electrodes. It screens **whether the
+>   animal was moving during the sweep**.
+> - Yield tracks **immobility**, which is why our one good recording is a single
+>   8.1 hour unbroken sleep block. For a sleep study that is close to the best
+>   possible failure mode: the signal is present exactly when we need it.
+> - The remaining work is **mechanical** — strain relief and tether load — not
+>   surgical and not electrode replacement.
+>
+> Honest caveat to carry into any presentation: the still versus moving
+> comparison was run once, on one animal, and was not replicated.
+>
+> Full result: [[2026-08-04-movement-dependent-contact]].
+
 > [!important] ADDENDUM, same day — read this before the numbers below
 > Four things changed after this report was first written. **The conclusions
 > below all survive**, but some numbers shifted slightly and two claims are now

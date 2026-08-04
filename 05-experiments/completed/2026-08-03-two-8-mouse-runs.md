@@ -19,6 +19,25 @@ priority: critical
 > **The one-line answer.** The electrodes are not failing randomly — they are
 > **wearing out in one direction, on the EEG side only, and they do not recover.**
 
+> [!danger] ⭐⭐⭐ THE ONE-LINE ANSWER ABOVE IS WRONG. Overturned 2026-08-04.
+> The electrodes are **not wearing out at all**. Contact is **movement
+> dependent**: the same animal on the same port read **0.052 MΩ while immobile
+> and 8.649 MΩ while moving**, a 166 fold change, and 0.052 MΩ is the best
+> impedance ever recorded on this rig.
+>
+> **What that does to this document:**
+> - **"EEG got worse on 8 of 8 animals and better on none" is a sampling
+>   artefact**, not a degradation trend. Post-run sweeps were taken with animals
+>   awake and active. Two days later B1's EEG came back to 0.052 MΩ, and D1's
+>   "dead" EMG came back to 0.688 MΩ, so the loss plainly does recover.
+> - **"Run 2 is a total loss" still stands as a fact about the data**, but the
+>   explanation changes completely: the animals were awake and moving, not
+>   degraded.
+> - The Run 1 versus Run 2 comparison remains useful as a record of what was
+>   recorded. It is no longer evidence about electrode lifetime.
+>
+> Full result: [[2026-08-04-movement-dependent-contact]].
+
 Supersedes the per-run numbers in
 [[2026-08-01-channel-mapping-correction-first-sleep]] and
 [[2026-08-01-28h-contact-duty-cycle-and-c1-negative]]. Method:
