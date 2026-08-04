@@ -137,7 +137,10 @@ def collect_impedance(day, out_dir, explicit=None):
     files = list(explicit or [])
     if not files and os.path.isdir(IMP_DIR):
         target = dt.datetime.strptime(day, "%Y-%m-%d").date()
-        for f in sorted(glob.glob(os.path.join(IMP_DIR, "*.csv"))):
+        # recursive: sweeps were foldered by date on 2026-08-04, and older flat
+        # files still match this pattern
+        for f in sorted(glob.glob(os.path.join(IMP_DIR, "**", "*.csv"),
+                                  recursive=True)):
             if os.path.basename(f).startswith("RENAME-MANIFEST"):
                 continue
             d, _, _ = sweep_identity(f)

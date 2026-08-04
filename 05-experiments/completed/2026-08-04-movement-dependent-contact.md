@@ -1,210 +1,130 @@
 ---
-tags: [experiment, eeg, electrodes, impedance, contact, movement, root-cause]
+tags: [experiment, eeg, electrodes, impedance, contact, intermittency]
 created: 2026-08-04
 status: completed
 ---
 
-# 2026-08-04 — The electrodes are fine. Contact is intermittent. Movement is NOT the proven trigger.
-
-> [!danger] ⭐⭐⭐ READ FIRST — the movement hypothesis FAILED its replication, same day
-> A pre-registered test was run within the hour: an 8 mouse sweep with B1, B2 and
-> C1 moving and the other five still. **The prediction failed completely.**
->
-> | | connected | open | rate |
-> | --- | --- | --- | --- |
-> | **MOVED** (B1, B2, C1) | 3 | 3 | **50%** |
-> | **STILL** (A1, A2, C2, D1, D2) | 5 | 5 | **50%** |
->
-> Identical. Individual cases are worse than the aggregate: **B1 moving read
-> 0.177 MΩ CONNECTED**, having read 8.649 MΩ moving two sweeps earlier. **C1
-> moving read connected on both channels.** **D1 still read open on both**, having
-> read 0.688 MΩ alone an hour before. File: `imp_8mice_b1b2c1moved.csv`.
->
-> **A sweep takes about 20 seconds**, so the animal's state held for the whole
-> measurement. This is a clean test with a clean null, not a noisy one.
->
-> **What survives:** the contact is intermittent, flipping in both directions on a
-> timescale of minutes, and **the electrodes and implants are good** — 0.052 MΩ
-> happened and cannot be produced by a bad electrode. **What does NOT survive:**
-> that movement is the trigger. Cause remains unidentified.
->
-> Everything below is preserved as written, because the single animal measurement
-> in §1 is real and still needs explaining. Read it as **one striking observation
-> that did not replicate**, not as a root cause.
+# 2026-08-04 — The electrodes are good. The contact is intermittent. The trigger is unknown.
 
 > [!abstract] TL;DR
-> **What I found.** I measured the same mouse, on the same port, in the same
-> session, twice: once while it was holding still, once while it was moving. The
-> EEG impedance went from **0.052 MΩ to 8.649 MΩ**. That is a 166 fold change,
-> and 0.052 MΩ is the best number anyone has recorded on this rig. The electrode
-> is not degraded. It is excellent when the animal is still, and it goes open
-> when the animal moves.
+> **The good news, and it is big.** One EEG channel measured **0.052 MΩ** today,
+> the best value ever recorded on this rig and inside the range published in the
+> literature. Mouse **D2** recovered completely from fully open and stayed clean
+> in every sweep. **The electrodes and the implants are good. No surgery is
+> warranted.**
 >
-> **Why it matters.** Every confusing thing about this project resolves into
-> this one fact. We have spent weeks treating a mechanical intermittency as an
-> electrode failure, an implant failure, and a soldering failure. It is none of
-> those.
+> **The problem, restated correctly.** The contact is **intermittent**. B1's EEG
+> read 6.236, then 0.052, then 8.649, then 0.177 MΩ across 23 minutes. So a single
+> impedance sweep cannot tell us whether an electrode is good. It only reports the
+> state of a contact at that instant, and that state changes within minutes.
 >
-> **What is still open.** Where exactly along the tether the contact breaks, and
-> what the mechanical fix is. Also, I did NOT repeat the still versus moving
-> comparison, so read §6 before quoting the effect size in a paper.
+> **What I got wrong today, and corrected the same day.** I proposed that movement
+> causes the loss of contact, on the strength of one still versus moving pair. I
+> then tested it and **it failed**. Movement is not established as the trigger.
+> The trigger is still unknown.
+>
+> **What is still open.** What flips the contact, and whether the slip ring is
+> involved. §7 has the plan.
 
 ---
 
-## 1. The measurement that settles it
+## 1. The session, in order
 
-Animal **B1**, alone on **port B**, no splitter, two sweeps minutes apart in one
-session. The only thing that changed between them is whether the mouse was
-moving.
+Seven sweeps in 23 minutes, all in
+`~/Downloads/impedance measurments/2026-08-04/`. Full register with file names:
+[[impedance-sweep-register]].
+
+| # | time | configuration | why I ran it |
+| --- | --- | --- | --- |
+| 1 | 16:33 | 8 mice, 64 ch/port | first sweep after the DMM test and a full restart |
+| 2 | 16:40 | D2 alone, port D | is D2's recovery real |
+| 3 | 16:42 | D1 alone, port D | did D1's EMG really die |
+| 4 | 16:44 | B1 alone, **port D** | port swap control |
+| 5 | 16:47 | B1 alone, port B, **MOUSE STILL** | ⭐ the best measurement of the day |
+| 6 | 16:48 | B1 alone, port B, **MOUSE MOVING** | generated the movement hypothesis |
+| 7 | 16:56 | 8 mice, **B1 B2 C1 moving, five still** | ⚠️ the test of that hypothesis |
+
+Preceding all of this: the DMM continuity test passed on the whole fleet
+([[dmm-eeg-path-continuity-test]]), so the boards, pads, solder joints and the
+statically rotated slip ring were already clean before any of these sweeps.
+
+## 2. ⭐ The result that matters most: the electrodes are good
+
+**Sweep 5. B1 alone on port B, mouse holding still: EEG `B/1` = 0.052 MΩ @ 179.7°.**
+
+That is the **best impedance ever recorded on this rig**, EEG or EMG. The previous
+best were C1 EMG at 0.051 MΩ and A1 EMG at 0.073 MΩ, both EMG; the best EEG we had
+ever seen was B1 itself at 0.133 MΩ. 0.052 MΩ sits inside the 10 to 50 kΩ band
+reported for epidural electrodes in [[electrode-failure-and-impedance-literature]].
+
+**A degraded, failed or badly implanted electrode cannot produce that number.**
+
+**Mouse D2 says the same thing independently.** It read 9.200 MΩ, fully open, after
+Run 2. Today it was connected on **both** channels in **every** sweep:
+
+| D2 | sweep 1 (16:33) | sweep 2 (16:40, alone) | sweep 7 (16:56) |
+| --- | --- | --- | --- |
+| EEG | 0.352 | 0.459 | 0.400 |
+| EMG | 0.233 | 0.270 | 0.088 |
+
+D2 is the only animal that managed that, and it was streaming a clean signal.
+**Channels that read open recover completely.** Whatever is wrong is not
+destructive and not permanent.
+
+> [!danger] Therefore: NO SURGERY, and the reason is now positive
+> Previous versions of this argument said "do not operate, we have not excluded
+> the cheap explanations yet". That is no longer the argument. **We have positive
+> evidence that the implants work**, from two independent animals. Do not schedule
+> surgeries, and do not use the 82% epidural failure literature to explain our
+> numbers.
+
+## 3. The problem, stated correctly: fast reversible intermittency
+
+**B1's EEG channel, one afternoon, 23 minutes:**
+
+| 16:33 | 16:47 | 16:48 | 16:56 |
+| --- | --- | --- | --- |
+| 6.236 (8 mice) | **0.052** (alone, still) | 8.649 (alone, moving) | **0.177** (8 mice, moving) |
+
+**166× spread, four values, one electrode.** No fixed property of an electrode can
+produce this.
+
+**D1's EMG makes the same point.** It read 8.203 MΩ in sweep 1 and I logged it as a
+control channel that had died during the multimeter work. Nine minutes later, alone,
+it read **0.688 MΩ**. It never died.
+
+Consequences:
+
+1. **A single sweep cannot rank, screen or classify a channel.** It is a 20 second
+   snapshot of something that changes within minutes.
+2. **Comparing sweeps across days compares two moments, not two conditions.** This
+   kills the "EEG got worse on 8 of 8 animals across Run 2" trend in
+   [[2026-08-03-two-8-mouse-runs]]: that was sampling, not degradation.
+3. **The contact recovers on its own.** Loss is not cumulative.
+
+## 4. The movement hypothesis, and why it failed
+
+### What suggested it
+
+Sweeps 5 and 6, one minute apart, same animal, same port, only the animal's
+behaviour differing:
 
 | B1, port B | EEG `B/1` | EMG `B/2` |
 | --- | --- | --- |
-| **mouse still** | **0.052 MΩ @ 179.7°** | 2.099 MΩ @ 168.6° |
-| **mouse moving** | **8.649 MΩ @ 54.6°** | 5.805 MΩ @ 33.2° |
-| change | **166×** | 2.8× |
+| **mouse still** (16:47) | **0.052 MΩ @ 179.7°** | 2.099 @ 168.6° |
+| **mouse moving** (16:48) | **8.649 MΩ @ 54.6°** | 5.805 @ 33.2° |
 
-Files: `B1_only_portB_mousestill.csv`, `B1_only_portB_moving.csv`.
+Both channels moved together and the phase tracked the magnitude, from near 180°
+(connected, capacitive) to 30 to 55° (the open signature). It looked decisive.
 
-Both channels move the same way. The phase moves with the magnitude, from near
-180° (a connected, capacitive electrode interface) to 30 to 55° (the signature we
-have always seen on open channels). This is not noise on one number, it is the
-whole channel changing state.
+### The test, prediction registered first
 
-> [!important] 0.052 MΩ is the best impedance ever recorded in this fleet
-> The previous best was C1 EMG at 0.051 MΩ and A1 EMG at 0.073 MΩ, and those were
-> EMG. For **EEG**, the best we had ever seen was B1 itself at 0.133 MΩ. B1's EEG
-> electrode is not marginal, not degrading, not failing. When the animal holds
-> still it is **better than everything else we own**.
-
-## 2. What the supporting single animal sweeps show
-
-I disconnected everything and brought animals up one at a time, with no
-splitter. With one headstage and no splitter the animal lands on `/1` and `/2`
-of whatever port it is plugged into, NOT on `/33` and `/34`. That matters when
-reading these files.
-
-| Sweep | file | EEG | EMG | reading |
-| --- | --- | --- | --- | --- |
-| **D2 alone**, port D | `imp_D2only.csv` | `D/1` 0.459 @ 2.5° | `D/2` 0.270 @ 178.5° | both connected, confirms D2 is genuinely good |
-| **D1 alone**, port D | `D1only.csv` | `D/1` 7.444 @ 44.6° | `D/2` **0.688 @ 176.3°** | EMG is FINE |
-| **B1 alone**, port D | `B1_only_portD.csv` | `D/1` 0.873 @ 4.7° | `D/2` 0.325 @ 1.8° | both connected in a different port |
-
-Two things fall out of this table.
-
-**D1's EMG did not break.** In the 8 mouse sweep an hour earlier it read 8.203 MΩ
-and I wrote it up as a channel that had died during the multimeter work. Alone,
-it reads 0.688 MΩ. It never broke. The animal was moving.
-
-**B1 works in port D too**, at 0.873 MΩ. So the port is not the variable, which
-incidentally discharges step 2 of the §6 escalation ladder in
-[[dmm-eeg-path-continuity-test]] without having to run it deliberately.
-
-### Channels to ignore in these files
-
-- `/3` through `/16` sit at 0.6 to 9 MΩ. Those are **unwired pads** on the C3410.
-  Open is the correct answer for them.
-- `/18` through `/32` sit near 0.01 MΩ at phase 0° or 180°. The RHD2216 is a
-  **16 channel** part. Those are not real inputs. Ignore them entirely.
-
-## 3. Why this explains everything we have been chasing
-
-Every open finding in this project has been a symptom of the same mechanical
-intermittency, sampled at a different moment.
-
-| Observation | What we thought | What it actually is |
-| --- | --- | --- |
-| Open electrode in 36 of 41 animal recordings | Electrodes failing, implants failing | Sweeps caught the animal moving |
-| **Hum is bimodal**: 9 to 90 µV connected, 1000 to 4700 µV open | Two populations of electrodes | One electrode, two mechanical states |
-| **Contact flipped 522 times in half a second** | Unexplained instability | An animal moving |
-| Impedance register **churns** every sweep, 13 of 16 channels swinging, D2 EMG 55×, B1 EEG 47×, D1 EMG 41× | Progressive electrode degradation | Each sweep is a different posture |
-| The DMM continuity test **passed on the whole fleet** this morning | Puzzling, since something is clearly broken | Expected. A static, unloaded, hand rotated bench test cannot reproduce an animal pulling on a tether |
-| Across Run 2, EEG got worse on 8 of 8 animals and better on none | A degradation trend | A sampling artefact. Post run sweeps were taken with animals awake and active |
-| ⭐ Our one good recording, **C1 on 2026-07-31, is a single 8.1 hour unbroken block** | A lucky animal | **Sleep is when the mouse holds still.** The data has been telling us this the whole time |
-
-That last row is the one I trust most, because it is an independent 8.73 hour
-observation that nobody designed as a test of this hypothesis, and it points the
-same way.
-
-> [!quote] Paper-ready
-> Electrode impedance in this preparation is dominated by a movement dependent
-> mechanical contact rather than by the electrode tissue interface: the same
-> animal measured on the same port read 0.052 MΩ while immobile and 8.649 MΩ
-> while moving, and recording yield tracks immobility rather than electrode age.
-
-## 4. What is now excluded, and must not be re-proposed
-
-These are dead. All of them were expensive to kill and none of them should be
-raised again without new evidence.
-
-1. **"The electrodes are degraded or failing."** B1's EEG reads 0.052 MΩ. The
-   82% epidural failure literature in [[electrode-failure-and-impedance-literature]]
-   is real, but it is **not what is happening here**, and it should no longer be
-   used to explain our numbers or to lower expectations.
-2. **"Cold solder joint on pad 0 or pad 1."** Killed this morning by the DMM
-   test, fleet wide.
-3. **"The slip ring is the fault"**, in the sense of a statically broken
-   conductor. Killed this morning. It may still be the mechanical hinge, see §5.
-4. **"The fault is per pad rather than per channel type."** B1 passed on pads
-   2 and 3.
-5. **"The fault is the port or the XDAQ."** B1 works in both port B and port D.
-6. **"We need new mice."** Absolutely not. The implants are good. **NO SURGERY.**
-7. **"The negative electrode of each pair is open."** Still unmeasurable, still
-   worth asking Kontex about, but it is no longer a leading hypothesis: a
-   permanently open negative electrode cannot produce a channel that reads
-   0.052 MΩ when the animal is still.
-
-## 5. What is still open
-
-**Where along the path does the contact break under movement?** Everything from
-the C3410 pads to the slip ring socket passed a static continuity test, so the
-candidates are the interfaces that a static test cannot load:
-
-- the **tether to headcap** connection at the animal, under tension and torque
-- the **slip ring under load**, which the hand rotation test could not reproduce
-  because it was unloaded and at rest
-- the **tether plug** at the slip ring socket, under cable drag
-- the **headstage seating** on the C3410, under cable pull
-
-The fix is mechanical, and mechanical means strain relief, cable management,
-tether counterbalance, and connector retention. It does not mean surgery and it
-does not mean new electrodes.
-
-> [!danger] Still forbidden, and now for a better reason than before
-> No "reseating" of electrodes or EMG wires, which is impossible after
-> implantation anyway. No tether change without a written argument. **And no
-> surgeries: the implants have now been positively shown to be good.**
-
-## 6. Honest limits on this result, read before quoting it
-
-I am recording these plainly so that nobody, including us, over reads the data
-later.
-
-1. **The still versus moving comparison was run ONCE, on ONE animal.** It was not
-   replicated, by choice, on 2026-08-04. The effect size is enormous and both
-   channels moved together, and it is corroborated by the C1 sleep block and by
-   the whole pattern in §3, but the direct experiment is n=1. If a reviewer asks
-   for the still/moving/still/moving alternation, we do not have it yet, and it
-   would cost about ten minutes to get.
-2. **"Moving" and "still" were judged by eye**, not scored from video. There is
-   no timestamped movement trace aligned to the sweeps.
-3. ~~Impedance sweeps are not instantaneous, so a "moving" sweep mixes postures.~~
-   **WRONG, corrected same day: a full 8 mouse sweep takes about 20 seconds.** The
-   animal's state holds for the whole measurement. This removes the excuse for the
-   failed replication above — that test was clean and it returned a clean null.
-4. Only the **positive** input of each bipolar pair is measured, as always. See
-   [[impedance-sweep-register]].
-5. **No photographs** of the boards under magnification were taken, by choice, on
-   2026-08-04. The DMM test and visual inspection results are recorded, but there
-   is no image record of the pre intervention pad state.
-
-## 6b. The replication, in full — run within the hour, prediction registered first
-
-`imp_8mice_b1b2c1moved.csv`, 8 mice, 64 ch/port. Stated before the sweep: B1, B2
-and C1 were moving, the other five were still.
+Sweep 7. 8 mice, **B1, B2 and C1 moving**, **A1, A2, C2, D1 and D2 still**.
+Prediction: movers open, still animals connected.
 
 | animal | state | EEG | EMG |
 | --- | --- | --- | --- |
-| B1 | **MOVED** | **0.177 @ 1.0° CONNECTED** | 8.693 open |
+| B1 | **MOVED** | **0.177 CONNECTED** | 8.693 open |
 | B2 | **MOVED** | 5.406 open | 7.765 open |
 | C1 | **MOVED** | **0.584 CONNECTED** | **0.644 CONNECTED** |
 | A1 | still | 5.989 open | **0.327 CONNECTED** |
@@ -213,39 +133,156 @@ and C1 were moving, the other five were still.
 | D1 | still | 4.926 open | 5.557 open |
 | D2 | still | **0.400 CONNECTED** | **0.088 CONNECTED** |
 
-Moved 3 of 6 connected. Still 5 of 10 connected. **50% against 50%.**
+**Moved: 3 of 6 connected. Still: 5 of 10 connected. 50% against 50%.**
 
-**B1's EEG has read 0.052, 8.649, 6.236 and 0.177 MΩ in a single afternoon.** No
-hypothesis about a fixed condition of that electrode can survive that. The
-contact is intermittent on a timescale of minutes and the trigger is not gross
-movement.
+### Reading this honestly, in both directions
 
-Note also that **animals that were definitely still went open** (A2 both, D1
-both). Whatever flips the contact is not gated on movement at all.
+**The group comparison is weak evidence.** It is unpaired, three animals against
+five, each with its own baseline propensity, at a ~50% base rate. That design has
+very little power and its null does not refute much.
 
-## 7. What to do next
+**What actually damages the hypothesis is B1 contradicting itself.** B1 read
+8.649 MΩ moving in sweep 6 and **0.177 MΩ connected while moving** in sweep 7. Same
+animal, same stated condition, opposite result, nine minutes apart. That is a
+within animal contradiction and no argument about pairing rescues it.
 
-1. **Reconnect all 8 animals and run.** The rig is not broken and the animals are
-   not broken.
-2. **Expect and exploit the movement dependence.** Usable EEG will come from
-   immobile periods, which is exactly when sleep happens. This is a far better
-   position than we thought we were in this morning, because sleep research only
-   needs the animal to be scoreable while it is asleep.
-3. **Attack the mechanics, not the electronics.** Strain relief and tether load
-   are the target now. Weigh the tether, check the counterbalance, check that the
-   cable cannot drag or torque the headcap.
-4. **Re-frame the professor handover pack.** The current draft explains a data
-   quality problem in terms of electrode failure. That framing is now wrong and
-   should be replaced with this result, which is a much better story: the
-   preparation works, and the remaining problem is mechanical and fixable.
-5. Keep the Kontex polarity question (Q12) in the batch, but **demote it**. It is
-   now a completeness issue rather than a candidate root cause.
+**And animals that were definitely still went open**: A2 on both channels, D1 on
+both. Whatever flips the contact is not gated on gross movement.
+
+> [!important] A sweep takes about 20 seconds
+> Measured at the bench today. So the animal's state held for the whole
+> measurement, and the failed replication **cannot** be explained away as a sweep
+> averaging over mixed postures. An earlier draft of this page claimed it could.
+> That was wrong and is retracted.
+
+**Status: movement is a plausible contributor, not an established cause.** The way
+to settle it is a paired design run properly, alternating still and moving on the
+same animal several times. See §7.
+
+## 5. What the other sweeps established
+
+**Sweep 4, B1 alone in port D:** `D/1` 0.873, `D/2` 0.325. B1 works in a port other
+than its own, so **the port, the splitter and the XDAQ path are not the variable**.
+This discharges step 2 of the §6 escalation ladder in
+[[dmm-eeg-path-continuity-test]] without having to run it deliberately.
+
+**Sweep 2, D2 alone:** confirms D2's recovery is real and not a splitter artefact.
+
+### Channels to ignore when reading the single animal files
+
+With one headstage and no splitter an animal lands on `/1` and `/2` of its port,
+**not** `/33` and `/34`.
+
+- `/3` through `/16`: 0.6 to 9 MΩ. **Unwired pads** on the C3410. Open is correct.
+- `/18` through `/32`: near 0.01 MΩ. The RHD2216 is a **16 channel** part. Not real
+  inputs.
+
+## 6. Where this leaves each hypothesis
+
+| Hypothesis | Status |
+| --- | --- |
+| Electrodes degraded or failing | ☠️ **DEAD.** 0.052 MΩ, and D2 fully recovered |
+| Implant failure, "make new mice" | ☠️ **DEAD.** Positive evidence the implants work |
+| Cold solder joint on pad 0 or 1 | ☠️ **DEAD.** DMM test, fleet wide |
+| Solder bridge or leakage on the board | ☠️ **DEAD.** Inspected fleet wide, no cross contamination |
+| Fault is per pad, not per channel type | ☠️ **DEAD.** B1 passed on pads 2/3 |
+| Port, splitter or XDAQ | ☠️ **DEAD.** B1 works in port B and port D |
+| Slip ring, as a statically broken conductor | ☠️ **DEAD.** 360° rotation clean, fleet wide |
+| **Slip ring, under load or in motion** | ❓ **OPEN.** Never tested under load. Next test |
+| **Tether construction** (thin heatshrink joints) | ❓ **OPEN.** Rebuild planned |
+| **Implantation depth**, pin marginally on the dura | ❓ **OPEN.** See caution below |
+| **Movement as the trigger** | ⚠️ **TESTED AND NOT CONFIRMED** |
+| Room electrical interference | ❓ **OPEN.** Room stripped today, see §8 |
+
+> [!warning] On the implantation depth idea
+> A pin resting marginally on the dura, making and breaking with sub millimetre
+> motion, is consistent with everything here, including flips while the animal is
+> still, since breathing and pulsation never stop. **But note two things.** First,
+> depth alone cannot explain a channel that reaches 0.052 MΩ, so it would have to
+> be the marginal contact version, not simple "too shallow". Second, **it cannot
+> help the current cohort** — you cannot re lower an implanted pin — so it is a
+> protocol change for a future surgery batch and it does not unblock the animals
+> we have. Decide it after the tests in §7, not before.
+
+## 7. Next tests
+
+### 1. Sweep loop, planned for 2026-08-05
+
+**Repeated sweeps every ~30 s for 20 minutes on one animal**, logged with time, to
+measure the **flip rate** rather than a single state. Radiens has a Python API. This
+is the instrument every remaining question needs, because:
+
+- At a ~50% base rate, **one sweep reading "good" proves nothing.** Comparisons
+  must be between duty cycles, not between single readings.
+- It converts the movement question from eyeballed labels into a time series that
+  can be scored against behaviour afterwards.
+
+### 2. Direct connection, bypassing the slip ring
+
+Custom long tether from the animal straight to the adapter board and headstage.
+Removes the largest untested mechanical element.
+
+> [!warning] Two traps in this test
+> **You would change two variables at once.** A new custom tether removes the slip
+> ring *and* replaces the tether and its joints. If the problem disappears you will
+> not know which change did it. If possible, bypass the slip ring using the
+> existing tether, or run the new tether through the existing slip ring first.
+>
+> **One clean sweep proves nothing**, for the reason in §7.1. Compare flip rates
+> over 20 minutes, not single readings.
+
+### 3. Tether rebuild, soldered joints and resin
+
+Replaces the thin heatshrink joints.
+
+> [!note] Leave a flexible section
+> Soldered joints potted in resin are stiff, and stiff joints concentrate strain at
+> the edge of the resin. Keep a deliberate flexible length between the resin and
+> the headcap, or the break point may move rather than disappear.
+
+### 4. Housekeeping
+
+- Re-frame [[2026-08-03-data-quality-report-for-professor]]. The copy already sent
+  to the PI does not carry today's findings.
+- Keep the Kontex polarity question (Q12) in the batch but **demote it**. A channel
+  reading 0.052 MΩ cannot have a permanently open negative electrode.
+
+## 8. Recording room stripped, 2026-08-04
+
+To rule out electrical interference, the room was reduced to essentials. Remaining
+on the rack: the **wifi router** with the wall ethernet, the **ASUS PC**, the
+**XDAQ**, and the **white noise generator** with its two small jack speakers.
+
+⚠️ **The Raspberry Pis and all cameras were removed, so NO VIDEO IS BEING
+RECORDED** until they go back. This blocks any behaviour scoring against the sweep
+loop, so the two need sequencing: either accept eyeball labels tomorrow, or put one
+camera back first.
+
+## 9. Honest limits on everything above
+
+1. **The still versus moving pair is n=1 and was not replicated**; the one attempt
+   to reproduce it failed, and the same animal contradicted it.
+2. **"Still" and "moving" were judged by eye**, not scored from video. The labels in
+   the file names are the experimenter's note, not an instrument reading.
+3. **No photographs** of the boards under magnification were taken, by choice. There
+   is no image record of the pre intervention pad state.
+4. Only the **positive** input of each bipolar pair is ever measured. See
+   [[impedance-sweep-register]].
+5. The 8 mouse sweeps run through **splitters**; the single animal sweeps do not.
+   Cross configuration comparisons carry that difference.
+
+> [!quote] Paper-ready
+> Electrode impedance in this preparation is dominated by an intermittent
+> mechanical contact rather than by the electrode tissue interface: the same
+> channel measured 0.052 MΩ and 8.649 MΩ within a single afternoon, and fully open
+> channels recovered spontaneously, so individual impedance sweeps were treated as
+> instantaneous contact state rather than as a measure of electrode condition.
 
 ## Related
-- [[impedance-sweep-register]] — every sweep, including today's
-- [[dmm-eeg-path-continuity-test]] — the static test that passed fleet wide this morning
-- [[2026-08-03-two-8-mouse-runs]] — the run analysis whose "8 of 8 got worse" conclusion this result overturns
-- [[2026-07-31-contact-intermittency-no-wire-control]] — the 522 flips
-- [[2026-08-01-28h-contact-duty-cycle-and-c1-negative]] — duty cycle framing, now explained
+- [[impedance-sweep-register]] — every sweep, the file names, and the session timeline
+- [[dmm-eeg-path-continuity-test]] — the static bench test, **CLOSED, passed fleet wide**
+- [[2026-08-03-two-8-mouse-runs]] — its "8 of 8 got worse" conclusion is overturned here
+- [[2026-07-31-contact-intermittency-no-wire-control]] — the 522 flips, now in context
+- [[2026-08-01-28h-contact-duty-cycle-and-c1-negative]] — duty cycle framing
 - [[electrode-failure-and-impedance-literature]] — real, but not our failure mode
-- [[2026-08-03-data-quality-report-for-professor]] — needs rewriting around this
+- [[2026-08-03-data-quality-report-for-professor]] — needs re-framing

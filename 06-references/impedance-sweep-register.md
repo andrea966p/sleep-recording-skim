@@ -13,7 +13,8 @@ status: active
 > names (`imp_8mice_corrected.csv`, `imp_8mice_channelscorrect.csv`) could not be
 > told apart and their meaning lived only in someone's memory.
 
-Files: `~/Downloads/impedance measurments/`. Copies are placed in each day folder
+Files: `~/Downloads/impedance measurments/`, **foldered by date since 2026-08-04**.
+Copies are placed in each day folder
 under `/home/skimlab/eeg-processed/YYYY-MM-DD/impedance/` by
 `pipeline/stage2_split.py`, alongside a parsed `impedance_summary.csv`.
 
@@ -43,20 +44,39 @@ name and falls back to mtime only for unlabelled files.
 | 2026-07-31 | 17:51 | 4 mice, 32 ch/port | config test, splitters removed | 128 | `imp_2026-07-31_1751_4mice-32ch_config-test-nosplitter.csv` |
 | **2026-08-02** | **01:44** | **8 mice, 64 ch/port** | ⭐ **PRE-RUN 2** (run started 01:46) | 256 | `imp_2026-08-02_0144_8mice-64ch_PRE-run2.csv` |
 | **2026-08-02** | **23:34** | **8 mice, 64 ch/port** | ⭐ **POST-RUN 2** | 256 | `imp_2026-08-02_2334_8mice-64ch_POST-run2.csv` |
-| 2026-08-04 | 16:33 | 8 mice, 64 ch/port | after the DMM test and a full restart, D2 clean | 256 | `imp_aftermultimetertestandrestart_D2clean.csv` |
-| 2026-08-04 | — | D2 alone, port D, no splitter | single animal, lands on `D/1`+`D/2` | 32 | `imp_D2only.csv` |
-| 2026-08-04 | — | D1 alone, port D, no splitter | single animal | 32 | `D1only.csv` |
-| 2026-08-04 | — | B1 alone, **port D**, no splitter | port swap control | 32 | `B1_only_portD.csv` |
-| **2026-08-04** | — | **B1 alone, port B, no splitter** | ⭐⭐ **MOUSE STILL** | 32 | `B1_only_portB_mousestill.csv` |
-| **2026-08-04** | — | **B1 alone, port B, no splitter** | ⭐⭐ **MOUSE MOVING** | 32 | `B1_only_portB_moving.csv` |
-| **2026-08-04** | — | **8 mice, 64 ch/port** | ⭐⭐ **replication: B1, B2, C1 MOVING, other five STILL. Prediction FAILED, 50% vs 50%** | 256 | `imp_8mice_b1b2c1moved.csv` |
+| 2026-08-04 | 16:33 | 8 mice, 64 ch/port | after the DMM test and a full restart | 256 | `2026-08-04/imp_2026-08-04_1633_8mice-64ch_post-DMM-restart.csv` |
+| 2026-08-04 | 16:40 | D2 alone, port D, 32 ch, no splitter | single animal, lands on `D/1`+`D/2` | 32 | `2026-08-04/imp_2026-08-04_1640_D2-alone-portD-32ch_single-animal.csv` |
+| 2026-08-04 | 16:42 | D1 alone, port D, 32 ch, no splitter | single animal | 32 | `2026-08-04/imp_2026-08-04_1642_D1-alone-portD-32ch_single-animal.csv` |
+| 2026-08-04 | 16:44 | B1 alone, **port D**, 32 ch, no splitter | port swap control | 32 | `2026-08-04/imp_2026-08-04_1644_B1-alone-portD-32ch_port-swap-control.csv` |
+| **2026-08-04** | **16:47** | **B1 alone, port B, 32 ch, no splitter** | ⭐⭐ **MOUSE STILL** | 32 | `2026-08-04/imp_2026-08-04_1647_B1-alone-portB-32ch_MOUSE-STILL.csv` |
+| **2026-08-04** | **16:48** | **B1 alone, port B, 32 ch, no splitter** | ⭐⭐ **MOUSE MOVING** | 32 | `2026-08-04/imp_2026-08-04_1648_B1-alone-portB-32ch_MOUSE-MOVING.csv` |
+| **2026-08-04** | **16:56** | **8 mice, 64 ch/port** | ⭐⭐ **replication: B1, B2, C1 MOVING, other five STILL. Prediction FAILED, 50% vs 50%** | 256 | `2026-08-04/imp_2026-08-04_1656_8mice-64ch_replication-B1B2C1-moving.csv` |
 
-> [!warning] The 2026-08-04 files do not follow the naming convention
-> They were written during a live diagnostic session and kept under the names
-> they were saved with, because those names are already cited in
-> [[2026-08-04-movement-dependent-contact]] and in the day journal. Do not rename
-> them retroactively without updating `RENAME-MANIFEST.csv` and both citing
-> documents. The last two are the most important files in this register.
+## Folder layout, reorganised 2026-08-04
+
+```
+~/Downloads/impedance measurments/
+├── RENAME-MANIFEST.csv        every original name → its current path
+├── 2026-07-31/                5 sweeps
+├── 2026-08-02/                2 sweeps, the two run brackets
+└── 2026-08-04/                7 sweeps, the DMM and intermittency session
+```
+
+All 14 sweeps now follow `imp_YYYY-MM-DD_HHMM_<config>_<context>.csv`, so
+`sweep_identity()` reads date, time and label from the **name** for every file
+with no mtime fallback anywhere. Times in the table above are the real file
+times, not estimates.
+
+> [!note] The pipeline glob was made recursive on the same day
+> `pipeline/stage2_split.py` used to glob `IMP_DIR/*.csv`, which the date folders
+> would have broken. It now globs `IMP_DIR/**/*.csv` with `recursive=True`, which
+> also still matches any flat file. Verified after the move: all 14 sweeps are
+> discovered and all 14 resolve their identity from the filename.
+
+> [!warning] A sweep name is a claim about what was measured
+> The 16:47 and 16:48 files carry `MOUSE-STILL` and `MOUSE-MOVING` in their names.
+> Those labels were assigned **by eye at the bench**, not scored from video. Treat
+> them as the experimenter's note, not as an instrument reading.
 
 `RENAME-MANIFEST.csv` sits beside the files and records every original name, so
 the rename is reversible and older notes referring to the old names can still be
@@ -148,6 +168,51 @@ almost completely** between sweeps.
 
 Channels do not drift. **They flip.** That is the fingerprint of a mechanical
 contact, and 2026-08-04 identified the variable that flips them.
+
+## ⭐ The 2026-08-04 session, in order, and what each sweep was for
+
+Seven sweeps in 23 minutes. Read top to bottom, this is the day's whole argument.
+
+| # | time | what | result | what it established |
+| --- | --- | --- | --- | --- |
+| 1 | **16:33** | 8 mice, after the DMM test and a full restart | 6 of 16 connected | **D2 recovered** (EEG 9.200 → 0.352). **D1 EMG apparently dead** (0.279 → 8.203). **B1 EEG apparently dead** (0.732 → 6.236). Membership churned, count did not |
+| 2 | **16:40** | **D2 alone**, port D | `D/1` 0.459 @ 2.5°, `D/2` 0.270 @ 178.5° | D2's recovery is real, not a splitter artefact. Confirms the clean streaming signal |
+| 3 | **16:42** | **D1 alone**, port D | `D/1` 7.444, `D/2` **0.688** | **D1's EMG never broke.** 8.203 at 16:33, 0.688 nine minutes later. First hard proof the flipping is fast and reversible |
+| 4 | **16:44** | **B1 alone in port D** | `D/1` 0.873, `D/2` 0.325 | B1 works in a **different port** ⇒ port, splitter and XDAQ path exonerated. This discharges step 2 of the §6 ladder in [[dmm-eeg-path-continuity-test]] |
+| 5 | **16:47** | **B1 alone, port B, MOUSE STILL** | `B/1` **0.052 @ 179.7°** | ⭐ **Best impedance ever recorded on this rig**, EEG or EMG, and inside the published 10 to 50 kΩ band. **The electrode and the implant are good.** |
+| 6 | **16:48** | **B1 alone, port B, MOUSE MOVING** | `B/1` **8.649 @ 54.6°** | 166× against sweep 5, one minute apart. Generated the movement hypothesis |
+| 7 | **16:56** | 8 mice, **B1 B2 C1 moving, five still** | moved 3/6, still 5/10 connected | ⚠️ **Replication FAILED.** 50% against 50%. **B1 moving read 0.177 CONNECTED**, contradicting sweep 6 in the same animal |
+
+### B1's EEG on one afternoon
+
+| 16:33 | 16:47 | 16:48 | 16:56 |
+| --- | --- | --- | --- |
+| 6.236 (8 mice) | **0.052** (alone, still) | 8.649 (alone, moving) | **0.177** (8 mice, moving) |
+
+**Four values spanning 166×, in 23 minutes, on one electrode.** This single row is
+the strongest evidence in the register: no fixed property of an electrode can
+produce it, and no single sweep can characterise it.
+
+### What the day settled, and what it did not
+
+| ✅ Established | ❌ Not established |
+| --- | --- |
+| The **electrodes and implants are good** (0.052 MΩ) | **What triggers the flip** |
+| The contact is **intermittent, fast and reversible**, both directions, within minutes | That **movement** is the trigger. Tested, and it failed |
+| A single sweep **cannot rank, screen or classify** a channel | Whether the slip ring is involved. Untested under load |
+| **Port, splitter and XDAQ** are not the variable (sweep 4) | Whether implantation depth contributes |
+| **Boards, pads and solder** are clean, fleet wide ([[dmm-eeg-path-continuity-test]]) | |
+
+> [!important] A sweep takes about 20 seconds
+> Measured at the bench on 2026-08-04. This matters for interpreting sweep 7: the
+> animal's state held for the whole measurement, so the failed replication cannot
+> be explained away as a sweep averaging over mixed postures. It was a clean test
+> with a clean null.
+>
+> It also means an unpaired comparison across 8 animals at a ~50% base rate has
+> very little power. Sweep 7 is **weak evidence against** the movement hypothesis.
+> What actually damages the hypothesis is **B1 contradicting itself** between
+> sweeps 6 and 7.
 
 > [!note] D1's EMG never broke
 > It reads 8.203 MΩ in the 2026-08-04 8-mouse sweep, which looked like a working

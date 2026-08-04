@@ -1,10 +1,42 @@
 ---
 tags: [procedure, eeg, electrodes, multimeter, diagnostics, bench-test]
 created: 2026-08-04
-status: TODO — run 2026-08-04
+status: CLOSED — run and passed fleet-wide 2026-08-04
 ---
 
 # DMM continuity test on the EEG path — the free tier-1 bench test
+
+> [!success] ✅ CLOSED 2026-08-04. Run on the whole fleet. Everything passed.
+> **Do not run this again, and do not re-open the hypotheses it killed.**
+>
+> | section | result, every board |
+> | --- | --- |
+> | §4.2 mapping, pad ↔ slip-ring pin | **PASS** — every pad beeps to its own pin, nothing else |
+> | §4.3 resistance | **no differential** — 0 to 200 Ω probe chatter on all four pads, EMG controls included |
+> | §4.4 360° rotation | **PASS** — beep solid and unbroken |
+> | §4.5 short hunt | **PASS** — no bridges |
+> | joint inspection | **PASS** — no solder crossing outside its own pad, no cross contamination |
+>
+> **Killed by this test:** cold solder joint on pad 0 or 1 · the slip ring as a
+> statically broken conductor · the fault being per pad rather than per channel
+> type (B1 passed on pads 2/3) · board leakage or bridging.
+>
+> **Two artefacts, both benign, recorded so nobody re-chases them.** A
+> **capacitor charge transient** looks like leakage: ~1100 to 1800 that vanishes to
+> open, values not repeatable across re-probes, no beep, identical on every pair
+> including the pad 2 to pad 3 control. A real short is a steady near zero **with a
+> beep that stays on**; short the probes together before each pair to dump the
+> charge. And **vias beep** — the small plated dots on the back of the board are
+> the traces surfacing, which is expected and useful for tracing a net.
+>
+> **Photographs were not taken, by choice.**
+>
+> **What it did not settle.** The rotation was by hand, unloaded, at rest, so the
+> slip ring is cleared only of what a static test can see. Within the hour the real
+> picture emerged: the contact is **intermittent, fast and reversible**, and the
+> electrodes are good. **§6 below is superseded** — step 2, the port swap, was
+> discharged incidentally when B1 worked in both port B and port D.
+> **Go to [[2026-08-04-movement-dependent-contact]].**
 
 > [!abstract] TL;DR — for non-technical readers
 > **What this is.** A multimeter test on the rig side of the slip ring that asks
