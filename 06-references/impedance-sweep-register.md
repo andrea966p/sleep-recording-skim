@@ -43,6 +43,19 @@ name and falls back to mtime only for unlabelled files.
 | 2026-07-31 | 17:51 | 4 mice, 32 ch/port | config test, splitters removed | 128 | `imp_2026-07-31_1751_4mice-32ch_config-test-nosplitter.csv` |
 | **2026-08-02** | **01:44** | **8 mice, 64 ch/port** | ⭐ **PRE-RUN 2** (run started 01:46) | 256 | `imp_2026-08-02_0144_8mice-64ch_PRE-run2.csv` |
 | **2026-08-02** | **23:34** | **8 mice, 64 ch/port** | ⭐ **POST-RUN 2** | 256 | `imp_2026-08-02_2334_8mice-64ch_POST-run2.csv` |
+| 2026-08-04 | 16:33 | 8 mice, 64 ch/port | after the DMM test and a full restart, D2 clean | 256 | `imp_aftermultimetertestandrestart_D2clean.csv` |
+| 2026-08-04 | — | D2 alone, port D, no splitter | single animal, lands on `D/1`+`D/2` | 32 | `imp_D2only.csv` |
+| 2026-08-04 | — | D1 alone, port D, no splitter | single animal | 32 | `D1only.csv` |
+| 2026-08-04 | — | B1 alone, **port D**, no splitter | port swap control | 32 | `B1_only_portD.csv` |
+| **2026-08-04** | — | **B1 alone, port B, no splitter** | ⭐⭐ **MOUSE STILL** | 32 | `B1_only_portB_mousestill.csv` |
+| **2026-08-04** | — | **B1 alone, port B, no splitter** | ⭐⭐ **MOUSE MOVING** | 32 | `B1_only_portB_moving.csv` |
+
+> [!warning] The 2026-08-04 files do not follow the naming convention
+> They were written during a live diagnostic session and kept under the names
+> they were saved with, because those names are already cited in
+> [[2026-08-04-movement-dependent-contact]] and in the day journal. Do not rename
+> them retroactively without updating `RENAME-MANIFEST.csv` and both citing
+> documents. The last two are the most important files in this register.
 
 `RENAME-MANIFEST.csv` sits beside the files and records every original name, so
 the rename is reversible and older notes referring to the old names can still be
