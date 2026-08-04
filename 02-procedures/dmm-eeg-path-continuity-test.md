@@ -160,12 +160,12 @@ Do **not** assume which socket contact belongs to which pad. Find out.
 
 Record it as you go:
 
-| pad | socket contact that beeps | beeped? |
-| --- | --- | --- |
-| 2 (EMG L, control) | | |
-| 3 (EMG R, control) | | |
-| 0 (EEG frontal) | | |
-| 1 (EEG parietal) | | |
+| pad                | socket contact that beeps | beeped? |
+| ------------------ | ------------------------- | ------- |
+| 2 (EMG L, control) |                           | yes     |
+| 3 (EMG R, control) |                           | yes     |
+| 0 (EEG frontal)    |                           | yes     |
+| 1 (EEG parietal)   |                           | yes     |
 
 > [!tip] This step alone may end the investigation
 > If pad 0 or pad 1 beeps to **no contact at all**, while pads 2 and 3 each find
