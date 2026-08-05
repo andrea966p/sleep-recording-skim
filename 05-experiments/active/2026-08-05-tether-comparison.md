@@ -193,17 +193,73 @@ prediction was written after its first supporting sweep.
 
 ## 10. Results
 
-*To be filled after the session.*
-
-| arm | window | sweeps | `B/1` duty | `B/2` duty | `D/1` duty | `D/2` duty |
+| arm | window | sweeps | `B/1` B1 EEG | `B/2` B1 EMG | `D/1` D2 EEG | `D/2` D2 EMG |
 | --- | --- | --- | --- | --- | --- | --- |
-| A original |  |  |  |  |  |  |
-| B short soldered |  |  |  |  |  |  |
-| C long direct |  |  |  |  |  |  |
+| **A** original | 16:36:59-16:55:59 | 20/20 | 9/20 = **45%** | 4/20 = **20%** | 8/20 = 40% | 20/20 = 100% |
+| **B** short soldered | 17:46:17-18:05:17 | 20/20 | **20/20 = 100%** | **15/20 = 75%** | 3/20 = 15% | 19/20 = 95% |
+| **C** long direct | | | | | | |
+
+Fisher exact, arm B against arm A: `B/1` **p = 0.0001**, `B/2` **p = 0.0006**.
+Controls: `D/1` p = 0.078 (went **down**), `D/2` not significant.
+
+```
+B1 EEG state, arm A:  CoooooooCCCCCoCCCooo     5 flips, median 2.913, max 9.089
+B1 EEG state, arm B:  CCCCCCCCCCCCCCCCCCCC     0 flips, median 0.903, max 1.341
+```
+
+> [!success] The whole distribution moved, not just the threshold crossings
+> B1's EEG never went open once in arm B, and its **worst** reading of 20 sweeps was
+> 1.341 MΩ against a worst of 9.089 in arm A. Zero flips. The channel stopped behaving
+> like an intermittent contact.
+
+> [!success] The controls exclude a session-wide improvement
+> Neither D2 channel improved. `D/1` went **down**, 40% → 15%. A drift in the room, the rig
+> or the measurement would have lifted both animals together; they moved in opposite
+> directions, so the change is specific to B1.
+
+### ⚠️ Limitations of the A→B comparison, which cannot be removed
+
+> [!danger] A against B confounds three things at once
+> The swap required **isoflurane, handling, and re-plugging the headcap connector**. Arm A
+> had **no** preceding anaesthesia. So four explanations fit the result equally well:
+> 1. the soldered tether is genuinely better
+> 2. **re-seating the connector** fixed a bad contact, which any swap would have done
+> 3. the animal was **recovering from isoflurane** for part or all of arm B
+> 4. some combination
+>
+> **Arm A2, the handling control, was ruled out on welfare grounds** — every tether change
+> costs an isoflurane episode and the animal cannot absorb another. This is a legitimate
+> constraint, not an oversight, and the limitation stands in the record instead.
+
+> [!note] Partial evidence against the anaesthesia explanation
+> Arm B drifts upward across the block: `B/1` first-10 median 0.741 → last-10 median 0.994,
+> rho **+0.51** against sweep number; `B/2` rho +0.22. Consistent with recovery from
+> isoflurane, since sweep 1 was only ~4 minutes after the swap.
+>
+> **But `B/1` stayed 10/10 connected in both halves.** If anaesthesia were doing the work,
+> flips should have returned by the end of the block. They did not. Anaesthesia looks like a
+> partial contributor to the magnitude, not the explanation for the effect.
+
+> [!important] ⭐ Why arm C is still a valid test despite all of the above
+> **Arm C also requires isoflurane, handling and a re-plug, so B and C carry the same
+> exposure and it cancels.** B against C was always the designed single-variable test:
+> both tethers are soldered and resined, and the only difference is the slip ring.
+>
+> Two protocol requirements follow:
+> - **Start arm C's first sweep ~4 minutes after the swap**, matching arm B, so both arms
+>   sit at the same point in post-anaesthesia recovery.
+> - **Run 40 sweeps**, not 20. No extra anaesthesia, and it provides a well-recovered late
+>   window to compare against arm B's late window.
+
+> [!tip] The free substitute for arm A2
+> Re-run a block **hours later with the tether untouched**. No handling, no isoflurane, no
+> cost to the animal. If B1 still reads near 100%, anaesthesia is excluded and the tether
+> result stands alone. If it has collapsed back toward 45%, the improvement was temporary,
+> which would matter more.
 
 ## 11. Verdict
 
-*To be filled after the session.*
+*Pending arm C.*
 
 > [!quote] Paper-ready
-> *To be written after the result, not before.*
+> *To be written after arm C, not before.*
