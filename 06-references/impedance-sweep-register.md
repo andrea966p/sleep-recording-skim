@@ -59,8 +59,19 @@ name and falls back to mtime only for unlabelled files.
 ├── RENAME-MANIFEST.csv        every original name → its current path
 ├── 2026-07-31/                5 sweeps
 ├── 2026-08-02/                2 sweeps, the two run brackets
-└── 2026-08-04/                7 sweeps, the DMM and intermittency session
+├── 2026-08-04/                7 sweeps, the DMM and intermittency session
+└── 2026-08-05/                the tether comparison, one subfolder per arm
+    ├── armA-original/
+    ├── armB-short-soldered/
+    └── armC-long-direct-noslipring/
 ```
+
+> [!important] 2026-08-05 onward, a block of sweeps is one register row, not twenty
+> The tether comparison fires ~20 sweeps per arm because the primary outcome is a **duty
+> cycle**, not a reading. Register the **arm**: its clock window, its configuration, how
+> many sweeps it fired and the duty cycle per channel. Listing every individual file would
+> bury the register in rows that individually mean nothing.
+> Design: [[2026-08-05-tether-comparison]].
 
 All 14 sweeps now follow `imp_YYYY-MM-DD_HHMM_<config>_<context>.csv`, so
 `sweep_identity()` reads date, time and label from the **name** for every file
