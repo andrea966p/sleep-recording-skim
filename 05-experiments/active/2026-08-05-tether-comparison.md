@@ -257,9 +257,63 @@ B1 EEG state, arm B:  CCCCCCCCCCCCCCCCCCCC     0 flips, median 0.903, max 1.341
 > result stands alone. If it has collapsed back toward 45%, the improvement was temporary,
 > which would matter more.
 
-## 11. Verdict
+## 11. 🔴 B1 died under isoflurane, and what that costs this experiment
 
-*Pending arm C.*
+B1 was lost on induction for the arm C tether swap, evening of 2026-08-05. Colony is now
+**n = 7**: A1, A2, B2, C1, C2, D1, D2.
+
+**Arms A and B are complete and stand.** 40 sweeps, both blocks clean, and they remain the
+strongest result of the project.
+
+**What is permanently lost:** arm C against arm B in the same animal. That was the only
+comparison that isolated the **slip ring**, because it held tether construction constant.
+No remaining animal has a soldered-tether block, and giving one would cost an isoflurane
+episode per animal.
+
+### Arm C, revised for 2026-08-06: D2
+
+| channel | baseline, arms A + B pooled, original tether |
+| --- | --- |
+| `D/1` EEG | **11/40 = 27.5%** — headroom; 60% would reach p = 0.0032 at n = 40 |
+| `D/2` EMG | **39/40 = 97.5%** — at the ceiling, so it serves as a **harm detector** |
+
+D2 is the only remaining animal with a genuine duty-cycle baseline, and the comparison is
+still **within-animal**. Every other candidate has isolated single sweeps only, which are
+worthless as a baseline at a ~50% flip rate.
+
+Protocol: D2 → long tether, **stay on port D**; **D1 onto port B as a free concurrent
+control** (rig-end connection needs no anaesthesia); first sweep **~4 min after the swap**
+to match arm B; **40 sweeps**; re-run `remap.py` first.
+
+> [!danger] The claim has to change with the design
+> D2's baseline is the **original heatshrink tether with the slip ring**. The long custom
+> tether changes **construction and the slip ring together**. Tomorrow therefore tests
+> **"does the new chain help"**, not **"is it the slip ring"**. The second claim is no
+> longer available at any sample size without another anaesthesia per animal.
+
+> [!warning] Welfare, before the next induction
+> An animal was lost on induction. Vaporiser setting, flow and warming should be checked
+> before D2 goes under, since D2 is the healthiest animal remaining and the one with the
+> 0.017 MΩ channel.
+
+## 12. Verdict
+
+**Interim, arms A and B only.** Replacing a thin-heatshrink tether with a soldered and
+resined one, on B1, took its EEG duty cycle from **45% to 100%** and its EMG from **20% to
+75%**, with the worst reading of 20 sweeps falling from 9.089 MΩ to 1.341 MΩ and flips from
+5 to 0. Concurrent controls in a second animal did **not** improve, ruling out session-wide
+drift.
+
+**The effect is real and large. Its cause is not yet isolated**, because the swap bundled
+tether construction, connector re-seating and an isoflurane episode, and the handling
+control was ruled out on welfare grounds.
 
 > [!quote] Paper-ready
-> *To be written after arm C, not before.*
+> Electrode contact was quantified as a duty cycle, the proportion of repeated 1 kHz
+> impedance sweeps below 2 MΩ, rather than as a single measurement, because the contact
+> was found to alternate between connected and open states within minutes. In one animal,
+> replacing a heat-shrink-jointed tether with a soldered and resin-encapsulated one raised
+> the EEG duty cycle from 9 of 20 sweeps to 20 of 20 (p = 0.0001, Fisher exact) while a
+> concurrently measured control animal showed no improvement. Because the exchange also
+> involved re-seating the headstage connector under anaesthesia, the improvement cannot be
+> attributed to tether construction alone.

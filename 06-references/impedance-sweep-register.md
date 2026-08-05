@@ -52,6 +52,34 @@ name and falls back to mtime only for unlabelled files.
 | **2026-08-04** | **16:48** | **B1 alone, port B, 32 ch, no splitter** | ⭐⭐ **MOUSE MOVING** | 32 | `2026-08-04/imp_2026-08-04_1648_B1-alone-portB-32ch_MOUSE-MOVING.csv` |
 | **2026-08-04** | **16:56** | **8 mice, 64 ch/port** | ⭐⭐ **replication: B1, B2, C1 MOVING, other five STILL. Prediction FAILED, 50% vs 50%** | 256 | `2026-08-04/imp_2026-08-04_1656_8mice-64ch_replication-B1B2C1-moving.csv` |
 
+## ⭐ 2026-08-05, the tether comparison. One row per BLOCK, not per sweep
+
+Sweeps became **automated** on this date (gRPC `GetIntanImpedance`, see [[2026-08-05]]), so
+blocks of 20 replaced single sweeps. Duty cycle = fraction of sweeps below 2 MΩ.
+
+| block | window | config | n | `B/1` | `B/2` | `D/1` | `D/2` | folder |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| **arm A** original tether | 16:36:59-16:55:59 | B1 port B + D2 port D, 32 ch/port | 20 | **45%** | **20%** | 40% | 100% | `2026-08-05/armA-original/` |
+| **arm B** short soldered | 17:46:17-18:05:17 | same | 20 | **100%** | **75%** | 15% | 95% | `2026-08-05/armB-short-soldered/` |
+
+Fisher exact B against A: `B/1` **p = 0.0001**, `B/2` **p = 0.0006**. Controls did not
+improve (`D/1` fell 40% → 15%), excluding session-wide drift.
+Full analysis and its limits: [[2026-08-05-tether-comparison]].
+
+One-off sweeps from the same day live in `2026-08-05/00-checks/`: the 8-mouse pre-session
+sweep (16:22), the 2-port config check (16:26), the **unipolar LFP reference mouse** (17:23,
+see [[2026-08-05-unipolar-lfp-mouse-reference]]) and the post-swap check (17:42).
+
+> [!danger] 🔴 B1 died under isoflurane on 2026-08-05
+> Colony is now **n = 7**. Its arm A and arm B blocks stand and are the strongest data in
+> this register. **Arm C against arm B, the only comparison that isolated the slip ring,
+> is permanently lost.**
+
+> [!warning] A duty cycle and a single sweep are not the same measurement
+> Every row above 2026-08-05 is a **single 20 second snapshot** of a contact that flips
+> within minutes. Every row from 2026-08-05 onward is a **rate over 20 minutes**. Do not
+> put them in the same column and do not compare them directly.
+
 ## Folder layout, reorganised 2026-08-04
 
 ```
