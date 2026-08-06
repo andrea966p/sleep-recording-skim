@@ -106,6 +106,21 @@ means the channel is statistically distinguishable from a cable attached to noth
 
 **Four channels out of fourteen beat an empty cable.** One animal has both.
 
+### Which mice are recordable, in one table
+
+Re-scored against the 2,240-reading instrument floor described in §6.
+
+| animal | verdict |
+| --- | --- |
+| **B1, the new mouse** | ✅ **recordable, EEG and EMG. The only one.** |
+| A1 | EMG only. Movement and wake detectable, **sleep cannot be staged.** |
+| D2 | EMG only. Same. |
+| B2, C1, C2, D1 | ❌ not recordable, neither channel beats an unwired input |
+| A2 | no mouse, negative control |
+
+**If we started a recording right now, 1 animal of 8 would give scoreable sleep and 3 of 8
+would give any signal at all.**
+
 > [!warning] Single measurements are actively misleading, and this is the proof
 > Mouse C1 looked healthy in a one-off measurement this morning, 0.155 MOhm on its EMG. Over
 > 20 consecutive measurements it scored **0 out of 20** on both channels and changed state 9
@@ -146,11 +161,33 @@ tether today.
 
 Now formally designed and partly underway: [[2026-08-06-unloaded-chain-interference]].
 
-**Part A, what the empty cable itself does.** We strip it one element at a time and measure
-after each removal: full cable, then without the tether, then without the slip ring, then
-with nothing plugged in at all. Whichever removal drops the false-positive rate names the
-leaking element. **First result is already in: removing the tether changed nothing** (22.5%
-before, 26.7% after), so the tether is not the source. Slip ring is being tested now.
+**Part A is finished, and the answer is that our hardware is not the problem.** We stripped
+the empty cable one element at a time and measured after each removal:
+
+| what was plugged in | reported "connected" |
+| --- | --- |
+| tether + slip ring + amplifier board | 22.5% |
+| slip ring + amplifier board | 26.7% |
+| **amplifier board alone** | **23.3%**, best reading 0.107 MOhm |
+
+Removing the tether changed nothing. Removing the slip ring changed nothing. **A bare
+amplifier board with nothing attached still reported an impedance we would have called an
+excellent electrode.**
+
+We then confirmed this against a far larger control that was already sitting in our data.
+Each mouse uses only **2 of its chip's 16 amplifier inputs**, so the other 14 are real
+amplifier inputs with **no wire attached at all**, measured on every port in every sweep.
+Across 2,240 such readings the false-positive rate was **21.4%** at the old 2 MOhm pass mark
+and **3.1%** at the new 0.5 MOhm one, matching the cut cable to within one percent.
+
+> [!success] Conclusion for the professor's question, first half
+> The spurious "connected" readings come from **the amplifier's own behaviour on a floating
+> input**, not from leakage in our tethers, slip rings or splitters. Our cabling is
+> exonerated. The lowest reading an unwired input produced was **0.051 MOhm**, which is the
+> same as the best electrode value ever recorded on this rig, so **a single low impedance
+> reading is not evidence of contact.**
+
+**Part B, whether it disturbs its neighbours**, is designed and not yet run.
 
 **Part B, whether it disturbs its neighbours.** We move the empty cable onto the new mouse's
 splitter and alternate it in and out, four blocks, measuring both impedance and raw signal,

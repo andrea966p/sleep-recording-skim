@@ -63,6 +63,69 @@ is swept **15 times back to back**, about 8 minutes per rung at 31.4 s per 256-c
 **Outcome per rung:** fraction of readings below 2 MOhm, fraction below 0.5 MOhm, median,
 min and max |Z|, and the phase distribution.
 
+### ✅ Part A RESULT, 2026-08-06. The ladder is flat and the chain is innocent.
+
+| rung | configuration | \|Z\| < 2 MOhm | \|Z\| < 0.5 MOhm | best reading |
+| --- | --- | --- | --- | --- |
+| **A3** | tether + slip ring + headstage | 9/40 = **22.5%** | 1/40 | 0.248 MOhm |
+| **A2** | slip ring + headstage, no tether | 8/30 = **26.7%** | 1/30 | 0.266 MOhm |
+| **A1** | **headstage only** | 7/30 = **23.3%** | 1/30 | **0.107 MOhm** |
+| **A0** | nothing plugged | **not measurable, see below** | | |
+
+**Removing the tether changed nothing. Removing the slip ring changed nothing.** A bare
+headstage with nothing attached to it still produced 0.107 MOhm, a value we would have read
+as an outstanding electrode.
+
+> [!warning] A0 as designed is degenerate
+> Unplugging the headstage from the splitter does not leave an empty channel to measure, it
+> **removes the channels**. Port A dropped from 64 to 32 amplifier channels and the total from
+> 256 to 224; `A/33` and `A/34` ceased to exist. The instrument floor cannot be measured this
+> way.
+
+### ⭐⭐⭐ The real A0: unwired amplifier inputs, already in every sweep we own
+
+Each mouse is wired to only **2 of its chip's 16 amplifier inputs** (pads 0-3 → `/1` and `/2`).
+That leaves `/3` to `/16` and `/35` to `/48` as **real amplifier inputs with no wire attached**,
+on every port, in every sweep ever taken. They are the instrument floor, free, with enormous n.
+
+⚠️ `/17`-`/32` and `/49`-`/64` must be **excluded**: those are inactive slots, internally tied,
+and they read ~0.051 MOhm essentially always (96.2% below 0.5 MOhm here). Including them would
+destroy the control.
+
+| control | n | < 2 MOhm | < 0.5 MOhm | min |
+| --- | --- | --- | --- | --- |
+| A2 cut tether, teardown ladder | 100 | **22.5%** | **3.0%** | 0.107 |
+| **unwired amplifier inputs, all 4 ports, 20 sweeps** | **2240** | **21.4%** | **3.1%** | **0.051** |
+
+> [!success] Two independent controls agree to within one percent
+> A cut tether through a slip ring and a splitter, and a bare amplifier input with no cable
+> at all, produce the **same false-positive rate**. The false positives are the **amplifier's
+> own floating-input behaviour**, mechanism (b) of §1. **Mechanism (a) is excluded: our
+> tethers, slip rings and splitters are not leaking.**
+
+> [!danger] The unwired floor reached 0.051 MOhm
+> That is the same value as the best electrode reading ever recorded on this rig. **A single
+> low impedance reading, on its own, is not evidence of contact.** Only a duty cycle compared
+> against this floor is.
+
+### Recordable animals, scored against the 2240-sample floor at 0.5 MOhm
+
+| animal | EEG | EMG | verdict |
+| --- | --- | --- | --- |
+| **B1, new mouse** | 6/20, **p = 3e-05** | 13/20, **p = 5e-15** | ✅ **RECORDABLE, both channels** |
+| A1 | 1/20 n.s. | 14/20, **p = 1e-16** | EMG only, **cannot stage sleep** |
+| D2 | 1/20 n.s. | 14/20, **p = 1e-16** | EMG only, **cannot stage sleep** |
+| B2 | 0/20 n.s. | 0/20 n.s. | ❌ not recordable |
+| C1 | 0/20 n.s. | 0/20 n.s. | ❌ not recordable |
+| C2 | 1/20 n.s. | 2/20 n.s. | ❌ not recordable |
+| D1 | 1/20 n.s. | 0/20 n.s. | ❌ not recordable |
+| A2 | no mouse | no mouse | negative control |
+
+**1 animal of 8 would yield scoreable sleep. 3 of 8 yield any signal at all.**
+
+⚠️ Impedance predicts **class, not yield** — the 2 August run's pre-registered predictions came
+out 4 correct, 3 wrong, 1 void. B1 being recordable is necessary, not sufficient.
+
 > [!warning] Re-run `remap.py` after every rung
 > `ntvChanIdx` is global. Unplugging a headstage can change how many channels a port
 > enumerates, which silently shifts every downstream label. **Confirm the channel count and
