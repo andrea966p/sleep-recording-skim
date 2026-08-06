@@ -129,6 +129,45 @@ Written before the recording. This is a genuine test of whether impedance predic
 - All 256 primary channels recorded, 1000 Hz, about 1.84 GB/h. 845 GB free at the start.
 - Record the start and stop clock times.
 
-## 8. Results
+## 8. Implementation
+
+Script: `eeg-emg-analysis/qc/usable_fraction_vs_floor.py`, run as
+`python usable_fraction_vs_floor.py /home/skimlab/radix/data/allego_0__uid0806-12-45-02`.
+
+**XDAT layout, verified on this file:** `float32`, **262 interleaved channels**
+(256 primary + 2 aux + 2 din + 2 dout), values already in **µV**. Channel label comes from
+`.xdat.json` → `sapiens_base.biointerface_map`, as `port` + `/` + `site_num`, in file order.
+Sample count = filesize ÷ (262 × 4). Read with `np.memmap`, the file is several GB.
+
+## 9. Results
+
+**Recording:** `allego_0__uid0806-12-45-02`, started **12:45:02 KST**, 1000 Hz, all 256
+primary channels. Stopped ~17:00.
+
+### Smoke test on the first 90 seconds, before the real analysis
+
+Run only to prove the pipeline is correct, **not a result**. n = 9 epochs.
+
+> [!success] The falsification test passes
+> The **floor control channels score 0.00% usable** and **A2, which has no mouse, scores
+> 0.0%**. The criterion does not manufacture signal out of nothing, which is the thing that
+> had to be true before any animal number could be believed.
+
+Median 60 Hz amplitude per channel, µV, unnotched:
+
+| connected | µV | | open | µV |
+| --- | --- | --- | --- | --- |
+| B1 EMG | **12.6** | | C2 EEG | 844 |
+| D2 EMG | **25.7** | | B2 EEG | 1092 |
+| C1 EMG | **26.7** | | D2 EEG | 1597 |
+| B1 EEG | **39.1** | | A2 EEG (**no mouse**) | 3553 |
+| | | | A1 EEG | 5574 |
+
+**Cleanly bimodal, with nothing between 40 and 600 µV**, reproducing the 9-90 µV versus
+1000-4700 µV signature measured across 41 earlier animal-recordings. The one value in the
+valley is **A1's EMG at 609 µV**, which this morning's impedance called excellent
+(p = 1e-16). Worth watching over the full recording.
+
+### Full recording
 
 To be filled after the recording stops.
