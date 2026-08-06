@@ -1,227 +1,257 @@
 ---
-tags: [status, eeg, impedance, duty-cycle, report, professor]
+tags: [status, eeg, impedance, recording, data-quality, report, professor]
 created: 2026-08-06
 status: complete
 ---
 
-# Rig status, 6 August 2026, morning: what the rig can do and what it is actually doing
+# Rig status, 6 August 2026: what the rig can do, what it is doing, and how we know
 
-> [!abstract] TL;DR
-> The rig can physically carry 8 mice and that part is finished and working. What it cannot
-> do is keep them electrically connected. This morning I measured every animal 20 times in a
-> row and only **1 animal of 8 has a genuinely working EEG and EMG pair**.
+---
+
+# PART 0 — The very short version
+
+> [!quote] Paste ready. Nothing below is needed to understand this.
+> **Where we are.** The rig can carry 8 mice and that part works. Only **1 of 8 animals produces
+> usable EEG**. That animal is the one we let recover for **16 days** before tethering, instead of
+> the 8 to 10 days the others got.
 >
-> Two things happened today that change how we should read all of our impedance numbers.
-> First, one slot on the rig turned out to hold **no mouse at all**, just a cut cable, and it
-> reported "connected" impedances 22% of the time. That gave us our first ever negative
-> control and it tells us our old pass mark was too generous. Second, a mouse that recovered
-> for **16 days before being tethered** is the only animal on the rig with a perfectly stable
-> signal: 40 out of 40 measurements connected, zero dropouts.
+> **What changed today.** We discovered that one position on the rig held a **cut cable with no
+> mouse on it**, and it passed our quality test 22% of the time. That gave us our first true
+> negative control. We now judge every channel against **112 amplifier inputs that have no
+> electrode attached**, recorded at the same instant in the same file.
 >
-> Still open: we cannot yet say whether that mouse is good because of the longer recovery or
-> because of its new tether, because it got both at once.
+> **Why that matters.** Two things we believed were unsafe. First, a single impedance reading
+> means nothing: an empty cable can read better than a real mouse. Second, once you filter a
+> recording, **a bare wire produces a convincing EEG trace**, about 69 microvolts of it. So neither
+> a good impedance number nor a good looking trace is evidence.
+>
+> **What we use instead.** We repeat each measurement 20 to 40 times and report the **fraction
+> connected**, and we judge cleaned recordings by the **shape of the frequency spectrum**, which
+> filtering cannot fake. Real brain activity falls steeply with frequency; noise is flat.
+>
+> **Result.** One animal, B1, is at **99.7% usable** with zero artefact and a clearly biological
+> spectrum. Seven animals are indistinguishable from an unconnected amplifier. Statistics are
+> Fisher exact tests against the unconnected control. All four channels that pass are highly
+> significant, the weakest at p = 0.00003. Every other channel is not significant.
+>
+> **How to read it.** The bottleneck is **electrical contact**, not surgery and not the recording
+> system. The single most promising lead is the **recovery time before tethering**, and the next
+> experiment separates that from the tether that animal also received.
 
-Detail and statistics: [[2026-08-06-fleet-duty-cycle-census]]
-Yesterday's tether experiment: [[2026-08-05-tether-comparison]]
-Root cause work: [[2026-08-04-movement-dependent-contact]]
-Planned next test: [[2026-08-06-unloaded-chain-interference]]
+---
 
-## 1. Can the rig record 8 mice at the same time?
+# PART 1 — The full report
 
-**Yes on capacity, and capacity is not our problem.**
+> [!abstract] TL;DR for the rest of this page
+> §1 answers whether the rig can record 8 mice. §2 explains the method and why we changed it.
+> §3 gives the results with figures. §4 is the statistics and how to interpret them. §5 is what
+> is still open and what we do next.
 
-Four ports, each with a C3442 splitter carrying two animals, gives 8 mice and **256 amplifier
-channels**. I enumerated all 256 this morning and every one returned a measurement. That is
-exactly the hard ceiling of the XDAQ Core, which supports 8 headstages and no more, so the
-rig is sitting precisely at its design limit with nothing wasted.
+Underlying documents: [[2026-08-06-fleet-duty-cycle-census]] ·
+[[2026-08-06-recording-data-quality-preregistration]] · [[2026-08-06-unloaded-chain-interference]] ·
+[[eeg-artefact-and-railing-rejection-policy]] · [[2026-08-05-tether-comparison]] ·
+day log [[2026-08-06]]
 
-**No on yield.** The limiting factor is electrical contact between the implanted electrode and
-the amplifier, which is the same bottleneck we identified on 4 August. Averaged over 20
-measurements, **1.8 of 8 animals** had both channels connected at any given moment, and once
-the numbers are corrected against the negative control described below, the honest figure is
-**1 animal of 8**.
+## 1. Can the rig record 8 mice at once?
 
-## 2. How we measure this now, and why it changed
+**Capacity: yes, and it is not the constraint.** Four ports, a splitter on each, two mice per
+port, **256 amplifier channels**. All 256 were enumerated and returned data. That is the hard
+ceiling of the XDAQ Core, which supports 8 headstages, so the rig sits exactly at its design
+limit.
 
-An impedance reading tells us whether an electrode is electrically connected. On 4 August we
-found that this connection **switches on and off within minutes** in the same animal without
-anything being touched, so a single reading is close to a coin toss and cannot be used to
-judge a channel.
+**Yield: no.** Only **1 animal of 8** produces usable EEG. The limiting factor is the electrical
+contact between the implanted electrode and the amplifier.
 
-Since then we measure a **duty cycle** instead: fire the same measurement 20 or 40 times in a
-row and count the fraction that come back connected. One measurement of all 256 channels
-takes **31.4 seconds**, and the whole process is now automated, so a 20-measurement block
-costs 10 minutes of unattended time.
+## 2. Method, and why we changed it today
 
-> [!success] The method proved itself today
-> Mouse D2 was measured yesterday and again today, 24 hours apart, through a hardware change
-> in between. Its EEG duty cycle was **27.5% yesterday and 30% today**, and its EMG was
-> **97.5% and 100%**. So a duty cycle is a **stable, repeatable property of a channel**, not
-> noise. This is what makes the comparisons below meaningful.
+### 2.1 The problem with our old measure
 
-## 3. 🔴 The most important finding: our pass mark was too generous
+We used to judge an electrode by a single impedance reading, calling anything below 2 megohm
+"connected". Today we found out what that number is worth.
 
-The A2 position on the rig holds **a cut cable attached to nothing**. There is no mouse. The
-cable is still wired through its rotating connector (slip ring), its amplifier board
-(headstage) and the shared splitter into the recording system, so it was measured 20 times
-this morning alongside the real animals, entirely by accident.
+The **A2 position on the rig holds a cut cable with no mouse attached to it**, still wired through
+its rotating connector, its amplifier board and the shared splitter. It was measured 20 times
+alongside the animals. **It passed the 2 megohm test 22% of the time**, with a best reading of
+0.248 megohm.
 
-**It should have read disconnected every single time. It did not.**
+We then found a much larger version of the same control that was already in every recording we
+have ever made. **Each mouse is connected to only 2 of its chip's 16 amplifier inputs.** The other
+14 are real amplifiers with **no wire attached**, and they are recorded anyway. Across four ports
+that is **112 channels of pure nothing**, measured simultaneously with the animals.
 
-```
-22% of the readings from a cable attached to NOTHING came back below our
-2 MOhm "connected" threshold, with a best reading of 0.248 MOhm.
-```
+![[2026-08-06-figA-threshold.png]]
 
-This is the first negative control this project has ever had, and it is bad news that we
-badly needed. It means **any channel scoring between 15% and 35% is statistically
-indistinguishable from a cable attached to nothing.**
+**Figure A.** Grey: 2,240 readings from amplifier inputs with no electrode. Blue: all animal
+channels. Green: B1. **21.4% of the bare wires pass the old 2 megohm mark.** At 0.5 megohm only
+3.1% do, while B1 still passes 47.5% of the time. This is why the pass mark moved.
 
-> [!important] The fix, which costs nothing
-> Tightening the pass mark from **2 MOhm to 0.5 MOhm** drops the false-positive rate from
-> **22% to 2.5%**, one reading in forty, while genuinely connected channels still score 30 to
-> 70 percent. We have adopted 0.5 MOhm going forward, and the empty cable now stays plugged
-> in permanently as a free control, because every measurement reads all ports at once.
+> [!warning] The consequence, stated plainly
+> **Any channel scoring between 15 and 35 percent under the old rule was statistically
+> indistinguishable from a cable attached to nothing.** Several of our historical judgements sat
+> in exactly that band.
 
-⚠️ **This does not overturn yesterday's tether result.** Yesterday's improved channel scored
-20 out of 20 against this 22% background, which is still overwhelming. What it does mean is
-that the *before* condition was partly false positives, so **the improvement we measured
-yesterday is larger than we reported, not smaller.**
+### 2.2 We measure duty cycle, not a single reading
 
-## 4. Where every animal actually stands
+Electrical contact on this rig **switches on and off within minutes** with nothing being touched.
+We established that on 4 August, watching one channel move from 6.236 to 0.052 to 8.649 megohm in
+23 minutes.
 
-Scored at the corrected 0.5 MOhm pass mark, against the empty-cable control. "Significant"
-means the channel is statistically distinguishable from a cable attached to nothing.
+So a single reading is close to a coin toss. We now fire the measurement **20 to 40 times in a row
+and report the fraction that come back connected**. One sweep of all 256 channels takes 31.4
+seconds and the process is automated, so a 20 sweep block costs 10 minutes unattended.
 
-| animal | EEG | EMG | verdict |
-| --- | --- | --- | --- |
-| **B1, the new mouse** | 30%, **p = 0.004** | 65%, **p = 1.8e-07** | **the only animal with a working pair** |
-| A1 | 5%, not significant | 70%, **p = 2.9e-08** | EMG excellent, EEG absent |
-| D2 | 5%, not significant | 70%, **p = 2.9e-08** | EMG excellent, EEG absent |
-| B2 | 0% | 0% | nothing |
-| C1 | 0% | 0% | nothing |
-| C2 | 5%, not significant | 10%, not significant | nothing |
-| D1 | 5%, not significant | 0% | nothing |
-| A2 | no mouse | no mouse | negative control |
+**The method validated itself today.** D2 measured 27.5% yesterday over 40 sweeps and 30% today
+over 20, with a hardware change in between; its muscle channel 97.5% and 100%. **A duty cycle is a
+stable, repeatable property of a channel.**
 
-**Four channels out of fourteen beat an empty cable.** One animal has both.
+### 2.3 Judging the recording itself, and a trap we nearly fell into
 
-### Which mice are recordable, in one table
+Impedance says the wire is connected. It cannot say the signal on the wire is brain activity. So we
+recorded 3.18 hours and judged the data directly, using a criterion **written down before the
+recording started** so the thresholds could not be tuned to flatter the result.
 
-Re-scored against the 2,240-reading instrument floor described in §6.
+The obvious approach is to apply the standard cleaning, a 60 hertz notch for mains interference and
+a 0.5 to 30 hertz band pass, and look at the traces. **We tested that approach by running the 112
+wire free channels through the identical cleaning.**
 
-| animal | verdict |
-| --- | --- |
-| **B1, the new mouse** | ✅ **recordable, EEG and EMG. The only one.** |
-| A1 | EMG only. Movement and wake detectable, **sleep cannot be staged.** |
-| D2 | EMG only. Same. |
-| B2, C1, C2, D1 | ❌ not recordable, neither channel beats an unwired input |
-| A2 | no mouse, negative control |
+> [!danger] The result that changed how we judge everything
+> **A channel with no wire attached comes out at a median of 69 microvolts of smooth, plausible,
+> EEG looking signal.**
+>
+> Filtering manufactures a convincing trace out of nothing. **Looking at cleaned traces cannot tell
+> you whether an electrode is connected.**
 
-**If we started a recording right now, 1 animal of 8 would give scoreable sleep and 3 of 8
-would give any signal at all.**
+What filtering **cannot** fake is the **shape of the frequency spectrum**. Real neural activity puts
+most of its power at low frequencies and falls away steeply, the so called one over f shape. Noise
+is spread evenly and is flat. So we classify by spectral slope and by the share of power in the
+0.5 to 4 hertz band, always against the unconnected controls in the same file.
 
-> [!warning] Single measurements are actively misleading, and this is the proof
-> Mouse C1 looked healthy in a one-off measurement this morning, 0.155 MOhm on its EMG. Over
-> 20 consecutive measurements it scored **0 out of 20** on both channels and changed state 9
-> and 6 times. If we had judged it on one reading we would have called it a good animal.
+## 3. Results
 
-## 5. ⭐ The new mouse, and the one number that might matter most
+### 3.1 Every animal, by impedance
 
-A mouse implanted on 21 July with the rest of the group was left in its home cage and
-**never tethered until this morning, 16 days after surgery**. It was then connected to the
-new soldered and resin-sealed 19.5 cm tether we built yesterday.
+![[2026-08-06-figB-duty-cycle.png]]
 
-It scored **40 out of 40 measurements connected, on both channels, with zero dropouts.** It
-is the only animal on the rig with a stable EEG. Its worst reading in the entire block was
-1.531 MOhm, where every other animal swings up to 8 or 9 MOhm.
+**Figure B.** Duty cycle per animal at the corrected 0.5 megohm mark, red dashed line is the
+wire free floor. **Only four bars clear it: B1 on both channels, A1's muscle channel, D2's muscle
+channel.** Everything else is at or below the level of a cable attached to nothing.
 
-For comparison, the other seven animals were tethered on 30 July, which is **8 to 10 days
-after surgery**. Our own written protocol requires **at least 14 days**. So this is the first
-animal in the project ever tethered according to our own protocol, and it is the best animal
-we have ever had.
+### 3.2 Every animal, by the recording
 
-> [!danger] Two things changed at once, so we cannot claim either yet
-> The new mouse differs from the others in **recovery time (16 days versus 8 to 10)** and in
-> **tether construction (soldered and resin-sealed versus thin heat-shrink)**. With one animal
-> and two variables, neither explanation can be claimed. I want to be explicit about this
-> because the temptation to declare "longer recovery fixes it" is strong and the data does not
-> support it yet.
+3.18 hours, 10 second epochs. **The falsification check passed first: the control channels scored
+0.00% usable and the no mouse position scored 0.0%.** Only then did we read the animals.
 
-**How we separate them, this afternoon, for free:** mouse D2 was tethered at day 8 and has a
-twice-measured baseline of 27.5 to 30 percent. It is scheduled to receive a new soldered
-tether today.
+| animal | EEG usable | EMG usable | both | longest unbroken block |
+| --- | --- | --- | --- | --- |
+| **B1, the 16 day recovery mouse** | **99.8%** | **99.7%** | **99.7%** | **39.5 min** |
+| D2 | 0.0% | 86.1% | 0.0% | none |
+| C1 | 0.0% | 36.3% | 0.0% | none |
+| A1 | 0.0% | 5.2% | 0.0% | none |
+| B2, C2, D1 | 0.0% | 0.0% | 0.0% | none |
+| A2, no mouse | 0.0% | 0.0% | 0.0% | none |
 
-- If D2 jumps to near 100%, **tether construction alone is sufficient** and recovery time is
-  not the driver.
-- If D2 improves only partly, **recovery time is carrying real weight**, and the fix for the
-  next cohort is simply to follow the 14-day protocol we already have.
+**Seven of seven implanted animals score 0.0% on EEG.** Sleep cannot be staged without EEG.
 
-## 6. The professor's question: does a dangling cable interfere with other animals?
+### 3.3 The same conclusion, reached a second way
 
-Now formally designed and partly underway: [[2026-08-06-unloaded-chain-interference]].
+![[2026-08-06-traces-filtered.png]]
 
-**Part A is finished, and the answer is that our hardware is not the problem.** We stripped
-the empty cable one element at a time and measured after each removal:
+**Figure C.** Twenty seconds per channel after cleaning, **every panel at an identical plus or
+minus 400 microvolt scale**. That fixed shared scale is what makes the comparison honest: recording
+software auto scales by default, which would zoom into each channel's noise until every panel looked
+beautiful. B1 is smooth and rolling with visible slow waves. Everything else, including the no mouse
+position and the bare wires, is dense high frequency hash.
 
-| what was plugged in | reported "connected" |
-| --- | --- |
-| tether + slip ring + amplifier board | 22.5% |
-| slip ring + amplifier board | 26.7% |
-| **amplifier board alone** | **23.3%**, best reading 0.107 MOhm |
+![[2026-08-06-psd.png]]
 
-Removing the tether changed nothing. Removing the slip ring changed nothing. **A bare
-amplifier board with nothing attached still reported an impedance we would have called an
-excellent electrode.**
+**Figure D.** The same channels as power against frequency, both axes logarithmic. **B1, the thick
+blue line, falls steeply from about 2 hertz across five orders of magnitude.** Every other line is a
+flat plateau at a different height. **Height is loudness. Shape is biology.** Only B1 has the shape.
 
-We then confirmed this against a far larger control that was already sitting in our data.
-Each mouse uses only **2 of its chip's 16 amplifier inputs**, so the other 14 are real
-amplifier inputs with **no wire attached at all**, measured on every port in every sweep.
-Across 2,240 such readings the false-positive rate was **21.4%** at the old 2 MOhm pass mark
-and **3.1%** at the new 0.5 MOhm one, matching the cut cable to within one percent.
+Numerically, the unconnected controls occupy a spectral slope range of **−1.10 to −0.04**. B1 sits
+at **−2.15 with a delta fraction of 0.47**. B2, C2, D2 and the no mouse position are all inside the
+control range.
 
-> [!success] Conclusion for the professor's question, first half
-> The spurious "connected" readings come from **the amplifier's own behaviour on a floating
-> input**, not from leakage in our tethers, slip rings or splitters. Our cabling is
-> exonerated. The lowest reading an unwired input produced was **0.051 MOhm**, which is the
-> same as the best electrode value ever recorded on this rig, so **a single low impedance
-> reading is not evidence of contact.**
+### 3.4 The one animal that works, and the unresolved reason
 
-**Part B, whether it disturbs its neighbours**, is designed and not yet run.
+The working animal was implanted on 21 July with the rest of the cohort, then **kept in its home
+cage untethered until 6 August, 16 days after surgery**. The other seven were tethered on 30 July,
+**8 to 10 days after surgery**. Our own protocol requires **at least 14 days**, so this is the first
+animal in the project ever tethered in line with it, and it is the best animal we have ever had.
 
-**Part B, whether it disturbs its neighbours.** We move the empty cable onto the new mouse's
-splitter and alternate it in and out, four blocks, measuring both impedance and raw signal,
-including a direct correlation between the empty cable's channels and the mouse's channels,
-which measures crosstalk rather than inferring it. The new mouse is used because at 100% it
-can only get worse, and getting worse is exactly what we are testing for. No anaesthesia and
-no animal handling anywhere in this.
+> [!danger] Two things changed at once, so neither can be claimed
+> That animal also received a **newly built tether with soldered joints under resin**, instead of
+> the thin heat shrink joints the others have. **Recovery time and tether construction changed
+> together, in one animal.** We cannot yet say which one is responsible, and we should resist the
+> temptation to announce that longer recovery fixes the problem.
 
-> [!note] The splitter is already partly cleared, for free
-> Two observations from this morning argue against the splitter causing harm: the new mouse
-> scored 20 out of 20 **while sharing its splitter with B2, which is completely dead**, and
-> A1's EMG scored 70% **while sharing its splitter with this very empty cable**. Neither a
-> dead partner nor an empty cable hurt its neighbour. The splitter was also excluded
-> independently on 4 August.
+## 4. Statistics, and how to interpret them
 
-## 7. Still open
+**Test used: Fisher exact test**, one sided, comparing the number of connected readings on an animal
+channel against the number of connected readings from the unconnected control channels in the same
+block. Fisher exact is the correct choice because these are small counts of successes and failures
+in two groups, where the chi squared approximation is unreliable.
 
-- **We cannot separate recovery time from tether construction.** One animal, two variables.
-  The D2 swap this afternoon addresses it.
-- **We cannot test whether the slip ring is the culprit any more.** That test needed the same
-  animal measured with two tethers that differ only in the slip ring, and the animal it was
-  planned on died on 5 August. Any replacement costs an anaesthesia episode per animal.
-- **We still only measure one half of each electrode pair.** The recording chip can test the
-  other half but neither the manufacturer's software nor the open-source alternative exposes
-  the control. This is with the vendor.
-- **No video.** All cameras were removed from the room on 4 August, so we cannot yet relate
-  contact dropouts to what the animal is physically doing.
-- **The impedance duty cycle predicts channel class, not sleep-scoring yield.** In our
-  our 2 August recording the pre-registered predictions came out 4 correct, 3 wrong, 1 void.
-  A good duty cycle is necessary, not sufficient.
+**Why the control is inside the same block.** Every threshold on this project used to be inherited
+from an earlier session or from the literature. Deriving it instead from channels recorded **at the
+same instant, on the same chips, in the same room** removes drift, room noise and session effects in
+one step, and it makes the comparison self validating: if the control does not separate from the
+animals, that is the result and no threshold will fix it.
 
-## 8. What I would say in one sentence
+| channel | connected | p against control |
+| --- | --- | --- |
+| B1 EEG | 6/20 | **3e-05** |
+| B1 EMG | 13/20 | **1.8e-07** |
+| A1 EMG | 14/20 | **2.9e-08** |
+| D2 EMG | 14/20 | **2.9e-08** |
+| all other channels | 0 to 2 of 20 | not significant |
 
-We have gone from "the electrodes are failing" to "the electrodes are fine and the connection
-is intermittent" to, today, **"we now have a negative control, a corrected pass mark, and one
-animal that works perfectly"** — and the single most valuable thing we can do next is find out
-whether that animal works because we waited 16 days or because of its new cable.
+**How to read a not significant result here.** It does **not** mean the electrode is broken. It
+means the channel cannot be distinguished from an amplifier with no wire attached, on this
+measurement, in this block. Given that we have measured a working electrode at 0.052 megohm on this
+same rig, the most likely reading is that these electrodes are fine and the **contact** is not being
+made.
+
+**Known limits, stated deliberately.**
+- **n = 1 animal** for the working case. This is a lead, not a fleet wide conclusion.
+- **Impedance predicts class, not yield.** Today's pre registered predictions came out **6 hits, 1
+  partial, 1 miss**, better than the 2 August run's 4 correct, 3 wrong, 1 void. The two failures
+  point in opposite directions, so impedance is not biased optimistic or pessimistic. It is simply
+  blind to what rides on a connected wire. **A1 is the demonstration**: impedance called its muscle
+  channel one of the best on the rig, and in the recording 296 of its 331 microvolts are mains hum.
+- **Only the positive input of each electrode pair can be measured.** The chip can test the other
+  side but neither the manufacturer's software nor the open source alternative exposes the control.
+  This is with the vendor.
+- **No video.** All cameras were removed from the room on 4 August, so we cannot yet relate contact
+  dropouts to what the animal is physically doing.
+
+## 5. Still open, and what we do next
+
+1. **Recovery time or tether construction?** The single most valuable question on the board. The
+   next experiment separates them by giving a newly built tether to an animal tethered at day 8.
+2. **A tether swap performed this evening produced an ambiguous result** and is written up as
+   provisional. The animal appeared to worsen sharply, then fully recovered 40 minutes later, which
+   is consistent with our known behaviour of contact states persisting for tens of minutes. An
+   overnight recording, which cannot be fooled by which moment we sampled, will settle it.
+3. **One muscle channel, C1, is genuinely ambiguous** and needs video to resolve.
+4. **The interference question** raised previously, whether a dangling cable disturbs its
+   neighbours, is half answered. Stripping the empty cable element by element showed **our tethers,
+   slip rings and splitters are not leaking**; the spurious readings come from the amplifier's own
+   behaviour on a floating input. The remaining half, whether the empty cable disturbs a working
+   neighbour, is designed and not yet run.
+5. **A hardware high pass filter at 1.10 hertz** is applied before the data is saved and cannot be
+   undone. It attenuates the bottom of the delta band. It is identical on all ports and all our
+   thresholds were derived from data carrying it, so our internal comparisons are unaffected, but it
+   matters for comparison with published values.
+
+> [!quote] Paper ready
+> Electrode contact was quantified as a duty cycle, the proportion of repeated 1 kHz impedance
+> sweeps below a threshold, rather than as a single measurement, because contact was found to
+> alternate between connected and open states within minutes. Thresholds were derived from
+> amplifier inputs with no electrode attached, acquired simultaneously in the same session, which
+> passed a 2 MOhm criterion in 21.4% of readings and a 0.5 MOhm criterion in 3.1%. In recorded data,
+> the same unconnected inputs yielded a median root mean square amplitude of 69 microvolts of
+> spectrally flat signal after 60, 120 and 180 Hz notch and 0.5 to 30 Hz band pass filtering,
+> demonstrating that filtered trace morphology alone is insufficient to establish electrode
+> connection. Channels were therefore classified by spectral slope relative to the unconnected
+> distribution. One of eight animals fell outside that distribution.

@@ -127,7 +127,7 @@ About 2 hours including swaps.
 ~/Downloads/impedance measurments/2026-08-05/
 ├── armA-original/
 ├── armB-short-soldered/
-└── armC-long-direct-noslipring/
+└── armC-long-direct-noslipring/   (empty: B1 died before arm C ran)
 ```
 
 Folders already created. Let Allego name files however it likes during a block; do not
@@ -415,7 +415,7 @@ not a favourable coin flip, it is a different state.
 the lowest value it produced all day. One sweep, so not a result, but no sign of damage.
 
 > [!note] Data hygiene
-> The folder `armC-long-direct-noslipring/` now holds three different conditions: the pre-block
+> The folder `05-armC-D2-longtether-noslipring-40sweeps/` now holds three different conditions: the pre-block
 > single sweep, the 40-sweep block, and the twist sweep. A folder glob therefore scores **41**
 > sweeps, not 40. Harmless here, but the conditions should be separated before any future
 > analysis globs that directory.

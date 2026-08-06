@@ -91,8 +91,40 @@ see [[2026-08-05-unipolar-lfp-mouse-reference]]) and the post-swap check (17:42)
 └── 2026-08-05/                the tether comparison, one subfolder per arm
     ├── armA-original/
     ├── armB-short-soldered/
-    └── armC-long-direct-noslipring/
+    └── armC-long-direct-noslipring/   (empty)
 ```
+
+### 2026-08-06, reorganised the same evening
+
+Numbered **chronologically**. Config string for the whole day is
+**`7mice-A2empty-4ports-64ch`** — seven mice, because the **A2 position holds a cut cable with
+no animal on it**.
+
+```
+└── 2026-08-06/
+    ├── README.md                                          channel map, traps, contents
+    ├── 01-fleet-census-20sweeps/                11:30-11:41  all 8 positions, duty cycle
+    ├── 02-teardown-rungA2-ring+headstage-15sweeps/  12:04-12:11  A2 chain, tether removed
+    ├── 03-teardown-rungA1-headstage-only-15sweeps/  12:19-12:27  A2 chain, slip ring also removed
+    ├── 04-preswap-D2-baseline-15sweeps/         15:57-16:04  20 min before D2's swap
+    ├── 05-armC-D2-longtether-noslipring-40sweeps/  16:27-16:47  arm C, finally run, on D2
+    └── 06-single-sweeps/                        one-off readings, NEVER pool these
+```
+
+> [!warning] Single sweeps must never sit inside a block folder
+> Two loose sweeps were sitting in the arm C folder, so a folder glob scored **41** sweeps
+> instead of 40. They now live in `06-single-sweeps/`. A cut tether with no mouse reads below
+> 2 MOhm about **22%** of the time, so one sweep cannot classify anything and must never be
+> pooled into a duty cycle.
+
+> [!important] ⭐ The floor control is free and is in every sweep ever taken
+> Each mouse uses only 2 of its chip's 16 amplifier inputs, so **`/3`-`/16` and `/35`-`/48` are
+> real amplifier inputs with no wire attached** — 112 per sweep. They are the null distribution:
+> **21.4% of them pass 2 MOhm, 3.1% pass 0.5 MOhm**, and one reached **0.051 MOhm**.
+> ❌ **Never include `/17`-`/32` or `/49`-`/64`** — inactive slots, internally tied, they read low
+> almost always and would destroy the control.
+> ⇒ **The connected criterion is now |Z| < 0.5 MOhm**, not 2 MOhm. Re-score old blocks before
+> quoting them. See [[2026-08-06-fleet-duty-cycle-census]].
 
 > [!important] 2026-08-05 onward, a block of sweeps is one register row, not twenty
 > The tether comparison fires ~20 sweeps per arm because the primary outcome is a **duty

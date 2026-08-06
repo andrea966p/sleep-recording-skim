@@ -18,7 +18,7 @@ status: complete
 > once, so we cannot yet say which one did it.
 
 Prior session: [[2026-08-05-tether-comparison]] · root cause: [[2026-08-04-movement-dependent-contact]]
-Register: [[impedance-sweep-register]] · files: `~/Downloads/impedance measurments/2026-08-06/fleet-census/`
+Register: [[impedance-sweep-register]] · files: `~/Downloads/impedance measurments/2026-08-06/01-fleet-census-20sweeps/`
 
 ## 1. Configuration
 
@@ -88,6 +88,21 @@ Fisher exact, each channel's 20 sweeps against the control's 40 channel-sweeps, 
 | C2 | 35% n.s. | 40% n.s. | 5% n.s. | 10% n.s. |
 | D1 | 35% n.s. | 15% n.s. | 5% n.s. | 0% n.s. |
 | D2 | 30% n.s. | 100% **2.4e-09** | 5% n.s. | 70% **2.9e-08** |
+
+### Figures
+
+![[2026-08-06-figA-threshold.png]]
+
+**Figure A.** Grey is 2,240 readings from amplifier inputs with **no electrode attached**; blue is
+all animal channels; green is B1. **21.4% of the bare wires pass the old 2 MOhm mark**, against
+3.1% at 0.5 MOhm, while B1 still passes 47.5% of the time. This single picture is the entire
+argument for moving the pass mark.
+
+![[2026-08-06-figB-duty-cycle.png]]
+
+**Figure B.** Duty cycle per animal at 0.5 MOhm, red dashed line is the wire-free floor. Only four
+bars clear it: **B1 on both channels, A1's EMG, D2's EMG**. Note that the **A2 bar, which is a cable
+with no mouse on it, is the same height as several animals' EEG bars.**
 
 > [!important] Only four channels in the entire fleet beat an empty tether
 > **A1 EMG, B1-new EEG, B1-new EMG, D2 EMG.** That is 4 of 14 measured channels, in 7 animals.
