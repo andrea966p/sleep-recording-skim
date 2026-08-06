@@ -385,3 +385,37 @@ chain is bad", and that is a very different engineering problem.
 
 🛑 **Do not revert D2 under anaesthesia on the same day.** The data is recorded and the
 decision keeps.
+
+### 🔴 Caveat added the same evening: D2 recovered, so the harm finding is PROVISIONAL
+
+At roughly 17:30, after the arm C block had ended and while the slip ring of **B1** was being
+twisted by hand, a single sweep was taken (`imp_B1twistingslipring.csv`):
+
+| site | this sweep | during arm C, 41 sweeps |
+| --- | --- | --- |
+| **D2 EEG** `D/33` | **0.396 MOhm** | 0/41 below 0.5, median 8.235, **block minimum 3.127** |
+| **D2 EMG** `D/34` | **0.404 MOhm** | 0/41 below 0.5, median 1.820, **block minimum 0.694** |
+| B1 EEG `B/1` | **0.084 MOhm** | best B1 value of the day |
+| A2 no-mouse | 7.550 MOhm | open, control behaving normally |
+
+**Both D2 channels now read below every one of the 41 values recorded during arm C.** That is
+not a favourable coin flip, it is a different state.
+
+> [!warning] What this does to §13
+> **Arm C may have captured one long open state rather than permanent harm from the swap.**
+> Our own root-cause work shows contact states persist for tens of minutes and then flip, and
+> 41 consecutive sweeps span only 21 minutes. The flat rho of −0.00 that excluded anaesthesia
+> recovery is **equally consistent with being stuck in a single state for the whole block**.
+>
+> The harm finding stands as the best reading of 41 sweeps against 15, but it is now
+> **provisional and must not be reported as established**. The overnight recording settles it:
+> a usable fraction measured over 12+ hours cannot be fooled by which state we sampled.
+
+**Twisting B1's slip ring caused no harm** — its EEG read 0.084 MOhm during the manipulation,
+the lowest value it produced all day. One sweep, so not a result, but no sign of damage.
+
+> [!note] Data hygiene
+> The folder `armC-long-direct-noslipring/` now holds three different conditions: the pre-block
+> single sweep, the 40-sweep block, and the twist sweep. A folder glob therefore scores **41**
+> sweeps, not 40. Harmless here, but the conditions should be separated before any future
+> analysis globs that directory.
