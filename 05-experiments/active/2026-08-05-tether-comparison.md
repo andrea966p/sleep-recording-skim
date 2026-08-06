@@ -317,3 +317,71 @@ control was ruled out on welfare grounds.
 > concurrently measured control animal showed no improvement. Because the exchange also
 > involved re-seating the headstage connector under anaesthesia, the improvement cannot be
 > attributed to tether construction alone.
+
+---
+
+# 13. Arm C finally ran, on D2, 2026-08-06 — and it went the wrong way
+
+**Configuration:** D2 moved to the **long custom tether, plugged directly into the headstage,
+slip ring removed entirely**. D2 stayed on port D, mouse-2 position, so `D/33` = EEG and
+`D/34` = EMG. Splitters in, 256 channels. `remap.py` re-run and confirmed before scoring.
+
+**Blocks, all 2026-08-06, scored at |Z| < 0.5 MOhm against the wire-free floor channels
+recomputed inside each block.**
+
+| block | clock | D2 EEG `D/33` | D2 EMG `D/34` |
+| --- | --- | --- | --- |
+| morning census | 11:30-11:41, 20 sweeps | 1/20 = 5.0%, median 3.658 | 14/20 = **70.0%**, median 0.373 |
+| **pre-swap baseline** | 15:57-16:04, 15 sweeps | 0/15 = 0.0%, median 3.450 | 10/15 = **66.7%**, median 0.437 |
+| **arm C, long, no slip ring** | 16:27-16:47, 40 sweeps | 0/41 = 0.0%, median **8.235** | **0/41 = 0.0%**, median **1.820** |
+
+**Harm test on the EMG:** 10/15 against 0/41 below 0.5 MOhm, **p = 8.4e-08**. At the looser
+2 MOhm line, 15/15 against 25/41, **p = 0.0025**. D2's EEG median roughly doubled, 3.450 to
+8.235.
+
+> [!danger] The harm detector fired, and that is why it was in the design
+> D2 was chosen precisely because its EMG was a **working channel that could show damage**.
+> It did. A channel that was connected in two out of three sweeps is now connected in none.
+
+### Both alternative explanations are excluded
+
+**Session-wide drift is excluded.** B1 on port B was untouched throughout and did not move:
+33.3% before, 34.1% during. The no-mouse A2 cable did not move either, 0.0% to 4.9%.
+
+**Anaesthesia recovery is excluded.** In arm B the improvement **drifted upward across the
+block** as the animal woke, rho +0.51 against sweep number. Here D2's EMG is **completely flat
+across all 40 sweeps, rho −0.00, p = 0.99**, first-half median 1.743 against last-half 1.899,
+and its EEG gets slightly **worse** across the block, rho +0.38, p = 0.014. There is no
+recovery curve. This is a stable new state.
+
+### ⭐ What it does to the slip-ring hypothesis
+
+| arm | tether | slip ring | animal | outcome |
+| --- | --- | --- | --- | --- |
+| **B** | short, soldered + resin | **yes** | B1 | 45% → **100%** |
+| **C** | long, soldered + resin | **no** | D2 | 67% → **0%** |
+
+Both tethers are soldered and resined, so construction is approximately held constant and the
+slip ring is the main difference. **The direction is the opposite of "the slip ring is the
+problem."** If anything the slip ring is doing something useful, most plausibly providing
+mechanical decoupling.
+
+> [!warning] This is a lead, not a conclusion
+> **Different animals and different tether lengths.** The clean within-animal version of this
+> comparison died with B1 on 5 August and cannot be recovered without an anaesthesia episode
+> per animal. Do not state it more strongly than "arm C went the wrong way, and the slip-ring
+> hypothesis now has evidence against it."
+
+### 🔧 The mechanism to check first, and it is free
+
+§5 of this page predicted exactly this failure mode: **the long tether cannot rotate, so it
+twists as the animal turns and eventually binds.** A tether under tension pulling on the
+headcap is a highly plausible cause of a sudden, stable, non-recovering degradation on both
+channels at once.
+
+**Action: inspect the tether for twist, tension or binding. If found, untwist and re-run 20
+sweeps.** If D2's EMG returns, the correct conclusion is "the long tether binds", not "the new
+chain is bad", and that is a very different engineering problem.
+
+🛑 **Do not revert D2 under anaesthesia on the same day.** The data is recorded and the
+decision keeps.
