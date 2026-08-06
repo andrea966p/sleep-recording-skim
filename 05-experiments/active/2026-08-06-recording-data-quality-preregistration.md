@@ -440,3 +440,25 @@ job, and carries no information.
 > morphology alone is insufficient to establish electrode connection. Channels were therefore
 > classified by spectral slope and delta fraction relative to the unconnected distribution. One
 > of eight animals fell outside that distribution.
+
+---
+
+# 12. Can we just reject the railed epochs and keep the 24 hours?
+
+Proposed 2026-08-06: mark railed epochs as missing, keep the rest of the night, report the
+rejection rate. **The principle is correct and is now our standing policy**, written up in
+[[eeg-artefact-and-railing-rejection-policy]]. It does not rescue this recording, and the
+measurement showing why is in §4 of that page.
+
+Three sentences of summary:
+
+1. **The unit was wrong.** "7% railed" was a fraction of **samples**. At the **epoch** level the
+   same channel is **77.6%**, because one railed sample spoils a whole 10 s epoch.
+2. **The railing is not movement.** A1 and D1 rail in unbroken blocks of 91 and 130 minutes, and
+   the **A2 position, which has no mouse in it, rails 100% of the time**.
+3. **Rejection does not help.** Keeping only the perfectly clean epochs, the surviving spectral
+   shape still sits inside the bare-wire range for B2, C2, C1 and D2. Those epochs are not
+   spoiled EEG, they are not EEG.
+
+**B1 is unaffected: 0 railed epochs in 782.** If that holds for 24 hours it is a complete
+artefact-free record needing no rejection at all.
