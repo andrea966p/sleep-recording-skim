@@ -236,8 +236,207 @@ diagnostic above reports hum and rms separately so the effect of the guard is vi
 than hidden, and a future analysis may wish to revisit the upper bound for EMG specifically,
 since EMG bursts can legitimately exceed 150 µV.
 
-### Decision taken at 14:25
+### Decision taken at 14:25 (first pass)
 
 **Recording continued rather than stopped.** The yield question is already answered and will
 not change. **B1's longest unbroken block, 39.5 min out of 100, is the one number still
 moving**, and block length is what decides scoreability. Running to 17:00 costs nothing.
+
+---
+
+# 10. What I actually did, in plain words
+
+> [!abstract] Read this section if the rest of the page is hard to follow
+> This is the whole analysis explained without jargon, in the order I did it, including the
+> two figures and what they mean. Written 2026-08-06 because the method got complicated fast
+> and the reasoning matters more than the numbers.
+
+## 10.1 The problem I was trying to avoid
+
+I want to know, for each mouse, whether the electrical signal we recorded is real brain
+activity or just noise.
+
+The hard part is that **noise can look exactly like brain activity once you filter it**. If I
+take a channel with nothing attached to it, remove the 60 hertz hum from the electrical mains,
+and keep only the 0.5 to 30 hertz range where sleep signals live, I get a wandering wiggly
+line that looks perfectly plausible. So "the trace looks good" is not evidence. I needed
+something better.
+
+## 10.2 The trick: the rig measures "nothing" for us, 112 times over
+
+Every mouse is connected to the recording chip through **only 2 of the chip's 16 amplifier
+inputs**. One input pair carries the brain signal, one carries the neck muscle signal. The
+other 14 inputs on that chip are **real amplifiers with no wire attached to them at all**.
+
+They get recorded anyway, at the same moment, on the same hardware, in the same room. Across
+the four ports that gives **112 channels of pure nothing**, recorded simultaneously with the
+animals.
+
+That is the control. Anything a real mouse channel does, it has to do **more** than these 112
+do, or it is not evidence of a mouse.
+
+> [!warning] One group had to be excluded and it matters
+> Channels `/17` to `/32` and `/49` to `/64` are **inactive slots**. They are not amplifiers
+> with nothing attached, they are internally tied together inside the chip, so they always
+> read quiet and low. If I had included them in the control group, the control would have
+> looked artificially good and every real animal would have looked bad by comparison. Only
+> `/3` to `/16` and `/35` to `/48` are true "amplifier with no wire" channels.
+
+Separately, and by luck, the **A2 position on the rig has no mouse in it** — just a cut cable.
+So A2 is a second, completely independent control. It has the whole cable, the rotating
+connector and the amplifier board attached, and no animal. If my analysis ever says A2 has
+good data, my analysis is broken.
+
+## 10.3 First pass: judging the raw signal
+
+I cut the recording into **10 second pieces**, called epochs, and measured three things on
+every channel in every piece:
+
+| what I measured | in plain words |
+| --- | --- |
+| **60 hertz amplitude** | how much electrical mains hum is on this channel |
+| **rms** | how big the signal is overall, roughly its average size |
+| **railed fraction** | how often the amplifier hit its ceiling and could record no more |
+
+**Why 60 hertz hum is the key measurement.** Korean mains electricity runs at 60 hertz and it
+leaks into everything. A properly connected electrode has a low impedance path, so the hum
+mostly cancels out and sits at 9 to 90 microvolts. A disconnected electrode acts like an
+antenna and the hum explodes to 1000 to 4700 microvolts. We measured that across 41 earlier
+recordings. **It is about a hundredfold difference with almost nothing in between**, so it
+separates connected from disconnected extremely well.
+
+**How I picked the pass mark.** I did not choose a number. I took the 112 wire-free channels,
+looked at all 66,864 of their 10 second pieces, and took the value that only the quietest 1
+percent of them beat: **388 microvolts of hum**. A mouse channel counts as usable in that
+piece if it is quieter than that, plus its overall size is sane, plus the amplifier never hit
+its ceiling.
+
+**The check that had to pass first.** I ran that criterion on the control channels themselves.
+They scored **0.00 percent usable**, and the no-mouse A2 slot scored **0.0 percent**. Good, the
+method is not inventing signal out of nothing. Only then did I look at the animals.
+
+**Result:** B1 usable 99.7 percent of the time on both channels. D2's muscle channel 86
+percent. Everything else near zero, and **every brain channel except B1's was at 0.0 percent**.
+
+## 10.4 The fair objection, and the second pass
+
+The objection is a good one: **that first pass judged the raw signal**, before any cleaning.
+Maybe there is perfectly good brain activity hiding underneath the hum, and once we remove the
+hum properly it appears. That is what you would normally do before scoring sleep by hand.
+
+So I did the standard cleaning:
+
+1. **Notch filters at 60, 120 and 180 hertz** — surgically remove the mains hum and its echoes.
+2. **Band-pass 0.5 to 30 hertz** — keep only the frequency range sleep scoring uses, throw away
+   everything above and below.
+
+Then I judged again. But **crucially, I put the 112 wire-free control channels through exactly
+the same cleaning**, so I could see what "nothing" looks like after cleaning too.
+
+> [!danger] The result that decides everything
+> After cleaning, a channel **with no wire attached** comes out at a median of **69 microvolts**
+> of smooth, plausible, EEG-looking signal.
+>
+> **Filtering manufactures a convincing trace out of nothing.** This is why looking at cleaned
+> traces cannot tell you whether a mouse is connected, and it is the single most important
+> thing on this page.
+
+## 10.5 What survives cleaning: the shape of the spectrum
+
+Filtering can change how big a signal is, and it can remove specific frequencies. What it
+cannot do is invent the **shape** of a real biological spectrum.
+
+Real brain activity has a characteristic shape: **most of the power sits at low frequencies and
+falls away steeply as frequency rises**. Physicists call this a one-over-f shape. Plot it on a
+log-log graph and it is a downhill slope. Electrical noise, by contrast, is spread evenly
+across frequencies, so it plots as a flat line.
+
+So I measured two shape numbers per channel:
+
+| number | what it means | real brain | bare wire |
+| --- | --- | --- | --- |
+| **spectral slope** | how steeply power falls as frequency rises | steeply negative | near flat |
+| **delta fraction** | share of the power in the 0.5-4 hertz slow-wave band | high | low |
+
+And again I measured them on the 112 wire-free controls, to find the range that "nothing"
+occupies: **slope between −1.10 and −0.04, delta fraction around 0.16.**
+
+| animal brain channel | slope | delta fraction | verdict |
+| --- | --- | --- | --- |
+| **B1** | **−2.15** | **0.47** | **far outside the bare-wire range. Real.** |
+| B2 | −0.47 | 0.17 | inside the bare-wire range |
+| C2 | −0.38 | 0.17 | inside the bare-wire range |
+| D2 | −0.38 | 0.17 | inside the bare-wire range |
+| A1, C1, D1 | — | — | amplifier railed 2 to 7 percent of the time |
+| A2, no mouse | −0.04 | 0.09 | inside the bare-wire range, as it must be |
+
+> [!important] Railing cannot be filtered away, and this is why
+> When the hum is so large that the amplifier hits its ceiling, the tops and bottoms of the
+> wave get **flattened off**. That is not a frequency you can subtract out, it is information
+> that was destroyed at the moment of recording. A1, C1 and D1 are in that state for 2 to 7
+> percent of the recording. **No amount of post-processing brings those channels back.**
+
+## 10.6 The conclusion, and why I trust it
+
+**Only B1 has real brain activity.** Two completely separate methods say so:
+
+- the **raw** method, based on mains hum against a 112 channel control, and
+- the **cleaned** method, based on spectral shape against the same control after identical
+  filtering.
+
+They share no assumptions and no thresholds, and they agree. Both also correctly report that
+the **no-mouse A2 slot has nothing**, which is the test that would have caught either of them
+being wrong.
+
+# 11. The two figures, and what they show
+
+Both are in `05-experiments/attachments/`, generated from **10 minutes taken from the middle of
+the recording**, so nothing was cherry-picked from a good moment.
+
+## 11.1 Filtered traces
+
+![[2026-08-06-traces-filtered.png]]
+
+**What it is:** 20 seconds of signal from seven channels, after the 60/120/180 hertz notch and
+the 0.5 to 30 hertz band-pass. Top is B1. Below it are three other mice, then the no-mouse A2
+slot, then two bare-wire control channels.
+
+**The one rule that makes it honest: every panel uses the identical vertical scale, plus or
+minus 400 microvolts.** If each panel were auto-scaled to fit its own data, which is what
+recording software does by default, every one of these would look like a beautiful signal. The
+software would simply zoom into the noise until it filled the panel. **A fixed shared scale is
+what makes the comparison meaningful.**
+
+**What it shows:** B1 is smooth and rolling, with visible slow waves. Everything else is dense
+high-frequency hash. B2's hash is smaller than the others, but it is still hash, with no slow
+structure. And the bare wires at the bottom look qualitatively like the mice above them, which
+is exactly the point.
+
+## 11.2 Power spectrum
+
+![[2026-08-06-psd.png]]
+
+**What it is:** the same channels, but instead of showing signal over time it shows **how much
+power sits at each frequency**. Both axes are logarithmic, which is the standard way to view
+this, because it turns the expected one-over-f relationship into a straight downhill line.
+
+**What it shows:** B1, the thick blue line, climbs at the far left and then **falls steeply and
+continuously** from about 2 hertz onward, dropping roughly five orders of magnitude by 40
+hertz. That is the signature of real neural activity.
+
+Every other line is a **flat plateau** across the whole range. Flat means the power is spread
+evenly over all frequencies, which is the definition of noise. The no-mouse A2 line and the
+bare-wire lines are flat in exactly the same way as the animal channels are, at different
+heights. **Height is loudness. Shape is biology. B1 is the only line with the shape.**
+
+The drop-off that all lines share above about 30 hertz is just the band-pass filter doing its
+job, and carries no information.
+
+> [!quote] Paper-ready
+> Recorded signals were assessed against 112 simultaneously acquired amplifier inputs that had
+> no electrode attached, providing a within-session null distribution. After 60, 120 and 180 Hz
+> notch filtering and 0.5-30 Hz band-pass, unconnected inputs yielded a median root mean square
+> amplitude of 69 microvolts of spectrally flat signal, demonstrating that filtered trace
+> morphology alone is insufficient to establish electrode connection. Channels were therefore
+> classified by spectral slope and delta fraction relative to the unconnected distribution. One
+> of eight animals fell outside that distribution.
