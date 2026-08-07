@@ -70,7 +70,9 @@ def epoch_features(eeg, emg, fs):
                                  fr[(fr >= lo) & (fr < hi)], axis=1)
     return dict(n=n,
                 eeg_rms=Ef.std(1), emg_rms=Mf.std(1),
-                delta=bp(*T.BAND_DELTA), theta=bp(*T.BAND_THETA),
+                delta=bp(*T.BAND_DELTA),                    # REPORTING band
+                delta_stg=bp(*T.BAND_DELTA_STAGING),        # STAGING band
+                theta=bp(*T.BAND_THETA),
                 total=bp(*T.BAND_TOTAL), norm=bp(*T.BAND_NORM))
 
 
@@ -81,9 +83,20 @@ def stage(f, ok):
     if len(idx) == 0:
         return lab, {}, lab.copy()
     le = np.log10(np.clip(f["emg_rms"][idx], 1e-6, None))
-    td = np.log10(np.clip(f["theta"][idx] / np.clip(f["delta"][idx], 1e-12, None),
+    # STAGING uses BAND_DELTA_STAGING (0.5-4.5 Hz), matching the Japanese tool.
+    # Reported delta elsewhere uses BAND_DELTA (1-4 Hz), matching the paper.
+    td = np.log10(np.clip(f["theta"][idx] / np.clip(f["delta_stg"][idx], 1e-12, None),
                           1e-6, None))
-    emg_thr = P.otsu_threshold(le)
+    # FIX 10: degenerate-input fallback, copied from the Japanese tool
+    # (sleepy_pipeline_refined.estimate_emg_threshold): fewer than 10 finite
+    # values, or fewer than 2 distinct values, falls back to the MEDIAN rather
+    # than letting the split routine produce nonsense.
+    if len(le) < 10 or len(np.unique(le)) < 2:
+        emg_thr = float(np.median(le))
+        degenerate = True
+    else:
+        emg_thr = P.otsu_threshold(le)
+        degenerate = False
     wake = le >= emg_thr
     td_thr = np.percentile(td, 80)          # <- fixes REM share by construction
     lab[idx] = np.where(wake, WAKE, np.where(td < td_thr, NREM, REM))
@@ -100,7 +113,8 @@ def stage(f, ok):
         lab_otsu[nw] = np.where(td_nw < td_thr_otsu, NREM, REM)
     else:
         td_thr_otsu = float("nan")
-    return lab, dict(emg_otsu_log10=float(emg_thr),
+    return lab, dict(degenerate_fallback=bool(degenerate),
+                     emg_otsu_log10=float(emg_thr),
                      theta_delta_p80_log10=float(td_thr),
                      theta_delta_otsu_log10=float(td_thr_otsu)), lab_otsu
 
@@ -145,8 +159,9 @@ def physiology(f, lab, ok, spec_mask=None):
             eeg_rms=float(np.median(f["eeg_rms"][m])),
             delta_pct=float(np.median(100 * f["delta"][m]
                                       / np.clip(f["total"][m], 1e-12, None))),
+            # this mirrors the STAGING discriminator, so it uses the staging band
             theta_delta=float(np.median(f["theta"][m]
-                                        / np.clip(f["delta"][m], 1e-12, None))),
+                                        / np.clip(f["delta_stg"][m], 1e-12, None))),
             # IIIS-style: power relative to the 15-30 Hz band
             delta_density=float(f["delta"][m].sum()
                                 / max(float(f["norm"][m].sum()), 1e-12)),
@@ -170,7 +185,68 @@ def physiology(f, lab, ok, spec_mask=None):
         ok_all = all(checks.values())
     else:
         ok_all = False
-    return out, checks, bool(ok_all)
+    # WHICH OF THESE CAN ACTUALLY FAIL?
+    # Verified against the staging rule on 2026-08-08 (council review):
+    #   wake_has_highest_emg   FORCED  -- WAKE *is* the Otsu split on EMG
+    #   rem_highest_theta_delta FORCED -- REM *is* the top of theta/delta
+    #   rem_emg_low            FORCED  -- REM is a subset of non-wake, which is
+    #                                     by definition below the EMG cut
+    #   nrem_has_most_delta    NEAR-FORCED -- NREM is the residual after the
+    #                                     high theta/delta epochs are removed
+    #   nrem_largest_amplitude INFORMATIVE -- nothing in the rule constrains
+    #                                     EEG amplitude
+    # Reporting "5/5 PASS" as validation is therefore misleading. Only the
+    # informative check is evidence.
+    forced = {"wake_has_highest_emg": "FORCED by the WAKE rule",
+              "rem_highest_theta_delta": "FORCED by the REM rule",
+              "rem_emg_low": "FORCED, REM is a subset of non-wake",
+              "nrem_has_most_delta": "NEAR-FORCED, NREM is the residual"}
+    informative = {k: v for k, v in checks.items() if k not in forced}
+    detail = {k: dict(passed=bool(v),
+                      status=forced.get(k, "INFORMATIVE, can genuinely fail"))
+              for k, v in checks.items()}
+    return out, checks, bool(ok_all), detail, informative
+
+
+def rem_order_null(lab, blocks, n_iter=200, seed=0):
+    """Is 'REM is entered from NREM' more than the label composition forces?
+
+    Null: keep each block's RUN LENGTHS and its multiset of run states, but
+    permute the ORDER of the runs. That destroys any real sequential structure
+    while preserving how much of each state there is and how consolidated it is,
+    which is exactly what could otherwise manufacture a high transition rate.
+
+    Returns (null_mean, null_sd, percentile_of_observed).
+    """
+    rng = np.random.default_rng(seed)
+    obs = rem_entry_order(lab, blocks)[2]
+    if np.isnan(obs):
+        return float("nan"), float("nan"), float("nan")
+    vals = []
+    for _ in range(n_iter):
+        shuffled = lab.copy()
+        for a, b in blocks:
+            seg = lab[a:b]
+            if len(seg) < 3:
+                continue
+            edges = np.flatnonzero(np.diff(seg)) + 1
+            starts = np.concatenate(([0], edges))
+            ends = np.concatenate((edges, [len(seg)]))
+            runs = [(seg[st], en - st) for st, en in zip(starts, ends)]
+            rng.shuffle(runs)
+            out, k = np.empty(len(seg), dtype=int), 0
+            for v, ln in runs:
+                out[k:k + ln] = v
+                k += ln
+            shuffled[a:b] = out
+        v = rem_entry_order(shuffled, blocks)[2]
+        if not np.isnan(v):
+            vals.append(v)
+    if not vals:
+        return float("nan"), float("nan"), float("nan")
+    vals = np.array(vals)
+    pct = 100.0 * float((vals < obs).mean())
+    return float(vals.mean()), float(vals.std()), pct
 
 
 def enforce_min_bout(lab, blocks, min_ep):
@@ -233,7 +309,7 @@ def otsu_sensitivity(f, ok, blocks, zt, thr_log, in_block):
     if len(idx) == 0:
         return []
     le = np.log10(np.clip(f["emg_rms"][idx], 1e-6, None))
-    td = np.log10(np.clip(f["theta"][idx] / np.clip(f["delta"][idx], 1e-12, None),
+    td = np.log10(np.clip(f["theta"][idx] / np.clip(f["delta_stg"][idx], 1e-12, None),
                           1e-6, None))
     td_thr = np.percentile(td, 80)
     lt = P.is_light(zt[:n])
@@ -344,7 +420,9 @@ def analyse(npz_path):
 
     spec_mask = (steady_state_mask(lab, blocks)
                  if T.EXCLUDE_TRANSITION_EPOCHS_FROM_SPECTRA else None)
-    phys, checks, phys_ok = physiology(f, lab, sel, spec_mask=spec_mask)
+    phys, checks, phys_ok, phys_detail, phys_informative = physiology(
+        f, lab, sel, spec_mask=spec_mask)
+    phys_informative_pass = bool(phys_informative) and all(phys_informative.values())
     n_spec = int((sel & (spec_mask if spec_mask is not None else True)).sum())
     spectra_info = dict(
         exclude_transition_epochs=bool(T.EXCLUDE_TRANSITION_EPOCHS_FROM_SPECTRA),
@@ -359,6 +437,7 @@ def analyse(npz_path):
     # mechanically raises the fraction of REM entered from NREM.
     rn, rt, rpct = rem_entry_order(lab_raw, blocks)
     rn_s, rt_s, rpct_s = rem_entry_order(lab, blocks)
+    nm, nsd, npct = rem_order_null(lab_raw, blocks)
 
     # measured (not constructed) REM share, and REM as a fraction of sleep --
     # literature for mice is REM < 10% of total sleep
@@ -462,9 +541,23 @@ def analyse(npz_path):
         rem_measured=rem_measured,
         persistence=pers, thresholds_used=thr,
         physiology=phys, physiology_checks=checks, physiology_pass=phys_ok,
+        physiology_detail=phys_detail,
+        physiology_informative_checks=phys_informative,
+        physiology_informative_pass=phys_informative_pass,
+        physiology_caveat=("4 of the 5 checks are FORCED by the staging rule and "
+                           "cannot fail. Do NOT report '5/5 PASS' as validation. "
+                           "Only physiology_informative_pass is evidence."),
         rem_entries=int(rt), rem_from_nrem=int(rn),
         rem_from_nrem_pct=None if np.isnan(rpct) else round(float(rpct), 1),
         rem_from_nrem_pct_smoothed=None if np.isnan(rpct_s) else round(float(rpct_s), 1),
+        rem_from_nrem_null=dict(
+            null_mean_pct=None if np.isnan(nm) else round(nm, 1),
+            null_sd_pct=None if np.isnan(nsd) else round(nsd, 1),
+            observed_percentile_of_null=None if np.isnan(npct) else round(npct, 1),
+            method="run-order shuffle within blocks; run lengths and state "
+                   "composition preserved, sequence destroyed",
+            note="If the observed value sits inside the null, 'REM is entered from "
+                 "NREM' is forced by label composition and is NOT evidence."),
         validity_stats_computed_on=("RAW labels, before the minimum-bout merge. "
                                     "Smoothing inflates both persistence and REM order "
                                     "by construction; architecture and bouts below are "
@@ -515,11 +608,20 @@ def _summary(r):
     for k, v in r["persistence"].items():
         L.append(f"  r@{k:<6} {v['r']}   shuffled {v['shuffled']}   "
                  f"pairs {v['pairs']}, blocks {v['blocks']}")
+    nl = r.get("rem_from_nrem_null") or {}
     L += ["", f"REM entered from NREM  {r['rem_from_nrem']}/{r['rem_entries']} "
               f"= {r['rem_from_nrem_pct']}%  (expect > {T.REM_FROM_NREM_MIN:.0f}%)",
+          f"  shuffled null: {nl.get('null_mean_pct')}% +/- {nl.get('null_sd_pct')}%"
+          f"   observed sits at the {nl.get('observed_percentile_of_null')}th pct of the null",
+          "  >> if the observed value is inside the null, this is forced by label",
+          "     composition and is NOT evidence.",
           "", f"physiology pass: {r['physiology_pass']}"]
     for k, v in r["physiology_checks"].items():
-        L.append(f"  {'PASS' if v else 'FAIL'}  {k}")
+        st = r.get("physiology_detail", {}).get(k, {}).get("status", "")
+        L.append(f"  {'PASS' if v else 'FAIL'}  {k:24} {st}")
+    L += [f"  >> INFORMATIVE CHECKS ONLY: {r.get('physiology_informative_pass')}",
+          "     4 of 5 checks are FORCED by the staging rule and cannot fail.",
+          "     Do not report '5/5 PASS' as validation."]
     L += ["", "median values by state"]
     for nm in ("WAKE", "NREM", "REM"):
         p = r["physiology"].get(nm)

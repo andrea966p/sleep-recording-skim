@@ -456,3 +456,50 @@ unsure, backspace to go back, progress saved in the browser so it survives a rel
   reviewer will actually ask for.
 - Fix 3, the selection-bias test, **needs human-scored states** to plot rejection rate against, so
   it is gated behind this too.
+
+
+---
+
+# 7. The Japanese scoring tool's source code, read 2026-08-08
+
+We were given `SleepyScoreApp_HM_260312_exported.m` and `sleepy_pipeline_refined.py`, the tool used
+in Japan to score these recordings. Full algorithm and comparison:
+[[sleepyscore-japan-scoring-tool-algorithm]].
+
+> [!success] 🔴 It answers the worst open problem in our pipeline
+> **They do not use a percentile for REM. Both their thresholds are 2-cluster k-means splits**,
+> WAKE on the EMG integral and REM on the theta/delta ratio among sleep epochs, with the threshold
+> taken as the mean of the two cluster centres.
+>
+> Our 80th-percentile rule **forces REM to 20% of sleep by construction** and has been unreportable
+> since 2026-08-03. **The reference method removes that problem entirely**, and our existing
+> `rem_measured` Otsu cross-check is already most of the implementation.
+
+> [!note] Their WAKE rule and ours are near-equivalent
+> k-means with k=2 on 1-D data and Otsu's method optimise the same split. **So our Otsu cut is a
+> fair implementation of their approach** — and the ±25% sensitivity measured in §5 therefore
+> applies to their tool as well, not just ours.
+
+⚠️ **A conflict with a change made earlier the same day.** We moved `BAND_DELTA` to 1-4 Hz citing
+the paper. The tool low-passes at **4.5 Hz** for staging. Both are right for different jobs: the
+paper's 1-4 Hz is for **reporting spectra**, the tool's 0-4.5 Hz is for **staging**. We use one
+constant for both and should split it.
+
+⚠️ Their delta and theta features are **time-domain rectified integrals**, `sum(|filtered|)`, not
+Welch band powers. Not comparable numerically, so **their threshold values cannot be transferred to
+our features**.
+
+✅ **Confirms the paper on the point that mattered: there is no minimum bout rule anywhere in the
+code.** Our 12 s rule remains correctly documented as a house convention.
+
+> [!danger] Nothing from this has been applied, deliberately
+> Swapping the REM rule changes every REM number we have, and the council was explicit that method
+> changes at n = 2 with no ground truth are unfalsifiable. **Score the blind packs first**, then
+> make the change and measure whether kappa improves. That is now the ordering: kappa, then the
+> k-means REM rule.
+
+| # | fix | status |
+| --- | --- | --- |
+| 8 | **Replace the p80 REM rule with a 2-cluster split** (reference method) | ⬜ **gated behind the kappa** |
+| 9 | Split `BAND_DELTA` into staging 0-4.5 Hz and reporting 1-4 Hz | ⬜ |
+| 10 | Median fallback for degenerate recordings, as they do | ⬜ |

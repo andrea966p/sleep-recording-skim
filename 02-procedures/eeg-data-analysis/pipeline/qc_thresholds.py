@@ -56,7 +56,7 @@ NPERSEG = 2048
 # 6-9 Hz theta band spans a single FFT bin, so np.trapz over one point returns
 # exactly 0.0 and silently destroys every REM measurement with no error raised.
 
-BAND_DELTA = (1.0, 4.0)
+BAND_DELTA = (1.0, 4.0)   # REPORTING band; see BAND_DELTA_STAGING for the staging one
 # CHANGED 2026-08-08 from (0.5, 4.0) to match the IIIS Tsukuba reference exactly:
 # "NREMS was characterized by high-amplitude, delta (1-4 Hz)-frequency EEG waves"
 # and "The delta range ... was calculated as the average of the EEG power of
@@ -67,6 +67,20 @@ BAND_DELTA = (1.0, 4.0)
 # irreversibly attenuates 0.5-1.1 Hz before the data is saved, so a 0.5 Hz lower
 # edge was integrating a band the hardware had already eaten.
 BAND_THETA = (6.0, 9.0)   # avoid putting 7 Hz on a boundary (Kostin 2025)
+
+BAND_DELTA_STAGING = (0.5, 4.5)
+# The band used to build the theta/delta ratio that separates NREM from REM.
+# The Japanese scoring tool (SleepyScore) LOW-PASSES at 4.5 Hz for this purpose:
+# `delta_cutoff_hz = 4.5`, 2nd-order Butterworth low-pass.
+# SOURCE: sleepy_pipeline_refined.py / SleepyScoreApp_HM_260312_exported.m, read
+# 2026-08-08. Our lower edge is 0.5 rather than 0 because a 0 Hz edge is not
+# meaningful for a band-power integral and the 1.10 Hz hardware high-pass has
+# already removed everything below it.
+#
+# ⚠️ STAGING AND REPORTING USE DIFFERENT DELTA BANDS ON PURPOSE.
+# The paper (Nakata 2025, doi:10.1093/sleep/zsae279) quotes delta as 1-4 Hz for
+# REPORTED SPECTRA; the tool uses 0-4.5 Hz for STAGING. Those are two jobs and
+# one constant cannot serve both.
 BAND_TOTAL = (0.5, 30.0)
 BAND_NORM = (15.0, 30.0)
 # Normalisation band. IIIS Tsukuba express each frequency bin as a percentage of
