@@ -7,6 +7,19 @@ tags: [eeg, emg, ecg, impedance, tether, cohort]
 
 # ECG cohort, first baseline
 
+> [!danger] READ THIS FIRST, the answer is at the bottom of the page
+> This note is written **in the order the evening actually happened**, so the early sections
+> record hypotheses that were later **withdrawn**. The conclusion is
+> [§ THE GROUND WIRE WAS CONNECTED TO THE WRONG PIN](#-the-ground-wire-was-connected-to-the-wrong-pin).
+>
+> **All seven new mice were recording with no ground connection to the animal.** The cerebellum
+> dura pin was mated to the **orange** wire, which floats, while the **brown** wire sitting in
+> the headstage GND pad touches nothing on the mouse.
+>
+> 🔴 **Withdrawn below, do not act on them:** the tether short hypothesis, the fluid bridge under
+> the cement, and the suggestion to spend an isoflurane episode moving one mouse to an old style
+> tether. ✅ **The fix is a connector re-mate and needs no anaesthesia.**
+
 ## TL;DR, where we are right now
 
 We pulled every mouse off the rig and put on **7 brand new mice**, each implanted with
@@ -63,8 +76,9 @@ are now real wired channels:
 ## Live stream screen, 120 seconds, 2026-08-07 evening
 
 Captured through the Radiens Python client while Allego was streaming, 24 selected channels
-(exactly the 8 slots times 3 roles), 1000 Hz. Scripts in the session scratchpad,
-`grab_stream.py`, `look_live.py`, `look_live2.py`, `look_live3.py`.
+(exactly the 8 slots times 3 roles), 1000 Hz. Scripts now live in `eeg-emg-analysis/qc/`:
+**`grab_stream.py`** (captures N seconds of the live stream to `.npy` plus a labels file) and
+**`live_screen.py`** (the table below, including the heartbeat test).
 
 Columns: `rms` is raw root mean square. `60Hz` is the mains amplitude. `rms_nohum` is the RMS
 left after notching 60/120/180/240/300 Hz and bandpassing 0.5 to 45 Hz, so it is roughly
@@ -261,7 +275,7 @@ cannot be serialised. **This is a library bug, not a rig problem, and it will bi
 EXCEPTION. A FAILED CONFIG LEAVES THE OLD PATH IN PLACE SILENTLY.**
 
 Workaround, build the message yourself (script kept at
-`scratchpad/set_rec_cfg.py`, worth promoting into `qc/` if we need it again):
+`eeg-emg-analysis/qc/set_recording_config_fixed.py`, worth promoting into `qc/` if we need it again):
 
 ```python
 from radiens.grpc_radiens import allegoserver_pb2 as ap, allegoserver_pb2_grpc as ag
@@ -282,17 +296,18 @@ explicitly first anyway, because the sweep required streaming to be off.
 
 ## Still open
 
-- Is the new cohort actually dead, or is this just the usual intermittent contact caught in a
-  bad 120 second window? **The overnight recording is the only thing that can answer this.**
-  Score it against the new `/4`-`/16`, `/36`-`/48` floor.
-- **Why did the hum collapse without any signal appearing?** My leading guess is the cerebellar
-  ground giving a better common mode reference, so mains rejection improved even where the
-  signal electrodes are not in contact. That would mean the change is real and good, but
-  independent of the contact problem. Not tested.
-- **The 8 conductor tether wires are NOT soldered, they use thin heatshrink.** Both chains that
-  ever worked on this rig, the arm B tether on B1 and the arm C tether on D2, were
-  **soldered and resin encapsulated**. This cohort is the opposite. If the overnight recording
-  is bad, that is the first suspect, and it is the same suspect we already had.
+> [!warning] Written before the ground wiring error was found. The first three bullets are
+> **answered or withdrawn**, kept only to show the order of reasoning. The last three still stand.
+
+- ~~Is the new cohort actually dead, or is this just intermittent contact in a bad window?~~
+  **ANSWERED: neither. The animals were floating.**
+- ~~Why did the hum collapse without any signal appearing? Leading guess is the cerebellar ground
+  giving a better common mode reference.~~ 🔴 **WRONG, AND IT WAS THE BIGGEST CLUE.** The correct
+  answer is the opposite: **there was no ground at all**, so mains drove the whole animal as
+  common mode and **the bipolar channels rejected it**. Low hum and absent signal, one cause.
+- ~~The 8 conductor tether wires are not soldered, that is the first suspect.~~ 🔴 **WITHDRAWN.**
+  The tethers passed a multimeter continuity check and the wiring error explains everything
+  without them.
 - We have lost the empty cut tether control. The unwired amplifier floor still works and is
   free, and **A/35 is a bonus "implanted mouse, unwired site" control**, but write down that
   the dedicated one is gone.
@@ -354,6 +369,10 @@ zero and lf/hf near 0.6**. Loud noise and quiet noise. Neither is signal.
 
 ## The short hypothesis, revised after the multimeter result
 
+> [!warning] 🔴 **SUPERSEDED ~30 MINUTES LATER BY THE GROUNDING ERROR.** Candidates 1 and 2 below
+> are **withdrawn**. Candidate 3, the ground, is the answer, and note it was already on the list
+> here and I ranked it last. Kept because the reasoning about beep testers is still useful.
+
 🔴 **andrea reports every tether was checked with a multimeter before use and NO conductor beeps
 against any other.** That kills the metallic short in the tether. ⚠️ **BUT A CONTINUITY BEEPER
 FIRES BELOW ROUGHLY 30 TO 50 Ω, AND THE IMPEDANCES WE MEASURE ARE 4 TO 20 kΩ AT MINIMUM AND
@@ -376,6 +395,10 @@ detail. **Seven of seven ECG channels show nothing.** That is hard to explain by
 easy to explain by a bridged pair.
 
 ## The discriminator worth running next
+
+> [!danger] 🔴 **WITHDRAWN. DO NOT RUN THIS. IT COSTS AN ISOFLURANE EPISODE AND ANSWERS A
+> QUESTION THAT IS ALREADY ANSWERED.** The fault is the ground wiring, and the fix is a connector
+> re-mate with no anaesthesia. Kept only as a record of what I was about to propose.
 
 The control shares the rig with the seven but shares **neither the surgery batch, nor the
 8 conductor unsoldered tether, nor the cerebellar ground**. So the fault is in one of those
@@ -461,13 +484,19 @@ tomorrow's after state gets compared against.
 1. **Re-pin the cerebellum ground to the brown wire on all seven.** Confirm brown lands on the
    headstage GND pad and that the orange wire is no longer carrying the dura pin.
 2. ⭐ **Watch the live stream BEFORE committing to a night.** If the hypothesis is right, EEG
-   appears within seconds. `scratchpad/grab_stream.py` then `look_live2.py`. ⚠️ Remember
+   appears within seconds:
+   ```
+   /opt/neurosurveillance/venv/bin/python qc/grab_stream.py /tmp/check 60
+   ~/eeg-analysis-venv/bin/python qc/live_screen.py /tmp/check
+   ```
+   ⚠️ **Two different interpreters, and neither can do both jobs**: `radiens` only exists in
+   `/opt/neurosurveillance/venv`, and `scipy` only works in `~/eeg-analysis-venv`. ⚠️ Remember
    `get_signals()` returns **only the GUI selected channels**, 24 of them here.
 3. **Run a fresh impedance block** with the ground correct. ⭐ **PREDICTION: the impedances
    should get WORSE, or at least change character**, because the return path moves from
    "through the paired electrode" to "through the ground electrode". **If the numbers stay
    identical at 100% duty with zero flips, the ground is still not connected.**
 4. **Start the overnight recording.** ⚠️ `set_recording_config()` is broken, use
-   `scratchpad/set_rec_cfg.py`, and confirm `_data.xdat` is growing in `~/radix/data`.
+   `eeg-emg-analysis/qc/set_recording_config_fixed.py`, and confirm `_data.xdat` is growing in `~/radix/data`.
 5. Score against the floor `/4`-`/16`, `/36`-`/48`, ⭐ **with the heartbeat as the primary
    yes/no test**, and compare directly against this pre-fix file.
