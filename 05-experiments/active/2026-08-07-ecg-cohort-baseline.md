@@ -155,6 +155,84 @@ Changes to `eeg-emg-analysis/qc/sweep_block_all_ports.py`:
 ⚠️ **A SINGLE SWEEP MEANS NOTHING.** Contact flips within minutes. Read the duty cycle over the
 whole block, and always quote the block's duration next to it.
 
+### Result, 30 sweeps, 18:55:55 to 19:13:19, block duration 17.4 minutes
+
+Scored with the new `eeg-emg-analysis/qc/block_duty_cycle.py` against this cohort's own floor.
+
+✅ **Falsification check passed. FLOOR: 3120 sweep-channels from the 104 unwired amplifier
+inputs, 3.4 percent below 0.5 MΩ, median 4.296 MΩ.** That is the same 2 to 3 percent we got on
+the old cohort, so the 0.5 MΩ criterion is still calibrated and the block is interpretable.
+
+| mouse | role | site | duty % | median Z MΩ | min Z MΩ | flips | p vs floor |
+|---|---|---|---:|---:|---:|---:|---:|
+| A1 | EEG | A/1 | **96.7** | 0.122 | 0.009 | 1 | 7e-42 * |
+| A1 | EMG | A/2 | **90.0** | 0.245 | 0.015 | 6 | 8e-37 * |
+| A1 | ECG | A/3 | **100.0** | 0.084 | 0.008 | 0 | 9e-45 * |
+| **A2 CONTROL** | EEG | A/33 | **0.0** | 1.639 | 0.666 | 0 | 1 |
+| **A2 CONTROL** | EMG | A/34 | **0.0** | 0.650 | 0.515 | 0 | 1 |
+| **A2 CONTROL** | ECG | A/35 | 0.0 | 5.011 | 0.565 | 0 | 1 |
+| B1 | EEG | B/1 | 66.7 | 0.358 | 0.021 | 14 | 9e-23 * |
+| B1 | EMG | B/2 | 10.0 | 2.640 | 0.088 | 5 | 0.081 |
+| B1 | ECG | B/3 | 16.7 | 3.693 | 0.285 | 9 | 0.0032 * |
+| B2 | EEG | B/33 | **96.7** | 0.209 | 0.018 | 1 | 7e-42 * |
+| B2 | EMG | B/34 | 30.0 | 0.661 | 0.084 | 9 | 5e-07 * |
+| B2 | ECG | B/35 | **100.0** | 0.159 | 0.016 | 0 | 9e-45 * |
+| C1 | EEG | C/1 | **96.7** | 0.155 | 0.019 | 1 | 7e-42 * |
+| C1 | EMG | C/2 | 50.0 | 0.458 | 0.022 | 12 | 9e-15 * |
+| C1 | ECG | C/3 | **100.0** | 0.156 | 0.016 | 0 | 9e-45 * |
+| C2 | EEG | C/33 | 66.7 | 0.365 | 0.056 | 14 | 9e-23 * |
+| C2 | EMG | C/34 | 80.0 | 0.330 | 0.013 | 10 | 3e-30 * |
+| C2 | ECG | C/35 | 10.0 | 2.135 | 0.112 | 4 | 0.081 |
+| D1 | EEG | D/1 | **93.3** | 0.195 | 0.014 | 3 | 3e-39 * |
+| D1 | EMG | D/2 | **93.3** | 0.183 | 0.024 | 4 | 3e-39 * |
+| D1 | ECG | D/3 | **100.0** | 0.114 | 0.004 | 0 | 9e-45 * |
+| D2 | EEG | D/33 | 70.0 | 0.291 | 0.026 | 13 | 2e-24 * |
+| D2 | EMG | D/34 | 83.3 | 0.357 | 0.014 | 8 | 2e-32 * |
+| D2 | ECG | D/35 | **100.0** | 0.185 | 0.011 | 0 | 9e-45 * |
+
+⭐⭐⭐ **BY IMPEDANCE THIS IS THE BEST THE RIG HAS EVER LOOKED. 19 of the 21 new mouse channels
+beat an unwired amplifier input, and seven of them sit at 100 percent duty with ZERO flips.**
+For comparison, on 2026-08-06 only **4 of 14** channels beat the floor at all.
+
+🔴🔴 **AND YET THE IMPEDANCE AND THE RECORDING POINT IN OPPOSITE DIRECTIONS.**
+
+- Every channel that reads beautifully connected produced **flat amplifier noise with no
+  heartbeat** in the live stream.
+- The **control, A2, reads 0.0 percent duty on all three sites**, and it is the **only slot on
+  the rig producing real electroencephalogram**.
+
+The control part of that is explainable and is not a surprise: B1's EEG median was **0.813 MΩ**
+back on 2026-08-06, which is already above the 0.5 MΩ line. ⚠️ **THE 0.5 MΩ CRITERION
+CLASSIFIES THE BEST CHANNEL THIS PROJECT HAS EVER RECORDED AS OPEN.** It was only ever built
+to beat an unwired floor, it is **not** an absolute statement about contact, and it must never
+be quoted as one.
+
+⭐⭐ **The new mice are the worrying half, and there is a hypothesis that explains all three
+observations at once: THE BIPOLAR PAIRS MAY BE SHORTED SOMEWHERE IN THE UNSOLDERED 8 CONDUCTOR
+TETHER.** A short would give you, simultaneously:
+
+1. **Very low impedance**, because the measured site now has a metal path to a large electrode.
+   Note several minimum readings of **0.004 to 0.020 MΩ, that is 4 to 20 kΩ**, at or below the
+   published range for epidural electrodes, which is 10 to 50 kΩ. Real tissue interfaces should
+   not go that low.
+2. **Almost no 60 Hz hum**, because a short is a low impedance path and rejects common mode
+   pickup very well. This is exactly the fleet wide hum collapse we measured.
+3. **No differential signal at all**, because if the two members of a bipolar pair are tied
+   together their difference is zero by construction.
+
+⚠️ **THIS IS A HYPOTHESIS, NOT A RESULT.** The wires being crimped under thin heatshrink
+instead of soldered is precisely the construction that produces conductor to conductor shorts,
+and both tether chains that ever worked on this rig, arm B on B1 and arm C on D2, were
+**soldered and resin encapsulated**. But 120 seconds of stream cannot settle it. **The
+overnight recording is the test.** If it comes back flat with low hum across the whole new
+cohort while A/33 stays clean, the short hypothesis becomes the leading explanation and the
+next step is a bench continuity check of a spare 8 conductor tether, pin to pin, before
+touching any animal.
+
+⚠️ Note sweep 30 at 19:12:50: **six of the eight slots flipped their EEG site to open in the
+same sweep**. Single sweep, could easily be coincidence or someone walking past the rack, but
+worth remembering if it repeats.
+
 ⚠️ **NEVER SWEEP FROM THE ALLEGO GRAPHICAL INTERFACE.** It does not save the result anywhere
 recoverable, we lost a sweep that way on 2026-08-06. Always use this script, which writes one
 comma separated values (CSV) file per sweep. **Re-run `remap_channels.py` first after any port
@@ -162,8 +240,45 @@ or headstage change.**
 
 ## Overnight recording
 
-Started right after the sweep block, to be stopped by andrea tomorrow morning. Roughly 3.8
-gigabytes per hour, so a 24 hour run is about 90 GB, and there was 748 GB free when I checked.
+**`allego_0__uid0807-19-14-58`, started 2026-08-07 19:14:58 KST**, in
+`/home/skimlab/radix/data/`. Verified running: 1000 Hz, **262 channels (256 primary, 2 aux,
+2 digital in, 2 digital out)**, and the `_data.xdat` file confirmed growing on disk at the
+expected rate. **andrea stops it tomorrow morning.** Roughly 3.8 GB per hour, so a 24 hour run
+is about 90 GB against 748 GB free.
+
+🔴⭐⭐ **BUG FOUND IN THE RADIENS PYTHON CLIENT, AND THE WORKAROUND.**
+`AllegoClient.set_recording_config(...)` **DOES NOT WORK.** It fails with
+
+```
+grpc.RpcError: StatusCode.INTERNAL  details = "Exception serializing request!"
+```
+
+The reason: the `allego.ConfigRecording` protobuf message has a **required** `recordingType`
+enum field, and `radiens/api/api_allego.py::set_recording_config` never sets it, so the message
+cannot be serialised. **This is a library bug, not a rig problem, and it will bite again.**
+
+⚠️ **IF THE RECORDING CONFIG IS SET AND NOTHING HAPPENS, CHECK THAT YOU ACTUALLY GOT AN
+EXCEPTION. A FAILED CONFIG LEAVES THE OLD PATH IN PLACE SILENTLY.**
+
+Workaround, build the message yourself (script kept at
+`scratchpad/set_rec_cfg.py`, worth promoting into `qc/` if we need it again):
+
+```python
+from radiens.grpc_radiens import allegoserver_pb2 as ap, allegoserver_pb2_grpc as ag
+req = ap.ConfigRecording(baseFileName="allego", baseFilePath="/home/skimlab/radix/data",
+                         dataSourceIdx=0, timeStamp=True, splitFilesByPort=False,
+                         forceStartAtTStamp0=False, recordingType=ap.continuous)
+stub.SetConfigRecording(req, timeout=60)
+```
+
+⚠️ **DO NOT TRUST THE `path` FIELD IN `get_status().recording`.** It reports the **client
+process's current working directory**, not the actual output directory. I watched it change
+from `.../eeg-emg-analysis/qc` to `/home/skimlab/Monitoring_project` to `/home/skimlab` purely
+because I ran the query from different folders. **The only reliable check is to `ls` the
+destination and confirm `_data.xdat` is growing.**
+
+⭐ `set_recording('on')` turns streaming on by itself if it is off, but I set streaming on
+explicitly first anyway, because the sweep required streaming to be off.
 
 ## Still open
 
