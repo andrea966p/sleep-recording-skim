@@ -140,6 +140,50 @@ def physiology(f, lab, ok):
     return out, checks, bool(ok_all)
 
 
+def enforce_min_bout(lab, blocks, min_ep):
+    """Merge runs shorter than min_ep into the neighbouring state.
+
+    Applied WITHIN unbroken contact blocks only. Merging across a block
+    boundary would join epochs that may be hours apart -- the same class of
+    error as the 2026-08-03 persistence bug.
+
+    A short run is relabelled to whichever adjacent run is LONGER; ties go to
+    the preceding run. Iterated until no run shorter than min_ep remains,
+    because merging can create new short runs.
+
+    Returns (new_lab, n_epochs_relabelled).
+    """
+    out = lab.copy()
+    changed_total = 0
+    for a, b in blocks:
+        seg = out[a:b]
+        if len(seg) < min_ep:
+            continue
+        # Repeat until stable. Merging one short run can create a new short run,
+        # so one pass is not enough. A cap of len(seg) cannot be exceeded because
+        # every merge strictly reduces the number of runs.
+        for _ in range(len(seg)):
+            edges = np.flatnonzero(np.diff(seg)) + 1
+            starts = np.concatenate(([0], edges))
+            ends = np.concatenate((edges, [len(seg)]))
+            lens = ends - starts
+            if len(lens) == 1:
+                break
+            short = np.flatnonzero(lens < min_ep)
+            if len(short) == 0:
+                break
+            # merge the SHORTEST run first, so the result does not depend on
+            # scan order
+            i = int(short[np.argmin(lens[short])])
+            prev_len = lens[i - 1] if i > 0 else -1
+            next_len = lens[i + 1] if i + 1 < len(lens) else -1
+            take = i - 1 if prev_len >= next_len else i + 1
+            changed_total += int(lens[i])
+            seg[starts[i]:ends[i]] = seg[starts[take]]
+        out[a:b] = seg
+    return out, changed_total
+
+
 def rem_entry_order(lab, blocks):
     """REM should be entered from NREM. Counted WITHIN blocks only."""
     from_n = tot = 0
@@ -168,6 +212,11 @@ def analyse(npz_path):
     ok = ok[:n]
     blocks = [(a, min(b, n)) for a, b in blocks if a < n and min(b, n) - a >= T.MIN_BLOCK]
     lab, thr, lab_otsu = stage(f, ok)
+    # LAB SCORING CONVENTION: a state shorter than MIN_BOUT_EPOCHS (12 s) is not
+    # counted as that state. See qc_thresholds.MIN_BOUT_EPOCHS for provenance.
+    lab_raw = lab.copy()
+    lab, n_merged = enforce_min_bout(lab, blocks, T.MIN_BOUT_EPOCHS)
+    lab_otsu, _ = enforce_min_bout(lab_otsu, blocks, T.MIN_BOUT_EPOCHS)
 
     in_block = np.zeros(n, dtype=bool)
     for a, b in blocks:
@@ -207,6 +256,15 @@ def analyse(npz_path):
                 "literature value of <10% of sleep, so neither is a "
                 "measurement. Report WAKE vs NREM, plus the ORDER property "
                 "that REM is entered from NREM. Do not report a REM share."))
+
+    n_scored = int((lab_raw >= 0).sum())
+    min_bout = dict(
+        min_bout_epochs=int(T.MIN_BOUT_EPOCHS),
+        min_bout_s=int(T.MIN_BOUT_EPOCHS * T.EPOCH_S),
+        epochs_relabelled=int(n_merged),
+        pct_of_scored_epochs=round(100.0 * n_merged / n_scored, 2) if n_scored else 0.0,
+        rule="runs shorter than the minimum are merged into the longer neighbouring state, within blocks only",
+        provenance="LAB CONVENTION, not from the IIIS reference (see qc_thresholds.MIN_BOUT_EPOCHS)")
 
     bt = {}
     for v, nm in NAMES.items():
@@ -262,7 +320,8 @@ def analyse(npz_path):
         physiology=phys, physiology_checks=checks, physiology_pass=phys_ok,
         rem_entries=int(rt), rem_from_nrem=int(rn),
         rem_from_nrem_pct=None if np.isnan(rpct) else round(float(rpct), 1),
-        bouts=bt, by_light_phase=phase,
+        bouts=bt,
+        min_bout=min_bout, by_light_phase=phase,
         light_cycle=f"on {T.LIGHTS_ON_HOUR:02d}:00 / off {T.LIGHTS_OFF_HOUR:02d}:00 KST",
         pipeline_version="2026-08-03")
 

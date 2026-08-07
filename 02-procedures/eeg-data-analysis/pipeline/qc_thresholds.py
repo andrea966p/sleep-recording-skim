@@ -34,6 +34,23 @@ EPOCH_S = 4
 # work spans 4 s (IntelliSleepScorer), 10 s (Kostin 2025) and 20 s (FASTER,
 # MC-SleepNet). We use 4 s and NEVER report bouts shorter than 2 epochs.
 
+MIN_BOUT_EPOCHS = 3
+# = 12 s at 4 s epochs. A run of a state shorter than this is not counted as
+# that state; it is merged into the neighbouring state.
+#
+# PROVENANCE: THIS LAB'S SCORING CONVENTION, stated by the operator 2026-08-07:
+#   "The basic unit epoch is 4 seconds, and we look at 5 blocks at once, so it
+#    is set to 20 seconds. Also, after analyzing with 4 s epoch, we do not count
+#    it as a stage if it is shorter than three consecutive epochs (12 s)."
+#
+# ⚠️ NOT from the IIIS Tsukuba reference. Checked directly against Nakata et al.
+# SLEEP 2025 (doi:10.1093/sleep/zsae279), the current method from the Funato /
+# Yanagisawa group: it specifies 4 s epochs, semiautomatic scoring followed by
+# visual inspection, and computes mean episode duration as total time in state
+# divided by number of episodes, with NO minimum bout criterion of any kind.
+# So this constant is a house rule, defensible and common in rodent work, but it
+# must be reported as ours and not attributed to that reference.
+
 NPERSEG = 2048
 # DO NOT LOWER. df = fs/nperseg = 0.49 Hz. At nperseg=512 df = 1.95 Hz and the
 # 6-9 Hz theta band spans a single FFT bin, so np.trapz over one point returns
