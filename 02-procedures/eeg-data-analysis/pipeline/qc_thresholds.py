@@ -56,9 +56,33 @@ NPERSEG = 2048
 # 6-9 Hz theta band spans a single FFT bin, so np.trapz over one point returns
 # exactly 0.0 and silently destroys every REM measurement with no error raised.
 
-BAND_DELTA = (0.5, 4.0)   # Kostin 2025 / FASTER use 0.5-4 or 0.75-4
+BAND_DELTA = (1.0, 4.0)
+# CHANGED 2026-08-08 from (0.5, 4.0) to match the IIIS Tsukuba reference exactly:
+# "NREMS was characterized by high-amplitude, delta (1-4 Hz)-frequency EEG waves"
+# and "The delta range ... was calculated as the average of the EEG power of
+# 1-4 Hz". SOURCE: Nakata et al., SLEEP 2025, doi:10.1093/sleep/zsae279.
+# Kostin 2025 / FASTER use 0.5-4 or 0.75-4, so both are defensible; we align with
+# the reference lab whose montage we copied.
+# ⭐ It also suits our hardware: the acquisition high-pass sits at 1.10 Hz and
+# irreversibly attenuates 0.5-1.1 Hz before the data is saved, so a 0.5 Hz lower
+# edge was integrating a band the hardware had already eaten.
 BAND_THETA = (6.0, 9.0)   # avoid putting 7 Hz on a boundary (Kostin 2025)
 BAND_TOTAL = (0.5, 30.0)
+BAND_NORM = (15.0, 30.0)
+# Normalisation band. IIIS Tsukuba express each frequency bin as a percentage of
+# the MEAN TOTAL EEG POWER OVER 15-30 Hz across all sleep/wake states, and define
+# NREMS delta density as delta power during NREMS over the 15-30 Hz sum during
+# NREMS. Adopted 2026-08-08 so our delta values are comparable to theirs.
+# SOURCE: Nakata et al., SLEEP 2025, doi:10.1093/sleep/zsae279 (Funato/Yanagisawa).
+# CAVEAT: their EEG hardware filter is 0.5-100 Hz; ours is 0.5-30 Hz, so the top
+# of this band sits on our filter's roll-off. The normaliser is therefore
+# internally consistent but not numerically identical to theirs.
+
+EXCLUDE_TRANSITION_EPOCHS_FROM_SPECTRA = True
+# IIIS exclude, FROM THE POWER SPECTRUM ANALYSIS ONLY, epochs with artifacts and
+# epochs in which either the preceding or the following epoch was in a different
+# vigilance state. Staging and state totals still use every epoch.
+# SOURCE: same paper.
 
 FILT_EEG = (0.5, 30.0)    # band-pass, 4th-order Butterworth, zero-phase
 FILT_EMG = (10.0, 300.0)  # band-pass; 300 Hz or Nyquist-1, whichever is lower

@@ -71,7 +71,7 @@ def epoch_features(eeg, emg, fs):
     return dict(n=n,
                 eeg_rms=Ef.std(1), emg_rms=Mf.std(1),
                 delta=bp(*T.BAND_DELTA), theta=bp(*T.BAND_THETA),
-                total=bp(*T.BAND_TOTAL))
+                total=bp(*T.BAND_TOTAL), norm=bp(*T.BAND_NORM))
 
 
 def stage(f, ok):
@@ -105,13 +105,34 @@ def stage(f, ok):
                      theta_delta_otsu_log10=float(td_thr_otsu)), lab_otsu
 
 
-def physiology(f, lab, ok):
+def steady_state_mask(lab, blocks):
+    """Epochs whose PRECEDING and FOLLOWING epoch are the same state.
+
+    IIIS exclude transition epochs from power-spectrum analysis only; staging
+    and state totals still use every epoch. Evaluated WITHIN blocks, so a block
+    edge is treated as a transition rather than reaching across a contact gap.
+    SOURCE: Nakata et al., SLEEP 2025, doi:10.1093/sleep/zsae279.
+    """
+    m = np.zeros(len(lab), dtype=bool)
+    for a, b in blocks:
+        if b - a < 3:
+            continue
+        seg = lab[a:b]
+        same = (seg[1:-1] == seg[:-2]) & (seg[1:-1] == seg[2:]) & (seg[1:-1] >= 0)
+        m[a + 1:b - 1] = same
+    return m
+
+
+def physiology(f, lab, ok, spec_mask=None):
     """Do the three states behave like WAKE, NREM and REM should?
 
     If they do not, the clustering found something other than sleep and no
     architecture number from it is meaningful.
     """
-    idx = np.where(ok[:f["n"]] & (lab >= 0))[0]
+    base = ok[:f["n"]] & (lab >= 0)
+    if spec_mask is not None:
+        base = base & spec_mask[:f["n"]]
+    idx = np.where(base)[0]
     out = {}
     for v, nm in NAMES.items():
         m = idx[lab[idx] == v]
@@ -125,7 +146,12 @@ def physiology(f, lab, ok):
             delta_pct=float(np.median(100 * f["delta"][m]
                                       / np.clip(f["total"][m], 1e-12, None))),
             theta_delta=float(np.median(f["theta"][m]
-                                        / np.clip(f["delta"][m], 1e-12, None))))
+                                        / np.clip(f["delta"][m], 1e-12, None))),
+            # IIIS-style: power relative to the 15-30 Hz band
+            delta_density=float(f["delta"][m].sum()
+                                / max(float(f["norm"][m].sum()), 1e-12)),
+            theta_density=float(f["theta"][m].sum()
+                                / max(float(f["norm"][m].sum()), 1e-12)))
     checks, ok_all = {}, True
     have = all(out.get(k) for k in ("WAKE", "NREM", "REM"))
     if have:
@@ -249,7 +275,21 @@ def analyse(npz_path):
                           shuffled=None if np.isnan(shuf) else round(float(shuf), 3),
                           pairs=int(pairs), blocks=int(used))
 
-    phys, checks, phys_ok = physiology(f, lab, sel)
+    # Spectral summaries exclude TRANSITION epochs (IIIS). Staging and state
+    # totals above are unaffected.
+    spec_mask = (steady_state_mask(lab, blocks)
+                 if T.EXCLUDE_TRANSITION_EPOCHS_FROM_SPECTRA else None)
+    phys, checks, phys_ok = physiology(f, lab, sel, spec_mask=spec_mask)
+    n_spec = int((sel & (spec_mask if spec_mask is not None else True)).sum())
+    spectra_info = dict(
+        exclude_transition_epochs=bool(T.EXCLUDE_TRANSITION_EPOCHS_FROM_SPECTRA),
+        epochs_used_for_spectra=n_spec,
+        epochs_scored=int(sel.sum()),
+        pct_excluded_as_transition=round(100.0 * (int(sel.sum()) - n_spec)
+                                         / max(int(sel.sum()), 1), 1),
+        normalisation_band_hz=list(T.BAND_NORM),
+        note="IIIS: exclude artifact and transition epochs from SPECTRA only; "
+             "power expressed relative to 15-30 Hz. doi:10.1093/sleep/zsae279")
     # Also on RAW labels: smoothing deletes isolated single-epoch REM, which
     # mechanically raises the fraction of REM entered from NREM.
     rn, rt, rpct = rem_entry_order(lab_raw, blocks)
@@ -281,6 +321,29 @@ def analyse(npz_path):
         pct_of_scored_epochs=round(100.0 * n_merged / n_scored, 2) if n_scored else 0.0,
         rule="runs shorter than the minimum are merged into the longer neighbouring state, within blocks only",
         provenance="LAB CONVENTION, not from the IIIS reference (see qc_thresholds.MIN_BOUT_EPOCHS)")
+
+    # STATE TOTALS BOTH WAYS.
+    # Ours: percentage of SCORED epochs (rejected epochs excluded entirely).
+    # IIIS include artifact epochs in their state totals, which they can do
+    # because a human still assigns a stage to an artifact epoch. We cannot --
+    # our rejected epochs are OPEN electrodes with no signal to score. So the
+    # comparable presentation is percentage of the WHOLE recording with the
+    # unscored fraction stated explicitly.
+    # NOTE: blocks contain only PASSING epochs by construction, so a
+    # "percentage of epochs in blocks" is identical to "percentage of scored
+    # epochs" and tells you nothing. The informative denominator is the WHOLE
+    # RECORDING, which exposes how much was thrown away.
+    totals_both_ways = dict(
+        of_scored_epochs={NAMES[v]: round(100.0 * counts[NAMES[v]] / tot_ep, 1)
+                          for v in NAMES},
+        of_whole_recording={NAMES[v]: round(100.0 * counts[NAMES[v]] / max(n, 1), 1)
+                            for v in NAMES},
+        unscored_pct_of_recording=round(100.0 * (n - int(sel.sum())) / max(n, 1), 1),
+        recording_epochs=int(n), scored_epochs=int(sel.sum()),
+        note="IIIS include artifact epochs in state totals (doi:10.1093/sleep/zsae279). "
+             "Our rejected epochs are open electrodes with no scorable signal, so they "
+             "cannot be assigned a stage. Percentages of scored epochs are NOT directly "
+             "comparable to published values without this denominator.")
 
     bt = {}
     for v, nm in NAMES.items():
@@ -342,7 +405,8 @@ def analyse(npz_path):
                                     "by construction; architecture and bouts below are "
                                     "computed on the SMOOTHED labels."),
         bouts=bt,
-        min_bout=min_bout, by_light_phase=phase,
+        min_bout=min_bout, spectra=spectra_info,
+        state_totals=totals_both_ways, by_light_phase=phase,
         light_cycle=f"on {T.LIGHTS_ON_HOUR:02d}:00 / off {T.LIGHTS_OFF_HOUR:02d}:00 KST",
         pipeline_version="2026-08-08")
 
