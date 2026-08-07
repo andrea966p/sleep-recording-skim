@@ -437,7 +437,7 @@ def analyse(npz_path):
     # mechanically raises the fraction of REM entered from NREM.
     rn, rt, rpct = rem_entry_order(lab_raw, blocks)
     rn_s, rt_s, rpct_s = rem_entry_order(lab, blocks)
-    nm, nsd, npct = rem_order_null(lab_raw, blocks)
+    rem_null_mean, rem_null_sd, rem_null_pct = rem_order_null(lab_raw, blocks)
 
     # measured (not constructed) REM share, and REM as a fraction of sleep --
     # literature for mice is REM < 10% of total sleep
@@ -551,9 +551,10 @@ def analyse(npz_path):
         rem_from_nrem_pct=None if np.isnan(rpct) else round(float(rpct), 1),
         rem_from_nrem_pct_smoothed=None if np.isnan(rpct_s) else round(float(rpct_s), 1),
         rem_from_nrem_null=dict(
-            null_mean_pct=None if np.isnan(nm) else round(nm, 1),
-            null_sd_pct=None if np.isnan(nsd) else round(nsd, 1),
-            observed_percentile_of_null=None if np.isnan(npct) else round(npct, 1),
+            null_mean_pct=None if np.isnan(rem_null_mean) else round(rem_null_mean, 1),
+            null_sd_pct=None if np.isnan(rem_null_sd) else round(rem_null_sd, 1),
+            observed_percentile_of_null=(None if np.isnan(rem_null_pct)
+                                         else round(rem_null_pct, 1)),
             method="run-order shuffle within blocks; run lengths and state "
                    "composition preserved, sequence destroyed",
             note="If the observed value sits inside the null, 'REM is entered from "
