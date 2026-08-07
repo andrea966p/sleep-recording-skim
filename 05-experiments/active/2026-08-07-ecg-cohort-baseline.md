@@ -385,3 +385,89 @@ three, and no amount of further analysis of this recording separates them.
 Comes alive means tether. Stays flat means surgery or ground, and then the ground site is the
 next thing to vary. ⚠️ **This costs one isoflurane episode on one animal**, so it is andrea's
 call, not mine, and it should wait until the night is scored.
+
+---
+
+## 🔴⭐⭐⭐ THE GROUND WIRE WAS CONNECTED TO THE WRONG PIN
+
+**andrea's hypothesis, 2026-08-07 ~22:00, and it explains the whole night.**
+
+The cerebellum dura pin should mate to the **brown** wire, which runs through the brown slip ring
+line and lands on the **GND pad of the headstage adapter board**. Instead the cerebellum pin was
+mated to the **orange** wire, which is floating at the far end, and the brown wire sitting in the
+headstage GND pad **is not connected to the mouse at all**.
+
+⇒ **ALL SEVEN NEW MICE HAVE BEEN RECORDING WITH NO GROUND / REFERENCE CONNECTION TO THE ANIMAL.**
+The control is untouched because it is the old mouse on the old tether.
+
+### Why this explains every single thing we saw
+
+1. ⭐⭐ **THE FLEET WIDE HUM COLLAPSE, WHICH NOTHING ELSE EXPLAINED.** With no ground, mains
+   drives the **whole animal** as a common mode signal, and **a genuinely bipolar channel rejects
+   common mode**. So the differential hum goes DOWN. ⚠️ **The "lose the ground and get enormous
+   hum" intuition is for SINGLE ENDED referential recording, not for a differential pair.**
+   **Low hum and absent signal come from the same cause.**
+2. ⭐⭐ **IMPEDANCE EXCELLENT, PURELY RESISTIVE, AND PERFECTLY STABLE WITH ZERO FLIPS.** With GND
+   floating the injected current has to return through **the other electrode of the pair**, so
+   the measurement is electrode → tissue → electrode. That is a real and stable tissue path,
+   resistive, 100 to 360 kΩ. ⭐ **The stability is the tell: every failure this rig has ever had
+   was intermittent. Seven channels at 100% duty with ZERO flips is not how electrodes fail, it
+   is how a wiring error behaves.**
+3. **Seven of seven identical, no intermittency.** Deterministic, as a mis-pin must be.
+4. **The control is unaffected** on the same port, splitter and amplifier.
+5. **No heartbeat on any ECG channel**, which electrode placement cannot explain.
+6. ⭐ **The three channels of each new mouse carry substantially the SAME waveform**, mean
+   broadband |r| 0.38 and **D1 at 0.79**, while the control's three channels are independent at
+   0.13. Skull EEG and thoracic ECG have nothing in common unless everything is riding one shared
+   floating potential. ⚠️ Partly confounded: a channel with real signal is automatically less
+   correlated with its neighbours, so some of the control's 0.13 is *because* it works.
+
+### What does NOT fit, keep it in view
+
+⚠️ A missing bias return should push the amplifier out of its linear range, and we measured
+**zero railing**. A soft loss of sensitivity on an AC coupled Intan front end is plausible but
+was **not demonstrated** from this data.
+⚠️ 🔴 **A PREDICTION WAS MADE AND FAILED TONIGHT.** I predicted the impedance phase would sit
+near **-90°** if the path were tether capacitance. It came back **~2° or ~178°, purely
+resistive**. The capacitive coupling idea is dead. Weight the rest accordingly.
+
+### Superseded by this
+
+🔴 **The "bipolar pairs are shorted in the unsoldered 8 conductor tether" hypothesis is
+WITHDRAWN.** andrea's multimeter check already showed no conductor beeps against any other, and
+the grounding error explains the same observations without needing a short.
+⚠️ The point about **beep testers firing below roughly 30 to 50 Ω, so a tens of kΩ leak is
+silent**, remains true and worth keeping, it just is not what happened here.
+🔴 **The "conductive bridge / fluid under the cement" idea is also withdrawn**, and with it the
+suggestion to spend an isoflurane episode moving one mouse onto an old style tether.
+✅ **NO ANAESTHESIA IS NEEDED. This is a connector re-mate, not the implanted electrode**, so it
+is NOT the "never reseat an electrode" case.
+
+## Decision taken 2026-08-07 22:01
+
+andrea **stopped the recording** and will **re-pin the ground on all seven mice tomorrow**, then
+start a fresh recording. I had suggested fixing them one at a time inside the running file;
+**her call, and it costs nothing**, because the control already has its 23.66 h night from
+2026-08-06/07 and the pre-fix baseline is fully captured.
+
+🗂️ **PRE-FIX BASELINE FILE, KEEP IT: `allego_0__uid0807-19-14-58`**, 19:14:58 to 22:01,
+**2.768 h**, 10.44 GB, `~/radix/data/`. Verified intact on stop: data and timestamp files agree
+to the sample (9,964,672 each), zero remainder bytes, no error string. **This is the before state
+for all seven animals AND 2.8 h of the working control under the identical floor**, which is what
+tomorrow's after state gets compared against.
+
+## Tomorrow, in order
+
+1. **Re-pin the cerebellum ground to the brown wire on all seven.** Confirm brown lands on the
+   headstage GND pad and that the orange wire is no longer carrying the dura pin.
+2. ⭐ **Watch the live stream BEFORE committing to a night.** If the hypothesis is right, EEG
+   appears within seconds. `scratchpad/grab_stream.py` then `look_live2.py`. ⚠️ Remember
+   `get_signals()` returns **only the GUI selected channels**, 24 of them here.
+3. **Run a fresh impedance block** with the ground correct. ⭐ **PREDICTION: the impedances
+   should get WORSE, or at least change character**, because the return path moves from
+   "through the paired electrode" to "through the ground electrode". **If the numbers stay
+   identical at 100% duty with zero flips, the ground is still not connected.**
+4. **Start the overnight recording.** ⚠️ `set_recording_config()` is broken, use
+   `scratchpad/set_rec_cfg.py`, and confirm `_data.xdat` is growing in `~/radix/data`.
+5. Score against the floor `/4`-`/16`, `/36`-`/48`, ⭐ **with the heartbeat as the primary
+   yes/no test**, and compare directly against this pre-fix file.
