@@ -235,6 +235,22 @@ Low hum and absent signal had the same cause.
 ⇒ **Re-derive every hum threshold from the current cohort's own floor, and never assume low hum
 means good contact.**
 
+## 3.3c Diagnosing WHICH failure an animal has
+
+Stage 1 says `OPEN` and stops. That word hides at least four faults needing different fixes:
+**floating conductor** (huge hum, railing), **shared path** (both channels rail, and the animal's
+**own two channels correlate > 0.5**), **damaged/partially conducting** (intermediate hum, *quieter
+than the floor*, no railing, e.g. a chewed tether), and **one good channel of two**.
+
+⭐ The discriminator that turned out to matter is the **correlation between an animal's own EEG and
+EMG** after filtering: working animals sit at **0.07-0.08**, a shared fault drives it to **0.74**.
+
+🛑 **Spectral slope judges EEG, not EMG** — real EMG is broadband, so a flat spectrum is expected
+for a working muscle channel.
+
+Full lookup table and the worked example on all 8 positions:
+[[per-animal-failure-signatures]].
+
 ## 3.4 Artefact and railing
 
 Full rules: [[eeg-artefact-and-railing-rejection-policy]].

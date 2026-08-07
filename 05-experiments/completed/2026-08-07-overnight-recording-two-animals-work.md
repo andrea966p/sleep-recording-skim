@@ -187,6 +187,25 @@ episode per animal.** The vault predicted exactly this limitation before the exp
 
 ---
 
+## 6b. What the six failed animals actually have
+
+They are **not one problem**. Per-channel forensics across the whole recording separates them:
+[[per-animal-failure-signatures]].
+
+| animal | fault | evidence |
+| --- | --- | --- |
+| **C2** | 🦷 **chewed tether, confirmed** | both channels at intermediate hum, **quieter than the wire-free floor**, ~0% railing, no signal = partially conducting cable |
+| **C1** | EEG floating, **EMG genuinely connected** | EMG hum **75.9 µV**, inside the measured connected band of 9-90 µV |
+| **A1** | same shape, one grade worse | EMG hum 264 µV, connected but swamped; EEG at 5312 µV |
+| **D1** | 🔴 **shared-path fault** | its own two channels correlate at **0.74**; working animals sit at 0.07 |
+| **B2** | shared-path, mixed | correlation **0.50** |
+| **A2** | no mouse | the control, behaving correctly |
+
+> [!success] Five of six failures point at the tether chain, not the implants
+> One chewed cable, two shared-path faults upstream of both channels, and two animals with a
+> **working electrode on one channel and a floating one on the other through the same tether**.
+> That is not a pattern of failing implants.
+
 ## 7. Processed data, and the canonical pipeline's own verdict
 
 Both recordings were run through the project pipeline
