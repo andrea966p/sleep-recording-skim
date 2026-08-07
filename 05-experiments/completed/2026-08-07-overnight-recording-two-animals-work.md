@@ -184,3 +184,55 @@ episode per animal.** The vault predicted exactly this limitation before the exp
    surgical one, so the existing cohort is recoverable.
 3. **Export B1 and D2 to EDF+** for manual scoring.
 4. C1's EMG remains ambiguous and needs video.
+
+---
+
+## 7. Processed data, and the canonical pipeline's own verdict
+
+Both recordings were run through the project pipeline
+(`stage1_qc.py`, then `stage2_split.py --all-verdicts`) into
+**`/home/skimlab/eeg-processed/2026-08-06/`**, with `INDEX.md` describing the layout and a
+`by-mouse/` folder giving a per animal view.
+
+> [!success] A third, independent method agrees
+> Stage 1 uses a **fixed 150 µV mains limit inherited from earlier sessions**, nothing to do with
+> today's floor-control work, and it reaches the same verdicts.
+
+| mouse | afternoon, 3.18 h | overnight, 23.66 h |
+| --- | --- | --- |
+| **B1** | **CLEAN**, 100.00%, longest block 190.7 min | **CLEAN**, 100.00%, **longest block 1419.5 min** |
+| **D2** | **OPEN**, 0.00%, mains 794.9 µV, 26.1% railed | **CLEAN**, 98.68%, mains 96.1 µV, **0.0% railed**, longest block 576.4 min |
+| A1, A2, B2, C1, C2, D1 | OPEN | OPEN |
+
+> [!important] ⭐ B1's entire 23.66 hour recording is ONE unbroken block
+> 1419.5 minutes, `n_blocks = 1`. The previous project best was **C1's 8.1 hour block on
+> 31 July**. D2's longest is **9.6 hours**, which also beats it.
+
+### ⚠️ Why these block lengths differ from §1
+
+§1 reports 215.8 min for B1 and 87.3 min for D2; the pipeline reports 1419.5 and 576.4. Both are
+correct and they measure different things:
+
+| | §1 analysis | pipeline stage 1 |
+| --- | --- | --- |
+| epoch | 10 s | 4 s |
+| gate | 60 Hz below the **floor-derived** 415 µV, **plus** rms 10-150 µV, **plus** zero railed samples, **on both channels simultaneously** | the project's inherited gate, 150 µV mains limit |
+
+The §1 criterion is stricter and breaks a block whenever **either** channel dips, so it fragments
+long stretches. **Quote the pipeline numbers for scoreability**, since that is the project's
+canonical measure, and quote the §1 numbers when the point is separation from an unconnected
+amplifier.
+
+### 🔴 The unsaved final impedance sweep is not recoverable
+
+A sweep was taken before the mice were disconnected but not saved. It cannot be recovered:
+`zcheck_spec` in the recording JSON is all null, `~/radix/workspace/allego_signal_map-instrument.csv`
+holds only the channel map, `~/.config/allego/allego-workspaces.json` holds settings and no values,
+and the gRPC call **fires a new measurement** rather than returning the last one.
+
+✅ **Fix: never take a sweep from the GUI again.** `eeg-emg-analysis/qc/sweep_block_all_ports.py`
+writes a CSV per sweep automatically, so nothing depends on remembering to save. Run
+`remap_channels.py` first after any port change.
+
+Nothing was lost scientifically: the observation was that B1 and D2 looked good, and the recording
+demonstrates that far more strongly.
