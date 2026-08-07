@@ -131,7 +131,7 @@ Fixes, in dependency order. Each is applied only after explicit approval.
 
 | # | fix | status |
 | --- | --- | --- |
-| 1 | **Minimum bout duration: 3 consecutive epochs, 12 s**, per our SOP | ⬜ |
+| 1 | **Minimum bout duration: 3 consecutive epochs, 12 s**, per our SOP | ✅ **done 2026-08-08**, see §4 |
 | 2 | Blind scoring harness + Cohen's kappa against stage 3 | ⬜ |
 | 3 | Rejection rate as a function of scored state (the selection-bias test) | ⬜ |
 | 4 | Otsu cut ±25% sensitivity sweep on the circadian result | ⬜ |
@@ -144,3 +144,101 @@ Fixes, in dependency order. Each is applied only after explicit approval.
 > Not contiguous hours. Shuffle the order, hide the automatic labels. Everything else on the list
 > is unfalsifiable until that number exists — including the selection-bias test, which needs
 > scored states to plot rejection rate against.
+
+
+---
+
+# 4. Fix 1 applied, 2026-08-08 — minimum bout duration
+
+## 4.1 What was checked first
+
+⭐ **The reference was consulted before the constant was written**, and it did not say what we
+assumed. According to PubMed, the current IIIS Tsukuba method is **Nakata et al., SLEEP 2025**
+([doi:10.1093/sleep/zsae279](https://doi.org/10.1093/sleep/zsae279)), from the Funato and
+Yanagisawa group.
+
+| IIIS rule | ours | |
+| --- | --- | --- |
+| **4 s epochs**, semiautomatic then **visual inspection** | 4 s, automatic only | ✅ epoch / ❌ no visual step |
+| **Theta 6-9 Hz** | 6-9 Hz | ✅ exact |
+| Delta **1-4 Hz** | 0.5-4 Hz | ❌ differs |
+| EEG 0.5-100 Hz, EMG 5-300 Hz, digitised **250 Hz** | 0.5-30 / 10-300, decimated to 250 Hz | partial |
+| Episode duration = total time ÷ episode count | same | ✅ |
+| **Movement-artifact epochs INCLUDED in state totals** | we exclude them | ❌ opposite |
+| For spectra only: exclude artifact epochs **and epochs whose neighbour is a different state** | not done | ❌ missing |
+| Power as % of mean total power over **15-30 Hz** | not done | ❌ missing |
+| **≥7 d recovery, then ≥9 d habituation on the tether** with counterbalanced arm | tethered day 8-10, ~1 d habituation | ❌ large gap |
+
+> [!danger] 🔴 There is NO minimum bout rule in the IIIS method
+> Not 3 epochs, not any value. They compute mean episode duration as total time divided by
+> episode count with no minimum applied.
+>
+> **Our 12 s rule is therefore a house convention, not an IIIS standard**, and
+> `qc_thresholds.MIN_BOUT_EPOCHS` records it that way. It is defensible and common in rodent
+> work, but it must never be attributed to that reference.
+
+## 4.2 What was implemented
+
+`MIN_BOUT_EPOCHS = 3` in `qc_thresholds.py`; `enforce_min_bout()` in `stage3_features.py`.
+Runs shorter than 3 epochs are **merged into the longer neighbouring state**, shortest run first,
+iterated until stable, **within unbroken contact blocks only** — merging across a block boundary
+would join epochs hours apart, the same class of error as the 2026-08-03 persistence bug.
+
+⚠️ Merge-versus-exclude was an implementation choice, not a stated part of the convention. Merge
+keeps the hypnogram continuous and matches SleepSign-style behaviour. It is a one-line switch.
+
+## 4.3 Effect
+
+| | before | after |
+| --- | --- | --- |
+| B1 bout counts, WAKE / NREM / REM | 1232 / 1672 / 971 | **205 / 258 / 98** |
+| B1 bout medians | 12 / 4 / 4 s | **84 / 40 / 22 s** |
+| B1 WAKE / NREM | 46.1 / 46.8% | 50.2 / 46.0% |
+| epochs relabelled | — | **B1 9.78%, D2 12.64%** |
+
+**The old bout statistics were mostly counting single-epoch flickers.** Counts fell six- to
+tenfold.
+
+✅ **The circadian result barely moved**, so it does not depend on this choice: B1 82.1 → 81.2%
+asleep in the light phase, **D2 70.3 → 70.4%**.
+
+## 4.4 🔴 The trap this exposed, and the split it forced
+
+Applying the rule made **both of our validity statistics rise with no new information**:
+
+| | unsmoothed | smoothed |
+| --- | --- | --- |
+| B1 `r@1min` | 0.603 | **0.742** |
+| B1 REM entered from NREM | 73.9% | **82.7%** |
+
+Smoothing a state sequence **raises its autocorrelation by construction**, and deleting isolated
+single-epoch REM mechanically raises the fraction of REM entered from NREM. Worse, the calibration
+in `qc_thresholds.py` — noise −0.035, 4 min bouts +0.510, pass at r > 0.30 — was derived on
+**unsmoothed** labels, so it would no longer have applied.
+
+> [!success] The fix: validity on RAW labels, architecture on SMOOTHED labels
+> `stage3_features.py` now keeps `lab_raw` and computes **persistence and the REM-order check
+> before the merge**, while architecture, bouts and the light/dark split are computed **after** it.
+> Both REM-order numbers are reported, and the JSON carries a
+> `validity_stats_computed_on` field saying which is which.
+>
+> This keeps the two jobs separate: *is the signal real* is answered on untouched data, *what is
+> the architecture* is answered under the lab convention.
+
+## 4.5 State after re-running all 16 files
+
+| animal | verdict | r@1min (raw) | WAKE / NREM (smoothed) | REM order (raw) | merged | asleep in light |
+| --- | --- | --- | --- | --- | --- | --- |
+| **B1 overnight** | SCOREABLE | **0.603** | 50.2 / 46.0% | 73.9% | 9.78% | **81.2%** |
+| **D2 overnight** | SCOREABLE | 0.499 | 43.4 / 50.0% | 79.5% | 12.64% | **70.4%** |
+| B1 afternoon | SCOREABLE | 0.481 | 26.8 / 65.6% | 79.6% | 9.86% | 73.2% |
+| other 13 | REJECT | — | — | — | — | — |
+
+Stage 4 EDF packets regenerated; `by-mouse/` relinked, 13 artefacts per animal.
+Backups: `qc_thresholds.py.bak`, `stage3_features.py.bak`. Pipeline version now `2026-08-08`.
+
+## 4.6 Approved next, not yet applied
+
+The four IIIS alignment items, all sourced from the paper above:
+**exclude transition epochs from spectra** · **normalise power to 15-30 Hz** ·
+**switch delta to 1-4 Hz** · **report state totals both ways**.

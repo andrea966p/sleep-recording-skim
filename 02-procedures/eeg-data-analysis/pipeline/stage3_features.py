@@ -18,6 +18,13 @@ READ THIS BEFORE QUOTING ANY NUMBER
     rule and not a measurement. The field is named rem_pct_CONSTRUCTED. What IS
     evidence is REM's ORDER: REM should be entered from NREM, not from wake.
 
+    Persistence and the REM-order check are computed on the RAW labels, BEFORE
+    the minimum-bout merge, and WITHIN unbroken contact blocks only. Smoothing
+    short bouts raises the autocorrelation of the state sequence with no new
+    information, so computing them after the merge would inflate both. The
+    architecture, bout and light/dark numbers ARE computed after the merge,
+    because that is the lab scoring convention.
+
     Persistence is computed WITHIN unbroken contact blocks only. Computing it
     across gaps is the bug that on 2026-08-03 produced both the project's
     largest false positive (+0.854 on 39 min of pure wake) and a false negative
@@ -226,7 +233,13 @@ def analyse(npz_path):
     counts = {NAMES[v]: int((lab[sel] == v).sum()) for v in NAMES}
     tot_ep = max(int(sel.sum()), 1)
 
-    sleep = ((lab == NREM) | (lab == REM)).astype(float)
+    # VALIDITY STATISTICS ARE COMPUTED ON THE *RAW* LABELS.
+    # Smoothing short bouts raises the autocorrelation of the state sequence by
+    # construction, so computing persistence on the smoothed labels would
+    # inflate it with no new information (B1: 0.603 -> 0.742 on 2026-08-08).
+    # The r@1min calibration in qc_thresholds (noise -0.035, 4 min bouts +0.510)
+    # was derived on UNSMOOTHED labels, so it only applies here.
+    sleep = ((lab_raw == NREM) | (lab_raw == REM)).astype(float)
     pers = {}
     for name, sec in (("1min", 60), ("5min", 300), ("10min", 600)):
         lg = sec // T.EPOCH_S
@@ -237,7 +250,10 @@ def analyse(npz_path):
                           pairs=int(pairs), blocks=int(used))
 
     phys, checks, phys_ok = physiology(f, lab, sel)
-    rn, rt, rpct = rem_entry_order(lab, blocks)
+    # Also on RAW labels: smoothing deletes isolated single-epoch REM, which
+    # mechanically raises the fraction of REM entered from NREM.
+    rn, rt, rpct = rem_entry_order(lab_raw, blocks)
+    rn_s, rt_s, rpct_s = rem_entry_order(lab, blocks)
 
     # measured (not constructed) REM share, and REM as a fraction of sleep --
     # literature for mice is REM < 10% of total sleep
@@ -320,10 +336,15 @@ def analyse(npz_path):
         physiology=phys, physiology_checks=checks, physiology_pass=phys_ok,
         rem_entries=int(rt), rem_from_nrem=int(rn),
         rem_from_nrem_pct=None if np.isnan(rpct) else round(float(rpct), 1),
+        rem_from_nrem_pct_smoothed=None if np.isnan(rpct_s) else round(float(rpct_s), 1),
+        validity_stats_computed_on=("RAW labels, before the minimum-bout merge. "
+                                    "Smoothing inflates both persistence and REM order "
+                                    "by construction; architecture and bouts below are "
+                                    "computed on the SMOOTHED labels."),
         bouts=bt,
         min_bout=min_bout, by_light_phase=phase,
         light_cycle=f"on {T.LIGHTS_ON_HOUR:02d}:00 / off {T.LIGHTS_OFF_HOUR:02d}:00 KST",
-        pipeline_version="2026-08-03")
+        pipeline_version="2026-08-08")
 
     stem = npz_path[:-4]
     with open(stem + "_hypnogram.csv", "w", newline="") as fh:
@@ -360,7 +381,7 @@ def _summary(r):
          f"  REM   {r['rem_pct_CONSTRUCTED']:>5.1f}%   <- FIXED BY CONSTRUCTION, "
          f"do not report as a finding",
          "",
-         "persistence (within unbroken blocks; calibration: noise -0.035, "
+         "persistence (RAW labels, within unbroken blocks; calibration: noise -0.035, "
          "4 min bouts +0.510)"]
     for k, v in r["persistence"].items():
         L.append(f"  r@{k:<6} {v['r']}   shuffled {v['shuffled']}   "
