@@ -132,9 +132,9 @@ Fixes, in dependency order. Each is applied only after explicit approval.
 | # | fix | status |
 | --- | --- | --- |
 | 1 | **Minimum bout duration: 3 consecutive epochs, 12 s**, per our SOP | ✅ **done 2026-08-08**, see §4 |
-| 2 | Blind scoring harness + Cohen's kappa against stage 3 | ⬜ |
+| 2 | Blind scoring harness + Cohen's kappa against stage 3 | 🟡 **harness built and tested 2026-08-08; awaiting a human scorer — see §6** |
 | 3 | Rejection rate as a function of scored state (the selection-bias test) | ⬜ |
-| 4 | Otsu cut ±25% sensitivity sweep on the circadian result | ⬜ |
+| 4 | Otsu cut ±25% sensitivity sweep on the circadian result | ✅ **done 2026-08-08 — see §5. The result is BAD.** |
 | 5 | Relabel the physiology checks honestly; add the persistence-shuffle null for REM order | ⬜ |
 | 6 | Cluster the wire-free null by session and headstage | ⬜ |
 | 7 | Positive control of known spectrum through the full pipeline | ⬜ |
@@ -298,3 +298,161 @@ test (fix 3) · **relabel the physiology checks honestly** and add the persisten
 REM order (fix 5) · **cluster the wire-free null by session** (fix 6) · **a positive control** (fix 7).
 Fix 4, the Otsu ±25% sweep, is the cheapest of these and would strengthen the circadian claim
 immediately.
+
+
+---
+
+# 5. Fix 4 applied, 2026-08-08 — the Otsu sweep, and what it did to the circadian claim
+
+## 5.1 What was swept, and how
+
+The WAKE / non-WAKE split is an Otsu cut on **log10(EMG rms in µV), refit per animal**. "±25%" is
+ambiguous in log units, so the sweep multiplies the threshold **in linear µV** by
+0.75, 0.90, 1.00, 1.10 and 1.25 — in log10 that is ∓0.097. Five points, so the shape is visible
+rather than just the endpoints. Architecture uses the smoothed labels and persistence the raw ones,
+exactly as the headline pipeline does, so the rows are directly comparable to reported values.
+
+`OTSU_SENSITIVITY_MULTIPLIERS` in `qc_thresholds.py`, `otsu_sensitivity()` in `stage3_features.py`.
+Written into both the features JSON and the text summary.
+
+## 5.2 🔴 The result
+
+| animal | reported asleep-in-light | range across ±25% | **swing** |
+| --- | --- | --- | --- |
+| B1 afternoon | 73.4% | 60.9 - 82.8% | 21.9 pts |
+| B1 overnight | 81.0% | 54.4 - 90.3% | 35.9 pts |
+| **D2 overnight** | **70.3%** | **23.0 - 88.9%** | **65.9 pts** |
+
+D2 in full:
+
+```
+  mult   thr uV   WAKE%  asleep light%   r@1min
+  0.75    19.64    84.7           23.0    0.654
+  0.90    23.57    62.4           52.0    0.601
+  1.00    26.19    43.5           70.3    0.499
+  1.10    28.80    27.1           81.7    0.455
+  1.25    32.73    13.5           88.9    0.379
+```
+
+> [!danger] 🔴 The circadian validation is threshold-dependent, and severely so
+> A ±25% change in a single per-animal threshold moves D2's headline number from **23% to 89%**
+> asleep in the light phase. The literature value of ~70% is reachable from almost anywhere in
+> that range.
+>
+> **The 70.3% agreement is therefore not the independent confirmation it was presented as.**
+> The council said "threshold-independent is false". It is worse than false; the number is close
+> to being determined by the cut.
+
+> [!warning] ⚠️ This corrects something I wrote on 2026-08-08
+> I described D2's 70.3% as "the cleaner number of the two" because it sat nearer the literature
+> mean than B1's 81-82%. **That was wrong on this axis.** D2 is by far the *more* fragile animal:
+> a 65.9 point swing against B1's 35.9. Proximity to the literature value said nothing about
+> robustness, and I should not have used it as a quality ranking.
+
+## 5.3 What it actually diagnoses
+
+A ±0.097 log10 shift only moves the answer this much if **the EMG distribution has no clear
+bimodal valley** — Otsu is placing a cut inside a continuum rather than in a gap. The ranking is
+consistent with signal quality: B1's EMG hum was 15.2 µV with 0.0% unscored, D2's 26.6 µV with
+1.6% unscored. **The sweep is measuring how well-separated wake and sleep muscle tone actually are,
+and for D2 the answer is: not very.**
+
+That is a more useful piece of information than the circadian agreement was.
+
+> [!important] What must change in how this is reported
+> - **Never describe the circadian check as threshold-independent or threshold-free.**
+> - **Quote the swing next to the headline number**, e.g. "70.3%, range 23.0-88.9% across a ±25%
+>   sweep of the WAKE threshold". The text summary now prints this automatically.
+> - The claim that the result "survived four method changes" (§4.7) **still stands** — minimum
+>   bout, transition exclusion, renormalisation and the delta band all left it near 70%. But those
+>   four were the wrong things to stress-test. **The WAKE cut was the sensitive parameter all
+>   along, and it was the one we had not varied.**
+
+> [!note] A tempting fix that must be refused
+> B1's persistence peaks at the 0.90 multiplier (r = 0.689) rather than at the Otsu cut
+> (r = 0.603), so one could choose the threshold that maximises within-block persistence. **Do not.**
+> `r@1min` is our validity statistic; tuning the threshold to maximise it would make it circular
+> and destroy the only independent check we have that the states are real.
+
+## 5.4 What this makes urgent
+
+The sweep converts fix 2 from "good practice" into **the blocking item**. The only way to know
+which multiplier is right is a **human-scored ground truth and a Cohen's kappa**; without it there
+is no principled way to place the WAKE cut, and every architecture number inherits that.
+
+An implementation bug was also caught and fixed during this work: `stage()` returns an empty
+threshold dict for recordings with no usable epochs, which raised `KeyError: emg_otsu_log10` on all
+13 rejected animals. Guarded; all 16 files re-run clean.
+
+
+---
+
+# 6. Fix 2, the kappa harness — built 2026-08-08, awaiting a scorer
+
+Two scripts in `eeg-emg-analysis/qc/`. Both need `~/eeg-analysis-venv/bin/python`.
+
+```bash
+python3 make_scoring_set.py <npz> [--n 300] [--random] [--seed N]
+python3 score_kappa.py <SCORING_DIR>
+```
+
+## 6.1 Design, and why each choice was made
+
+| choice | reason |
+| --- | --- |
+| **20 s per item, score the shaded centre 4 s epoch** | matches the lab convention exactly: 4 s epochs viewed 5 at a time |
+| **Items in RANDOM order** | scoring contiguous data lets a human follow bout structure, which inflates agreement for the wrong reason. Randomising forces each epoch to be judged on its own evidence, which is what a per-epoch classifier is being compared against |
+| **Stratified, equal n per automatic state** | REM is only 4-7% of epochs, so a random 300 would yield too few to say anything about the state we most need to test |
+| **Fixed y-axis across every item** | auto-scaling leaks state information — a quiet epoch autoscaled looks as large as a loud one |
+| **Automatic label never shown, never in the filename** | truth lives in `_TRUTH_do_not_open.csv` |
+| **UNSURE is an allowed answer** | forcing a guess on an ambiguous epoch manufactures agreement or disagreement. UNSURE items are excluded from kappa and counted separately |
+
+⚠️ **Stratification makes this a stratified kappa.** Kappa is prevalence-sensitive, so it is **not**
+the value you would get across the whole recording. The script prints this warning itself. Use
+`--random` to build a prevalence-matched pack as well.
+
+## 6.2 What it reports
+
+Cohen's kappa with a **bootstrap 95% CI**; **per-state kappa** (each state against the rest);
+the **confusion matrix** with the human as reference; raw agreement; and counts of blank and
+UNSURE items.
+
+Landis & Koch bands are printed as a reading aid, **not as a pass mark**.
+
+> [!important] The number that actually matters is REM
+> The pipeline **forces REM to 20% of sleep by construction**. If the human does not agree on REM,
+> that is the measurement finally telling us what we have suspected since 2026-08-03 — and it is
+> the only way to replace the percentile rule with a defensible absolute threshold.
+
+## 6.3 Validation of the harness itself
+
+Tested against a **simulated scorer with 15% injected disagreement and 3% UNSURE**, in a temporary
+copy so no fake scoresheet could contaminate the real pack. Recovered 82.0% raw agreement,
+**kappa 0.730, 95% CI [0.661, 0.791]**, with a confusion matrix showing the injected errors
+symmetrically. The arithmetic is correct.
+
+## 6.4 Packs ready
+
+| pack | items | size |
+| --- | --- | --- |
+| `portB-slot1_..._SCORING/` (B1 overnight) | 300 | 27 MB |
+| `portD-slot2_..._SCORING/` (D2 overnight) | 300 | 23 MB |
+
+Both verified **unscored**. Open `score.html` in a browser: keys **1/2/3/4** for WAKE / NREM / REM /
+unsure, backspace to go back, progress saved in the browser so it survives a reload, then
+**save CSV** over `scoresheet.csv`.
+
+> [!danger] Score D2 first
+> D2 is the animal whose circadian result swings **65.9 points** across the Otsu sweep (§5). It is
+> the one where a human reference will change the most, and the one whose 70.3% is currently
+> load-bearing in the professor handout.
+
+## 6.5 What the kappa unblocks
+
+- Places the **WAKE threshold** on evidence instead of on Otsu, which §5 showed the circadian
+  result depends on almost entirely.
+- Lets the **percentile REM rule** be replaced with an absolute theta/delta threshold.
+- Turns "the pipeline runs" into "the pipeline is accurate to κ = x", which is the claim a
+  reviewer will actually ask for.
+- Fix 3, the selection-bias test, **needs human-scored states** to plot rejection rate against, so
+  it is gated behind this too.
