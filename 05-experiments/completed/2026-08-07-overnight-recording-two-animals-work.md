@@ -18,6 +18,12 @@ status: complete
 > swap **fixed D2's EEG**. The impedance block had caught the channel in a single long open
 > state that happened to span all 21 minutes of it.
 
+> [!warning] ⚠️ Qualified 2026-08-08 by the council review
+> The **quality** conclusions on this page stand. The **circadian** framing does not: the check is
+> **not threshold-independent**, and D2's figure swings 65.9 points across a ±25% sweep of the WAKE
+> cut. The staging numbers here also predate the minimum-bout rule and the IIIS alignment changes.
+> Current values and the full caveats: [[2026-08-07-council-review-of-the-analysis-pipeline]].
+
 Recording: `allego_1__uid0806-16-57-38`, **2026-08-06 16:57:38 to 2026-08-07 16:37**, 1 kHz,
 all 256 primary channels, 89.3 GB, 8,517 epochs of 10 s.
 Method and criterion: [[2026-08-06-recording-data-quality-preregistration]].

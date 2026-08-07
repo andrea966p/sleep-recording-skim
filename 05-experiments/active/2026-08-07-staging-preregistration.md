@@ -6,6 +6,25 @@ status: active
 
 # Pre-registration: sleep staging of the two working animals
 
+> [!danger] 🔴 CORRECTED 2026-08-08 — read this before quoting any number below
+> Two things on this page have been overturned by later work the same week.
+>
+> **1. The circadian check is NOT threshold-independent.** §3 calls it that. An Otsu ±25% sweep
+> moves D2's "asleep in light" from **23.0% to 88.9%**, a 65.9 point swing, and B1's by 35.9
+> points. The ~70% literature value is reachable from almost anywhere in that range.
+> ⇒ **Always quote the swing beside the number.** [[2026-08-07-council-review-of-the-analysis-pipeline]] §5.
+>
+> **2. "Physiology 5/5 PASS" is not validation.** Four of the five checks are **forced by the
+> staging rule and cannot fail**. Only `nrem_largest_amplitude` is informative. §5 of this page
+> reports 5/5 as if it were evidence; it is not. Ibid. §1.2.
+>
+> ✅ **What survived:** the REM-from-NREM order property was tested against a run-order shuffle
+> null on 2026-08-08 and came out at **72.4% against a null of 56.6% ± 1.6%**, roughly 10 SD
+> outside. **That one is real evidence.**
+>
+> ⚠️ The architecture numbers below also predate the minimum-bout rule and the four IIIS alignment
+> changes. Current values live in [[2026-08-07-council-review-of-the-analysis-pipeline]] §4.7.
+
 > [!abstract] TL;DR
 > Written **before** stage 3 was run, so the caveats cannot be invented afterwards to explain an
 > awkward number. Both animals that produced clean data have a specific reason to sleep abnormally

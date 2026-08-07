@@ -7,6 +7,27 @@ audience: PI / lab meeting / methods section
 
 # How a recording becomes scorable, step by step
 
+> [!danger] 🔴 UPDATED 2026-08-08. Several statements below are superseded.
+> This page was written before the 2026-08-07 council review and before we read the source of the
+> Japanese scoring tool. **Read [[2026-08-07-council-review-of-the-analysis-pipeline]] alongside
+> it.** What changed:
+>
+> | on this page | now |
+> | --- | --- |
+> | one delta band | **two**: staging **0.5-4.5 Hz** (the Japanese tool), reporting **1-4 Hz** (the paper) |
+> | no minimum bout | **3 epochs, 12 s**, lab convention, merged into the neighbour |
+> | spectra over all epochs | **transition epochs excluded from spectra** (IIIS) |
+> | no power normalisation | **normalised to 15-30 Hz** (IIIS) |
+> | "physiology checks validate the states" | 🔴 **4 of the 5 cannot fail.** Only `nrem_largest_amplitude` is informative |
+> | "the circadian check is threshold-independent" | 🔴 **False.** ±25% on the WAKE cut swings D2 by **65.9 points** |
+> | persistence computed on the labels | **on the RAW labels**, before bout smoothing, which otherwise inflates it |
+> | REM by 80th percentile | ⬜ **to be replaced by a 2-cluster split**, which is what the Japanese tool does — gated behind the kappa |
+>
+> ✅ **Strengthened, not weakened:** the REM-from-NREM order property now has a **run-order shuffle
+> null** and sits ~10 SD outside it, so it is real evidence rather than an artefact of composition.
+>
+> Reference algorithm read off the actual tool: [[sleepyscore-japan-scoring-tool-algorithm]].
+
 > [!abstract] TL;DR
 > This is the ordered procedure that takes one raw recording from the acquisition
 > computer to a file a person can open and score by hand, with the reason for

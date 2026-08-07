@@ -345,3 +345,52 @@ mouse as `D2` in another.
 - [[analysis-methods-and-justification]] — what is standard and what is ours
 - [[allego-iir-filter-design-errors]] — acquisition-side filter log noise
 - `02-procedures/eeg-data-analysis/pipeline/README.md` — the operating manual
+
+
+---
+
+## Symptoms added 2026-08-08
+
+### The filtered trace looks like beautiful EEG but the animal is not connected
+**Cause.** Notch + band-pass applied to a **wire-free amplifier input** yields a median **69 µV of
+smooth, plausible, EEG-looking signal**. Filtering manufactures a convincing trace from nothing.
+**Fix.** Never judge by trace morphology. Classify by **spectral slope against the in-file floor**.
+See [[per-animal-failure-signatures]] and [[2026-08-06-recording-data-quality-preregistration]] §10.
+
+### Impedance says the channel is excellent, the recording says it is noise
+**Cause.** Impedance measures that the **wire is connected**; it cannot see what rides on it. A1's
+EMG was called excellent (p = 1e-16) while 296 of its 331 µV rms was mains hum.
+**Fix.** Impedance screens, the recording decides.
+
+### A duty-cycle block gives a hugely significant result that a recording later reverses
+**Cause.** A 40-sweep block spans ~21 min and contact states persist longer than that, so the block
+can sample **one state** and report it at p = 8e-08. This happened on 2026-08-06 and was reversed.
+**Fix.** Quote the block's **duration** beside its duty cycle. Never conclude harm or benefit from a
+block alone.
+
+### Bout counts are enormous and median bouts are one epoch
+**Cause.** No minimum bout duration was enforced. B1 showed 1,672 NREM bouts with a 4 s median.
+**Fix.** `MIN_BOUT_EPOCHS = 3`. Counts fell six- to tenfold and medians rose to 40-84 s.
+
+### Persistence jumps after a change that added no information
+**Cause.** Smoothing short bouts raises the state sequence's autocorrelation **by construction**.
+`r@1min` went 0.603 → 0.742 with no new data.
+**Fix.** Compute persistence and the REM-order check on the **raw** labels, architecture on the
+smoothed ones.
+
+### "Physiology 5/5 PASS" but the states are still not trustworthy
+**Cause.** Four of the five checks **restate the staging rule** and cannot fail.
+**Fix.** Report `physiology_informative_pass` only. The summary now prints which checks are forced.
+
+### The circadian result agrees beautifully with the literature
+**Cause.** It may be a coincidence of where the WAKE threshold landed. ±25% on the Otsu cut moves
+D2 from **23% to 89%** asleep in the light phase.
+**Fix.** Quote the sweep's swing beside the number. The summary prints it automatically.
+
+### stage2_split.py fills `impedance/` with the wrong files
+**Cause.** It flattens sweep blocks together and pulls in other days' sweeps.
+**Fix.** Check `impedance/` after every stage 2 run.
+
+### `KeyError: emg_otsu_log10`
+**Cause.** `stage()` returns an empty threshold dict for a recording with no usable epochs.
+**Fix.** Guarded 2026-08-08; a median fallback now mirrors the Japanese tool's behaviour.

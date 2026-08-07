@@ -367,3 +367,62 @@ status: active
 - [[eeg-analysis-problems]] — what to do when a step misbehaves
 - `02-procedures/eeg-data-analysis/pipeline/qc_thresholds.py` — every constant with its provenance
 - [[CANONICAL-allego-channel-selection]] — which channel is which
+
+
+---
+
+## Terms added 2026-08-06 to 2026-08-08
+
+**duty cycle** — the fraction of repeated impedance sweeps in which a channel came back below the
+connected threshold. Used instead of a single reading because contact flips within minutes.
+⚠️ A block of sweeps spans only ~20 min, and contact states persist longer than that, so **a duty
+cycle screens; only a multi-hour recording is an outcome**. Always state the block's duration.
+
+**floor control / wire-free channels** — amplifier inputs with **no electrode attached**, recorded
+at the same instant in the same file. A mouse uses only a few of its chip's 16 inputs, so the rest
+are free nulls. Every threshold is now derived from these rather than inherited.
+❌ Never include the **inactive slots** (`/17`-`/32`, `/49`-`/64`); they are internally tied and read
+low almost always.
+
+**spectral slope** — the gradient of log power against log frequency over 1-30 Hz. Real neural
+activity falls steeply (about −1.8 to −2.1 here); noise is flat (−1.3 to 0.0). **The discriminator
+that survives filtering**, unlike amplitude or trace appearance.
+🛑 It judges **EEG only**. Real EMG is broadband, so a flat EMG spectrum is expected.
+
+**railing / clipping** — samples at the ADC ceiling, 6389.6 µV. **Missing data, not noisy data**:
+clipping is nonlinear and irreversible. On this rig it is the **open-electrode signature**, not
+movement artefact — the no-mouse position railed 100% of the time.
+
+**minimum bout** — a run of a state shorter than 3 epochs (12 s) is not counted as that state and is
+merged into the longer neighbour. **Lab convention, not from the IIIS reference**, which has no
+minimum-bout rule at all.
+
+**raw versus smoothed labels** — validity statistics (`r@1min`, REM order) are computed **before**
+the minimum-bout merge; architecture and bouts **after**. Smoothing raises autocorrelation by
+construction, so computing persistence after it inflates the number with no new information.
+
+**staging delta versus reporting delta** — two different bands on purpose. **Staging 0.5-4.5 Hz**
+(the Japanese tool's low-pass, used for the theta/delta ratio) and **reporting 1-4 Hz** (the paper's
+band, used for quoted spectra).
+
+**transition epoch** — an epoch whose preceding or following epoch is a different state. Excluded
+from **spectra only**, never from staging or state totals. IIIS practice.
+
+**forced check** — a physiology check that cannot fail because it restates the staging rule.
+**4 of our 5 are forced.** Only `nrem_largest_amplitude` is informative.
+
+**run-order shuffle null** — permutes the order of state runs within a block while preserving run
+lengths and composition. Tests whether a sequential property is real or forced by composition.
+The REM-from-NREM order passes it at ~10 SD.
+
+**Cohen's kappa** — agreement between two scorers corrected for chance. The measurement that turns
+"the pipeline runs" into "the pipeline is accurate". ⚠️ **Prevalence-sensitive**, so a stratified
+scoring pack gives a stratified kappa, not the whole-recording value.
+
+**pseudoreplication** — treating correlated measurements as independent. Our 112 wire-free nulls
+share a board, reference and ground, so their **effective n is closer to the number of sessions**
+than to 112. Unresolved.
+
+**emg_activity** — `var(raw) / sum(|high-pass filtered|)`, a burst-versus-tonic shape measure used
+by the Japanese tool. We do not compute it. Possibly useful for separating real EMG bursts from
+movement artefact.

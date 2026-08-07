@@ -133,10 +133,10 @@ Fixes, in dependency order. Each is applied only after explicit approval.
 | --- | --- | --- |
 | 1 | **Minimum bout duration: 3 consecutive epochs, 12 s**, per our SOP | ✅ **done 2026-08-08**, see §4 |
 | 2 | Blind scoring harness + Cohen's kappa against stage 3 | 🟡 **harness built and tested 2026-08-08; awaiting a human scorer — see §6** |
-| 3 | Rejection rate as a function of scored state (the selection-bias test) | ⬜ |
+| 3 | Rejection rate as a function of scored state (the selection-bias test) | ✅ **done 2026-08-08 — the bias is NOT operating, §8.1** |
 | 4 | Otsu cut ±25% sensitivity sweep on the circadian result | ✅ **done 2026-08-08 — see §5. The result is BAD.** |
-| 5 | Relabel the physiology checks honestly; add the persistence-shuffle null for REM order | ⬜ |
-| 6 | Cluster the wire-free null by session and headstage | ⬜ |
+| 5 | Relabel the physiology checks honestly; add the persistence-shuffle null for REM order | ✅ **done 2026-08-08 — and the REM order SURVIVED the null, §8.2** |
+| 6 | Cluster the wire-free null by session and headstage | ✅ **done 2026-08-08 — ICC ≈ 0, §8.3** |
 | 7 | Positive control of known spectrum through the full pipeline | ⬜ |
 
 > [!quote] The council's single first action
@@ -501,5 +501,122 @@ code.** Our 12 s rule remains correctly documented as a house convention.
 | # | fix | status |
 | --- | --- | --- |
 | 8 | **Replace the p80 REM rule with a 2-cluster split** (reference method) | ⬜ **gated behind the kappa** |
-| 9 | Split `BAND_DELTA` into staging 0-4.5 Hz and reporting 1-4 Hz | ⬜ |
-| 10 | Median fallback for degenerate recordings, as they do | ⬜ |
+| 9 | Split `BAND_DELTA` into staging 0-4.5 Hz and reporting 1-4 Hz | ✅ **done 2026-08-08** |
+| 10 | Median fallback for degenerate recordings, as they do | ✅ **done 2026-08-08** |
+
+
+---
+
+# 8. Fixes 3, 5, 6, 9 and 10 — applied 2026-08-08
+
+## 8.1 ✅ Fix 3: the selection bias is NOT operating on the animals we report
+
+**The council's most serious finding, and it does not survive measurement.**
+
+The test as stated — rejection rate by scored state — is impossible, because **a rejected epoch has
+no state**. So `qc/selection_bias_test.py` tests the mechanism instead, two ways that need no human
+scoring: how much was rejected at all, and whether rejected epochs carry **higher EMG** than
+accepted ones. EMG is a separate channel and often survives when the EEG gate fails; if rejection
+preferentially removes movement, that is the predicted bias.
+
+| animal | epochs rejected | Cliff's δ (rejected vs accepted EMG) | verdict |
+| --- | --- | --- | --- |
+| **B1 overnight** | **0 = 0.0%** | — | ✅ **nothing rejected, the gate CANNOT have biased it** |
+| B1 afternoon | **0 = 0.0%** | — | ✅ same |
+| **D2 overnight** | 282 = **1.3%** | **−0.171** (small) | ⚠️ rejected epochs are **quieter**, i.e. bias runs the **opposite** way, and only 1.3% is at stake |
+
+> [!success] The predicted bias is absent where it would have mattered
+> Two of the three scoreable recordings had **zero** epochs rejected, so no selection could have
+> occurred. The third rejected 1.3%, and those epochs carry **lower** EMG, the opposite of the
+> movement-driven direction the council predicted.
+>
+> **The concern was correct in principle and does not apply to this dataset.** It would matter for
+> an animal with a high rejection rate — but every such animal here is ~100% rejected, so there is
+> nothing to report from them anyway.
+
+## 8.2 ✅ Fix 5: physiology checks relabelled, and the REM order SURVIVED its null
+
+**The relabelling.** Verified against the staging rule and now printed in every summary:
+
+```
+PASS  wake_has_highest_emg     FORCED by the WAKE rule
+PASS  nrem_has_most_delta      NEAR-FORCED, NREM is the residual
+PASS  nrem_largest_amplitude   INFORMATIVE, can genuinely fail
+PASS  rem_highest_theta_delta  FORCED by the REM rule
+PASS  rem_emg_low              FORCED, REM is a subset of non-wake
+>> INFORMATIVE CHECKS ONLY: True
+```
+
+The JSON now carries `physiology_informative_pass` and a `physiology_caveat`. **Never quote
+"5/5 PASS" again.**
+
+**The null test, and it is good news.** `rem_order_null()` permutes the ORDER of state runs within
+each block while preserving run lengths and composition — destroying sequence while keeping
+everything that could otherwise manufacture a high transition rate.
+
+| animal | REM entered from NREM | shuffled null | position |
+| --- | --- | --- | --- |
+| B1 overnight | **72.4%** | 56.6% ± 1.6% | **100th pct, ~9.9 SD out** |
+| B1 afternoon | **81.1%** | 62.8% ± 3.8% | **100th pct, ~4.8 SD out** |
+| D2 overnight | **78.4%** | 64.5% ± 1.2% | **100th pct, ~11.6 SD out** |
+
+> [!success] ⭐ REM order is real evidence, in all three recordings
+> The council suspected this property was near-forced by having REM fixed at 20% of a
+> mostly-NREM residual. **It is not.** All three sit far outside their nulls. This is now the
+> **second** informative check we have, alongside `nrem_largest_amplitude`, and it is the stronger
+> of the two.
+
+## 8.3 🟡 Fix 6: pseudoreplication — the two methods disagree, and both are reported
+
+`qc/floor_pseudoreplication.py`, on the 23.66 h recording, 112 floor channels × 250 epochs.
+
+| measure | result |
+| --- | --- |
+| **ICC by port** | **0.000** |
+| design effect | 1.01 |
+| nominal n | 112 channels |
+| **effective n** | **110.7** |
+| 1st-percentile threshold | 413.1 µV |
+| naive CI, resampling channels | [402.1, 429.2], width **27.1** |
+| **cluster CI, resampling PORTS** | [384.2, 513.4], width **129.2** |
+| inflation factor | **4.8×** |
+
+> [!warning] These two answers point in opposite directions and I am not picking the flattering one
+> **ICC ≈ 0 says the channels are effectively exchangeable** — the shared board, reference and
+> ground do not make them measurably similar, and the effective n is 110.7 of 112. On that measure
+> the reviewers' concern does not materialise.
+>
+> **But the cluster bootstrap is 4.8× wider.** That is mostly an artefact of having only **4
+> clusters**: a cluster bootstrap with k = 4 is known to behave badly and produces wide, unstable
+> intervals regardless of the true dependence.
+>
+> **Conservative position: quote the cluster interval anyway**, ±65 µV rather than ±14 µV. It costs
+> nothing, and a reviewer who raises pseudoreplication is answered by the ICC while the wider
+> interval shows we did not exploit the assumption.
+
+## 8.4 ✅ Fixes 9 and 10
+
+**Fix 9, two delta bands.** `BAND_DELTA_STAGING = (0.5, 4.5)` now drives the theta/delta ratio,
+matching the Japanese tool's 4.5 Hz low-pass; `BAND_DELTA = (1.0, 4.0)` remains the reporting band,
+matching the paper. Applied to staging, to the physiology summary, and to the Otsu sweep.
+
+**Fix 10, degenerate-input fallback.** Copied from `sleepy_pipeline_refined.estimate_emg_threshold`:
+fewer than 10 finite values, or fewer than 2 distinct values, falls back to the **median** and sets
+`degenerate_fallback` in the thresholds. Previously this path produced an empty dict and crashed.
+
+## 8.5 Where the council's findings stand now
+
+| finding | status |
+| --- | --- |
+| Selection bias in the QC gate | ✅ **measured, not operating** on the reported animals |
+| 4 of 5 physiology checks forced | ✅ **relabelled**, and a second informative check found |
+| REM order near-forced | ✅ **tested and refuted** — it is real at 5-12 SD |
+| "Threshold-independent" is false | ✅ **confirmed and quantified**, swing now printed automatically |
+| 82.1% vs 70.3% presented as two hits | ✅ corrected in the write-ups |
+| Nulls pseudoreplicated | 🟡 **ICC ≈ 0**, but the conservative cluster CI is reported |
+| No positive control | ⬜ **still owed** — needs a signal generator, so it is bench work |
+| **Accuracy unmeasured** | 🟡 **harness built, packs waiting, needs a human day** |
+| Modernise the staging | ⛔ **rejected**, and the k-means REM rule stays gated behind the kappa |
+
+**Everything the council raised has been either measured or explicitly deferred with a reason.**
+The two genuinely open items are the **positive control** and the **kappa**.

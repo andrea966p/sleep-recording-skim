@@ -1,4 +1,14 @@
 ---
+
+> [!danger] 🔴 2026-08-08: this hub no longer lists everything you need
+> Three pages were added after this hub was written and they change how the pipeline must be read:
+> - ⭐ [[2026-08-07-council-review-of-the-analysis-pipeline]] — **the review, the fixes applied, and
+>   what may no longer be claimed.** Read before quoting any analysis number.
+> - [[sleepyscore-japan-scoring-tool-algorithm]] — the reference tool's algorithm, read off its
+>   source. **Their REM threshold is a 2-cluster split, not a percentile.**
+> - [[per-animal-failure-signatures]] — telling apart the four failure modes hidden behind `OPEN`.
+>
+> The four commands below are still correct. The **interpretation** rules have changed.
 tags: [procedure, eeg, analysis, hub, onboarding, python]
 created: 2026-06-30
 updated: 2026-08-03
