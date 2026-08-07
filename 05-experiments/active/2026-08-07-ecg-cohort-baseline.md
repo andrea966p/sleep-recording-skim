@@ -300,3 +300,88 @@ explicitly first anyway, because the sweep required streaming to be off.
   [[impedance-negative-electrode-unmeasurable]].
 - **No video.** Cameras were removed on 2026-08-04 and have not been restored, so any EMG that
   looks like movement artefact stays unresolvable.
+
+---
+
+## Pre-registration, written 2026-08-07 ~21:45, BEFORE the night exists
+
+Recorded in advance so tomorrow's scoring is honest. At this point I have read **144 minutes**
+of the running recording and scanned **all 256 amplifier channels**.
+
+**Prediction 1.** A2, the control, scores **usable EEG over the great majority of the night**,
+with a longest unbroken block of hours. Confidence **high**.
+
+**Prediction 2.** The seven new mice score **0.0% usable EEG and 0.0% usable ECG**. Confidence
+**moderate**, NOT high, see the falsifier below.
+
+**Prediction 3.** **No ECG channel shows a heartbeat** at 600 to 750 beats per minute with an
+interval coefficient of variation under 0.1. Confidence **high**. ⭐ This is the primary test
+because it needs no threshold we invented.
+
+**Prediction 4.** The most likely single exception, if there is one, is **A/2**, the only new
+mouse channel with real spectral tilt (slope -0.91). Weak prediction.
+
+⚠️ **WHAT WOULD FALSIFY PREDICTION 2, AND WHY I AM NOT CONFIDENT.** On 2026-08-06 a 21 minute
+window gave p = 8.4e-08 for a conclusion that turned out to be **exactly backwards**, and D2
+went from 0.0% to 87.9% usable once a real night was recorded. 144 minutes is better than 21 but
+**it is still not a night**. A channel that is open now can come good for a multi hour block
+later. **If any new mouse produces a multi hour clean block, prediction 2 is dead and the
+"nothing is connected" reading of tonight goes with it.**
+
+## What the 256 channel scan settled
+
+Method: Welch power spectrum per channel, **mains bins excluded** (±2.5 Hz around every harmonic
+to 480 Hz), so nothing here depends on filter design. Discriminator is the ratio of 1 to 40 Hz
+amplitude over 100 to 300 Hz amplitude, because biology is low frequency heavy and noise is flat.
+
+| channel | lf 1-40 | hf 100-300 | slope | lf/hf |
+|---|---:|---:|---:|---:|
+| **A/33 CONTROL EEG** | **52.9** | **11.0** | **-1.52** | **4.79** |
+| A/34 CONTROL EMG | 34.1 | 43.1 | -1.37 | 0.79 |
+| all 21 new mouse sites | 5.4 to 456 | 10 to 597 | -0.01 to -0.91 | 0.42 to 0.92 |
+| 104 floor channels | median 166 | | | 0.78 to 2.89 |
+
+⭐⭐ **A/33 IS UNIQUE ACROSS ALL 256 CHANNELS.** Nothing else has that signature.
+
+✅ **PINOUT MISMAPPING IS RULED OUT.** The top 20 channels by low frequency content are **all
+floor channels**, i.e. loud open inputs. No biological signal is hiding on a site we were not
+looking at. Impedance says the same thing independently: `/1`,`/2`,`/3` read 0.08 to 0.36 MΩ
+while `/4`-`/16` read 4.3 MΩ.
+
+✅ **THE LOUD vs QUIET SPLIT AMONG THE NEW MICE IS MEANINGLESS.** B/2, B/3, B/33 and C/35 are
+loud (330 to 456) and A/1, C/1, D/1, D/35 are quiet (5 to 10), but **both groups have slope near
+zero and lf/hf near 0.6**. Loud noise and quiet noise. Neither is signal.
+
+## The short hypothesis, revised after the multimeter result
+
+🔴 **andrea reports every tether was checked with a multimeter before use and NO conductor beeps
+against any other.** That kills the metallic short in the tether. ⚠️ **BUT A CONTINUITY BEEPER
+FIRES BELOW ROUGHLY 30 TO 50 Ω, AND THE IMPEDANCES WE MEASURE ARE 4 TO 20 kΩ AT MINIMUM AND
+84 TO 360 kΩ AT MEDIAN. A RESISTIVE LEAK OF TENS OF kΩ IS COMPLETELY SILENT ON A BEEP TEST AND
+WOULD STILL NULL A BIPOLAR PAIR.** The bench test also checks the tether unmated, so it says
+nothing about the implant head, the pins under compression, or fluid at the connector.
+
+⭐⭐ **REVISED READING: the new mice's channels are quiet, low impedance and low hum, which is
+what a WELL CONNECTED electrode looks like. What they lack is a potential difference.
+Good contact, no differential.** Surviving candidates, all animal side:
+
+1. **A conductive bridge across each pair at the implant**, fluid or saline under the cement.
+   Two tips in one conductive pool give low impedance to everything and no voltage between them.
+2. **The pair members sit at the same potential** for a placement reason.
+3. **The cerebellar ground**, the other thing that changed for all seven and not for the control.
+
+⭐ **THE ECG IS THE STRONGEST ANOMALY.** A thoracic electrocardiogram is a whole body dipole and
+any two points across the chest give hundreds of microvolts of QRS almost regardless of placement
+detail. **Seven of seven ECG channels show nothing.** That is hard to explain by placement and
+easy to explain by a bridged pair.
+
+## The discriminator worth running next
+
+The control shares the rig with the seven but shares **neither the surgery batch, nor the
+8 conductor unsoldered tether, nor the cerebellar ground**. So the fault is in one of those
+three, and no amount of further analysis of this recording separates them.
+
+⭐ **Cheapest discriminator: put ONE new mouse on a spare old style short soldered tether.**
+Comes alive means tether. Stays flat means surgery or ground, and then the ground site is the
+next thing to vary. ⚠️ **This costs one isoflurane episode on one animal**, so it is andrea's
+call, not mine, and it should wait until the night is scored.
