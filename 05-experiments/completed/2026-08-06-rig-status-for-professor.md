@@ -56,6 +56,44 @@ status: complete
 
 ---
 
+# PART 0b — Update, 7 August: the data is scoreable
+
+> [!quote] Paste ready. No dashes, ready for an email.
+> **We now have scoreable sleep data from two animals at once.**
+>
+> The 23.66 hour recording covers a full light and dark cycle. Both working animals pass every
+> physiological check we apply, five out of five: wake has the highest muscle activity, deep sleep
+> has the most slow wave power and the largest amplitude, and REM has the highest theta to delta
+> ratio with low muscle tone. In both animals REM is entered from deep sleep rather than from wake
+> in about three quarters of transitions, which is the correct order.
+>
+> **The strongest result is the circadian one, because nothing in our analysis knows what time it
+> is.** Published values for this mouse strain are about 70% of the light phase spent asleep. One
+> animal scored **70.3%**, the other **82.1%**, and both were far more awake in the dark phase, as
+> they should be. That is external validation of the entire analysis chain against biology it was
+> never tuned to match.
+>
+> **Amount of data.** One animal gave **23.66 hours as a single unbroken stretch**, the other gave
+> 23.3 hours in nine stretches, the longest 9.6 hours. Our previous best in this project was 8.1
+> hours, in July, from one animal.
+>
+> **What made the difference.** Replacing the tether. The second animal had been giving nothing at
+> all that same afternoon. It had been connected only 8 days after surgery, so the longer recovery
+> we suspected was not the deciding factor. The fix is an engineering change and it applies to every
+> animal we already have, with no new surgery.
+>
+> **One thing we will not report.** The proportion of REM sleep. Our method forces that number by
+> construction, and an independent way of computing it disagrees by a factor of four, so neither is
+> a measurement. We report wake against deep sleep, and the order in which REM is entered.
+>
+> **Caveat we recorded in advance.** Both animals had a reason to sleep abnormally: one was
+> tethered for the first time that morning, the other had been anaesthetised 40 minutes before the
+> recording began. We wrote that down before analysing, and it did not distort the result. The
+> animal at 82.1% slept slightly more than the published mean, so its figure should not be quoted
+> as normal architecture. The 70.3% animal is the cleaner number.
+
+---
+
 # PART 1 — The full report
 
 > [!abstract] TL;DR for the rest of this page
