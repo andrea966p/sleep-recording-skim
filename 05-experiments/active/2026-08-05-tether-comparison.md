@@ -419,3 +419,32 @@ the lowest value it produced all day. One sweep, so not a result, but no sign of
 > single sweep, the 40-sweep block, and the twist sweep. A folder glob therefore scores **41**
 > sweeps, not 40. Harmless here, but the conditions should be separated before any future
 > analysis globs that directory.
+
+
+---
+
+# 14. 🔴 RETRACTED: arm C did not harm D2, it fixed it
+
+The overnight recording settled it and the §13 harm conclusion is **withdrawn**.
+Full analysis: [[2026-08-07-overnight-recording-two-animals-work]].
+
+| D2 EEG | afternoon recording, BEFORE the swap | overnight recording, AFTER the swap |
+| --- | --- | --- |
+| usable fraction | **0.0%** | **87.9%** |
+| median 60 Hz | 916.9 µV | **133.2 µV** |
+| spectral slope | −0.38, inside the bare-wire range | **−2.05, far outside it** |
+| epochs railed | 29.7% | **0.0%** |
+| D2 EMG usable | 86.1% | **98.6%** |
+
+**The 40 sweep block in §13 caught the channel in one long open state that spanned all 21
+minutes of it.** Drift and anaesthesia were correctly excluded; what was not excluded, and could
+not be from a 21 minute window, was **state persistence**.
+
+> [!important] The rule this produces
+> **Impedance blocks screen. Only a multi-hour recording is an outcome.** Always state a block's
+> **duration** next to its duty cycle, and never conclude harm or benefit from a block alone.
+> A 40 sweep block produced p = 8.4e-08 for a conclusion that was exactly backwards.
+
+⭐ Both new tethers therefore **worked**: arm B improved B1 **with** the slip ring, arm C improved
+D2 **without** it. What they share is **soldered, resin-encapsulated construction**. That is now
+the leading candidate for the active ingredient, still circumstantial.
