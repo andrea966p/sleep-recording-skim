@@ -237,8 +237,64 @@ in `qc_thresholds.py` — noise −0.035, 4 min bouts +0.510, pass at r > 0.30 �
 Stage 4 EDF packets regenerated; `by-mouse/` relinked, 13 artefacts per animal.
 Backups: `qc_thresholds.py.bak`, `stage3_features.py.bak`. Pipeline version now `2026-08-08`.
 
-## 4.6 Approved next, not yet applied
+## 4.6 The four IIIS alignment items — ALL APPLIED 2026-08-08
 
-The four IIIS alignment items, all sourced from the paper above:
-**exclude transition epochs from spectra** · **normalise power to 15-30 Hz** ·
-**switch delta to 1-4 Hz** · **report state totals both ways**.
+All four are sourced from Nakata et al., SLEEP 2025
+([doi:10.1093/sleep/zsae279](https://doi.org/10.1093/sleep/zsae279)). Delta was applied **last and
+alone**, so its effect is attributable rather than confounded with the normalisation change.
+
+| # | item | implementation |
+| --- | --- | --- |
+| a | **Exclude transition epochs from spectra** | `steady_state_mask()`; an epoch counts only if the preceding **and** following epoch are the same state, evaluated **within blocks** so a block edge counts as a transition. Applies to the spectral summaries **only** — staging and state totals still use every epoch. **5.3-7.5% of epochs excluded.** |
+| b | **Normalise power to 15-30 Hz** | `BAND_NORM = (15.0, 30.0)`; new per-state `delta_density` and `theta_density` = band power ÷ 15-30 Hz power, IIIS style. ⚠️ Our EEG filter is 0.5-30 Hz against their 0.5-100 Hz, so the top of the band sits on our roll-off: internally consistent, not numerically identical to theirs. |
+| c | **State totals both ways** | `state_totals` reports `of_scored_epochs` **and** `of_whole_recording` plus `unscored_pct_of_recording`. |
+| d | **Delta 1-4 Hz** | `BAND_DELTA` 0.5-4 → **1.0-4.0**. |
+
+> [!warning] My first version of item (c) was degenerate and I replaced it
+> I initially reported "percentage of epochs in blocks" as the second denominator. **Blocks
+> contain only passing epochs by construction**, so that number is identical to "percentage of
+> scored epochs" and can never differ. The informative denominator is the **whole recording**,
+> which is what exposes how much was discarded: D2 **1.6% unscored**, C1 **100%**.
+
+> [!success] ⭐ Delta 1-4 Hz also suits our hardware
+> The acquisition high-pass sits at **1.10 Hz** and irreversibly attenuates 0.5-1.1 Hz before the
+> data is written. A 0.5 Hz lower edge was integrating a band the hardware had already eaten.
+> Aligning with IIIS removes that inconsistency as a side effect.
+
+### Isolated effect of the delta change, B1
+
+| | delta 0.5-4 | delta 1-4 |
+| --- | --- | --- |
+| WAKE / NREM | 50.2 / 46.0% | 50.2 / 46.2% |
+| REM entered from NREM | 73.9% | 73.0% |
+| `r@1min` (raw) | 0.603 | **0.603**, unchanged as expected — the WAKE split is Otsu on EMG |
+| NREM delta density | 8.43 | 7.89 |
+| **REM theta/delta** | 1.680 | **1.995** |
+| NREM theta/delta | 0.369 | 0.399 |
+| asleep in light | 81.2% | 81.0% |
+
+⭐ **REM/NREM separation on theta/delta improved**, 4.55× to **5.00×**, because the narrower delta
+band is a smaller denominator. Physiology still passes on every check.
+
+## 4.7 State after all four alignment items
+
+| animal | verdict | r@1min (raw) | WAKE / NREM | REM order (raw) | unscored | transitions excluded | asleep in light |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| **B1 overnight** | SCOREABLE | 0.603 | 50.2 / 46.2% | 73.0% | 0.0% | 5.3% | **81.0%** |
+| **D2 overnight** | SCOREABLE | 0.499 | 43.5 / 49.9% | 78.0% | 1.6% | 7.5% | **70.3%** |
+| B1 afternoon | SCOREABLE | 0.481 | 26.6 / 65.5% | 80.0% | 0.0% | 6.0% | 73.4% |
+
+**D2 is still at 70.3% asleep in the light phase against a literature ~70%**, through four method
+changes. That number has now survived the minimum-bout rule, transition exclusion, renormalisation
+and a delta band change without moving.
+
+Stage 3 and stage 4 re-run on all 16 files; `by-mouse/` relinked. Pipeline version `2026-08-08`.
+
+## 4.8 Still outstanding — fixes 2, 3, 5, 6, 7
+
+The alignment work did **not** touch the council's most serious findings. Still owed:
+**kappa against blind human scoring** (fix 2) · **rejection rate vs scored state**, the selection-bias
+test (fix 3) · **relabel the physiology checks honestly** and add the persistence-shuffle null for
+REM order (fix 5) · **cluster the wire-free null by session** (fix 6) · **a positive control** (fix 7).
+Fix 4, the Otsu ±25% sweep, is the cheapest of these and would strengthen the circadian claim
+immediately.

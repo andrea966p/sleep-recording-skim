@@ -78,6 +78,15 @@ BAND_NORM = (15.0, 30.0)
 # of this band sits on our filter's roll-off. The normaliser is therefore
 # internally consistent but not numerically identical to theirs.
 
+OTSU_SENSITIVITY_MULTIPLIERS = (0.75, 0.90, 1.00, 1.10, 1.25)
+# The WAKE/non-WAKE split is an Otsu cut on log10(EMG rms in uV), REFIT PER
+# ANIMAL. That means animals are not on a common scale and any cross-animal
+# comparison is only as good as the cut's stability. These multipliers are
+# applied to the threshold IN LINEAR uV (0.75x and 1.25x = +/-25%), which is the
+# interpretable form; in log10 that is -/+0.097.
+# Required by the 2026-08-07 council review, which flagged that describing the
+# circadian result as "threshold-independent" is false.
+
 EXCLUDE_TRANSITION_EPOCHS_FROM_SPECTRA = True
 # IIIS exclude, FROM THE POWER SPECTRUM ANALYSIS ONLY, epochs with artifacts and
 # epochs in which either the preceding or the following epoch was in a different

@@ -217,6 +217,52 @@ def enforce_min_bout(lab, blocks, min_ep):
     return out, changed_total
 
 
+def otsu_sensitivity(f, ok, blocks, zt, thr_log, in_block):
+    """How far do the headline numbers move if the WAKE cut is wrong?
+
+    The Otsu threshold is refit per animal, so "threshold-independent" is not a
+    claim we can make. This sweeps the cut by +/-25% IN LINEAR uV and reports
+    what happens to WAKE %, to sleep in the light phase, and to persistence.
+
+    Architecture numbers use the SMOOTHED labels and persistence uses the RAW
+    labels, exactly as the headline pipeline does, so the rows are comparable
+    to the reported values.
+    """
+    n = f["n"]
+    idx = np.where(ok[:n])[0]
+    if len(idx) == 0:
+        return []
+    le = np.log10(np.clip(f["emg_rms"][idx], 1e-6, None))
+    td = np.log10(np.clip(f["theta"][idx] / np.clip(f["delta"][idx], 1e-12, None),
+                          1e-6, None))
+    td_thr = np.percentile(td, 80)
+    lt = P.is_light(zt[:n])
+    rows = []
+    for mult in T.OTSU_SENSITIVITY_MULTIPLIERS:
+        thr = thr_log + np.log10(mult)          # +/-25% in linear uV
+        lab_r = np.full(n, -1, dtype=int)
+        wake = le >= thr
+        lab_r[idx] = np.where(wake, WAKE, np.where(td < td_thr, NREM, REM))
+        lab_s, _ = enforce_min_bout(lab_r.copy(), blocks, T.MIN_BOUT_EPOCHS)
+        sel = in_block & (lab_s >= 0)
+        tot = max(int(sel.sum()), 1)
+        light = lt & sel
+        asleep_light = (100.0 * float(((lab_s[light] == NREM) | (lab_s[light] == REM)).mean())
+                        if light.sum() else float("nan"))
+        sleep_raw = ((lab_r == NREM) | (lab_r == REM)).astype(float)
+        lg = 60 // T.EPOCH_S
+        bl = [(a, b) for a, b in blocks if (b - a) >= 2 * lg + 1]
+        r, _, _, _ = P.within_block_persistence(sleep_raw, bl, lag=lg)
+        rows.append(dict(
+            multiplier=float(mult),
+            threshold_uv=round(float(10 ** thr), 2),
+            wake_pct=round(100.0 * float((lab_s[sel] == WAKE).sum()) / tot, 1),
+            nrem_pct=round(100.0 * float((lab_s[sel] == NREM).sum()) / tot, 1),
+            asleep_in_light_pct=None if np.isnan(asleep_light) else round(asleep_light, 1),
+            r_1min_raw=None if np.isnan(r) else round(float(r), 3)))
+    return rows
+
+
 def rem_entry_order(lab, blocks):
     """REM should be entered from NREM. Counted WITHIN blocks only."""
     from_n = tot = 0
@@ -277,6 +323,25 @@ def analyse(npz_path):
 
     # Spectral summaries exclude TRANSITION epochs (IIIS). Staging and state
     # totals above are unaffected.
+    # thr is {} when a recording has no usable epochs at all
+    sens = (otsu_sensitivity(f, ok, blocks, zt, thr["emg_otsu_log10"], in_block)
+            if "emg_otsu_log10" in thr else [])
+    if sens:
+        base = [r for r in sens if r["multiplier"] == 1.0][0]
+        al = [r["asleep_in_light_pct"] for r in sens if r["asleep_in_light_pct"] is not None]
+        wk = [r["wake_pct"] for r in sens]
+        sens_summary = dict(
+            rows=sens,
+            wake_pct_range=[min(wk), max(wk)],
+            wake_pct_swing=round(max(wk) - min(wk), 1),
+            asleep_in_light_range=[min(al), max(al)] if al else None,
+            asleep_in_light_swing=round(max(al) - min(al), 1) if al else None,
+            note="WAKE cut swept +/-25% in linear uV. The Otsu threshold is refit per "
+                 "animal, so the circadian result is NOT threshold-independent; this "
+                 "states how much it depends on the cut. Required by the council review.")
+    else:
+        sens_summary = None
+
     spec_mask = (steady_state_mask(lab, blocks)
                  if T.EXCLUDE_TRANSITION_EPOCHS_FROM_SPECTRA else None)
     phys, checks, phys_ok = physiology(f, lab, sel, spec_mask=spec_mask)
@@ -405,7 +470,7 @@ def analyse(npz_path):
                                     "by construction; architecture and bouts below are "
                                     "computed on the SMOOTHED labels."),
         bouts=bt,
-        min_bout=min_bout, spectra=spectra_info,
+        min_bout=min_bout, spectra=spectra_info, otsu_sensitivity=sens_summary,
         state_totals=totals_both_ways, by_light_phase=phase,
         light_cycle=f"on {T.LIGHTS_ON_HOUR:02d}:00 / off {T.LIGHTS_OFF_HOUR:02d}:00 KST",
         pipeline_version="2026-08-08")
@@ -490,6 +555,19 @@ def _summary(r):
               f"  This animal: {100 - lp['wake_pct']:.1f}% asleep in the light "
               f"phase.  " + ("consistent" if 45 <= (100 - lp["wake_pct"]) <= 90
                              else "OUTSIDE the normal range")]
+    if r.get("otsu_sensitivity"):
+        sv = r["otsu_sensitivity"]
+        L += ["", "WAKE-cut sensitivity (Otsu threshold swept +/-25% in linear uV)",
+              f"  {'mult':>6}{'thr uV':>9}{'WAKE%':>8}{'asleep light%':>15}{'r@1min':>9}"]
+        for x in sv["rows"]:
+            L.append(f"  {x['multiplier']:>6}{x['threshold_uv']:>9}{x['wake_pct']:>8}"
+                     f"{str(x['asleep_in_light_pct']):>15}{str(x['r_1min_raw']):>9}")
+        L += [f"  >> asleep-in-light swings {sv['asleep_in_light_swing']} points "
+              f"across the sweep",
+              "     The Otsu cut is REFIT PER ANIMAL, so this result is NOT",
+              "     threshold-independent. Quote this swing next to the headline",
+              "     number, and never call the circadian check threshold-free."]
+
     return "\n".join(L) + "\n"
 
 
