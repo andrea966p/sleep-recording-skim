@@ -316,3 +316,185 @@ and D2 went from 0.0 to 87.9 percent usable once a real night was recorded. Toda
   was a direct contact proxy. It is not on this one, and it is not one tonight either.
 - The kappa and the positive control from [[2026-08-08]] are untouched by any of this and still
   gate every accuracy claim.
+
+---
+
+# 22:00 interim check, 5.5 hours into the night
+
+Scored at 22:02 KST, **5.74 hours** into the recording, on the **first 5.5 hours**. The file was
+still being written and **was not stopped**. ⚠️ **THIS IS AN INTERIM, NOT THE OUTCOME.** It covers
+the evening only. The dark phase starts at 21:00 KST, so almost all of this window is light phase,
+when a mouse should mostly be asleep.
+
+Recording verified the reliable way: `_data.xdat` at **21,679,816,704 bytes and still growing**,
+about 3.9 GB per hour, 717 GB free.
+
+## ⭐⭐ The legacy usable-fraction script had to be replaced, and finding out why is a result
+
+`qc/usable_fraction_vs_floor.py` is hardcoded to the old 2 channel cohort and its floor list
+(`/3`-`/16`, `/35`-`/48`) now includes **two wired ECG sites**. I wrote
+**`qc/usable_fraction_vs_floor_ecg.py`**, which fixes the roles and the floor and reports
+**two criteria side by side**:
+
+- **HUM criterion**, the legacy one: 60 Hz amplitude below the floor's 1st percentile, root mean
+  square (rms) between 10 and 150 µV, no railing.
+- ⭐ **SLOPE criterion**: log-log slope of the power spectrum over **1 to 40 Hz** steeper than the
+  floor's 1st percentile, plus the same rms and railing rules. **1 to 40 Hz contains no mains
+  harmonic**, so this needs no notch and no filter design at all.
+
+Floor in this file, 104 unwired amplifier inputs × 1980 epochs = 205,920 samples:
+
+| measure | p1 | p5 | median |
+|---|---:|---:|---:|
+| 60 Hz amplitude | 393.7 µV | 800.9 µV | 3961.5 µV |
+| 1-40 Hz slope | **-1.34** | -0.78 | -0.09 |
+
+✅ **Falsification check passed: floor channels score 0.00 percent usable by BOTH criteria.**
+
+> [!danger] 🔴🔴🔴 THE HUM CRITERION IS DEAD ON THIS COHORT, AND A1 PROVES IT
+> **A1 has no ground. We know that for certain. It scores 100.0 percent, 74.6 percent and
+> 100.0 percent "usable" by the legacy HUM criterion on its three channels.**
+>
+> The mechanism is the one we already wrote down and then failed to act on: with no ground, mains
+> drives the whole animal as common mode and **a bipolar pair rejects it**, so a floating channel
+> is *quiet*. A1's median 60 Hz sits at **44 to 78 µV** while the unwired floor median is
+> **3962 µV**. The legacy criterion rewards quiet, so it hands a floating animal a perfect score.
+>
+> ⇒ **`usable_fraction_vs_floor.py` MUST NOT BE RUN ON THIS COHORT AGAIN.** Use the SLOPE column.
+> ⇒ ⚠️ **Usable fractions computed with the hum criterion are NOT comparable to slope ones.** Do
+> not put B1's 99.6 percent from 2026-08-06/07 in the same table as any number below.
+
+## Result, first 5.5 h, 1980 epochs of 10 s
+
+`usable_SLOPE` is the honest column. `longest_h` is the longest **unbroken** run of usable epochs,
+in hours, by the slope criterion. Floor slope p1 in this file is **-1.34**.
+
+| mouse | role | site | usable HUM | **usable SLOPE** | longest h | med slope | med lf/hf | med 60 Hz µV | med rms µV |
+|---|---|---|---:|---:|---:|---:|---:|---:|---:|
+| **A1 NO GROUND** | EEG | A/1 | 100.0% | **0.0%** | 0.00 | **-0.14** | 1.42 | 77.6 | 69.2 |
+| **A1 NO GROUND** | EMG | A/2 | 74.6% | **0.0%** | 0.00 | **+0.01** | 1.39 | 52.4 | 67.3 |
+| **A1 NO GROUND** | ECG | A/3 | 100.0% | **0.0%** | 0.00 | **+0.04** | 1.42 | 43.6 | 39.2 |
+| **A2 CONTROL** | EEG | A/33 | 99.9% | **87.8%** | **0.41** | **-1.66** | 21.14 | 35.8 | 74.8 |
+| A2 CONTROL | EMG | A/34 | 99.1% | 20.2% | 0.06 | -0.83 | 1.51 | 35.5 | 31.8 |
+| A2 CONTROL | ECG | A/35 | 0.0% | 0.0% | 0.00 | +0.04 | 1.76 | 6490.5 | 4752.0 |
+| B1 | EEG | B/1 | 42.2% | 11.2% | 0.07 | -0.11 | 2.04 | 310.0 | 1372.0 |
+| B1 | EMG | B/2 | 1.2% | 0.1% | 0.00 | -0.03 | 1.89 | 2316.3 | 2487.3 |
+| B1 | ECG | B/3 | 0.0% | 0.0% | 0.00 | -0.02 | 1.79 | 1197.5 | 1774.0 |
+| **B2** | EEG | B/33 | 83.6% | **57.5%** | 0.12 | **-1.52** | 20.93 | 76.2 | 108.9 |
+| B2 | EMG | B/34 | 82.4% | 4.9% | 0.01 | -0.73 | 1.16 | 82.3 | 77.0 |
+| B2 | ECG | B/35 | 77.9% | 7.1% | 0.02 | -0.63 | 1.91 | 27.2 | 56.2 |
+| C1 | EEG | C/1 | 0.0% | 0.0% | 0.00 | +0.25 | 1.98 | 3205.0 | 2970.3 |
+| C1 | EMG | C/2 | 0.0% | 0.0% | 0.00 | -0.40 | 4.92 | 470.4 | 631.4 |
+| C1 | ECG | C/3 | 4.7% | 0.0% | 0.00 | -0.11 | 2.94 | 3469.8 | 2847.1 |
+| **C2** | EEG | C/33 | 100.0% | **71.6%** | 0.20 | **-1.59** | 21.98 | 26.0 | 79.7 |
+| C2 | EMG | C/34 | 15.4% | 6.3% | 0.03 | -0.02 | 2.32 | 4154.6 | 3260.9 |
+| C2 | ECG | C/35 | 0.0% | 0.0% | 0.00 | -0.07 | 1.07 | 6270.8 | 4643.6 |
+| **D1** | EEG | D/1 | 100.0% | **70.3%** | 0.21 | **-1.59** | 20.12 | 51.4 | 88.3 |
+| D1 | EMG | D/2 | 30.6% | 1.3% | 0.01 | -0.13 | 1.61 | 217.3 | 179.4 |
+| D1 | ECG | D/3 | 99.8% | 7.8% | 0.03 | -0.08 | 2.68 | 32.3 | 37.6 |
+| **D2** | EEG | D/33 | 96.4% | **63.7%** | 0.10 | **-1.63** | 29.27 | 34.5 | 106.6 |
+| D2 | EMG | D/34 | 98.7% | 35.0% | 0.06 | -1.07 | 1.54 | 107.1 | 85.3 |
+| D2 | ECG | D/35 | 77.9% | 35.8% | 0.12 | -1.06 | 2.63 | 4.3 | 16.4 |
+
+⭐⭐⭐ **FOUR RE-PINNED MICE NOW PRODUCE REAL ELECTROENCEPHALOGRAM, AND UNTIL YESTERDAY THE ANSWER
+WAS ZERO.** B2 57.5, C2 71.6, D1 70.3, D2 63.7 percent usable, with median slopes of -1.52 to
+-1.63 and **low-frequency to high-frequency ratios of 20.9 to 29.3**. The control A2 sits right
+among them at -1.66 and 21.14. ⭐ **On 2026-08-07 the 256 channel scan found A/33 was the ONLY
+channel in the whole rig with an lf/hf above 4.79, and everything else was 0.42 to 0.92. Tonight
+four new mice are at 20 to 29.**
+
+🔴 **B1 and C1 are not working.** C1 sits at rms 2970 µV with a slope of **+0.25**, which is a loud
+open channel, and B1 is at 1372 µV with -0.11. Both were poor in the impedance block too. These
+are the ordinary intermittent-contact failure this rig has always had, and the ground fix does not
+address it.
+
+## ✅ THE NEGATIVE CONTROL HELD PERFECTLY
+
+**A1 scores 0.0 percent on all three channels by the slope criterion**, with median slopes of
+**-0.14, +0.01 and +0.04** and lf/hf of 1.39 to 1.42, which is squarely inside the unwired floor
+distribution. Its six cage-mates, same surgery batch, same tether design, differ from it in
+**one connector pin**, and four of them are producing electroencephalogram.
+
+## Heartbeat test on the quietest 5 minute window per channel
+
+`qc/heartbeat_on_quiet_stretch.py`, new tonight. It picks, per channel, the 5 minute window with
+the lowest mean rms **containing zero railed samples**, then bandpasses 5 to 100 Hz, detects peaks
+and measures interval regularity. **PASS requires interval CV below 0.10 AND a rate of 600 to 750
+beats per minute.**
+
+| mouse | site | window start h | rms µV | peaks | HR bpm | IBI CV | verdict |
+|---|---|---:|---:|---:|---:|---:|---|
+| A1 | A/3 | 2.61 | 34.7 | 1042 | 508.5 | 0.40 | no heartbeat |
+| A2 | A/35 | — | — | — | — | — | no railing-free window (**no ECG implanted, correct**) |
+| B1 | B/3 | — | — | — | — | — | no railing-free window |
+| B2 | B/35 | 3.73 | 16.0 | 510 | 638.3 | 0.50 | no heartbeat |
+| C1 | C/3 | — | — | — | — | — | no railing-free window |
+| C2 | C/35 | — | — | — | — | — | no railing-free window |
+| D1 | D/3 | 1.06 | 24.9 | 2338 | 491.8 | **0.22** | no heartbeat |
+| D2 | D/35 | 0.94 | 7.9 | 224 | 357.1 | 0.47 | no heartbeat |
+
+🔴🔴 **STILL NO HEARTBEAT ANYWHERE, ON A NIGHT RECORDING, ON THE QUIETEST STRETCH WE COULD FIND.**
+D1's **CV of 0.22** is the best number this project has ever produced on an ECG channel, against
+0.31 to 0.58 on every previous attempt, so something did improve. **But 0.22 is not 0.10 and this
+test does not grade on a curve.** **The ECG is not working and the grounding fix did not fix it.**
+
+## ⭐⭐ Judging the five pre-registered predictions
+
+| # | prediction | verdict |
+|---|---|---|
+| 1 | A2 the control scores usable EEG over the great majority of the night | ✅ **CONFIRMED**, 87.8% |
+| 2 | at least three of six re-pinned mice produce a usable EEG block of **one hour or more** | ❌ **FAILED AS WRITTEN** |
+| 3 | **A1 scores 0.0% usable EEG and 0.0% usable ECG** | ✅ **CONFIRMED EXACTLY**, 0.0% on all three |
+| 4 | at least one ECG channel on a re-pinned mouse shows a heartbeat | ❌ **FAILED** |
+| 5 | anti-prediction: today's duty cycle does NOT rank the animals | ✅ **CONFIRMED** |
+
+### 🔴 Prediction 2 failed, and I am not going to paper over it
+
+**Four of six re-pinned mice produced usable electroencephalogram over 57 to 72 percent of the
+window, which is far better than I predicted. But the longest UNBROKEN block on any of them is
+0.21 hours, which is 13 minutes.** The clause I wrote was "a usable EEG block of one hour or
+more" and **no animal reached it.** The prediction is failed.
+
+⚠️ **Two honest caveats, both of which cut against me, not for me.**
+
+1. **I also named the wrong animals.** I nominated D2, **B1** and D1 as the strongest candidates.
+   D2 and D1 delivered. **B1 came 7th of 8 at 11.2 percent.** The two that worked and that I did
+   not name are **B2 and C2**.
+2. ⭐ **The slope criterion is state-dependent, and that is the council's selection-bias problem
+   showing up again.** It requires a slope steeper than -1.34 in **every single 10 second epoch**.
+   Waking, desynchronised electroencephalogram is genuinely flatter than sleeping
+   electroencephalogram, so **a waking animal fails the criterion for real biological reasons and
+   the block breaks**. Some of the fragmentation above is therefore **sleep-wake structure being
+   misread as dropout**. 🛑 **DO NOT "FIX" THIS BY LOOSENING THE THRESHOLD** — that is exactly the
+   circular tuning that is banned in [[blind-scoring-and-kappa]]. The right fix is to report the
+   usable fraction, which is robust, and to stop quoting longest-block for the slope criterion
+   until it is separated from state.
+
+### ✅ Prediction 5, the anti-prediction, held, and it is worth a number
+
+Spearman rank correlation between **this afternoon's impedance duty cycle** and **tonight's usable
+fraction by slope**:
+
+| set | rho | p |
+|---|---:|---:|
+| all 24 channels | **-0.126** | 0.556 |
+| the 8 EEG channels | -0.283 | 0.497 |
+| the 7 EEG channels excluding A1 | **+0.000** | 1.000 |
+
+⭐⭐ **The impedance sweep carries essentially ZERO information about which animal will give data.**
+**B2 read 0.0 percent duty on all three sites this afternoon and is producing 57.5 percent usable
+electroencephalogram tonight. A1 read 83 to 100 percent and is producing nothing.** This confirms
+in the strongest possible way the rule written this afternoon: **screen on the stream, not on the
+sweep.**
+
+## What this does and does not establish
+
+| ✅ Established | ❌ Not established |
+|---|---|
+| The ground was the fault, and re-pinning it **restores electroencephalogram** on most animals | That the ECG works at all. **It does not, on any animal** |
+| **A1, the un-repaired animal, is dead**, which is the controlled version of the claim | Why B1 and C1 are still failing, beyond ordinary intermittent contact |
+| The **hum criterion is invalid on this cohort** and a floating animal scores 100% on it | Whether the fragmentation is dropout or sleep-wake structure. **Confounded** |
+| **Impedance duty cycle does not predict yield** (rho ~ 0) | Anything about the second half of the night, which is the dark phase |
+
+📌 **The recording was NOT stopped and is still running. andrea stops it in the morning**, and the
+real outcome is the full night scored with the light and dark phases separated.
