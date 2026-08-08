@@ -80,6 +80,70 @@ see [[2026-08-05-unipolar-lfp-mouse-reference]]) and the post-swap check (17:42)
 > within minutes. Every row from 2026-08-05 onward is a **rate over 20 minutes**. Do not
 > put them in the same column and do not compare them directly.
 
+## ⭐⭐⭐ 2026-08-07 and 2026-08-08, the grounding error and its repair. One row per BLOCK
+
+The ECG cohort carries **three channels per mouse**, so the block script takes `--roles eeg,emg,ecg`
+and the free floor control moved to **`/4`-`/16` and `/36`-`/48`**, 104 channels per sweep.
+
+| block | window | config | n | floor % < 0.5 MΩ | folder |
+|---|---|---|---:|---:|---|
+| **ECG cohort baseline**, ground **mis-pinned on all 7** | 2026-08-07 18:55:55-19:13:19, 17.4 min | `8slots-ECG-Actrl-4ports-64ch` | 30 | 3.4 | `2026-08-07/01-ecg-cohort-baseline-30sweeps/` |
+| ⭐ **post ground re-pin**, 6 of 7 fixed, **A1 left floating as a control** | 2026-08-08 15:59:25-16:16:20, 16.9 min | `8slots-ECG-groundfix-A1nogrnd-4ports-64ch` | 30 | 2.6 | `2026-08-08/01-post-ground-fix-30sweeps/` |
+
+Duty cycle, percent of sweeps below 0.5 MΩ, before against after:
+
+| site | role | 08-07 duty | 08-08 duty | 08-07 flips | 08-08 flips |
+|---|---|---:|---:|---:|---:|
+| **A/1** | **A1 EEG, ground NEVER fixed** | 96.7 | **83.3** | 1 | 8 |
+| **A/2** | **A1 EMG, ground NEVER fixed** | 90.0 | **90.0** | 6 | 6 |
+| **A/3** | **A1 ECG, ground NEVER fixed** | 100.0 | **100.0** | 0 | **0** |
+| A/33 | A2 control EEG | 0.0 | 6.7 | 0 | 4 |
+| A/34 | A2 control EMG | 0.0 | 33.3 | 0 | 14 |
+| A/35 | A2 control ECG, nothing implanted | 0.0 | 3.3 | 0 | 2 |
+| B/1 | B1 EEG | 66.7 | 23.3 | 14 | 10 |
+| B/2 | B1 EMG | 10.0 | 3.3 | 5 | 2 |
+| B/3 | B1 ECG | 16.7 | 10.0 | 9 | 5 |
+| B/33 | B2 EEG | 96.7 | **0.0** | 1 | 0 |
+| B/34 | B2 EMG | 30.0 | **0.0** | 9 | 0 |
+| B/35 | B2 ECG | 100.0 | **0.0** | 0 | 0 |
+| C/1 | C1 EEG | 96.7 | 6.7 | 1 | 4 |
+| C/2 | C1 EMG | 50.0 | 16.7 | 12 | 9 |
+| C/3 | C1 ECG | 100.0 | 30.0 | 0 | 8 |
+| C/33 | C2 EEG | 66.7 | 3.3 | 14 | 2 |
+| C/34 | C2 EMG | 80.0 | 10.0 | 10 | 5 |
+| C/35 | C2 ECG | 10.0 | 6.7 | 4 | 4 |
+| D/1 | D1 EEG | 93.3 | 73.3 | 3 | 12 |
+| D/2 | D1 EMG | 93.3 | 70.0 | 4 | 14 |
+| D/3 | D1 ECG | 100.0 | 96.7 | 0 | 2 |
+| D/33 | D2 EEG | 70.0 | 36.7 | 13 | 8 |
+| D/34 | D2 EMG | 83.3 | **0.0** | 8 | 0 |
+| D/35 | D2 ECG | 100.0 | **100.0** | 0 | **0** |
+
+> [!danger] ⭐⭐⭐ A LOW, STABLE, ZERO FLIP IMPEDANCE CAN MEAN THE ANIMAL HAS NO GROUND
+> This is the most important entry in the whole register and it inverts an assumption we held for
+> weeks. On 2026-08-07 all seven new mice had their cerebellum ground pin mated to a **floating**
+> wire. With no ground, the injected test current returns **through the other electrode of the
+> pair**, electrode to tissue to electrode. That is a genuine, stable, purely resistive path, so
+> the sweep reports a **beautiful** number: 19 of 21 channels beat the floor and several sat at
+> **100 percent duty with zero flips**, while the recording was flat amplifier noise with no
+> heartbeat anywhere.
+>
+> ⭐ **THE ZERO FLIPS WERE THE TELL.** Every genuine failure this rig has ever had is
+> **intermittent**. A channel that never once flips in 30 sweeps is not an electrode, it is a
+> wiring topology.
+>
+> Repairing the ground made the numbers **worse on the six repaired animals and left A1, the one
+> not repaired, essentially unchanged**. That is the controlled version of the same claim, and it
+> was **pre-registered before the block ran**. See [[2026-08-08-ground-fix-post-repin-night]].
+
+> [!warning] ⭐⭐ Consequence: on this cohort the sweep no longer screens
+> With a working ground, duty cycle stopped tracking anything we care about. In the same hour,
+> **B2 read 0.0 percent on all three sites** while its ECG site had a spectral slope of **-1.45**
+> in the live stream, and **D/34 read 0.0 percent** with a slope of **-1.66**. Meanwhile **A1,
+> which is definitely floating, read 83 to 100 percent**.
+> ⇒ **Screen on the stream, not on the sweep.** Keep taking sweeps as the record and as the
+> before/after of hardware changes, but do not use them to choose which animals to score.
+
 ## Folder layout, reorganised 2026-08-04
 
 ```
