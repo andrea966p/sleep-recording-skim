@@ -72,6 +72,8 @@ Three further limits, stated plainly:
 
 Sample size is two animals.
 
+One counterweight belongs here rather than in a footnote. The animal that held the B1 position in July was sacrificed on 5 August because its **skull electrode physically detached**. That is a real head side failure and it is the only direct physical evidence of an implant level problem in the whole cohort. It does not overturn the tether conclusion, which rests on a different animal recovering from zero to 87.9 percent usable EEG with its implant untouched, and on five of six failures showing shared path or cable signatures. It does mean head side attachment belongs on the watch list for the next cohort alongside tether construction.
+
 ## The two open items
 
 1. **Blind human scoring and a Cohen kappa. This is the blocking item.** Three sets of 300 clips are built and verified unscored, and the decision rules were written down before any scoring began, so the outcome cannot be reinterpreted afterwards. Above 0.80 the current staging stands. Between 0.60 and 0.80 it is reported with its confusion matrix and treated as approximate. Between 0.40 and 0.60 it becomes a screening tool only. Below 0.40 automatic staging is abandoned. The REM specific value decides the REM question. The wake threshold is then placed by agreement with the human scorer, never by maximising the project's own statistics.

@@ -127,7 +127,7 @@ About 2 hours including swaps.
 ~/Downloads/impedance measurments/2026-08-05/
 ├── armA-original/
 ├── armB-short-soldered/
-└── armC-long-direct-noslipring/   (empty: B1 died before arm C ran)
+└── armC-long-direct-noslipring/   (empty: B1 was sacrificed before arm C ran)
 ```
 
 Folders already created. Let Allego name files however it likes during a block; do not
@@ -295,10 +295,12 @@ to match arm B; **40 sweeps**; re-run `remap.py` first.
 > **"does the new chain help"**, not **"is it the slip ring"**. The second claim is no
 > longer available at any sample size without another anaesthesia per animal.
 
-> [!warning] Welfare, before the next induction
-> An animal was lost on induction. Vaporiser setting, flow and warming should be checked
-> before D2 goes under, since D2 is the healthiest animal remaining and the one with the
-> 0.017 MΩ channel.
+> [!info] ⚠️ WITHDRAWN 2026-08-09. The welfare concern here rested on a wrong cause
+> This block originally read that an animal had been lost on induction and that the
+> vaporiser, flow and warming should be checked. **B1 was not lost to anaesthesia. It was
+> sacrificed because its skull electrode had detached**, so nothing about the anaesthesia
+> setup is implicated and no check of it is owed. ⭐ The failure was **mechanical and at the
+> head**, which points the same way as every other finding on this rig.
 
 ## 12. Verdict
 

@@ -251,6 +251,10 @@ The reason the statistic lied is that the 40 sweep block spanned only **21 minut
 
 B1, the original, was sacrificed on 5 August because its skull electrode had detached. The replacement animal in that slot is the one referred to as B1 throughout the recording results above. That loss also permanently ended the slip ring isolation experiment.
 
+⚠️ **CORRECTION LOGGED 2026-08-09.** This was written up at the time as a death under isoflurane on induction, and a welfare action was raised off the back of it. **That was wrong and both have been withdrawn across the vault.** Anaesthesia is not implicated and no check of the vaporiser, flow or warming is owed.
+
+⭐ **The corrected cause carries a finding, and it cuts slightly against the tether story, so it is stated here rather than buried.** A **skull electrode physically came away** on this animal. That is a genuine head side, mechanical failure mode, and it is the one piece of direct physical evidence of an implant level problem in the whole cohort. It does not overturn the tether conclusion, because that conclusion rests on a different animal recovering from zero to 87.9 percent usable EEG **with its implant untouched**, and on five of six failures showing shared path or cable signatures. What it does mean is that **head side attachment is not automatically safe**, and it belongs on the list of things to watch in the next cohort alongside the tether construction.
+
 ---
 
 # PART 1b — The two animals that matter, followed individually
