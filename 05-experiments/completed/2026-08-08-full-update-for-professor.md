@@ -447,6 +447,18 @@ This is the part I would want you to take away from the fleet history, separatel
 
 The pipeline takes the raw file, gates out unusable epochs, scores each 4 second epoch as wake, non REM or REM, and then produces architecture, bout statistics and light versus dark breakdowns. Every threshold in it was re-derived from our own data, 1,137,955 epochs of it.
 
+## 2.0 Where the statistics live
+
+Point estimates alone are not the case. The tests behind each claim are in two figures.
+
+**Hardware claims, `05-experiments/attachments/2026-08-08-fig9-hardware-statistics.png`.** Every channel's connected duty cycle against 2,240 readings from amplifier inputs with no wire, Fisher exact one sided, Jeffreys 95 percent intervals. **Four of sixteen channels beat an unconnected input and three of those four are muscle channels.** The tether comparison is on the same figure, Fisher exact, with the concurrent control animal plotted alongside so drift can be ruled out by eye.
+
+**Sleep claims, `05-experiments/attachments/2026-08-08-fig10-sleep-statistics.png`.** Persistence against a within block permutation null, REM ordering against 2,000 run order permutations, and the rank correlation between impedance and actual yield.
+
+⚠️ **Two things that figure admits rather than hides.** First, **no confidence interval is placed on the persistence magnitude.** The best recording is a single unbroken block, so there is no independent replicate to resample, and a block bootstrap interval would mostly report the chunk length chosen rather than anything about the animal. A block bootstrap was built, produced intervals that did not bracket their own point estimate, and was discarded rather than tuned until it looked right. The permutation test shown instead is exact and tests the claim actually being made. Second, the values plotted come from the stored hypnogram, whose labels have been through the 12 second minimum bout rule, so they sit **above** the raw label values quoted throughout this document. That gap is the smoothing inflation described in §2.4, drawn rather than asserted.
+
+⭐ **The rank correlation is the useful negative result.** Across all eight EEG channels, impedance duty cycle against usable fraction gives Spearman rho 0.63 at p equal to 0.094, **not significant at n equal to 8**. D2 was connected in one sweep out of twenty and produced 87.9 percent usable EEG; four channels that screened better produced nothing. That is the operational rule stated as a number.
+
 ## 2.1 The three scoreable recordings
 
 | | B1 overnight | D2 overnight | B1 afternoon |

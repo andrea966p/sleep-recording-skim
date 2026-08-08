@@ -42,6 +42,10 @@ Six of eight positions fail, and they fail on the EEG channel, which is the chan
 
 ![[2026-08-08-fig2-fleet-outcome.png]]
 
+Tested formally: each channel was measured 20 times and compared against 2,240 readings from amplifier inputs with no wire attached, taken in the same sweeps. **Only four of sixteen channels beat an unconnected input, and three of those four are muscle channels**, so exactly one animal had a usable EEG that day.
+
+![[2026-08-08-fig9-hardware-statistics.png]]
+
 The six failures are not six independent stories. One is a confirmed chewed tether, visible in the data as a channel quieter than a bare wire yet carrying nothing. Two show a correlation of 0.74 and 0.50 between their own two channels, where working animals sit at 0.07, which means one fault upstream of both channels rather than two coincidental electrode failures. Two have a working electrode on one channel and a floating one on the other through the same cable. One holds no animal at all and now serves as a permanent negative control. **Five of six point at the tether chain.**
 
 One animal deserves separate mention. It carried the best electrode in the fleet on 31 July, survived deliberate provocation of every joint in its cable, and produced 8.73 hours of sleep in one unbroken block, which was the only real sleep data the project held until August. Its EEG was electrically open two days later and never recorded again, even though the impedance returned to a good value on 4 August.
@@ -57,6 +61,12 @@ Both animals are strongly awake in the dark phase and asleep in the light phase,
 Two checks are capable of failing and both pass. State persists over minutes far above both a shuffled control and a synthetic bout calibration, and REM episodes are entered from non REM far more often than a permutation of the same state runs allows, by 5 to 12 standard deviations.
 
 ![[2026-08-08-fig6-validity.png]]
+
+Both are tested against permutation nulls rather than quoted as bare numbers. No permutation of any recording reached the observed REM ordering in 2,000 attempts, and the persistence values sit far outside the range produced by shuffling the same labels within their own blocks. The same figure carries two deliberate admissions: **no confidence interval is placed on the persistence magnitude**, because the best recording is a single unbroken block and there is no independent replicate to resample, and **the smoothed values plotted sit above the raw label values quoted in the text**, because the 12 second minimum bout rule inflates this statistic by construction.
+
+![[2026-08-08-fig10-sleep-statistics.png]]
+
+The right hand panel of that figure is the quantitative form of the operational rule. Across all eight EEG channels the rank correlation between impedance and what was actually recorded is **not significant at n equal to 8**. One animal was connected in a single sweep out of twenty and still produced 87.9 percent usable EEG, while four channels that screened better produced nothing.
 
 ## What cannot be claimed
 
@@ -81,4 +91,4 @@ One counterweight belongs here rather than in a footnote. The animal that held t
 
 ## Notes on reading the figures
 
-Figures are rebuilt from the raw files by the scripts in `eeg-emg-analysis/qc/figures_2026-08-08/`, run with `~/eeg-analysis-venv/bin/python`. All measurements come from one 23.66 hour recording of 6 to 7 August unless stated otherwise. Processing is written on each figure. Traces are plotted on fixed vertical scales, because auto scaling makes every channel look like signal, and the windows shown were selected automatically as the window closest to the median amplitude of that channel, so no panel is a lucky or an unlucky moment. Position labels such as B1 and D2 identify rig positions, not individual animals. The animal in the B1 position changed on 6 August, because the original was sacrificed on 5 August after its skull electrode detached.
+Tests used: Fisher exact with Jeffreys intervals for anything counted in sweeps or epochs, permutation nulls for the sleep statistics, and Spearman rank correlation for impedance against yield. Where a statistic could not be given an honest interval, none is given and the reason is written on the figure. Figures are rebuilt from the raw files by the scripts in `eeg-emg-analysis/qc/figures_2026-08-08/`, run with `~/eeg-analysis-venv/bin/python`. All measurements come from one 23.66 hour recording of 6 to 7 August unless stated otherwise. Processing is written on each figure. Traces are plotted on fixed vertical scales, because auto scaling makes every channel look like signal, and the windows shown were selected automatically as the window closest to the median amplitude of that channel, so no panel is a lucky or an unlucky moment. Position labels such as B1 and D2 identify rig positions, not individual animals. The animal in the B1 position changed on 6 August, because the original was sacrificed on 5 August after its skull electrode detached.
