@@ -1,0 +1,49 @@
+{
+  "notice": "Export completed with explicit settings. This report does not establish visual, accessibility, scientific-integrity, or journal-submission compliance.",
+  "outputs": [
+    {
+      "format": "png",
+      "kind": "raster",
+      "path": "/home/skimlab/Monitoring_project/Monitoring_project_obsidian_vault/05-experiments/attachments/2026-08-09-fig06-threshold-sensitivity.png",
+      "size_bytes": 401245
+    },
+    {
+      "format": "pdf",
+      "kind": "vector-container",
+      "path": "/home/skimlab/Monitoring_project/Monitoring_project_obsidian_vault/05-experiments/attachments/2026-08-09-fig06-threshold-sensitivity.pdf",
+      "size_bytes": 107081
+    }
+  ],
+  "provenance": {
+    "alt_text": "Left: percent asleep in the light phase against the multiplier applied to the wake threshold, for three recordings. All three rise steeply, D2 from 23 percent at multiplier 0.75 to 89 percent at 1.25. A dashed line marks the approximate published value of 70 percent. Right: bar chart of the swing, 66 points for D2 overnight, 36 for B1 overnight, 22.3 for B1 afternoon.",
+    "missing_data": "none",
+    "palette": "okabe_ito_on_white",
+    "raw_data": "pipeline features files, otsu_sensitivity block",
+    "seed": 20260809,
+    "style": "default (scientific-visualization skill asset)",
+    "transformations": "wake threshold multiplied by 0.75 to 1.25 in linear microvolts",
+    "uncertainty": "sensitivity sweep, not a confidence interval"
+  },
+  "schema_version": "1.0",
+  "settings": {
+    "bbox_inches": null,
+    "dpi": 300.0,
+    "facecolor": "white",
+    "figure_size_inches": [
+      10.8,
+      5.0
+    ],
+    "font_mode": "truetype",
+    "formats": [
+      "png",
+      "pdf"
+    ],
+    "pad_inches": 0.1,
+    "transparent": false
+  },
+  "versions": {
+    "matplotlib": "3.11.0",
+    "pillow": "12.2.0"
+  },
+  "warnings": []
+}

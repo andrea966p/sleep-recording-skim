@@ -1,0 +1,49 @@
+{
+  "notice": "Export completed with explicit settings. This report does not establish visual, accessibility, scientific-integrity, or journal-submission compliance.",
+  "outputs": [
+    {
+      "format": "png",
+      "kind": "raster",
+      "path": "/home/skimlab/Monitoring_project/Monitoring_project_obsidian_vault/05-experiments/attachments/2026-08-09-fig07-yield-timeline.png",
+      "size_bytes": 324133
+    },
+    {
+      "format": "pdf",
+      "kind": "vector-container",
+      "path": "/home/skimlab/Monitoring_project/Monitoring_project_obsidian_vault/05-experiments/attachments/2026-08-09-fig07-yield-timeline.pdf",
+      "size_bytes": 100131
+    }
+  ],
+  "provenance": {
+    "alt_text": "Two bar charts of six recordings. Absolute scoreable hours are zero for three July and August recordings, 10.4 hours for 31 July, 3.2 for the 6 August afternoon and 46.9 for the overnight recording. As a percentage of available animal hours the same six read 0, 0, 4.7, 0, 12.5 and 24.8.",
+    "missing_data": "older recordings flagged with an asterisk",
+    "palette": "okabe_ito_on_white",
+    "raw_data": "pipeline features files; older recordings from vault write ups, marked",
+    "seed": 20260809,
+    "style": "default (scientific-visualization skill asset)",
+    "transformations": "sum of hours_in_blocks over animals with SCOREABLE verdict",
+    "uncertainty": "none, these are counts"
+  },
+  "schema_version": "1.0",
+  "settings": {
+    "bbox_inches": null,
+    "dpi": 300.0,
+    "facecolor": "white",
+    "figure_size_inches": [
+      11.0,
+      4.6
+    ],
+    "font_mode": "truetype",
+    "formats": [
+      "png",
+      "pdf"
+    ],
+    "pad_inches": 0.1,
+    "transparent": false
+  },
+  "versions": {
+    "matplotlib": "3.11.0",
+    "pillow": "12.2.0"
+  },
+  "warnings": []
+}

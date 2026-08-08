@@ -1,0 +1,49 @@
+{
+  "notice": "Export completed with explicit settings. This report does not establish visual, accessibility, scientific-integrity, or journal-submission compliance.",
+  "outputs": [
+    {
+      "format": "png",
+      "kind": "raster",
+      "path": "/home/skimlab/Monitoring_project/Monitoring_project_obsidian_vault/05-experiments/attachments/2026-08-09-fig05-hypnograms.png",
+      "size_bytes": 368194
+    },
+    {
+      "format": "pdf",
+      "kind": "vector-container",
+      "path": "/home/skimlab/Monitoring_project/Monitoring_project_obsidian_vault/05-experiments/attachments/2026-08-09-fig05-hypnograms.pdf",
+      "size_bytes": 403419
+    }
+  ],
+  "provenance": {
+    "alt_text": "Two hypnograms drawn as state bands over 24 hours with the dark phase shaded, each with a curve of percent asleep per hour beneath. Both animals are mostly awake during the dark phase and mostly asleep during the light phase.",
+    "missing_data": "epochs outside usable blocks drawn explicitly in grey",
+    "palette": "okabe_ito_on_white",
+    "raw_data": "pipeline hypnogram CSVs in /home/skimlab/eeg-processed/2026-08-06/",
+    "seed": 20260809,
+    "style": "default (scientific-visualization skill asset)",
+    "transformations": "4 s epochs, minimum bout rule applied to labels shown",
+    "uncertainty": "not applicable"
+  },
+  "schema_version": "1.0",
+  "settings": {
+    "bbox_inches": null,
+    "dpi": 300.0,
+    "facecolor": "white",
+    "figure_size_inches": [
+      11.4,
+      6.8
+    ],
+    "font_mode": "truetype",
+    "formats": [
+      "png",
+      "pdf"
+    ],
+    "pad_inches": 0.1,
+    "transparent": false
+  },
+  "versions": {
+    "matplotlib": "3.11.0",
+    "pillow": "12.2.0"
+  },
+  "warnings": []
+}
