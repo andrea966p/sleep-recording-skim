@@ -6,6 +6,11 @@ status: complete
 
 # The test mice, start to finish: the rig, the troubleshooting, and what the data can and cannot say
 
+> [!info] 📄 **THIS IS THE LONG WORKING RECORD, NOT THE HANDOUT.**
+> **The document to actually send is [[2026-08-08-professor-update-short]]** — two pages, eight figures, crucial points only.
+> This page keeps the complete narrative, every number, every retraction and every raw file reference behind it.
+> Figures live in `05-experiments/attachments/2026-08-08-fig1..fig8-*.png`; scripts that build them are in the session scratchpad and are described in the short report's notes section.
+
 Covers the ORIGINAL EEG plus EMG cohort (surgeries 21 to 23 July 2026, tethered 30 July, recorded through 7 August). It does NOT cover the seven new EEG plus EMG plus ECG mice implanted on the evening of 7 August, which are a separate story and are currently blocked on a wiring fault.
 
 ---
