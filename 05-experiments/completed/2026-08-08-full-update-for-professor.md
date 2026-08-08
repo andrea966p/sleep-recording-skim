@@ -9,7 +9,11 @@ status: complete
 > [!info] 📄 **THIS IS THE LONG WORKING RECORD, NOT THE HANDOUT.**
 > **The document to actually send is [[2026-08-08-professor-update-short]]** — two pages, eight figures, crucial points only.
 > This page keeps the complete narrative, every number, every retraction and every raw file reference behind it.
-> Figures live in `05-experiments/attachments/2026-08-08-fig1..fig8-*.png`; scripts that build them are in the session scratchpad and are described in the short report's notes section.
+> Figures live in `05-experiments/attachments/2026-08-09-fig01..fig09-*.png`, rebuilt on 2026-08-09 after an audit;
+> the previous set is kept under `attachments/superseded/2026-08-08-figures/`. **Read
+> [[figure-and-analysis-audit-2026-08-08]] before citing any figure**: it records a fabricated reference band, an
+> invalid confidence interval, three figures that held typed-in values, and a threshold-dependent tether result
+> that all had to be corrected.
 
 Covers the ORIGINAL EEG plus EMG cohort (surgeries 21 to 23 July 2026, tethered 30 July, recorded through 7 August). It does NOT cover the seven new EEG plus EMG plus ECG mice implanted on the evening of 7 August, which are a separate story and are currently blocked on a wiring fault.
 
@@ -451,13 +455,13 @@ The pipeline takes the raw file, gates out unusable epochs, scores each 4 second
 
 Point estimates alone are not the case. The tests behind each claim are in two figures.
 
-**Hardware claims, `05-experiments/attachments/2026-08-08-fig9-hardware-statistics.png`.** Every channel's connected duty cycle against 2,240 readings from amplifier inputs with no wire, Fisher exact one sided, Jeffreys 95 percent intervals. **Four of sixteen channels beat an unconnected input and three of those four are muscle channels.** The tether comparison is on the same figure, Fisher exact, with the concurrent control animal plotted alongside so drift can be ruled out by eye.
+**Hardware claims, `05-experiments/attachments/2026-08-09-fig08-hardware-statistics.png`.** Every channel's connected duty cycle against 2,240 readings from amplifier inputs with no wire, Fisher exact one sided, Jeffreys 95 percent intervals. **Four of sixteen channels beat an unconnected input after Holm correction for the sixteen tests, and three of those four are muscle channels.** Risk differences against the floor run from +26.9 to +66.9 points. The tether comparison is on the same figure, Fisher exact, at BOTH pass marks, with the concurrent control animal plotted alongside so drift can be ruled out by eye. See the correction above: the EEG half of that comparison reverses at the corrected pass mark.
 
-**Sleep claims, `05-experiments/attachments/2026-08-08-fig10-sleep-statistics.png`.** Persistence against a within block permutation null, REM ordering against 2,000 run order permutations, and the rank correlation between impedance and actual yield.
+**Sleep claims, `05-experiments/attachments/2026-08-09-fig09-sleep-statistics.png`.** Persistence against a within block permutation null, REM ordering against 2,000 run order permutations, and the rank correlation between impedance and actual yield with an exact permutation p.
 
 ⚠️ **Two things that figure admits rather than hides.** First, **no confidence interval is placed on the persistence magnitude.** The best recording is a single unbroken block, so there is no independent replicate to resample, and a block bootstrap interval would mostly report the chunk length chosen rather than anything about the animal. A block bootstrap was built, produced intervals that did not bracket their own point estimate, and was discarded rather than tuned until it looked right. The permutation test shown instead is exact and tests the claim actually being made. Second, the values plotted come from the stored hypnogram, whose labels have been through the 12 second minimum bout rule, so they sit **above** the raw label values quoted throughout this document. That gap is the smoothing inflation described in §2.4, drawn rather than asserted.
 
-⭐ **The rank correlation is the useful negative result.** Across all eight EEG channels, impedance duty cycle against usable fraction gives Spearman rho 0.63 at p equal to 0.094, **not significant at n equal to 8**. D2 was connected in one sweep out of twenty and produced 87.9 percent usable EEG; four channels that screened better produced nothing. That is the operational rule stated as a number.
+⭐ **The rank correlation is the useful negative result.** Across the seven positions holding an animal, impedance duty cycle against usable fraction gives Spearman rho 0.73 with an **exact permutation p of 0.094 from 10,000 relabellings, not significant**. The exact test is used because five of the seven values are tied, which makes the asymptotic p unreliable, and the position with no animal is excluded because it cannot belong in a correlation about animals. D2 was connected in one sweep out of twenty and produced 87.9 percent usable EEG; three channels tied with it produced nothing. That is the operational rule stated as a number.
 
 ## 2.1 The three scoreable recordings
 
@@ -554,6 +558,12 @@ Two things worth knowing: their delta and theta are **time domain rectified inte
 3. **The order of state transitions is real.** REM is entered from non REM far more often than a permutation of the same state runs would give, at 5 to 12 standard deviations.
 4. **The bottleneck is electrical contact in the tether chain, not surgery, not the implants, and not the recording system.** Supported by a best ever 0.052 megaohm reading, by full recovery of a previously open channel, by a clean multimeter pass across the whole fleet, and by five of six failures showing a shared fault path rather than independent electrode failures.
 5. **The fix is an engineering change applicable to every animal without new surgery.** D2 went from 0.0 to 87.9 percent usable EEG on a tether swap alone, at day 8 after surgery.
+
+## A claim corrected on 2026-08-09
+
+🔴 **"The soldered tether took the duty cycle from 45 percent to 100 percent" is threshold dependent and must no longer be quoted that way.** That figure was computed at the 2 MOhm pass mark, which was retired the next day when a cut cable with no animal was found to pass 22 percent of the time at 2 MOhm. Re-scored at the corrected **0.5 MOhm** pass mark, the same 40 sweeps give **B1 EEG 5/20 to 2/20** (the improvement disappears and reverses, p = 0.41) and **B1 EMG 0/20 to 7/20** (still improves, p = 0.0083). The concurrent control animal does not improve at either threshold, so the design is intact; the threshold was doing the work. ⚠️ The census memory had already said "re-score old blocks before quoting them" and this block was never re-scored.
+
+⭐ **What survives:** the tether conclusion never rested on this block. It rests on the recording, D2 going from 0.0 to 87.9 percent usable EEG with the implant untouched. This is exactly the rule the project adopted after the arm C retraction: **impedance blocks screen, only a multi-hour recording is an outcome.**
 
 ## Claims I have withdrawn
 

@@ -5,13 +5,13 @@
       "format": "png",
       "kind": "raster",
       "path": "/home/skimlab/Monitoring_project/Monitoring_project_obsidian_vault/05-experiments/attachments/2026-08-09-fig03-signal-traces.png",
-      "size_bytes": 1339240
+      "size_bytes": 1293755
     },
     {
       "format": "pdf",
       "kind": "vector-container",
       "path": "/home/skimlab/Monitoring_project/Monitoring_project_obsidian_vault/05-experiments/attachments/2026-08-09-fig03-signal-traces.pdf",
-      "size_bytes": 310495
+      "size_bytes": 308948
     }
   ],
   "provenance": {
@@ -31,7 +31,7 @@
     "facecolor": "white",
     "figure_size_inches": [
       12.6,
-      10.45
+      9.25
     ],
     "font_mode": "truetype",
     "formats": [
