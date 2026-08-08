@@ -132,12 +132,12 @@ Fixes, in dependency order. Each is applied only after explicit approval.
 | # | fix | status |
 | --- | --- | --- |
 | 1 | **Minimum bout duration: 3 consecutive epochs, 12 s**, per our SOP | ✅ **done 2026-08-08**, see §4 |
-| 2 | Blind scoring harness + Cohen's kappa against stage 3 | 🟡 **harness built and tested 2026-08-08; awaiting a human scorer — see §6** |
+| 2 | Blind scoring harness + Cohen's kappa against stage 3 | 🟡 **harness built, packs ready, decision rules pre-registered — [[blind-scoring-and-kappa]]. Awaiting a human day.** |
 | 3 | Rejection rate as a function of scored state (the selection-bias test) | ✅ **done 2026-08-08 — the bias is NOT operating, §8.1** |
 | 4 | Otsu cut ±25% sensitivity sweep on the circadian result | ✅ **done 2026-08-08 — see §5. The result is BAD.** |
 | 5 | Relabel the physiology checks honestly; add the persistence-shuffle null for REM order | ✅ **done 2026-08-08 — and the REM order SURVIVED the null, §8.2** |
 | 6 | Cluster the wire-free null by session and headstage | ✅ **done 2026-08-08 — ICC ≈ 0, §8.3** |
-| 7 | Positive control of known spectrum through the full pipeline | ⬜ |
+| 7 | Positive control of known spectrum through the full pipeline | 📋 **specified 2026-08-08, NOT SCHEDULED** — [[positive-control-known-signal-injection]] |
 
 > [!quote] The council's single first action
 > **Score 300 stratified random epochs per animal yourself, blind, and compute Cohen's kappa.**
@@ -620,3 +620,57 @@ fewer than 10 finite values, or fewer than 2 distinct values, falls back to the 
 
 **Everything the council raised has been either measured or explicitly deferred with a reason.**
 The two genuinely open items are the **positive control** and the **kappa**.
+
+
+---
+
+# 9. Closing state, 2026-08-08
+
+## 9.1 Everything the council raised
+
+| finding | status |
+| --- | --- |
+| Selection bias in the QC gate | ✅ **measured, not operating** (§8.1) |
+| 4 of 5 physiology checks forced | ✅ **relabelled and printed as such** (§8.2) |
+| REM order near-forced | ✅ **tested and refuted, real at 5-12 SD** (§8.2) |
+| "Threshold-independent" is false | ✅ **quantified, swing printed automatically** (§5) |
+| 82.1% and 70.3% presented as two hits | ✅ corrected across the write-ups |
+| Nulls pseudoreplicated | 🟡 **ICC ≈ 0**, conservative cluster CI reported (§8.3) |
+| Minimum bout missing | ✅ applied, with the raw/smoothed split it forced (§4) |
+| Not aligned with the reference lab | ✅ four IIIS items applied (§4.6) |
+| **Accuracy unmeasured** | 🟡 **harness + packs + pre-registered decision rules ready** ([[blind-scoring-and-kappa]]) |
+| **No positive control** | 📋 **specified, not scheduled** ([[positive-control-known-signal-injection]]) |
+| Modernise the staging | ⛔ **rejected**, and the k-means REM rule stays gated behind the kappa |
+
+**Nothing raised is unaddressed.** Two items are open by choice, both with the reason recorded.
+
+## 9.2 The two open items, and what unblocks them
+
+**The kappa needs one human day.** Packs are built and the decision rules are pre-registered in
+[[blind-scoring-and-kappa]] §2, written before any epoch was scored so the result cannot be
+reinterpreted afterwards. It gates: placing the WAKE cut on evidence, adopting the k-means REM rule,
+strengthening the selection-bias test to use human states rather than an EMG proxy, and any claim
+that the pipeline is **accurate** rather than merely **runs**.
+
+**The positive control needs half a day of bench time and about £20 of parts.** Specified in
+[[positive-control-known-signal-injection]]. ⭐ It would also settle the standing **1.10 Hz
+hardware high-pass** question by measuring the actual attenuation at 0.5 and 0.75 Hz.
+
+## 9.3 What changed in the pipeline today
+
+`qc_thresholds.py` and `stage3_features.py`, both backed up as `.bak`, pipeline version
+`2026-08-08`. New constants: `MIN_BOUT_EPOCHS`, `BAND_NORM`, `BAND_DELTA_STAGING`,
+`EXCLUDE_TRANSITION_EPOCHS_FROM_SPECTRA`, `OTSU_SENSITIVITY_MULTIPLIERS`. New functions:
+`enforce_min_bout`, `steady_state_mask`, `otsu_sensitivity`, `rem_order_null`, plus a
+degenerate-input median fallback.
+
+New scripts in `eeg-emg-analysis/qc/`: `make_scoring_set.py`, `score_kappa.py`,
+`selection_bias_test.py`, `floor_pseudoreplication.py`, `per_animal_forensics.py`.
+
+> [!quote] Where the analysis stands, in one paragraph
+> The pipeline now derives every threshold from controls recorded in the same file, separates the
+> statistics that validate the states from the statistics that describe them, matches the reference
+> lab on four counts and documents where it deliberately does not, states its own threshold
+> sensitivity in every output, and marks which of its self-checks cannot fail. It has been tested
+> against three of the four objections a reviewer is most likely to raise, and it survived them.
+> **The fourth, agreement with a human, is built and waiting.**
