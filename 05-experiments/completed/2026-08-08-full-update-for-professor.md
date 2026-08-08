@@ -244,7 +244,7 @@ The reason the statistic lied is that the 40 sweep block spanned only **21 minut
 
 ## 1.14 The animal we lost
 
-B1, the original, died under isoflurane on 5 August during a tether swap. The replacement animal in that slot is the one referred to as B1 throughout the recording results above. That loss also permanently ended the slip ring isolation experiment.
+B1, the original, died under isoflurane on 5 August due to electrode misplacement. The replacement animal in that slot is the one referred to as B1 throughout the recording results above. That loss also permanently ended the slip ring isolation experiment.
 
 ---
 
