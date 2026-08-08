@@ -257,10 +257,14 @@ B1 EEG state, arm B:  CCCCCCCCCCCCCCCCCCCC     0 flips, median 0.903, max 1.341
 > result stands alone. If it has collapsed back toward 45%, the improvement was temporary,
 > which would matter more.
 
-## 11. 🔴 B1 died under isoflurane, and what that costs this experiment
+## 11. 🔴 B1 was sacrificed, and what that costs this experiment
 
-B1 was lost on induction for the arm C tether swap, evening of 2026-08-05. Colony is now
-**n = 7**: A1, A2, B2, C1, C2, D1, D2.
+> [!warning] ⚠️ CORRECTED 2026-08-09. This section originally attributed the loss to isoflurane
+> induction. **B1 was sacrificed because its skull electrode had detached.** Anaesthesia was
+> not the cause.
+
+B1 was euthanised on the evening of 2026-08-05 after its skull electrode came away. Colony is
+now **n = 7**: A1, A2, B2, C1, C2, D1, D2.
 
 **Arms A and B are complete and stand.** 40 sweeps, both blocks clean, and they remain the
 strongest result of the project.
@@ -368,7 +372,7 @@ mechanical decoupling.
 
 > [!warning] This is a lead, not a conclusion
 > **Different animals and different tether lengths.** The clean within-animal version of this
-> comparison died with B1 on 5 August and cannot be recovered without an anaesthesia episode
+> comparison was lost with B1 on 5 August and cannot be recovered without an anaesthesia episode
 > per animal. Do not state it more strongly than "arm C went the wrong way, and the slip-ring
 > hypothesis now has evidence against it."
 

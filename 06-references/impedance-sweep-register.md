@@ -70,7 +70,7 @@ One-off sweeps from the same day live in `2026-08-05/00-checks/`: the 8-mouse pr
 sweep (16:22), the 2-port config check (16:26), the **unipolar LFP reference mouse** (17:23,
 see [[2026-08-05-unipolar-lfp-mouse-reference]]) and the post-swap check (17:42).
 
-> [!danger] 🔴 B1 died under isoflurane on 2026-08-05
+> [!danger] 🔴 B1 was sacrificed on 2026-08-05 after its skull electrode detached
 > Colony is now **n = 7**. Its arm A and arm B blocks stand and are the strongest data in
 > this register. **Arm C against arm B, the only comparison that isolated the slip ring,
 > is permanently lost.**

@@ -23,7 +23,7 @@ Covers the ORIGINAL EEG plus EMG cohort (surgeries 21 to 23 July 2026, tethered 
 >
 > **How long it took and why.** These animals were operated on 21 to 23 July and first connected to the rig on 30 July. The first impedance readings were taken by hand on 31 July, one sweep at a time, and two test recordings ran across that weekend, about 50 hours in total. Those first readings misled us badly, and it is worth saying exactly how: the same animal read 0.623, then 1.717, then 0.027 megaohms across 98 minutes with nothing done to it, a swing of 64 times, and we were reading each of those numbers as a fact about the animal. It took another five days to work out that we were sampling a switch that flips on its own, and to replace single readings with repeated ones, negative controls, and a threshold derived from amplifier inputs that have no wire on them.
 >
-> **One naming warning.** A1, B1, D2 and so on are rig positions, not animal names. The B1 in the overnight result is **not** the B1 in the July results, because the original animal in that position died under isoflurane on 5 August and a replacement was moved in.
+> **One naming warning.** A1, B1, D2 and so on are rig positions, not animal names. The B1 in the overnight result is **not** the B1 in the July results, because the original animal in that position was sacrificed on 5 August after its skull electrode detached, and a replacement was moved in.
 >
 > **What was actually wrong.** Not the surgeries, not the amplifier, not the recording computer, not the room, not the mains hum, and not the electrodes. It was **electrical contact in the tether chain**, and it was intermittent. The same electrode on the same animal in the same session measured 0.052 megaohms one minute and 8.649 megaohms the next, a factor of 166. That single fact explains almost every confusing result we had for six weeks.
 >
@@ -249,7 +249,7 @@ The reason the statistic lied is that the 40 sweep block spanned only **21 minut
 
 ## 1.14 The animal we lost
 
-B1, the original, died under isoflurane on 5 August due to electrode misplacement. The replacement animal in that slot is the one referred to as B1 throughout the recording results above. That loss also permanently ended the slip ring isolation experiment.
+B1, the original, was sacrificed on 5 August because its skull electrode had detached. The replacement animal in that slot is the one referred to as B1 throughout the recording results above. That loss also permanently ended the slip ring isolation experiment.
 
 ---
 
@@ -263,27 +263,27 @@ Everything in Part 1 is the fleet view. Because the entire result rests on two p
 
 ### B1, the original, 30 July to 5 August
 
-| when | what happened | numbers |
-| --- | --- | --- |
-| 31 Jul 16:13 | first ever reading, alone on port B | EEG **0.623**, EMG **0.026 MΩ**, both excellent |
-| 31 Jul 17:34 | 8 mouse sweep, 81 minutes later, nothing done | EEG **1.717**, EMG **5.465**, the muscle channel has gone open |
-| 31 Jul 17:51 | splitters removed, 17 minutes later | EEG **0.027**, a **64 times** swing from the reading before |
-| 31 Jul evening | chattered during another animal's provocation test | bounced between 10 and 4400 microvolts for 55 seconds |
-| 31 Jul to 1 Aug | **run 1**, 27.9 hours | **the worst chatterer in the fleet, 372 flips or more** |
-| after run 1 | scored on the corrected map | **11.8 hours of good EEG, 0.2 hours of EMG** |
-| 2 Aug 01:44 | pre run 2 sweep | EEG **0.133, the best number on the rig**, EMG **7.099, open** |
-| 2 Aug | **run 2**, 21.74 hours | best EEG in the fleet and still only 14 percent of epochs; EMG **0.0 percent** |
-| 4 Aug 16:44 | moved to **port D** as a control | still works there, so **the port, splitter and recording box are cleared** |
-| 4 Aug 16:47 to 16:56 | four sweeps in nine minutes | EEG **6.236 then 0.052 then 8.649 then 0.177 MΩ** |
-| 5 Aug 16:36 | **arm A**, original tether, 20 sweeps | EEG connected **45 percent**, EMG **20 percent** |
-| 5 Aug 17:46 | **arm B**, short soldered and resin tether, 20 sweeps | EEG **100 percent**, EMG **75 percent**, p = 0.0001 and 0.0006 |
-| 5 Aug | **died under isoflurane** during the tether work | colony down to seven |
+| when                 | what happened                                         | numbers                                                                        |
+| -------------------- | ----------------------------------------------------- | ------------------------------------------------------------------------------ |
+| 31 Jul 16:13         | first ever reading, alone on port B                   | EEG **0.623**, EMG **0.026 MΩ**, both excellent                                |
+| 31 Jul 17:34         | 8 mouse sweep, 81 minutes later, nothing done         | EEG **1.717**, EMG **5.465**, the muscle channel has gone open                 |
+| 31 Jul 17:51         | splitters removed, 17 minutes later                   | EEG **0.027**, a **64 times** swing from the reading before                    |
+| 31 Jul evening       | chattered during another animal's provocation test    | bounced between 10 and 4400 microvolts for 55 seconds                          |
+| 31 Jul to 1 Aug      | **run 1**, 27.9 hours                                 | **the worst chatterer in the fleet, 372 flips or more**                        |
+| after run 1          | scored on the corrected map                           | **11.8 hours of good EEG, 0.2 hours of EMG**                                   |
+| 2 Aug 01:44          | pre run 2 sweep                                       | EEG **0.133, the best number on the rig**, EMG **7.099, open**                 |
+| 2 Aug                | **run 2**, 21.74 hours                                | best EEG in the fleet and still only 14 percent of epochs; EMG **0.0 percent** |
+| 4 Aug 16:44          | moved to **port D** as a control                      | still works there, so **the port, splitter and recording box are cleared**     |
+| 4 Aug 16:47 to 16:56 | four sweeps in nine minutes                           | EEG **6.236 then 0.052 then 8.649 then 0.177 MΩ**                              |
+| 5 Aug 16:36          | **arm A**, original tether, 20 sweeps                 | EEG connected **45 percent**, EMG **20 percent**                               |
+| 5 Aug 17:46          | **arm B**, short soldered and resin tether, 20 sweeps | EEG **100 percent**, EMG **75 percent**, p = 0.0001 and 0.0006                 |
+| 5 Aug                | **sacrificed, skull electrode detached**      | colony down to seven                                                           |
 
 ⭐ **The single most important number in the whole project is in that table: 0.052 megaohms.** That is inside the published range for this type of electrode, it is the best value ever recorded on this rig, and **a degraded or badly implanted electrode cannot produce it.** It is the positive evidence that the implants were fine.
 
 ⭐ **The second most important thing in that table is the shape of it.** This animal had **11.8 hours of good EEG in run 1 and was still completely unscoreable**, because scoring needs the muscle channel too and the muscle channel was dead. **One channel blocked half a day of good brain data.** That pattern, one good channel and one dead one on the same animal through the same cable, is what eventually pointed at the cable rather than the animal.
 
-⚠️ **What we lost when this animal died:** it was the only animal with a measured before and after on the same tether comparison, and the arm C test that would have isolated the slip ring specifically is **permanently impossible**. The arm A and arm B blocks stand and are still the strongest tether evidence we have.
+⚠️ **What was lost with this animal:** it was the only animal with a measured before and after on the same tether comparison, and the arm C test that would have isolated the slip ring specifically is **permanently impossible**. The arm A and arm B blocks stand and are still the strongest tether evidence we have.
 
 ### B1, the replacement, from 6 August
 
