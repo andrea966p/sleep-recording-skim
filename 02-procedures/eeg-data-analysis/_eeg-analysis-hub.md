@@ -1,5 +1,21 @@
 ---
 
+> [!important] ⭐⭐⭐ 2026-08-09: THE CODE MOVED, AND THERE IS A NEW FIRST STEP
+> **The pipeline no longer lives in this vault.** It is now at
+> `~/Monitoring_project/eeg-emg-analysis/pipeline/`, next to the QC scripts, so that
+> one file defines each constant. The two trees had disagreed on the epoch length,
+> the impedance pass mark and the rail voltage. **Every constant is now in
+> `eeg-emg-analysis/core/qc_thresholds.py` and nowhere else.**
+>
+> **Read [[animal-card-and-verdict-ladder]] first.** Checking an animal is now one
+> command that produces one page: a six-rung verdict ladder saying how far up the
+> chain of questions that animal got, and why it stopped there. Figures are
+> filtered views of those cards, not separate scripts.
+>
+> The consolidation was proved by reproducing every published usable fraction
+> exactly, including B1's 215.8 min block and the 415.0 µV floor threshold from
+> 953,904 wire-free measurements. See the regression table on that page.
+
 > [!danger] 🔴 2026-08-08: this hub no longer lists everything you need
 > Three pages were added after this hub was written and they change how the pipeline must be read:
 > - ⭐ [[2026-08-07-council-review-of-the-analysis-pipeline]] — **the review, the fixes applied, and

@@ -60,6 +60,7 @@ Production IPs, usernames, paths, and settings.
 - [[02-procedures/first-headstage-connection|First Headstage Connection — bring-up + channel map]] ✅ resolved 2026-06-19
 
 **EEG data analysis (everything AFTER the recording exists):**
+- ⭐⭐⭐ [[02-procedures/eeg-data-analysis/animal-card-and-verdict-ladder|THE ANIMAL CARD AND THE VERDICT LADDER]] — **newest, and the new first step.** One page per animal-recording saying how far up six rungs that animal got and why it stopped. 🔑 **A rung is not evaluated if the rung below it failed**, and no panel is drawn for it. ⚠️ **The code moved out of this vault** to `~/Monitoring_project/eeg-emg-analysis/`; every constant is now in `core/qc_thresholds.py` and nowhere else. Proved by reproducing every published usable fraction exactly.
 - ⭐⭐ [[02-procedures/eeg-data-analysis/_eeg-analysis-hub|START HERE — EEG data analysis]] — the four commands, what each stage decides, the four rules you must not break. **The only page that says what to run.**
 - ⭐ [[02-procedures/eeg-data-analysis/pipeline/README|Pipeline operating manual]] — every stage in detail, every threshold with its provenance
 - ⭐ [[02-procedures/eeg-data-analysis/analysis-methods-and-justification|Methods and justification]] — what is standard practice and what we added, with citations. **The one to hand to the professor.**
