@@ -89,6 +89,27 @@ and the free floor control moved to **`/4`-`/16` and `/36`-`/48`**, 104 channels
 |---|---|---|---:|---:|---|
 | **ECG cohort baseline**, ground **mis-pinned on all 7** | 2026-08-07 18:55:55-19:13:19, 17.4 min | `8slots-ECG-Actrl-4ports-64ch` | 30 | 3.4 | `2026-08-07/01-ecg-cohort-baseline-30sweeps/` |
 | ⭐ **post ground re-pin**, 6 of 7 fixed, **A1 left floating as a control** | 2026-08-08 15:59:25-16:16:20, 16.9 min | `8slots-ECG-groundfix-A1nogrnd-4ports-64ch` | 30 | 2.6 | `2026-08-08/01-post-ground-fix-30sweeps/` |
+| **post-night**, after the 16.39 h run, before the ZT0 run | 2026-08-09 08:42:28-08:50:38, 8.2 min | `8slots-ECG-groundfix-A1nogrnd-4ports-64ch` | 15 | 2.3 | `2026-08-09/01-post-night-15sweeps/` |
+
+⭐⭐ **A1's floating signature has now reproduced on three consecutive days.** The one animal whose
+ground was never re-pinned is the highest duty cycle in the fleet every single time:
+
+| block | `A/1` EEG | `A/2` EMG | `A/3` ECG |
+|---|---|---|---|
+| 2026-08-07, everyone floating | 96.7% / 1 flip | 90.0% / 6 | 100.0% / **0** |
+| 2026-08-08, six repaired, A1 not | 83.3% / 8 | 90.0% / 6 | 100.0% / **0** |
+| 2026-08-09, same | 86.7% / 4 | 80.0% / 3 | 100.0% / **0** |
+
+> [!danger] 🔴⭐⭐ THIRD INDEPENDENT DEMONSTRATION THAT THE SWEEP DOES NOT PREDICT THE RECORDING
+> On the morning of 2026-08-09, **B2 and C2 read 0.0 percent on all six of their sites**. Those two
+> animals had just produced **57.5 and 71.6 percent usable electroencephalogram** through the
+> night. **A1 read 86 to 100 percent and produced nothing at all.**
+> Spearman rank correlation between the 2026-08-08 duty cycle and that night's usable fraction was
+> **-0.126 (p = 0.56)** over 24 channels and **exactly +0.000** over the seven EEG channels
+> excluding A1.
+> ⇒ **SCREEN ON THE STREAM, NOT ON THE SWEEP.** Keep taking blocks: they are cheap, they are the
+> record, and they are how a hardware change is bracketed. **Do not use them to choose which
+> animals to score.**
 
 Duty cycle, percent of sweeps below 0.5 MΩ, before against after:
 
