@@ -1,0 +1,58 @@
+---
+name: multi-machine-setup-and-vault-safety
+description: Work moved off e10ubuntu onto the ThinkPad laptop; the Syncthing settings that let the vault be deleted before are fixed; claude-portable shares memory and skills across machines
+metadata:
+  type: project
+---
+
+Set up 2026-08-16. `e10ubuntu` is needed for live recordings, so day to day work moves
+to the ThinkPad laptop (`thinkpadubuntu`, `100.66.98.20`) and later the office PC.
+`e10ubuntu` is `100.82.250.62`, reachable over Tailscale.
+
+**FOUND THE VAULT DELETION CAUSE.** The Syncthing folder had **no file versioning**
+(a delete anywhere propagated everywhere with ZERO undo) **and no `.stignore`**, so
+the live 114 MB `.git` directory was replicated between machines while obsidian-git
+committed into it on both ends. Both fixed: staggered versioning with 365 day
+retention, and `/.git` excluded via `<vault>/.stignore`.
+
+**Sync baseline, use it to verify any new device: 486 files, 153,921,657 bytes**
+(excludes `.git`; with `.git` the vault is 4383 files, ~260 MB).
+
+**Non negotiable rules:** never remove a Syncthing folder with "delete on disk";
+never point Syncthing at a directory that already holds another copy of the vault
+(new device = empty dir, RECEIVE ONLY first, verify counts, then send-receive);
+versioning mandatory on every device; `.git` stays excluded; cold `tar` snapshot to
+`~/vault-snapshots/` before any Syncthing config change.
+
+**Two Syncthing config dirs existed on e10ubuntu.** Live one is `~/.config/syncthing`
+(device `2LNSMIM…`, web UI `127.0.0.1:8080`). The dead one is renamed to
+`~/.local/state/syncthing.STALE-DO-NOT-USE`. Syncthing ≥1.28 moves the default config
+dir there, so the live path is pinned in
+`~/.config/systemd/user/syncthing.service.d/10-pin-home.conf`. It is a **user** unit,
+not a system one, so no sudo is needed to manage it.
+
+**Git backup no longer comes from Obsidian.** `.git` exists only on `e10ubuntu`;
+`/home/skimlab/.local/bin/vault-git-backup.sh` runs from `vault-git-backup.timer`
+every 15 min. obsidian-git auto intervals set to `0`.
+
+**`~/claude-portable`** is the shared Claude Code config repo (memory, skills, hooks,
+`skills-lock.json`, `CLAUDE.md`, portable `settings.json`). `bootstrap.sh <project>`
+symlinks a machine into it, `check.sh` verifies. Claude keys memory on a slug from
+the project's absolute path, so each machine symlinks **its own** slug dir at the one
+shared `memory/` — that is what makes differing usernames irrelevant. The old
+`settings.json` hardcoded an nvm node path and was not portable.
+
+🔴 **The Synology NAS backup has been FAILING since 2026-08-14** — the NAS is not in
+the current tailnet at all (`tailscale ping 100.120.86.10` → `no matching peer`).
+Same root cause as everything else here: the switch to the `skimlab.kaist@gmail.com`
+tailnet left dead IPs hardcoded. Needs hands on the Synology. Last good backup
+2026-08-13.
+
+**Why:** the previous vault loss was not bad luck, it was a missing undo path plus
+`.git` being synced. Both are now structurally prevented rather than remembered.
+
+**How to apply:** when working from the laptop, run rig and NVR commands with
+`ssh e10 '<cmd>'`, and `ssh e10 -t 'tmux new -As rig'` for anything long running.
+Before changing anything in Syncthing, take the tar snapshot first. Full guide is in
+the vault at `01-infrastructure/multi-machine-work-setup.md`. See also
+[[nas-backup]] and [[feedback_verify_operational_details]].

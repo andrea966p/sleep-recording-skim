@@ -33,6 +33,9 @@
 - [DAQ ecosystem comparison](daq-ecosystem-comparison.md) (VAULT-ONLY, confidential) · [16→32 device](acquisition-device-16-32-mice.md) · [Open Ephys option](openephys-scale-up-option.md). **Kontex quote 262024 = $10,002.89**, valid to 2026-08-20.
 - 📞 **Kontex call prep:** `01-infrastructure/vendor-correspondence/2026-07-29-kontex-kc-call-prep-rig-finalization.md`. ⚠️ **OPEN: why 2 PCs, is SyncLink needed, behaviour under OE GUI.**
 
+## Working across machines
+- 🔴⭐⭐⭐ **[MULTI-MACHINE SETUP + THE VAULT DELETION CAUSE — 2026-08-16](multi-machine-setup-and-vault-safety.md).** Work moves to the ThinkPad (`ssh e10` = `100.82.250.62`). 🔴🔴 **FOUND WHY THE VAULT DIED: Syncthing had NO file versioning (zero undo) and NO `.stignore`, so the live 114 MB `.git` was replicated while obsidian-git committed on both ends.** Both fixed. ⭐⭐ **Baseline to verify any new device: 486 files / 153,921,657 bytes** (excl `.git`). 🛑 **New device = EMPTY dir, RECEIVE ONLY, verify counts, THEN send-receive. Never "delete on disk". Tar snapshot to `~/vault-snapshots/` before ANY Syncthing change.** ⚠️ Live syncthing cfg = `~/.config/syncthing` (device `2LNSMIM…`, port 8080), **user unit, no sudo**; the other one is `.STALE-DO-NOT-USE`. Git backup now `vault-git-backup.timer`, NOT Obsidian. ⭐ **`~/claude-portable`** = shared memory/skills/hooks/settings, `bootstrap.sh` + `check.sh`. 🔴 **NAS BACKUP BROKEN SINCE 2026-08-14** (NAS not in the new tailnet). Guide: `01-infrastructure/multi-machine-work-setup.md`.
+
 ## Other big findings
 - ✅ **RustDesk + HDMI-switch crash FIXED + VALIDATED** (2026-07-15). `GRUB_CMDLINE_LINUX_DEFAULT="quiet splash video=HDMI-A-1:1920x1080@60e"` (`e` = forced-enabled). 1080p not 4K (thermal). Journal `2026-07-13.md`.
 - **72h/20h runs (Jul 10-14):** byte-perfect files, 0 scoreable EEG. **VIDEO recorded NOTHING** — Frigate recording OFF at runtime since 2026-07-03. **PC THROTTLED ~78% of the 72h run, peak 101°C — cooling is the wall.**
