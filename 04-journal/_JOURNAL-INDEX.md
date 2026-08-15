@@ -14,6 +14,7 @@
 
 | Date | Day | What happened |
 |---|---|---|
+| [[2026-08-16]] | Sun | Work moved to the ThinkPad; **vault deletion root-caused (no Syncthing versioning + `.git` synced)**, both fixed and tested; **NAS backup + office PC DEFERRED on purpose** |
 | [[2026-08-02]] | Sun | All 8 mice rescored: **D2 withdrawn, replication is n=2**; **B1 = 11.8 h of good EEG blocked by a dead EMG**; 5/8 mice have zero EEG |
 | [[2026-08-01]] | Sat | ⭐⭐ **CHANNEL MAP WAS WRONG — EMG always worked; FIRST REAL SLEEP ARCHITECTURE (C1: W 66.8 / NREM 29.3 / REM 3.9 %)**; 21 scoreable mouse-hours, not zero |
 | [[2026-08-01]] | Sat | 🔴⭐ (earlier, wrong-map) 27.9 h run analysed: grounds perfect 28 h; **78 % of leg-time OPEN**; two failure modes (one-way vs chattering); **C1 clean but NO sleep structure**; yield 3.9 % |

@@ -189,6 +189,12 @@ Ran end to end on 2026-08-16, laptop paired and verified:
 
 ## STILL OPEN
 
+> [!warning] DEFERRED 2026-08-16, by choice
+> The first two items below both need me to be **physically at a machine that is not the
+> laptop**, so they were deliberately postponed on 2026-08-16 rather than forgotten. See
+> [[04-journal/2026-08/2026-08-16]]. The backup gap is the one that should not sit long:
+> nothing has been backed up since 2026-08-13.
+
 - **The Synology network attached storage backup is BROKEN and needs me to act on the
   Synology itself.** The box is not in the current tailnet at all, `tailscale ping
   100.120.86.10` answers `no matching peer`. I have to log the Tailscale package on
