@@ -80,3 +80,28 @@ Execute phases from `Frigate NVR Server Preparation.md` sequentially:
 - Managed via **nvm** (Node Version Manager)
 - Default version: `lts/*`
 - Switch versions: `nvm use <version>`
+
+## Working from a machine other than e10ubuntu
+
+The rig, the NVR, Allego/Radiens, Docker, Frigate and the EEG data all live on
+`e10ubuntu` (Tailscale `100.82.250.62`). Only that machine can run those commands.
+
+From the ThinkPad laptop or the office PC, run them over SSH instead:
+
+```bash
+ssh e10 'docker ps'
+ssh e10 'vainfo'
+```
+
+For anything long running, use tmux so an SSH drop does not kill it:
+
+```bash
+ssh e10 -t 'tmux new -As rig'
+```
+
+The Obsidian vault is synced to every machine by Syncthing, so vault files are local
+and need no SSH. `.git` is deliberately NOT synced: the vault's git repository and
+its backup timer exist on `e10ubuntu` only.
+
+Full setup and the vault safety rules:
+`Monitoring_project_obsidian_vault/01-infrastructure/multi-machine-work-setup.md`

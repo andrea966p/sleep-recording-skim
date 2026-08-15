@@ -15,8 +15,21 @@ the live 114 MB `.git` directory was replicated between machines while obsidian-
 committed into it on both ends. Both fixed: staggered versioning with 365 day
 retention, and `/.git` excluded via `<vault>/.stignore`.
 
-**Sync baseline, use it to verify any new device: 486 files, 153,921,657 bytes**
-(excludes `.git`; with `.git` the vault is 4383 files, ~260 MB).
+**Sync baseline, use it to verify any new device: 489 files, 153,935,853 bytes**
+(excludes `.git`). ✅ **VERIFIED END TO END 2026-08-16:** laptop pulled to an exact
+byte match as receive-only, then flipped to send-receive; create synced in ~5 s both
+directions; **a delete on the laptop propagated in ~5 s AND left the full file
+recoverable in `<vault>/.stversions/` on e10** — the exact operation that killed the
+vault before is now survivable.
+
+🔴 **THE OFFICE PC IS PAUSED AND UNSHARED FROM THE VAULT FOLDER.** The moment its
+address was fixed to `dynamic` it reconnected **through a public Syncthing relay,
+even though Tailscale reports it offline**, and started announcing its whole `.git`
+into the shared index (global jumped to 4719 items / 260 MB). ⚠️ **Pausing a device
+does NOT remove what it already announced** — the entries persist in the stored global
+index. Fix was `.stignore` on the laptop plus removing the office PC from the folder's
+device list. **Before letting it back: put `.stignore` on its copy FIRST**, then
+unpause, re-share, verify counts. Never just unpause it.
 
 **Non negotiable rules:** never remove a Syncthing folder with "delete on disk";
 never point Syncthing at a directory that already holds another copy of the vault
