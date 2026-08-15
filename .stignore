@@ -1,0 +1,12 @@
+// Syncthing ignore rules for the Monitoring Project Obsidian vault.
+// This file is LOCAL to each device and is deliberately not synced.
+//
+// WHY /.git IS EXCLUDED (do not remove):
+// Syncthing replicating a live .git directory while git commits run on more
+// than one machine corrupts the index and can propagate phantom deletions.
+// Git backup for this vault runs on e10ubuntu ONLY, via vault-git-backup.timer.
+
+/.git
+/.obsidian/workspace*.json
+/.stversions
+/.trash
