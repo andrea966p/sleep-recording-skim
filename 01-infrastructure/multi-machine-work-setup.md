@@ -203,5 +203,11 @@ Ran end to end on 2026-08-16, laptop paired and verified:
   reports it offline, so it will reconnect the instant it is allowed to.
 - The office PC is also still on the OLD tailnet. Worth logging it into
   `skimlab.kaist@gmail.com` while I am there, same as the Synology.
-- Obsidian itself is not installed on the ThinkPad yet. The vault syncs fine without
-  it, but I will want it for actual note taking.
+- Obsidian is now installed on the ThinkPad. **Expect obsidian-git to complain there**:
+  `.obsidian/community-plugins.json` is synced so the plugin loads on the laptop, but
+  the laptop deliberately has no `.git`. Its auto intervals are already `0` so it does
+  nothing, it just may show a "not a git repository" notice. Harmless. If I disable the
+  plugin to silence it, note that the toggle syncs and it will switch off on e10ubuntu
+  too, which is fine because `vault-git-backup.timer` does the backups now.
+- Claude Code is v2.1.227 on the ThinkPad and v2.1.233 on e10ubuntu. Not a problem,
+  worth keeping roughly aligned.
