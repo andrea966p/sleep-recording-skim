@@ -59,8 +59,31 @@ identity and made every synced folder look brand new.**
    `~/.local/state/syncthing.STALE-DO-NOT-USE`.
 
 Sync baseline after these changes, useful as the acceptance number when adding a
-device: **486 files, 153,921,657 bytes**. That excludes `.git`. With `.git` the
-vault is 4383 files and about 260 MB.
+device: **489 files, 153,935,853 bytes**. That excludes `.git`. With `.git` the
+vault is about 4386 files and 260 MB. Recompute it when files are added, the point
+is that a new device must match the other devices exactly before it is trusted.
+
+### The office PC surprise, and why it is now paused
+
+The moment I corrected the office PC's Syncthing address to `dynamic`, **it
+reconnected**, through a public Syncthing relay at `218.236.76.26:22067`. Tailscale
+still reports that machine as offline, so it had been reachable to Syncthing all
+along and simply could not resolve the dead hardcoded address.
+
+That was a problem, because the office PC has no `.stignore`, so it immediately began
+announcing its entire `.git` directory into the shared index. The global index jumped
+to 4719 items and 260 MB against this machine's 489 items and 154 MB, and the laptop,
+which was mid sync, would have pulled all of it.
+
+**WARNING WORTH REMEMBERING: pausing a device does NOT remove what it has already
+announced.** The `.git` entries stayed in the stored global index after the pause. Two
+things fixed it: putting `.stignore` on the laptop so it ignores them regardless, and
+removing the office PC from the folder's device list, which dropped its contribution
+from the index and returned it to a clean 489 items.
+
+So the office PC is currently **paused AND unshared from the vault folder**. Before it
+is allowed back it needs `.stignore` in place on its own copy, following the same
+receive-only bootstrap as the laptop.
 
 ### Git backup moved off the Obsidian plugin
 
@@ -142,6 +165,28 @@ not need syncing because `settings.json` carries `enabledPlugins` and
 | Syncthing folder identifier | `monitoring_project_obsidian_vault` |
 | Vault git remote | `git@github.com:andrea966p/neurosurveillance-vault.git` |
 
+## Proof that it works
+
+Ran end to end on 2026-08-16, laptop paired and verified:
+
+- Laptop pulled the vault into a brand new empty directory as RECEIVE ONLY and landed
+  on exactly **489 files, 153,935,853 bytes, 0 needed, 0 errors**, matching e10ubuntu
+  to the byte. Only then did I flip it to send and receive.
+- **No `.git` on the laptop**, confirmed. Git backup stays on `e10ubuntu` alone.
+- Created a file on the laptop, it reached `e10ubuntu` in about 5 seconds.
+- Edited it on `e10ubuntu`, the change reached the laptop.
+- **Deleted it on the laptop. The delete propagated in about 5 seconds AND the full
+  file, both lines, was sitting recoverable in `<vault>/.stversions/` on e10ubuntu.**
+  That is the exact operation that destroyed the vault last time, and it is now
+  survivable.
+- `claude-portable` cloned onto the laptop and `check.sh` reported all nine links
+  healthy. The laptop's slug is `-home-andrea-Monitoring-project` versus e10ubuntu's
+  `-home-skimlab-Monitoring-project`, which is the whole reason the symlink
+  indirection exists.
+- Passwordless SSH from the laptop works, and the host key fingerprint
+  `SHA256:ADQlu52SqlujF7Qz80/oPpMbgfTopAP47Fc9c2LxsbQ` matches this machine's real
+  key, so the connection is not being intercepted.
+
 ## STILL OPEN
 
 - **The Synology network attached storage backup is BROKEN and needs me to act on the
@@ -151,9 +196,12 @@ not need syncing because `settings.json` carries `enabledPlugins` and
   `neurosurveillance/deploy/nas-backup.sh`. Last good backup was 2026-08-13. Retention
   is 3 days, and pruning only happens on a successful run, so the 08-11, 08-12 and
   08-13 copies should still be on the box.
-- The laptop side is not done yet: Syncthing pairing, the SSH key, and cloning
-  `claude-portable`.
-- The office PC has not been touched. Its Syncthing address is already corrected to
-  `dynamic`, so it should find its way back once it is powered on and in the tailnet.
-- `claude-portable` has no remote yet. It contains the research memory files, so it
-  needs to be a PRIVATE repository.
+- **The office PC is PAUSED and UNSHARED from the vault folder.** To bring it back:
+  put `.stignore` on its copy of the vault FIRST, then unpause, then re-share the
+  folder, then verify its file count matches before trusting it. Do not simply
+  unpause it. It is reachable through the Syncthing relay even while Tailscale
+  reports it offline, so it will reconnect the instant it is allowed to.
+- The office PC is also still on the OLD tailnet. Worth logging it into
+  `skimlab.kaist@gmail.com` while I am there, same as the Synology.
+- Obsidian itself is not installed on the ThinkPad yet. The vault syncs fine without
+  it, but I will want it for actual note taking.
