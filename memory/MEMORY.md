@@ -1,0 +1,100 @@
+# Project Memory
+
+## EEG rig (the active problem)
+- 🔴⭐⭐⭐ **[ANALYSIS STACK AUDIT — 2026-08-11](analysis-stack-audit-2026-08-11.md). READ FIRST, newest.** 🔴🔴 **EMG GATE FAILED BY EVERY EXPERIMENTAL ANIMAL** on the full 16.39 h incl. the dark phase (A2 CONTROL −0.734; best re-pinned C2 −0.174) ⇒ **THE KAPPA IS BLOCKED, not next.** ⭐ only lead: **C2 dark −0.332 (n=50 min)**. 🔴🔴 **"Filtering cannot manufacture slope" is FALSE** (band-passed wire-free input = 100% usable); band kept, **scale-free guard added**. 🔴 **A second BACKWARDS pipeline was live** (EEG−EMG as "EEG", pad−pad as "EMG") — deleted, no published number affected. ⭐⭐ **Floor sampling error: slope fractions carry ±20 pts** (B1 83.1%→[53.1,98.0]), hum 0.0 pts. ⚠️ **`FLAT_UV` is INERT** (rejects 0.00%); `OPEN_UV` survives (149.4 vs 150.0). ⭐ **4th suite = software positive control**, real synthetic .xdat, half the cases must REJECT. 🛑 **REPO HAS ZERO GIT COMMITS.**
+- ⭐⭐⭐ **[A2 CONTROL, 48 h, TWO FULL CIRCADIAN CYCLES — BEST DATA EVER TAKEN HERE — 2026-08-11](a2-control-48h-reference-profile.md). READ FIRST, newest.** `allego_0__uid0809-09-00-00`, **47.09 of 48.19 h usable, ZERO railed epochs in 17,349**, slope −1.52 vs floor p1 −1.11, 60 Hz 36 µV vs floor 2754 µV. ⭐⭐ **Started AND ended at ZT0 ⇒ light and dark equal — MAKE ZT0 THE DEFAULT for runs over a day** (`qc/start_recording_at.py`). ⭐ **EMG genuinely state-dependent** (r −0.645, negative in BOTH phases; raw amplitude alone 31 µV light vs 73 µV dark). ⭐⭐ **Circadian ORDERING survives the whole ±25% sweep (light beats dark by 25.5-42.7 pts everywhere) but the ABSOLUTE % is STILL threshold-dependent — never quote it as fact**; 🛑 0.90× lands on the literature ~70%, **not chosen, that would be circular**. ⭐⭐⭐ **REPLICATES ON ITSELF: asleep-in-light 62.5% vs 61.1%, median light EMG 31.0 vs 31.1 µV across two consecutive days.** ⚠️ **CONTROL, NOT THE FLEET**; still no kappa. Script `qc/animal_signal_report.py`.
+- ⭐⭐⭐ **[ANIMAL CARD + VERDICT LADDER — the new analysis entry point, 2026-08-09](animal-card-verdict-ladder.md). READ BEFORE ANY ANALYSIS OR FIGURE.** Six rungs; **a rung is BLOCKED and undrawn if the one below failed**. **Code moved out of the vault to `~/Monitoring_project/eeg-emg-analysis/`; `core/qc_thresholds.py` is the ONLY constants file, `core/criteria.py` the ONLY usable-fraction engine.** 🔑 Rung 2 gates on **longest unbroken block ≥15 min, not total fraction**. 🔴 HUM-vs-SLOPE guard applies **to EEG roles only** (a healthy EMG is also quiet+flat). ⭐ Cohort manifest makes the **ANIMAL** the key, not the rig position, with **timed** tether-arm placements. 3 test suites green = the contract.
+- ✅⭐⭐⭐ **[THE GROUND RE-PIN WORKED — 2026-08-08](ground-fix-worked-2026-08-08.md). READ FIRST, newest.** 6 of 7 re-pinned; **A1 could NOT be ⇒ A1 = free NO-GROUND control.** ⭐⭐ **22:00 interim, 5.5 h: FOUR re-pinned mice give real EEG (B2 57.5%, C2 71.6%, D1 70.3%, D2 63.7%, lf/hf 20.9-29.3) where yesterday it was ZERO; A1 scores 0.0% on all three.** 🔴 B1 11.2% + C1 0.0% still fail (intermittent contact, not ground). 🔴🔴 **THE HUM CRITERION IS DEAD — A1, floating, scores 100% "usable" on it. both `usable_fraction_vs_floor*.py` are DELETED — use `core/criteria.py` via `cards/ladder.py`, SLOPE criterion.** 🔴 **STILL NO ECG HEARTBEAT** (best D/3 CV 0.22, bar 0.10). 🔑 **A low, stable, ZERO-FLIP impedance can mean NO GROUND**; **impedance duty vs usable fraction rho = −0.13 ⇒ SCREEN ON THE STREAM, NOT THE SWEEP.** 🔴 **EMG validated on the CONTROL ONLY** (A2 state-dependence r=−0.651; best re-pinned mouse −0.175, D2 **+0.053**); **slope criterion is a CATEGORY ERROR for EMG** (EMG is broadband). 🔴 **ECG DEAD 7/7 vs a real floor null** (unwired inputs reach autocorr z 13.1, comb 1047 — nothing beats it); **my earlier "CARDIAC" verdicts WITHDRAWN as boundary artefacts.** ✅ 08-08 run stopped **16.39 h, 61.8 GB, INTACT**; 🔴 **dark phase UNSCORED**. ⭐ **A1 floating signature reproduced 3 days running**; **3rd proof sweep≠recording (B2+C2 read 0.0% on all six sites after giving 57.5%/71.6% usable EEG).** ⭐ **New run `allego_0__uid0809-09-00-00` started 09:00:00 = ZT0 — prefer ZT0 starts**; helper `qc/start_recording_at.py`.
+- 🔴⭐⭐⭐ **[ROOT CAUSE: CEREBELLUM GROUND ON THE WRONG PIN, ALL 7 NEW MICE FLOATING — 2026-08-07](ecg-cohort-ground-miswired.md).** Dura pin on **orange** (floating); **brown** in the headstage GND pad touches nothing. Explains the hum collapse AND the perfect impedance at once. ✅ Fix = connector re-mate, **no anaesthesia**. Pre-fix baseline `allego_0__uid0807-19-14-58` (2.768 h) KEEP.
+- **[COHORT REPLACED: 7 NEW EEG+EMG+ECG MICE — 2026-08-07](ecg-cohort-2026-08-07.md).** Channels **`/1` EEG `/2` EMG `/3` ECG**, slot 2 = `/33`,`/34`,`/35`; **A slot 2 = old B1 as CONTROL**. 🔑 **Floor is now `/4`-`/16`,`/36`-`/48`** (never `/17`-`/32`,`/49`-`/64`). 🔴 `set_recording_config()` BROKEN (required `recordingType` enum) — use `qc/set_recording_config_fixed.py`. ⚠️ `get_status().recording.path` LIES (reports the client's cwd); always `ls` the destination.
+- ⭐⭐⭐ **[COUNCIL REVIEW + PIPELINE FIXES — 2026-08-07/08](council-and-pipeline-fixes.md). READ BEFORE TOUCHING THE ANALYSIS.** ⭐⭐ **Three council findings did NOT survive measurement** (selection bias not operating; REM-from-NREM order survived a shuffle null; nulls not pseudoreplicated). 🔴 **Circadian check is threshold-DEPENDENT: ±25% on the WAKE cut swings D2 by 65.9 points.** 🔴 **4 of 5 physiology checks CANNOT FAIL — stop quoting "5/5".** ⛔ Council REJECTED "modernise the staging" at n=2 with no ground truth. ⭐ The Japanese tool uses a **2-cluster k-means** for REM, not a percentile — gated behind the kappa. 🟡 **2 ITEMS OPEN BY CHOICE: the KAPPA** (packs ready, rules pre-registered in `02-procedures/blind-scoring-and-kappa.md`; 🛑 never tune the threshold to maximise `r@1min`) **and a POSITIVE CONTROL** (`02-procedures/positive-control-known-signal-injection.md`, not scheduled).
+- ⭐⭐ **[3 SCOREABLE RECORDINGS + CIRCADIAN CHECK — 2026-08-07](staging-circadian-validation-2026-08-07.md).** Synthesis = vault `07-decisions/2026-08-07-rig-specification-and-analysis-method.md` = **the page to argue from.** B1 23.66 h in ONE block (r@1min 0.603), D2 23.28 h (0.499). Asleep in light D2 70.3%, B1 82.1%. ⚠️ **SUPERSEDED as the circadian evidence by [[a2-control-48h-reference-profile]]**, which has the ±25% sweep and a day-to-day replication.
+- ⭐⭐⭐ **[TWO ANIMALS WORK; THE TETHER IS THE FIX — 2026-08-07](overnight-two-animals-tether-is-the-fix.md).** B1 99.6% usable (3.6 h unbroken), D2 86.5%. 🔴 **RETRACTS the 08-06 "arm C harmed D2"** (0.0% → 87.9%; a 21-min block caught one long open state) — see also [[tether-soldered-duty-cycle-result]]. ⭐ **D2 was tethered at day 8 ⇒ long recovery NOT required; the cohort is recoverable WITHOUT surgery.** 🔑 **Impedance blocks SCREEN; only a multi-hour recording is an OUTCOME — always state block duration.** 🔴 B1 (the original) was SACRIFICED 08-05, detached skull electrode (NOT an anaesthesia death).
+- ⭐⭐ **[USABLE FRACTION vs AN IN-FILE CONTROL](recording-usable-fraction-analysis.md)** — ⛔ its script is DELETED; `core/criteria.py` is the only engine. 🔑 XDAT = float32, 262 interleaved ch, µV, labels from `biointerface_map`. ⚠️ **Hardware bandpass 1.10-475.17 Hz REACHES the saved file and eats the bottom of delta.**
+- ⭐⭐⭐ **[THE 0.5 MΩ CRITERION, AND WHY 2 MΩ DIED — 2026-08-06](fleet-duty-cycle-census-and-new-mouse.md).** An EMPTY tether read "connected" **22%** of the time at 2 MΩ ⇒ **use |Z| < 0.5 MΩ** (floor 2.5-3.4%). ✅ Teardown ladder FLAT ⇒ tether/slip-ring/splitter innocent; the false positives are the **amplifier's floating input**. ✅ Duty cycle reproduces across days. Capacity 8 mice/256 ch is fine and not the constraint. ⚠️ **0.5 MΩ still calls our best-ever channel open — it beats a floor, it is not an absolute contact statement.**
+- ⭐⭐⭐ **[ELECTRODES PROVEN GOOD; CONTACT IS INTERMITTENT — 2026-08-04](movement-dependent-contact-root-cause.md).** B1 EEG hit **0.052 MΩ** ⇒ 🛑 **NO SURGERY.** Contact **flips fast and reversibly** (6.236→0.052→8.649→0.177 MΩ in 23 min) ⇒ **a single sweep cannot rank/screen/classify**. ⚠️ **Movement NOT proven as the trigger** (test gave 50% vs 50%; B1 contradicted itself). Port/splitter/XDAQ dead as causes. ✅ **[DMM test: whole fleet passed](dmm-continuity-test-result.md)** — passing was EXPECTED, the test is static and the fault is not.
+- 🔴⭐⭐ **[FULL EEG RIG STATE](eeg-rig-current-state.md) — READ BEFORE ANY EEG WORK.** Channel law, channel signatures, run results, retractions. ⚠️ Its electrode-failure framing is SUPERSEDED by the ground root cause.
+- ⭐⭐⭐ **Channel selection SETTLED: `02-procedures/CANONICAL-allego-channel-selection.md`.** ⚠️ That page is the OLD 2-channel map; the ECG cohort adds `/3`,`/35`.
+- 🛑 **NEVER suggest "reseating" an electrode/EMG wire** — impossible after implantation; only animal-side option is a tether change = isoflurane. **Do NOT schedule surgeries.** 🛑 **Signals are ALREADY bipolar — never subtract EEG from EMG. Stop quoting "~6% yield".**
+- 🧹 **Recording room stripped 2026-08-04:** rack = wifi router + ASUS PC + XDAQ + white-noise generator. ⚠️ **ALL CAMERAS REMOVED ⇒ NO VIDEO** until restored.
+- ⭐ **Only ONE old recording has real sleep: 2026-07-31, C1 8.73 h, one 8.1 h unbroken block, r@1min +0.744; C2 qualifies ⇒ n=2.** Report `05-experiments/completed/2026-08-03-data-quality-report-for-professor.md`.
+- 🟡 **Only half of each electrode pair has ever been measured** (no polarity control ⇒ all impedances are `inX+`). ❌ **[Open Ephys does NOT fix this](impedance-negative-electrode-unmeasurable.md)** — `setZcheckPolarity` has 0 call sites in the shipped binary. **Don't propose switching software for it.** Free fix = DMM each C3410 pad vs GND pad.
+- 📤 **KONTEX BATCH 2026-08-04:** Q12 impedance polarity + Q13 Allego spike-sorter filter errors, paste-ready text in `01-infrastructure/vendor-correspondence/2026-07-29-kontex-kc-call-prep-rig-finalization.md` §"TO SEND".
+- ⚠️ [82% of epidural electrodes fail in 3 weeks](electrode-failure-literature.md) — real literature, ❌ **NOT our failure mode.** Do not use it to lower expectations.
+- ⭐⭐🔑 [THE ANALYSIS PIPELINE](eeg-analysis-pipeline.md) — `02-procedures/eeg-data-analysis/pipeline/` is THE path; thresholds re-derived from 1,137,955 epochs.
+- ⭐⭐ [Light schedule 09:00 ON / 21:00 OFF KST, ZT0=09:00](light-schedule-and-circadian-validation.md).
+- 🔴 [Scoring bug #2 — persistence measured across time gaps](eeg-analysis-codebase.md) — fixed by within-block autocorrelation. Older scripts: [EEG QC tooling](eeg-qc-tooling.md). [Full 60 Hz saga](eeg-60hz-saga.md). [First headstage bring-up](project_first_headstage_bringup.md).
+- **Hardware-video-sync (Phase 0a):** gate = `DO 03` (DB25 pin22) Gated mode + Allego "BNC Breakout Board" toggle ON; shadow-first MQTT. [[project_hardware_sync_neuronexus_reply]].
+
+## Rig expansion (8 → 32 mice)
+- ⭐⭐ **START AT `07-decisions/RIG-EXPANSION-HUB.md`.** Vendor emails in `01-infrastructure/vendor-correspondence/`.
+- 🔴⭐ [DAQ research corrections](daq-research-corrections-2026-07-28.md) — **8 primary-source corrections; READ BEFORE trusting older DAQ notes.** Core has NO isolation; PortExp MANDATORY for 16/box; 16-animal scheduling impossible in ANY package → **don't buy Allego**; Intan via White Mountain Systems.
+- ⭐ [XDAQ channel law + wiring](xdaq-channel-law-and-32-mouse-wiring.md) — **animals = channels ÷ 64**. ⚠️ order **ONE-R1024**, R512 gives only 8. A splitter fills a box, never exceeds it → **32 = 2 boxes**.
+- [DAQ ecosystem comparison](daq-ecosystem-comparison.md) (VAULT-ONLY, confidential) · [16→32 device](acquisition-device-16-32-mice.md) · [Open Ephys option](openephys-scale-up-option.md). **Kontex quote 262024 = $10,002.89**, valid to 2026-08-20.
+- 📞 **Kontex call prep:** `01-infrastructure/vendor-correspondence/2026-07-29-kontex-kc-call-prep-rig-finalization.md`. ⚠️ **OPEN: why 2 PCs, is SyncLink needed, behaviour under OE GUI.**
+
+## Other big findings
+- ✅ **RustDesk + HDMI-switch crash FIXED + VALIDATED** (2026-07-15). `GRUB_CMDLINE_LINUX_DEFAULT="quiet splash video=HDMI-A-1:1920x1080@60e"` (`e` = forced-enabled). 1080p not 4K (thermal). Journal `2026-07-13.md`.
+- **72h/20h runs (Jul 10-14):** byte-perfect files, 0 scoreable EEG. **VIDEO recorded NOTHING** — Frigate recording OFF at runtime since 2026-07-03. **PC THROTTLED ~78% of the 72h run, peak 101°C — cooling is the wall.**
+
+## Project Overview
+NeuroSurveillance: Raspberry Pi 5 + Frigate NVR video monitoring for neuroscience sleep research. **Scale-up planned to ≥4 Pi5 / 8 cameras.**
+- **Pi1** `192.168.0.11`: go2rtc 1.9.14, pi_cam_0/1. **Pi2** `192.168.0.12`: pi_cam_2/3. All 1024x768@15fps H.264.
+- **NVR** `192.168.0.50` (mini-PC `e10ubuntu`): Frigate (Docker), session daemon, Mosquitto MQTT. 4 cams/4 chambers.
+- Vault `Monitoring_project_obsidian_vault/` (docs); code repo `neurosurveillance/` (backend+frontend monorepo).
+
+## Architecture (detail derivable from code — key facts only)
+- **Backend** (Python 3.12 Flask) `neurosurveillance/backend/`: `daemon.py` (Radiens poll, MQTT, Flask API `127.0.0.1:8585`, sessions), plus `storage_monitor` · `radiens_poller` · `session_manager` · `manual_session_manager` · `frigate_controller` · `session_journal` (SQLite WAL) · `reconciler` (nightly 00:01 KST) · `recording_watchdog` · `scripts/nvr-mqtt-slack.py`. Export ffprobe sanity: `<0.95×` dur ⇒ partial.
+- **Frontend** (React 19 + TS + Tailwind + DaisyUI 5, Vite + Tauri): ChamberSilo per camera, SystemHealth/Storage/SessionHistory footer, SettingsModal. Polls `/api/status` 1.5s, `/api/health` 5s, `/api/storage` 10s.
+- **Config:** production `/opt/neurosurveillance/config.yaml`. **Daemon auto video start/stop DISABLED 2026-07-03** (`sessions.auto_start:false`). Re-enable = flip flag + `sudo systemctl restart neurosurveillance-session`. Deferred daemon bugs: session-JSON filename collision, long-export partial, `radiens.log` unrotated.
+
+## Monitoring Stack (Mar-Apr 2026)
+- Netdata v2.9.0 on NVR+Pi1+Pi2. Uptime Kuma (Docker, NVR, 7 monitors). NVR alerts: 16 `nvr_*`, 227 defaults silenced. Slack webhook shared. **No Netdata MQTT collector** → bridge does MQTT→Slack ([[pattern_netdata_no_mqtt_collector]]).
+
+## Host Hardware
+- `e10ubuntu` @ `192.168.0.50`: Intel Core Ultra 5 125H (14c/18t, iGPU QSV+NPU), 30GiB RAM, 1.9TB NVMe. (CLAUDE.md says Ultra 7 — actual Ultra 5.)
+- **Thermal = the wall:** PL1 capped 20W. Fixes: aggressive fan curve, dedust+repaste, headless. Council leans proper desktop/SFF for a 72h live-animal instrument.
+
+## Known Issues
+- [Exports move out of Frigate dir](frigate-exports-moved-out-of-frigate-dir.md) — CHECK THERE before saying an export failed.
+- [Recording toggle fragility](frigate-recording-toggle-fragility.md) — capture gated by RETAINED MQTT; SIGTERM-OFF → silent no-capture after reboot (cost a 72h run). **🔧 LEASE-model fix written, 12/12 tests pass, ACTIVATES ON NEXT RESTART.** Recording dirs are UTC not KST.
+- Recurring Pi5 PoE crashes (Waveshare PoE HAT PMIC latch-up).
+- [Docker upgrades fire unwanted recordings](project_docker_upgrade_recordings.md) — `apt-mark hold` applied 2026-05-20.
+- Lab members list: only `["andrea"]`.
+
+## Completed work (pointers)
+- **NAS backup** DEPLOYED+VERIFIED (May 26): daily 00:00 → Synology over Tailscale. Transfer = **ssh pipe NOT rsync/scp**. [[nas-backup]].
+- **Stabilization sprint wk1 CLOSED** (May 22-26): Mosquitto auth + SHA-pins; SQLite WAL journal; Frigate restart-grace via LWT ([[pattern_frigate_mqtt_message_ordering]]); watchdog→Slack; ffprobe export sanity; nightly reconciler ([[pattern_frigate_record_enabled_orphan_noise]]).
+- **Storage mgmt** (Apr 2): StorageMonitor 30s poll, 200GB EEG reserve. [Storage](project_storage_management.md).
+
+## Planned Work
+- [Hardware-sync XDAQ→Pi GPIO](project_hardware_sync_neuronexus_reply.md) — vendor CLOSED; remaining = bench validation (scope pin22) + ~$40 BOM. **🟢 PLAN FINALIZED. ALIGNMENT USES NO CLOCKS: pulse from the camera FRAME-CAPTURE CALLBACK, fit frame N ↔ sample S, slope = drift, PER-CAMERA. In-frame LED PERMANENTLY REJECTED. DRIFT +204 ppm ⇒ pulse train MANDATORY. 24/7 recording REJECTED (455GB).** Vault `07-decisions/2026-07-27-video-eeg-sync-recording-architecture.md`.
+- [Settings sync gap](project_settings_sync.md) — SettingsModal → localStorage only (deferred).
+- [Camera per-partition framing](camera-roi-framing.md) — ROI test Pi1.
+- [Multi-user recording schedules](project_multiuser_recording_schedules.md) — Allego **GUI** = one global R_ON/R_OFF. **OVERTURNED 2026-07-24: radiens v4.0 Python API DOCUMENTS per-port control** (`start_recording(*, port=...)`, `split_files_by_port=True`). ⚠️ UNVALIDATED on our Gen-1 Core → bench test owed.
+
+## Vault navigation
+- ⭐⭐ **EEG ANALYSIS = FOUR PAGES, no others:** `02-procedures/eeg-data-analysis/_eeg-analysis-hub.md` = **START HERE** · `pipeline/README.md` = per-stage manual · `analysis-methods-and-justification.md` = standard-vs-ours + citations, hand to professor · `06-references/eeg-analysis-glossary.md` = every term in plain words · `03-troubleshooting/symptoms/eeg-analysis-problems.md` = 12-symptom lookup incl. the **SILENT** failures. `03-scripts-and-usage.md` + `_archive_pre_sleep64/` = SUPERSEDED TWICE.
+- ⭐ **`07-decisions/` FILING RULE (trimmed 26→9 on 2026-08-03): CHOICES ONLY.** Results→`05-experiments/completed/`, literature/comparisons→`06-references/`, procedures→`02-procedures/`, symptoms→`03-troubleshooting/symptoms/`, vendor call prep→`01-infrastructure/vendor-correspondence/`. Table in [[reference-vault-07-decisions]] + vault `CLAUDE.md`.
+- `02-procedures/allego-electrode-setup-sleep64.md` — THE electrode SOP. `signal-mapping-guide.md`, `signal-quality-and-grounding.md`, `multimeter-guide.md`.
+- `06-references/radiens-software-reference.md` — PRIMARY Radiens/Allego ref. `00-config/production-values.md` — IPs/ports/paths. `_INDEX.md`, `AI-INSTRUCTIONS.md`.
+
+## Environment Notes
+- NVR hostname `e10ubuntu` (not `frigate-server`); user `skimlab` (not `sleepigene`). We are ON the NVR — no SSH for local commands.
+
+## Artefact policy
+- ⭐⭐ **`02-procedures/eeg-artefact-and-railing-rejection-policy.md` = THE standing rule.** Reject at EPOCH level, never animal level — **but only after checking the surviving clean epochs still have real spectral shape vs the wire-free floor.** 🔴 **On this rig RAILING IS THE OPEN-ELECTRODE SIGNATURE, not movement**, so discarding railed epochs rescues NOTHING. ⚠️ **Always say samples vs epochs**: "7% railed" (samples) was **77.6% of epochs** for C1. ⭐ Co-railing localises the fault: 100% together = shared path (tether/ground), 0% together = that pin pair alone.
+
+## Working Preferences
+- [No dashes in emails](feedback_no_dashes_in_emails.md) — never use `-` or `—` in email bodies.
+- [Implementation guides preferred](feedback_leave_guides.md) — for major features, write vault guide not code.
+- [Verify operational details](feedback_verify_operational_details.md) — read source files, never assume names/paths.
+- [Don't suggest `record.enabled: false`](feedback_record_enabled_false_off_limits.md) — breaks Frigate, off-limits.
+- [Sudo command style](feedback_sudo_command_style.md) — bare commands, one step at a time, expected output.
+- [Report writing style](feedback_report_writing_style.md) — informal first-person, expand acronyms, ALLCAPS warnings, TL;DR + still-open.
+
+## Operational patterns
+- [Docker SHA-pinning](project_docker_sha_pin_pattern.md) — pin `:tag@sha256:digest` of local cached image.
+- [Frigate MQTT retained-topic ordering](pattern_frigate_mqtt_message_ordering.md) — defer state callbacks + cancel-on-availability.
+- [Frigate `record.enabled=true` ORPHAN noise](pattern_frigate_record_enabled_orphan_noise.md) — 6h floor + Slack suppression.
+- [No Netdata MQTT collector](pattern_netdata_no_mqtt_collector.md) — extend the bridge service for future MQTT alerts.
