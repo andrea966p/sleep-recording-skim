@@ -55,6 +55,19 @@ the project's absolute path, so each machine symlinks **its own** slug dir at th
 shared `memory/` — that is what makes differing usernames irrelevant. The old
 `settings.json` hardcoded an nvm node path and was not portable.
 
+⚠️ **THE LAPTOP HAS TWO VAULT DIRECTORIES. Only one is live.**
+`~/Monitoring_project/Monitoring_project_obsidian_vault` is the Syncthing folder and the
+only one to work in. `~/Projects/Monitoring_project_obsidian_vault` is a **git clone of
+`andrea966p/neurosurveillance-vault`, NOT synced by anything** — Syncthing's config lists
+only `~/Sync` and the first path. On 2026-08-16 both were open in Obsidian at once, which
+is pure confusion bait: `diff -rq` showed the trees **content-identical**, so the clone
+holds nothing unique and edits made there would go nowhere and be silently lost. Fixed by
+removing the clone from Obsidian's vault list (`~/.config/obsidian/obsidian.json`, backup
+`.bak-20260816`, edited with Obsidian CLOSED so it could not rewrite the file on quit) and
+deleting its leftover `.stfolder` marker. **The clone's files were left on disk.** Its
+`.stignore` is git-tracked so it reappears in any clone; that is harmless.
+⚠️ **A's `.stfolder` must never be deleted** — that is the live folder marker.
+
 🔴 **The Synology NAS backup has been FAILING since 2026-08-14** — the NAS is not in
 the current tailnet at all (`tailscale ping 100.120.86.10` → `no matching peer`).
 Same root cause as everything else here: the switch to the `skimlab.kaist@gmail.com`
