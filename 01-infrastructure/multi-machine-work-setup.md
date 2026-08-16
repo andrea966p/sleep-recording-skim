@@ -134,6 +134,48 @@ Secrets and per machine state are deliberately excluded: `~/.claude.json`,
 not need syncing because `settings.json` carries `enabledPlugins` and
 `extraKnownMarketplaces`, so Claude Code reinstalls them by itself.
 
+### The config repo syncs itself now (added 2026-08-16)
+
+Having the repo on every machine is only half the job. Memory written on the laptop
+stayed invisible to `e10ubuntu` until somebody remembered to commit, push and pull, and
+that gap is silent: on 2026-08-16 `e10ubuntu` held a stale sync baseline for nine hours
+without a single warning.
+
+`~/claude-portable/sync.sh` now runs from a **`SessionEnd` hook**, so it fires once per
+Claude Code session on whichever machine you were using. It commits, rebases and pushes.
+
+> [!warning] This is NOT the same situation as the vault, do not copy the vault's pattern
+> The vault gets away with an unattended 15 minute timer because its `.git` exists on
+> **exactly one machine**. `claude-portable` has a working clone on **every** machine, all
+> pushing the same branch, and `MEMORY.md` is a single file edited from both ends. Races
+> are normal here, not exceptional. That is why this is a per session hook rather than a
+> timer, and why the script is written to fail safe.
+
+What the script guarantees:
+
+- `flock` serialises runs, so a second one skips instead of fighting the first.
+- It rebases **only when actually behind**, and on conflict it runs `git rebase --abort`,
+  verifies `HEAD` returned to where it started, and exits non-zero **without pushing**. It
+  never leaves a half finished rebase sitting in the repository that holds the memory.
+- Network calls are wrapped in `timeout 25`, so a dead network cannot hang the end of a
+  session. A failed fetch or push leaves the commit safely local for the next run.
+- It never deletes, never force pushes, never resets.
+- Everything is appended to `~/.cache/claude-portable-sync.log`, because hook output is
+  invisible in normal use and a silent failure would defeat the point.
+
+> [!warning] `settings.json` is deliberately NEVER auto committed
+> Claude Code rewrites that file at runtime. On 2026-08-16 it flipped `"model"` from
+> `opus` to `sonnet` on its own. The file is shared by every machine, so an unattended
+> commit would silently change the model everywhere. Changes to it are reported in the log
+> and left for you to commit by hand.
+
+`./sync.sh --status` shows what would be committed and what is being held back, and
+changes nothing.
+
+**Each machine needs a git identity in that clone**, or the script refuses to run and
+tells you the two commands. Both machines are set to
+`andrea966p <andrea96p@kaist.ac.kr>` as of 2026-08-16.
+
 ## STANDING RULES, do not break these
 
 - **NEVER remove a Syncthing folder using the "delete on disk" option. NEVER use
