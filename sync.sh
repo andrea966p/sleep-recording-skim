@@ -67,7 +67,7 @@ if [[ "${1:-}" == "--status" ]]; then
     say "log:     $LOGFILE"
     say ""
     say "would commit:"
-    git status --porcelain -- "${PATHSPEC[@]}" | sed 's/^/  /' || true
+    for p in "${PATHSPEC[@]}"; do [[ -e "$p" ]] && git status --porcelain -- "$p"; done | sed 's/^/  /'
     say ""
     say "held back (never auto-committed):"
     git status --porcelain -- settings.json | sed 's/^/  /' || true
@@ -108,9 +108,26 @@ fi
 # Remember where we started so a failed rebase can be undone exactly.
 start_commit="$(git rev-parse HEAD)"
 
+# `git add` aborts on a pathspec that matches nothing, which would silently skip
+# the whole commit if any entry above is ever removed from the repo. Narrow the
+# list to what actually exists so one missing path cannot stop the sync.
+EXISTING=()
+for p in "${PATHSPEC[@]}"; do
+    [[ -e "$p" ]] && EXISTING+=("$p")
+done
+if [[ ${#EXISTING[@]} -eq 0 ]]; then
+    log "ERROR: none of the tracked paths exist in $REPO"
+    say "claude-portable: none of the tracked paths exist in $REPO. Nothing done."
+    exit 1
+fi
+
 # 1. Commit local work, if any. Only the allowed paths.
-if [[ -n "$(git status --porcelain -- "${PATHSPEC[@]}")" ]]; then
-    git add -- "${PATHSPEC[@]}"
+if [[ -n "$(git status --porcelain -- "${EXISTING[@]}")" ]]; then
+    if ! git add -- "${EXISTING[@]}" 2>>"$LOGFILE"; then
+        log "ERROR: git add failed, nothing committed"
+        say "claude-portable: git add failed, nothing committed. See $LOGFILE"
+        exit 1
+    fi
     host="$(hostname -s 2>/dev/null || hostname)"
     if git commit -q -m "sync from ${host}: $(date '+%F %T')" \
         -m "Automatic commit from the Claude Code SessionEnd hook (sync.sh)."; then
