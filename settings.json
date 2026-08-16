@@ -24,6 +24,18 @@
           }
         ]
       }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -lc '\"$HOME/claude-portable/sync.sh\"'",
+            "timeout": 60,
+            "statusMessage": "Syncing shared config..."
+          }
+        ]
+      }
     ]
   },
   "statusLine": {
