@@ -68,6 +68,19 @@ deleting its leftover `.stfolder` marker. **The clone's files were left on disk.
 `.stignore` is git-tracked so it reappears in any clone; that is harmless.
 ⚠️ **A's `.stfolder` must never be deleted** — that is the live folder marker.
 
+✅ **`claude-portable` SYNCS ITSELF from 2026-08-16** — `sync.sh` runs from a **`SessionEnd`
+hook**, committing, rebasing and pushing once per Claude Code session. 🛑 **Do NOT copy the
+vault's timer pattern here**: the vault's `.git` lives on ONE machine, but this repo has a
+clone on EVERY machine all pushing one branch with `MEMORY.md` edited from both ends, so
+races are normal. Script fails safe: `flock`, rebases only when behind, on conflict runs
+`rebase --abort` + verifies HEAD returned and exits non-zero **without pushing**, `timeout 25`
+on network calls, never deletes or force-pushes, logs to `~/.cache/claude-portable-sync.log`.
+⚠️ **`settings.json` is NEVER auto-committed** — Claude Code rewrote `"model"` opus→sonnet by
+itself on 2026-08-16, and the file is shared, so an unattended commit changes the model
+everywhere; it is logged and left for a manual commit. `./sync.sh --status` = dry run.
+⚠️ **Each machine needs a git identity in the clone** or the script refuses; both set to
+`andrea966p <andrea96p@kaist.ac.kr>`.
+
 🔴 **The Synology NAS backup has been FAILING since 2026-08-14** — the NAS is not in
 the current tailnet at all (`tailscale ping 100.120.86.10` → `no matching peer`).
 Same root cause as everything else here: the switch to the `skimlab.kaist@gmail.com`
