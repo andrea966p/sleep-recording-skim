@@ -1,0 +1,1341 @@
+{
+ "pass_mohm": 0.5,
+ "generated_from": "compute_inputs.py",
+ "impedance_trajectory": {
+  "A1": {
+   "eeg": [
+    6.757,
+    4.446,
+    8.284,
+    6.078,
+    5.989
+   ],
+   "emg": [
+    0.087,
+    0.087,
+    0.073,
+    0.252,
+    0.327
+   ],
+   "labels": [
+    "31 Jul 17:34",
+    "2 Aug 01:44",
+    "2 Aug 23:34",
+    "4 Aug 16:33",
+    "4 Aug 16:56"
+   ]
+  },
+  "A2": {
+   "eeg": [
+    7.644,
+    5.962,
+    6.917,
+    1.966,
+    6.221
+   ],
+   "emg": [
+    5.849,
+    4.851,
+    1.746,
+    8.195,
+    3.639
+   ],
+   "labels": [
+    "31 Jul 17:34",
+    "2 Aug 01:44",
+    "2 Aug 23:34",
+    "4 Aug 16:33",
+    "4 Aug 16:56"
+   ]
+  },
+  "B1": {
+   "eeg": [
+    1.717,
+    0.133,
+    0.732,
+    6.236,
+    0.177
+   ],
+   "emg": [
+    5.465,
+    7.099,
+    6.375,
+    6.66,
+    8.693
+   ],
+   "labels": [
+    "31 Jul 17:34",
+    "2 Aug 01:44",
+    "2 Aug 23:34",
+    "4 Aug 16:33",
+    "4 Aug 16:56"
+   ]
+  },
+  "B2": {
+   "eeg": [
+    7.11,
+    5.771,
+    7.336,
+    0.879,
+    5.406
+   ],
+   "emg": [
+    5.663,
+    6.287,
+    2.695,
+    7.765,
+    7.765
+   ],
+   "labels": [
+    "31 Jul 17:34",
+    "2 Aug 01:44",
+    "2 Aug 23:34",
+    "4 Aug 16:33",
+    "4 Aug 16:56"
+   ]
+  },
+  "C1": {
+   "eeg": [
+    0.465,
+    5.72,
+    7.929,
+    4.323,
+    0.584
+   ],
+   "emg": [
+    0.19,
+    0.051,
+    0.27,
+    0.323,
+    0.644
+   ],
+   "labels": [
+    "31 Jul 17:34",
+    "2 Aug 01:44",
+    "2 Aug 23:34",
+    "4 Aug 16:33",
+    "4 Aug 16:56"
+   ]
+  },
+  "C2": {
+   "eeg": [
+    4.418,
+    1.146,
+    2.507,
+    5.137,
+    0.411
+   ],
+   "emg": [
+    0.139,
+    0.168,
+    0.111,
+    0.318,
+    0.122
+   ],
+   "labels": [
+    "31 Jul 17:34",
+    "2 Aug 01:44",
+    "2 Aug 23:34",
+    "4 Aug 16:33",
+    "4 Aug 16:56"
+   ]
+  },
+  "D1": {
+   "eeg": [
+    6.3,
+    3.98,
+    7.504,
+    1.172,
+    4.926
+   ],
+   "emg": [
+    0.335,
+    0.202,
+    0.279,
+    8.203,
+    5.557
+   ],
+   "labels": [
+    "31 Jul 17:34",
+    "2 Aug 01:44",
+    "2 Aug 23:34",
+    "4 Aug 16:33",
+    "4 Aug 16:56"
+   ]
+  },
+  "D2": {
+   "eeg": [
+    0.66,
+    2.114,
+    9.2,
+    0.352,
+    0.4
+   ],
+   "emg": [
+    0.286,
+    0.023,
+    1.273,
+    0.233,
+    0.088
+   ],
+   "labels": [
+    "31 Jul 17:34",
+    "2 Aug 01:44",
+    "2 Aug 23:34",
+    "4 Aug 16:33",
+    "4 Aug 16:56"
+   ]
+  }
+ },
+ "impedance_trajectory_note": "each point is ONE 20 second sweep, unrepeated; magnitude only; positive input of each bipolar pair",
+ "census": {
+  "channels": {
+   "A1 EEG": {
+    "k": 1,
+    "n": 20,
+    "site": "A/1",
+    "position": "A1",
+    "channel": "EEG"
+   },
+   "A1 EMG": {
+    "k": 14,
+    "n": 20,
+    "site": "A/2",
+    "position": "A1",
+    "channel": "EMG"
+   },
+   "A2 EEG": {
+    "k": 1,
+    "n": 20,
+    "site": "A/33",
+    "position": "A2",
+    "channel": "EEG"
+   },
+   "A2 EMG": {
+    "k": 0,
+    "n": 20,
+    "site": "A/34",
+    "position": "A2",
+    "channel": "EMG"
+   },
+   "B1 EEG": {
+    "k": 6,
+    "n": 20,
+    "site": "B/1",
+    "position": "B1",
+    "channel": "EEG"
+   },
+   "B1 EMG": {
+    "k": 13,
+    "n": 20,
+    "site": "B/2",
+    "position": "B1",
+    "channel": "EMG"
+   },
+   "B2 EEG": {
+    "k": 0,
+    "n": 20,
+    "site": "B/33",
+    "position": "B2",
+    "channel": "EEG"
+   },
+   "B2 EMG": {
+    "k": 0,
+    "n": 20,
+    "site": "B/34",
+    "position": "B2",
+    "channel": "EMG"
+   },
+   "C1 EEG": {
+    "k": 0,
+    "n": 20,
+    "site": "C/1",
+    "position": "C1",
+    "channel": "EEG"
+   },
+   "C1 EMG": {
+    "k": 0,
+    "n": 20,
+    "site": "C/2",
+    "position": "C1",
+    "channel": "EMG"
+   },
+   "C2 EEG": {
+    "k": 1,
+    "n": 20,
+    "site": "C/33",
+    "position": "C2",
+    "channel": "EEG"
+   },
+   "C2 EMG": {
+    "k": 2,
+    "n": 20,
+    "site": "C/34",
+    "position": "C2",
+    "channel": "EMG"
+   },
+   "D1 EEG": {
+    "k": 1,
+    "n": 20,
+    "site": "D/1",
+    "position": "D1",
+    "channel": "EEG"
+   },
+   "D1 EMG": {
+    "k": 0,
+    "n": 20,
+    "site": "D/2",
+    "position": "D1",
+    "channel": "EMG"
+   },
+   "D2 EEG": {
+    "k": 1,
+    "n": 20,
+    "site": "D/33",
+    "position": "D2",
+    "channel": "EEG"
+   },
+   "D2 EMG": {
+    "k": 14,
+    "n": 20,
+    "site": "D/34",
+    "position": "D2",
+    "channel": "EMG"
+   }
+  },
+  "n_sweeps": 20,
+  "floor_k": 70,
+  "floor_n": 2240,
+  "floor_by_port": {
+   "A": [
+    16,
+    560
+   ],
+   "B": [
+    18,
+    560
+   ],
+   "C": [
+    15,
+    560
+   ],
+   "D": [
+    21,
+    560
+   ]
+  },
+  "source": "/home/skimlab/Downloads/impedance measurments/2026-08-06/01-fleet-census-20sweeps"
+ },
+ "tether_arms": {
+  "B1 EEG": {
+   "a_k": 5,
+   "a_n": 20,
+   "b_k": 2,
+   "b_n": 20,
+   "site": "B/1"
+  },
+  "B1 EMG": {
+   "a_k": 0,
+   "a_n": 20,
+   "b_k": 7,
+   "b_n": 20,
+   "site": "B/2"
+  },
+  "D2 EEG, control": {
+   "a_k": 2,
+   "a_n": 20,
+   "b_k": 2,
+   "b_n": 20,
+   "site": "D/1"
+  },
+  "D2 EMG, control": {
+   "a_k": 16,
+   "a_n": 20,
+   "b_k": 14,
+   "b_n": 20,
+   "site": "D/2"
+  }
+ },
+ "recordings": {
+  "portA-slot1_2026-08-06_124502_3h11m": {
+   "name": "A1",
+   "verdict": "REJECT: only 0.0 min in blocks; within-block r@1min=None <= 0.3; physiology FAIL: states missing; implausible wake 0.0%",
+   "hours_in_blocks": 0.0,
+   "n_blocks": 0,
+   "longest_block_min": 0.0,
+   "wake_pct": 0.0,
+   "nrem_pct": 0.0,
+   "persistence": {
+    "1min": null,
+    "5min": null,
+    "10min": null
+   },
+   "persistence_shuffled": {
+    "1min": null,
+    "5min": null,
+    "10min": null
+   },
+   "rem_from_nrem_pct": null,
+   "rem_null": {
+    "null_mean_pct": null,
+    "null_sd_pct": null,
+    "observed_percentile_of_null": null,
+    "method": "run-order shuffle within blocks; run lengths and state composition preserved, sequence destroyed",
+    "note": "If the observed value sits inside the null, 'REM is entered from NREM' is forced by label composition and is NOT evidence."
+   },
+   "otsu_sensitivity": null,
+   "by_light_phase": {
+    "light": null,
+    "dark": null
+   },
+   "validity_stats_computed_on": "RAW labels, before the minimum-bout merge. Smoothing inflates both persistence and REM order by construction; architecture and bouts below are computed on the SMOOTHED labels."
+  },
+  "portA-slot1_2026-08-06_165738_23h40m": {
+   "name": "A1",
+   "verdict": "REJECT: only 0.0 min in blocks; within-block r@1min=None <= 0.3; physiology FAIL: states missing; implausible wake 0.0%",
+   "hours_in_blocks": 0.0,
+   "n_blocks": 0,
+   "longest_block_min": 0.0,
+   "wake_pct": 0.0,
+   "nrem_pct": 0.0,
+   "persistence": {
+    "1min": null,
+    "5min": null,
+    "10min": null
+   },
+   "persistence_shuffled": {
+    "1min": null,
+    "5min": null,
+    "10min": null
+   },
+   "rem_from_nrem_pct": null,
+   "rem_null": {
+    "null_mean_pct": null,
+    "null_sd_pct": null,
+    "observed_percentile_of_null": null,
+    "method": "run-order shuffle within blocks; run lengths and state composition preserved, sequence destroyed",
+    "note": "If the observed value sits inside the null, 'REM is entered from NREM' is forced by label composition and is NOT evidence."
+   },
+   "otsu_sensitivity": null,
+   "by_light_phase": {
+    "light": null,
+    "dark": null
+   },
+   "validity_stats_computed_on": "RAW labels, before the minimum-bout merge. Smoothing inflates both persistence and REM order by construction; architecture and bouts below are computed on the SMOOTHED labels."
+  },
+  "portA-slot2_2026-08-06_124502_3h11m": {
+   "name": "A2",
+   "verdict": "REJECT: only 0.0 min in blocks; within-block r@1min=None <= 0.3; physiology FAIL: states missing; implausible wake 0.0%",
+   "hours_in_blocks": 0.0,
+   "n_blocks": 0,
+   "longest_block_min": 0.0,
+   "wake_pct": 0.0,
+   "nrem_pct": 0.0,
+   "persistence": {
+    "1min": null,
+    "5min": null,
+    "10min": null
+   },
+   "persistence_shuffled": {
+    "1min": null,
+    "5min": null,
+    "10min": null
+   },
+   "rem_from_nrem_pct": null,
+   "rem_null": {
+    "null_mean_pct": null,
+    "null_sd_pct": null,
+    "observed_percentile_of_null": null,
+    "method": "run-order shuffle within blocks; run lengths and state composition preserved, sequence destroyed",
+    "note": "If the observed value sits inside the null, 'REM is entered from NREM' is forced by label composition and is NOT evidence."
+   },
+   "otsu_sensitivity": null,
+   "by_light_phase": {
+    "light": null,
+    "dark": null
+   },
+   "validity_stats_computed_on": "RAW labels, before the minimum-bout merge. Smoothing inflates both persistence and REM order by construction; architecture and bouts below are computed on the SMOOTHED labels."
+  },
+  "portA-slot2_2026-08-06_165738_23h40m": {
+   "name": "A2",
+   "verdict": "REJECT: only 0.0 min in blocks; within-block r@1min=None <= 0.3; physiology FAIL: states missing; implausible wake 0.0%",
+   "hours_in_blocks": 0.0,
+   "n_blocks": 0,
+   "longest_block_min": 0.0,
+   "wake_pct": 0.0,
+   "nrem_pct": 0.0,
+   "persistence": {
+    "1min": null,
+    "5min": null,
+    "10min": null
+   },
+   "persistence_shuffled": {
+    "1min": null,
+    "5min": null,
+    "10min": null
+   },
+   "rem_from_nrem_pct": null,
+   "rem_null": {
+    "null_mean_pct": null,
+    "null_sd_pct": null,
+    "observed_percentile_of_null": null,
+    "method": "run-order shuffle within blocks; run lengths and state composition preserved, sequence destroyed",
+    "note": "If the observed value sits inside the null, 'REM is entered from NREM' is forced by label composition and is NOT evidence."
+   },
+   "otsu_sensitivity": null,
+   "by_light_phase": {
+    "light": null,
+    "dark": null
+   },
+   "validity_stats_computed_on": "RAW labels, before the minimum-bout merge. Smoothing inflates both persistence and REM order by construction; architecture and bouts below are computed on the SMOOTHED labels."
+  },
+  "portB-slot1_2026-08-06_124502_3h11m": {
+   "name": "B1",
+   "verdict": "SCOREABLE",
+   "hours_in_blocks": 3.179,
+   "n_blocks": 1,
+   "longest_block_min": 190.7,
+   "wake_pct": 26.7,
+   "nrem_pct": 65.3,
+   "persistence": {
+    "1min": 0.481,
+    "5min": 0.158,
+    "10min": -0.008
+   },
+   "persistence_shuffled": {
+    "1min": 0.001,
+    "5min": -0.01,
+    "10min": 0.004
+   },
+   "rem_from_nrem_pct": 81.1,
+   "rem_null": {
+    "null_mean_pct": 62.8,
+    "null_sd_pct": 3.8,
+    "observed_percentile_of_null": 100.0,
+    "method": "run-order shuffle within blocks; run lengths and state composition preserved, sequence destroyed",
+    "note": "If the observed value sits inside the null, 'REM is entered from NREM' is forced by label composition and is NOT evidence."
+   },
+   "otsu_sensitivity": [
+    {
+     "multiplier": 0.75,
+     "threshold_uv": 13.84,
+     "wake_pct": 39.1,
+     "nrem_pct": 53.5,
+     "asleep_in_light_pct": 60.9,
+     "r_1min_raw": 0.53
+    },
+    {
+     "multiplier": 0.9,
+     "threshold_uv": 16.61,
+     "wake_pct": 28.4,
+     "nrem_pct": 64.1,
+     "asleep_in_light_pct": 71.6,
+     "r_1min_raw": 0.542
+    },
+    {
+     "multiplier": 1.0,
+     "threshold_uv": 18.45,
+     "wake_pct": 26.7,
+     "nrem_pct": 65.3,
+     "asleep_in_light_pct": 73.3,
+     "r_1min_raw": 0.481
+    },
+    {
+     "multiplier": 1.1,
+     "threshold_uv": 20.3,
+     "wake_pct": 24.5,
+     "nrem_pct": 66.8,
+     "asleep_in_light_pct": 75.5,
+     "r_1min_raw": 0.394
+    },
+    {
+     "multiplier": 1.25,
+     "threshold_uv": 23.06,
+     "wake_pct": 16.8,
+     "nrem_pct": 72.2,
+     "asleep_in_light_pct": 83.2,
+     "r_1min_raw": 0.301
+    }
+   ],
+   "by_light_phase": {
+    "light": {
+     "hours": 3.18,
+     "wake_pct": 26.7,
+     "nrem_pct": 65.3,
+     "rem_pct_CONSTRUCTED": 8.0
+    },
+    "dark": null
+   },
+   "validity_stats_computed_on": "RAW labels, before the minimum-bout merge. Smoothing inflates both persistence and REM order by construction; architecture and bouts below are computed on the SMOOTHED labels."
+  },
+  "portB-slot1_2026-08-06_165738_23h40m": {
+   "name": "B1",
+   "verdict": "SCOREABLE",
+   "hours_in_blocks": 23.659,
+   "n_blocks": 1,
+   "longest_block_min": 1419.5,
+   "wake_pct": 50.2,
+   "nrem_pct": 46.5,
+   "persistence": {
+    "1min": 0.603,
+    "5min": 0.463,
+    "10min": 0.425
+   },
+   "persistence_shuffled": {
+    "1min": 0.01,
+    "5min": -0.001,
+    "10min": -0.003
+   },
+   "rem_from_nrem_pct": 72.4,
+   "rem_null": {
+    "null_mean_pct": 56.6,
+    "null_sd_pct": 1.6,
+    "observed_percentile_of_null": 100.0,
+    "method": "run-order shuffle within blocks; run lengths and state composition preserved, sequence destroyed",
+    "note": "If the observed value sits inside the null, 'REM is entered from NREM' is forced by label composition and is NOT evidence."
+   },
+   "otsu_sensitivity": [
+    {
+     "multiplier": 0.75,
+     "threshold_uv": 16.0,
+     "wake_pct": 67.4,
+     "nrem_pct": 30.3,
+     "asleep_in_light_pct": 54.2,
+     "r_1min_raw": 0.666
+    },
+    {
+     "multiplier": 0.9,
+     "threshold_uv": 19.2,
+     "wake_pct": 53.6,
+     "nrem_pct": 43.4,
+     "asleep_in_light_pct": 79.1,
+     "r_1min_raw": 0.689
+    },
+    {
+     "multiplier": 1.0,
+     "threshold_uv": 21.33,
+     "wake_pct": 50.2,
+     "nrem_pct": 46.5,
+     "asleep_in_light_pct": 81.2,
+     "r_1min_raw": 0.603
+    },
+    {
+     "multiplier": 1.1,
+     "threshold_uv": 23.46,
+     "wake_pct": 44.2,
+     "nrem_pct": 51.6,
+     "asleep_in_light_pct": 84.2,
+     "r_1min_raw": 0.491
+    },
+    {
+     "multiplier": 1.25,
+     "threshold_uv": 26.66,
+     "wake_pct": 32.1,
+     "nrem_pct": 62.1,
+     "asleep_in_light_pct": 90.2,
+     "r_1min_raw": 0.341
+    }
+   ],
+   "by_light_phase": {
+    "light": {
+     "hours": 11.66,
+     "wake_pct": 18.8,
+     "nrem_pct": 75.8,
+     "rem_pct_CONSTRUCTED": 5.4
+    },
+    "dark": {
+     "hours": 12.0,
+     "wake_pct": 80.7,
+     "nrem_pct": 18.0,
+     "rem_pct_CONSTRUCTED": 1.3
+    }
+   },
+   "validity_stats_computed_on": "RAW labels, before the minimum-bout merge. Smoothing inflates both persistence and REM order by construction; architecture and bouts below are computed on the SMOOTHED labels."
+  },
+  "portB-slot2_2026-08-06_124502_3h11m": {
+   "name": "B2",
+   "verdict": "REJECT: only 0.0 min in blocks; within-block r@1min=None <= 0.3; physiology FAIL: states missing; implausible wake 0.0%",
+   "hours_in_blocks": 0.0,
+   "n_blocks": 0,
+   "longest_block_min": 0.0,
+   "wake_pct": 0.0,
+   "nrem_pct": 0.0,
+   "persistence": {
+    "1min": null,
+    "5min": null,
+    "10min": null
+   },
+   "persistence_shuffled": {
+    "1min": null,
+    "5min": null,
+    "10min": null
+   },
+   "rem_from_nrem_pct": null,
+   "rem_null": {
+    "null_mean_pct": null,
+    "null_sd_pct": null,
+    "observed_percentile_of_null": null,
+    "method": "run-order shuffle within blocks; run lengths and state composition preserved, sequence destroyed",
+    "note": "If the observed value sits inside the null, 'REM is entered from NREM' is forced by label composition and is NOT evidence."
+   },
+   "otsu_sensitivity": null,
+   "by_light_phase": {
+    "light": null,
+    "dark": null
+   },
+   "validity_stats_computed_on": "RAW labels, before the minimum-bout merge. Smoothing inflates both persistence and REM order by construction; architecture and bouts below are computed on the SMOOTHED labels."
+  },
+  "portB-slot2_2026-08-06_165738_23h40m": {
+   "name": "B2",
+   "verdict": "REJECT: only 0.0 min in blocks; within-block r@1min=None <= 0.3; physiology FAIL: states missing; implausible wake 0.0%",
+   "hours_in_blocks": 0.0,
+   "n_blocks": 0,
+   "longest_block_min": 0.0,
+   "wake_pct": 0.0,
+   "nrem_pct": 0.0,
+   "persistence": {
+    "1min": null,
+    "5min": null,
+    "10min": null
+   },
+   "persistence_shuffled": {
+    "1min": null,
+    "5min": null,
+    "10min": null
+   },
+   "rem_from_nrem_pct": null,
+   "rem_null": {
+    "null_mean_pct": null,
+    "null_sd_pct": null,
+    "observed_percentile_of_null": null,
+    "method": "run-order shuffle within blocks; run lengths and state composition preserved, sequence destroyed",
+    "note": "If the observed value sits inside the null, 'REM is entered from NREM' is forced by label composition and is NOT evidence."
+   },
+   "otsu_sensitivity": null,
+   "by_light_phase": {
+    "light": null,
+    "dark": null
+   },
+   "validity_stats_computed_on": "RAW labels, before the minimum-bout merge. Smoothing inflates both persistence and REM order by construction; architecture and bouts below are computed on the SMOOTHED labels."
+  },
+  "portC-slot1_2026-08-06_124502_3h11m": {
+   "name": "C1",
+   "verdict": "REJECT: only 0.0 min in blocks; within-block r@1min=None <= 0.3; physiology FAIL: states missing; implausible wake 0.0%",
+   "hours_in_blocks": 0.0,
+   "n_blocks": 0,
+   "longest_block_min": 0.0,
+   "wake_pct": 0.0,
+   "nrem_pct": 0.0,
+   "persistence": {
+    "1min": null,
+    "5min": null,
+    "10min": null
+   },
+   "persistence_shuffled": {
+    "1min": null,
+    "5min": null,
+    "10min": null
+   },
+   "rem_from_nrem_pct": null,
+   "rem_null": {
+    "null_mean_pct": null,
+    "null_sd_pct": null,
+    "observed_percentile_of_null": null,
+    "method": "run-order shuffle within blocks; run lengths and state composition preserved, sequence destroyed",
+    "note": "If the observed value sits inside the null, 'REM is entered from NREM' is forced by label composition and is NOT evidence."
+   },
+   "otsu_sensitivity": null,
+   "by_light_phase": {
+    "light": null,
+    "dark": null
+   },
+   "validity_stats_computed_on": "RAW labels, before the minimum-bout merge. Smoothing inflates both persistence and REM order by construction; architecture and bouts below are computed on the SMOOTHED labels."
+  },
+  "portC-slot1_2026-08-06_165738_23h40m": {
+   "name": "C1",
+   "verdict": "REJECT: only 0.0 min in blocks; within-block r@1min=None <= 0.3; physiology FAIL: states missing; implausible wake 0.0%",
+   "hours_in_blocks": 0.0,
+   "n_blocks": 0,
+   "longest_block_min": 0.0,
+   "wake_pct": 0.0,
+   "nrem_pct": 0.0,
+   "persistence": {
+    "1min": null,
+    "5min": null,
+    "10min": null
+   },
+   "persistence_shuffled": {
+    "1min": null,
+    "5min": null,
+    "10min": null
+   },
+   "rem_from_nrem_pct": null,
+   "rem_null": {
+    "null_mean_pct": null,
+    "null_sd_pct": null,
+    "observed_percentile_of_null": null,
+    "method": "run-order shuffle within blocks; run lengths and state composition preserved, sequence destroyed",
+    "note": "If the observed value sits inside the null, 'REM is entered from NREM' is forced by label composition and is NOT evidence."
+   },
+   "otsu_sensitivity": null,
+   "by_light_phase": {
+    "light": null,
+    "dark": null
+   },
+   "validity_stats_computed_on": "RAW labels, before the minimum-bout merge. Smoothing inflates both persistence and REM order by construction; architecture and bouts below are computed on the SMOOTHED labels."
+  },
+  "portC-slot2_2026-08-06_124502_3h11m": {
+   "name": "C2",
+   "verdict": "REJECT: only 0.0 min in blocks; within-block r@1min=None <= 0.3; physiology FAIL: states missing; implausible wake 0.0%",
+   "hours_in_blocks": 0.0,
+   "n_blocks": 0,
+   "longest_block_min": 0.0,
+   "wake_pct": 0.0,
+   "nrem_pct": 0.0,
+   "persistence": {
+    "1min": null,
+    "5min": null,
+    "10min": null
+   },
+   "persistence_shuffled": {
+    "1min": null,
+    "5min": null,
+    "10min": null
+   },
+   "rem_from_nrem_pct": null,
+   "rem_null": {
+    "null_mean_pct": null,
+    "null_sd_pct": null,
+    "observed_percentile_of_null": null,
+    "method": "run-order shuffle within blocks; run lengths and state composition preserved, sequence destroyed",
+    "note": "If the observed value sits inside the null, 'REM is entered from NREM' is forced by label composition and is NOT evidence."
+   },
+   "otsu_sensitivity": null,
+   "by_light_phase": {
+    "light": null,
+    "dark": null
+   },
+   "validity_stats_computed_on": "RAW labels, before the minimum-bout merge. Smoothing inflates both persistence and REM order by construction; architecture and bouts below are computed on the SMOOTHED labels."
+  },
+  "portC-slot2_2026-08-06_165738_23h40m": {
+   "name": "C2",
+   "verdict": "REJECT: only 0.0 min in blocks; within-block r@1min=None <= 0.3; physiology FAIL: states missing; implausible wake 0.0%",
+   "hours_in_blocks": 0.0,
+   "n_blocks": 0,
+   "longest_block_min": 0.0,
+   "wake_pct": 0.0,
+   "nrem_pct": 0.0,
+   "persistence": {
+    "1min": null,
+    "5min": null,
+    "10min": null
+   },
+   "persistence_shuffled": {
+    "1min": null,
+    "5min": null,
+    "10min": null
+   },
+   "rem_from_nrem_pct": null,
+   "rem_null": {
+    "null_mean_pct": null,
+    "null_sd_pct": null,
+    "observed_percentile_of_null": null,
+    "method": "run-order shuffle within blocks; run lengths and state composition preserved, sequence destroyed",
+    "note": "If the observed value sits inside the null, 'REM is entered from NREM' is forced by label composition and is NOT evidence."
+   },
+   "otsu_sensitivity": [
+    {
+     "multiplier": 0.75,
+     "threshold_uv": 42.38,
+     "wake_pct": 0.0,
+     "nrem_pct": 0.0,
+     "asleep_in_light_pct": null,
+     "r_1min_raw": null
+    },
+    {
+     "multiplier": 0.9,
+     "threshold_uv": 50.86,
+     "wake_pct": 0.0,
+     "nrem_pct": 0.0,
+     "asleep_in_light_pct": null,
+     "r_1min_raw": null
+    },
+    {
+     "multiplier": 1.0,
+     "threshold_uv": 56.51,
+     "wake_pct": 0.0,
+     "nrem_pct": 0.0,
+     "asleep_in_light_pct": null,
+     "r_1min_raw": null
+    },
+    {
+     "multiplier": 1.1,
+     "threshold_uv": 62.16,
+     "wake_pct": 0.0,
+     "nrem_pct": 0.0,
+     "asleep_in_light_pct": null,
+     "r_1min_raw": null
+    },
+    {
+     "multiplier": 1.25,
+     "threshold_uv": 70.63,
+     "wake_pct": 0.0,
+     "nrem_pct": 0.0,
+     "asleep_in_light_pct": null,
+     "r_1min_raw": null
+    }
+   ],
+   "by_light_phase": {
+    "light": null,
+    "dark": null
+   },
+   "validity_stats_computed_on": "RAW labels, before the minimum-bout merge. Smoothing inflates both persistence and REM order by construction; architecture and bouts below are computed on the SMOOTHED labels."
+  },
+  "portD-slot1_2026-08-06_124502_3h11m": {
+   "name": "D1",
+   "verdict": "REJECT: only 0.0 min in blocks; within-block r@1min=None <= 0.3; physiology FAIL: states missing; implausible wake 0.0%",
+   "hours_in_blocks": 0.0,
+   "n_blocks": 0,
+   "longest_block_min": 0.0,
+   "wake_pct": 0.0,
+   "nrem_pct": 0.0,
+   "persistence": {
+    "1min": null,
+    "5min": null,
+    "10min": null
+   },
+   "persistence_shuffled": {
+    "1min": null,
+    "5min": null,
+    "10min": null
+   },
+   "rem_from_nrem_pct": null,
+   "rem_null": {
+    "null_mean_pct": null,
+    "null_sd_pct": null,
+    "observed_percentile_of_null": null,
+    "method": "run-order shuffle within blocks; run lengths and state composition preserved, sequence destroyed",
+    "note": "If the observed value sits inside the null, 'REM is entered from NREM' is forced by label composition and is NOT evidence."
+   },
+   "otsu_sensitivity": null,
+   "by_light_phase": {
+    "light": null,
+    "dark": null
+   },
+   "validity_stats_computed_on": "RAW labels, before the minimum-bout merge. Smoothing inflates both persistence and REM order by construction; architecture and bouts below are computed on the SMOOTHED labels."
+  },
+  "portD-slot1_2026-08-06_165738_23h40m": {
+   "name": "D1",
+   "verdict": "REJECT: only 0.0 min in blocks; within-block r@1min=None <= 0.3; physiology FAIL: states missing; implausible wake 0.0%",
+   "hours_in_blocks": 0.0,
+   "n_blocks": 0,
+   "longest_block_min": 0.0,
+   "wake_pct": 0.0,
+   "nrem_pct": 0.0,
+   "persistence": {
+    "1min": null,
+    "5min": null,
+    "10min": null
+   },
+   "persistence_shuffled": {
+    "1min": null,
+    "5min": null,
+    "10min": null
+   },
+   "rem_from_nrem_pct": null,
+   "rem_null": {
+    "null_mean_pct": null,
+    "null_sd_pct": null,
+    "observed_percentile_of_null": null,
+    "method": "run-order shuffle within blocks; run lengths and state composition preserved, sequence destroyed",
+    "note": "If the observed value sits inside the null, 'REM is entered from NREM' is forced by label composition and is NOT evidence."
+   },
+   "otsu_sensitivity": null,
+   "by_light_phase": {
+    "light": null,
+    "dark": null
+   },
+   "validity_stats_computed_on": "RAW labels, before the minimum-bout merge. Smoothing inflates both persistence and REM order by construction; architecture and bouts below are computed on the SMOOTHED labels."
+  },
+  "portD-slot2_2026-08-06_124502_3h11m": {
+   "name": "D2",
+   "verdict": "REJECT: only 0.0 min in blocks; within-block r@1min=None <= 0.3; physiology FAIL: states missing; implausible wake 0.0%",
+   "hours_in_blocks": 0.0,
+   "n_blocks": 0,
+   "longest_block_min": 0.0,
+   "wake_pct": 0.0,
+   "nrem_pct": 0.0,
+   "persistence": {
+    "1min": null,
+    "5min": null,
+    "10min": null
+   },
+   "persistence_shuffled": {
+    "1min": null,
+    "5min": null,
+    "10min": null
+   },
+   "rem_from_nrem_pct": null,
+   "rem_null": {
+    "null_mean_pct": null,
+    "null_sd_pct": null,
+    "observed_percentile_of_null": null,
+    "method": "run-order shuffle within blocks; run lengths and state composition preserved, sequence destroyed",
+    "note": "If the observed value sits inside the null, 'REM is entered from NREM' is forced by label composition and is NOT evidence."
+   },
+   "otsu_sensitivity": null,
+   "by_light_phase": {
+    "light": null,
+    "dark": null
+   },
+   "validity_stats_computed_on": "RAW labels, before the minimum-bout merge. Smoothing inflates both persistence and REM order by construction; architecture and bouts below are computed on the SMOOTHED labels."
+  },
+  "portD-slot2_2026-08-06_165738_23h40m": {
+   "name": "D2",
+   "verdict": "SCOREABLE",
+   "hours_in_blocks": 23.281,
+   "n_blocks": 9,
+   "longest_block_min": 576.4,
+   "wake_pct": 43.3,
+   "nrem_pct": 49.9,
+   "persistence": {
+    "1min": 0.499,
+    "5min": 0.234,
+    "10min": 0.146
+   },
+   "persistence_shuffled": {
+    "1min": -0.001,
+    "5min": 0.001,
+    "10min": 0.005
+   },
+   "rem_from_nrem_pct": 78.4,
+   "rem_null": {
+    "null_mean_pct": 64.5,
+    "null_sd_pct": 1.2,
+    "observed_percentile_of_null": 100.0,
+    "method": "run-order shuffle within blocks; run lengths and state composition preserved, sequence destroyed",
+    "note": "If the observed value sits inside the null, 'REM is entered from NREM' is forced by label composition and is NOT evidence."
+   },
+   "otsu_sensitivity": [
+    {
+     "multiplier": 0.75,
+     "threshold_uv": 19.64,
+     "wake_pct": 84.8,
+     "nrem_pct": 13.8,
+     "asleep_in_light_pct": 23.0,
+     "r_1min_raw": 0.654
+    },
+    {
+     "multiplier": 0.9,
+     "threshold_uv": 23.57,
+     "wake_pct": 62.4,
+     "nrem_pct": 33.7,
+     "asleep_in_light_pct": 52.1,
+     "r_1min_raw": 0.601
+    },
+    {
+     "multiplier": 1.0,
+     "threshold_uv": 26.19,
+     "wake_pct": 43.3,
+     "nrem_pct": 49.9,
+     "asleep_in_light_pct": 70.4,
+     "r_1min_raw": 0.499
+    },
+    {
+     "multiplier": 1.1,
+     "threshold_uv": 28.8,
+     "wake_pct": 26.9,
+     "nrem_pct": 64.2,
+     "asleep_in_light_pct": 81.8,
+     "r_1min_raw": 0.455
+    },
+    {
+     "multiplier": 1.25,
+     "threshold_uv": 32.73,
+     "wake_pct": 13.4,
+     "nrem_pct": 75.3,
+     "asleep_in_light_pct": 89.0,
+     "r_1min_raw": 0.379
+    }
+   ],
+   "by_light_phase": {
+    "light": {
+     "hours": 11.41,
+     "wake_pct": 29.6,
+     "nrem_pct": 63.4,
+     "rem_pct_CONSTRUCTED": 7.0
+    },
+    "dark": {
+     "hours": 11.87,
+     "wake_pct": 56.5,
+     "nrem_pct": 37.0,
+     "rem_pct_CONSTRUCTED": 6.5
+    }
+   },
+   "validity_stats_computed_on": "RAW labels, before the minimum-bout merge. Smoothing inflates both persistence and REM order by construction; architecture and bouts below are computed on the SMOOTHED labels."
+  }
+ },
+ "yield_by_recording": {
+  "2026-08-06_124502_3h11m": {
+   "scoreable_hours": 3.179,
+   "animals": [
+    "B1"
+   ],
+   "provenance": "pipeline features files"
+  },
+  "2026-08-06_165738_23h40m": {
+   "scoreable_hours": 46.94,
+   "animals": [
+    "B1",
+    "D2"
+   ],
+   "provenance": "pipeline features files"
+  },
+  "2026-07-10_72h": {
+   "scoreable_hours": 0.0,
+   "animals": [],
+   "provenance": "vault write-up"
+  },
+  "2026-07-13_20h": {
+   "scoreable_hours": 0.0,
+   "animals": [],
+   "provenance": "vault write-up"
+  },
+  "2026-07-31_27h9m": {
+   "scoreable_hours": 10.4,
+   "animals": [
+    "C1"
+   ],
+   "provenance": "vault write-up"
+  },
+  "2026-08-02_21h7m": {
+   "scoreable_hours": 0.0,
+   "animals": [],
+   "provenance": "vault write-up"
+  }
+ },
+ "usable": {
+  "animals": {
+   "A1": {
+    "eeg_pct": 0.0,
+    "emg_pct": 7.620054009627804,
+    "both_pct": 0.0,
+    "longest_both_min": 0.0
+   },
+   "A2": {
+    "eeg_pct": 0.0,
+    "emg_pct": 0.0,
+    "both_pct": 0.0,
+    "longest_both_min": 0.0
+   },
+   "B1": {
+    "eeg_pct": 99.96477632969355,
+    "emg_pct": 99.64776329693554,
+    "both_pct": 99.62428085006458,
+    "longest_both_min": 215.83333333333334
+   },
+   "B2": {
+    "eeg_pct": 0.0,
+    "emg_pct": 0.0,
+    "both_pct": 0.0,
+    "longest_both_min": 0.0
+   },
+   "C1": {
+    "eeg_pct": 0.0,
+    "emg_pct": 37.77151579194552,
+    "both_pct": 0.0,
+    "longest_both_min": 0.0
+   },
+   "C2": {
+    "eeg_pct": 0.12915345779030174,
+    "emg_pct": 15.228366795820126,
+    "both_pct": 0.0,
+    "longest_both_min": 0.0
+   },
+   "D1": {
+    "eeg_pct": 0.0,
+    "emg_pct": 0.0,
+    "both_pct": 0.0,
+    "longest_both_min": 0.0
+   },
+   "D2": {
+    "eeg_pct": 87.91828108488905,
+    "emg_pct": 98.62627685804861,
+    "both_pct": 86.54455794293764,
+    "longest_both_min": 87.33333333333333
+   }
+  },
+  "threshold_uv": 415.0167541503906,
+  "n_epochs": 8517,
+  "epoch_s": 10,
+  "floor_pct": 0.0,
+  "source": "/home/skimlab/Monitoring_project/eeg-emg-analysis/qc/figures_2026-08-08/derived/usable_overnight.npz"
+ },
+ "forensics": {
+  "recording": "allego_1__uid0806-16-57-38",
+  "n_epochs_sampled": 120,
+  "epoch_s": 10,
+  "filter": "notch 60/120/180 Hz Q=30 then 4th-order Butterworth 0.5-30 Hz, zero phase",
+  "slope_band_hz": [
+   1,
+   30
+  ],
+  "welch_nperseg": 2048,
+  "floor_sites": [
+   "A/5",
+   "B/7",
+   "C/9",
+   "D/11",
+   "A/38",
+   "C/40"
+  ],
+  "floor": {
+   "hum_uv": 2275.9052117872225,
+   "rms_uv": 2440.3400498160545,
+   "railed": 0.026500555555555555,
+   "slope": -0.4728268271141067,
+   "slope_min": -0.7936976933347613,
+   "slope_max": -0.3716775412823301,
+   "hum_min": 531.2734548075099,
+   "hum_max": 5613.220235675088
+  },
+  "animals": {
+   "A1": {
+    "eeg_site": "A/1",
+    "emg_site": "A/2",
+    "inter_channel_r": 0.2332454069809975,
+    "eeg": {
+     "hum_uv": 5311.995679672529,
+     "rms_uv": 3986.1270942782776,
+     "railed": 0.0278625,
+     "slope": -0.24640801939938484
+    },
+    "emg": {
+     "hum_uv": 264.44903315524874,
+     "rms_uv": 278.1291746831938,
+     "railed": 7.916666666666666e-05,
+     "slope": -1.1052970414354029
+    }
+   },
+   "A2": {
+    "eeg_site": "A/33",
+    "emg_site": "A/34",
+    "inter_channel_r": 0.48926127821064525,
+    "eeg": {
+     "hum_uv": 2546.410150094715,
+     "rms_uv": 2454.0092171735305,
+     "railed": 0.015735000000000002,
+     "slope": -0.36780185065048576
+    },
+    "emg": {
+     "hum_uv": 4506.507351310345,
+     "rms_uv": 3538.2115973249383,
+     "railed": 0.058435,
+     "slope": -0.2891382735843976
+    }
+   },
+   "B1": {
+    "eeg_site": "B/1",
+    "emg_site": "B/2",
+    "inter_channel_r": 0.07981361747182654,
+    "eeg": {
+     "hum_uv": 38.188863475474705,
+     "rms_uv": 70.85217877973926,
+     "railed": 0.0,
+     "slope": -1.9660809756480593
+    },
+    "emg": {
+     "hum_uv": 15.2307879749888,
+     "rms_uv": 54.116404852298984,
+     "railed": 0.0,
+     "slope": -1.2757897542506762
+    }
+   },
+   "B2": {
+    "eeg_site": "B/33",
+    "emg_site": "B/34",
+    "inter_channel_r": 0.4995085631153385,
+    "eeg": {
+     "hum_uv": 778.7464891801683,
+     "rms_uv": 2829.861185499103,
+     "railed": 0.005143333333333333,
+     "slope": -0.5721247487739143
+    },
+    "emg": {
+     "hum_uv": 3667.0916141852817,
+     "rms_uv": 3708.395223536295,
+     "railed": 0.059990833333333334,
+     "slope": -0.3259172753870934
+    }
+   },
+   "C1": {
+    "eeg_site": "C/1",
+    "emg_site": "C/2",
+    "inter_channel_r": 0.12682584980971262,
+    "eeg": {
+     "hum_uv": 5813.508841104149,
+     "rms_uv": 4282.688670886089,
+     "railed": 0.06835833333333333,
+     "slope": -0.33751005013286
+    },
+    "emg": {
+     "hum_uv": 75.94231992319169,
+     "rms_uv": 544.1874364617553,
+     "railed": 0.011532500000000001,
+     "slope": -0.6211436504242396
+    }
+   },
+   "C2": {
+    "eeg_site": "C/33",
+    "emg_site": "C/34",
+    "inter_channel_r": 0.18849845574025031,
+    "eeg": {
+     "hum_uv": 1076.270495026563,
+     "rms_uv": 1693.3520286374835,
+     "railed": 0.002761666666666667,
+     "slope": -0.3992983401432367
+    },
+    "emg": {
+     "hum_uv": 1331.0217387368773,
+     "rms_uv": 1788.0773542387522,
+     "railed": 0.003931666666666667,
+     "slope": -0.36216378814576355
+    }
+   },
+   "D1": {
+    "eeg_site": "D/1",
+    "emg_site": "D/2",
+    "inter_channel_r": 0.7391869747645632,
+    "eeg": {
+     "hum_uv": 6196.844086486364,
+     "rms_uv": 4519.701885575675,
+     "railed": 0.028285000000000005,
+     "slope": -0.27922564675898953
+    },
+    "emg": {
+     "hum_uv": 5363.240497556097,
+     "rms_uv": 4071.9838483289823,
+     "railed": 0.07002916666666666,
+     "slope": 0.11539089720303489
+    }
+   },
+   "D2": {
+    "eeg_site": "D/33",
+    "emg_site": "D/34",
+    "inter_channel_r": 0.07492106447047436,
+    "eeg": {
+     "hum_uv": 134.1048094061485,
+     "rms_uv": 123.19512143886512,
+     "railed": 0.0,
+     "slope": -1.963604959301145
+    },
+    "emg": {
+     "hum_uv": 26.58383276926751,
+     "rms_uv": 43.85995512650831,
+     "railed": 0.0,
+     "slope": -1.3286417750678563
+    }
+   }
+  }
+ }
+}

@@ -1,0 +1,59 @@
+{
+  "notice": "Export completed with explicit settings. This report does not establish visual, accessibility, scientific-integrity, or journal-submission compliance.",
+  "outputs": [
+    {
+      "format": "png",
+      "kind": "raster",
+      "path": "/home/skimlab/Monitoring_project/eeg-emg-analysis/cards/out/HLB-fem-profsurgery-troubleshooting/figures/allego_2__uid0802-01-46-57__A2__HLB-A2-NO-MOUSE_card.png",
+      "size_bytes": 579865
+    },
+    {
+      "format": "pdf",
+      "kind": "vector-container",
+      "path": "/home/skimlab/Monitoring_project/eeg-emg-analysis/cards/out/HLB-fem-profsurgery-troubleshooting/figures/allego_2__uid0802-01-46-57__A2__HLB-A2-NO-MOUSE_card.pdf",
+      "size_bytes": 207564
+    }
+  ],
+  "provenance": {
+    "alt_text": "Animal card for HLB-A2-NO-MOUSE in rig position A2 during recording allego_2__uid0802-01-46-57. The verdict ladder reads: rung 0 FILE PASS; rung 1 IDENTITY PASS; rung 2 CONNECTION FAIL; rung 3 SCOREABILITY BLOCKED; rung 4 ARCHITECTURE BLOCKED; rung 5 EXPORT BLOCKED. The highest rung passed is 1. Connection: 0.0% usable, longest unbroken block 0.0 min. The life timeline strip shows this animal's dated events on an axis of age in weeks.",
+    "card_json": "cards/out/HLB-fem-profsurgery-troubleshooting/allego_2__uid0802-01-46-57__A2_card.json",
+    "criterion": "hum",
+    "git_rev": "not a git repo",
+    "palette": "okabe_ito_on_white",
+    "recording_base": "/home/skimlab/radix/data/allego_2__uid0802-01-46-57",
+    "seed": 20260809,
+    "source_files": {},
+    "style": "default (scientific-visualization skill asset)",
+    "thresholds_hash": "c635d5245a5b",
+    "verdicts": {
+      "ARCHITECTURE": "BLOCKED",
+      "CONNECTION": "FAIL",
+      "EXPORT": "BLOCKED",
+      "FILE": "PASS",
+      "IDENTITY": "PASS",
+      "SCOREABILITY": "BLOCKED"
+    }
+  },
+  "schema_version": "1.0",
+  "settings": {
+    "bbox_inches": null,
+    "dpi": 300.0,
+    "facecolor": "white",
+    "figure_size_inches": [
+      8.27,
+      11.69
+    ],
+    "font_mode": "truetype",
+    "formats": [
+      "png",
+      "pdf"
+    ],
+    "pad_inches": 0.1,
+    "transparent": false
+  },
+  "versions": {
+    "matplotlib": "3.11.0",
+    "pillow": "12.2.0"
+  },
+  "warnings": []
+}

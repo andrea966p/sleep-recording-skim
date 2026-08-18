@@ -1,0 +1,67 @@
+{
+  "notice": "Export completed with explicit settings. This report does not establish visual, accessibility, scientific-integrity, or journal-submission compliance.",
+  "outputs": [
+    {
+      "format": "png",
+      "kind": "raster",
+      "path": "/home/skimlab/Monitoring_project/eeg-emg-analysis/cards/out/HLB-fem-profsurgery-troubleshooting/figures/allego_1__uid0731-18-06-37__C1__HLB-C1_card.png",
+      "size_bytes": 689974
+    },
+    {
+      "format": "pdf",
+      "kind": "vector-container",
+      "path": "/home/skimlab/Monitoring_project/eeg-emg-analysis/cards/out/HLB-fem-profsurgery-troubleshooting/figures/allego_1__uid0731-18-06-37__C1__HLB-C1_card.pdf",
+      "size_bytes": 207855
+    }
+  ],
+  "provenance": {
+    "alt_text": "Animal card for HLB-C1 in rig position C1 during recording allego_1__uid0731-18-06-37. The verdict ladder reads: rung 0 FILE PASS; rung 1 IDENTITY PASS; rung 2 CONNECTION PASS; rung 3 SCOREABILITY PASS; rung 4 ARCHITECTURE PROVISIONAL; rung 5 EXPORT INSUFFICIENT. The highest rung passed is 4. Connection: 30.3% usable, longest unbroken block 46.3 min. The life timeline strip shows this animal's dated events on an axis of age in weeks.",
+    "card_json": "cards/out/HLB-fem-profsurgery-troubleshooting/allego_1__uid0731-18-06-37__C1_card.json",
+    "criterion": "hum",
+    "git_rev": "not a git repo",
+    "palette": "okabe_ito_on_white",
+    "recording_base": "/home/skimlab/radix/data/allego_1__uid0731-18-06-37",
+    "seed": 20260809,
+    "source_files": {
+      "day_dir": "/home/skimlab/eeg-processed/2026-07-31",
+      "edf": "/home/skimlab/eeg-processed/2026-07-31/portC-slot1_2026-07-31_180637_27h54m.edf",
+      "features": "/home/skimlab/eeg-processed/2026-07-31/portC-slot1_2026-07-31_180637_27h54m_features.json",
+      "hypnogram": "/home/skimlab/eeg-processed/2026-07-31/portC-slot1_2026-07-31_180637_27h54m_hypnogram.csv",
+      "npz": "/home/skimlab/eeg-processed/2026-07-31/portC-slot1_2026-07-31_180637_27h54m.npz",
+      "scorer_readme": "/home/skimlab/eeg-processed/2026-07-31/portC-slot1_2026-07-31_180637_27h54m_SCORER-README.txt",
+      "summary": "/home/skimlab/eeg-processed/2026-07-31/portC-slot1_2026-07-31_180637_27h54m_summary.txt"
+    },
+    "style": "default (scientific-visualization skill asset)",
+    "thresholds_hash": "c635d5245a5b",
+    "verdicts": {
+      "ARCHITECTURE": "PROVISIONAL",
+      "CONNECTION": "PASS",
+      "EXPORT": "INSUFFICIENT",
+      "FILE": "PASS",
+      "IDENTITY": "PASS",
+      "SCOREABILITY": "PASS"
+    }
+  },
+  "schema_version": "1.0",
+  "settings": {
+    "bbox_inches": null,
+    "dpi": 300.0,
+    "facecolor": "white",
+    "figure_size_inches": [
+      8.27,
+      11.69
+    ],
+    "font_mode": "truetype",
+    "formats": [
+      "png",
+      "pdf"
+    ],
+    "pad_inches": 0.1,
+    "transparent": false
+  },
+  "versions": {
+    "matplotlib": "3.11.0",
+    "pillow": "12.2.0"
+  },
+  "warnings": []
+}

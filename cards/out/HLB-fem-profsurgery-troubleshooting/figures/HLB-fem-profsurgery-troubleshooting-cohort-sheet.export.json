@@ -1,0 +1,87 @@
+{
+  "notice": "Export completed with explicit settings. This report does not establish visual, accessibility, scientific-integrity, or journal-submission compliance.",
+  "outputs": [
+    {
+      "format": "png",
+      "kind": "raster",
+      "path": "/home/skimlab/Monitoring_project/eeg-emg-analysis/cards/out/HLB-fem-profsurgery-troubleshooting/figures/HLB-fem-profsurgery-troubleshooting-cohort-sheet.png",
+      "size_bytes": 706478
+    },
+    {
+      "format": "pdf",
+      "kind": "vector-container",
+      "path": "/home/skimlab/Monitoring_project/eeg-emg-analysis/cards/out/HLB-fem-profsurgery-troubleshooting/figures/HLB-fem-profsurgery-troubleshooting-cohort-sheet.pdf",
+      "size_bytes": 126526
+    }
+  ],
+  "provenance": {
+    "alt_text": "Cohort sheet for HLB-fem-profsurgery-troubleshooting: a matrix of 32 animal-recordings by six verdict rungs. A1 HLB-A1 reaches rung 1; A2 HLB-A2-NO-MOUSE reaches rung 1; B1 HLB-B1a reaches rung 1; B2 HLB-B2 reaches rung 1; C1 HLB-C1 reaches rung 4; C2 HLB-C2 reaches rung 4; D1 HLB-D1 reaches rung 1; D2 HLB-D2 reaches rung 1; A1 HLB-A1 reaches rung 1; A2 HLB-A2-NO-MOUSE reaches rung 1; B1 HLB-B1a reaches rung 1; B2 HLB-B2 reaches rung 1; C1 HLB-C1 reaches rung 1; C2 HLB-C2 reaches rung 1; D1 HLB-D1 reaches rung 1; D2 HLB-D2 reaches rung 1; A1 HLB-A1 reaches rung 1; A2 HLB-A2-NO-MOUSE reaches rung 1; B1 HLB-B1b reaches rung 5; B2 HLB-B2 reaches rung 1; C1 HLB-C1 reaches rung 1; C2 HLB-C2 reaches rung 1; D1 HLB-D1 reaches rung 1; D2 HLB-D2 reaches rung 1; A1 HLB-A1 reaches rung 1; A2 HLB-A2-NO-MOUSE reaches rung 1; B1 HLB-B1b reaches rung 5; B2 HLB-B2 reaches rung 1; C1 HLB-C1 reaches rung 1; C2 HLB-C2 reaches rung 1; D1 HLB-D1 reaches rung 1; D2 HLB-D2 reaches rung 5",
+    "cards": [
+      "allego_1__uid0731-18-06-37__A1",
+      "allego_1__uid0731-18-06-37__A2",
+      "allego_1__uid0731-18-06-37__B1",
+      "allego_1__uid0731-18-06-37__B2",
+      "allego_1__uid0731-18-06-37__C1",
+      "allego_1__uid0731-18-06-37__C2",
+      "allego_1__uid0731-18-06-37__D1",
+      "allego_1__uid0731-18-06-37__D2",
+      "allego_2__uid0802-01-46-57__A1",
+      "allego_2__uid0802-01-46-57__A2",
+      "allego_2__uid0802-01-46-57__B1",
+      "allego_2__uid0802-01-46-57__B2",
+      "allego_2__uid0802-01-46-57__C1",
+      "allego_2__uid0802-01-46-57__C2",
+      "allego_2__uid0802-01-46-57__D1",
+      "allego_2__uid0802-01-46-57__D2",
+      "allego_0__uid0806-12-45-02__A1",
+      "allego_0__uid0806-12-45-02__A2",
+      "allego_0__uid0806-12-45-02__B1",
+      "allego_0__uid0806-12-45-02__B2",
+      "allego_0__uid0806-12-45-02__C1",
+      "allego_0__uid0806-12-45-02__C2",
+      "allego_0__uid0806-12-45-02__D1",
+      "allego_0__uid0806-12-45-02__D2",
+      "allego_1__uid0806-16-57-38__A1",
+      "allego_1__uid0806-16-57-38__A2",
+      "allego_1__uid0806-16-57-38__B1",
+      "allego_1__uid0806-16-57-38__B2",
+      "allego_1__uid0806-16-57-38__C1",
+      "allego_1__uid0806-16-57-38__C2",
+      "allego_1__uid0806-16-57-38__D1",
+      "allego_1__uid0806-16-57-38__D2"
+    ],
+    "cohort": "HLB-fem-profsurgery-troubleshooting",
+    "n_animal_recordings": 32,
+    "palette": "okabe_ito_on_white",
+    "recordings": [
+      "allego_0__uid0806-12-45-02",
+      "allego_1__uid0731-18-06-37",
+      "allego_1__uid0806-16-57-38",
+      "allego_2__uid0802-01-46-57"
+    ],
+    "seed": 20260809,
+    "style": "default (scientific-visualization skill asset)"
+  },
+  "schema_version": "1.0",
+  "settings": {
+    "bbox_inches": null,
+    "dpi": 300.0,
+    "facecolor": "white",
+    "figure_size_inches": [
+      11.69,
+      13.080000000000002
+    ],
+    "font_mode": "truetype",
+    "formats": [
+      "png",
+      "pdf"
+    ],
+    "pad_inches": 0.1,
+    "transparent": false
+  },
+  "versions": {
+    "matplotlib": "3.11.0",
+    "pillow": "12.2.0"
+  },
+  "warnings": []
+}

@@ -1,0 +1,271 @@
+# =============================================================================
+# COHORT MANIFEST -- HLB female cohort, professor's surgeries, rig troubleshooting
+# =============================================================================
+#
+# HOW TO READ THIS FILE
+#   Every field is optional. A field that is absent renders as "not recorded" on
+#   the animal card, on purpose, so that the gaps stay visible until they are
+#   filled. Do not invent a value to make a card look tidy.
+#
+#   Every value that came from somewhere carries a `sources:` entry naming where.
+#   Values seeded from the vault are stamped with the document they came from.
+#
+# ⚠️ ANIMAL IDs HERE ARE PROVISIONAL. This project never recorded animal
+#   identities, only rig positions, so the ids below are placeholders of the form
+#   HLB-<position>. Replace them with the real ear tags the moment the husbandry
+#   spreadsheet exists; `cohorts/load.py --husbandry` joins on `animal_id`.
+#
+# ⚠️ ALMOST ALL HUSBANDRY DATA IS MISSING and cannot be recovered from the vault:
+#   arrival dates, dates of birth, ages, every body weight, surgical notes and
+#   sampling notes were never written down. The vault says so itself, in
+#   `02-procedures/eeg-data-analysis/analysis-methods-and-justification.md` §7:
+#   "THIS IS CURRENTLY LOGGED NOWHERE. IT NEEDS TO START."
+#
+# WHAT IS ACTUALLY KNOWN
+#   - surgeries 21 to 23 July 2026, per-animal dates never recorded
+#   - first tethered 30 July 2026, which is day 8 to 10 after surgery
+#   - recorded through 7 August 2026, then the whole cohort was replaced
+#   Source: 05-experiments/completed/2026-08-08-professor-update-short.md
+#
+# TETHER ARMS (the experimental variable this cohort exists to test)
+#   arm A  original tether, through the slip ring
+#   arm B  19.5 cm short tether, joints SOLDERED and encapsulated in resin,
+#          through the slip ring
+#   arm C  long tether, soldered, DIRECT to the headstage, NO slip ring
+#   Source: 05-experiments/active/2026-08-05-tether-comparison.md
+# =============================================================================
+
+cohort_id: HLB-fem-profsurgery-troubleshooting
+title: HLB female cohort, professor's surgeries, tether troubleshooting
+project_id: neurosurveillance-eeg
+description: >
+  The original EEG plus EMG cohort. Eight rig positions, seven animals, one
+  position holding a cut tether attached to nothing. This is the cohort on which
+  the tether chain was identified as the bottleneck, and on which the only
+  scoreable sleep this project holds was recorded. Replaced on the evening of
+  2026-08-07 by a separate EEG plus EMG plus ECG cohort belonging to another lab
+  member, which is NOT part of this manifest.
+
+roles: [eeg, emg]          # /1 EEG, /2 EMG for slot 1; /33, /34 for slot 2
+criterion: hum             # see core/criteria.py; valid HERE because the in-file
+                           # floor is bimodal on this cohort. It is NOT valid on
+                           # the ECG cohort, where a floating channel scores 100%.
+
+notes: >
+  Position labels are RIG POSITIONS, not animals. The B1 position held two
+  different mice: the original was sacrificed on 2026-08-05 after its skull
+  electrode physically detached, and a second animal was tethered into the same
+  position on 2026-08-06. Any figure labelled only "B1" spanning both dates is
+  showing two animals as one.
+
+# -----------------------------------------------------------------------------
+# Recordings that belong to this cohort.
+# The four substantive ones. Short setup files from the same days are excluded.
+# -----------------------------------------------------------------------------
+recordings:
+  - base: allego_1__uid0731-18-06-37
+    date: 2026-07-31
+    notes: 27.90 h, 8 positions. C1 and C2 scoreable. The only real sleep this project held until August.
+  - base: allego_2__uid0802-01-46-57
+    date: 2026-08-02
+    notes: 21.74 h, 8 positions, nothing scoreable.
+  - base: allego_0__uid0806-12-45-02
+    date: 2026-08-06
+    notes: 3.18 h afternoon. B1-new 99.8 percent usable EEG, everything else 0.0 percent.
+  - base: allego_1__uid0806-16-57-38
+    date: 2026-08-06
+    notes: 23.66 h overnight across a full light and dark cycle. The best recording the project has produced.
+
+# -----------------------------------------------------------------------------
+animals:
+
+  - animal_id: HLB-A1
+    sex: F
+    vendor: HLB
+    # surgery_date: not recorded, somewhere in 21 to 23 July 2026
+    tether_date: 2026-07-30
+    placements:
+      - from: 2026-07-30
+        position: A1
+        tether_arm: A
+        source: vault 2026-08-08-full-update-for-professor
+    recordings:
+      - {base: allego_1__uid0731-18-06-37, date: 2026-07-31, position: A1}
+      - {base: allego_2__uid0802-01-46-57, date: 2026-08-02, position: A1}
+      - {base: allego_0__uid0806-12-45-02, date: 2026-08-06, position: A1}
+      - {base: allego_1__uid0806-16-57-38, date: 2026-08-06, position: A1}
+    notes: >
+      The most electrically stable channel on the rig, five sweeps across five
+      days all below 0.35 MOhm, and still only 5 to 7.6 percent usable, because
+      296 of its 331 uV rms is mains hum. The standing counterexample to reading
+      impedance as quality.
+    sources: {tether_date: vault 2026-08-08-professor-update-short}
+
+  - animal_id: HLB-A2-NO-MOUSE
+    vendor: HLB
+    placements:
+      - from: 2026-07-30
+        position: A2
+        tether_arm: A
+        tether_notes: cut tether attached to nothing, still wired through its slip ring
+        source: vault 04-journal/2026-08/2026-08-06
+    recordings:
+      - {base: allego_1__uid0731-18-06-37, date: 2026-07-31, position: A2, role: no-mouse control}
+      - {base: allego_2__uid0802-01-46-57, date: 2026-08-02, position: A2, role: no-mouse control}
+      - {base: allego_0__uid0806-12-45-02, date: 2026-08-06, position: A2, role: no-mouse control}
+      - {base: allego_1__uid0806-16-57-38, date: 2026-08-06, position: A2, role: no-mouse control}
+    notes: >
+      NOT AN ANIMAL. Discovered on 2026-08-06 to be a cut tether attached to
+      nothing. It reads "connected" in 22 percent of channel-sweeps at the old
+      2 MOhm pass mark, which is what retired that threshold in favour of
+      0.5 MOhm, and it rails 100 percent of the time, which is what proved
+      railing is the open-electrode signature rather than movement artefact.
+      ⚠️ Whether this position ever held a mouse before 2026-08-06 is NOT
+      recorded anywhere. Treated as a no-mouse control throughout because that
+      is what every measurement of it shows.
+
+  - animal_id: HLB-B1a
+    sex: F
+    vendor: HLB
+    tether_date: 2026-07-30
+    sacrifice_date: 2026-08-05
+    placements:
+      - {from: 2026-07-30, position: B1, tether_arm: A, source: vault 2026-08-05-tether-comparison}
+      - {from: 2026-08-05, position: B1, tether_arm: B, tether_notes: swapped 17:46, source: vault 2026-08-05-tether-comparison}
+    recordings:
+      - {base: allego_1__uid0731-18-06-37, date: 2026-07-31, position: B1}
+      - {base: allego_2__uid0802-01-46-57, date: 2026-08-02, position: B1}
+    notes: >
+      THE ORIGINAL B1. Sacrificed on 2026-08-05 because its skull electrode
+      physically detached: the only direct physical evidence of an implant-level
+      problem anywhere in this cohort. Carried arm A, then arm B on its last day,
+      where its EEG went from 5 flips and a median of 2.913 MOhm to zero flips
+      and a median of 0.903 MOhm. Arm C was never run on it.
+      ⚠️ An earlier vault write-up recorded this as an anaesthesia death, and the
+      welfare action taken from that, were both withdrawn on 2026-08-09.
+
+  - animal_id: HLB-B1b
+    sex: F
+    vendor: HLB
+    surgery_date: 2026-07-21
+    tether_date: 2026-08-06
+    placements:
+      - from: 2026-08-06
+        position: B1
+        tether_arm: B
+        tether_notes: 19.5 cm short tether, soldered joints encapsulated in resin
+        source: vault 2026-08-06-fleet-duty-cycle-census
+    recordings:
+      - {base: allego_0__uid0806-12-45-02, date: 2026-08-06, position: B1}
+      - {base: allego_1__uid0806-16-57-38, date: 2026-08-06, position: B1}
+    notes: >
+      A DIFFERENT ANIMAL from HLB-B1a in the same rig position. Implanted 21 July
+      with the rest of the cohort, then left in its home cage untethered for
+      16 days, which makes it the first animal this project ever tethered in line
+      with its own 14 day protocol. Produced 23.66 h of usable EEG in ONE
+      unbroken block, the best recording the project has.
+    sources: {surgery_date: vault 2026-08-06-fleet-duty-cycle-census, tether_date: same}
+
+  - animal_id: HLB-B2
+    sex: F
+    vendor: HLB
+    tether_date: 2026-07-30
+    placements:
+      - {from: 2026-07-30, position: B2, tether_arm: A}
+    recordings:
+      - {base: allego_1__uid0731-18-06-37, date: 2026-07-31, position: B2}
+      - {base: allego_2__uid0802-01-46-57, date: 2026-08-02, position: B2}
+      - {base: allego_0__uid0806-12-45-02, date: 2026-08-06, position: B2}
+      - {base: allego_1__uid0806-16-57-38, date: 2026-08-06, position: B2}
+    notes: >
+      Shared-path fault. Its own two channels correlate at 0.50 where working
+      animals sit at 0.07, and 100 percent of its EEG-railed epochs also rail on
+      EMG, which localises the fault to a path shared by both channels rather
+      than to two coincidental electrode failures.
+
+  - animal_id: HLB-C1
+    sex: F
+    vendor: HLB
+    tether_date: 2026-07-30
+    placements:
+      - {from: 2026-07-30, position: C1, tether_arm: A}
+    recordings:
+      - {base: allego_1__uid0731-18-06-37, date: 2026-07-31, position: C1}
+      - {base: allego_2__uid0802-01-46-57, date: 2026-08-02, position: C1}
+      - {base: allego_0__uid0806-12-45-02, date: 2026-08-06, position: C1}
+      - {base: allego_1__uid0806-16-57-38, date: 2026-08-06, position: C1}
+    notes: >
+      The single most informative animal in the cohort. Best EEG in the fleet on
+      31 July at 0.465 MOhm, survived deliberate joint-by-joint provocation of
+      its cable, and produced 8.73 h of sleep in one 8.1 h unbroken block with
+      r@1min +0.744, still the highest this project has recorded. Two days later
+      its EEG was electrically open, and it never recorded again even though the
+      impedance returned to a good value on 4 August. A channel can read
+      connected and still record nothing.
+
+  - animal_id: HLB-C2
+    sex: F
+    vendor: HLB
+    tether_date: 2026-07-30
+    placements:
+      - {from: 2026-07-30, position: C2, tether_arm: A}
+    recordings:
+      - {base: allego_1__uid0731-18-06-37, date: 2026-07-31, position: C2}
+      - {base: allego_2__uid0802-01-46-57, date: 2026-08-02, position: C2}
+      - {base: allego_0__uid0806-12-45-02, date: 2026-08-06, position: C2}
+      - {base: allego_1__uid0806-16-57-38, date: 2026-08-06, position: C2}
+    notes: >
+      Second scoreable animal of 31 July, 4.02 h gated with r@1min +0.532.
+      Later a CONFIRMED CHEWED TETHER, read off the data before it was seen: both
+      channels sit at intermediate hum, 1076 and 1331 uV, which is QUIETER than
+      the 2276 uV bare-wire floor, with near-zero railing and no signal. A
+      partially conducting damaged cable, not an open one.
+
+  - animal_id: HLB-D1
+    sex: F
+    vendor: HLB
+    tether_date: 2026-07-30
+    placements:
+      - {from: 2026-07-30, position: D1, tether_arm: A}
+    recordings:
+      - {base: allego_1__uid0731-18-06-37, date: 2026-07-31, position: D1}
+      - {base: allego_2__uid0802-01-46-57, date: 2026-08-02, position: D1}
+      - {base: allego_0__uid0806-12-45-02, date: 2026-08-06, position: D1}
+      - {base: allego_1__uid0806-16-57-38, date: 2026-08-06, position: D1}
+    notes: >
+      Shared-path fault, the clearest one: its own two channels correlate at 0.74
+      against 0.07 in working animals, and it rails 100 percent of the time with
+      a longest continuous railed run of 130.3 minutes, identical to the position
+      that holds no animal.
+
+  - animal_id: HLB-D2
+    sex: F
+    vendor: HLB
+    tether_date: 2026-07-30
+    placements:
+      - {from: 2026-07-30, position: D2, tether_arm: A}
+      # ⚠️ THE TIME MATTERS. The swap happened at 16:27 on 2026-08-06, between
+      # the 12:45 afternoon recording (arm A) and the 16:57 overnight recording
+      # (arm C). A date-only entry labels both recordings arm C, which would
+      # attribute the afternoon's failure to the tether that actually fixed it.
+      - from: 2026-08-06 16:27
+        position: D2
+        tether_arm: C
+        tether_notes: long tether, soldered, direct to headstage, no slip ring
+        source: vault 2026-08-07-overnight-recording-two-animals-work
+    recordings:
+      - {base: allego_1__uid0731-18-06-37, date: 2026-07-31, position: D2}
+      - {base: allego_2__uid0802-01-46-57, date: 2026-08-02, position: D2}
+      - {base: allego_0__uid0806-12-45-02, date: 2026-08-06, position: D2}
+      - {base: allego_1__uid0806-16-57-38, date: 2026-08-06, position: D2}
+    notes: >
+      THE DEMONSTRATION THAT THE TETHER IS THE FIX. Went from 0.0 percent to
+      87.9 percent usable EEG after an arm C swap and nothing else: hum 916.9 to
+      133.2 uV, spectral slope -0.38 to -2.05, railing 29.7 to 0.0 percent, with
+      its implant untouched. Tethered at day 8 after surgery, which is why long
+      post-operative recovery is not required for a usable recording.
+      ⚠️ A 40-sweep impedance block taken just after the swap said the swap had
+      HARMED this animal, p = 8.4e-08. The block spanned 21 minutes and caught
+      one long open state. The recording reversed it completely. This is the
+      origin of the rule that impedance blocks screen and only a multi-hour
+      recording is an outcome.
