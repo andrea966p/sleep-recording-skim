@@ -7,13 +7,14 @@
 >
 > Read a day here, then follow its links down. **Detail belongs in the linked notes, not in the journal.**
 
-**63 entries.** Dates with no entry had no vault activity, mostly weekends.
+**64 entries.** Dates with no entry had no vault activity, mostly weekends.
 
 
 ## August 2026
 
 | Date | Day | What happened |
 |---|---|---|
+| [[2026-08-18]] | Tue | ⭐ **Eight new W-SD mice screened in 6.4 min: FIVE give clean EEG (A1 A2 B2 C1 D2), B2 is EEG only, C2 electrode OPEN**; 🔴 **B1 + D1 headstage grounds went floating TODAY** (the silent chip was A2 on 08-14/16), connector re mate tomorrow; ⚠️ **the POOLED floor in `criteria.py` condemned all five good mice, per chip floor fixes it**; 🛑 6.3 min block vs a 15 min bar ⇒ INSUFFICIENT, not PASS |
 | [[2026-08-16]] | Sun | Work moved to the ThinkPad; **vault deletion root-caused (no Syncthing versioning + `.git` synced)**, both fixed and tested; duplicate laptop vault untangled; **shared Claude config now self-syncs via a `SessionEnd` hook**; **NAS backup + office PC DEFERRED on purpose** |
 | [[2026-08-02]] | Sun | All 8 mice rescored: **D2 withdrawn, replication is n=2**; **B1 = 11.8 h of good EEG blocked by a dead EMG**; 5/8 mice have zero EEG |
 | [[2026-08-01]] | Sat | ⭐⭐ **CHANNEL MAP WAS WRONG — EMG always worked; FIRST REAL SLEEP ARCHITECTURE (C1: W 66.8 / NREM 29.3 / REM 3.9 %)**; 21 scoreable mouse-hours, not zero |
