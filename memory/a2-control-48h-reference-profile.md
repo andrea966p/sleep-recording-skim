@@ -8,6 +8,8 @@ metadata:
   modified: 2026-08-11T00:49:42.389Z
 ---
 
+🛑 **THAT MOUSE IS GONE. THIS IS A HISTORICAL SINGLE ANIMAL, NOT A STANDING REFERENCE.** Every run has new mice unless the user says otherwise, and a rig position is not an animal ([[cohort-identity-every-run-is-new-mice]]). **Do NOT carry these numbers, or the label "the A2 control", into a later cohort** — judge each file against the wire-free floor inside that same file. What still transfers is the METHOD (ZT0 start, the EMG state-dependence test, the threshold sweep), never the animal.
+
 ⭐⭐⭐ **THE BEST DATA THIS PROJECT HAS EVER TAKEN. `allego_0__uid0809-09-00-00`, 2026-08-09 09:00 to 2026-08-11 09:11, 48.19 h, 181.8 GB, INTACT** (173,496,576 samples both files, remainders 0). A2 = the old B1 mouse, port A slot 2, short soldered resin tether. Sites **`A/33` EEG, `A/34` EMG**.
 
 ⭐⭐ **STARTED AND ENDED AT ZT0** (lights on 09:00) ⇒ **two complete circadian cycles, 24.2 h light and 24.0 h dark, equal**. 📌 **Make a ZT0 start the default for any run over a day** — costs nothing, removes a correction from every circadian number. Helper `eeg-emg-analysis/qc/start_recording_at.py HH:MM:SS`.
