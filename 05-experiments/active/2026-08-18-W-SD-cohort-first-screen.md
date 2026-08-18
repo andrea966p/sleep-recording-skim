@@ -188,3 +188,120 @@ hypnogram exists for this cohort.
 > The per chip floor run and the blind 256 channel scan were written outside the repository and are
 > not committed. `~/Monitoring_project/eeg-emg-analysis` still has zero git commits, so nothing on
 > this page can currently be reproduced from a tagged version of the code.
+
+---
+
+# The one hour run after the electrode re-seat
+
+Andrea checked and re-seated the electrodes on the evening of 2026-08-18 and started a second
+recording. **`allego_1__uid0818-20-50-26`, 20:50:26 to 21:50:39 KST, 3612.9 s = 1.004 h, 3.79 GB.**
+Stopped deliberately at one hour. **File INTACT**: 3,612,928 data samples equal 3,612,928 timestamp
+samples, remainders 0 and 0. Same two roles, same per chip floor method, 361 quality control epochs
+of 10 s.
+
+## The re-seat worked on two of the three problems
+
+| chip | before, 18:56 run | after re-seat | verdict |
+|---|---|---|---|
+| **D slot 1** | 82 µV | **4456 µV** | ✅ **FIXED** |
+| **B slot 1** | 162 µV | **453 µV** | ⚠️ **STILL PARTIAL**, about nine times below the others |
+| everything else | 3088 to 5192 | 3857 to 4992 | ✅ normal |
+
+⚠️ **B slot 1 is NOT intermittent, it is consistently wrong.** Median 60 Hz on its wire free inputs
+across six ten minute chunks of the hour: **481, 473, 476, 473, 451, 449 µV**, against 5009, 5065,
+5055, 5016, 4859, 4919 on port A slot 1 over the same chunks. A loose connector would flap. This
+one sits still at the wrong value, which points at a **seated but incorrect or high resistance
+ground path** rather than a connector that has fallen out. Worth checking the pin position itself,
+not just pushing the connector home again.
+
+## ✅ Correction to this morning's page: W-SD C2 was NOT an animal side failure
+
+Above I wrote that W-SD C2 had an open electrode and that there was "nothing to do about that from
+the outside". **That was wrong.** After the re-seat its spectral slope moved from **−0.16 to −1.07**
+and it produces real signal for part of the hour. The fault was in the connection, not in the
+implant. **The lesson is the one this project keeps relearning: do not call a channel an animal
+side failure until the connector has been re-seated and the animal re-recorded.**
+
+C2 is still not good, it is **intermittent**: 39.3 % of the hour usable with a longest unbroken
+block of 8.7 minutes, its root mean square amplitude has risen to 297.6 µV, and it is the only EEG
+channel in the file with any railing at all, 0.9 %.
+
+## The verdict, one hour, per chip floor
+
+**Electroencephalogram alone**, slope criterion against that chip's own wire free inputs:
+
+| mouse | slope | usable % of the hour | longest unbroken block | rung 2 on EEG |
+|---|---|---|---|---|
+| **W-SD A1** | −1.48 | **100.0** | **60.2 min** (the whole hour) | ✅ **PASS** |
+| **W-SD C1** | −1.25 | **100.0** | **60.2 min** (the whole hour) | ✅ **PASS** |
+| **W-SD A2** | −1.51 | 99.4 | **34.3 min** | ✅ **PASS** |
+| **W-SD D2** | −1.44 | 99.4 | **52.8 min** | ✅ **PASS** |
+| **W-SD B2** | −1.39 | 97.8 | **15.8 min** | ✅ **PASS** |
+| W-SD C2 | −1.07 | 39.3 | 8.7 min | ❌ INSUFFICIENT |
+| W-SD D1 | −1.17 | 29.4 | 2.0 min | ❌ INSUFFICIENT |
+| W-SD B1 | −1.21 | 0.3 | 0.2 min | ❌ INSUFFICIENT |
+
+⭐ **Five mice clear the 15 minute rung 2 bar on EEG, and two of them are usable for the entire
+hour without a single break.** Zero railed epochs on all five. Every chip passes its own
+falsification check, mean 0.00 to 0.79 % against the 1 % expected by construction.
+
+**Electromyogram**, hum plus amplitude against the same chip floor:
+
+| mouse | rms µV | 60 Hz µV | usable % | longest block |
+|---|---|---|---|---|
+| W-SD D2 | 58.3 | 10.5 | 95.3 | **20.8 min** ✅ |
+| W-SD A2 | 53.1 | 6.9 | 92.8 | **24.2 min** ✅ |
+| W-SD A1 | 74.1 | 15.2 | 92.8 | 13.5 min |
+| W-SD C1 | 115.5 | 26.6 | 83.4 | 14.0 min |
+| W-SD B1 | 101.2 | 37.7 | 82.0 | 7.2 min |
+| W-SD C2 | 101.1 | 18.2 | 56.0 | 11.2 min |
+| W-SD D1 | 1439.3 | 1400.4 | 0.3 | 0.2 min ❌ |
+| W-SD B2 | 442.5 | 543.4 | 0.0 | 0.0 min ❌ |
+
+## 🔑 The strict ladder verdict is harsher, and it is the one to quote
+
+`cards/ladder.py` computes rung 2 on the **AND of the two channels**: an epoch counts only if the
+electroencephalogram **and** the electromyogram are both usable in that same epoch, and the 15
+minute bar is applied to that combined block. That is deliberate, because a sleep stage needs both.
+
+| mouse | both usable % | longest combined block | **RUNG 2** |
+|---|---|---|---|
+| **W-SD A2** | 92.2 | **24.2 min** | ✅ **PASS** |
+| W-SD D2 | 94.7 | 13.5 min | 🟡 INSUFFICIENT |
+| W-SD A1 | 92.8 | 13.5 min | 🟡 INSUFFICIENT |
+| W-SD C1 | 83.4 | 14.0 min | 🟡 INSUFFICIENT |
+| W-SD C2 | 38.8 | 4.3 min | 🟡 INSUFFICIENT |
+| W-SD B2 | 0.0 | 0.0 min | ❌ FAIL, dead electromyogram |
+| W-SD B1 | 0.0 | 0.0 min | ❌ FAIL |
+| W-SD D1 | 0.0 | 0.0 min | ❌ FAIL |
+
+⚠️ **Only W-SD A2 formally passes rung 2 on this hour.** But read the middle three carefully:
+**D2, A1 and C1 sit at 83 to 95 % of the hour usable and miss the bar by one to one and a half
+minutes**, because short electromyogram dropouts chop the combined run. That is a very different
+situation from B1, B2 and D1, which produce nothing. 📌 **The obvious next test is simply a longer
+recording**: an hour is short enough that a couple of dropouts decide the verdict, and all three
+would likely clear 15 minutes somewhere in a night.
+
+## Where the cohort stands tonight
+
+- ✅ **Good, and ready for a long recording: W-SD A1, A2, C1, D2.** Four mice with 92 to 100 %
+  usable brain signal and a working muscle channel.
+- 🟡 **Brain signal only: W-SD B2.** 97.8 % usable EEG with a 15.8 min block, but its EMG channel
+  is open at 443 µV. Usable for anything that does not need muscle tone, not for sleep staging.
+- 🟡 **Intermittent, keep watching: W-SD C2.** Recovered from dead to 39 % after the re-seat.
+- ❌ **Not usable tonight: W-SD B1 and W-SD D1.** B1 sits behind a partially grounded chip.
+  D1's chip ground is now fixed but its own two channels still fail, its electromyogram at
+  1439 µV, so D1 is the one animal whose problem may genuinely be animal side.
+
+## Still open after today
+
+- [ ] **W-SD B1: check the ground PIN POSITION on port B slot 1**, not just the connector seating.
+      Stable at 450 µV for a full hour says wrongly seated, not loose.
+- [ ] **W-SD D1: re-seat once more, then treat as animal side if it does not move.** Its chip is
+      grounded now and it still fails, which is the first evidence in this cohort of a fault that
+      is not the connector.
+- [ ] **Run a full night on A1, A2, C1 and D2.** Prefer a ZT0 start with `qc/start_recording_at.py`
+      if it will run past a day.
+- [ ] **Give `core/criteria.py` a per chip floor option.** Still outstanding, still the reason none
+      of tonight's numbers came from `cards/ladder.py` directly.
+- [ ] Cohort manifest for W-SD, once animal identifiers, surgery dates, sex and tether arms exist.
