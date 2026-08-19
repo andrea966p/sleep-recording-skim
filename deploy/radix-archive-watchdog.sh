@@ -40,6 +40,19 @@ if (( 10#$HH >= 8 && 10#$HH < 20 )) && ! { (( 10#$HH == 8 )) && (( 10#$MM < 30 )
   exit 0
 fi
 
+# A live recording is a reason to wait, not a failure. Without this the
+# watchdog would start-and-defer every 20 min for the whole length of a run,
+# burning a "strike" each time and eventually Slacking that it is stuck.
+REPO="/home/skimlab/Monitoring_project/eeg-emg-analysis"
+PY="/opt/neurosurveillance/venv/bin/python3"
+MODE=$(cd "$REPO" && PYTHONPATH="$REPO" timeout 30 "$PY" -c "
+from radiens.allego_client import AllegoClient
+print(AllegoClient().get_status().recording.mode)" 2>/dev/null | tail -1)
+if [[ "$MODE" == "R_ON" ]]; then
+    log "recording is live; standing down silently (no strike)"
+    exit 0
+fi
+
 n=$(( $( [[ -f "$STRIKES" ]] && cat "$STRIKES" || echo 0 ) + 1 ))
 echo "$n" > "$STRIKES"
 log "no run in progress and archive incomplete -> starting (restart #$n)"

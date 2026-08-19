@@ -95,6 +95,12 @@ TOTAL_FILES=${#FILES[@]}
 TOTAL_BYTES=$(du -sb "$SRC" | cut -f1)
 log "=== radix-archive start: $TOTAL_FILES files, $(human "$TOTAL_BYTES") ==="
 
+if recording_active; then
+  log "a recording is live — deferring entirely (no files touched)"
+  echo "DEFERRED $(date '+%F %T')" > "$LOGS/radix-archive.state"
+  exit 0
+fi
+
 START_TS=$(date +%s)
 done_files=0; done_bytes=0; failed_files=0; skipped=0
 FAILED_LIST=""
@@ -111,10 +117,13 @@ It resumes automatically tonight; nothing is lost."
     exit 0
   fi
 
+  # A recording that starts mid-run means we stop, not churn. Sleeping per file
+  # would idle for ~21 h across the file list and then report INCOMPLETE to Slack
+  # once per pass for the whole length of the recording.
   if recording_active; then
-    log "recording is R_ON — backing off 10 min"
-    sleep 600
-    continue
+    log "recording started — deferring the rest of the run, will resume when it ends"
+    echo "DEFERRED $(date '+%F %T')" > "$LOGS/radix-archive.state"
+    exit 0
   fi
 
   size=$(stat -c %s "$src")
