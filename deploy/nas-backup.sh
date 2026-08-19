@@ -16,7 +16,10 @@
 set -euo pipefail
 
 # ---- NAS target -------------------------------------------------------------
-NAS_HOST="100.120.86.10"      # Tailscale address
+# Use the MagicDNS name, NOT a literal 100.x address. The NAS was readdressed
+# (100.120.86.10 -> 100.120.86.9) and the hardcoded literal silently broke every
+# run from 2026-08-14 to 2026-08-19. Third stale-address outage in this setup.
+NAS_HOST="bilab-syn.tail8808c0.ts.net"   # shared into this tailnet from bilab
 NAS_PORT="53"
 NAS_USER="Andrea"
 NAS_DIR="e10_setup_backups"   # relative to NAS user's home
@@ -31,6 +34,9 @@ INCLUDES=(
   "${PROJECT_HOME}/Monitoring_project_obsidian_vault"
   "${PROJECT_HOME}/neurosurveillance"
   "${PROJECT_HOME}/neurosurveillance-system"
+  "${PROJECT_HOME}/eeg-emg-analysis"       # the EEG/EMG analysis stack (git repo since 2026-08-19)
+  "home/skimlab/radix/devices"             # Allego device/port configuration
+  "home/skimlab/radix/workspace"           # Allego workspace settings
   "opt/neurosurveillance/config.yaml"
   "opt/neurosurveillance/sessions"
   "opt/neurosurveillance/exports"          # MP4s are excluded below; keeps the sidecar JSONs

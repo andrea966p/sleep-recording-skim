@@ -30,3 +30,8 @@ Thumbs.db
 # === Logs ===
 *.log
 .stignore
+
+# === Ops runtime state (deploy/) ===
+# Lock files, rotating logs and the archive manifest are runtime state, not source.
+# The manifest IS still protected: deploy/ is inside the nightly NAS tarball.
+deploy/logs/
