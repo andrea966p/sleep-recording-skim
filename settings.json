@@ -9,6 +9,12 @@
             "command": "bash -lc 'node \"$HOME/.claude/hooks/caveman-activate.js\"'",
             "timeout": 5,
             "statusMessage": "Loading caveman mode..."
+          },
+          {
+            "type": "command",
+            "command": "bash -lc '\"$HOME/claude-portable/sync.sh\" --pull-only'",
+            "timeout": 30,
+            "statusMessage": "Syncing shared memory..."
           }
         ]
       }
