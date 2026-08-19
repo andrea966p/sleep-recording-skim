@@ -112,6 +112,16 @@ password authentication alone.
 Long running rig commands must not die when the connection drops. Use
 `ssh e10 -t 'tmux new -As rig'` for interactive work.
 
+> [!warning] tmux did not exist on e10ubuntu until 2026-08-19
+> This page and `CLAUDE.md` had promised that command since 2026-08-16, but the binary was
+> never there. Neither was `screen`, `zellij`, `byobu` or `dtach`, so **every long running
+> command run this way since then died with its SSH connection**. Installed 2026-08-19 with
+> `sudo apt install tmux`, now `tmux 3.4` on e10ubuntu and `3.6` on the ThinkPad. Docker is
+> `apt-mark hold` so the install could not disturb it, and the live recording was unaffected.
+> LESSON: an instruction written into a guide is not a validated instruction. If a fallback
+> is ever needed again, `ssh e10 'setsid nohup <cmd> > ~/logs/<name>.log 2>&1 < /dev/null &'`
+> survives a drop, but gives you no reattach.
+
 ### Claude Code parity across machines
 
 New repository at `~/claude-portable`, cloned onto every machine. It holds the
@@ -256,6 +266,10 @@ Ran end to end on 2026-08-16, laptop paired and verified:
   folder, then verify its file count matches before trusting it. Do not simply
   unpause it. It is reachable through the Syncthing relay even while Tailscale
   reports it offline, so it will reconnect the instant it is allowed to.
+- 🔴 **The two code folders replicate a live `.git` with NO versioning, and the office PC is
+  still SHARED on both of them** (paused, but not unshared the way the vault was). Measured
+  2026-08-19, deliberately NOT fixed. `.stignore` on both machines is a PRECONDITION for the
+  bring-back above. Details and the exact fix: the last section of this page.
 - The office PC is also still on the OLD tailnet. Worth logging it into
   `skimlab.kaist@gmail.com` while I am there, same as the Synology.
 - Obsidian is now installed on the ThinkPad. **Expect obsidian-git to complain there**:
@@ -333,3 +347,63 @@ without changing anything:
 > Anything touching Allego, radiens, Docker, Frigate or `~/radix/data` only works on e10ubuntu.
 > From the laptop use `ssh e10 '<command>'`, and `ssh e10 -t 'tmux new -As rig'` for anything long
 > running so an SSH drop does not kill it.
+
+## The live `.git` replication hazard on the two code folders (measured 2026-08-19, NOT fixed, deliberate)
+
+> [!warning] DORMANT, NOT SAFE. It arms the moment the office PC is unpaused.
+> `neurosurveillance` and `neurosurveillance-system` are Syncthing folders that DO
+> replicate a live `.git`, with NO file versioning, so there is no undo. That is exactly
+> the combination that destroyed the vault on 2026-04-29. Nothing was changed on
+> 2026-08-19 because the only peer for both folders is the office PC and it is paused,
+> so today the replication goes nowhere. **The fix below is a PRECONDITION for bringing
+> the office PC back, alongside the vault `.stignore` step already listed in STILL OPEN.**
+
+### What I actually measured, from the laptop
+
+Everything here came from the Syncthing REST application programming interface on both
+machines on 2026-08-19, not from memory.
+
+| Syncthing folder | Path on e10ubuntu | Peers | Excludes `/.git`? | Versioning |
+|---|---|---|---|---|
+| `monitoring_project_obsidian_vault` | `~/Monitoring_project/Monitoring_project_obsidian_vault` | laptop + e10ubuntu | YES | staggered |
+| `neurosurveillance-private` | `~/Monitoring_project/neurosurveillance` | **office PC** + e10ubuntu | **NO** | **NONE** |
+| `neurosurveillance-system` | `~/Monitoring_project/neurosurveillance-system` | **office PC** + e10ubuntu | **no `.stignore` file at all** | **NONE** |
+
+- `db/browse` on both code folders lists `.git` at the top level, so `.git` really is in
+  the synced index, it is not merely un-ignored on disk. Sizes are 1.4 MB and 676 KB.
+- `neurosurveillance-private` does have a `.stignore`, but it only covers build
+  artefacts, editor files and logs. There is no `/.git` line in it.
+- Office PC device `TP5LGIP` reads `connected=False, paused=True` on e10ubuntu, and both
+  code folders still list it as a device. So it is PAUSED but, unlike the vault folder,
+  it was never UNSHARED from these two.
+- All three folders were `state=idle`, `needFiles=0`, `errors=0`. Vault is 498 local and
+  498 global on both machines, `neurosurveillance-private` 242, `neurosurveillance-system` 121.
+
+### 🔴 Correction to what this page said before
+
+The laptop does **not** have either code folder. Its Syncthing has exactly two folders,
+`default` (empty, 0 files) and the vault. Any claim that a live `.git` is replicating
+between e10ubuntu and the ThinkPad is WRONG. The exposure is e10ubuntu to office PC only.
+
+### The fix, when it is done
+
+Run it on e10ubuntu, and on the office PC's own copy before that machine is unpaused,
+because **`.stignore` is per device and is itself never synced**.
+
+1. Tar snapshot both folders into `~/vault-snapshots/` first. Standing rule.
+2. Add `/.git` to `~/Monitoring_project/neurosurveillance/.stignore`.
+3. Create `~/Monitoring_project/neurosurveillance-system/.stignore` containing `/.git`.
+4. Consider turning on staggered versioning for both folders, matching the vault.
+
+Adding an ignore rule deletes nothing. Syncthing simply stops syncing that path. But
+note the lesson from the vault: **pausing or ignoring does NOT retract what a device has
+already announced into the global index**, so if the office PC ever does announce its
+`.git`, removing it from the folder's device list is what cleans the index.
+
+### Other small corrections from the same session
+
+- The laptop's Syncthing config is `~/.local/state/syncthing/config.xml` and its web
+  interface is on `127.0.0.1:8384`. The `~/.config/syncthing` plus port 8080 written
+  elsewhere on this page is the **e10ubuntu** layout, not a universal one.
+- Laptop to e10ubuntu Syncthing is currently a DIRECT local network transmission control
+  protocol connection on the KAIST network, not Tailscale and not a relay.
