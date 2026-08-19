@@ -52,3 +52,14 @@ uid0809 A1=1611 A2=4753 B1=3286 B2=3601 C1=1640 C2=4686 D1=4871 D2=4763
 **Tonight's standing: good = A1, A2, C1, D2. EEG-only = B2. Intermittent = C2. Not usable = B1 (chip ground), D1 (chip now grounded and STILL fails ⇒ first possible genuine animal-side fault in this cohort).**
 
 Scratch scripts used (per-chip floor, blind 256-channel scan) were written outside the repo and are not committed. Engine: [[animal-card-verdict-ladder]]. 📌 **Andrea checks the B1+D1 connector seating on the morning of 2026-08-19.**
+
+
+---
+
+🔴🔴 **2026-08-19 17:16: W-SD B1 CHEWED AND CUT ITS TETHER. THE ANIMAL IN B1 IS NOW A DIFFERENT
+MOUSE** (a pre-tethered one from the habituation rack). ⛔ **EVERY B1 VERDICT ABOVE BELONGS TO THE
+OLD ANIMAL — DO NOT CARRY IT.** B1's failure was animal-side ground wiring, so a fresh animal there
+is a real test: **if the new B1 is ALSO dead, the fault is the RIG POSITION, not the mouse** — that
+would be a new finding. ⚠️ The chewed tether is damaged hardware, repair not yet logged.
+Runs: `allego_0__uid0819-09-00-00` (09:00-17:16, 8.27 h, 31.2 GB, 8 mice, old B1) then
+`allego_1__uid0819-17-25-20` (17:25 Wed → 09:00 Fri, ~39.6 h, new B1).

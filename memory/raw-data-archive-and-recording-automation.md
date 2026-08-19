@@ -41,3 +41,15 @@ Slack: `nvr-notify.sh`, reads the webhook at runtime from `/etc/netdata/health_a
 (world-readable) so there is no second copy of the secret. Verified HTTP 200.
 
 Related: [[nas-backup-stale-address-outage]] · [[nas-backup]] · [[recording-2026-08-18-eight-new-mice]]
+
+
+## 2026-08-19 evening revisions
+🔴 **A HAND-STARTED RECORDING DOES NOT ARM THE WATCHDOG.** Only `scheduled-recording.sh` writes
+`logs/current-recording.txt`. After starting a run by hand in Allego you MUST:
+`echo "<basename>" > deploy/logs/current-recording.txt && rm -f deploy/logs/watchdog-lastsize.txt`.
+**Deleting the lastsize file is not optional** — a stale baseline (30.4 GB vs a 126 MB new file)
+reads as shrinkage and fires a FALSE STALL alarm, or the watchdog disarms and leaves the run unwatched.
+✅ **Archive now DEFERS instead of churning during a recording** (~4 s exit, state `DEFERRED`), and the
+watchdog stands down silently without counting a strike. The old code slept 600 s PER FILE and
+skipped — ~21 h of sleeping per pass over 130 files, plus an "incomplete" Slack message every pass.
+⚠️ **The archive will not run between 08:30 and 20:00** (protected window) even with no recording.
