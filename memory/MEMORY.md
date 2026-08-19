@@ -68,6 +68,8 @@ NeuroSurveillance: Raspberry Pi 5 + Frigate NVR video monitoring for neuroscienc
 - Lab members list: only `["andrea"]`.
 
 ## Completed work (pointers)
+- ✅⭐⭐⭐ **[ALL 831 GB OF RAW DATA IS NOW ON THE NAS + UNATTENDED RECORDING, 2026-08-19](raw-data-archive-and-recording-automation.md).** 124 files, 7.5 h, **zero errors**, sha256 both ends, `.part`-then-rename. 🛑 **Never deletes locally.** ⚠️ ONE-SHOT not a schedule. 🔴🔴 **`radiens` ONLY in `/opt/neurosurveillance/venv/bin/python3`.** 🔑 Recording success = bytes growing on disk, nothing else. 🔴 **`ssh` in a `while read` loop eats stdin — always `ssh -n`** (my verifier said `ok=1` after ONE file). ⚠️ `nas-backup.sh` had NEVER included `eeg-emg-analysis`.
+- 🔴⭐⭐ **[NAS BACKUP: 6-DAY OUTAGE WAS A WRONG IP, 2026-08-19](nas-backup-stale-address-outage.md)** — NAS is `100.120.86.9`/`bilab-syn.tail8808c0.ts.net`, NOT `.10`. **Script now uses the MagicDNS name; never hardcode a `100.x` literal.** 🛑 Two confident wrong diagnoses first (ACL `autogroup:member`; stale Synology firewall rule) — **a `tailscale ping` pong proves neither that traffic flows nor that the address is still right.** ⚠️ `production-values.md` + `nas-backup.md` still list dead IPs. ⭐ NAS has **13 TB free**.
 - **NAS backup** DEPLOYED+VERIFIED (May 26): daily 00:00 → Synology over Tailscale. Transfer = **ssh pipe NOT rsync/scp**. [[nas-backup]].
 - **Stabilization sprint wk1 CLOSED** (May 22-26): Mosquitto auth + SHA-pins; SQLite WAL journal; Frigate restart-grace via LWT ([[pattern_frigate_mqtt_message_ordering]]); watchdog→Slack; ffprobe export sanity; nightly reconciler ([[pattern_frigate_record_enabled_orphan_noise]]).
 - **Storage mgmt** (Apr 2): StorageMonitor 30s poll, 200GB EEG reserve. [Storage](project_storage_management.md).
