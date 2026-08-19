@@ -27,6 +27,11 @@
 # USAGE
 #   sync.sh          commit tracked changes (except settings.json), pull, push
 #   sync.sh --status what would happen, changes nothing
+#   sync.sh --pull-only  fetch and fast-forward ONLY. Never commits, never pushes.
+#                        Meant for SessionStart: without it a session starts by
+#                        reading whatever memory happens to be on this disk, which
+#                        may be days behind another machine. Leaves a dirty tree
+#                        strictly alone rather than risking your uncommitted work.
 #
 # Vault doc: 01-infrastructure/multi-machine-work-setup.md
 
@@ -71,6 +76,49 @@ if [[ "${1:-}" == "--status" ]]; then
     say ""
     say "held back (never auto-committed):"
     git status --porcelain -- settings.json | sed 's/^/  /' || true
+    exit 0
+fi
+
+if [[ "${1:-}" == "--pull-only" ]]; then
+    # SessionStart path. The only goal is that the model reads current memory.
+    # Deliberately does NOT commit or push: at session start there is nothing new
+    # to share yet, and pushing here would blur who changed what.
+    exec 9>"$LOCKFILE"
+    flock -n 9 || { log "pull-only: another sync holds the lock, skipping"; exit 0; }
+
+    if ! timeout "$NET_TIMEOUT" git fetch -q "$REMOTE" "$BRANCH" 2>>"$LOGFILE"; then
+        log "pull-only: fetch failed or timed out"
+        exit 0
+    fi
+
+    behind="$(git rev-list --count HEAD.."$REMOTE/$BRANCH" 2>/dev/null || echo 0)"
+    if [[ "$behind" -eq 0 ]]; then
+        log "pull-only: already up to date"
+        exit 0
+    fi
+
+    # A dirty tree is left alone. Rebasing over uncommitted memory edits is
+    # exactly the kind of silent loss this repo exists to prevent.
+    if [[ -n "$(git status --porcelain -- "${PATHSPEC[@]}" 2>/dev/null)" ]]; then
+        log "pull-only: $behind commit(s) behind but tree is dirty, NOT rebasing"
+        say "claude-portable: $behind new commit(s) on $REMOTE/$BRANCH, but this machine has"
+        say "  uncommitted changes. NOT pulling. Memory may be stale this session."
+        say "  Resolve by hand:  cd $REPO && git pull --rebase"
+        exit 0
+    fi
+
+    start_commit="$(git rev-parse HEAD)"
+    if git rebase -q "$REMOTE/$BRANCH" 2>>"$LOGFILE"; then
+        log "pull-only: advanced $behind commit(s) from $REMOTE/$BRANCH"
+    else
+        git rebase --abort 2>/dev/null
+        if [[ "$(git rev-parse HEAD)" != "$start_commit" ]]; then
+            log "pull-only WARNING: HEAD moved despite rebase --abort"
+        fi
+        log "pull-only: REBASE CONFLICT, aborted, nothing changed"
+        say "claude-portable: pull conflict, rebase aborted. Memory may be stale this session."
+        say "  Resolve by hand:  cd $REPO && git pull --rebase"
+    fi
     exit 0
 fi
 
