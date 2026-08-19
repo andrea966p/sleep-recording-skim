@@ -31,8 +31,8 @@ at addresses from the old tailnet, and nobody noticed because they fail silently
 
 | Thing | Stale value | Effect |
 |---|---|---|
-| Syncthing peer, office PC | `tcp://100.117.204.8:22000` | Office PC could never reconnect |
-| Network attached storage backup script | `100.120.86.10` port 53 | Nightly backup failing since 08-14 |
+| Syncthing peer, office PC | `tcp://100.117.204.8:22000` (DEAD — bilab-era address) | Office PC could never reconnect |
+| Network attached storage backup script | `bilab-syn.tail8808c0.ts.net` port 53 | FIXED 2026-08-19; was failing since 08-14 |
 
 On top of that there were two separate Syncthing configuration directories on
 `e10ubuntu` with two different device identities. The live one is
@@ -234,16 +234,23 @@ Ran end to end on 2026-08-16, laptop paired and verified:
 > [!warning] DEFERRED 2026-08-16, by choice
 > The first two items below both need me to be **physically at a machine that is not the
 > laptop**, so they were deliberately postponed on 2026-08-16 rather than forgotten. See
-> [[04-journal/2026-08/2026-08-16]]. The backup gap is the one that should not sit long:
-> nothing has been backed up since 2026-08-13.
+> [[04-journal/2026-08/2026-08-16]]. ✅ **The backup gap is CLOSED as of 2026-08-19** — see below.
 
-- **The Synology network attached storage backup is BROKEN and needs me to act on the
-  Synology itself.** The box is not in the current tailnet at all, `tailscale ping
-  100.120.86.10` answers `no matching peer`. I have to log the Tailscale package on
-  the Synology into `skimlab.kaist@gmail.com`, then update `NAS_HOST` in
-  `neurosurveillance/deploy/nas-backup.sh`. Last good backup was 2026-08-13. Retention
-  is 3 days, and pruning only happens on a successful run, so the 08-11, 08-12 and
-  08-13 copies should still be on the box.
+- ✅ **RESOLVED 2026-08-19 — the Synology backup works again, and the fix was not what this
+  page predicted.** I did not have to touch the Synology, and it did not need to be logged into
+  `skimlab.kaist@gmail.com`. Two things were needed: **(a)** share the NAS node from the
+  `bilab.kaist@gmail.com` tailnet to `skimlab.kaist@gmail.com` and accept it, and **(b)** fix the
+  address, which was the actual cause — `nas-backup.sh` had `100.120.86.10` hardcoded and the NAS
+  answers on `100.120.86.9`.
+  🔴 **`NAS_HOST` is now the MagicDNS name `bilab-syn.tail8808c0.ts.net` and must stay a name.**
+  The 08-11/12/13 tarballs had indeed survived, exactly as predicted here, because pruning only
+  runs after a verified upload.
+  ⚠️ **Do not trust `tailscale ping` as the test** — it answered `pong` while every TCP port was
+  dead, and it kept answering on the wrong address until the peer map refreshed. That single
+  measurement produced two wrong diagnoses. Full write-up:
+  [[03-troubleshooting/incidents/2026-08-19-nas-backup-wrong-address]].
+- ✅ **All 831 GB of raw recordings are now on the NAS too**, checksum-verified, which was never
+  true before. See [[01-infrastructure/raw-recording-archive-to-nas]].
 - **The office PC is PAUSED and UNSHARED from the vault folder.** To bring it back:
   put `.stignore` on its copy of the vault FIRST, then unpause, then re-share the
   folder, then verify its file count matches before trusting it. Do not simply
@@ -259,3 +266,70 @@ Ran end to end on 2026-08-16, laptop paired and verified:
   too, which is fine because `vault-git-backup.timer` does the backups now.
 - Claude Code is v2.1.227 on the ThinkPad and v2.1.233 on e10ubuntu. Not a problem,
   worth keeping roughly aligned.
+
+## Continuing work on the laptop (added 2026-08-19)
+
+`~/claude-portable` shares memory, skills, hooks and settings between machines over git.
+**Until 2026-08-19 it only synced on `SessionEnd`.** That meant a session on the laptop began by
+reading whatever memory happened to be on the laptop's disk, which could be days behind e10ubuntu —
+and only caught up at the *end* of a session that had already been reasoning without it.
+
+`sync.sh --pull-only` now runs on **`SessionStart`** as well. It fetches and fast-forwards, never
+commits, never pushes, and **leaves a dirty tree strictly alone** rather than rebasing over
+uncommitted memory edits.
+
+### One-time bootstrap on each other machine
+
+> [!warning] THE HOOK THAT PULLS IS INSIDE THE COMMIT YOU HAVE NOT PULLED YET
+> So the first pull has to be done by hand, once, per machine. After that it maintains itself.
+
+`settings.json` is tracked but deliberately **never auto-committed**, because Claude Code rewrites it
+at runtime (it has flipped `model` by itself, and it writes an `autoMode.environment` block full of
+machine-specific absolute paths). On any machine that has been used, `settings.json` will therefore
+be locally modified, and that **blocks a plain `git pull --rebase`**.
+
+```bash
+cd ~/claude-portable && git status --short
+```
+
+If `settings.json` shows as modified, set it aside first. Its contents are machine-specific and
+regenerate on their own, so dropping the local edit costs nothing:
+
+```bash
+cp ~/claude-portable/settings.json /tmp/settings.local.bak
+```
+```bash
+cd ~/claude-portable && git checkout -- settings.json
+```
+```bash
+cd ~/claude-portable && git pull --rebase
+```
+
+Expected: it fast-forwards and `settings.json` now contains **two** `SessionStart` hooks — the
+caveman one and `sync.sh --pull-only`. Confirm:
+
+```bash
+grep -c 'pull-only' ~/claude-portable/settings.json
+```
+Expected: `1`.
+
+From then on every session starts with current memory, and `--status` shows what any sync would do
+without changing anything:
+
+```bash
+~/claude-portable/sync.sh --status
+```
+
+### What still is NOT shared, by design
+
+| Thing | Why | How the laptop gets it |
+|---|---|---|
+| `settings.json` local edits | machine-specific paths; Claude Code rewrites it | regenerates itself |
+| The vault's `.git` | single repository on e10ubuntu only | Syncthing syncs the files, not `.git` |
+| The rig, Allego, Docker, the EEG data | they physically live on e10ubuntu | `ssh e10` |
+| `neurosurveillance` branches | committed locally on e10ubuntu, not pushed by default | `ssh e10`, or push the branch deliberately |
+
+> [!note] The laptop cannot run the rig
+> Anything touching Allego, radiens, Docker, Frigate or `~/radix/data` only works on e10ubuntu.
+> From the laptop use `ssh e10 '<command>'`, and `ssh e10 -t 'tmux new -As rig'` for anything long
+> running so an SSH drop does not kill it.

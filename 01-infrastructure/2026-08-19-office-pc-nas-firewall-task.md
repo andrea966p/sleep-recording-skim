@@ -1,3 +1,23 @@
+---
+tags: [infrastructure, nas, tailscale, superseded]
+created: 2026-08-19
+status: superseded
+---
+
+> [!danger] SUPERSEDED — THE DIAGNOSIS IN THIS BRIEF WAS WRONG. DO NOT ACT ON IT.
+> This brief sent an agent to the office PC to fix a stale Synology firewall rule. **No such rule
+> existed.** The firewall already allowed the whole Tailscale range for SSH, above the deny.
+> The agent correctly refused to change anything and reported back — that refusal is the only
+> reason a working rule did not get edited.
+>
+> **The real cause was a wrong IP address in `nas-backup.sh`** (`100.120.86.10`; the NAS answers on
+> `100.120.86.9`). Fixed 2026-08-19 by switching to the MagicDNS name.
+> Read [[03-troubleshooting/incidents/2026-08-19-nas-backup-wrong-address]] instead.
+>
+> **Kept only as a record of how a plausible wrong theory got built and how it was caught.**
+> The useful part is §2 (the safety rules) and §6 (report back rather than improvise), which are
+> good practice for any hands-on infrastructure task and are what made the failure recoverable.
+
 # Task brief: restore NAS reachability from the NVR
 
 **For:** an AI agent running on the office PC (`andrea-kaist-pc-ubuntu`), which has

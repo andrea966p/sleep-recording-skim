@@ -44,13 +44,45 @@ status: active
 | `{NVR_HOSTNAME}`   | `e10ubuntu`      | ASUS NUC 14 Pro hostname      |
 | `{NETWORK_SUBNET}` | `192.168.0.0/24` | Lab network                   |
 
-### Tailscale IPs (for remote access) bilab.kaist@gmail.com tailnet
+### Tailscale (rewritten 2026-08-19 — the old table was six months stale and caused a multi-day misdiagnosis)
 
-| Device                | Tailscale IP    |
-| --------------------- | --------------- |
-| PC 1 (Office)         | `100.117.204.8` |
-| PC 2 (Experiment/NVR) | `100.85.191.25` |
-| Synology NAS          | `100.120.86.10` |
+> [!warning] There are THREE tailnets. A machine belongs to exactly one at a time.
+> Every address below changes if a machine is moved between tailnets. **Never hardcode a
+> `100.x` literal in a script — use the MagicDNS name.** Stale literals have now caused three
+> separate outages here. See [[03-troubleshooting/incidents/2026-08-19-nas-backup-wrong-address]].
+
+| Tailnet | MagicDNS suffix | What lives there |
+|---|---|---|
+| `skimlab.kaist@gmail.com` | `tail706d43.ts.net` | the NVR and the lab laptops — **this is the NVR's tailnet** |
+| `bilab.kaist@gmail.com`   | `tail8808c0.ts.net` | the Synology NAS and the office PC's LAN |
+| `andrea.piazzola4@gmail.com` | `tail9039f9.ts.net` | home tailnet (Raspberry Pi, Home Assistant) |
+
+**Members of the NVR's tailnet (`skimlab.kaist@gmail.com`), as of 2026-08-19:**
+
+| Device | Tailscale IP | MagicDNS name | Owner |
+|---|---|---|---|
+| `e10ubuntu` (NVR) | `100.82.250.62` | `e10ubuntu.tail706d43.ts.net` | skimlab.kaist@ |
+| `thinkpadubuntu` | `100.66.98.20` | `thinkpadubuntu.tail706d43.ts.net` | andrea.piazzola4@ |
+| `Andrea-KAIST-PC-ubuntu` | `100.125.44.24` | `andrea-kaist-pc-ubuntu.tail706d43.ts.net` | andrea.piazzola4@ |
+| `Skim` | `100.107.145.68` | `skim.tail706d43.ts.net` | skimlab.kaist@ |
+| `sleepi-BOOK` | `100.72.151.79` | `sleepi-book.tail706d43.ts.net` | skimlab.kaist@ |
+
+**Shared INTO the NVR's tailnet (not members):**
+
+| Device | Tailscale IP | MagicDNS name | Shared from |
+|---|---|---|---|
+| `Bilab_Syn` (the NAS) | `100.120.86.9` | `bilab-syn.tail8808c0.ts.net` | bilab.kaist@ |
+
+> [!note] Why `andrea.piazzola4@gmail.com` appears twice
+> That one Google account is **both** a member user of the skimlab tailnet **and** the owner of
+> the separate home tailnet whose devices are shared in. Tailscale shows them under two different
+> user IDs. This dual role is the single biggest source of confusion when debugging access — always
+> ask *which* of the two roles a given device is using.
+
+> [!danger] Retired addresses — do not use, they belong to nothing now
+> `100.85.191.25` was the NVR **in the bilab tailnet**. `100.117.204.8` was the office PC in the
+> same. `100.120.86.10` was the NAS's old address. All three appear in older vault pages and in
+> `~/.config/rustdesk/RustDesk2.toml`; none of them resolve today.
 
 ---
 
@@ -58,7 +90,7 @@ status: active
 
 | Variable | Production Value | Notes |
 |----------|------------------|-------|
-| `{NAS_HOST}` | `100.120.86.10` | Synology NAS, Tailscale |
+| `{NAS_HOST}` | `bilab-syn.tail8808c0.ts.net` | Synology NAS (`Bilab_Syn`, currently `100.120.86.9`, LAN `192.168.0.21` on the **office** network — not reachable from the NVR's LAN). **Use the name, never the IP.** |
 | `{NAS_SSH_PORT}` | `53` | non-default SSH port |
 | `{NAS_USER}` | `Andrea` | NAS account (≠ NVR user `skimlab`) |
 | `{NAS_BACKUP_DIR}` | `e10_setup_backups` | relative to NAS user home |

@@ -134,10 +134,10 @@ The nightly NAS backup ([[../02-procedures/installation/nas-backup|NAS Backup pr
 
 ```bash
 # 1. See what snapshots exist on the NAS
-ssh -p 53 Andrea@100.120.86.10 'ls -lh e10_setup_backups'
+ssh -p 53 Andrea@bilab-syn.tail8808c0.ts.net 'ls -lh e10_setup_backups'
 
 # 2. Pull the newest snapshot back (ssh pipe — NOT scp/rsync; this NAS rejects both)
-ssh -p 53 Andrea@100.120.86.10 'cat e10_setup_backups/e10_backup_YYYY-MM-DD.tar.gz' > /tmp/restore.tar.gz
+ssh -p 53 Andrea@bilab-syn.tail8808c0.ts.net 'cat e10_setup_backups/e10_backup_YYYY-MM-DD.tar.gz' > /tmp/restore.tar.gz
 
 # 3. Inspect before extracting (archive paths are relative to /)
 tar tzf /tmp/restore.tar.gz | less

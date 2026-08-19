@@ -304,7 +304,7 @@ tailscale ping <hostname-or-ip>
 ### Connectivity
 ```bash
 # Check if using direct or relayed connection
-tailscale ping --c 5 100.85.191.25
+tailscale ping -c 5 e10ubuntu.tail706d43.ts.net   # NVR (was 100.85.191.25 in the old bilab tailnet)
 
 # Network check
 tailscale netcheck

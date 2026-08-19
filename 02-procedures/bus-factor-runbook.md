@@ -179,7 +179,7 @@ Quick reference card. Full detail in [[../00-config/production-values|production
 | **NVR** (`e10ubuntu`) | `192.168.0.50` | Frigate + session daemon + Mosquitto + Netdata | `skimlab` |
 | **Pi 1** | `192.168.0.11` | go2rtc for `pi_cam_0` + `pi_cam_1` | `skimlab` |
 | **Pi 2** | `192.168.0.12` | go2rtc for `pi_cam_2` + `pi_cam_3` | `skimlab` |
-| **Synology NAS** | `100.120.86.10` (Tailscale only) | Nightly backups, port `53` | `Andrea` (not `skimlab`) |
+| **Synology NAS** | `bilab-syn.tail8808c0.ts.net` (Tailscale only; the IP moves, the name does not) | Nightly backups, port `53` | `Andrea` (not `skimlab`) |
 
 ### Key URLs
 

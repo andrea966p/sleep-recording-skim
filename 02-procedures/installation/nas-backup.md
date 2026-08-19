@@ -16,11 +16,19 @@ status: active
 > [!quote] Paper-ready
 > Project state on the NVR (documentation vault, daemon source and configuration, append-only session journal, and Frigate configuration; recorded video excluded) is snapshotted nightly to an off-site network-attached store over an authenticated Tailscale link, with a rolling three-day retention, providing an automated recovery point independent of the acquisition host.
 
+> [!danger] Never write the NAS's IP address into this procedure or into the script
+> This page used to say `100.120.86.10`. The NAS was readdressed to `100.120.86.9` and that stale
+> literal silently broke **every** backup from 2026-08-14 to 2026-08-19 — six days, discovered only
+> because someone went looking. Two confident wrong diagnoses (a Tailscale ACL problem, then a
+> Synology firewall rule) were reached and acted on before the real cause was found.
+> **Always use the MagicDNS name `bilab-syn.tail8808c0.ts.net`.**
+> Full write-up: [[03-troubleshooting/incidents/2026-08-19-nas-backup-wrong-address]].
+
 ## What it does
 
 - **When:** every day at `00:00` (systemd timer, `Persistent=true` → a missed midnight runs at next boot).
 - **What:** one compressed dated tarball `e10_backup_YYYY-MM-DD.tar.gz` (~50 MB).
-- **Where:** NAS `Andrea@100.120.86.10:53` → `~/e10_setup_backups/`.
+- **Where:** NAS `Andrea@bilab-syn.tail8808c0.ts.net:53` → `~/e10_setup_backups/`.
 - **Retention:** newest **3** kept; the 4th-oldest is deleted each run.
 - **Runs as:** user `skimlab` (every backed-up path is `skimlab`-owned, so no root is needed), key-based SSH with `~/.ssh/id_ed25519`.
 
@@ -33,6 +41,8 @@ status: active
 | `Monitoring_project_obsidian_vault/` | the documentation vault |
 | `neurosurveillance/` (code repo) | backend + frontend source, `.git` history |
 | `neurosurveillance-system/` | legacy/aux session-daemon copy |
+| `eeg-emg-analysis/` | the EEG/EMG analysis stack — **added 2026-08-19**, it was missing and therefore unbacked-up entirely |
+| `~/radix/devices`, `~/radix/workspace` | Allego device + workspace configuration (added 2026-08-19) |
 | `/opt/neurosurveillance/config.yaml` | production daemon config |
 | `/opt/neurosurveillance/sessions/` | per-session metadata JSONs |
 | `/opt/neurosurveillance/session_wal.db` | append-only session journal (consistent snapshot via SQLite online backup) |
@@ -58,20 +68,20 @@ status: active
 ### 1. Install the SSH key on the NAS (interactive — enter the NAS password once)
 
 ```bash
-ssh-copy-id -p 53 -i ~/.ssh/id_ed25519.pub Andrea@100.120.86.10
+ssh-copy-id -p 53 -i ~/.ssh/id_ed25519.pub Andrea@bilab-syn.tail8808c0.ts.net
 ```
 
 > [!warning] Synology key-auth gotcha
 > Synology DSM only honours key auth if **User Home service** is enabled (Control Panel → User & Group → Advanced → User Home) and the permissions are exact: home dir `0755`, `~/.ssh` `0700`, `~/.ssh/authorized_keys` `0644`. If step 2 still prompts for a password, fix perms on the NAS:
 > ```bash
-> ssh -p 53 Andrea@100.120.86.10
+> ssh -p 53 Andrea@bilab-syn.tail8808c0.ts.net
 > chmod 0755 ~ && chmod 0700 ~/.ssh && chmod 0644 ~/.ssh/authorized_keys
 > ```
 
 ### 2. Verify passwordless SSH + the target folder
 
 ```bash
-ssh -p 53 -o BatchMode=yes Andrea@100.120.86.10 'echo KEY_OK; ls -d e10_setup_backups'
+ssh -p 53 -o BatchMode=yes Andrea@bilab-syn.tail8808c0.ts.net 'echo KEY_OK; ls -d e10_setup_backups'
 ```
 Expected: `KEY_OK` then `e10_setup_backups` — no password prompt.
 
@@ -110,13 +120,13 @@ systemctl list-timers nas-backup.timer
 systemctl status nas-backup.service
 
 # what's on the NAS right now
-ssh -p 53 Andrea@100.120.86.10 'ls -lh e10_setup_backups'
+ssh -p 53 Andrea@bilab-syn.tail8808c0.ts.net 'ls -lh e10_setup_backups'
 ```
 
 ### Restore
 ```bash
 # pull a snapshot back — use the ssh pipe, NOT scp/rsync (Synology SFTP/rsync quirks)
-ssh -p 53 Andrea@100.120.86.10 'cat e10_setup_backups/e10_backup_YYYY-MM-DD.tar.gz' > /tmp/e10_backup_YYYY-MM-DD.tar.gz
+ssh -p 53 Andrea@bilab-syn.tail8808c0.ts.net 'cat e10_setup_backups/e10_backup_YYYY-MM-DD.tar.gz' > /tmp/e10_backup_YYYY-MM-DD.tar.gz
 # inspect without extracting
 tar tzf /tmp/e10_backup_YYYY-MM-DD.tar.gz | less
 # extract (paths are relative to /, so extract from a staging dir and copy back deliberately)

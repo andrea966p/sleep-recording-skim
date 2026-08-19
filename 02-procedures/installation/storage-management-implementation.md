@@ -1378,10 +1378,16 @@ After implementing all steps, validate end-to-end:
 
 ## Future: NAS Transfer Integration
 
-When the Synology NAS (`100.120.86.10` via Tailscale) is ready:
+When the Synology NAS (`bilab-syn.tail8808c0.ts.net` via Tailscale) is ready:
+
+> [!warning] SUPERSEDED APPROACH — rsync does NOT work against this NAS
+> The plan below proposes `rsync`. That was retested on 2026-08-19 and still fails (it falls back
+> to a password prompt and dies). Use the verified ssh-pipe pattern in
+> [[01-infrastructure/raw-recording-archive-to-nas]] instead, which is deployed and working.
+
 
 1. Create `nas_transfer.py` — watches for `export_status == "completed"` sessions
-2. Uses `rsync` over Tailscale to `100.120.86.10:/volume1/neurosurveillance/`
+2. ~~Uses `rsync` over Tailscale to `100.120.86.10:/volume1/neurosurveillance/`~~ — see warning above
 3. Updates `nas_transfer_status` in session records (`"skipped"` → `"transferring"` → `"completed"`)
 4. Optionally deletes local exports after confirmed NAS transfer → frees space automatically
 5. Add a "NAS" row to StoragePanel showing transfer queue and status

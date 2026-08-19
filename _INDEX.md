@@ -41,6 +41,11 @@ Production IPs, usernames, paths, and settings.
 - [[01-infrastructure/frigate/docker-compose|Docker Compose]]
 - [[01-infrastructure/frigate/config-yml|config.yml]]
 
+**Backup (added 2026-08-19):**
+- ⭐ [[01-infrastructure/raw-recording-archive-to-nas|Raw recording archive to the NAS]] — the verified copy of all 831 GB of `.xdat` data. **Read this before deleting anything from `~/radix/data`.**
+- [[02-procedures/installation/nas-backup|NAS backup (nightly project snapshot)]] — vault, code, daemon config
+- 🔴 [[03-troubleshooting/incidents/2026-08-19-nas-backup-wrong-address|Incident: backup dead 6 days from one wrong IP]] — **why you must never hardcode a `100.x` address**
+
 **Sleep recording (Intan RHD2216 + Allego) — operator docs:**
 - [[02-procedures/sleep-recording-operator-manual|⭐ Sleep-Recording Operator Manual — START HERE, ordered phases from assembly to EEG/EMG analysis]]
 - [[06-references/radiens-software-reference|⭐ Radiens Software — PRIMARY Reference (Allego + Videre)]] — **main software reference; embeds the full 177-page NeuroNexus manual + our load-bearing facts (mode, channel select, no in-GUI rename)**
@@ -104,6 +109,7 @@ Production IPs, usernames, paths, and settings.
 - [[02-procedures/installation/storage-management-implementation|Storage Management System]] ✅
 - [[02-procedures/new-researcher-onboarding|New Researcher Onboarding]] — day-0 access + first-recording walkthrough
 - [[02-procedures/bus-factor-runbook|Bus-Factor Runbook]] — "Andrea is unreachable" emergency operator guide (added 2026-05-28)
+- ⭐ [[02-procedures/scheduled-recording-and-watchdogs|Scheduled recording + watchdogs]] — start Allego at an exact time unattended and get Slack proof it is really writing bytes (added 2026-08-19)
 
 ### Troubleshooting
 
@@ -213,6 +219,10 @@ procedures to `02-procedures/`, vendor call prep to
 | **Netdata (Pi 2)** | 192.168.0.12:19999 | Active |
 | **Uptime Kuma** | 192.168.0.50:3001 | Active (7 monitors, Slack alerting) |
 | **nvr-mqtt-slack** | systemd (NVR) | Active (watchdog stalls → Slack; added 2026-05-25) |
+| **NAS (`Bilab_Syn`)** | `bilab-syn.tail8808c0.ts.net` | Reachable (shared in from the `bilab` tailnet; 13 TB free). **Use the name, never an IP.** |
+| **Nightly project backup** | `nas-backup.timer` 00:00 | Active — fixed 2026-08-19 after 6 days dead; now also covers `eeg-emg-analysis` |
+| **Raw data archive** | cron watchdog, 20 min | 124 files / 831 GB copied + checksum-verified 2026-08-19 |
+| **Recording watchdog** | cron, hourly | Armed while a recording runs; self-disarms on stop |
 
 ---
 

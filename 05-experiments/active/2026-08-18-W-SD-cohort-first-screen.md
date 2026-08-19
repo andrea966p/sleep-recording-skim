@@ -282,6 +282,17 @@ situation from B1, B2 and D1, which produce nothing. 📌 **The obvious next tes
 recording**: an hour is short enough that a couple of dropouts decide the verdict, and all three
 would likely clear 15 minutes somewhere in a night.
 
+> [!success] THAT LONGER RECORDING IS NOW RUNNING — started 2026-08-19 09:00:00
+> `allego_0__uid0819-09-00-00`, all 8 W-SD mice, started automatically at **ZT0** and running until
+> stopped by hand. Growth was verified on disk at the start (2.86 GB/h) and an hourly watchdog is
+> checking that it keeps writing, with a Slack alarm if it stalls.
+> This is the direct test of the prediction above: **do D2, A1 and C1 clear the 15-minute strict
+> rung-2 bar somewhere in a full day, once a couple of EMG dropouts no longer decide the verdict?**
+> 🛑 **Do not score this run against the hour-long screen's verdicts** — per the cohort rule, rig
+> position is not animal identity, but these ARE the same eight animals as 2026-08-18, so the
+> comparison is legitimate here. State block duration, not just total fraction.
+> How it was started: [[02-procedures/scheduled-recording-and-watchdogs]].
+
 ## Where the cohort stands tonight
 
 - ✅ **Good, and ready for a long recording: W-SD A1, A2, C1, D2.** Four mice with 92 to 100 %
