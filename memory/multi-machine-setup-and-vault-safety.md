@@ -95,3 +95,12 @@ tailnet left dead IPs hardcoded. Needs hands on the Synology. Last good backup
 Before changing anything in Syncthing, take the tar snapshot first. Full guide is in
 the vault at `01-infrastructure/multi-machine-work-setup.md`. See also
 [[nas-backup]] and [[feedback_verify_operational_details]].
+
+⭐⭐ **2026-08-19: `claude-portable` now ALSO pulls at `SessionStart`** (`sync.sh --pull-only`), not
+only at `SessionEnd`. 🔴 **Before this, a session on a second machine started by reading STALE
+memory and only caught up at the END of a session that had already reasoned without it.**
+`--pull-only` never commits, never pushes, and **refuses to rebase over a dirty tree**.
+🛑 **BOOTSTRAP IS MANUAL, ONCE PER MACHINE — the hook that pulls is inside the commit you have not
+pulled yet.** And `settings.json` is tracked but never auto-committed (Claude Code rewrites it, incl.
+an `autoMode.environment` block with machine-specific absolute paths), so it is ALWAYS locally dirty
+and **blocks `git pull --rebase`**: `git checkout -- settings.json` first, then pull.
