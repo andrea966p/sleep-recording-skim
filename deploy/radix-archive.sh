@@ -55,7 +55,15 @@ if ! flock -n 9; then
 fi
 
 # ---- guards -----------------------------------------------------------------
-past_hard_stop() { [[ "$(date +%H:%M)" > "$HARD_STOP" && "$(date +%H)" -lt 20 ]]; }
+# 10# forces base 10. Without it `date +%H` returns "08"/"09", bash reads them as
+# octal, and the test ERRORS OUT instead of firing — which is exactly what happened
+# on 2026-08-19, leaving the 08:30 guard inoperative.
+past_hard_stop() {
+  local hh mm now
+  hh=$((10#$(date +%H))); mm=$((10#$(date +%M)))
+  now=$(( hh*60 + mm ))
+  (( now >= 8*60+30 && hh < 20 ))
+}
 
 recording_active() {
   local m
