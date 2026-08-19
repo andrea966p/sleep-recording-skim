@@ -292,6 +292,13 @@ would likely clear 15 minutes somewhere in a night.
 > position is not animal identity, but these ARE the same eight animals as 2026-08-18, so the
 > comparison is legitimate here. State block duration, not just total fraction.
 > How it was started: [[02-procedures/scheduled-recording-and-watchdogs]].
+>
+> 🔴 **STOPPED EARLY at 17:16 (8.27 h, 31.2 GB) — W-SD B1 CHEWED AND CUT ITS TETHER.**
+> That animal is off the rig and a **different, already-tethered mouse from the habituation rack is
+> now in the B1 position**. ⚠️ **Every B1 verdict on this page belongs to the OLD animal and must not
+> be carried across.** The replacement run is `allego_1__uid0819-17-25-20` (17:25 Wed → 09:00 Fri).
+> Because B1's failure was traced to animal-side ground wiring, a fresh animal there is a real test:
+> if the new B1 is also dead, the fault is the rig position, not the mouse.
 
 ## Where the cohort stands tonight
 
