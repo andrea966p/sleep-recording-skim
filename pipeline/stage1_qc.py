@@ -29,6 +29,12 @@ import scipy.signal as sg
 from core import qc_thresholds as T
 from pipeline import pipeline_common as P
 
+# numpy 2.0 removed np.trapz in favour of np.trapezoid. Bind once, here, so the
+# pipeline runs on both. Without this the whole staging path dies on numpy >= 2
+# with "module 'numpy' has no attribute 'trapz'".
+_trapz = getattr(np, "trapezoid", None) or np.trapz
+
+
 CACHE = os.environ.get("EEG_QC_CACHE", "/tmp/eeg_pipeline_cache/")
 os.makedirs(CACHE, exist_ok=True)
 
@@ -84,7 +90,7 @@ def extract_features(base, force=False):
         raw_e = blk[:n * T.EPOCH_S * fs, :NM].reshape(n, T.EPOCH_S * fs, NM)
 
         fr, Pxx = sg.welch(Ee, fs, nperseg=min(T.NPERSEG, T.EPOCH_S * fs), axis=1)
-        bp = lambda lo, hi: np.trapz(Pxx[:, (fr >= lo) & (fr < hi), :],
+        bp = lambda lo, hi: _trapz(Pxx[:, (fr >= lo) & (fr < hi), :],
                                      fr[(fr >= lo) & (fr < hi)], axis=1)
         delta[i0:i0 + n] = bp(*T.BAND_DELTA)
         theta[i0:i0 + n] = bp(*T.BAND_THETA)

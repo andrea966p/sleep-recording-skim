@@ -46,6 +46,12 @@ import scipy.signal as sg
 from core import qc_thresholds as T
 from pipeline import pipeline_common as P
 
+# numpy 2.0 removed np.trapz in favour of np.trapezoid. Bind once, here, so the
+# pipeline runs on both. Without this the whole staging path dies on numpy >= 2
+# with "module 'numpy' has no attribute 'trapz'".
+_trapz = getattr(np, "trapezoid", None) or np.trapz
+
+
 WAKE, NREM, REM = 0, 1, 2
 NAMES = {WAKE: "WAKE", NREM: "NREM", REM: "REM"}
 
@@ -65,7 +71,7 @@ def epoch_features(eeg, emg, fs):
 
     nper = min(T.NPERSEG, fs * T.EPOCH_S)
     fr, Pxx = sg.welch(Ef, fs, nperseg=nper, axis=1)
-    bp = lambda lo, hi: np.trapz(Pxx[:, (fr >= lo) & (fr < hi)],
+    bp = lambda lo, hi: _trapz(Pxx[:, (fr >= lo) & (fr < hi)],
                                  fr[(fr >= lo) & (fr < hi)], axis=1)
     return dict(n=n,
                 eeg_rms=Ef.std(1), emg_rms=Mf.std(1),
