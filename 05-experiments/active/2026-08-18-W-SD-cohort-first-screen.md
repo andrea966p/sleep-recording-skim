@@ -29,6 +29,12 @@ Related: [[2026-08-18]] · [[animal-card-and-verdict-ladder]] ·
 [[2026-08-07-ecg-cohort-baseline]].
 
 
+> [!warning] 🔴 SUPERSEDED — see the 39.7 h run, and note C1/C2 were WITHDRAWN there
+> The 8 positions were re-recorded for 39.7 h on 19-21 August and scored per-chip.
+> **Surviving passes are A1, A2, D2 only.** C1 and C2 initially appeared to pass and were withdrawn
+> after falsification (C1's state-dependence was a delta-RATIO artefact).
+> [[05-experiments/completed/2026-08-21-39h-run-score]]
+
 > [!warning] 🔴 THE VERDICTS ON THIS PAGE USED THE POOLED WIRE-FREE FLOOR (noted 2026-08-21)
 > `criteria.floor_stats()` pools the floor across all eight amplifier chips; the project's own
 > definition says it must come from the same chip. On **this recording** the chips diverge by
