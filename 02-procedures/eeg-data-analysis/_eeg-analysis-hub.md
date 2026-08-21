@@ -16,6 +16,13 @@
 > exactly, including B1's 215.8 min block and the 415.0 µV floor threshold from
 > 953,904 wire-free measurements. See the regression table on that page.
 
+> [!note] Is this whole approach defensible? Checked against the literature 2026-08-21
+> The in-file wire-free floor is a per-recording version of **shorted-input noise testing**, which is
+> standard instrumentation practice; per-chip grouping is physically correct. **Using it as a live
+> per-file criterion is non-standard, but the field handles the same question by eye.** The honest
+> risk is not the method — it is that **the bottleneck here is hardware yield, and no hypnogram has
+> ever been produced.** [[06-references/is-our-qc-approach-sound]]
+
 > [!danger] 🔴🔴 2026-08-21: THE WIRE-FREE FLOOR IS POOLED ACROSS CHIPS, AND IT SHOULD NOT BE
 > `core/criteria.py::floor_stats()` pools every unwired input across all **eight** amplifier chips
 > into one threshold. The `USABLE_FRACTION_DEFINITION` string in that same file says the comparison
