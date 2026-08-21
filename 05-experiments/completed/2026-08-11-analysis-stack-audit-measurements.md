@@ -6,7 +6,8 @@ its headline findings did not survive that check. Four things it never saw did.
 The important ones: **a second, backwards implementation of the whole pipeline was
 sitting in the repo**; **the slope criterion's central justification is false**;
 **no experimental animal passes the EMG gate, on the full recording including the
-dark phase**; and **slope-criterion usable fractions carry 37 to 45 point
+dark phase** (⚠️ **PARTLY WRONG — corrected 2026-08-21, see §4: with a per-chip floor B2 reaches
+-0.366 and does pass**); and **slope-criterion usable fractions carry 37 to 45 point
 intervals from the wire-free floor's own sampling error alone.**
 
 All four test suites are green. Every number below was measured on this rig's own
@@ -119,6 +120,34 @@ Bar set at **-1.0**, an order of magnitude of margin on both sides. On the real
 is silent on genuine data and fires only on the trap.
 
 ## 4. The EMG gate: no experimental animal passes
+
+> [!warning] PARTLY CORRECTED 2026-08-21 — THE HEADING IS WRONG, AND THE REASON IS A BUG
+> These numbers were computed with the **pooled** wire-free floor. `criteria.floor_stats()` pools
+> all unwired inputs across all eight amplifier chips, but this project's own definition of usable
+> fraction — written in the same source file — says the comparison is against inputs recorded
+> **"through the same chip"**. On this very recording the pooled value (-1.335) is **harsher than
+> seven of the eight chips' own floors**, so the gate was restricted to far fewer minutes than it
+> should have been.
+>
+> **Re-run on the same file with a per-chip floor, one animal changes verdict:**
+>
+> | animal | r pooled (below) | r per-chip | |
+> |---|---|---|---|
+> | **B2** | -0.156 (n=159 min) | **-0.366 (n=203 min)** | **crosses the bar → STATE-DEPENDENT** |
+> | A2 (control) | -0.734 (n=597) | -0.713 (n=983) | unchanged |
+> | C2 | -0.174 (n=137) | -0.180 (n=142) | unchanged |
+> | D1 | +0.023 (n=428) | +0.028 (n=326) | unchanged |
+> | D2 | +0.010 (n=353) | -0.135 (n=660) | improves, still fails |
+>
+> So **"no experimental animal passes" is false — B2 passes.** The wider claim, that most of the
+> cohort failed, still stands: three of the four evaluable experimental animals fail either way.
+>
+> ⭐ **This cuts both ways and is worth stating plainly: the floor fix does NOT manufacture passes.**
+> Applied to this recording it moves exactly one animal. That is the evidence that the four passes on
+> the 2026-08-19 run are a real improvement in the DATA, not an artefact of changing the floor.
+>
+> Full detail: [[05-experiments/completed/2026-08-21-39h-run-score]].
+
 
 `qc/emg_state_dependence.py`, run on the **full 16.39 h** of
 `allego_0__uid0808-16-17-36`, including the dark phase that had never been

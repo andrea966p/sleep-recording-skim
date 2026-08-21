@@ -28,6 +28,21 @@ Recording **`allego_0__uid0818-18-56-33`**, started 2026-08-18 18:56:33 KST, sto
 Related: [[2026-08-18]] · [[animal-card-and-verdict-ladder]] ·
 [[2026-08-07-ecg-cohort-baseline]].
 
+
+> [!warning] 🔴 THE VERDICTS ON THIS PAGE USED THE POOLED WIRE-FREE FLOOR (noted 2026-08-21)
+> `criteria.floor_stats()` pools the floor across all eight amplifier chips; the project's own
+> definition says it must come from the same chip. On **this recording** the chips diverge by
+> **1.535** in slope p1 (pooled -1.510; per-chip -1.942 to -0.407), and the pooled value is
+> **too harsh for 7 of the 8 chips**.
+>
+> 🔑 So on this page a **FAIL or a low fraction is suspect and probably understated**, while a
+> **PASS is conservative and survives**. The one chip that got a too-lenient bar here is **B1**,
+> whose failure is therefore NOT explained by the floor.
+>
+> ⚠️ **The per-position numbers on this page have not been recomputed.** The same eight positions
+> were re-recorded for 39.7 h on 19-21 August and scored per-chip, which supersedes this screen as
+> the cohort's status: [[05-experiments/completed/2026-08-21-39h-run-score]].
+
 ## How I am naming these mice
 
 They are batch **W-SD**, and I refer to them as **W-SD** plus the rig position: W-SD A1, W-SD A2,

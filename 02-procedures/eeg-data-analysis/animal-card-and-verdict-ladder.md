@@ -125,6 +125,34 @@ so on every page until a husbandry sheet exists. That is deliberate.
 before tethering, a body weight outside 5 to 80 g, or one rig position claimed by
 two animals at once, all raise rather than producing a nonsense timeline.
 
+## 🔴 Which floor the criteria are measured against (read this before the criteria)
+
+Both criteria below compare a channel to "the 1st percentile of the wire-free floor". **Which
+wire-free inputs go into that percentile is not a detail, and the code currently gets it wrong.**
+
+`core/criteria.py::floor_stats()` **pools** all unwired inputs across all eight amplifier chips.
+The `USABLE_FRACTION_DEFINITION` in that same file says the comparison is against inputs recorded
+**"through the same chip"**. Measured on four recordings, the chips diverge every time — spreads of
+0.74 to 1.54 in slope p1 — and the pooled value lands **too harsh for 7 of 8 chips and too lenient
+for 1**, in all four.
+
+On the 2026-08-19 run this is the whole answer, not a correction to it:
+
+| position | usable EEG, per-chip | usable EEG, pooled | longest block per-chip | pooled |
+|---|---|---|---|---|
+| A1 | 99.9% | 41.5% | 457.5 min | 9.3 min |
+| C1 | 97.7% | 21.6% | 211.2 min | 5.5 min |
+| D2 | 98.5% | 29.4% | 86.2 min | 7.5 min |
+
+**Under the pooled floor every position fails rung 2. Under a per-chip floor five pass.**
+
+🔑 **The error has a direction.** Where pooled was harsher than a chip's own floor, a **FAIL is
+suspect** and a **PASS is conservative and survives**. ⭐ **And it does not just inflate everything**
+— re-running the 2026-08-08 EMG gate per-chip moves exactly one animal across the bar.
+
+🛑 **`floor_stats()` is NOT fixed.** Until it is, compute the per-chip floor alongside it, as
+`qc/score_2026-08-21/score.py` does. See [[05-experiments/completed/2026-08-21-39h-run-score]].
+
 ## The two criteria, and why they must never be mixed
 
 Both are computed on every run. You choose which is reported.

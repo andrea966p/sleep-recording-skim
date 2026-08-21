@@ -16,6 +16,33 @@
 > exactly, including B1's 215.8 min block and the 415.0 µV floor threshold from
 > 953,904 wire-free measurements. See the regression table on that page.
 
+> [!danger] 🔴🔴 2026-08-21: THE WIRE-FREE FLOOR IS POOLED ACROSS CHIPS, AND IT SHOULD NOT BE
+> `core/criteria.py::floor_stats()` pools every unwired input across all **eight** amplifier chips
+> into one threshold. The `USABLE_FRACTION_DEFINITION` string in that same file says the comparison
+> is against inputs recorded **"through the same chip"**. The code and its own definition disagree,
+> and the definition is right.
+>
+> **Measured on four recordings, the chips diverge every time**, and the pooled value came out
+> **too harsh for 7 of 8 chips and too lenient for exactly 1** in all four:
+>
+> | recording | pooled p1 | per-chip range | spread |
+> |---|---|---|---|
+> | 2026-08-08 16.39 h | -1.328 | -1.540 .. -0.800 | 0.740 |
+> | 2026-08-09 48 h control | -1.352 | -1.666 .. -0.840 | 0.826 |
+> | 2026-08-18 1 h screen | -1.510 | -1.942 .. -0.407 | 1.535 |
+> | 2026-08-19 39.7 h | -1.633 | -2.079 .. -0.676 | 1.403 |
+>
+> 🔑 **THE ERROR HAS A DIRECTION, SO READ OLD RESULTS ACCORDINGLY.** Where the pooled floor was
+> harsher than a chip's own, a **FAIL is suspect** but a **PASS is conservative and survives**. Only
+> the one chip per run that got a more lenient bar has suspect passes.
+>
+> ⭐ **It does NOT simply inflate everything.** Re-running the 2026-08-08 EMG gate per-chip moves
+> exactly ONE animal across the bar (B2, -0.156 → -0.366). The 48 h control's passes are unchanged.
+>
+> 🛑 **`floor_stats()` IS NOT FIXED.** Scoring done on 2026-08-21 computes a per-chip floor alongside
+> it. Fixing the library and re-checking what the pooled value affected is OPEN.
+> Evidence and method: [[05-experiments/completed/2026-08-21-39h-run-score]].
+
 > [!danger] 🔴 2026-08-08: this hub no longer lists everything you need
 > Three pages were added after this hub was written and they change how the pipeline must be read:
 > - ⭐ [[2026-08-07-council-review-of-the-analysis-pipeline]] — **the review, the fixes applied, and

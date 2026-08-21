@@ -23,6 +23,18 @@ tags: [eeg, emg, control, circadian, recording, reference]
 Recording **`allego_0__uid0809-09-00-00`**, started 2026-08-09 09:00:00 KST, stopped by andrea on
 2026-08-11 at about 09:11. Related: [[2026-08-09]], [[2026-08-08-ground-fix-post-repin-night]].
 
+
+> [!note] ✅ CHECKED AGAINST THE 2026-08-21 FLOOR BUG — THIS PAGE'S NUMBERS SURVIVE
+> The usable fractions here were computed with the pooled wire-free floor, which was later found to
+> contradict the project's own "same chip" definition. On **this** recording the pooled value
+> (-1.352) is **harsher** than the A2 chip's own floor (-0.976), so the 47.09 of 48.19 h usable is a
+> **conservative** figure: correcting the floor can only raise it, not lower it.
+>
+> ⚠️ Two caveats. The **D1** chip is the one exception in this file (own floor -1.666, harsher than
+> pooled), so any D1 number here may be flattered. And the fractions have **not** been recomputed —
+> this is a statement about the direction of the error, not a re-measurement.
+> Detail: [[05-experiments/completed/2026-08-21-39h-run-score]].
+
 ## The recording
 
 | | |
