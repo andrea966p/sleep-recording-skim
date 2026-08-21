@@ -18,8 +18,25 @@ status: active
 
 ## Status
 
-**First full run completed 2026-08-19 08:51.** 124 files, 831.2 gigabytes, 7.5 hours,
-average 31 megabytes per second. **Zero transfer errors, zero checksum mismatches, zero retries.**
+**Current as of 2026-08-21 18:07: 130 files, 1.01 terabytes, all verified on the NAS.**
+
+- First run 2026-08-19: 124 files, 831.2 GB, 7.5 h, zero errors.
+- Second run 2026-08-21: the remaining 182.3 GB (the 8.27 h run and the 39.7 h run), 1.4 h.
+
+Independent cross-check after the second run: file counts 130 = 130, zero leftover `.part` files,
+**sum of file bytes identical to the byte on both sides**, no per-file size differences, and a fresh
+sha256 of the 149.7 GB run matching its manifest entry.
+
+> [!note] `du -sb` will show a small difference and it is not a fault
+> The directory inode differs in size between ext4 and the NAS filesystem — about 9.8 kilobytes.
+> **Compare the sum of file sizes, not `du`.**
+
+> [!tip] Running it by hand outside the protected window
+> ```bash
+> ARCHIVE_IGNORE_WINDOW=1 ./radix-archive.sh
+> ```
+> This skips the 08:30-20:00 window only. The recording check still applies, so the run still defers
+> if the rig starts up.
 
 ## The files
 
