@@ -58,7 +58,12 @@ fi
 # 10# forces base 10. Without it `date +%H` returns "08"/"09", bash reads them as
 # octal, and the test ERRORS OUT instead of firing — which is exactly what happened
 # on 2026-08-19, leaving the 08:30 guard inoperative.
+# The window is a blunt proxy for "do not compete with a recording"; the
+# recording_active() check below is the precise one. For a deliberate manual run
+# with the rig idle, ARCHIVE_IGNORE_WINDOW=1 skips the proxy. It does NOT skip
+# the recording check, which still defers the run if the rig starts up.
 past_hard_stop() {
+  [[ "${ARCHIVE_IGNORE_WINDOW:-0}" == "1" ]] && return 1
   local hh mm now
   hh=$((10#$(date +%H))); mm=$((10#$(date +%M)))
   now=$(( hh*60 + mm ))
@@ -120,17 +125,21 @@ It resumes automatically tonight; nothing is lost."
   # A recording that starts mid-run means we stop, not churn. Sleeping per file
   # would idle for ~21 h across the file list and then report INCOMPLETE to Slack
   # once per pass for the whole length of the recording.
-  if recording_active; then
-    log "recording started — deferring the rest of the run, will resume when it ends"
-    echo "DEFERRED $(date '+%F %T')" > "$LOGS/radix-archive.state"
-    exit 0
-  fi
-
+  # Cheap check FIRST. recording_active() costs ~3.3 s because it spawns a python
+  # client, so asking it about files that are already archived wastes minutes on
+  # every resumed run (~7 min across a 124-file backlog). A file we are going to
+  # skip does not need a rig query at all.
   size=$(stat -c %s "$src")
 
   if [[ -n "$(manifest_status "$name" "$size")" ]]; then
     skipped=$((skipped+1)); done_bytes=$((done_bytes+size)); done_files=$((done_files+1))
     continue
+  fi
+
+  if recording_active; then
+    log "recording started — deferring the rest of the run, will resume when it ends"
+    echo "DEFERRED $(date '+%F %T')" > "$LOGS/radix-archive.state"
+    exit 0
   fi
 
   ok=0
