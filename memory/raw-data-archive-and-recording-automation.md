@@ -53,3 +53,22 @@ reads as shrinkage and fires a FALSE STALL alarm, or the watchdog disarms and le
 watchdog stands down silently without counting a strike. The old code slept 600 s PER FILE and
 skipped — ~21 h of sleeping per pass over 130 files, plus an "incomplete" Slack message every pass.
 ⚠️ **The archive will not run between 08:30 and 20:00** (protected window) even with no recording.
+
+
+## 2026-08-21: everything archived + the 39.7 h run
+✅ **130 files / 1.01 TB on the NAS, verified.** Cross-checked independently: counts 130=130, zero
+`.part`, **file-byte sums identical (1,013,471,371,569)**, no per-file size diffs, fresh sha256 of the
+149.7 GB run matches. ⚠️ **`du -sb` shows the NAS ~9.8 kB larger — that is the DIRECTORY INODE, not
+data. Compare file-size sums, not `du`.**
+⭐ **`allego_1__uid0819-17-25-20` = 39.674 h, 142,825,728 samples, timestamp steps `{1:...}` ⇒ ZERO
+dropped samples, drift +9 ppm, byte-exact.** Cleanest long run this rig has made. **File integrity
+only — signal quality NOT yet scored.**
+✅ **The automation held 40 h unattended**: hourly watchdog `OK growing` every check, **zero false
+alarms**, auto-disarmed on stop; archive stayed `DEFERRED` with no churn or strikes.
+🔑 **`ARCHIVE_IGNORE_WINDOW=1`** bypasses the 08:30-20:00 window for a manual run; it does NOT bypass
+the recording check.
+🔴 **Perf fix: the manifest skip now runs BEFORE `recording_active()`** (which costs ~3.3 s spawning a
+python client). Re-scanning 130 done files went ~7 min → **4.3 s**.
+✅ **Both repos are on GitHub now (private): `neurosurveillance` (branch `ops/...`) and
+`eeg-emg-analysis` (205 objects, 18.53 MiB, first push ever).**
+⚠️ **My `pgrep -f <script>` guards keep matching my OWN command line — use the state file, not pgrep.**
