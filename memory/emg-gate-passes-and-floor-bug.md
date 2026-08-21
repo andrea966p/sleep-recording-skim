@@ -84,3 +84,19 @@ negative control, agrees with the hardware verdicts).
 ⭐ **LESSON: the animal with the best number was the wrong one. Both withdrawn animals had ALREADY
 been contradicted by a simple independent check. A strong number that disagrees with basic
 physiology is a WARNING, not a puzzle.**
+
+
+## Is the approach defensible? (literature check 2026-08-21)
+✅ **The in-file wire-free floor = a per-recording version of SHORTED-INPUT NOISE TESTING, which IS
+standard instrumentation practice.** Per-chip grouping is physically right (own ref+ground per chip).
+⚠️ **Using it as a LIVE PER-FILE criterion is non-standard — no published method does it.** The field
+asks the same question and answers it **BY EYE** ("excluded if contaminated / exceeds dynamic range").
+🔑 **Every modern staging tool reports Cohen's kappa vs HUMAN SCORERS** (REST 0.873; SAC 97.4-98.1%
+vs human 97.3-97.8%; MLS-Net 90.4%) **and all assume artifact-free input.** That kappa is the field's
+currency and **we still do not have one.**
+🔴🔴 **THE REAL RISK IS NOT THE METHOD, IT IS EFFORT ALLOCATION: 5/8 channels fail for HARDWARE
+reasons (B1 floating chip, B2 open EMG 427 µV, D1 degraded mid-run). Fixing the B1 ground beats any
+floor refinement.** 🛑 **User does NOT want to write a methods paper** — the goal is only to avoid
+wasting time and getting wrong answers.
+⚠️ bioRxiv API has NO keyword search (category+date only) ⇒ sampled via web search, NOT a novelty search.
+Vault: `06-references/is-our-qc-approach-sound.md`.
