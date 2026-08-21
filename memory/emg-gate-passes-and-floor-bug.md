@@ -46,3 +46,22 @@ about "A1, which has no ground at all" is STALE TEXT about a DIFFERENT cohort.
 Artefacts + scripts: `eeg-emg-analysis/qc/score_2026-08-21/`. Report:
 vault `05-experiments/completed/2026-08-21-39h-run-score.md`.
 Related: [[animal-card-verdict-ladder]] · [[recording-2026-08-18-eight-new-mice]]
+
+
+## How far back the floor bug reaches (MEASURED 2026-08-21, not assumed)
+**All four substantive recordings have DIVERGING chips**, and in every one the pooled value is
+**too harsh for exactly 7 of 8 chips, too lenient for exactly 1**:
+`08-08 16.39h` pooled -1.328, chips -1.540..-0.800 (lenient chip = D1) ·
+`08-09 48h control` -1.352, -1.666..-0.840 (D1) ·
+`08-18 1h screen` -1.510, -1.942..-0.407 (B1) ·
+`08-19 39.7h` -1.633, -2.079..-0.676 (B1).
+🔑 **DIRECTION RULE: where pooled was harsher, a FAIL is suspect but a PASS is CONSERVATIVE and
+SURVIVES.** ⇒ **the A2 48 h control's 47.09/48.19 h stands** (its chip -0.976 vs pooled -1.352);
+only that one too-lenient chip per run has suspect passes.
+
+## ⭐⭐ THE CONTROL THAT MATTERS: re-ran the 08-08 EMG gate per-chip
+**It moves exactly ONE animal: B2 -0.156 → -0.366 (crosses the bar).** A2 control -0.734→-0.713,
+C2 -0.174→-0.180, D1 +0.023→+0.028, D2 +0.010→-0.135 (still fails).
+⇒ **The floor fix does NOT manufacture passes. The four passes on the 39.7 h run are a REAL change
+in the data.** ⚠️ Corrects the 08-11 audit: **"no experimental animal passes" is FALSE (B2 does)**,
+but 3 of 4 still fail so the wider claim stands.
