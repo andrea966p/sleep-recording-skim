@@ -1,0 +1,142 @@
+/usr/lib/python3/dist-packages/scipy/__init__.py:132: UserWarning: A NumPy version >=1.21.6 and <1.28.0 is required for this version of SciPy (detected version 2.2.6)
+  warnings.warn(f"A NumPy version >={np_minversion} and <{np_maxversion}"
+
+A module that was compiled using NumPy 1.x cannot be run in
+NumPy 2.2.6 as it may crash. To support both 1.x and 2.x
+versions of NumPy, modules must be compiled with NumPy 2.0.
+Some module may need to rebuild instead e.g. with 'pybind11>=2.12'.
+
+If you are a user of the module, the easiest solution will be to
+downgrade to 'numpy<2' or try to upgrade the affected module.
+We expect that some modules will need time to support NumPy 2.
+
+Traceback (most recent call last):  File "/home/skimlab/Monitoring_project/eeg-emg-analysis/qc/emg_state_dependence.py", line 377, in <module>
+    sys.exit(main())
+  File "/home/skimlab/Monitoring_project/eeg-emg-analysis/qc/emg_state_dependence.py", line 276, in main
+    b = burstiness(x, fs_raw, labels.index(site), k, feat.epoch_s)
+  File "/home/skimlab/Monitoring_project/eeg-emg-analysis/qc/emg_state_dependence.py", line 147, in burstiness
+    from scipy.signal import butter, filtfilt, hilbert, iirnotch, welch
+  File "/usr/lib/python3/dist-packages/scipy/signal/__init__.py", line 311, in <module>
+    from . import _sigtools, windows
+Traceback (most recent call last):
+  File "/opt/neurosurveillance/venv/lib/python3.12/site-packages/numpy/core/_multiarray_umath.py", line 44, in __getattr__
+    raise ImportError(msg)
+ImportError: 
+A module that was compiled using NumPy 1.x cannot be run in
+NumPy 2.2.6 as it may crash. To support both 1.x and 2.x
+versions of NumPy, modules must be compiled with NumPy 2.0.
+Some module may need to rebuild instead e.g. with 'pybind11>=2.12'.
+
+If you are a user of the module, the easiest solution will be to
+downgrade to 'numpy<2' or try to upgrade the affected module.
+We expect that some modules will need time to support NumPy 2.
+
+
+recording : allego_1__uid0819-17-25-20
+rung 0    : INTACT -- 142,825,728 data samples = 142,825,728 timestamp samples, remainder 0 and 0
+features  : single pass, this takes a while on a full night
+  ...300/14282 epochs
+  ...600/14282 epochs
+  ...900/14282 epochs
+  ...1200/14282 epochs
+  ...1500/14282 epochs
+  ...1800/14282 epochs
+  ...2100/14282 epochs
+  ...2400/14282 epochs
+  ...2700/14282 epochs
+  ...3000/14282 epochs
+  ...3300/14282 epochs
+  ...3600/14282 epochs
+  ...3900/14282 epochs
+  ...4200/14282 epochs
+  ...4500/14282 epochs
+  ...4800/14282 epochs
+  ...5100/14282 epochs
+  ...5400/14282 epochs
+  ...5700/14282 epochs
+  ...6000/14282 epochs
+  ...6300/14282 epochs
+  ...6600/14282 epochs
+  ...6900/14282 epochs
+  ...7200/14282 epochs
+  ...7500/14282 epochs
+  ...7800/14282 epochs
+  ...8100/14282 epochs
+  ...8400/14282 epochs
+  ...8700/14282 epochs
+  ...9000/14282 epochs
+  ...9300/14282 epochs
+  ...9600/14282 epochs
+  ...9900/14282 epochs
+  ...10200/14282 epochs
+  ...10500/14282 epochs
+  ...10800/14282 epochs
+  ...11100/14282 epochs
+  ...11400/14282 epochs
+  ...11700/14282 epochs
+  ...12000/14282 epochs
+  ...12300/14282 epochs
+  ...12600/14282 epochs
+  ...12900/14282 epochs
+  ...13200/14282 epochs
+  ...13500/14282 epochs
+  ...13800/14282 epochs
+  ...14100/14282 epochs
+            14282 epochs of 10s = 39.67 h
+floor     : slope p1 -1.633 from 112 wire-free sites
+clock     : starts 2026-08-19 17:25 KST = ZT8.42; 40% of epochs in the light phase
+
+animal EEG    EMG    phase    n_min        r   verdict
+------------------------------------------------------------------------------
+A1     A/1    A/2    all        749   -0.127   no state dependence
+                     light      434   -0.077   no state dependence
+                     dark       315   -0.090   no state dependence
+
+A2     A/33   A/34   all        475   -0.092   no state dependence
+                     light      319    0.056   no state dependence
+                     dark       156   -0.197   weak, right direction
+
+B1     B/1    B/2    all          0     nan   INSUFFICIENT (too few usable EEG minutes)
+                     light        0     nan   INSUFFICIENT (too few usable EEG minutes)
+                     dark         0     nan   INSUFFICIENT (too few usable EEG minutes)
+
+B2     B/33   B/34   all        375    0.092   no state dependence
+                     light      273    0.002   no state dependence
+                     dark       102    0.254   WRONG DIRECTION
+
+C1     C/1    C/2    all        302    0.062   no state dependence
+                     light       62    0.153   WRONG DIRECTION
+                     dark       240   -0.067   no state dependence
+
+C2     C/33   C/34   all        257   -0.052   no state dependence
+                     light      188   -0.050   no state dependence
+                     dark        69   -0.109   no state dependence
+
+D1     D/1    D/2    all        210   -0.066   no state dependence
+                     light      120   -0.031   no state dependence
+                     dark        90   -0.118   no state dependence
+
+D2     D/33   D/34   all        451   -0.103   no state dependence
+                     light      302    0.165   WRONG DIRECTION
+                     dark       149   -0.264   weak, right direction
+
+==============================================================================
+TEST 2 -- EMG BURSTINESS: DIAGNOSTIC ONLY, THIS TEST EMITS NO PASS
+Real muscle fires in bursts, so its envelope should be variable while
+stationary amplifier noise is not. On this rig that reasoning FAILS:
+A1, which has NO GROUND AT ALL, scores near the top, because a floating
+input picks up variable interference. Numbers are printed as evidence
+against the test, not as a verdict. Nothing may gate on this column.
+
+Traceback (most recent call last):
+  File "/home/skimlab/Monitoring_project/eeg-emg-analysis/qc/emg_state_dependence.py", line 377, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/home/skimlab/Monitoring_project/eeg-emg-analysis/qc/emg_state_dependence.py", line 276, in main
+    b = burstiness(x, fs_raw, labels.index(site), k, feat.epoch_s)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/skimlab/Monitoring_project/eeg-emg-analysis/qc/emg_state_dependence.py", line 147, in burstiness
+    from scipy.signal import butter, filtfilt, hilbert, iirnotch, welch
+  File "/usr/lib/python3/dist-packages/scipy/signal/__init__.py", line 311, in <module>
+    from . import _sigtools, windows
+ImportError: numpy.core.multiarray failed to import
