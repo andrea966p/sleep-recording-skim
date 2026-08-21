@@ -65,3 +65,22 @@ C2 -0.174→-0.180, D1 +0.023→+0.028, D2 +0.010→-0.135 (still fails).
 ⇒ **The floor fix does NOT manufacture passes. The four passes on the 39.7 h run are a REAL change
 in the data.** ⚠️ Corrects the 08-11 audit: **"no experimental animal passes" is FALSE (B2 does)**,
 but 3 of 4 still fail so the wider claim stands.
+
+
+## 🔴 FALSIFICATION ROUND 2026-08-21 — C1 AND C2 ARE WITHDRAWN, n=3 NOT 4
+🔴🔴 **THE DELTA *RATIO* CARRIES EMG-BAND POWER IN ITS DENOMINATOR** ⇒ muscle/movement bleed into the
+EEG channel drives r negative **in a dead animal**. Recomputed vs **ABSOLUTE delta power (µV²)**:
+**A1 -0.580→-0.705, A2 -0.525→-0.686, D2 -0.485→-0.661 ALL STRENGTHEN** (opposite of the artefact's
+prediction) but **C1 COLLAPSES -0.733→-0.009** and **C2 REVERSES -0.689→+0.595**.
+⛔ **C1 AND C2 WITHDRAWN. SURVIVORS = A1, A2, D2 ONLY.** ⚠️ **C1 had the BEST number on the rig and
+was the artefact; its inverted circadian EMG had already flagged it.**
+🔑 **ALWAYS TEST STATE-DEPENDENCE ON ABSOLUTE DELTA POWER, NOT THE RATIO.**
+✅ **Per-chip criterion applied to the 112 wire-free inputs: 0/112 pass the 15-min gate** ⇒ it is NOT
+measuring chip self-similarity. 🔴 **BUT the fixed `r <= -0.30` BAR IS CROSSABLE BY INTERFERENCE —
+16/112 wire-free channels reach it. REPLACE IT WITH A PER-CHIP NULL** (each EMG vs its own chip's 14
+wire-free channels): A1 z-2.96, A2 -2.12, D2 -1.68 below their null; B1/B2/D1 INSIDE theirs (a real
+negative control, agrees with the hardware verdicts).
+⚠️ **Per-chip floor = 14 samples not 112 ⇒ trades bias for variance; NO bootstrap CI computed yet.**
+⭐ **LESSON: the animal with the best number was the wrong one. Both withdrawn animals had ALREADY
+been contradicted by a simple independent check. A strong number that disagrees with basic
+physiology is a WARNING, not a puzzle.**
