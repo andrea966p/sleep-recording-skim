@@ -29,6 +29,13 @@ Related: [[2026-08-18]] · [[animal-card-and-verdict-ladder]] ·
 [[2026-08-07-ecg-cohort-baseline]].
 
 
+> [!danger] 🔴 THE COHORT IS DOWN TO 6 — B1 AND C1 ANIMALS ARE GONE (2026-08-21)
+> Both were found missing **with their tethers** after the 39.7 h recording stopped at 09:05.
+> **B1** had already failed with the PREVIOUS animal too, which makes that position a **hardware
+> fault — a ground connection on the port, not surgery.** **C1** had been withdrawn the day before
+> when its EMG state-dependence collapsed under falsification.
+> ⚠️ **Two tethers now need repair or replacement.**
+
 > [!warning] 🔴 SUPERSEDED — see the 39.7 h run, and note C1/C2 were WITHDRAWN there
 > The 8 positions were re-recorded for 39.7 h on 19-21 August and scored per-chip.
 > **Surviving passes are A1, A2, D2 only.** C1 and C2 initially appeared to pass and were withdrawn

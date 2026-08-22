@@ -61,9 +61,24 @@ which python3
 ```
 
 Expect `/usr/bin/python3`. If it says anything under `/opt/neurosurveillance`,
-deactivate the virtual environment first. The older `~/eeg-analysis-venv` from
-[[01-environment-setup]] also works, but the current pipeline needs nothing
-beyond numpy and scipy, so system `python3` is the simpler answer.
+deactivate the virtual environment first.
+
+> [!note] Confirmed still correct 2026-08-22, with the reason spelled out
+> `/usr/bin/python3` has **numpy 1.26.4 + scipy 1.11.4**, which match.
+> `/opt/neurosurveillance/venv` has **numpy 2.2.6** but no scipy of its own, so it
+> falls through to the system scipy compiled against numpy 1.x — hence the crash.
+> 🔑 **`radiens` lives ONLY in the daemon venv, and analysis does not need it.**
+> radiens is for talking to Allego (starting and stopping recordings). Reading
+> `.xdat` needs nothing but numpy. So: **recording → daemon venv, analysis →
+> system python3.**
+
+> [!warning] If you use `~/eeg-analysis-venv` instead, you meet the opposite problem
+> That venv has **numpy 2.5.0**, and numpy 2.0 **removed `np.trapz`**. Before
+> 2026-08-22 the pipeline used it and died with
+> `module 'numpy' has no attribute 'trapz'`. Stages 1 and 3 now bind
+> `np.trapezoid` when it exists and fall back to `np.trapz`, so the pipeline runs
+> on **either** numpy. Nothing else in the pipeline is numpy-2 sensitive as of
+> this date, but that has not been exhaustively checked.
 
 ---
 
@@ -323,6 +338,28 @@ animal's threshold on another, which is what wrongly passed D2 on 2026-08-01.
 **Also check** that you are not comparing animals across recordings by name.
 Names are **positional**: `D2` in one recording is not necessarily the same
 mouse as `D2` in another.
+
+---
+
+## 13. A position produces NO states at all: `physiology FAIL: states missing`
+
+**Cause.** Its **EMG electrode is open**, so there are zero epochs that pass QC and
+nothing to stage. Seen on B2, 2026-08-19: EEG mains 72.7 µV (fine), **EMG mains
+535.8 µV** against the 150 µV `OPEN_UV` limit. Stage 1 requires **both** channels
+under the limit, because WAKE is separated from sleep by an Otsu split on
+**log EMG RMS**. With an open EMG that cut measures amplifier noise.
+
+**This is the correct answer, not a failure to try.** Do not work around it by
+forcing a threshold.
+
+**What you can still use.** The hypnogram CSV is written, with `state` = `EXCLUDED`
+on every epoch, but the **EEG-derived columns are valid** for all epochs:
+`eeg_rms_uv`, `delta`, `theta`, `theta_delta`, `zt_h`. Fine for spectral work.
+
+⚠️ **Do not invent an EEG-only stager to fill the gap.** Single-EEG mouse staging is
+a real published approach (https://www.nature.com/articles/s41598-021-90332-1) but
+this project has neither implemented nor validated one, and an unvalidated staging
+algorithm is exactly how a confidently wrong result is produced.
 
 ---
 
