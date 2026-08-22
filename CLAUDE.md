@@ -99,6 +99,10 @@ For anything long running, use tmux so an SSH drop does not kill it:
 ssh e10 -t 'tmux new -As rig'
 ```
 
+tmux was MISSING on `e10ubuntu` until 2026-08-19 even though this line had promised it since
+2026-08-16, so anything long running started that way before then died with the connection.
+Installed now: `tmux 3.4` on e10ubuntu, `3.6` on the ThinkPad.
+
 The Obsidian vault is synced to every machine by Syncthing, so vault files are local
 and need no SSH. `.git` is deliberately NOT synced: the vault's git repository and
 its backup timer exist on `e10ubuntu` only.
