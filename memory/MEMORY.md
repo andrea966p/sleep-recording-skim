@@ -60,6 +60,7 @@ NeuroSurveillance: Raspberry Pi 5 + Frigate NVR video monitoring for neuroscienc
 
 ## Host Hardware
 - `e10ubuntu` @ `192.168.0.50`: Intel Core Ultra 5 125H (14c/18t, iGPU QSV+NPU), 30GiB RAM, 1.9TB NVMe. (CLAUDE.md says Ultra 7 — actual Ultra 5.)
+- 🔴⭐ **[allegoserver spins a core after the GUI closes](allegoserver-runaway-thread-thermal.md)** — caused the CPU temp alarms 2026-08-23; +10 W/+11 °C. `kill` it. ⚠️ `ps %CPU` = lifetime avg, misleads.
 - **Thermal = the wall:** PL1 capped 20W. Fixes: aggressive fan curve, dedust+repaste, headless. Council leans proper desktop/SFF for a 72h live-animal instrument.
 
 ## Known Issues
