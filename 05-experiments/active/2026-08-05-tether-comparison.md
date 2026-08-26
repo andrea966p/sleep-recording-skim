@@ -339,11 +339,19 @@ recomputed inside each block.**
 | --- | --- | --- | --- |
 | morning census | 11:30-11:41, 20 sweeps | 1/20 = 5.0%, median 3.658 | 14/20 = **70.0%**, median 0.373 |
 | **pre-swap baseline** | 15:57-16:04, 15 sweeps | 0/15 = 0.0%, median 3.450 | 10/15 = **66.7%**, median 0.437 |
-| **arm C, long, no slip ring** | 16:27-16:47, 40 sweeps | 0/41 = 0.0%, median **8.235** | **0/41 = 0.0%**, median **1.820** |
+| **arm C, long, no slip ring** | 16:27-16:47, 40 sweeps | 0/40 = 0.0%, median **8.249** | **0/40 = 0.0%**, median **1.825** |
 
-**Harm test on the EMG:** 10/15 against 0/41 below 0.5 MOhm, **p = 8.4e-08**. At the looser
-2 MOhm line, 15/15 against 25/41, **p = 0.0025**. D2's EEG median roughly doubled, 3.450 to
-8.235.
+**Harm test on the EMG:** 10/15 against 0/40 below 0.5 MOhm, **p = 1.0e-07**. At the looser
+2 MOhm line, 15/15 against 25/40, **p = 0.0052**. D2's EEG median roughly doubled, 3.450 to
+8.249.
+
+> [!warning] ⚠️ CORRECTED 2026-08-26. These numbers were originally computed on **41** sweeps
+> The 41st was `..._1626_..._armC-first-sweep-after-swap.csv`, a manual GUI sweep taken **80 s
+> before** the automated block started, which had been sitting in the block folder. The
+> conclusion is unchanged and the direction is unchanged. What changed: EEG median 8.235 →
+> **8.249**, EMG median 1.820 → **1.825**, and the 0.5 MOhm p value 8.4e-08 → **1.0e-07**.
+> The original "25/41" was itself inconsistent: 25 was the count over the 40 block files.
+> See §13 data hygiene below.
 
 > [!danger] The harm detector fired, and that is why it was in the design
 > D2 was chosen precisely because its EMG was a **working channel that could show damage**.
@@ -394,37 +402,65 @@ decision keeps.
 
 ### 🔴 Caveat added the same evening: D2 recovered, so the harm finding is PROVISIONAL
 
-At roughly 17:30, after the arm C block had ended and while the slip ring of **B1** was being
-twisted by hand, a single sweep was taken (`imp_B1twistingslipring.csv`):
+At **16:56**, roughly 8 minutes after the arm C block ended, and while the slip ring of **B1**
+was being twisted by hand, a single sweep was taken
+(`imp_2026-08-06_1656_7mice-A2empty-4ports-64ch_B1-slipring-twisted-by-hand.csv`; the
+"roughly 17:30" originally written here was wrong, the file mtime is 16:56:13):
 
-| site | this sweep | during arm C, 41 sweeps |
+| site | this sweep | during arm C, 40 sweeps |
 | --- | --- | --- |
-| **D2 EEG** `D/33` | **0.396 MOhm** | 0/41 below 0.5, median 8.235, **block minimum 3.127** |
-| **D2 EMG** `D/34` | **0.404 MOhm** | 0/41 below 0.5, median 1.820, **block minimum 0.694** |
+| **D2 EEG** `D/33` | **0.396 MOhm** | 0/40 below 0.5, median 8.249, **block minimum 6.992** |
+| **D2 EMG** `D/34` | **0.404 MOhm** | 0/40 below 0.5, median 1.825, **block minimum 0.694** |
 | B1 EEG `B/1` | **0.084 MOhm** | best B1 value of the day |
 | A2 no-mouse | 7.550 MOhm | open, control behaving normally |
 
-**Both D2 channels now read below every one of the 41 values recorded during arm C.** That is
+**Both D2 channels now read below every one of the 40 values recorded during arm C.** That is
 not a favourable coin flip, it is a different state.
+
+> [!note] ⭐ The correction makes the EEG gap **larger**, not smaller
+> The "block minimum 3.127" quoted here was never a block value at all — it was the stray 16:26
+> pre-block sweep. The real arm C block minimum for `D/33` is **6.992**, so the 16:56 reading of
+> 0.396 sits further outside the block than originally stated.
 
 > [!warning] What this does to §13
 > **Arm C may have captured one long open state rather than permanent harm from the swap.**
 > Our own root-cause work shows contact states persist for tens of minutes and then flip, and
-> 41 consecutive sweeps span only 21 minutes. The flat rho of −0.00 that excluded anaesthesia
+> 40 consecutive sweeps span only 21 minutes. The flat rho of −0.00 that excluded anaesthesia
 > recovery is **equally consistent with being stuck in a single state for the whole block**.
 >
-> The harm finding stands as the best reading of 41 sweeps against 15, but it is now
+> The harm finding stands as the best reading of 40 sweeps against 15, but it is now
 > **provisional and must not be reported as established**. The overnight recording settles it:
 > a usable fraction measured over 12+ hours cannot be fooled by which state we sampled.
 
 **Twisting B1's slip ring caused no harm** — its EEG read 0.084 MOhm during the manipulation,
 the lowest value it produced all day. One sweep, so not a result, but no sign of damage.
 
-> [!note] Data hygiene
-> The folder `05-armC-D2-longtether-noslipring-40sweeps/` now holds three different conditions: the pre-block
-> single sweep, the 40-sweep block, and the twist sweep. A folder glob therefore scores **41**
-> sweeps, not 40. Harmless here, but the conditions should be separated before any future
-> analysis globs that directory.
+> [!success] ✅ Data hygiene — RESOLVED, and it was not harmless
+> The three conditions were separated on **2026-08-06 at 17:03:03**, and
+> `2026-08-06/README.md` documents the split. `05-armC-D2-longtether-noslipring-40sweeps/`
+> now holds **exactly 40 CSVs** (16:27:21 to 16:47:42) plus `_log.tsv`, and the two one-off
+> sweeps live in `06-single-sweeps/`.
+>
+> 🔴 **But the published arm C numbers on this page had already been computed on the
+> contaminated 41**, and were only corrected on **2026-08-26**. The tell was the quoted
+> "block minimum 3.127", which is exactly the value of the stray 16:26 sweep and appears
+> nowhere in the block. Corrected values are in §13 above.
+>
+> 🔑 **Rule:** a block's n must come from its `_log.tsv` row count, not from a folder glob.
+> `_log.tsv` has a header line, so `wc -l` also reads one too many — 41 lines is 40 sweeps.
+
+### Verified file manifest, three conditions
+
+| condition | files | clock | D2 EEG `D/33` | D2 EMG `D/34` |
+| --- | --- | --- | --- | --- |
+| **1. pre-swap baseline** (original tether + slip ring) | `04-preswap-D2-baseline-15sweeps/`, 15 CSV | 15:57:12-16:04:29 | median 3.450, min 0.705, **0/15** below 0.5 | median 0.437, min 0.071, **10/15** below 0.5 |
+| **2. arm C block** (long tether, no slip ring) | `05-armC-D2-longtether-noslipring-40sweeps/`, **40** CSV | 16:27:21-16:47:42 | median 8.249, min 6.992, **0/40** | median 1.825, min 0.694, **0/40** |
+| **3a. stray pre-block sweep** ⚠️ **excluded from the block** | `06-single-sweeps/..._1626_..._armC-first-sweep-after-swap.csv` | 16:26:00 | 3.127 | 1.783 |
+| **3b. twist sweep** | `06-single-sweeps/..._1656_..._B1-slipring-twisted-by-hand.csv` | 16:56:13 | 0.396 | 0.404 |
+
+Sweep 3a is **after the swap** and is a legitimate arm C reading, so it was not wrong data —
+it was wrong **pooling**: a single manual GUI sweep pooled into a pre-registered 40-sweep
+automated block. Recomputed 2026-08-26 from `_log.tsv` and the raw CSVs.
 
 
 ---
