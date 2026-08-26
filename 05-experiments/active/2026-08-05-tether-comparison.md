@@ -485,7 +485,7 @@ not be from a 21 minute window, was **state persistence**.
 > [!important] The rule this produces
 > **Impedance blocks screen. Only a multi-hour recording is an outcome.** Always state a block's
 > **duration** next to its duty cycle, and never conclude harm or benefit from a block alone.
-> A 40 sweep block produced p = 8.4e-08 for a conclusion that was exactly backwards.
+> A 40 sweep block produced p = 1.0e-07 for a conclusion that was exactly backwards.
 
 ⭐ Both new tethers therefore **worked**: arm B improved B1 **with** the slip ring, arm C improved
 D2 **without** it. What they share is **soldered, resin-encapsulated construction**. That is now

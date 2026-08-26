@@ -299,7 +299,7 @@ Written in advance so tomorrow's scoring is honest, exactly as we did last night
   sweep now measures.
 
 ⚠️ **WHAT WOULD FALSIFY ALL OF THIS: A NIGHT IS THE OUTCOME, 120 SECONDS IS NOT.** On 2026-08-06 a
-21 minute window gave p = 8.4e-08 for a conclusion that turned out to be **exactly backwards**,
+21 minute window gave p = 1.0e-07 for a conclusion that turned out to be **exactly backwards**,
 and D2 went from 0.0 to 87.9 percent usable once a real night was recorded. Today's live look is
 120 seconds. **Nothing on this page is an outcome until the recording is scored.**
 

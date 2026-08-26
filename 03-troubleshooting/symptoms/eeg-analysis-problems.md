@@ -401,7 +401,7 @@ EMG was called excellent (p = 1e-16) while 296 of its 331 µV rms was mains hum.
 
 ### A duty-cycle block gives a hugely significant result that a recording later reverses
 **Cause.** A 40-sweep block spans ~21 min and contact states persist longer than that, so the block
-can sample **one state** and report it at p = 8e-08. This happened on 2026-08-06 and was reversed.
+can sample **one state** and report it at p = 1e-07. This happened on 2026-08-06 and was reversed.
 **Fix.** Quote the block's **duration** beside its duty cycle. Never conclude harm or benefit from a
 block alone.
 

@@ -227,7 +227,10 @@ What does survive filtering is **the shape of the spectrum**. Real brain activit
 
 ## 1.12 The retraction I am least comfortable about (6 to 7 August)
 
-On 6 August I reported, with a p value of 8.4 times 10 to the minus 8, that the new long tether had **harmed** animal D2, taking its EMG from 67 percent to 0 percent.
+On 6 August I reported, with a p value of 1.0 times 10 to the minus 7, that the new long tether had **harmed** animal D2, taking its EMG from 67 percent to 0 percent.
+
+> [!note] ⚠️ Small numerical correction made on 26 August, and it changes nothing about the story
+> When this update was first written the p value here read 8.4 times 10 to the minus 8. That number had been computed over 41 impedance sweeps rather than 40. The extra one was a single manual sweep taken by hand about 80 seconds before the automated block began, which had been sitting in the same folder and was getting picked up by a file glob. Recomputed over the real 40 sweeps the value is **1.0 times 10 to the minus 7**. The counts, the medians, the direction and the retraction below are all unchanged. The full audit is in the tether comparison page, section 13.
 
 **That was exactly backwards.** The overnight recording showed the swap had **fixed** D2: usable EEG went from 0.0 percent to 87.9 percent, railed epochs from 29.7 percent to 0.0 percent, median hum from 916.9 to 133.2 microvolts.
 
@@ -328,7 +331,7 @@ D2 is the more valuable of the two, scientifically, because it is the only anima
 | 6 Aug 11:30 | fleet census, 20 sweeps | EEG **30 percent**, EMG **100 percent** |
 | 6 Aug, rescored against the empty cable | at the corrected 0.5 megaohm pass mark | 🔴 **D2's EEG is NOT statistically distinguishable from a cable attached to nothing.** EMG only. **Cannot stage sleep.** |
 | 6 Aug 15:57 | 15 sweep baseline, 20 minutes before the swap | |
-| 6 Aug 16:27 | **new long soldered tether fitted, slip ring removed**, 40 sweeps over 20 minutes | 🔴 read as **harm, p = 8.4 times 10 to the minus 8** |
+| 6 Aug 16:27 | **new long soldered tether fitted, slip ring removed**, 40 sweeps over 20 minutes | 🔴 read as **harm, p = 1.0 times 10 to the minus 7** |
 | 6 to 7 Aug | the 23.66 hour overnight recording | ✅ **EEG usable 0.0 percent to 87.9 percent. Hum median 916.9 to 133.2 microvolts. Spectral slope minus 0.38 to minus 2.05. Railed epochs 29.7 percent to 0.0 percent. EMG 86.1 to 98.6 percent.** |
 | 7 Aug, scored | | **SCOREABLE.** 23.28 hours in 9 blocks, longest 9.6 hours, persistence 0.499, REM order 78.4 percent at about 12 standard deviations, **70.4 percent asleep in the light phase** |
 
@@ -570,7 +573,7 @@ Two things worth knowing: their delta and theta are **time domain rectified inte
 - ❌ "First sleep biology recorded" (15 July). Clipping artefact, flipped sign when railed epochs were excluded.
 - ❌ "The EMG failed on 23 of 24 legs, we may need new mice." The channel map was wrong. The EMG mostly worked.
 - ❌ "Six channels recovered." Found with the buggy persistence metric, all false.
-- ❌ "The new long tether harmed D2, p equal to 8.4 times 10 to the minus 8." Backwards. The swap fixed it. The block was 21 minutes long and caught one open state.
+- ❌ "The new long tether harmed D2, p equal to 1.0 times 10 to the minus 7." Backwards. The swap fixed it. The block was 21 minutes long and caught one open state.
 - ❌ "Movement causes the contact loss." Proposed and disproved the same day.
 - ❌ "Physiology passes 5 out of 5." Four of the five checks cannot fail.
 - ❌ "The circadian agreement is threshold independent." It swings by up to 66 points.

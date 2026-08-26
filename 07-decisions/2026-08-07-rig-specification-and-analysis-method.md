@@ -195,7 +195,7 @@ change silently relabels everything.
 
 > [!danger] 🔑 Impedance blocks SCREEN. Only a multi-hour recording is an OUTCOME.
 > A 40 sweep block spans about 21 minutes, and contact states persist **longer than that**. On
-> 2026-08-06 a block gave **p = 8.4e-08** for a conclusion the overnight recording reversed
+> 2026-08-06 a block gave **p = 1.0e-07** for a conclusion the overnight recording reversed
 > completely.
 >
 > **Always state a block's duration next to its duty cycle, and never conclude harm or benefit

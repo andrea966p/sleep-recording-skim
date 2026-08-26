@@ -196,11 +196,20 @@ no animal on it**.
     └── 06-single-sweeps/                        one-off readings, NEVER pool these
 ```
 
-> [!warning] Single sweeps must never sit inside a block folder
-> Two loose sweeps were sitting in the arm C folder, so a folder glob scored **41** sweeps
-> instead of 40. They now live in `06-single-sweeps/`. A cut tether with no mouse reads below
-> 2 MOhm about **22%** of the time, so one sweep cannot classify anything and must never be
-> pooled into a duty cycle.
+> [!warning] 🔴 Single sweeps must never sit inside a block folder, and this one cost us a number
+> A loose sweep was sitting in the arm C folder — the **16:26 manual GUI sweep**, taken 80 s
+> before the automated block started — so a folder glob scored **41** sweeps instead of 40. It
+> now lives in `06-single-sweeps/`. A cut tether with no mouse reads below 2 MOhm about **22%**
+> of the time, so one sweep cannot classify anything and must never be pooled into a duty cycle.
+>
+> ⚠️ **It was NOT caught before publication.** The arm C statistics went into the vault computed
+> on the contaminated 41 and were only corrected on **2026-08-26**: EEG median 8.235 → 8.249,
+> EEG block minimum 3.127 → **6.992** (3.127 was the stray sweep's own value and appears nowhere
+> in the block), EMG median 1.820 → 1.825, 0.5 MOhm p value 8.4e-08 → **1.0e-07**, 2 MOhm
+> 25/41 p = 0.0025 → **25/40 p = 0.0052**. Direction and conclusions unchanged.
+>
+> 🔑 **Take a block's n from the row count of its `_log.tsv`, never from a folder glob.**
+> `_log.tsv` carries a header line, so `wc -l` also reads one too many: 41 lines is 40 sweeps.
 
 > [!important] ⭐ The floor control is free and is in every sweep ever taken
 > Each mouse uses only 2 of its chip's 16 amplifier inputs, so **`/3`-`/16` and `/35`-`/48` are

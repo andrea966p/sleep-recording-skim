@@ -78,10 +78,16 @@ control slope range across this recording: **[−1.29, −0.07]**.
 D2 was swapped onto the **long custom tether plugged straight into the headstage, slip ring
 removed**. A 40 sweep impedance block immediately afterwards gave:
 
-- D2 EMG **10/15 → 0/40** below 0.5 MOhm, p = 8.4e-08
+- D2 EMG **10/15 → 0/40** below 0.5 MOhm, p = 1.0e-07
 - D2 EEG median **3.450 → 8.249** MOhm
 - untouched controls unchanged, so drift excluded
 - EMG **flat across the block, rho −0.00**, so anaesthesia recovery excluded
+
+> [!note] ⚠️ p value corrected 2026-08-26
+> Originally reported as **p = 8.4e-08**, computed on 41 sweeps. The 41st was a stray manual
+> sweep taken 80 s before the block, since removed from the block folder. Recomputed on the
+> real 40, **p = 1.0e-07**. Counts, medians and every conclusion on this page are unchanged.
+> Full audit: [[2026-08-05-tether-comparison]] §13.
 
 I reported that as harm, flagged it provisional when D2 recovered 40 minutes later, and said
 the overnight recording would settle it.
@@ -114,7 +120,7 @@ is the same channel, the same animal, 24 hours apart.
 > [!important] Even a 40 sweep duty cycle can be unrepresentative
 > We adopted duty cycles precisely because a single reading is a coin toss. This shows the fix
 > was **necessary but not sufficient**. Contact states on this rig persist for **longer than a
-> 21 minute block**, so a block can sample one state and report it with a p value of 8e-08.
+> 21 minute block**, so a block can sample one state and report it with a p value of 1e-07.
 >
 > **Impedance blocks are a screening tool. Only a multi-hour recording is an outcome.** Duty
 > cycle blocks should be reported with their **duration** stated prominently and should never

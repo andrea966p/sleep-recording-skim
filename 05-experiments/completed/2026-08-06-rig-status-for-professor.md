@@ -163,7 +163,7 @@ repeatable property of a channel**, unlike a single reading.
 > [!warning] But a duty cycle block is still only a screen, and we learned this the hard way
 > A 40 sweep block spans about 21 minutes. Contact states on this rig **persist for longer than
 > that**, so a block can sample one state and report it with great confidence and be wrong. On
-> 6 August a block gave p = 8.4e-08 for a conclusion the overnight recording reversed completely.
+> 6 August a block gave p = 1.0e-07 for a conclusion the overnight recording reversed completely.
 > **Impedance screens. Only a multi hour recording is an outcome.** Always state a block's duration
 > next to its result.
 
@@ -283,7 +283,7 @@ the working animal**. Same animal, same electrode, 24 hours apart.
 
 > [!warning] One honest correction, recorded rather than quietly dropped
 > An impedance block taken immediately after that swap indicated the **opposite**, that the animal
-> had been damaged, at p = 8.4e-08. The recording reversed it. The block had caught the channel in
+> had been damaged, at p = 1.0e-07. The recording reversed it. The block had caught the channel in
 > a single long open state spanning all 21 minutes of it. This is why impedance is now treated as a
 > screen and the recording as the outcome.
 

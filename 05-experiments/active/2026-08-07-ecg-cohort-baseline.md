@@ -337,7 +337,7 @@ because it needs no threshold we invented.
 mouse channel with real spectral tilt (slope -0.91). Weak prediction.
 
 ⚠️ **WHAT WOULD FALSIFY PREDICTION 2, AND WHY I AM NOT CONFIDENT.** On 2026-08-06 a 21 minute
-window gave p = 8.4e-08 for a conclusion that turned out to be **exactly backwards**, and D2
+window gave p = 1.0e-07 for a conclusion that turned out to be **exactly backwards**, and D2
 went from 0.0% to 87.9% usable once a real night was recorded. 144 minutes is better than 21 but
 **it is still not a night**. A channel that is open now can come good for a multi hour block
 later. **If any new mouse produces a multi hour clean block, prediction 2 is dead and the
