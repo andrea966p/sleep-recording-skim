@@ -340,6 +340,53 @@ FLOOR_PERCENTILE = 1
 # median: we want "better than nearly every unwired input", not "better than
 # average".
 
+FLOOR_SCOPE = "chip"
+# "chip"  -- the wire-free inputs of the SAME port+slot as the animal (correct)
+# "pooled" -- all wire-free inputs in the file (the historical behaviour, WRONG)
+#
+# WHY THIS EXISTS. usable_fraction's own definition says the comparison is made
+# against wire-free inputs "recorded simultaneously through the same chip, cable
+# and room". Pooling all 8 chips contradicts that sentence, and it is not a
+# harmless approximation: chips differ. MEASURED on allego_0__uid0825-09-00-00,
+# the pooled slope threshold is -1.94 while the per-chip thresholds run from
+# -0.95 (A2) to -2.38 (B1). Under the pooled number EVERY animal in that file
+# fails, including ones with 96% usable EEG against their own chip. A single
+# floating headstage is enough to drag the pooled floor steep and condemn the
+# whole rig, which is exactly what happened on 2026-08-18.
+#
+# DIRECTION RULE, measured repeatedly: a FAIL under the pooled floor is suspect,
+# a PASS under it is conservative and survives the change to per-chip.
+
+FLOOR_ESTIMATOR = "site_p1_median"
+# How the percentile is estimated from a chip's wire-free sites.
+#   "pooled_p1"       -- percentile over every (epoch, site) value together
+#   "site_p1_median"  -- percentile per SITE, then the median across sites
+#
+# WHY NOT "pooled_p1". A chip has only ~14 wire-free sites. Pooling their epochs
+# lets the lower tail of ONE unrepresentative site set the threshold for the
+# whole chip. MEASURED on allego_0__uid0825-09-00-00 chip A1: every floor site
+# has a flat median slope (+0.38 to -0.74), yet sites A/11-A/15 are partially
+# coupled (rms 651-2696 uV, lf/hf 3.6-5.2) and their epoch tails drag the pooled
+# p1 down to -1.59, the strictest bar on the rig. Taking the percentile per site
+# first and then the median makes one bad site a minority vote instead of the
+# decider. Across-chip spread of the threshold falls from 1.16 to 0.96.
+#
+# 🛑 THIS CHOICE WAS NOT MADE BY LOOKING AT WHICH ANIMALS IT PASSES. It is a
+# robustness argument about estimating a percentile from a small, heterogeneous
+# sample. It moves A1's threshold by 0.07 and does NOT change A1's verdict.
+
+FLOOR_MIN_HUM_UV = 800.0
+# A chip whose wire-free inputs are QUIETER than this has no ground reference,
+# so its floor is not a valid negative control and no verdict can be drawn from
+# it. Such a chip is UNJUDGEABLE, which is not the same as the animal failing.
+#
+# WHY 800. A grounded chip's wire-free inputs sit in mains hum. MEASURED across
+# every recording since 2026-08-07, a grounded chip's floor 60 Hz is 1138-5609
+# uV and a floating one is 82-466 uV -- two populations separated by more than a
+# factor of two with nothing in between. 800 sits in that empty gap. The value
+# is deliberately NOT tuned to any animal's verdict; moving it anywhere inside
+# 500-1100 changes nothing about which chips are called floating.
+
 SLOPE_BAND_HZ = (1.0, 40.0)
 # Band for the log-log spectral slope. Starts at 1.0 because the acquisition
 # high-pass sits at 1.10 Hz, ends at 40 to stay clear of the 60 Hz mains and its

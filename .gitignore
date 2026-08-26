@@ -16,3 +16,6 @@ venv/
 # Raw acquisition data is NEVER committed: it lives in ~/radix/data (775 GB)
 *.xdat
 *.xdat.json
+
+# Stray runtime log written by the radiens client when allegoserver is unreachable
+radiens.log

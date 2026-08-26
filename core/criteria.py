@@ -344,29 +344,94 @@ class FloorStats:
     slope_p5: float
     slope_median: float
     slope_min: float
+    # Provenance of THIS floor. Reported on every card so a number can never be
+    # quoted without saying which wire-free inputs produced it.
+    scope: str = "pooled"          # "chip" | "pooled"
+    position: str = ""             # the chip, when scope == "chip"
+    estimator: str = "pooled_p1"   # see qc_thresholds.FLOOR_ESTIMATOR
+    grounded: bool = True          # False => floor is not a valid control
+    validity_reason: str = ""
 
     def as_dict(self) -> dict:
         return {k: (round(v, 3) if isinstance(v, float) else v)
                 for k, v in self.__dict__.items()}
 
 
-def floor_stats(feat: EpochFeatures) -> FloorStats:
-    """Thresholds come from the wire-free inputs IN THIS FILE, never from memory."""
-    fc = np.array([feat.col(s) for s in feat.spec.floor_sites()])
-    fh = feat.hum[:, fc].ravel()
-    fs_ = feat.slope[:, fc].ravel()
+def _percentile(values: np.ndarray, p: float, estimator: str) -> float:
+    """Percentile of a floor statistic, estimated over a small, heterogeneous set.
+
+    values is (n_epochs, n_sites).
+
+    "pooled_p1" throws every (epoch, site) value into one pot, which lets the
+    lower tail of a single unrepresentative site set the threshold for the whole
+    chip. "site_p1_median" takes the percentile within each site first and then
+    the median across sites, so one bad site is a minority vote rather than the
+    decider. See qc_thresholds.FLOOR_ESTIMATOR for the measurement that motivated
+    this.
+    """
+    if estimator == "pooled_p1":
+        return float(np.percentile(values, p))
+    if estimator == "site_p1_median":
+        return float(np.median(np.percentile(values, p, axis=0)))
+    raise ValueError(f"unknown floor estimator {estimator!r}")
+
+
+def floor_sites_of(spec: CohortSpec, position: str) -> list[str]:
+    """The wire-free sites on the SAME port and slot as `position`.
+
+    This is what "through the same chip" in USABLE_FRACTION_DEFINITION means.
+    """
+    port = position[0]
+    slot_i = int(position[1:])
+    base = spec.slot_bases[slot_i - 1]
+    n = len(spec.roles)
+    return [f"{port}/{i}" for i in range(base + n, base + CHIP_REAL_CHANNELS)]
+
+
+def floor_stats(feat: EpochFeatures,
+                position: str | None = None,
+                *,
+                estimator: str | None = None) -> FloorStats:
+    """Thresholds come from the wire-free inputs IN THIS FILE, never from memory.
+
+    position=None reproduces the historical POOLED floor across all chips. That
+    is kept only so old callers keep working; it contradicts this project's own
+    definition of usable fraction and it condemns a whole rig when one headstage
+    floats. Pass a position.
+    """
+    estimator = estimator or T.FLOOR_ESTIMATOR
+    if position is None:
+        sites, scope = feat.spec.floor_sites(), "pooled"
+    else:
+        sites, scope = floor_sites_of(feat.spec, position), "chip"
+    fc = np.array([feat.col(s) for s in sites])
+    fh = feat.hum[:, fc]
+    fs_ = feat.slope[:, fc]
     p = T.FLOOR_PERCENTILE
+    hum_median = float(np.median(fh))
+    grounded = hum_median >= T.FLOOR_MIN_HUM_UV
+    reason = "" if grounded else (
+        f"wire-free inputs on this chip sit at {hum_median:.0f} uV of 60 Hz, "
+        f"below the {T.FLOOR_MIN_HUM_UV:.0f} uV that a GROUNDED chip shows. The "
+        "headstage has no ground reference, so its wire-free inputs are not a "
+        "valid negative control and no connection verdict can be drawn from "
+        "them. This is a HARDWARE fault at the chip, not a statement about the "
+        "animal.")
     return FloorStats(
         n_sites=len(fc), n_epochs=feat.n_epochs, n_samples=int(fh.size),
-        hum_p1=float(np.percentile(fh, p)), hum_p5=float(np.percentile(fh, 5)),
-        hum_median=float(np.median(fh)),
-        slope_p1=float(np.percentile(fs_, p)), slope_p5=float(np.percentile(fs_, 5)),
-        slope_median=float(np.median(fs_)), slope_min=float(fs_.min()))
+        hum_p1=_percentile(fh, p, estimator), hum_p5=_percentile(fh, 5, estimator),
+        hum_median=hum_median,
+        slope_p1=_percentile(fs_, p, estimator), slope_p5=_percentile(fs_, 5, estimator),
+        slope_median=float(np.median(fs_)), slope_min=float(fs_.min()),
+        scope=scope, position=position or "", estimator=estimator,
+        grounded=grounded, validity_reason=reason)
 
 
 def floor_threshold_ci(feat: EpochFeatures, criterion: str = "slope",
                        n_boot: int = 2000, ci: float = 95.0,
-                       seed: int = 20260810) -> dict:
+                       seed: int = 20260810,
+                       position: str | None = None,
+                       estimator: str | None = None) -> dict:
     """Sampling uncertainty of the floor threshold, and what it does to a fraction.
 
     WHY THIS EXISTS. Every usable fraction in this project is a comparison against
@@ -381,17 +446,20 @@ def floor_threshold_ci(feat: EpochFeatures, criterion: str = "slope",
     independent draws and produce an interval far too narrow to be honest. There
     are only 14 to 104 floor SITES, and that is the real sample size.
     """
+    estimator = estimator or T.FLOOR_ESTIMATOR
     rng = np.random.default_rng(seed)
-    fc = np.array([feat.col(s) for s in feat.spec.floor_sites()])
+    sites = (floor_sites_of(feat.spec, position) if position
+             else feat.spec.floor_sites())
+    fc = np.array([feat.col(s) for s in sites])
     src = feat.slope if criterion == "slope" else feat.hum
     p = T.FLOOR_PERCENTILE
     n_sites = len(fc)
     draws = np.empty(n_boot)
     for b in range(n_boot):
         pick = rng.integers(0, n_sites, n_sites)          # sites, with replacement
-        draws[b] = np.percentile(src[:, fc[pick]].ravel(), p)
+        draws[b] = _percentile(src[:, fc[pick]], p, estimator)
     lo, hi = np.percentile(draws, [(100 - ci) / 2, 100 - (100 - ci) / 2])
-    point = float(np.percentile(src[:, fc].ravel(), p))
+    point = _percentile(src[:, fc], p, estimator)
     return {"criterion": criterion, "n_floor_sites": int(n_sites),
             "point": point, "lo": float(lo), "hi": float(hi), "ci": ci,
             "n_boot": n_boot,
@@ -430,8 +498,14 @@ def falsification_check(feat: EpochFeatures, floor: FloorStats,
     animal number from this file means anything. Run it before believing a
     result, not after.
     """
+    # Score the floor THIS threshold came from. Scoring the pooled site list
+    # against a per-chip threshold compares a chip to other chips' hardware and
+    # reports the mismatch as a criterion failure.
+    sites = (floor_sites_of(feat.spec, floor.position)
+             if floor.scope == "chip" and floor.position
+             else feat.spec.floor_sites())
     fracs = []
-    for site in feat.spec.floor_sites():
+    for site in sites:
         m = _raw_mask(feat, site, floor, criterion)
         fracs.append(float(m.mean()))
     arr = np.array(fracs)

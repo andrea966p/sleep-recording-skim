@@ -262,6 +262,24 @@ def rung2_connection(feat: C.EpochFeatures, position: str, spec: C.CohortSpec,
                      floor: C.FloorStats, criterion: str) -> Rung:
     r = Rung(2, "CONNECTION",
              "Is the electrode connected, judged against wire-free inputs in the same file?")
+
+    # 🔑 JUDGE THIS ANIMAL AGAINST ITS OWN CHIP. The floor handed in may be the
+    # historical pooled one; re-derive it per chip unless the caller already did.
+    if floor.scope != "chip" or floor.position != position:
+        floor = C.floor_stats(feat, position)
+
+    # 🛑 AN UNGROUNDED CHIP HAS NO VALID NEGATIVE CONTROL. Its wire-free inputs
+    # go quiet and steep, which makes the threshold unbeatable and reports a
+    # hardware fault as a dead animal. Say UNJUDGEABLE and say why.
+    if not floor.grounded:
+        r.verdict = "UNJUDGEABLE"
+        r.reason = floor.validity_reason
+        r.headline = (f"chip floor is {floor.hum_median:.0f} uV of 60 Hz "
+                      f"(grounded chips show >{T.FLOOR_MIN_HUM_UV:.0f}) -- "
+                      "no verdict can be drawn")
+        r.detail = {"floor": floor.as_dict()}
+        return r
+
     sites = spec.animal_sites()[position]
     masks: dict[str, np.ndarray] = {}
     refusals: dict[str, str] = {}
@@ -300,14 +318,15 @@ def rung2_connection(feat: C.EpochFeatures, position: str, spec: C.CohortSpec,
     # without this interval is quoted to a precision it does not have.
     # This does NOT move the rung 2 verdict, which gates on the longest unbroken
     # block rather than the fraction -- one of the reasons it does.
-    thr_ci = C.floor_threshold_ci(feat, criterion)
+    thr_ci = C.floor_threshold_ci(feat, criterion, position=position)
     intervals = {}
     for role, site in sites.items():
         if role in refusals:
             continue
         role_criterion = per_role[role]["criterion"]
         ci_for_role = (thr_ci if role_criterion == criterion
-                       else C.floor_threshold_ci(feat, role_criterion))
+                       else C.floor_threshold_ci(feat, role_criterion,
+                                                 position=position))
         intervals[role] = C.usable_fraction_interval(feat, site, floor,
                                                      role_criterion, ci_for_role)
 
@@ -676,7 +695,9 @@ def main(argv: list[str]) -> int:
                                 sites=np.array(feat.sites), hum=feat.hum, rms=feat.rms,
                                 rail=feat.rail, slope=feat.slope, delta=feat.delta,
                                 lfhf=feat.lfhf)
-    floor = C.floor_stats(feat)
+    # Card-level floor is per-chip now; computed inside the loop so each
+    # animal is judged against its OWN chip's wire-free inputs.
+    floor = C.floor_stats(feat)          # pooled, kept only for the header
 
     outdir = Path(args.out) if args.out else (
         ROOT / "cards" / "out" / cohort.cohort_id)
@@ -687,7 +708,7 @@ def main(argv: list[str]) -> int:
           f"{'4 ARCH':<12} {'5 EXPORT':<12}")
     print("-" * 118)
     for pos in positions:
-        card = build_card(base, cohort, pos, feat, floor, criterion)
+        card = build_card(base, cohort, pos, feat, C.floor_stats(feat, pos), criterion)
         path = outdir / f"{card.recording}__{pos}_card.json"
         path.write_text(json.dumps(card.to_json(), indent=2, default=str))
         v = {r.number: r.verdict for r in card.rungs}

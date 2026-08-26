@@ -1,0 +1,267 @@
+# =============================================================================
+# COHORT MANIFEST -- S-SD, SOD1 + CSD, batch 2 of the SOD1 intake series
+# =============================================================================
+#
+# PROVENANCE. Every husbandry value below was read out of the lab's own
+# spreadsheet, `~/Downloads/HLB_SOD1_Intake_Monitoring.xlsx`, sheet `Registry`,
+# on 2026-08-24. This is the FIRST cohort in this project with real animal ids,
+# real surgery dates and real body weights, rather than placeholders.
+#
+# The `verdict_2026_08_24` note on each animal is MEASURED, not husbandry: it is
+# the rung-2 connection result from allego_0__uid0824-17-56-51, computed against
+# a PER-CHIP wire-free floor trimmed of contaminated sites. It is a CONNECTION
+# measure, not a data-quality score, and not a sleep result.
+#
+# ⚠️ The registry lists `Recording start = 2026-08-25` for every S-SD animal,
+#   but the first hour-long recording was actually taken on 2026-08-24 at
+#   17:56:51 KST. The sheet is one day behind reality.
+# =============================================================================
+
+cohort_id: S-SD
+title: SOD1 + CSD cohort, batch S-SD
+project_id: neurosurveillance-eeg
+description: >
+  Ten male mice, HLBCSD11 to HLBCSD20, surgeries 2026-08-10 to 2026-08-12, all
+  tethered 2026-08-18. Eight are on the rig; HLBCSD17 is operated and tethered
+  but has no XDAQ position, and HLBCSD20 is excluded. This is the batch that
+  followed W-SD.
+
+roles: [eeg, emg]          # /1 EEG, /2 EMG for slot 1; /33, /34 for slot 2
+criterion: slope           # EEG only; EMG is broadband, so it is judged on hum
+
+notes: >
+  Position labels are RIG POSITIONS, not animals. B slot 1 has now failed across
+  three consecutive cohorts and its wire-free floor 60 Hz is the lowest on the
+  rig, so a failure at B1 is evidence about the PORT before it is evidence about
+  the mouse. HLBCSD13 sits there and has no adverse surgical note at all.
+
+# -----------------------------------------------------------------------------
+recordings:
+  - base: allego_0__uid0824-17-56-51
+    date: 2026-08-24
+    notes: >
+      60.04 min, 3.78 GB, rung 0 PASS. First full-hour screen of this cohort.
+      4 animals give hour-long usable EEG; only D2 passes the strict
+      EEG-and-EMG-in-the-same-epoch gate.
+
+# -----------------------------------------------------------------------------
+animals:
+
+  - animal_id: HLBCSD11
+    batch_id: S-SD
+    project_id: neurosurveillance-eeg
+    sex: M
+    vendor: HLB
+    dob: 2026-05-04
+    arrival_date: 2026-07-28
+    surgery_date: 2026-08-10
+    surgeon: Andrea
+    surgery_notes: >
+      bleeding F-L eeg, struggle to induce anesthesia, hiccups strong
+    tether_date: 2026-08-18
+    sampling_date: 2026-09-03
+    weighings:
+      - {date: 2026-08-10, grams: 31.4, occasion: surgery, source: husbandry-sheet}
+      - {date: 2026-08-18, grams: 32.2, occasion: tethering, source: husbandry-sheet}
+    placements:
+      - {from: 2026-08-18, position: A1, source: husbandry-sheet}
+    recordings:
+      - {base: allego_0__uid0824-17-56-51, date: 2026-08-24, position: A1, role: animal}
+    notes: >
+      verdict_2026_08_24: EEG INTERMITTENT 35.3% / 3.0 min longest block, dropped out entirely min 30-50. EMG GOOD 92.8% / 21.3 min.
+    sources: {husbandry: HLB_SOD1_Intake_Monitoring.xlsx Registry, read 2026-08-24}
+
+  - animal_id: HLBCSD12
+    batch_id: S-SD
+    project_id: neurosurveillance-eeg
+    sex: M
+    vendor: HLB
+    dob: 2026-05-04
+    arrival_date: 2026-07-28
+    surgery_date: 2026-08-10
+    surgeon: Andrea
+    tether_date: 2026-08-18
+    sampling_date: 2026-09-03
+    weighings:
+      - {date: 2026-08-10, grams: 28.9, occasion: surgery, source: husbandry-sheet}
+      - {date: 2026-08-18, grams: 29.5, occasion: tethering, source: husbandry-sheet}
+    placements:
+      - {from: 2026-08-18, position: A2, source: husbandry-sheet}
+    recordings:
+      - {base: allego_0__uid0824-17-56-51, date: 2026-08-24, position: A2, role: animal}
+    notes: >
+      verdict_2026_08_24: EEG 100% usable, unbroken the whole 60.0 min. EMG OPEN (531 uV).
+    sources: {husbandry: HLB_SOD1_Intake_Monitoring.xlsx Registry, read 2026-08-24}
+
+  - animal_id: HLBCSD13
+    batch_id: S-SD
+    project_id: neurosurveillance-eeg
+    sex: M
+    vendor: HLB
+    dob: 2026-05-04
+    arrival_date: 2026-07-28
+    surgery_date: 2026-08-10
+    surgeon: Andrea
+    tether_date: 2026-08-18
+    sampling_date: 2026-09-03
+    weighings:
+      - {date: 2026-08-10, grams: 29.7, occasion: surgery, source: husbandry-sheet}
+      - {date: 2026-08-18, grams: 30.4, occasion: tethering, source: husbandry-sheet}
+    placements:
+      - {from: 2026-08-18, position: B1, source: husbandry-sheet}
+    recordings:
+      - {base: allego_0__uid0824-17-56-51, date: 2026-08-24, position: B1, role: animal}
+    notes: >
+      verdict_2026_08_24: NOTHING. EEG open (slope +0.00, 3137 uV), EMG open (2932 uV). Chip floor 60 Hz 1491 uV, weakest on the rig.
+    sources: {husbandry: HLB_SOD1_Intake_Monitoring.xlsx Registry, read 2026-08-24}
+
+  - animal_id: HLBCSD14
+    batch_id: S-SD
+    project_id: neurosurveillance-eeg
+    sex: M
+    vendor: HLB
+    dob: 2026-05-04
+    arrival_date: 2026-07-28
+    surgery_date: 2026-08-10
+    surgeon: Andrea
+    tether_date: 2026-08-18
+    sampling_date: 2026-09-03
+    weighings:
+      - {date: 2026-08-10, grams: 29.3, occasion: surgery, source: husbandry-sheet}
+      - {date: 2026-08-18, grams: 28.8, occasion: tethering, source: husbandry-sheet}
+    placements:
+      - {from: 2026-08-18, position: B2, source: husbandry-sheet}
+    recordings:
+      - {base: allego_0__uid0824-17-56-51, date: 2026-08-24, position: B2, role: animal}
+    notes: >
+      verdict_2026_08_24: EEG OPEN (4431 uV). EMG GOOD 88.1% / 30.8 min.
+    sources: {husbandry: HLB_SOD1_Intake_Monitoring.xlsx Registry, read 2026-08-24}
+
+  - animal_id: HLBCSD15
+    batch_id: S-SD
+    project_id: neurosurveillance-eeg
+    sex: M
+    vendor: HLB
+    dob: 2026-05-04
+    arrival_date: 2026-07-28
+    surgery_date: 2026-08-11
+    surgeon: Andrea
+    surgery_notes: >
+      bleeding P-L eeg
+    tether_date: 2026-08-18
+    sampling_date: 2026-09-03
+    weighings:
+      - {date: 2026-08-11, grams: 28.4, occasion: surgery, source: husbandry-sheet}
+      - {date: 2026-08-18, grams: 31.5, occasion: tethering, source: husbandry-sheet}
+    placements:
+      - {from: 2026-08-18, position: C1, source: husbandry-sheet}
+    recordings:
+      - {base: allego_0__uid0824-17-56-51, date: 2026-08-24, position: C1, role: animal}
+    notes: >
+      verdict_2026_08_24: EEG 99.7% / 41.3 min. EMG OPEN (453 uV).
+    sources: {husbandry: HLB_SOD1_Intake_Monitoring.xlsx Registry, read 2026-08-24}
+
+  - animal_id: HLBCSD16
+    batch_id: S-SD
+    project_id: neurosurveillance-eeg
+    sex: M
+    vendor: HLB
+    dob: 2026-05-04
+    arrival_date: 2026-07-28
+    surgery_date: 2026-08-11
+    surgeon: Andrea
+    tether_date: 2026-08-18
+    sampling_date: 2026-09-03
+    weighings:
+      - {date: 2026-08-11, grams: 31.4, occasion: surgery, source: husbandry-sheet}
+      - {date: 2026-08-18, grams: 30.9, occasion: tethering, source: husbandry-sheet}
+    placements:
+      - {from: 2026-08-18, position: C2, source: husbandry-sheet}
+    recordings:
+      - {base: allego_0__uid0824-17-56-51, date: 2026-08-24, position: C2, role: animal}
+    notes: >
+      verdict_2026_08_24: EEG 100% usable, unbroken the whole 60.0 min. EMG OPEN (1001 uV).
+    sources: {husbandry: HLB_SOD1_Intake_Monitoring.xlsx Registry, read 2026-08-24}
+
+  - animal_id: HLBCSD17
+    batch_id: S-SD
+    project_id: neurosurveillance-eeg
+    sex: M
+    vendor: HLB
+    dob: 2026-05-04
+    arrival_date: 2026-07-28
+    surgery_date: 2026-08-11
+    surgeon: Andrea
+    tether_date: 2026-08-18
+    sampling_date: 2026-09-03
+    weighings:
+      - {date: 2026-08-11, grams: 30.0, occasion: surgery, source: husbandry-sheet}
+      - {date: 2026-08-18, grams: 30.6, occasion: tethering, source: husbandry-sheet}
+    notes: >
+      No XDAQ position: operated and tethered but not on the rig for the 2026-08-24 recording.
+    sources: {husbandry: HLB_SOD1_Intake_Monitoring.xlsx Registry, read 2026-08-24}
+
+  - animal_id: HLBCSD18
+    batch_id: S-SD
+    project_id: neurosurveillance-eeg
+    sex: M
+    vendor: HLB
+    dob: 2026-05-04
+    arrival_date: 2026-07-28
+    surgery_date: 2026-08-11
+    surgeon: Andrea
+    surgery_notes: >
+      lots superficial bleeding after skin incision. Lots of bleeding from 4 holes
+    tether_date: 2026-08-18
+    sampling_date: 2026-09-03
+    weighings:
+      - {date: 2026-08-11, grams: 29.0, occasion: surgery, source: husbandry-sheet}
+      - {date: 2026-08-18, grams: 28.6, occasion: tethering, source: husbandry-sheet}
+    placements:
+      - {from: 2026-08-18, position: D2, source: husbandry-sheet}
+    recordings:
+      - {base: allego_0__uid0824-17-56-51, date: 2026-08-24, position: D2, role: animal}
+    notes: >
+      verdict_2026_08_24: PASS. Only animal usable on EEG AND EMG in the same epoch: 89.2%, 23.8 min unbroken. EEG 99.7% / 36.7 min, EMG 89.2%.
+    sources: {husbandry: HLB_SOD1_Intake_Monitoring.xlsx Registry, read 2026-08-24}
+
+  - animal_id: HLBCSD19
+    batch_id: S-SD
+    project_id: neurosurveillance-eeg
+    sex: M
+    vendor: HLB
+    dob: 2026-05-04
+    arrival_date: 2026-07-28
+    surgery_date: 2026-08-12
+    surgeon: Andrea
+    tether_date: 2026-08-18
+    sampling_date: 2026-09-03
+    weighings:
+      - {date: 2026-08-12, grams: 31.0, occasion: surgery, source: husbandry-sheet}
+      - {date: 2026-08-18, grams: 31.4, occasion: tethering, source: husbandry-sheet}
+    placements:
+      - {from: 2026-08-18, position: D1, source: husbandry-sheet}
+    recordings:
+      - {base: allego_0__uid0824-17-56-51, date: 2026-08-24, position: D1, role: animal}
+    notes: >
+      verdict_2026_08_24: EEG INTERMITTENT 53.3% / 9.0 min, deep mid-run dip then full recovery to 92% in the last block. EMG OPEN (928 uV).
+      Registry note: tethered in the habituation rack. Might have tether damaged due to climbing
+    sources: {husbandry: HLB_SOD1_Intake_Monitoring.xlsx Registry, read 2026-08-24}
+
+  - animal_id: HLBCSD20
+    batch_id: S-SD
+    project_id: neurosurveillance-eeg
+    sex: M
+    vendor: HLB
+    dob: 2026-05-04
+    arrival_date: 2026-07-28
+    surgery_date: 2026-08-12
+    surgeon: Andrea
+    tether_date: 2026-08-18
+    sampling_date: 2026-09-03
+    weighings:
+      - {date: 2026-08-12, grams: 30.4, occasion: surgery, source: husbandry-sheet}
+    notes: >
+      No XDAQ position: operated and tethered but not on the rig for the 2026-08-24 recording.
+      Status: Excluded
+    sources: {husbandry: HLB_SOD1_Intake_Monitoring.xlsx Registry, read 2026-08-24}
