@@ -75,6 +75,7 @@ NeuroSurveillance: Raspberry Pi 5 + Frigate NVR video monitoring for neuroscienc
 - **Thermal = the wall:** PL1 capped 20W. Fixes: aggressive fan curve, dedust+repaste, headless. Council leans proper desktop/SFF for a 72h live-animal instrument.
 
 ## Known Issues
+- ✅ **[USB HDD would not mount = NTFS DIRTY BIT, not a dying drive](usb-hdd-ntfs-dirty-bit.md)** — `ntfs3` refuses dirty volumes; fix `sudo ntfsfix -d /dev/sda1`. 🛑 bare `ntfsfix` SETS the bit. SMART clean, CRC 0.
 - [Exports move out of Frigate dir](frigate-exports-moved-out-of-frigate-dir.md) — CHECK THERE before saying an export failed.
 - [Recording toggle fragility](frigate-recording-toggle-fragility.md) — capture gated by RETAINED MQTT; SIGTERM-OFF → silent no-capture after reboot (cost a 72h run). 🔧 LEASE-model fix written, 12/12 tests pass, ACTIVATES ON NEXT RESTART. Recording dirs are UTC not KST.
 - Recurring Pi5 PoE crashes (Waveshare PoE HAT PMIC latch-up).
