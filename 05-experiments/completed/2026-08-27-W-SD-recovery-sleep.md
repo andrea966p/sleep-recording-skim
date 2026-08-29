@@ -7,7 +7,17 @@ recording: allego_2__uid0827-12-58-32
 cohort: W-SD
 ---
 
-# Recovery sleep after 7 days of chronic sleep deprivation, batch W-SD
+# Recovery sleep on the penultimate SD day, Thursday 13:00 to Friday 09:00, batch W-SD
+
+> [!important] What this timepoint is, stated precisely (corrected 2026-08-29)
+> This is the **recovery-sleep window that follows the sleep-deprivation bout on the SECOND TO LAST
+> day of the CSD protocol**: from **13:00 Thursday 2026-08-27**, the moment that day's deprivation
+> ended, through to **09:00 Friday 2026-08-28**. The protocol was still running; this is not a
+> post-protocol endpoint. An earlier version of this page called it "recovery sleep after 7 days of
+> CSD", which reads as though deprivation had finished. **It had not.** Seven days had *elapsed*
+> since CSD began on Friday 2026-08-21, and Thursday was the penultimate day.
+> The measurements on this page are unaffected — the file analysed is and always was
+> `allego_2__uid0827-12-58-32`, Thursday 12:58:30 to Friday 09:05:45 KST, 20.121 h.
 
 > [!note] The batch was sampled on 2026-08-28. Nothing here can be re-measured.
 > Batch close-out, covering everything W-SD produced from first screen to sampling:
@@ -41,8 +51,9 @@ cohort: W-SD
 | | |
 |---|---|
 | Recording | `allego_2__uid0827-12-58-32` |
-| Start | 2026-08-27 12:58:32 KST, as the SD day ended at 13:00 |
-| Stop | 2026-08-28 09:05 KST, immediately before sampling |
+| Start | **Thursday 2026-08-27 12:58:30 KST**, as that day's deprivation bout ended at 13:00 |
+| Stop | **Friday 2026-08-28 09:05:45 KST**, by hand, before sampling |
+| What the window is | the **recovery sleep after the penultimate SD day**, not a post-protocol endpoint |
 | Duration | 20.119 h, 7,243 epochs of 10 s |
 | Samples | 72,435,328 at 1000 Hz, 262 channels |
 | Data vs timestamps | equal, remainder 0 and 0 |

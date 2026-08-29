@@ -10,8 +10,9 @@ created: 2026-08-29
 > connection on it, fix what is fixable, and only then start the real run.** Twenty minutes of
 > checking is cheap. Twenty hours of one-animal data is not.
 >
-> This exists because of 2026-08-27. A 20 h recovery-sleep recording was started on eight animals
-> after seven days of sleep deprivation, with sampling the next morning. A first-hour screen was
+> This exists because of 2026-08-27. A 20 h rebound recording was started on eight animals at
+> 13:00 on the Thursday, the moment the penultimate day's sleep-deprivation bout ended, and ran to
+> 09:00 on the Friday with sampling straight afterwards. A first-hour screen was
 > run **during** the recording and reported that one of the eight positions was working. The fault
 > on two of the failing positions was a connector, it was fixed in minutes, and it was fixed
 > **after the recording had already ended**. See [[2026-08-27-W-SD-recovery-sleep]].

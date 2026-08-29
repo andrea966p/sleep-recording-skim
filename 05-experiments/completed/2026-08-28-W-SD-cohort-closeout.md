@@ -15,15 +15,19 @@ batch_status: SAMPLED 2026-08-28
 
 > [!abstract] TL;DR
 > Batch **W-SD**, ten male C57BL/6J, the **UV water arm** (0 U, the control against S-SD's SOD1),
-> under **chronic sleep deprivation 2026-08-21 to 2026-08-28**. Eight on the rig, one sacrificed
-> early, one in the deprivation chamber untethered.
+> under **chronic sleep deprivation from Friday 2026-08-21 to sampling on Friday 2026-08-28**. Eight
+> on the rig, one sacrificed early, one in the deprivation chamber untethered.
+>
+> ⚠️ **The rebound recording is the recovery-sleep window after the PENULTIMATE deprivation day** —
+> 13:00 Thursday 2026-08-27 to 09:00 Friday 2026-08-28 — not a post-protocol endpoint. The protocol
+> was still running when it was taken.
 >
 > ✅ **The pre-CSD baseline was the best data this rig has ever produced on a full cohort.**
 > Recomputed with the per-chip floor: **five positions give real EEG and four pass strict rung 2
 > over 39.7 hours** — A1 96.1% both roles, D2 92.8%, A2 82.2%, C1 66.4%, with unbroken EEG blocks
 > of 7.6, 1.4, 4.2 and 8.9 hours.
 >
-> 🔴🔴 **The recovery-sleep endpoint, seven days later, produced one usable animal.** D2 alone.
+> 🔴🔴 **The rebound recording, seven days later, produced one usable animal.** D2 alone.
 > **The paired before/after comparison the whole arm exists for is n = 1.**
 >
 > 🔑 **The cause is now identified and it is not the implants. Four chips lost their ground
@@ -45,7 +49,7 @@ batch_status: SAMPLED 2026-08-28
 | Surgery | 2026-08-03 to 2026-08-05, Andrea and Diane |
 | Tethering | 2026-08-10 |
 | Drinking arm | **UV-sterilised water, 0 U** — the control arm against S-SD's SOD1 |
-| Sleep condition | **chronic sleep deprivation, 2026-08-21 to 2026-08-28, seven days** |
+| Sleep condition | **chronic sleep deprivation, Friday 2026-08-21 to sampling Friday 2026-08-28**; daily bouts end at 13:00. **Thursday 08-27 is the penultimate day** |
 | Sampling | **2026-08-28** |
 | Source | `HLB_SOD1_Intake_Monitoring.xlsx`, sheets `Registry` (header row 5), `W-SD`, `Sampling` |
 
@@ -84,8 +88,8 @@ the glass tube after tethering"*, which is consistent.
 | `allego_1__uid0818-20-50-26` | 08-18 | 1.004 h | re-seat run the same evening |
 | `allego_0__uid0819-09-00-00` | 08-19 | 8.278 h | daytime run, stopped 17:16 for the B1 animal swap |
 | `allego_1__uid0819-17-25-20` | 08-19 to 08-21 | **39.674 h** | **the pre-CSD baseline** |
-| — | 08-21 to 08-27 | — | **seven days of chronic sleep deprivation, no recording** |
-| `allego_2__uid0827-12-58-32` | 08-27 to 08-28 | **20.119 h** | **the recovery-sleep endpoint** |
+| — | Fri 08-21 to Thu 08-27 | — | **chronic sleep deprivation, daily bouts ending 13:00, no recording** |
+| `allego_2__uid0827-12-58-32` | **Thu 08-27 13:00 → Fri 08-28 09:00** | **20.121 h** | **the recovery sleep after the PENULTIMATE SD day** |
 | `allego_3__uid0828-09-26-12` | 08-28 | 0.023 h | 80 s check after the endpoint run |
 
 All seven files are rung 0 INTACT with remainder 0 on both data and timestamps.
@@ -127,10 +131,12 @@ out of a 39.7 hour recording.
 **1.487× its own chip floor**, which is an open input riding the rail. It went on the rig on 08-19
 and produced nothing at any point.
 
-## 🔴 The recovery-sleep endpoint
+## 🔴 The rebound recording: recovery sleep after the penultimate SD day
 
-`allego_2__uid0827-12-58-32`, 20.119 h, started 12:58:32 as the SD day ended at 13:00 and stopped by
-hand at 09:05 the next morning, hours before sampling. Full report:
+`allego_2__uid0827-12-58-32`, 20.121 h, **Thursday 2026-08-27 12:58:30 → Friday 2026-08-28
+09:05:45 KST**. It starts as that Thursday's deprivation bout ended at 13:00 and was stopped by hand
+on the Friday morning, hours before sampling. **The CSD protocol was still running across this
+window** — Thursday was the second to last day, not the end. Full report:
 [[2026-08-27-W-SD-recovery-sleep]].
 
 | pos | mouse | EEG rms | slope | lf/hf | sep | EEG % | longest | h ≥15 min | EMG % | BOTH % |
