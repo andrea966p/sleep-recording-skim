@@ -1,12 +1,26 @@
 ---
 title: W-SD cohort, first screen after surgery
 date: 2026-08-18
-status: active
-tags: [experiment, eeg, emg, cohort, w-sd, recording, grounding]
+status: complete
+tags: [experiment, eeg, emg, cohort, w-sd, recording, grounding, closeout]
 subjects: 8
 ---
 
 # The W-SD cohort: what the first six minutes say
+
+> [!info] 🏁 THE BATCH IS CLOSED — SAMPLED 2026-08-28
+> Every recording this cohort produced, the recomputed per-chip baseline, the recovery-sleep
+> endpoint and the cause of the losses are in the close-out:
+> **[[2026-08-28-W-SD-cohort-closeout]]**.
+> ⚠️ Two claims on THIS page are now retracted by that work:
+> 1. "B1 and D1 have no ground connection, that is a plug problem" was right in kind and the
+>    **B1 diagnosis of a PORT fault was wrong** — the swap test of 2026-08-26 on the S-SD batch
+>    proved B slot 1 is a good port and the fault follows the animal and its tether.
+>    See [[b-slot1-was-the-tether-not-the-port]] in the analysis memory and
+>    [[2026-08-27-B1-swap-baseline-20h-run]].
+> 2. The per-position numbers here used the POOLED floor and were **too harsh for 7 of 8 chips**.
+>    The 39.7 h baseline recomputed per-chip gives **five positions with real EEG and four passing
+>    strict rung 2**, not three.
 
 > [!abstract] TL;DR
 > Eight newly operated mice from batch **W-SD** went on the rig today and I took a short

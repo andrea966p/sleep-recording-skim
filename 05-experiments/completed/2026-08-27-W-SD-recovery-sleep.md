@@ -2,11 +2,16 @@
 tags: [experiment, eeg, emg, W-SD, sleep-deprivation, completed]
 created: 2026-08-28
 status: complete
+batch_status: SAMPLED 2026-08-28
 recording: allego_2__uid0827-12-58-32
 cohort: W-SD
 ---
 
 # Recovery sleep after 7 days of chronic sleep deprivation, batch W-SD
+
+> [!note] The batch was sampled on 2026-08-28. Nothing here can be re-measured.
+> Batch close-out, covering everything W-SD produced from first screen to sampling:
+> [[2026-08-28-W-SD-cohort-closeout]].
 
 > [!abstract] TL;DR
 > `allego_2__uid0827-12-58-32`, **2026-08-27 12:58:32 → 2026-08-28 09:05 KST, 20.119 h, 66.2 GiB,
@@ -157,6 +162,62 @@ own.** That rules out settling after handling.
 ✅ **A1 and A2 are recoverable and were recovered.** Their grounds went back to full strength and
 their EEG reappeared with a −1.4 to −1.5 slope and an lf/hf 4 to 7 times their own floor.
 🔴 **B1 did not recover** and is the one position where something is physically broken.
+
+## A1 and A2 in detail — the EEG was never intermittent, and the electrodes were never broken
+
+Added 2026-08-29, after the batch was sampled.
+
+**Neither channel carried anything at any point in the twenty hours.** This is not a degraded or
+flickering channel; it is a flat line that never moved.
+
+| | A1 (HLBCSD01) | A2 (HLBCSD02) | D2 (HLBCSD08), for contrast |
+|---|---|---|---|
+| EEG rms, full range across 21 hourly bins | **47-57 µV** | **62-72 µV** | 129-151 µV |
+| slope, every hourly bin | −0.03 to −0.17 | +0.09 to −0.30 | −1.45 |
+| lf/hf, every hourly bin | 1.07-1.50 | 1.03-1.39 | 15.89 |
+| its own chip floor's lf/hf p99 | 5.06 | 5.66 | 2.50 |
+| **epochs beating that p99** | **4 / 7,243 (0.06%)** | **2 / 7,243 (0.03%)** | **7,239 / 7,243 (99.94%)** |
+| **epochs with slope steeper than −1.0** | **9 (0.12%)** | **6 (0.08%)** | **7,069 (97.6%)** |
+
+An amplitude that varies by ±3 µV across twenty hours is not a biological signal. Real EEG changes
+with behavioural state; D2's does. The last twenty-five minutes of the recording look the same as
+the first.
+
+### The ratio that shows the electrodes were fine
+
+Each EEG channel's own 60 Hz, as a fraction of its chip's wire-free floor:
+
+| pos | EEG 60 Hz ÷ chip floor | reading |
+|---|---|---|
+| **A1** | **0.032** | proportionally normal |
+| **A2** | **0.045** | proportionally normal |
+| **D2** (real EEG) | **0.032** | the reference value |
+| C2 | 0.039 | proportionally normal, intermittent |
+| D1 | 0.215 | partial |
+| B1 | 0.482 | partial |
+| B2 | 1.207 | **at/above the floor = open input riding the rail** |
+| C1 | 1.446 | **open** |
+
+🔑 **A1 sits at exactly D2's value.** Relative to its own chip, nothing was wrong with that channel.
+What collapsed was the **chip's whole reference** — floor 4314 → 1347 µV — which scales everything
+on that chip down by a factor of three or four, so the EEG arrived at 55 µV and spectrally flat.
+
+The EMG on those same two positions ran at 98.4% and 99.2% all night through the **same tether**,
+and A1's muscle amplitude was 2.73× higher in the dark, which is genuine state dependence. Signal
+was reaching the headstage. The reference was not.
+
+### 🔴 The verdict engine called this a FAIL, and it should have refused
+
+`FLOOR_MIN_HUM_UV = 800`, so A1 at 1347, A2 at 1575 and D1 at 1814 all cleared the grounded gate and
+were scored **FAIL**. Across the 32 chip-recordings available from the four runs of 24 to 27 August,
+**six chips sat below 2000 µV and not one produced EEG**, while the lowest floor that ever produced
+EEG was **2186 µV**. There is no overlap. A bar of 2000 µV would have returned **UNJUDGEABLE** here,
+which is the difference between "this animal's electrode is bad, plan a tether change under
+anaesthesia" and "the rig could not answer, re-mate the connector at the bench".
+
+The evidence table, the proposed change and the check order are written up in
+[[weak-chip-ground-vs-open-electrode]]. ⚠️ **The constant has not been changed** — it rewrites
+verdicts already published in three reports and is waiting on a decision.
 
 ## What this run cost, and the one process change that would have prevented it
 
