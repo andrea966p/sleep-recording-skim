@@ -174,6 +174,61 @@ own.** That rules out settling after handling.
 their EEG reappeared with a −1.4 to −1.5 slope and an lf/hf 4 to 7 times their own floor.
 🔴 **B1 did not recover** and is the one position where something is physically broken.
 
+## ✅ The 1.8 h run at 10:08 — 50 more minutes of A1 and A2, and the re-mate holds
+
+Added 2026-08-29. `allego_4__uid0828-10-08-34`, 10:08:34 → 11:56 KST, **1.802 h**, 6.8 GB, rung 0
+PASS (6,488,320 data = timestamp samples, remainder 0 and 0). It started 42 minutes after the
+80 s check and **it is the only file with more than eighty seconds of post-re-mate data.**
+
+EEG usable %, per 10 min block, project criterion and per-chip floor:
+
+| pos | chip floor 60 Hz | 0 | 10 | 20 | 30 | 40 | 50 | 60 | 70 | 80 | 90 |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| **A1** | 5325 | **87** | **77** | **72** | **62** | **62** | 2 | 0 | 0 | 0 | 0 |
+| **A2** | 3920 | **77** | **68** | **95** | **82** | **82** | 5 | 0 | 0 | 0 | 0 |
+| **D2** | 4747 | 38 | 20 | 25 | **57** | 35 | **58** | **72** | **57** | 28 | 37 |
+| C2 | 2766 | 0 | 22 | 38 | 13 | 0 | 0 | 15 | 7 | 2 | 0 |
+| D1 | 1750 | 0 | 0 | 0 | 0 | 3 | 2 | 0 | 2 | 2 | 0 |
+| B1 | 559 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| B2 | 4756 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| C1 | 3521 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+
+✅ **The re-mate now rests on about fifty minutes per animal, not on eight epochs.** A1 held
+62-87% and A2 68-95% for as long as they stayed on the rig, on EEG amplitudes of 91-104 and
+136-143 µV. That is the claim above, independently confirmed on a record long enough to have a
+percentage.
+
+> [!warning] The zeros from minute 50 are the animals being unplugged, not a relapse
+> At about **10:58 both port-A positions go open on both roles in the same block, and the chip
+> floor steps down with them:**
+> ```
+>            minute   0    10    20    30    40  |   50    60    70    80    90
+> A1 EEG rms          96    96    94   104    91 | 2092  2107  2093  2085  2044
+> A2 EEG rms         140   143   138   136   139 | 2093  2253  2369  2358  2285
+> A1 EMG rms         104    98   104    93   107 | 3164  3186  3212  3071  2967
+> A2 EMG rms          85    84    70    80    80 | 2991  2360  2137  1973  2289
+> A1 floor 60 Hz    5325  5294  5265  5295  5319 | 3334  3315  3306  3294  3218
+> A2 floor 60 Hz    3920  3933  3881  3851  3852 | 3150  3161  3153  3192  3212
+> ```
+> **EEG and EMG cannot fail at the same instant on two separate chips from a signal fault**, and a
+> floor step means the reference itself moved. This was sampling morning. The animals came off the
+> tether. 🛑 **Nothing after minute 50 on A1 or A2 is animal data.** The whole-file medians (A1
+> slope −0.49, A2 −0.33, 33.3% and 37.8% usable) average a working animal with an empty input and
+> must not be read as a relapse.
+
+🛑 **No position reaches a 15 min block here** — longest EEG A2 10.7 min, A1 5.3 min, D2 2.8 min.
+**This file is a connection check, not a scoring file.** It enters no result and no rung 2 verdict.
+Unchanged from the endpoint run: B1 ungrounded at 559 µV, B2 and C1 railing, D1's floor 1391-1750 µV
+and therefore **unjudgeable** under the proposed 2000 µV gate, C2 intermittent.
+
+> [!note] A later file on the same disk is not this cohort
+> `allego_5__uid0828-19-10-50`, 08-28 19:10 → 19:46, 0.592 h, rung 0 INTACT. Every position on both
+> roles reads 101-153 µV with a steep slope, **including B1 (chip floor 113 µV) and C1 (669 µV),
+> which have no ground at all.** Real EEG cannot exist on an ungrounded chip, so the uniform
+> quiet-and-steep pattern is drifting unterminated inputs: **an empty rig with no animals
+> connected.** Origin unknown and not this project's. Recorded here so it is never adopted into
+> W-SD.
+
 ## A1 and A2 in detail — the EEG was never intermittent, and the electrodes were never broken
 
 Added 2026-08-29, after the batch was sampled.

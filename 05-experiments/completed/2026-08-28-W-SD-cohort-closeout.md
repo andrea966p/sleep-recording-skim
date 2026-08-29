@@ -32,8 +32,9 @@ batch_status: SAMPLED 2026-08-28
 >
 > 🔑 **The cause is now identified and it is not the implants. Four chips lost their ground
 > reference during the seven days of deprivation** — A1 4976 → 1347 µV, A2 4396 → 1575, D1 4441 →
-> 1814, B1 1275 → 593. **A1 and A2, the two best animals in the cohort, were lost this way**, and an
-> 80 s check taken 21 minutes after the run ended showed both fully restored by a connector re-mate.
+> 1814, B1 1275 → 593. **A1 and A2, the two best animals in the cohort, were lost this way**, and a
+> connector re-mate brought both back: an 80 s check 21 min after the run, then **50 min of A1 at
+> 62-87% usable and A2 at 68-95%** in the 1.8 h run that followed.
 >
 > 🔑 **The failure was visible in the first hour of the endpoint recording and was recorded rather
 > than acted on.** That is the process change: [[pre-flight-connection-screen]].
@@ -91,8 +92,11 @@ the glass tube after tethering"*, which is consistent.
 | — | Fri 08-21 to Thu 08-27 | — | **chronic sleep deprivation, daily bouts ending 13:00, no recording** |
 | `allego_2__uid0827-12-58-32` | **Thu 08-27 13:00 → Fri 08-28 09:00** | **20.121 h** | **the recovery sleep after the PENULTIMATE SD day** |
 | `allego_3__uid0828-09-26-12` | 08-28 | 0.023 h | 80 s check after the endpoint run |
+| `allego_4__uid0828-10-08-34` | 08-28 | **1.802 h** | **the re-mate confirmed** — A1 and A2 both carry EEG for the 50 min before they are unplugged for sampling |
 
-All seven files are rung 0 INTACT with remainder 0 on both data and timestamps.
+All eight files are rung 0 INTACT with remainder 0 on both data and timestamps.
+
+⚠️ A ninth file sits in the same directory and **is not this cohort**: `allego_5__uid0828-19-10-50` (08-28 19:10, 0.592 h) is an **empty rig** — every position reads 101-153 µV with a steep slope including two chips with no ground, which is drifting unterminated inputs, not EEG. Origin unknown. Do not adopt it into W-SD.
 
 ## ✅ The pre-CSD baseline, recomputed
 
@@ -182,10 +186,17 @@ independent places:
 2. **Their EMG worked all night through the same tether** — 98.4% and 99.2% — and A1's muscle
    amplitude was **2.73× higher in the dark**, which is genuine behavioural state dependence and
    cannot come from a floating input.
-3. **An 80 s check 21 minutes after the run ended showed both fully restored.** A1's floor
-   **1347 → 5026 µV**, A2's **1575 → 4490**, with EEG back at 91 and 134 µV, slope −1.43 and −1.53,
-   and lf/hf 13.75 and 10.73 against floor 99th percentiles of 1.88 and 3.48. **Nothing was done to
-   the electrodes.**
+3. **A connector re-mate brought both back, and it holds for as long as the animals stayed on
+   the rig.** The 80 s check 21 min after the run put A1's floor at **1347 → 5026 µV** and A2's at
+   **1575 → 4490**, with EEG back at 91 and 134 µV, slope −1.43 and −1.53, and lf/hf 13.75 and 10.73
+   against floor 99th percentiles of 1.88 and 3.48. **`allego_4__uid0828-10-08-34`, 1.802 h starting
+   42 min later, confirms it on a record long enough to carry a percentage: A1 usable 87/77/72/62/62%
+   and A2 77/68/95/82/82% per 10 min block, until both were unplugged for sampling at about 10:58.**
+   **Nothing was done to the electrodes.**
+   🛑 Read that file's whole-run medians as a relapse and you will be wrong — they average a working
+   animal with an empty input. The disconnect is unambiguous: EEG *and* EMG go open on both port-A
+   positions in the same block and the chip floors step down with them. See
+   [[2026-08-27-W-SD-recovery-sleep]].
 
 🔑 **B1 is the exception and the one genuine hardware fault.** Its floor **decayed monotonically
 across the twenty hours** — 825, 691, 633, 663, 650, 619, 641, 657, 642, 615, 591, 579, 548, 548,
