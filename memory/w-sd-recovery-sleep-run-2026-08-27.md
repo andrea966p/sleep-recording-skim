@@ -55,6 +55,21 @@ physical fault.** The fix was found ~20 h too late.
 numbers per site is effectively a minimum, which is why D2 scores 0.0% there while plainly carrying
 EEG.
 
+## ✅ THE RE-MATE IS CONFIRMED ON 50 MIN, NOT 80 s — `allego_4__uid0828-10-08-34`
+1.802 h, 10:08→11:56 08-28, rung 0 PASS. Found unlogged on 2026-08-29 and now in `cohorts/W-SD.yaml`
++ both vault pages. **A1 62-87% usable EEG, A2 68-95%, per 10 min, for the 50 min they stayed
+connected** (91-104 and 136-143 µV). D2 whole file 42.1% EEG / 97.1% EMG.
+🔑🔑 **THE TRAP — I fell in first: its whole-file medians (A1 slope −0.49, 33.3%) LOOK LIKE A
+RELAPSE AND ARE NOT.** At minute 50 **EEG AND EMG go open together on both port-A positions AND the
+chip floors step down** (EEG 96→2092, 140→2093; EMG 104→3164, 85→2991; floor 5319→3334, 3852→3150).
+Animals unplugged for sampling. ⭐ **A signal fault cannot kill two roles on two chips in one block,
+and it cannot move the floor. To tell "channel died" from "animal left", read the FLOOR and the
+OTHER ROLE, never the channel alone.** 🛑 Longest block 10.7 min ⇒ nothing passes rung 2; connection
+check, not a scoring file. 🔴 B1 still ungrounded 559 µV.
+⚠️ **`allego_5__uid0828-19-10-50`** (08-28 19:10, 0.592 h) = **EMPTY RIG, NOT OURS, NOT W-SD** — all
+8 positions 101-153 µV and steep, incl. B1 (floor 113 µV) and C1 (669) which have NO ground ⇒
+drifting unterminated inputs, not EEG.
+
 ## 🔑 THE PROCESS LESSON
 The first-hour screen already said 1 of 8 positions worked. It was run and then annotated instead
 of acted on. ⭐ **A first-hour connection screen must GATE the start of an unrepeatable endpoint
