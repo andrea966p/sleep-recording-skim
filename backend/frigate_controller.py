@@ -39,6 +39,25 @@ EXPORT_MAX_TIMEOUT = 86400.0  # 24h hard ceiling (safety net)
 # online arriving in that window can cancel the pending callbacks.
 STATE_DEFER_SECONDS = 1.5
 
+# Recording drain before releasing the last lease on a camera.
+#
+# Frigate's recording maintainer (frigate/record/maintainer.py:250) calls
+# drop_segment(), which UNLINKS any /tmp/cache segment that has not yet been
+# flushed to disk, the moment it sees record.enabled go false. ffmpeg closes a
+# cache segment every 10s and the maintainer flushes every 5s, so the worst case
+# in flight at the instant of an OFF is 10 + 5 = 15 seconds of video.
+#
+# 30s is deliberately 2x that worst case. It is cheap (about 3 MB of extra
+# footage per session) and it is NOT a tuning parameter: do not lower it to
+# "optimise" anything. Measured 2026-07-27: a 37s window produced a 19.0s file
+# without this drain.
+DEFAULT_DRAIN_SECONDS = 30.0
+
+# Lease holder names. Recording is ON while ANY holder has a lease, so an EEG
+# session can never stop a recording a human started by hand, and vice versa.
+LEASE_SESSION = "session"   # Radiens/EEG-triggered automatic session
+LEASE_MANUAL = "manual"     # human pressed Record in the Frigate UI
+
 
 class FrigateController:
     """Controls Frigate recording via MQTT and exports via HTTP API.
@@ -97,6 +116,13 @@ class FrigateController:
         # cancelling from this dict is guarded by _pending_state_lock.
         self._pending_state_actions: dict[str, threading.Timer] = {}
         self._pending_state_lock = threading.Lock()
+
+        # Recording leases: camera_id -> set of holder names.
+        # Recording is ON while the set is non-empty. This replaces the old
+        # boolean model, in which whoever stopped last silently stopped everyone.
+        self._leases: dict[str, set] = {}
+        self._lease_lock = threading.RLock()
+        self.drain_seconds = DEFAULT_DRAIN_SECONDS
 
         # Callback for external recording state changes: fn(camera_id, state_str)
         self._on_external_recording_change: Optional[
@@ -433,8 +459,179 @@ class FrigateController:
             logger.error("Failed to publish MQTT message: %s", e)
             return False
 
+    # ------------------------------------------------------------------
+    # Recording leases
+    #
+    # Recording is ON while ANY holder has a lease on the camera:
+    #
+    #     enabled = (manual_lease OR session_lease)
+    #
+    # Nothing outside this section should call set_recording(enabled=False).
+    # Callers RELEASE their own lease and the last release turns recording off,
+    # after a drain. That makes it structurally impossible for an EEG session to
+    # stop a recording a human started, or for a daemon shutdown to stop one at
+    # all (see _on_shutdown_leave_recording_on in daemon.py).
+    # ------------------------------------------------------------------
+
+    def acquire_lease(self, camera_id: str, holder: str) -> bool:
+        """Take a recording lease. Turns recording ON if it was off.
+
+        Returns True if recording is on for this camera once the call returns.
+        Idempotent: re-acquiring a lease you already hold is a no-op.
+        """
+        with self._lease_lock:
+            holders = self._leases.setdefault(camera_id, set())
+            was_empty = not holders
+
+            if holder in holders:
+                logger.debug("Lease %s/%s already held", camera_id, holder)
+                return True
+
+            holders.add(holder)
+
+            if not was_empty:
+                # Someone else already has it on. Do not republish, which would
+                # only generate an echo the state handler has to filter out.
+                logger.info(
+                    "Lease acquired %s/%s; recording already ON (holders: %s)",
+                    camera_id, holder, ",".join(sorted(holders)),
+                )
+                return True
+
+        logger.info("Lease acquired %s/%s; turning recording ON", camera_id, holder)
+        return self.set_recording(camera_id, enabled=True)
+
+    def release_lease(
+        self,
+        camera_id: str,
+        holder: str,
+        drain: bool = True,
+        shutdown_event: Optional[threading.Event] = None,
+    ) -> None:
+        """Release a recording lease, draining first if this is the last one.
+
+        BLOCKS for drain_seconds when this is the final holder, so the caller
+        must run it off the main loop (both current call sites are already in
+        background export threads).
+
+        Args:
+            camera_id: Frigate camera name.
+            holder: the lease name passed to acquire_lease.
+            drain: wait drain_seconds before turning recording off, so Frigate
+                flushes cache segments instead of unlinking them. Only skip this
+                when the tail is known to be worthless (e.g. an aborted session
+                that never really started).
+            shutdown_event: if set during the drain, the drain is cut short and
+                recording is LEFT ON. Losing a tail is unrecoverable; a camera
+                left recording is not.
+        """
+        with self._lease_lock:
+            holders = self._leases.get(camera_id, set())
+            if holder not in holders:
+                logger.debug(
+                    "Lease release %s/%s ignored: not held", camera_id, holder
+                )
+                return
+            # Do not remove yet. If we removed here and then drained, a
+            # concurrent acquire during the drain could not tell that a release
+            # was pending, and we would publish OFF underneath a new holder.
+            others = holders - {holder}
+
+        if others:
+            with self._lease_lock:
+                self._leases[camera_id].discard(holder)
+            logger.info(
+                "Lease released %s/%s; recording STAYS ON (holders: %s)",
+                camera_id, holder, ",".join(sorted(others)),
+            )
+            return
+
+        if drain and self.drain_seconds > 0:
+            logger.info(
+                "Lease release %s/%s is the last one — draining %.0fs before OFF "
+                "so Frigate flushes cache segments instead of deleting them",
+                camera_id, holder, self.drain_seconds,
+            )
+            if shutdown_event is not None:
+                if shutdown_event.wait(timeout=self.drain_seconds):
+                    logger.warning(
+                        "Shutdown during drain for %s — LEAVING RECORDING ON. "
+                        "A camera left recording is recoverable; a lost tail is not.",
+                        camera_id,
+                    )
+                    return
+            else:
+                time.sleep(self.drain_seconds)
+
+        with self._lease_lock:
+            holders = self._leases.get(camera_id, set())
+            holders.discard(holder)
+            if holders:
+                # Someone acquired a lease while we were draining. Leave it on.
+                logger.info(
+                    "Lease acquired during drain for %s — recording STAYS ON "
+                    "(holders: %s)",
+                    camera_id, ",".join(sorted(holders)),
+                )
+                return
+
+        logger.info("Last lease released for %s; turning recording OFF", camera_id)
+        self.set_recording(camera_id, enabled=False)
+
+    def get_cameras_recording(self) -> set:
+        """Cameras whose RUNTIME record.enabled is true, per Frigate's HTTP API.
+
+        The YAML `record.enabled` is only a startup default; the retained MQTT
+        toggle is what actually decides. /api/config reflects the runtime truth.
+
+        Returns an empty set if Frigate is unreachable, so a startup with Frigate
+        down does not invent leases.
+        """
+        try:
+            response = requests.get(f"{self.frigate_url}/api/config", timeout=10)
+            response.raise_for_status()
+            cameras = response.json().get("cameras", {})
+        except Exception as e:
+            logger.error("Could not read recording state from Frigate: %s", e)
+            return set()
+
+        return {
+            name
+            for name, cfg in cameras.items()
+            if cfg.get("record", {}).get("enabled")
+        }
+
+    def has_lease(self, camera_id: str, holder: str) -> bool:
+        """Whether `holder` currently holds a lease on this camera."""
+        with self._lease_lock:
+            return holder in self._leases.get(camera_id, set())
+
+    def lease_holders(self, camera_id: str) -> set:
+        """Current lease holders for a camera. Copy, safe to iterate."""
+        with self._lease_lock:
+            return set(self._leases.get(camera_id, set()))
+
+    def adopt_lease(self, camera_id: str, holder: str) -> None:
+        """Record a lease for recording that is ALREADY on, without publishing.
+
+        Used when the daemon observes an externally started recording (a human
+        pressed Record in the Frigate UI, or a recording survived a daemon
+        restart). Publishing ON here would be redundant and would generate an
+        echo the external-state handler then has to filter.
+        """
+        with self._lease_lock:
+            self._leases.setdefault(camera_id, set()).add(holder)
+        logger.info("Lease adopted %s/%s (recording was already ON)", camera_id, holder)
+
     def stop_all_recording(self) -> bool:
-        """Stop recording on all cameras. Used at daemon startup for clean slate."""
+        """Stop recording on all cameras, ignoring leases.
+
+        DANGEROUS. This bypasses the lease model and will stop a recording
+        someone else started, losing its tail. It is retained only for explicit
+        operator use. It must NOT be called on daemon startup or shutdown; both
+        of those previously did, and the shutdown call is what made a 72h run
+        record zero video (the retained OFF survived the reboot).
+        """
         success = True
         for key, camera_id in self.cameras.items():
             if not self.set_recording(camera_id, enabled=False):
@@ -568,6 +765,46 @@ class FrigateController:
             export_id, EXPORT_MAX_TIMEOUT,
         )
         return None
+
+    def delete_export(self, export_id: str) -> bool:
+        """Delete Frigate's DB row for an export we have already moved away.
+
+        Once _move_export_file() has moved the MP4 into the organized export
+        tree, Frigate's row still points at the old path. The row then shows
+        up in Frigate's export page as an unplayable entry, and deleting it
+        there frees nothing — the bytes left that directory long ago. Call
+        this right after a successful move so the row goes with the file.
+
+        Only call this when the move succeeded. If the file is still sitting
+        in Frigate's export directory, the row is the only handle on it.
+
+        Args:
+            export_id: The export ID returned by export_recording().
+
+        Returns:
+            True if Frigate removed the row (or had already removed it).
+        """
+        url = f"{self.frigate_url}/api/export/{export_id}"
+
+        try:
+            response = requests.delete(url, timeout=10)
+            if response.status_code == 404:
+                # Already gone — same end state we wanted.
+                logger.info("Frigate export row %s already absent", export_id)
+                return True
+            response.raise_for_status()
+            logger.info("Deleted Frigate export row %s", export_id)
+            return True
+
+        except requests.exceptions.ConnectionError:
+            logger.warning(
+                "Cannot reach Frigate at %s to delete export row %s",
+                self.frigate_url, export_id,
+            )
+            return False
+        except Exception as e:
+            logger.warning("Failed to delete Frigate export row %s: %s", export_id, e)
+            return False
 
     def check_frigate_health(self) -> bool:
         """Check if Frigate is reachable."""

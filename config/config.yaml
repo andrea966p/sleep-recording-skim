@@ -32,6 +32,23 @@ cameras:
 sessions:
   data_dir: "/opt/neurosurveillance/sessions"
 
+# Recording lease behaviour (added 2026-07-28).
+# Both keys are optional; the defaults below are what the code uses if the
+# whole block is absent.
+recording:
+  # Seconds recording stays ON past the end of a session before the last lease
+  # is released. Frigate's recording maintainer UNLINKS any /tmp/cache segment
+  # not yet flushed the moment it sees recording disabled, so stopping straight
+  # away destroys the last 10-20s of every session. ffmpeg closes a segment
+  # every 10s and the maintainer flushes every 5s => 15s worst case; 30s is 2x.
+  # NOT a tuning knob. Do not lower it. Costs ~3MB per session.
+  drain_seconds: 30
+
+  # true restores the pre-2026-07-28 behaviour of publishing OFF to every camera
+  # at daemon startup. That STOPS any recording already running, so restarting
+  # the daemon mid-session would cut the run short and lose its tail. Leave false.
+  reset_on_start: false
+
 # Manual session auto-detection (Frigate UI Record button)
 manual_sessions:
   enabled: true

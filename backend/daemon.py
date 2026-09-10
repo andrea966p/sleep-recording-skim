@@ -30,7 +30,12 @@ from zoneinfo import ZoneInfo
 import yaml
 
 from radiens_poller import RadiensPoller, RadiensStatus
-from frigate_controller import FrigateController
+from frigate_controller import (
+    DEFAULT_DRAIN_SECONDS,
+    LEASE_MANUAL,
+    LEASE_SESSION,
+    FrigateController,
+)
 from reconciler import Reconciler
 from session_journal import (
     EVENT_EXPORT_BEGIN,
@@ -171,6 +176,31 @@ class SessionDaemon:
         self.manual_sessions_enabled = manual_cfg.get("enabled", True)
         manual_min_duration = manual_cfg.get("min_duration", 5)
 
+        # Radiens-triggered auto video start/stop. Set sessions.auto_start=false
+        # to stop the daemon from auto-recording video on Radiens R_ON/R_OFF
+        # (2026-07-03: disabled pending hardware-sync replacement). Storage
+        # monitoring, export, manual sessions, and Radiens status all still run.
+        self.auto_session_enabled = config.get("sessions", {}).get(
+            "auto_start", True
+        )
+
+        # Recording lease behaviour.
+        #
+        # drain_seconds: how long recording stays on past the end of a session
+        # before the last lease is released, so Frigate flushes its cache
+        # segments instead of unlinking them. See DEFAULT_DRAIN_SECONDS. This is
+        # not a tuning knob; 30s is 2x the 15s worst case.
+        #
+        # reset_on_start: restore the old behaviour of publishing OFF to every
+        # camera at startup. Default false, because that stomps recordings
+        # already in progress.
+        # (applied to self.frigate just after it is constructed, below)
+        recording_cfg = config.get("recording", {})
+        self.drain_seconds = float(
+            recording_cfg.get("drain_seconds", DEFAULT_DRAIN_SECONDS)
+        )
+        self.reset_recordings_on_start = recording_cfg.get("reset_on_start", False)
+
         self.manual_session_manager = ManualSessionManager(
             sessions_dir=sessions_dir,
             export_dir=config["frigate"].get(
@@ -192,6 +222,12 @@ class SessionDaemon:
             cameras=cameras,
             mqtt_user=config["mqtt"].get("user"),
             mqtt_password=config["mqtt"].get("password"),
+        )
+        self.frigate.drain_seconds = self.drain_seconds
+        logger.info(
+            "Recording leases: drain=%.0fs, reset_on_start=%s",
+            self.frigate.drain_seconds,
+            self.reset_recordings_on_start,
         )
 
         self.poller = RadiensPoller(
@@ -285,9 +321,34 @@ class SessionDaemon:
             )
             sys.exit(1)
 
-        # 2. Reset recording state (clean slate)
-        logger.info("Resetting all camera recordings to OFF (clean slate)...")
-        self.frigate.stop_all_recording()
+        # 2. Recording state at startup.
+        #
+        # This used to unconditionally publish OFF to every camera as a "clean
+        # slate". That stomps any recording already in progress: restart the
+        # daemon during a 15h overnight run and the run is cut short, tail lost.
+        # Combined with the RETAINED topic it also means a crash-restart loop can
+        # leave every camera off indefinitely.
+        #
+        # Default is now to leave recording alone and ADOPT whatever is already
+        # on. Set recording.reset_on_start=true to restore the old behaviour.
+        if self.reset_recordings_on_start:
+            logger.warning(
+                "recording.reset_on_start=true — publishing OFF to all cameras. "
+                "This STOPS any recording currently in progress and loses its tail."
+            )
+            self.frigate.stop_all_recording()
+        else:
+            already_on = self.frigate.get_cameras_recording()
+            if already_on:
+                logger.warning(
+                    "Recording already ON at startup for %s — ADOPTING as manual "
+                    "leases rather than stopping them (fail-ON).",
+                    ", ".join(sorted(already_on)),
+                )
+                for camera_id in already_on:
+                    self.frigate.adopt_lease(camera_id, LEASE_MANUAL)
+            else:
+                logger.info("No cameras recording at startup.")
 
         # 2b. Startup grace period: Frigate's config has record.enabled=true,
         # so it reasserts ON shortly after we publish OFF. We must wait for
@@ -369,6 +430,13 @@ class SessionDaemon:
         """Called when Radiens transitions R_OFF -> R_ON."""
         logger.info(">>> SESSION START detected")
 
+        if not self.auto_session_enabled:
+            logger.info(
+                "Auto video start DISABLED (sessions.auto_start=false) — "
+                "ignoring Radiens R_ON; no session/Frigate recording started."
+            )
+            return
+
         # For multi-chamber, we start a session for each configured chamber.
         # Currently leveraging the single global Radiens status.
         chambers_to_start = [
@@ -393,8 +461,10 @@ class SessionDaemon:
                     radiens_file_path=status.file_path,
                 )
 
-                # Enable Frigate recording for this session's camera
-                if not self.frigate.set_recording(session.camera, enabled=True):
+                # Take a session lease on this camera. If a human already has a
+                # manual recording running, this is a no-op that simply adds a
+                # second holder, so neither side can stop the other.
+                if not self.frigate.acquire_lease(session.camera, LEASE_SESSION):
                     logger.error(
                         "Failed to enable Frigate recording for %s. "
                         "Video may not be captured for this session!",
@@ -414,15 +484,19 @@ class SessionDaemon:
         """Called when Radiens transitions R_ON -> R_OFF."""
         logger.info(">>> SESSION END detected")
 
+        if not self.auto_session_enabled:
+            logger.info(
+                "Auto video stop DISABLED (sessions.auto_start=false) — "
+                "ignoring Radiens R_OFF; no session end / export triggered."
+            )
+            return
+
         # End all active sessions
         active_chambers = list(self.session_manager.active_sessions.keys())
         for chamber_id in active_chambers:
             session = self.session_manager.end_session(chamber_id)
             if session is None:
                 continue
-
-            # Disable Frigate recording
-            self.frigate.set_recording(session.camera, enabled=False)
 
             logger.info(
                 "Session %s ended for chamber %s: duration=%.0fs, filename=%s",
@@ -432,7 +506,9 @@ class SessionDaemon:
                 session.video_filename,
             )
 
-            # Export video from Frigate (runs in a background thread)
+            # Recording is deliberately NOT stopped here. The drain plus the
+            # lease release happen inside the export thread below, because
+            # draining blocks for drain_seconds and must not stall the poll loop.
             export_thread = threading.Thread(
                 target=self._export_session,
                 args=(session,),
@@ -442,7 +518,15 @@ class SessionDaemon:
             export_thread.start()
 
     def _export_session(self, session):
-        """Export video from Frigate. Runs in a background thread."""
+        """Drain, release the session lease, then export. Background thread."""
+        # Order matters. Draining BEFORE the export gives Frigate time to flush
+        # the cache segments covering the end of the session; exporting first
+        # would race the very data we are waiting for.
+        self.frigate.release_lease(
+            session.camera,
+            LEASE_SESSION,
+            shutdown_event=self._shutdown_event,
+        )
         self._execute_export(
             session=session,
             manager=self.session_manager,
@@ -502,6 +586,15 @@ class SessionDaemon:
                     video_path, session, self.export_source_dir, manager.export_dir, manager.tz
                 )
 
+            # The move leaves Frigate's DB row pointing at a path that no
+            # longer exists, so the export page fills up with entries that
+            # cannot be played and whose deletion frees nothing. Drop the row
+            # now that we own the file. Only on a successful move — otherwise
+            # the row is the only remaining handle on the file.
+            row_deleted = False
+            if moved_to is not None:
+                row_deleted = self.frigate.delete_export(export_id)
+
             # Sanity-check the exported file's real duration against what we
             # asked Frigate to export. A short file means dropped/stalled
             # segments — flag it partial so the gap is visible instead of
@@ -542,6 +635,7 @@ class SessionDaemon:
                     "export_id": export_id,
                     "video_filename": session.video_filename,
                     "moved_to": str(moved_to) if moved_to else None,
+                    "frigate_row_deleted": row_deleted,
                     "duration_seconds": expected_s,
                     "probe_duration_seconds": probe_s,
                     "duration_ok": duration_ok,
@@ -750,6 +844,10 @@ class SessionDaemon:
             recording_type=recording_type,
             user_name=user_name,
         )
+        if session is not None:
+            # Recording is already ON (a human turned it on in the Frigate UI),
+            # so adopt the lease rather than republishing it.
+            self.frigate.adopt_lease(camera_id, LEASE_MANUAL)
         if session is None:
             # Journal refused the START write — undo Frigate's recording so
             # we don't end up with an untracked ON state on disk.
@@ -760,8 +858,21 @@ class SessionDaemon:
             self.frigate.set_recording(camera_id, enabled=False)
 
     def _handle_external_recording_off(self, camera_id: str):
-        """Stop a manual recording and kick off export when Frigate UI triggers Record OFF."""
+        """Stop a manual recording and kick off export when Frigate UI triggers Record OFF.
+
+        NOTE: the drain CANNOT help this path. The OFF was published by the
+        Frigate UI before the daemon ever saw it, so Frigate has already dropped
+        the unflushed cache segments by the time we get here. The tail is gone.
+        Only the daemon-controlled path (Radiens session end) can be drained.
+        Mitigation for manual recordings is operator habit: stop about 30s after
+        the interesting part ends.
+        """
         session = self.manual_session_manager.stop_recording(camera_id)
+        # Drop the manual lease regardless of whether a session record existed,
+        # so an adopted lease cannot leak and pin recording on forever. No drain:
+        # the tail was already lost upstream, and draining would only re-publish
+        # ON-then-OFF against a camera the user has explicitly turned off.
+        self.frigate.release_lease(camera_id, LEASE_MANUAL, drain=False)
         if session is None:
             return
 
@@ -850,19 +961,41 @@ class SessionDaemon:
         # Stop reconciler
         self.reconciler.stop()
 
-        # Abort active sessions if any
+        # Abort active sessions if any.
+        #
+        # FAIL-ON: we deliberately do NOT stop recording here.
+        #
+        # This used to publish OFF for every aborted session's camera and then
+        # call stop_all_recording() as a "safety net". Because the MQTT topic is
+        # RETAINED, that OFF survived the reboot, and capture stayed off until a
+        # human noticed. That is what made a 72h run record ZERO video, and it
+        # silently cost a further 20h run as well.
+        #
+        # A camera left recording is recoverable: it costs disk and someone
+        # switches it off. A tail dropped at shutdown, or a whole run lost to a
+        # retained OFF, is not recoverable at all. So on the way down we touch
+        # nothing and leave the cameras running.
         if self.session_manager.has_active_sessions:
             logger.warning("Aborting active sessions due to shutdown")
             active_chambers = list(self.session_manager.active_sessions.keys())
             for chamber_id in active_chambers:
-                session = self.session_manager.abort_session(chamber_id, reason="daemon shutdown")
-                if session:
-                    # Try to stop recording for the aborted session's camera
-                    self.frigate.set_recording(session.camera, enabled=False)
+                self.session_manager.abort_session(chamber_id, reason="daemon shutdown")
 
-        # Stop all recording (safety net)
-        logger.info("Stopping all camera recordings...")
-        self.frigate.stop_all_recording()
+        held = {
+            camera: holders
+            for camera in self.frigate.cameras.values()
+            if (holders := self.frigate.lease_holders(camera))
+        }
+        if held:
+            logger.warning(
+                "FAIL-ON: leaving recording ENABLED on shutdown for %s. "
+                "Recording is intentionally NOT stopped — a stuck-ON camera is "
+                "recoverable, a lost tail or a retained OFF is not. Stop these "
+                "manually if they are not wanted.",
+                ", ".join(f"{cam}({','.join(sorted(h))})" for cam, h in held.items()),
+            )
+        else:
+            logger.info("No recording leases held at shutdown.")
 
         # Disconnect MQTT
         logger.info("Disconnecting MQTT...")
