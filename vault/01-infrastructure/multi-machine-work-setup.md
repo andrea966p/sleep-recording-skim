@@ -407,3 +407,105 @@ already announced into the global index**, so if the office PC ever does announc
   elsewhere on this page is the **e10ubuntu** layout, not a universal one.
 - Laptop to e10ubuntu Syncthing is currently a DIRECT local network transmission control
   protocol connection on the KAIST network, not Tailscale and not a relay.
+
+---
+
+# 2026-09-10: everything moved into ONE repository, `sleep-recording-skim`
+
+> [!abstract] TL;DR — for non-technical readers
+> **What this is.** The vault, the recording software, the analysis code and the Claude
+> Code configuration now live in a single git repository called `sleep-recording-skim`.
+> Every computer clones that one repository. There is nothing else to set up.
+>
+> **Why it exists.** The old arrangement synced the same workspace three different ways
+> at once: Syncthing for the vault, a second git repository for Claude's memory, four
+> separate repositories for the code. Three mechanisms meant three things to forget, and
+> one of them failed silently for nineteen days.
+>
+> **How to read this page.** Everything above this line describes the OLD setup and is
+> kept for the record. This section is what is true now.
+
+## What was actually wrong with the old setup
+
+**The memory sync had been deadlocked since 2026-08-22 and nobody could tell.** On
+2026-09-10 `e10ubuntu` was 7 commits ahead and 1 behind `claude-portable`, and GitHub was
+missing roughly fourteen memory files: every EEG finding from 08-24 to 09-09. A session
+started on the laptop read memory from three weeks earlier.
+
+The cause was one design decision colliding with one git rule. `sync.sh` deliberately
+never committed `settings.json`, because Claude Code rewrites that file at runtime and an
+unattended commit would change the model on every machine. That left the working tree
+permanently dirty. **`git rebase` refuses to start on a dirty tree.** The log said
+`REBASE CONFLICT`, but the real error underneath was:
+
+```
+error: cannot rebase: You have unstaged changes.
+```
+
+So the moment the laptop pushed one commit, both directions locked: the push path could
+not rebase, and neither could the pull path. The safety rule protecting the model setting
+is what disabled the sync.
+
+> [!quote] Paper-ready
+> A file rewritten by the application at runtime must not live inside a shared
+> repository. It keeps the working tree permanently dirty, which blocks rebase and
+> therefore blocks both push and pull.
+
+## What is in place now
+
+One private repository, `git@github.com:andrea966p/sleep-recording-skim.git`, cloned to
+`~/sleep-recording-skim` on every machine:
+
+| Directory | Came from | How |
+|---|---|---|
+| `vault/` | `neurosurveillance-vault` | `git subtree`, full history |
+| `neurosurveillance/` | `neurosurveillance`, branch `ops/nas-archive-and-scheduled-recording` | `git subtree`, full history |
+| `neurosurveillance-system/` | `neurosurveillance-system` | `git subtree`, full history |
+| `eeg-emg-analysis/` | `eeg-emg-analysis`, branch `master` | `git subtree`, full history |
+| `claude-config/` | `claude-portable` | `git subtree`, full history |
+| `machine/` | new | bootstrap, check, systemd reference copies |
+
+`git subtree` rather than submodules: submodules pin a dependency at a commit for
+reproducible builds, which is not the problem here, and they buy detached heads and
+two-step commits in exchange. Nothing is pinned and there is one author, so the files
+simply live in the repository.
+
+## The only four commands
+
+```bash
+./skim status          # am I behind? what have I not committed?
+./skim pull            # get the other machine's work
+./skim push "message"  # commit everything and push
+./skim check           # Claude links intact, and Syncthing really gone
+```
+
+**Nothing syncs by itself, by choice.** `skim status` is read-only and runs from a
+`SessionStart` hook so a stale machine says so out loud. Everything that writes is typed
+by a human.
+
+`skim pull` and the pull inside `skim push` both use `git pull --rebase --autostash`.
+The autostash is not decoration: its absence is the entire bug described above.
+
+## Two rules that came out of real damage
+
+1. **Never let a second sync mechanism touch this repository.** Syncthing plus git on one
+   directory, replicating a live `.git` with no file versioning, is what destroyed the
+   vault on 2026-04-29. `./skim check` fails loudly if Syncthing is ever pointed back at
+   the workspace.
+2. **Never put a runtime-rewritten file in the repository.** `settings.json` is generated
+   from `claude-config/settings.template.json` by `machine/bootstrap.sh`, as a COPY, and
+   is gitignored. That removes the deadlock's cause rather than remembering to avoid it.
+
+## What Syncthing was retired from
+
+All three folders, on every machine, **removed without "delete on disk"**:
+`monitoring_project_obsidian_vault`, `neurosurveillance-private`,
+`neurosurveillance-system`. This also permanently ends the dormant hazard documented in
+the previous section: the two code folders that still replicated a live `.git` with no
+versioning to the paused office PC.
+
+## What has NOT changed
+
+The rig still exists only on `e10ubuntu`. Allego, radiens, XDAQ, Docker, Frigate and
+`~/radix/data` are physically there, and from any other machine you drive them with
+`ssh e10 '<command>'`, or `ssh e10 -t 'tmux new -As rig'` for anything long running.

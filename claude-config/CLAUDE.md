@@ -103,9 +103,25 @@ tmux was MISSING on `e10ubuntu` until 2026-08-19 even though this line had promi
 2026-08-16, so anything long running started that way before then died with the connection.
 Installed now: `tmux 3.4` on e10ubuntu, `3.6` on the ThinkPad.
 
-The Obsidian vault is synced to every machine by Syncthing, so vault files are local
-and need no SSH. `.git` is deliberately NOT synced: the vault's git repository and
-its backup timer exist on `e10ubuntu` only.
+The whole workspace is ONE git repository, `sleep-recording-skim`, cloned on every
+machine: the Obsidian vault, the recording software, the analysis code and this Claude
+configuration. Vault files are local everywhere, so they need no SSH.
 
-Full setup and the vault safety rules:
-`Monitoring_project_obsidian_vault/01-infrastructure/multi-machine-work-setup.md`
+Sync is MANUAL and is one command:
+
+```bash
+./skim status          # am I behind? what have I not committed?
+./skim pull            # before you start editing
+./skim push "message"  # when you stop
+```
+
+Nothing commits or pushes by itself. `skim status` is read-only and runs at session
+start; every writing verb is typed by a human.
+
+> [!warning] Syncthing is RETIRED for this workspace
+> Syncthing and git both syncing one directory, with a live `.git` replicated and no
+> file versioning, destroyed the vault on 2026-04-29. `./skim check` fails if Syncthing
+> is ever pointed back at this repository.
+
+Full setup and the workspace rules: `vault/01-infrastructure/multi-machine-work-setup.md`
+and `machine/README.md`.

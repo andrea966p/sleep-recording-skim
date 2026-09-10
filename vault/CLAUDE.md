@@ -9,7 +9,7 @@ This is an **Obsidian vault** for documenting a neuroscience surveillance system
 **Key Infrastructure:**
 - **Raspberry Pi 5** (`192.168.0.11`) running go2rtc (dual camera RTSP streaming)
 - **ASUS Mini PC** (`192.168.0.50`) running Frigate NVR (Docker-based video processing)
-- **Syncthing** syncs vault between PC 1 (office) and PC 2 (experiment room)
+- **One git repository** (`sleep-recording-skim`) holds this vault and all the code; every machine clones it and syncs by hand with `./skim`. Syncthing is RETIRED.
 - **Tailscale** for remote access
 
 ## Documentation Architecture
@@ -111,7 +111,7 @@ curl http://192.168.0.50:5000/api/stats
 
 2. **H.264 Only**: Never suggest H.265/HEVC for Raspberry Pi (causes kernel panics).
 
-3. **Syncthing Awareness**: Changes sync automatically to PC 2. Mention sync implications for infrastructure changes.
+3. **Sync Awareness**: Nothing syncs automatically. This vault lives inside the `sleep-recording-skim` repo; run `./skim pull` before editing and `./skim push "message"` after. Mention sync implications for infrastructure changes.
 
 4. **Configuration Variables**: When showing configs with `{VARIABLES}`, remind user to replace with actual values from `production-values.md`.
 
