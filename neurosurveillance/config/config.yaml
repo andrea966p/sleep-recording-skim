@@ -1,0 +1,83 @@
+# =============================================================================
+# Session Daemon Configuration - NeuroSurveillance System v1.0
+# =============================================================================
+# REFERENCE COPY -- the daemon reads /opt/neurosurveillance/config.yaml directly.
+# Edit the production copy on the NVR, not this file.
+# =============================================================================
+
+daemon:
+  poll_interval: 1.0          # seconds between Radiens polls
+  timezone: "Asia/Seoul"
+  log_level: info              # debug, info, warning, error
+  log_dir: "/opt/neurosurveillance/logs"
+
+api:
+  host: "127.0.0.1"           # localhost only -- not network-accessible
+  port: 8585
+
+mqtt:
+  host: "127.0.0.1"           # Mosquitto runs on same machine (Docker)
+  port: 1883
+
+frigate:
+  url: "http://127.0.0.1:5000"
+  export_dir: "/srv/frigate/storage/exports"
+
+cameras:
+  chamber_0: "pi_cam_0"
+  chamber_1: "pi_cam_1"
+  chamber_2: "pi_cam_2"
+  chamber_3: "pi_cam_3"
+
+sessions:
+  data_dir: "/opt/neurosurveillance/sessions"
+
+# Recording lease behaviour (added 2026-07-28).
+# Both keys are optional; the defaults below are what the code uses if the
+# whole block is absent.
+recording:
+  # Seconds recording stays ON past the end of a session before the last lease
+  # is released. Frigate's recording maintainer UNLINKS any /tmp/cache segment
+  # not yet flushed the moment it sees recording disabled, so stopping straight
+  # away destroys the last 10-20s of every session. ffmpeg closes a segment
+  # every 10s and the maintainer flushes every 5s => 15s worst case; 30s is 2x.
+  # NOT a tuning knob. Do not lower it. Costs ~3MB per session.
+  drain_seconds: 30
+
+  # true restores the pre-2026-07-28 behaviour of publishing OFF to every camera
+  # at daemon startup. That STOPS any recording already running, so restarting
+  # the daemon mid-session would cut the run short and lose its tail. Leave false.
+  reset_on_start: false
+
+# Manual session auto-detection (Frigate UI Record button)
+manual_sessions:
+  enabled: true
+  min_duration: 5            # Ignore recordings shorter than 5s (accidental clicks)
+
+# NAS transfer (deferred -- Tailscale NAS connectivity not yet set up)
+nas:
+  enabled: false
+  # host: "100.120.86.10"     # Synology NAS Tailscale IP
+  # path: "/volume1/neurosurveillance"
+  # method: "rsync"           # rsync or scp
+
+storage:
+  poll_interval: 30                    # How often to re-check disk (seconds)
+  paths:
+    recordings: "/srv/frigate/storage/recordings"
+    exports: "/srv/frigate/storage/exports"
+    clips: "/srv/frigate/storage/clips"
+    sessions: "/opt/neurosurveillance/sessions"
+  eeg_reserve_gb: 200                  # Hard reserve for XDAQ EEG/EMG data
+  warn_percent: 75                     # UI turns yellow at this threshold
+  critical_percent: 90                 # UI turns red, recordings may be blocked
+  camera_bitrate_mbps: 1.7             # Measured from actual recordings (1.5 target + container/VBR overhead)
+
+  # go2rtc API endpoints on each Pi — used by the "Refresh Bitrates" button
+  # to auto-detect actual camera bitrates from the running go2rtc config
+  go2rtc_apis:
+    - "http://192.168.0.11:1984"       # Pi 1 (pi_cam_0, pi_cam_1)
+    - "http://192.168.0.12:1984"       # Pi 2 (pi_cam_2, pi_cam_3)
+
+lab_members:
+  - andrea

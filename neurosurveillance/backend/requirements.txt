@@ -1,0 +1,10 @@
+# Session Daemon Dependencies
+# Install: python3 -m pip install -r requirements.txt
+#
+# Note: 'radiens' is on PyPI (v4.0.0+) but installed separately via the
+# NeuroNexus installer to ensure integration with the rest of the Allego suite.
+
+paho-mqtt>=2.0,<3.0
+flask>=3.0,<4.0
+requests>=2.31,<3.0
+pyyaml>=6.0,<7.0

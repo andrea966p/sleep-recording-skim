@@ -1,0 +1,553 @@
+"""
+HTTP REST API - Lightweight Flask API for session metadata and status.
+
+Binds to 127.0.0.1:8585 (localhost only). Provides endpoints for:
+- Setting session metadata (mouse_id, recording_type, user_name, chamber)
+- Querying daemon status, current session, and session history
+- Health check for systemd watchdog
+
+This API is consumed by the future UI (deferred to external app-building tool).
+It can also be used directly via curl for testing and scripting.
+"""
+
+import logging
+import re
+from dataclasses import asdict
+from typing import TYPE_CHECKING
+
+from flask import Flask, jsonify, request
+
+if TYPE_CHECKING:
+    from session_manager import SessionManager
+    from radiens_poller import RadiensPoller
+    from frigate_controller import FrigateController
+    from manual_session_manager import ManualSessionManager
+    from storage_monitor import StorageMonitor
+    from session_journal import SessionJournal
+    from reconciler import Reconciler
+
+logger = logging.getLogger(__name__)
+
+app = Flask(__name__)
+
+
+@app.after_request
+def add_cors_headers(response):
+    """Allow requests from Tauri webview (tauri://localhost) and dev servers."""
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, DELETE, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type"
+    return response
+
+
+# These are set by daemon.py at startup via init_api()
+_session_manager: "SessionManager | None" = None
+_radiens_poller: "RadiensPoller | None" = None
+_frigate_controller: "FrigateController | None" = None
+_manual_session_manager: "ManualSessionManager | None" = None
+_storage_monitor: "StorageMonitor | None" = None
+_recording_watchdog: "RecordingWatchdog | None" = None
+_session_journal: "SessionJournal | None" = None
+_reconciler: "Reconciler | None" = None
+_config: dict | None = None
+
+
+def init_api(
+    session_manager: "SessionManager",
+    radiens_poller: "RadiensPoller",
+    frigate_controller: "FrigateController",
+    config: dict,
+    manual_session_manager: "ManualSessionManager | None" = None,
+    storage_monitor: "StorageMonitor | None" = None,
+    recording_watchdog: "RecordingWatchdog | None" = None,
+    session_journal: "SessionJournal | None" = None,
+    reconciler: "Reconciler | None" = None,
+):
+    """Initialize the API with references to daemon components.
+
+    Called once by daemon.py before starting the Flask server.
+    """
+    global _session_manager, _radiens_poller, _frigate_controller, _config
+    global _manual_session_manager, _storage_monitor, _recording_watchdog
+    global _session_journal, _reconciler
+    _session_manager = session_manager
+    _radiens_poller = radiens_poller
+    _frigate_controller = frigate_controller
+    _manual_session_manager = manual_session_manager
+    _storage_monitor = storage_monitor
+    _recording_watchdog = recording_watchdog
+    _session_journal = session_journal
+    _reconciler = reconciler
+    _config = config
+    logger.info("API initialized")
+
+
+def sanitize_input(value: str) -> str:
+    """Sanitize string input to prevent path traversal and shell injection.
+    Allows alphanumeric characters, dashes, and underscores.
+    """
+    if not isinstance(value, str):
+        return ""
+    return re.sub(r"[^a-zA-Z0-9\-_]", "", value)
+
+
+# ---------------------------------------------------------------------------
+# Endpoints
+# ---------------------------------------------------------------------------
+
+
+@app.route("/api/status", methods=["GET"])
+def get_status():
+    """Daemon status overview.
+
+    Returns:
+        - daemon: running state
+        - radiens: connection status, current recording state
+        - mqtt: connection status
+        - frigate: reachable or not
+        - session: active session summary (if any)
+        - pending_metadata: metadata set for next session
+    """
+    radiens_connected = _radiens_poller.connected if _radiens_poller else False
+    radiens_state = (
+        _radiens_poller.previous_state.value if _radiens_poller else "UNKNOWN"
+    )
+
+    mqtt_connected = (
+        _frigate_controller.mqtt_connected if _frigate_controller else False
+    )
+
+    active = {}
+    if _session_manager and _session_manager.has_active_sessions:
+        for chamber_id, session in _session_manager.active_sessions.items():
+            active[chamber_id] = {
+                "session_id": session.session_id,
+                "mouse_id": session.mouse_id,
+                "recording_type": session.recording_type,
+                "chamber": session.chamber,
+                "camera": session.camera,
+                "start_time_local": session.start_time_local,
+            }
+
+    pending = {}
+    if _session_manager:
+        for chamber_id, meta in _session_manager.pending_metadata.items():
+            pending[chamber_id] = {
+                "mouse_id": meta.mouse_id,
+                "recording_type": meta.recording_type,
+                "user_name": meta.user_name,
+                "chamber": meta.chamber,
+                "is_default": meta.is_default(),
+            }
+
+    # Manual recordings currently active
+    manual = {}
+    if _manual_session_manager:
+        for cam_id, rec in _manual_session_manager.active_recordings.items():
+            manual[cam_id] = {
+                "session_id": rec.session_id,
+                "camera": rec.camera,
+                "start_time_local": rec.start_time_local,
+            }
+
+    # Send the same recording state to all configured chambers
+    radiens_recording_states = {
+        str(c_id).replace("chamber_", ""): radiens_state
+        for c_id in _config.get("cameras", {})
+    } if _config else {"0": radiens_state}
+
+    return jsonify({
+        "daemon": "running",
+        "radiens": {
+            "connected": radiens_connected,
+            "recording_states": radiens_recording_states,
+        },
+        "mqtt": {
+            "connected": mqtt_connected,
+        },
+        "sessions": active,
+        "pending_metadata": pending,
+        "manual_recordings": manual,
+    })
+
+
+@app.route("/api/session/metadata", methods=["POST"])
+def set_metadata():
+    """Set metadata for the next recording session.
+
+    Accepts JSON body with any combination of:
+        - mouse_id (str): Mouse identifier (e.g. "HETCF3R1")
+        - recording_type (str): Recording type (e.g. "basal", "sd")
+        - user_name (str): Researcher name (e.g. "andrea")
+        - chamber (int): Chamber number (0 or 1)
+
+    Partial updates are allowed -- only provided fields are changed.
+
+    Returns:
+        Updated metadata.
+
+    Example:
+        curl -X POST http://127.0.0.1:8585/api/session/metadata?chamber_id=0 \\
+          -H "Content-Type: application/json" \\
+          -d '{"mouse_id": "HETCF3R1", "recording_type": "basal", "chamber": 0}'
+    """
+    if not _session_manager:
+        return jsonify({"error": "Session manager not initialized"}), 503
+
+    chamber_id = request.args.get("chamber_id")
+    if not chamber_id:
+        # Backward compatibility / fallback
+        chamber_id = "0"
+
+    data = request.get_json(silent=True)
+    if not data:
+        return jsonify({"error": "Request body must be JSON"}), 400
+
+    # Validate chamber if provided
+    if "chamber" in data:
+        try:
+            chamber = int(data["chamber"])
+            valid_chambers = [
+                int(c_id.replace("chamber_", ""))
+                for c_id in _config.get("cameras", {})
+            ] if _config else [0, 1, 2, 3]
+            if chamber not in valid_chambers:
+                return jsonify({
+                    "error": f"Invalid chamber: {chamber}. Valid: {valid_chambers}"
+                }), 400
+            data["chamber"] = chamber
+        except (ValueError, TypeError):
+            return jsonify({
+                "error": "chamber must be an integer"
+            }), 400
+
+    # Validate lab member if user_name provided
+    if "user_name" in data and _config:
+        lab_members = _config.get("lab_members", [])
+        if lab_members and data["user_name"] not in lab_members:
+            logger.warning(
+                "user_name '%s' not in lab_members list: %s",
+                data["user_name"],
+                lab_members,
+            )
+            # Warning only -- don't reject the request
+
+    # Sanitize string inputs to prevent path traversal
+    safe_mouse_id = sanitize_input(data.get("mouse_id", "")) if "mouse_id" in data else None
+    safe_recording_type = sanitize_input(data.get("recording_type", "")) if "recording_type" in data else None
+    safe_user_name = sanitize_input(data.get("user_name", "")) if "user_name" in data else None
+
+    updated = _session_manager.set_metadata(
+        chamber_id=chamber_id,
+        mouse_id=safe_mouse_id,
+        recording_type=safe_recording_type,
+        user_name=safe_user_name,
+        chamber=data.get("chamber"),
+    )
+
+    return jsonify({
+        "status": "ok",
+        "metadata": {
+            "mouse_id": updated.mouse_id,
+            "recording_type": updated.recording_type,
+            "user_name": updated.user_name,
+            "chamber": updated.chamber,
+            "is_default": updated.is_default(),
+        },
+    })
+
+
+@app.route("/api/session/metadata", methods=["DELETE"])
+def clear_metadata():
+    """Clear pending metadata (reset to defaults)."""
+    if not _session_manager:
+        return jsonify({"error": "Session manager not initialized"}), 503
+
+    chamber_id = request.args.get("chamber_id")
+    if not chamber_id:
+        chamber_id = "0"
+
+    _session_manager.clear_metadata(chamber_id)
+    return jsonify({"status": "ok", "message": f"Metadata cleared for chamber {chamber_id}"})
+
+
+@app.route("/api/session/current", methods=["GET"])
+def get_current_session():
+    """Get the currently active session, if any.
+
+    Returns:
+        Session details if active, or {"session": null}.
+    """
+    if not _session_manager:
+        return jsonify({"error": "Session manager not initialized"}), 503
+
+    if _session_manager.has_active_sessions:
+        # Return the first active session for compatibility, or check chamber_id
+        session = next(iter(_session_manager.active_sessions.values()))
+        return jsonify({"session": asdict(session)})
+
+    return jsonify({"session": None})
+
+
+@app.route("/api/session/history", methods=["GET"])
+def get_session_history():
+    """List past sessions.
+
+    Query parameters:
+        - limit (int): Max number of sessions to return (default 50, newest first)
+        - source (str): Filter by source ("radiens", "manual", or omit for all)
+
+    Returns:
+        List of session records.
+    """
+    if not _session_manager:
+        return jsonify({"error": "Session manager not initialized"}), 503
+
+    limit = request.args.get("limit", 50, type=int)
+    limit = max(1, min(limit, 500))  # Clamp between 1 and 500
+    source_filter = request.args.get("source")
+
+    # Combine Radiens and manual histories
+    all_sessions = []
+
+    if source_filter is None or source_filter == "radiens":
+        all_sessions.extend(
+            [asdict(s) for s in _session_manager.history]
+        )
+
+    if _manual_session_manager and (
+        source_filter is None or source_filter == "manual"
+    ):
+        all_sessions.extend(
+            [asdict(s) for s in _manual_session_manager.history]
+        )
+
+    # Sort by start_time_utc descending (newest first)
+    all_sessions.sort(key=lambda s: s.get("start_time_utc", 0), reverse=True)
+
+    # Apply limit
+    recent = all_sessions[:limit]
+
+    return jsonify({
+        "count": len(recent),
+        "total": len(all_sessions),
+        "sessions": recent,
+    })
+
+
+@app.route("/api/session/manual", methods=["GET"])
+def get_manual_sessions():
+    """Get active and recent manual recording sessions.
+
+    Returns:
+        - active: Dict of camera_id -> active manual session info
+        - recent: Last 10 completed manual sessions (newest first)
+    """
+    if not _manual_session_manager:
+        return jsonify({"error": "Manual session manager not initialized"}), 503
+
+    active = {}
+    for cam_id, rec in _manual_session_manager.active_recordings.items():
+        active[cam_id] = asdict(rec)
+
+    history = _manual_session_manager.history
+    recent = [asdict(s) for s in reversed(history[-10:])]
+
+    return jsonify({
+        "active": active,
+        "recent_count": len(recent),
+        "recent": recent,
+    })
+
+
+@app.route("/api/health", methods=["GET"])
+def health_check():
+    """Health check endpoint.
+
+    Returns 200 if the daemon is running and core services are connected.
+    Returns 503 if critical services are down.
+
+    Used by systemd watchdog and monitoring.
+    """
+    radiens_ok = _radiens_poller.connected if _radiens_poller else False
+    mqtt_ok = _frigate_controller.mqtt_connected if _frigate_controller else False
+
+    healthy = radiens_ok and mqtt_ok
+    status_code = 200 if healthy else 503
+
+    storage_level = "ok"
+    storage_used_percent = 0.0
+    if _storage_monitor is not None:
+        s = _storage_monitor.get_status()
+        storage_level = s.get("status_level", "ok")
+        storage_used_percent = s.get("used_percent", 0.0)
+
+    recording_lag = (
+        _recording_watchdog.get_lag_snapshot() if _recording_watchdog else {}
+    )
+
+    return jsonify({
+        "healthy": healthy,
+        "radiens_connected": radiens_ok,
+        "mqtt_connected": mqtt_ok,
+        "storage_level": storage_level,
+        "storage_used_percent": storage_used_percent,
+        "recording_lag": recording_lag,
+    }), status_code
+
+
+# ---------------------------------------------------------------------------
+# Storage endpoints
+# ---------------------------------------------------------------------------
+
+
+@app.route("/api/storage", methods=["GET"])
+def get_storage():
+    """Current disk usage and storage status."""
+    if _storage_monitor is None:
+        return jsonify({"error": "storage monitor not initialized"}), 503
+    return jsonify(_storage_monitor.get_status())
+
+
+@app.route("/api/storage/estimate", methods=["GET"])
+def get_storage_estimate():
+    """Estimate how long available storage will last at current bitrate.
+
+    Query params:
+        num_cameras: int (default: total configured cameras)
+    """
+    if _storage_monitor is None:
+        return jsonify({"error": "storage monitor not initialized"}), 503
+
+    s = _storage_monitor.get_status()
+    effective_bytes = s.get("effective_available_bytes", 0)
+    bitrate_mbps = s.get("camera_bitrate_mbps", 1.7)
+
+    try:
+        num_cameras = int(request.args.get("num_cameras", 4))
+    except (ValueError, TypeError):
+        num_cameras = 4
+
+    if num_cameras <= 0 or bitrate_mbps <= 0:
+        return jsonify({"hours": None, "reason": "invalid parameters"}), 400
+
+    bytes_per_sec = num_cameras * bitrate_mbps * 1_000_000 / 8
+    seconds = effective_bytes / bytes_per_sec if bytes_per_sec > 0 else 0
+    hours = seconds / 3600
+
+    return jsonify({
+        "num_cameras": num_cameras,
+        "camera_bitrate_mbps": bitrate_mbps,
+        "effective_available_bytes": effective_bytes,
+        "estimated_hours": round(hours, 1),
+        "estimated_days": round(hours / 24, 1),
+    })
+
+
+@app.route("/api/storage/camera-bitrates", methods=["GET"])
+def get_camera_bitrates():
+    """Query go2rtc APIs for actual per-camera bitrates."""
+    if _storage_monitor is None:
+        return jsonify({"error": "storage monitor not initialized"}), 503
+    return jsonify(_storage_monitor.fetch_camera_bitrates())
+
+
+# ---------------------------------------------------------------------------
+# Session journal endpoint (council Stage 2.1)
+# ---------------------------------------------------------------------------
+
+
+@app.route("/api/journal", methods=["GET"])
+def get_journal():
+    """Read session-lifecycle events from the durable WAL journal.
+
+    Query parameters (all optional):
+        - since (float): Unix epoch seconds — only return events at or after this ts
+        - until (float): Unix epoch seconds — only return events at or before this ts
+        - event_type (str): One of START, EXPORT_BEGIN, EXPORT_COMPLETE, ABORT, STALL
+        - session_id (str): Filter by session UUID
+        - limit (int): Max rows (default 500, max 5000)
+
+    Returns:
+        {
+          "count": <int>,
+          "counts_by_type": {<event_type>: <int>, ...},
+          "events": [<event>, ...]   # newest first
+        }
+    """
+    if _session_journal is None:
+        return jsonify({"error": "session journal not initialized"}), 503
+
+    def _float_arg(name):
+        v = request.args.get(name)
+        if v is None:
+            return None
+        try:
+            return float(v)
+        except (ValueError, TypeError):
+            return None
+
+    since = _float_arg("since")
+    until = _float_arg("until")
+    event_type = request.args.get("event_type")
+    session_id = request.args.get("session_id")
+
+    try:
+        limit = int(request.args.get("limit", 500))
+    except (ValueError, TypeError):
+        limit = 500
+
+    events = _session_journal.query(
+        since=since,
+        until=until,
+        event_type=event_type,
+        session_id=session_id,
+        limit=limit,
+    )
+
+    return jsonify({
+        "count": len(events),
+        "counts_by_type": _session_journal.count_by_type(since=since),
+        "events": events,
+    })
+
+
+@app.route("/api/reconciler/last", methods=["GET"])
+def get_reconciler_last():
+    """Return the findings dict from the most recent reconciler run.
+
+    Returns 404 if the reconciler has not yet run.
+    """
+    if _reconciler is None:
+        return jsonify({"error": "reconciler not initialized"}), 503
+    findings = _reconciler.get_last_findings()
+    if findings is None:
+        return jsonify({"error": "reconciler has not run yet"}), 404
+    return jsonify(findings)
+
+
+@app.route("/api/reconciler/run", methods=["POST"])
+def run_reconciler():
+    """Trigger an ad-hoc reconciler pass and return the findings dict.
+
+    Query parameter (optional):
+        - window_hours (int): Override the scheduled window for this run.
+          Default uses the reconciler's configured window.
+
+    The run is synchronous (this endpoint blocks until findings are ready).
+    """
+    if _reconciler is None:
+        return jsonify({"error": "reconciler not initialized"}), 503
+
+    window_hours = None
+    raw = request.args.get("window_hours")
+    if raw is not None:
+        try:
+            window_hours = int(raw)
+            if window_hours <= 0:
+                raise ValueError("must be > 0")
+        except ValueError:
+            return jsonify({"error": "window_hours must be a positive int"}), 400
+
+    findings = _reconciler.run_once(window_hours=window_hours)
+    return jsonify(findings)

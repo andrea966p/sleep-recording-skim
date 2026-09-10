@@ -1,0 +1,37 @@
+# === Frontend ===
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
+frontend/*.local
+frontend/src-tauri/target/
+frontend/src-tauri/gen/schemas/
+frontend/tailwind_build_test.css
+
+# === Backend ===
+backend/__pycache__/
+backend/*.pyc
+*.egg-info/
+
+# === Environment ===
+.env
+.env.*
+venv/
+
+# === Editors ===
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.sw?
+
+# === OS ===
+.DS_Store
+Thumbs.db
+
+# === Logs ===
+*.log
+.stignore
+
+# === Ops runtime state (deploy/) ===
+# Lock files, rotating logs and the archive manifest are runtime state, not source.
+# The manifest IS still protected: deploy/ is inside the nightly NAS tarball.
+deploy/logs/
