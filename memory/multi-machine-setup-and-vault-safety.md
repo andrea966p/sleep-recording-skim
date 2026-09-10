@@ -81,11 +81,13 @@ everywhere; it is logged and left for a manual commit. `./sync.sh --status` = dr
 ⚠️ **Each machine needs a git identity in the clone** or the script refuses; both set to
 `andrea966p <andrea96p@kaist.ac.kr>`.
 
-🔴 **The Synology NAS backup has been FAILING since 2026-08-14** — the NAS is not in
+✅ **RESOLVED 2026-08-19, see [[nas-backup-stale-address-outage]] — the text below is the
+stale diagnosis, kept only for the history.** ~~🔴 **The Synology NAS backup has been FAILING since 2026-08-14** — the NAS is not in
 the current tailnet at all (`tailscale ping 100.120.86.10` → `no matching peer`).
 Same root cause as everything else here: the switch to the `skimlab.kaist@gmail.com`
 tailnet left dead IPs hardcoded. Needs hands on the Synology. Last good backup
-2026-08-13.
+2026-08-13.~~ (Wrong on the fix: no hands on the Synology were needed; the cause was a hardcoded
+`100.120.86.10` vs the real `100.120.86.9`, now the MagicDNS name.)
 
 **Why:** the previous vault loss was not bad luck, it was a missing undo path plus
 `.git` being synced. Both are now structurally prevented rather than remembered.
@@ -104,3 +106,45 @@ memory and only caught up at the END of a session that had already reasoned with
 pulled yet.** And `settings.json` is tracked but never auto-committed (Claude Code rewrites it, incl.
 an `autoMode.environment` block with machine-specific absolute paths), so it is ALWAYS locally dirty
 and **blocks `git pull --rebase`**: `git checkout -- settings.json` first, then pull.
+
+🔴⭐⭐ **2026-08-19, MEASURED FROM THE LAPTOP: the two CODE folders still replicate a live
+`.git` with NO versioning — the vault-killer combination, un-fixed by choice.**
+`neurosurveillance-private` (`~/Monitoring_project/neurosurveillance`) has a `.stignore` that
+covers only build artefacts, **no `/.git` line**; `neurosurveillance-system` has **no `.stignore`
+at all**; **both have `versioning: NONE`**; `db/browse` lists `.git` at top level on both, so it
+really is in the synced index (1.4 MB and 676 KB).
+🔴 **CORRECTION: this does NOT involve the laptop.** The laptop's Syncthing has exactly two
+folders, `default` (0 files) and the vault. Both code folders are shared **e10ubuntu ↔ office PC
+(`TP5LGIP`) only**, and that device reads `connected=False paused=True` ⇒ **the hazard is DORMANT
+and arms the instant the office PC is unpaused.** ⚠️ Unlike the vault, the office PC was **paused
+but NEVER UNSHARED** from these two. **Precondition for any bring-back: tar snapshot to
+`~/vault-snapshots/`, add `/.git` to both `.stignore`s ON BOTH MACHINES (`.stignore` is per-device
+and never itself synced), consider staggered versioning.** Adding an ignore deletes nothing.
+User decision 2026-08-19: **document only, do not touch e10ubuntu** (a recording was live).
+Written up in the vault at the end of `01-infrastructure/multi-machine-work-setup.md`.
+⚠️ **The laptop's Syncthing config is `~/.local/state/syncthing/config.xml`, web UI
+`127.0.0.1:8384`** — the `~/.config/syncthing` + port 8080 above is the **e10ubuntu** layout only.
+✅ Verified same day: vault `state=idle needFiles=0 errors=0`, **498 local = 498 global on BOTH
+machines** (raw `find` on the laptop counts 501: +`.stignore` +`.stfolder` +`.obsidian/workspace.json`,
+all deliberately per-machine). ⚠️ **The 489-file baseline above is STALE, it is 498 now.**
+The clone `~/Projects/Monitoring_project_obsidian_vault` is still absent from `obsidian.json`
+(only `Projects/Homelab` + the synced vault are listed) ⇒ still de-listed.
+Laptop↔e10 Syncthing runs as a **direct LAN tcp connection on the KAIST network**, not Tailscale,
+not a relay.
+
+⚠️ **2026-08-19: `tmux` was NEVER INSTALLED on e10ubuntu**, though CLAUDE.md and the vault page
+had told you to run `ssh e10 -t 'tmux new -As rig'` since 2026-08-16 ⇒ **anything long running
+started that way in between died with its SSH connection.** No `screen`/`zellij`/`byobu`/`dtach`
+either. Fixed: `sudo apt install tmux` ⇒ **tmux 3.4 on e10ubuntu, 3.6 on the ThinkPad**; docker is
+`apt-mark hold` so the install could not touch it, live recording unaffected.
+🔑 **A command written into a guide is not a validated command** — see [[feedback_verify_operational_details]].
+Fallback with no multiplexer: `ssh e10 'setsid nohup <cmd> > ~/logs/<n>.log 2>&1 < /dev/null &'`
+(survives a drop, no reattach).
+
+⚠️ **Facts recovered from the laptop's 2026-08-22 commit when the two histories were
+merged on 2026-09-10:** the vault sync baseline is **498 files, not 489**; the laptop's
+Syncthing config lives at `~/.local/state/syncthing` with its web UI on `127.0.0.1:8384`
+(the `~/.config/syncthing` + port 8080 layout is e10ubuntu's only); and as of 2026-08-19
+the two CODE folders `neurosurveillance` and `neurosurveillance-system` still replicate a
+live `.git` with NO versioning, shared with the PAUSED office PC only, never with the
+laptop — dormant, and it arms the moment that machine is unpaused.
