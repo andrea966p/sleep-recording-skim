@@ -51,3 +51,19 @@ without a single visible symptom for nineteen days.
 before stopping. Full write-up in the vault at
 `01-infrastructure/multi-machine-work-setup.md`, final section. See also
 [[multi-machine-setup-and-vault-safety]] (the superseded Syncthing-era setup).
+
+✅ **THE THINKPAD IS LIVE ON THE NEW REPO, 2026-09-10** — cloned (140.93 MiB, 1737 files),
+`check.sh` all nine links healthy, `settings.json` a real file, 78 memory files, `skim
+status` clean and in sync. Syncthing disabled there with
+`systemctl --user disable --now syncthing`.
+
+🔑 **On any machine that ran the OLD `claude-portable` bootstrap, `machine/bootstrap.sh`
+ABORTS**: `a backup already exists at ~/.claude/skills.pre-bootstrap` (from 2026-08-16).
+The blocker is only a symlink, never real data. Delete the five symlinks first —
+`~/.claude/{skills,hooks,statusline-command.sh,settings.json}` and `~/CLAUDE.md` — then
+re-run. The `.pre-bootstrap` backups and `~/claude-portable` itself stay untouched.
+
+🔴 **`bootstrap.sh` creates three symlinks INSIDE the workspace** (`.claude/skills`,
+`.agents/skills`, `skills-lock.json`) that hold ABSOLUTE machine paths. They are gitignored
+as of 2026-09-10; if they ever get committed, every other machine gets a path that does not
+exist there.
