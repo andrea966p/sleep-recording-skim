@@ -1,0 +1,445 @@
+# =============================================================================
+# COHORT MANIFEST -- W-SD, UV water + Chronic Sleep Deprivation, batch 1 of 4
+# =============================================================================
+#
+# PROVENANCE. Husbandry read from `~/Downloads/HLB_SOD1_Intake_Monitoring.xlsx`
+# on 2026-08-27: sheet `Registry` (header on ROW 5) for per-animal dates, weights,
+# XDAQ positions, surgery notes and status, and sheet `W-SD` for the batch block
+# and the daily water-intake grid. openpyxl only in `~/eeg-analysis-venv`.
+#
+# ⚠️ THE `XDAQ position` COLUMN IS A SINGLE CURRENT VALUE, NOT A HISTORY. The rig
+#   positions below are therefore the assignment AS OF the spreadsheet's last save
+#   (2026-08-24), carried forward. Two things it cannot express:
+#     1. B1 held a DIFFERENT, UNIDENTIFIED animal until 2026-08-19, when that
+#        animal chewed and cut its tether and came off the rig. HLBCSD09, which
+#        had been living tethered in the habituation rack, went into B1 that
+#        evening. The identity of the earlier B1 animal is NOT RECOVERABLE from
+#        the spreadsheet and is recorded as unknown rather than guessed.
+#     2. The batch came OFF the rig around 2026-08-22 and the S-SD batch went on.
+#        W-SD went back on for the recovery-sleep recording of 2026-08-27.
+#        ✅ THE 2026-08-27 POSITION MAP WAS CONFIRMED AT THE BENCH ON 2026-08-28:
+#        it IS the registry map. A1 01 · A2 02 · B1 09 · B2 04 · C1 03 · C2 06 ·
+#        D1 07 · D2 08, with 05 sacrificed and 10 untethered in the chamber.
+#
+# ⭐ B1 AND C1 ARE THE CHEWING CAGES. This batch's own registry says HLBCSD03 (C1)
+#   "ate the tether 08/19" and HLBCSD09 (B1) "08/21 ate the tether", and the S-SD
+#   batch then lost its B1 tether on 08-26 and its C1 tether on 08-27. Four events,
+#   two positions, two cohorts. It is mechanical at those CAGE locations; the swap
+#   test of 2026-08-26 proved the PORTS are good.
+#
+# 🏁 BATCH CLOSED. All ten animals were SAMPLED ON 2026-08-28. No further recording,
+#   no intervention, nothing on this manifest can be re-measured. Close-out:
+#   vault 05-experiments/completed/2026-08-28-W-SD-cohort-closeout.md
+# =============================================================================
+
+cohort_id: W-SD
+title: UV water + chronic sleep deprivation, batch W-SD
+project_id: neurosurveillance-eeg
+description: >
+  Ten male C57BL/6J (B6J-BomTac), HLBCSD01 to HLBCSD10, arrived 2026-07-21,
+  surgeries 2026-08-03 to 2026-08-05, all tethered 2026-08-10. Drinking treatment
+  is UV-sterilised water, NOT SOD1, so this batch is the water arm: its SOD1
+  intake is 0 U by construction. Sleep condition is CHRONIC SLEEP DEPRIVATION,
+  CSD start Friday 2026-08-21, sampling Friday 2026-08-28, with each day's
+  deprivation bout ending at 13:00. The rebound recording was taken in the
+  recovery window after the PENULTIMATE day's bout, 13:00 Thu 08-27 to 09:00
+  Fri 08-28. This is the batch that preceded S-SD.
+
+roles: [eeg, emg]          # /1 EEG, /2 EMG for slot 1; /33, /34 for slot 2
+criterion: slope           # EEG only; EMG is broadband, so it is judged on hum
+
+notes: >
+  Position labels are RIG POSITIONS, not animals. Treatment arm: UV water, target
+  dose 0 U. Group mean water intake over the 10 recorded days was 4.04 mL per
+  mouse per day (SD of daily means 1.46, SEM 0.46, n=10 days), against a 3 mL
+  reference; one-sample t vs 3 mL gives p = 0.051, so intake is not significantly
+  different from the reference volume.
+
+# -----------------------------------------------------------------------------
+recordings:
+  - base: allego_0__uid0818-18-56-33
+    date: 2026-08-18
+    notes: >
+      Short screen, 386 MB. First look at this batch on the rig.
+
+  - base: allego_1__uid0818-20-50-26
+    date: 2026-08-18
+    notes: >
+      1 h re-seat run, 3.6 GB. Two roles, no ECG.
+
+  - base: allego_0__uid0819-09-00-00
+    date: 2026-08-19
+    notes: >
+      8.278 h, 29.1 GiB, rung 0 PASS. Daytime run, stopped by hand at 17:16 so the
+      B1 animal could be swapped after it chewed and cut its tether.
+
+  - base: allego_1__uid0819-17-25-20
+    date: 2026-08-19
+    notes: >
+      THE PRE-CSD BASELINE. 39.672 h, 139.4 GiB, rung 0 PASS, zero dropped samples,
+      clock drift +9 ppm. Started after the B1 animal was swapped.
+      ✅ RECOMPUTED 2026-08-29 with the per-chip floor: FIVE positions carry real EEG
+      and FOUR pass strict rung 2 -- A1 96.1% both roles, D2 92.8%, A2 82.2%,
+      C1 66.4%, with EEG-only B2 at 92.4%. A1 alone gives 39.49 h of EEG inside
+      blocks of 15 min or more out of a 39.67 h recording. This is the best full-cohort
+      data this rig has produced.
+      ⚠️ The original report (05-experiments/completed/2026-08-21-39h-run-score.md) used
+      the POOLED floor and said THREE scoreable. Both are on that page now.
+      🔑 C1 PASSES RUNG 2 and is still WITHDRAWN -- the withdrawal was a RUNG 4 call
+      about EMG state dependence collapsing under falsification, not a connection
+      failure. Different rungs; both statements are true.
+      🔴 B1's chip floor was ALREADY 1275 uV here, below the ~2000 uV level that
+      separates working from dead chips on this rig, and its EEG channel sat at 1.487x
+      its own chip floor = an open input riding the rail. HLBCSD09 never produced
+      anything from the day it went on the rig.
+      Hypnograms: 3 of 6 usable, bar r@1min 0.30. Per-mouse export 35 GB.
+
+  - base: allego_2__uid0827-12-58-32
+    date: 2026-08-27
+    notes: >
+      THE REBOUND RECORDING: recovery sleep in the window following the deprivation
+      bout on the PENULTIMATE day of the CSD protocol. THURSDAY 2026-08-27 12:58:30
+      to FRIDAY 2026-08-28 09:05:45 KST, 20.121 h, 66.2 GiB, RUNG 0 PASS (72,435,328
+      data = timestamp samples, remainders 0/0). Zero watchdog stalls.
+      ⚠️ NOT a post-protocol endpoint. CSD ran Friday 08-21 to sampling Friday 08-28
+      with daily bouts ending at 13:00; Thursday 08-27 was the SECOND TO LAST day and
+      the protocol was still running across this window. Seven days had ELAPSED since
+      CSD began, which is not the same as CSD having finished.
+      🔴 ONE ANIMAL CARRIES THE TIMEPOINT: D2 / HLBCSD08, EEG 74.2% with a 45.3 min
+      block and 2.90 h inside blocks of 15 min or more, EMG 98.5%, BOTH 73.0% with a
+      45.0 min block, unmoved by a +-25% threshold sweep.
+      🔴🔴 THE PAIRED RECOVERY COMPARISON IS n=1. The pre-CSD baseline
+      allego_1__uid0819-17-25-20 had THREE scoreable animals (A1, A2, D2); A1 and A2
+      give no EEG here, so only D2 appears on both sides of the deprivation.
+      ⚠️ A1 and A2 kept working EMG throughout (98.4% and 99.2%) -- the fault was on
+      the EEG side of the tether chain, not the implant.
+      🔑 FOUR CHIP GROUNDS COLLAPSED ACROSS THE SEVEN DAYS OF DEPRIVATION, floor 60 Hz
+      pre-CSD -> recovery: A1 4976 -> 1347 (-73%), A2 4396 -> 1575 (-64%),
+      D1 4441 -> 1814 (-59%), B1 1275 -> 593 (-53%). B2/C2/D2 unchanged, C1 -34%.
+      A1 AND A2 WERE THE TWO BEST ANIMALS IN THE COHORT (96.1% and 82.2% on both roles
+      over 39.7 h) AND WERE LOST TO A GROUND FAULT, NOT AN ELECTRODE FAULT.
+      🔑 B1's ground DECAYED WITHIN the run too, 825 -> 469 uV, falling in nearly every
+      hourly bin. Every previous floating chip here was flat from first epoch to last;
+      this is the first recorded decay, and it looks like a conductor working loose
+      rather than a mis-seated connector. B1 alone did not recover afterwards.
+      🔴 THE 800 uV GROUNDED GATE IS TOO LOW. A1 (1347), A2 (1575) and D1 (1814) cleared
+      it and were scored FAIL when the honest verdict is UNJUDGEABLE. Across 32
+      chip-recordings, six chips sat below 2000 uV and NONE produced EEG; the lowest
+      floor that ever produced EEG was 2186 uV. Proposed FLOOR_MIN_HUM_UV = 2000,
+      NOT YET APPLIED. See vault
+      03-troubleshooting/symptoms/weak-chip-ground-vs-open-electrode.md
+      Report: vault 05-experiments/completed/2026-08-27-W-SD-recovery-sleep.md
+
+  - base: allego_3__uid0828-09-26-12
+    date: 2026-08-28
+    notes: >
+      80 s check recording taken after the recovery run, 83,328 samples, rung 0 PASS.
+      ✅ A1 AND A2 CAME BACK: chip floor 60 Hz 1347 -> 5026 and 1575 -> 4490 uV, and
+      A1, A2, C2 and D2 all show EEG separating from their own wire-free floors
+      (lf/hf 13.75 vs 1.88, 10.73 vs 3.48, 8.38 vs 2.25, 10.05 vs 1.59). B1 is still
+      ungrounded at 485 uV and did NOT recover.
+      🛑 EIGHT EPOCHS ONLY. A 1st-percentile threshold from eight numbers per site is
+      effectively a minimum, so the usable fractions from this file are meaningless
+      (D2 scores 0.0% while plainly carrying EEG). QUOTE THE lf/hf SEPARATION AND
+      NOTHING ELSE FROM THIS FILE.
+
+  - base: allego_4__uid0828-10-08-34
+    date: 2026-08-28
+    notes: >
+      THE CONFIRMATION OF THE RE-MATE. 1.802 h, 10:08:34 to 11:56 KST, 6.8 GB,
+      rung 0 PASS (6,488,320 data = timestamp samples, remainder 0 and 0).
+      Ran 42 min after the 80 s check and is the ONLY file with more than eighty
+      seconds of post-re-mate data.
+      ✅ A1 AND A2 BOTH CARRIED EEG FOR THE 50 MIN THEY STAYED CONNECTED. Usable
+      fraction per 10 min block, A1 87/77/72/62/62 and A2 77/68/95/82/82, on EEG
+      rms of 91-104 and 136-143 uV against chip floors of 5325 and 3920 uV. The
+      re-mate therefore rests on ~50 min per animal, not on eight epochs.
+      ⚠️ AT ABOUT 10:58 BOTH PORT-A POSITIONS GO OPEN ON BOTH ROLES AT ONCE and the
+      chip floor steps down with them: EEG rms 96 -> 2092 and 140 -> 2093 uV, EMG
+      104 -> 3164 and 85 -> 2991, floor 60 Hz 5319 -> 3334 and 3852 -> 3150. EEG and
+      EMG cannot fail simultaneously on two chips from a signal fault, and a floor
+      step means the reference moved. THE ANIMALS WERE UNPLUGGED, it was sampling
+      morning. 🛑 NOTHING AFTER MINUTE 50 ON A1 OR A2 IS ANIMAL DATA -- do not read
+      the whole-file medians (A1 slope -0.49, A2 -0.33) as a relapse. They are the
+      average of a working animal and an empty input.
+      D2 stayed connected throughout, 42.1% EEG and 97.1% EMG over the full 1.8 h.
+      Unchanged from the recovery run: B1 ungrounded at 559 uV, B2 and C1 railing,
+      D1 floor 1391-1750 uV = below the proposed 2000 uV gate and UNJUDGEABLE, C2
+      intermittent.
+      🛑 NO POSITION REACHES A 15 MIN BLOCK (longest EEG: A2 10.7 min, A1 5.3 min,
+      D2 2.8 min). THIS IS A CONNECTION CHECK, NOT A SCORING FILE. It enters no
+      result and no rung 2 verdict.
+
+  # NOT A W-SD RECORDING, listed so nobody adopts it into this cohort:
+  # `allego_5__uid0828-19-10-50`, 08-28 19:10 to 19:46, 0.592 h, rung 0 INTACT.
+  # Every position on both roles reads 101-153 uV with a steep slope, INCLUDING B1
+  # (chip floor 113 uV) and C1 (669 uV), which have no ground at all. Real EEG
+  # cannot exist on an ungrounded chip, so the uniform quiet-and-steep pattern is
+  # drifting unterminated inputs. EMPTY RIG, NO ANIMALS CONNECTED. Origin unknown;
+  # the user confirms it is not theirs.
+
+# -----------------------------------------------------------------------------
+animals:
+
+  - animal_id: HLBCSD01
+    batch_id: W-SD
+    project_id: neurosurveillance-eeg
+    sex: M
+    strain: C57BL/6J (B6J-BomTac)
+    vendor: HLB
+    dob: 2026-04-27
+    arrival_date: 2026-07-21
+    surgery_date: 2026-08-03
+    surgeon: Diane
+    tether_date: 2026-08-10
+    sampling_date: 2026-08-28
+    weighings:
+      - {date: 2026-08-03, grams: 28.0, occasion: surgery, source: husbandry-sheet}
+      - {date: 2026-08-10, grams: 30.6, occasion: tethering, source: husbandry-sheet}
+    placements:
+      - {from: 2026-08-10, position: A1, source: husbandry-sheet}
+    notes: >
+      Registry note: struggling to drink water from the glass tube after tethering.
+      Mean water intake 2.98 mL/day over 10 days, the lowest in the batch, consistent with that note.
+      verdict_2026_08_19: SCOREABLE on the 39.7 h run. Hypnogram WAKE 43.3% / NREM 52.1%, r@1min 0.495 (bar 0.30).
+      verdict_2026_08_27 (full 20.1 h): EEG FLOATING ALL RUN, 0.3% usable, 55 uV, slope -0.10, lf/hf 1.25 under a floor p99 of 5.06. Its chip's ground was weak for the entire run (~1300 uV against 4314 uV the day before) and never recovered on its own, which rules out settling after handling.
+      ✅ EMG IS REAL, not a floating input: 98.4% usable at 30 uV with a dark/light amplitude ratio of 2.73x, which is genuine state dependence. The fault was on the EEG side of the tether chain, not the implant.
+      ⭐ Was SCOREABLE before CSD (39.7 h run, hypnogram r@1min 0.495) and gives no EEG here, so it drops out of the paired recovery comparison.
+      verdict_2026_08_28 (80 s check): ✅ BACK. Chip floor 1347 -> 5026 uV, EEG 91 uV, slope -1.43, lf/hf 13.75 against a floor p99 of 1.88. Recoverable, and recovered 20 h too late.
+    sources: {husbandry: HLB_SOD1_Intake_Monitoring.xlsx Registry, read 2026-08-27}
+
+  - animal_id: HLBCSD02
+    batch_id: W-SD
+    project_id: neurosurveillance-eeg
+    sex: M
+    strain: C57BL/6J (B6J-BomTac)
+    vendor: HLB
+    dob: 2026-04-27
+    arrival_date: 2026-07-21
+    surgery_date: 2026-08-03
+    surgeon: Diane
+    surgery_notes: >
+      skull internal bleeding
+    tether_date: 2026-08-10
+    sampling_date: 2026-08-28
+    weighings:
+      - {date: 2026-08-03, grams: 26.6, occasion: surgery, source: husbandry-sheet}
+      - {date: 2026-08-10, grams: 28.0, occasion: tethering, source: husbandry-sheet}
+    placements:
+      - {from: 2026-08-10, position: A2, source: husbandry-sheet}
+    notes: >
+      verdict_2026_08_19: SCOREABLE on the 39.7 h run. Hypnogram WAKE 52.3% / NREM 43.3%, r@1min 0.592, the best on the rig.
+      Mean water intake 4.43 mL/day. 🔴 Despite the worst surgical note in the batch this animal gave the best staging result.
+      verdict_2026_08_27 (full 20.1 h): EEG FLOATING ALL RUN, 3.2% usable, 67 uV, slope -0.07, lf/hf 1.21 under a floor p99 of 5.66. Chip ground weak throughout (~1550 uV). EMG 99.2% at 51 uV, dark/light 1.44x.
+      🔴 Was the BEST animal before CSD (39.7 h run, hypnogram r@1min 0.592) and gives no EEG here.
+      verdict_2026_08_28 (80 s check): ✅ BACK. Chip floor 1575 -> 4490 uV, EEG 134 uV, slope -1.53, lf/hf 10.73 against a floor p99 of 3.48.
+    sources: {husbandry: HLB_SOD1_Intake_Monitoring.xlsx Registry, read 2026-08-27}
+
+  - animal_id: HLBCSD03
+    batch_id: W-SD
+    project_id: neurosurveillance-eeg
+    sex: M
+    strain: C57BL/6J (B6J-BomTac)
+    vendor: HLB
+    dob: 2026-04-27
+    arrival_date: 2026-07-21
+    surgery_date: 2026-08-03
+    surgeon: Andrea
+    tether_date: 2026-08-10
+    sampling_date: 2026-08-28
+    weighings:
+      - {date: 2026-08-03, grams: 29.1, occasion: surgery, source: husbandry-sheet}
+      - {date: 2026-08-10, grams: 31.3, occasion: tethering, source: husbandry-sheet}
+    placements:
+      - {from: 2026-08-10, position: C1, source: husbandry-sheet,
+         tether_notes: "registry: ATE THE TETHER 08/19. Found missing with its tether after the 39.7 h run was stopped on 08-21."}
+    notes: >
+      Mean water intake 4.48 mL/day.
+      verdict_2026_08_19: initially counted as SCOREABLE and then WITHDRAWN. Its EMG state-dependence collapsed under falsification (-0.733 -> -0.009 on absolute delta power) and its circadian EMG was inverted. The tether damage is the parsimonious explanation.
+      verdict_2026_08_27 (first hour, live): EEG OPEN and railing 100% of epochs (3855 uV); EMG OPEN and railing 100% (3336 uV). Nothing on either role.
+      verdict_2026_08_27 (full 20.1 h): NOTHING. BOTH channels open and railing 100% of 7,243 epochs, EEG 3901 uV and EMG 3599 uV, flat and stable all run. Consistent with the registry's "ate the tether 08/19".
+      verdict_2026_08_28 (80 s check): unchanged, both channels still railing 100%.
+    sources: {husbandry: HLB_SOD1_Intake_Monitoring.xlsx Registry, read 2026-08-27}
+
+  - animal_id: HLBCSD04
+    batch_id: W-SD
+    project_id: neurosurveillance-eeg
+    sex: M
+    strain: C57BL/6J (B6J-BomTac)
+    vendor: HLB
+    dob: 2026-04-27
+    arrival_date: 2026-07-21
+    surgery_date: 2026-08-03
+    surgeon: Andrea
+    surgery_notes: >
+      breathing issues and anesthesia induction difficulties
+    tether_date: 2026-08-10
+    sampling_date: 2026-08-28
+    weighings:
+      - {date: 2026-08-03, grams: 30.0, occasion: surgery, source: husbandry-sheet}
+      - {date: 2026-08-10, grams: 31.8, occasion: tethering, source: husbandry-sheet}
+    placements:
+      - {from: 2026-08-10, position: B2, source: husbandry-sheet}
+    notes: >
+      Highest water intake in the batch, 5.68 mL/day.
+      verdict_2026_08_19: EEG GENUINELY GOOD (92.4% usable, 261 min block) but EMG OPEN at 535.8 uV, so the stager correctly returns NO STATES. EEG columns stay valid for spectral work.
+      verdict_2026_08_27 (first hour, live): EEG OPEN and railing 100% (4125 uV). EMG 762 uV, not usable.
+      verdict_2026_08_27 (full 20.1 h): EEG OPEN, railing 100%, 4002 uV, 0.0% usable. EMG 736 uV, 0.0%. Nothing on either role -- a change from 08-19, when its EEG was genuinely good (92.4% usable, 261 min block) and only its EMG was open.
+      verdict_2026_08_28 (80 s check): unchanged.
+    sources: {husbandry: HLB_SOD1_Intake_Monitoring.xlsx Registry, read 2026-08-27}
+
+  - animal_id: HLBCSD05
+    batch_id: W-SD
+    project_id: neurosurveillance-eeg
+    sex: M
+    strain: C57BL/6J (B6J-BomTac)
+    vendor: HLB
+    dob: 2026-04-27
+    arrival_date: 2026-07-21
+    surgery_date: 2026-08-04
+    surgeon: Andrea
+    tether_date: 2026-08-10
+    sampling_date: 2026-08-28
+    weighings:
+      - {date: 2026-08-04, grams: 30.4, occasion: surgery, source: husbandry-sheet}
+      - {date: 2026-08-10, grams: 33.7, occasion: tethering, source: husbandry-sheet}
+    notes: >
+      Status SACRIFICED. Registry: "08/20 kept jumping, 08/21 compromised. sacrifice, electrode ok, internal bleeding intestines and spine dislocated cervical".
+      No XDAQ position recorded. Water intake stops after Day 7 (2026-08-16), 7 days of data, mean 4.29 mL/day.
+      ⭐ THE ELECTRODE WAS FOUND INTACT AT POST MORTEM. This animal is evidence that the implants survive; the failures are downstream of the skull.
+    sources: {husbandry: HLB_SOD1_Intake_Monitoring.xlsx Registry, read 2026-08-27}
+
+  - animal_id: HLBCSD06
+    batch_id: W-SD
+    project_id: neurosurveillance-eeg
+    sex: M
+    strain: C57BL/6J (B6J-BomTac)
+    vendor: HLB
+    dob: 2026-04-27
+    arrival_date: 2026-07-21
+    surgery_date: 2026-08-04
+    surgeon: Andrea
+    surgery_notes: >
+      right emg not sure
+    tether_date: 2026-08-10
+    sampling_date: 2026-08-28
+    weighings:
+      - {date: 2026-08-04, grams: 28.4, occasion: surgery, source: husbandry-sheet}
+      - {date: 2026-08-10, grams: 30.5, occasion: tethering, source: husbandry-sheet}
+    placements:
+      - {from: 2026-08-10, position: C2, source: husbandry-sheet}
+    notes: >
+      Mean water intake exactly 3.00 mL/day, the batch's tightest (SD 0.56).
+      verdict_2026_08_19: hypnogram REJECTED. r@1min 0.11 against a bar of 0.30, and 17.8% WAKE is not plausible for a mouse. Barely distinguishable from randomly relabelled data.
+      verdict_2026_08_27 (first hour, live): EEG OPEN, railing 98.3% (4181 uV). EMG 17 uV, 95.0% usable -- muscle channel works, EEG does not.
+      verdict_2026_08_27 (full 20.1 h): ⚠️ INTERMITTENT AND NOT SEPARATED. EEG 40.1% usable but the longest block is 11.2 min and NOTHING sits inside a block of 15 min or more; lf/hf 3.32 against its own floor p99 of 3.79, so it FAILS the separation test. Its EEG rms flips between ~95 and ~4200 uV at hour scale, and a +-25% sweep moves its longest block by a factor of 4.5. 🛑 DOES NOT ENTER ANY RESULT.
+      EMG 65.6% at 40 uV with a dark/light ratio of 4.32x, the strongest on the rig.
+      verdict_2026_08_28 (80 s check): EEG 70 uV, slope -1.11, lf/hf 8.38 against a floor p99 of 2.25 -- separated in the check, unlike in the run.
+    sources: {husbandry: HLB_SOD1_Intake_Monitoring.xlsx Registry, read 2026-08-27}
+
+  - animal_id: HLBCSD07
+    batch_id: W-SD
+    project_id: neurosurveillance-eeg
+    sex: M
+    strain: C57BL/6J (B6J-BomTac)
+    vendor: HLB
+    dob: 2026-04-27
+    arrival_date: 2026-07-21
+    surgery_date: 2026-08-04
+    surgeon: Andrea
+    tether_date: 2026-08-10
+    sampling_date: 2026-08-28
+    weighings:
+      - {date: 2026-08-04, grams: 30.8, occasion: surgery, source: husbandry-sheet}
+      - {date: 2026-08-10, grams: 33.4, occasion: tethering, source: husbandry-sheet}
+    placements:
+      - {from: 2026-08-10, position: D1, source: husbandry-sheet}
+    notes: >
+      Mean water intake 4.91 mL/day.
+      verdict_2026_08_19: hypnogram REJECTED. r@1min 0.001 -- indistinguishable from randomly relabelled data.
+      verdict_2026_08_27 (first hour, live): EEG quiet and FLAT (124 uV, slope +0.05, lf/hf 0.95 against a floor p99 of 3.26) = floating, not connected. EMG 159 uV, 43.1% usable with 14.2% railing. Its chip's ground is also down (floor 60 Hz 3425 -> 1804 uV).
+      verdict_2026_08_27 (full 20.1 h): FAIL. EEG 2087 uV, slope -0.03, 0.7% usable. EMG 1248 uV, 5.6%. Chip ground weak all run (~1800 uV against 3425 uV the day before).
+      verdict_2026_08_28 (80 s check): unchanged, EEG 1151 uV, lf/hf 1.61 under a floor p99 of 6.85.
+    sources: {husbandry: HLB_SOD1_Intake_Monitoring.xlsx Registry, read 2026-08-27}
+
+  - animal_id: HLBCSD08
+    batch_id: W-SD
+    project_id: neurosurveillance-eeg
+    sex: M
+    strain: C57BL/6J (B6J-BomTac)
+    vendor: HLB
+    dob: 2026-04-27
+    arrival_date: 2026-07-21
+    surgery_date: 2026-08-05
+    surgeon: Andrea
+    tether_date: 2026-08-10
+    sampling_date: 2026-08-28
+    weighings:
+      - {date: 2026-08-05, grams: 31.6, occasion: surgery, source: husbandry-sheet}
+      - {date: 2026-08-10, grams: 33.0, occasion: tethering, source: husbandry-sheet}
+    placements:
+      - {from: 2026-08-10, position: D2, source: husbandry-sheet}
+    notes: >
+      Mean water intake 3.03 mL/day.
+      verdict_2026_08_19: SCOREABLE. Hypnogram WAKE 54.2% / NREM 42.8%, r@1min 0.446.
+      verdict_2026_08_27 (first hour, live): ⭐ THE ONLY POSITION GIVING REAL EEG IN THE RECOVERY RUN. EEG 148 uV, slope -1.89, lf/hf 30.69 against a chip floor p99 of 1.98, 53.1% usable. EMG 20 uV, 98.6%. BOTH 52.5%.
+      verdict_2026_08_27 (full 20.1 h): ✅ PASS, AND THE ONLY ONE. EEG 74.2% usable, longest block 45.3 min, 2.90 h inside blocks of 15 min or more, 139 uV, slope -1.45, lf/hf 15.89 against a floor p99 of 2.50. EMG 98.5% at 38 uV, dark/light 3.60x. BOTH roles in the same epoch 73.0% with a 45.0 min block. Unmoved by a +-25% threshold sweep (74.2 / 74.2 / 74.1%).
+      ⭐ THE ONLY ANIMAL SCOREABLE BOTH BEFORE CSD (39.7 h run, r@1min 0.446) AND AFTER IT, so the entire recovery-sleep comparison for this batch rests on this mouse.
+      verdict_2026_08_28 (80 s check): still connected, lf/hf 10.05 against a floor p99 of 1.59.
+    sources: {husbandry: HLB_SOD1_Intake_Monitoring.xlsx Registry, read 2026-08-27}
+
+  - animal_id: HLBCSD09
+    batch_id: W-SD
+    project_id: neurosurveillance-eeg
+    sex: M
+    strain: C57BL/6J (B6J-BomTac)
+    vendor: HLB
+    dob: 2026-04-27
+    arrival_date: 2026-07-21
+    surgery_date: 2026-08-05
+    surgeon: Andrea
+    tether_date: 2026-08-10
+    sampling_date: 2026-08-28
+    weighings:
+      - {date: 2026-08-05, grams: 29.2, occasion: surgery, source: husbandry-sheet}
+      - {date: 2026-08-10, grams: 31.0, occasion: tethering, source: husbandry-sheet}
+    placements:
+      - {from: 2026-08-10, position: HABITUATION-RACK, source: bench-note,
+         tether_notes: "tethered in the habituation rack; registry says the tether may have been damaged by climbing"}
+      - {from: 2026-08-19 17:20, position: B1, source: journal-2026-08-19,
+         tether_notes: "moved into B1 the evening the previous B1 animal chewed and cut its tether; registry then records 08/21 ate the tether"}
+    notes: >
+      Mean water intake 3.40 mL/day.
+      ⚠️ NOT the animal that produced the 08-18 B1 screen verdict. Rig position is not animal identity; nothing from before 2026-08-19 17:20 carries to this animal.
+      verdict_2026_08_27 (first hour, live): EEG quiet and FLAT (277 uV, slope -0.18, lf/hf 1.46) = floating. EMG OPEN and railing 100% (4364 uV). Its chip's ground is nearly gone (floor 60 Hz 2186 -> 825 uV, against an 800 uV bar).
+      verdict_2026_08_27 (full 20.1 h): 🔴 UNJUDGEABLE. Its chip was never grounded, and the floor 60 Hz DECAYED across the run from 825 to 469 uV, falling in nearly every hourly bin. That decay is new: every previous floating chip in this project was flat from the first epoch to the last, so this looks like a conductor working loose rather than a mis-seated connector.
+      verdict_2026_08_28 (80 s check): 🔴 STILL UNGROUNDED at 485 uV. It did NOT recover when A1 and A2 did, so this is the one position with a physical fault.
+    sources: {husbandry: HLB_SOD1_Intake_Monitoring.xlsx Registry, read 2026-08-27; placement: vault journal 2026-08-19}
+
+  - animal_id: HLBCSD10
+    batch_id: W-SD
+    project_id: neurosurveillance-eeg
+    sex: M
+    strain: C57BL/6J (B6J-BomTac)
+    vendor: HLB
+    dob: 2026-04-27
+    arrival_date: 2026-07-21
+    surgery_date: 2026-08-05
+    surgeon: Diane
+    tether_date: 2026-08-10
+    sampling_date: 2026-08-28
+    weighings:
+      - {date: 2026-08-05, grams: 27.7, occasion: surgery, source: husbandry-sheet}
+    notes: >
+      No XDAQ position and NO WEIGHT AT TETHERING. Registry: "added 08/21 for CSD in deprivation chamber, not tethered".
+      Water intake grid is empty for this animal (n = 0 days).
+      ⭐ This animal receives the sleep-deprivation treatment WITHOUT an EEG record, so it counts for the tissue endpoints and not for the sleep ones.
+    sources: {husbandry: HLB_SOD1_Intake_Monitoring.xlsx Registry, read 2026-08-27}
+
+  # ---------------------------------------------------------------------------
+  # UNIDENTIFIED. The animal that occupied B1 from 2026-08-10 until it chewed and
+  # cut its tether on 2026-08-19 and came off the rig. It produced the 08-18 B1
+  # screen verdict (dead, no usable signal) and the first hours of the 39.7 h run.
+  # The spreadsheet cannot name it because `XDAQ position` holds one current value
+  # per animal. Do NOT attribute those numbers to HLBCSD09.
+  # ---------------------------------------------------------------------------

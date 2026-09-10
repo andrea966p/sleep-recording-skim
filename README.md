@@ -144,7 +144,7 @@ usable EEG. A test that can only pass is not evidence.
   is the hum criterion's failure in a new costume. `qc/emg_state_dependence.py`
   prints the column as evidence against the test and emits no pass from it.
 * **Impedance blocks screen; only a multi-hour recording is an outcome.** A
-  21-minute block once gave p = 8.4e-08 for a conclusion the overnight recording
+  21-minute block once gave p = 1.0e-07 for a conclusion the overnight recording
   reversed completely.
 * **A low, stable, zero-flip impedance can mean no ground at all.** Every genuine
   contact failure here has been intermittent.
