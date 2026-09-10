@@ -54,3 +54,10 @@ sessions/
 *.deb
 .DS_Store
 *.sw?
+
+# --- symlinks bootstrap.sh creates inside the workspace ----------------------
+# These point at claude-config/ with ABSOLUTE paths, so they are machine-specific
+# and must never be committed: a path from one machine is wrong on every other.
+/.claude/skills
+/.agents/skills
+/skills-lock.json
