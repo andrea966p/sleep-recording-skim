@@ -1,0 +1,231 @@
+# =============================================================================
+# Frigate NVR Configuration - NeuroSurveillance System v5.2
+# =============================================================================
+# Location: /srv/frigate/config/config.yml
+#
+# IMPORTANT: Replace all {VARIABLES} with your actual values before deploying.
+#
+# This configuration is optimized for recording-only operation with
+# Intel QSV hardware acceleration. Detection is disabled for maximum stability.
+#
+# CRITICAL: record.enabled MUST remain true at both global and per-camera
+# levels. The session daemon uses MQTT runtime toggling (ON/OFF) to control
+# when recording actually happens. If record.enabled is false in this config,
+# the MQTT toggle has no effect.
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# MQTT Configuration
+# -----------------------------------------------------------------------------
+# Required for session daemon recording control.
+# Mosquitto runs as a sibling container (see docker-compose.yml).
+# 'mosquitto' resolves via Docker networking to the Mosquitto container.
+mqtt:
+  enabled: true
+  host: mosquitto
+  port: 1883
+
+# -----------------------------------------------------------------------------
+# Database Configuration
+# -----------------------------------------------------------------------------
+database:
+  path: /media/frigate/frigate.db
+
+# -----------------------------------------------------------------------------
+# Detection Configuration
+# -----------------------------------------------------------------------------
+# DISABLED for pure recording mode
+# Enable only if you need object detection (increases CPU usage significantly)
+detect:
+  enabled: false
+
+# -----------------------------------------------------------------------------
+# FFmpeg Global Settings
+# -----------------------------------------------------------------------------
+# Intel QSV hardware acceleration -- inherited by ALL cameras
+# This reduces CPU usage from ~100% to ~10%
+#
+# Other presets available:
+#   - preset-intel-qsv-h265 (not recommended for Pi streams)
+#   - preset-nvidia (for NVIDIA GPUs)
+#   - preset-rpi-64-h264 (for Pi as NVR)
+ffmpeg:
+  hwaccel_args: preset-intel-qsv-h264
+
+# -----------------------------------------------------------------------------
+# Recording Configuration
+# -----------------------------------------------------------------------------
+# IMPORTANT: Keep enabled: true -- the session daemon toggles recording
+# at runtime via MQTT (frigate/<camera>/recordings/set ON/OFF).
+# Setting enabled: false here disables MQTT toggle entirely.
+record:
+  enabled: true
+  retain:
+    # Number of days to keep recordings
+    # Adjust based on storage capacity
+    # 7 days @ 1.5Mbps x 4 cameras = ~450 GB
+    days: 7
+    mode: all
+
+  # How often to check for expired recordings (seconds)
+  expire_interval: 60
+
+# -----------------------------------------------------------------------------
+# Snapshots Configuration
+# -----------------------------------------------------------------------------
+# Disabled -- not needed without detection
+snapshots:
+  enabled: false
+
+# -----------------------------------------------------------------------------
+# Camera Definitions
+# -----------------------------------------------------------------------------
+cameras:
+  # ---------------------------------------------------------------------------
+  # Camera 0 (Chamber 0) — Pi 1
+  # ---------------------------------------------------------------------------
+  {CAMERA_0_ID}:
+    ffmpeg:
+      inputs:
+        # RTSP stream from Raspberry Pi 1 via go2rtc
+        - path: rtsp://{PI1_IP}:8554/{CAMERA_0_ID}
+
+          # Input arguments for stable streaming
+          input_args:
+            # CRITICAL: Use TCP transport for reliability
+            # UDP causes frame drops over network
+            - -rtsp_transport
+            - tcp
+
+            # Buffer settings for network jitter
+            - -buffer_size
+            - "512000"
+
+            # Maximum delay before dropping frames
+            - -max_delay
+            - "500000"
+
+          # This stream is used for recording
+          roles:
+            - record
+
+    # Detection disabled for this camera
+    detect:
+      enabled: false
+
+    # Recording enabled (MQTT-toggled at runtime by session daemon)
+    record:
+      enabled: true
+
+  # ---------------------------------------------------------------------------
+  # Camera 1 (Chamber 1) — Pi 1
+  # ---------------------------------------------------------------------------
+  {CAMERA_1_ID}:
+    ffmpeg:
+      inputs:
+        - path: rtsp://{PI1_IP}:8554/{CAMERA_1_ID}
+          input_args:
+            - -rtsp_transport
+            - tcp
+            - -buffer_size
+            - "512000"
+            - -max_delay
+            - "500000"
+          roles:
+            - record
+
+    detect:
+      enabled: false
+
+    record:
+      enabled: true
+
+  # ---------------------------------------------------------------------------
+  # Camera 2 (Chamber 2) — Pi 2
+  # ---------------------------------------------------------------------------
+  {CAMERA_2_ID}:
+    ffmpeg:
+      inputs:
+        - path: rtsp://{PI2_IP}:8554/{CAMERA_2_ID}
+          input_args:
+            - -rtsp_transport
+            - tcp
+            - -buffer_size
+            - "512000"
+            - -max_delay
+            - "500000"
+          roles:
+            - record
+
+    detect:
+      enabled: false
+
+    record:
+      enabled: true
+
+  # ---------------------------------------------------------------------------
+  # Camera 3 (Chamber 3) — Pi 2
+  # ---------------------------------------------------------------------------
+  {CAMERA_3_ID}:
+    ffmpeg:
+      inputs:
+        - path: rtsp://{PI2_IP}:8554/{CAMERA_3_ID}
+          input_args:
+            - -rtsp_transport
+            - tcp
+            - -buffer_size
+            - "512000"
+            - -max_delay
+            - "500000"
+          roles:
+            - record
+
+    detect:
+      enabled: false
+
+    record:
+      enabled: true
+
+# -----------------------------------------------------------------------------
+# UI Configuration
+# -----------------------------------------------------------------------------
+ui:
+  timezone: "{TIMEZONE}"
+
+# -----------------------------------------------------------------------------
+# Logging Configuration
+# -----------------------------------------------------------------------------
+logger:
+  default: info
+
+# =============================================================================
+# VARIABLE REFERENCE
+# =============================================================================
+#
+# | Variable        | Description                  | Example              |
+# |-----------------|------------------------------|----------------------|
+# | {PI1_IP}        | Raspberry Pi 1 IP address    | 192.168.0.11         |
+# | {PI2_IP}        | Raspberry Pi 2 IP address    | 192.168.0.12         |
+# | {CAMERA_0_ID}   | Pi 1 camera 0 stream name    | pi_cam_0             |
+# | {CAMERA_1_ID}   | Pi 1 camera 1 stream name    | pi_cam_1             |
+# | {CAMERA_2_ID}   | Pi 2 camera 0 stream name    | pi_cam_2             |
+# | {CAMERA_3_ID}   | Pi 2 camera 1 stream name    | pi_cam_3             |
+# | {TIMEZONE}      | Your timezone                | Asia/Seoul           |
+#
+# =============================================================================
+# v5.1 -> v5.2 CHANGES
+# =============================================================================
+#
+# 1. Expanded from 2 cameras (single Pi) to 4 cameras (2 Pis)
+# 2. Split {PI_IP} into {PI1_IP} and {PI2_IP}
+# 3. Added {CAMERA_2_ID} and {CAMERA_3_ID} for Pi 2
+# 4. Updated storage estimate for 4 cameras (~450 GB at 7 days)
+#
+# v5.0 -> v5.1 CHANGES
+# =============================================================================
+#
+# 1. MQTT enabled and pointed to Mosquitto container (was disabled in v5.0)
+# 2. Removed per-camera hwaccel_args (global setting is inherited by all cameras)
+# 3. Removed logger.logs subsection (not needed for recording-only mode)
+#
+# =============================================================================
