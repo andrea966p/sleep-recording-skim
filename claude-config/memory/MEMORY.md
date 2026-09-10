@@ -51,7 +51,8 @@
 - 📞 **Kontex call prep:** `01-infrastructure/vendor-correspondence/2026-07-29-kontex-kc-call-prep-rig-finalization.md`. ⚠️ **OPEN: why 2 PCs, is SyncLink needed, behaviour under OE GUI.**
 
 ## Working across machines
-- 🔴⭐⭐⭐ **[MULTI-MACHINE SETUP + THE VAULT DELETION CAUSE — 2026-08-16](multi-machine-setup-and-vault-safety.md).** Cause: Syncthing had NO versioning and NO `.stignore`, so the live `.git` was replicated. Both fixed. ⭐ Verify any device against 489 files / 153,935,853 bytes (excl `.git`). 🛑 New device = EMPTY dir, RECEIVE ONLY, verify, THEN send-receive; tar snapshot first. 🔴 OFFICE PC PAUSED + UNSHARED. ⭐ `~/claude-portable` self-syncs on a SessionEnd hook. 🔴 NAS backup broken since 2026-08-14.
+- ✅🔴⭐⭐⭐ **[ONE REPO NOW: `sleep-recording-skim`](workspace-single-repo-sleep-recording-skim.md). NEWEST, READ FIRST.** Vault + all code + Claude config in ONE git repo, subtree, full history. Sync = MANUAL `./skim status|pull|push|check`. 🔑 The 19-day memory deadlock was `settings.json` keeping the tree dirty ⇒ `git rebase` refuses ⇒ push AND pull locked. 🛑 Syncthing RETIRED. ⚠️ e10 cutover NOT done (daemon symlink).
+- ⚠️ **[The Syncthing-era setup, SUPERSEDED 2026-09-10](multi-machine-setup-and-vault-safety.md).** Why the vault died in 2026-04 (no versioning + replicated live `.git`), the office-PC relay surprise, the `claude-portable` design. Historical; the workflow it describes is retired.
 
 ## Other big findings
 - ✅ **RustDesk + HDMI-switch crash FIXED + VALIDATED** (2026-07-15). `GRUB_CMDLINE_LINUX_DEFAULT="quiet splash video=HDMI-A-1:1920x1080@60e"` (`e` = forced-enabled). 1080p not 4K (thermal). Journal `2026-07-13.md`.
