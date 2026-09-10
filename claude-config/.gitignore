@@ -1,0 +1,7 @@
+# Never commit machine-specific or secret Claude Code state.
+.credentials.json
+history.jsonl
+sessions/
+shell-snapshots/
+settings.local.json
+*.pre-bootstrap
