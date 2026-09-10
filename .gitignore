@@ -1,0 +1,56 @@
+# =============================================================================
+# Sleep Recording SKIM: what never leaves this machine.
+#
+# Two rules behind every line here:
+#   1. Anything a machine rewrites at runtime stays OUT of the repo. A
+#      runtime-rewritten file inside a shared repo is what deadlocked
+#      claude-portable for 19 days in 2026 (settings.json kept the tree dirty,
+#      so `git rebase` refused to run and neither push nor pull could proceed).
+#   2. Anything regenerable stays out, however large. neurosurveillance's Rust
+#      target/ holds single .a files of 666 MB.
+# =============================================================================
+
+# --- Claude Code runtime state -----------------------------------------------
+claude-config/settings.json
+claude-config/**/*.local.json
+
+# --- build artefacts ---------------------------------------------------------
+node_modules/
+dist/
+dist-ssr/
+build/
+*.egg-info/
+__pycache__/
+*.py[cod]
+src-tauri/target/
+src-tauri/gen/schemas/
+
+# --- environments and secrets ------------------------------------------------
+venv/
+.venv/
+*-venv/
+.env
+.env.*
+*.pem
+*.key
+
+# --- machine-local runtime output --------------------------------------------
+*.log
+exports/
+sessions/
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+
+# --- Syncthing leftovers (Syncthing is retired for this workspace) -----------
+.stversions/
+.stfolder/
+
+# --- Obsidian per-machine window layout --------------------------------------
+.obsidian/workspace*.json
+.trash/
+
+# --- misc --------------------------------------------------------------------
+*.deb
+.DS_Store
+*.sw?

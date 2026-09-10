@@ -1,0 +1,104 @@
+#!/usr/bin/env bash
+#
+# Wire this machine's Claude Code installation to the Sleep Recording SKIM workspace.
+#
+# Usage:  ./machine/bootstrap.sh            (from anywhere inside the workspace)
+#
+# WHAT IT DOES
+#   Replaces a handful of per-machine Claude Code paths with symlinks into
+#   claude-config/, so every machine shares one copy of the memory, skills and
+#   hooks. Claude Code keys its per-project memory directory on a slug derived
+#   from the workspace's ABSOLUTE PATH, so the slug differs between machines with
+#   different usernames (-home-skimlab-sleep-recording-skim on e10ubuntu,
+#   -home-andrea-sleep-recording-skim on the ThinkPad). Symlinking each machine's
+#   OWN slug directory at the one shared memory/ is what makes that difference
+#   stop mattering.
+#
+#   settings.json is the exception and is deliberately COPIED, never symlinked.
+#   Claude Code rewrites that file at runtime (it has flipped "model" by itself,
+#   and it writes machine-specific absolute paths into it). A runtime-rewritten
+#   file inside the repo keeps the working tree permanently dirty, which makes
+#   `git rebase` refuse to run - that is precisely how the old claude-portable
+#   sync deadlocked for 19 days in 2026. Copying breaks that link for good.
+#
+# SAFETY
+#   This script NEVER deletes. Anything already at a target path is MOVED to
+#   <target>.pre-bootstrap. If such a backup already exists it aborts rather than
+#   overwrite it.
+
+set -euo pipefail
+
+WORKSPACE="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+CONFIG="$WORKSPACE/claude-config"
+
+if [[ ! -d "$CONFIG" ]]; then
+    echo "ERROR: no claude-config/ in $WORKSPACE" >&2
+    exit 2
+fi
+
+SLUG="$(printf '%s' "$WORKSPACE" | sed 's/[^a-zA-Z0-9]/-/g')"
+
+echo "workspace: $WORKSPACE"
+echo "slug:      $SLUG"
+echo
+
+link() {
+    local target="$1" source="$2"
+
+    if [[ ! -e "$source" ]]; then
+        echo "SKIP  $target  (no $source in repo)"
+        return 0
+    fi
+    if [[ -L "$target" && "$(readlink -f "$target")" == "$(readlink -f "$source")" ]]; then
+        echo "OK    $target"
+        return 0
+    fi
+
+    mkdir -p "$(dirname "$target")"
+
+    if [[ -e "$target" || -L "$target" ]]; then
+        if [[ -e "$target.pre-bootstrap" ]]; then
+            echo "ABORT $target: a backup already exists at $target.pre-bootstrap" >&2
+            echo "      Resolve it by hand, then re-run. Nothing was deleted." >&2
+            exit 1
+        fi
+        mv "$target" "$target.pre-bootstrap"
+        echo "SAVED $target -> $target.pre-bootstrap"
+    fi
+
+    ln -s "$source" "$target"
+    echo "LINK  $target -> $source"
+}
+
+link "$HOME/.claude/projects/$SLUG/memory"  "$CONFIG/memory"
+link "$HOME/.claude/skills"                 "$CONFIG/skills"
+link "$HOME/.claude/hooks"                  "$CONFIG/hooks"
+link "$HOME/.claude/statusline-command.sh"  "$CONFIG/statusline-command.sh"
+link "$HOME/CLAUDE.md"                      "$CONFIG/CLAUDE.md"
+link "$WORKSPACE/.claude/skills"            "$CONFIG/project-skills"
+link "$WORKSPACE/.agents/skills"            "$CONFIG/agent-skills"
+link "$WORKSPACE/skills-lock.json"          "$CONFIG/skills-lock.json"
+
+# settings.json: copy, never link. See the header.
+TEMPLATE="$CONFIG/settings.template.json"
+LIVE="$HOME/.claude/settings.json"
+if [[ ! -f "$TEMPLATE" ]]; then
+    echo "SKIP  $LIVE  (no settings.template.json in repo)"
+elif [[ -L "$LIVE" ]]; then
+    echo "FIX   $LIVE is a symlink from the old setup - replacing with a real copy"
+    mv "$LIVE" "$LIVE.pre-bootstrap-symlink"
+    cp "$TEMPLATE" "$LIVE"
+    echo "COPY  $TEMPLATE -> $LIVE"
+elif [[ ! -f "$LIVE" ]]; then
+    mkdir -p "$(dirname "$LIVE")"
+    cp "$TEMPLATE" "$LIVE"
+    echo "COPY  $TEMPLATE -> $LIVE"
+elif diff -q "$TEMPLATE" "$LIVE" >/dev/null 2>&1; then
+    echo "OK    $LIVE matches the template"
+else
+    echo "KEPT  $LIVE differs from the template (machine-specific, as expected)"
+    echo "      review with:  diff $TEMPLATE $LIVE"
+fi
+
+echo
+echo "Done. Verify with: $WORKSPACE/machine/check.sh"

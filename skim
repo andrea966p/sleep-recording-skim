@@ -1,0 +1,174 @@
+#!/usr/bin/env bash
+#
+# skim - the only sync command for the Sleep Recording SKIM workspace.
+#
+# WHY THIS EXISTS
+#   This workspace used to be synced three different ways at once: Syncthing for
+#   the Obsidian vault, a second git repo for Claude Code's memory, and four
+#   separate project repos for the code. Three mechanisms meant three places to
+#   forget, and on 2026-08-22 the memory one silently deadlocked and stayed dead
+#   for 19 days. Now there is one repo and one command.
+#
+# NOTHING HERE RUNS BY ITSELF.
+#   No hook commits, no timer pushes. `skim status` is read-only and is the only
+#   verb anything automated may call. Everything that writes is typed by a human.
+#
+# VERBS
+#   skim status          what is dirty here, and whether this machine is behind
+#   skim pull            fetch and rebase onto origin/main
+#   skim push "message"  commit everything and push
+#   skim check           verify the Claude Code symlinks and that Syncthing is gone
+
+set -uo pipefail
+
+REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+BRANCH=main
+REMOTE=origin
+cd "$REPO" || exit 1
+
+bold() { printf '\033[1m%s\033[0m\n' "$*"; }
+red()  { printf '\033[31m%s\033[0m\n' "$*"; }
+grn()  { printf '\033[32m%s\033[0m\n' "$*"; }
+ylw()  { printf '\033[33m%s\033[0m\n' "$*"; }
+
+have_upstream() { git rev-parse --abbrev-ref "$REMOTE/$BRANCH" >/dev/null 2>&1; }
+
+# Dirty files, grouped by the top-level directory they live in, so a glance tells
+# you whether the vault, the code or the Claude config is the thing you forgot.
+show_dirty() {
+    local porcelain
+    porcelain="$(git status --porcelain)"
+    if [[ -z "$porcelain" ]]; then
+        grn "clean: nothing uncommitted"
+        return 0
+    fi
+    bold "uncommitted:"
+    printf '%s\n' "$porcelain" \
+        | awk '{ path=$2; n=split(path, parts, "/"); top=(n>1)?parts[1]:"(root)"; count[top]++ }
+               END { for (t in count) printf "  %-28s %d file(s)\n", t, count[t] }' \
+        | sort
+    return 1
+}
+
+cmd_status() {
+    bold "Sleep Recording SKIM  -  $REPO"
+    echo
+
+    local dirty=0
+    show_dirty || dirty=1
+    echo
+
+    if ! have_upstream; then
+        ylw "no $REMOTE/$BRANCH yet - this clone has never been pushed"
+        return 1
+    fi
+
+    if ! timeout 20 git fetch -q "$REMOTE" "$BRANCH" 2>/dev/null; then
+        ylw "could not reach $REMOTE (offline?). Counts below may be stale."
+    fi
+
+    local behind ahead
+    behind="$(git rev-list --count "HEAD..$REMOTE/$BRANCH" 2>/dev/null || echo 0)"
+    ahead="$(git rev-list --count "$REMOTE/$BRANCH..HEAD" 2>/dev/null || echo 0)"
+
+    if [[ "$behind" -gt 0 ]]; then
+        red "BEHIND origin by $behind commit(s) - another machine has work you do not."
+        red "  run:  ./skim pull      BEFORE you start editing anything"
+    fi
+    if [[ "$ahead" -gt 0 ]]; then
+        ylw "AHEAD of origin by $ahead commit(s) - committed here, not pushed."
+        ylw "  run:  ./skim push"
+    fi
+    if [[ "$behind" -eq 0 && "$ahead" -eq 0 && "$dirty" -eq 0 ]]; then
+        grn "in sync with origin/$BRANCH"
+        return 0
+    fi
+    [[ "$behind" -gt 0 ]] && return 1
+    return 0
+}
+
+cmd_pull() {
+    # --autostash is not optional. Without it any locally modified file makes
+    # `git rebase` refuse to start, which is exactly how the old claude-portable
+    # sync deadlocked: it could neither pull nor push, silently, for 19 days.
+    bold "pulling..."
+    if git pull --rebase --autostash "$REMOTE" "$BRANCH"; then
+        grn "up to date with origin/$BRANCH"
+    else
+        red "pull failed. Nothing was force-changed; resolve by hand, then re-run."
+        red "  conflicts:  git diff --name-only --diff-filter=U"
+        exit 1
+    fi
+}
+
+cmd_push() {
+    local msg="${1:-}"
+    if [[ -z "$msg" ]]; then
+        red 'a message is required:  ./skim push "what you did"'
+        exit 2
+    fi
+
+    if [[ -z "$(git status --porcelain)" ]]; then
+        ylw "nothing to commit"
+    else
+        bold "committing:"
+        git status --short
+        git add -A
+        git commit -q -m "$msg" || { red "commit failed"; exit 1; }
+        grn "committed"
+    fi
+
+    # Pull before pushing so a rejected push never becomes the reason to force.
+    if have_upstream; then
+        git pull --rebase --autostash "$REMOTE" "$BRANCH" || {
+            red "pull before push failed - resolve conflicts, then ./skim push again"
+            exit 1
+        }
+    fi
+
+    if git push "$REMOTE" "$BRANCH"; then
+        grn "pushed to origin/$BRANCH"
+    else
+        red "push failed. Your work is committed locally and safe."
+        exit 1
+    fi
+}
+
+cmd_check() {
+    local rc=0
+    bold "Claude Code wiring"
+    if [[ -x "$REPO/machine/check.sh" ]]; then
+        "$REPO/machine/check.sh" "$REPO" || rc=1
+    else
+        red "machine/check.sh missing"; rc=1
+    fi
+
+    echo
+    bold "Syncthing"
+    # Syncthing was retired for this workspace on purpose: two sync systems on one
+    # directory is what destroyed the vault on 2026-04-29. If it is running AND
+    # sharing a path inside this repo, that combination is back.
+    if pgrep -x syncthing >/dev/null 2>&1; then
+        local cfg
+        cfg="$(ls "$HOME/.config/syncthing/config.xml" "$HOME/.local/state/syncthing/config.xml" 2>/dev/null | head -1)"
+        if [[ -n "$cfg" ]] && grep -q "$REPO" "$cfg" 2>/dev/null; then
+            red "DANGER: syncthing is running AND shares a path inside this repo."
+            red "  Two sync systems on one directory destroyed the vault on 2026-04-29."
+            red "  Remove the folder in Syncthing - NEVER with 'delete on disk'."
+            rc=1
+        else
+            ylw "syncthing is running but does not share this repo (fine)"
+        fi
+    else
+        grn "syncthing not running"
+    fi
+    return $rc
+}
+
+case "${1:-status}" in
+    status) cmd_status ;;
+    pull)   cmd_pull ;;
+    push)   shift; cmd_push "${1:-}" ;;
+    check)  cmd_check ;;
+    *) echo "usage: skim [status|pull|push \"message\"|check]" >&2; exit 2 ;;
+esac
