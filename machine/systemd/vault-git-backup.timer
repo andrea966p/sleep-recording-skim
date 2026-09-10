@@ -1,0 +1,14 @@
+# Reference copy of the unit as it runs on e10ubuntu. NOT installed from here.
+# Captured 2026-09-10 with `systemctl cat`. Read-only documentation.
+# /etc/systemd/system/vault-git-backup.timer
+[Unit]
+Description=Run the Obsidian vault git backup every 15 minutes
+
+[Timer]
+OnBootSec=5min
+OnUnitActiveSec=15min
+Persistent=true
+Unit=vault-git-backup.service
+
+[Install]
+WantedBy=timers.target

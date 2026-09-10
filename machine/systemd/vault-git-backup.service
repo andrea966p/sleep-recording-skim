@@ -1,0 +1,18 @@
+# Reference copy of the unit as it runs on e10ubuntu. NOT installed from here.
+# Captured 2026-09-10 with `systemctl cat`. Read-only documentation.
+# /etc/systemd/system/vault-git-backup.service
+[Unit]
+Description=Obsidian vault git backup to GitHub
+Documentation=file:///home/skimlab/Monitoring_project/Monitoring_project_obsidian_vault/01-infrastructure/multi-machine-work-setup.md
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=skimlab
+Group=skimlab
+Environment=HOME=/home/skimlab
+ExecStart=/home/skimlab/.local/bin/vault-git-backup.sh
+TimeoutStartSec=600
+Nice=10
+IOSchedulingClass=idle

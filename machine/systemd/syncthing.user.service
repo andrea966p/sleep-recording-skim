@@ -1,0 +1,42 @@
+# Reference copy of the unit as it runs on e10ubuntu. NOT installed from here.
+# Captured 2026-09-10 with `systemctl cat`. Read-only documentation.
+# /usr/lib/systemd/user/syncthing.service
+[Unit]
+Description=Syncthing - Open Source Continuous File Synchronization
+Documentation=man:syncthing(1)
+StartLimitIntervalSec=60
+StartLimitBurst=4
+
+[Service]
+ExecStart=/usr/bin/syncthing serve --no-browser --no-restart --logflags=0
+Restart=on-failure
+RestartSec=1
+SuccessExitStatus=3 4
+RestartForceExitStatus=3 4
+
+# Hardening
+SystemCallArchitectures=native
+MemoryDenyWriteExecute=true
+NoNewPrivileges=true
+
+# Elevated permissions to sync ownership (disabled by default),
+# see https://docs.syncthing.net/advanced/folder-sync-ownership
+#AmbientCapabilities=CAP_CHOWN CAP_FOWNER
+
+[Install]
+WantedBy=default.target
+
+# /home/skimlab/.config/systemd/user/syncthing.service.d/10-pin-home.conf
+# Pin Syncthing's config directory.
+#
+# WHY: this machine has TWO syncthing config dirs. The live one is
+#   ~/.config/syncthing        device 2LNSMIM-... GUI 127.0.0.1:8080
+# and a dead one was left at
+#   ~/.local/state/syncthing   device WFNJNUT-...  (renamed to .STALE-DO-NOT-USE)
+#
+# Syncthing >= 1.28 changes its DEFAULT config location to ~/.local/state/syncthing.
+# Without this pin, a routine package upgrade would silently switch identity and
+# every synced folder would look brand new. Do not remove.
+[Service]
+ExecStart=
+ExecStart=/usr/bin/syncthing serve --home=/home/skimlab/.config/syncthing --no-browser --no-restart --logflags=0
