@@ -1,0 +1,49 @@
+{
+  "notice": "Export completed with explicit settings. This report does not establish visual, accessibility, scientific-integrity, or journal-submission compliance.",
+  "outputs": [
+    {
+      "format": "png",
+      "kind": "raster",
+      "path": "/home/skimlab/Monitoring_project/Monitoring_project_obsidian_vault/05-experiments/attachments/2026-08-09-fig09-sleep-statistics.png",
+      "size_bytes": 514718
+    },
+    {
+      "format": "pdf",
+      "kind": "vector-container",
+      "path": "/home/skimlab/Monitoring_project/Monitoring_project_obsidian_vault/05-experiments/attachments/2026-08-09-fig09-sleep-statistics.pdf",
+      "size_bytes": 107281
+    }
+  ],
+  "provenance": {
+    "alt_text": "Three panels. Left: persistence bars far above their permutation nulls, with headline raw label values marked lower than the plotted smoothed values. Middle: observed REM ordering far to the right of every permutation null. Right: scatter of impedance duty cycle against usable fraction showing no significant rank correlation across seven animals.",
+    "missing_data": "A2 excluded from the correlation, it holds no animal",
+    "palette": "okabe_ito_on_white",
+    "raw_data": "pipeline hypnograms and features files; 6 August impedance census",
+    "seed": 20260809,
+    "style": "default (scientific-visualization skill asset)",
+    "transformations": "see caption",
+    "uncertainty": "permutation nulls, 10000 relabellings for the correlation"
+  },
+  "schema_version": "1.0",
+  "settings": {
+    "bbox_inches": null,
+    "dpi": 300.0,
+    "facecolor": "white",
+    "figure_size_inches": [
+      13.4,
+      5.2
+    ],
+    "font_mode": "truetype",
+    "formats": [
+      "png",
+      "pdf"
+    ],
+    "pad_inches": 0.1,
+    "transparent": false
+  },
+  "versions": {
+    "matplotlib": "3.11.0",
+    "pillow": "12.2.0"
+  },
+  "warnings": []
+}

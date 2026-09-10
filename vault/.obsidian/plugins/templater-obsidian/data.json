@@ -1,0 +1,54 @@
+{
+  "command_timeout": 5,
+  "templates_folder": "_templates",
+  "templates_pairs": [
+    [
+      "",
+      ""
+    ]
+  ],
+  "trigger_on_file_creation": true,
+  "auto_jump_to_cursor": false,
+  "enable_system_commands": false,
+  "shell_path": "",
+  "user_scripts_folder": "",
+  "enable_folder_templates": true,
+  "folder_templates": [
+    {
+      "folder": "04-journal",
+      "template": "_templates/Daily Journal.md"
+    },
+    {
+      "folder": "03-troubleshooting/incidents",
+      "template": "_templates/Incident Report.md"
+    },
+    {
+      "folder": "05-experiments/active",
+      "template": "_templates/Experiment.md"
+    },
+    {
+      "folder": "02-procedures",
+      "template": "_templates/Procedure.md"
+    },
+    {
+      "folder": "03-troubleshooting/symptoms",
+      "template": "_templates/Symptom.md"
+    }
+  ],
+  "enable_file_templates": false,
+  "file_templates": [
+    {
+      "regex": ".*",
+      "template": ""
+    }
+  ],
+  "syntax_highlighting": true,
+  "syntax_highlighting_mobile": false,
+  "enabled_templates_hotkeys": [
+    ""
+  ],
+  "startup_templates": [
+    ""
+  ],
+  "intellisense_render": 1
+}

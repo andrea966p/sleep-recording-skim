@@ -1,0 +1,6 @@
+2026-06-27 21:10:14,305 - ERROR - grpc_error - Error: code: 13 (StatusCode.INTERNAL), details: Exception serializing request!
+2026-06-27 21:11:02,146 - ERROR - grpc_error - Error: code: 13 (StatusCode.INTERNAL), details: Exception serializing request!
+2026-06-27 21:11:30,069 - ERROR - grpc_error - Error: code: 14 (StatusCode.UNAVAILABLE), details: failed to connect to all addresses; last error: UNKNOWN: ipv4:127.0.0.1:0: Failed to connect to remote host: connect: Connection refused (111)
+2026-06-27 21:11:30,070 - ERROR - grpc_error - Error: code: 14 (StatusCode.UNAVAILABLE), details: failed to connect to all addresses; last error: UNKNOWN: ipv4:127.0.0.1:0: Failed to connect to remote host: connect: Connection refused (111)
+2026-06-27 21:11:30,071 - ERROR - grpc_error - Error: code: 14 (StatusCode.UNAVAILABLE), details: failed to connect to all addresses; last error: UNKNOWN: ipv4:127.0.0.1:0: Failed to connect to remote host: connect: Connection refused (111)
+2026-06-27 21:11:30,075 - ERROR - grpc_error - Error: code: 14 (StatusCode.UNAVAILABLE), details: failed to connect to all addresses; last error: UNKNOWN: ipv4:127.0.0.1:0: Failed to connect to remote host: connect: Connection refused (111)

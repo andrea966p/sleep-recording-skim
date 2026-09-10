@@ -1,0 +1,50 @@
+{
+  "notice": "Export completed with explicit settings. This report does not establish visual, accessibility, scientific-integrity, or journal-submission compliance.",
+  "outputs": [
+    {
+      "format": "png",
+      "kind": "raster",
+      "path": "/home/skimlab/Monitoring_project/Monitoring_project_obsidian_vault/05-experiments/attachments/2026-08-09-fig04-spectra-and-discriminator.png",
+      "size_bytes": 412610
+    },
+    {
+      "format": "pdf",
+      "kind": "vector-container",
+      "path": "/home/skimlab/Monitoring_project/Monitoring_project_obsidian_vault/05-experiments/attachments/2026-08-09-fig04-spectra-and-discriminator.pdf",
+      "size_bytes": 136208
+    }
+  ],
+  "provenance": {
+    "alt_text": "Left panel: log log power spectra. The two working animals fall steeply with frequency while the floating electrode, the damaged tether and the wire free input are nearly flat. Right panel: scatter of 60 Hz amplitude against spectral slope. B1 and D2 sit at low hum and steep slope, far from every failing channel and from the wire free floor band.",
+    "derived": "derived/forensics_overnight.json",
+    "missing_data": "none",
+    "palette": "okabe_ito_on_white",
+    "raw_data": "/home/skimlab/radix/data/allego_1__uid0806-16-57-38",
+    "seed": 20260809,
+    "style": "default (scientific-visualization skill asset)",
+    "transformations": "Welch nperseg 2048; slope fitted 1 to 30 Hz after notch and band pass",
+    "uncertainty": "floor range shown as shaded bands"
+  },
+  "schema_version": "1.0",
+  "settings": {
+    "bbox_inches": null,
+    "dpi": 300.0,
+    "facecolor": "white",
+    "figure_size_inches": [
+      11.0,
+      5.2
+    ],
+    "font_mode": "truetype",
+    "formats": [
+      "png",
+      "pdf"
+    ],
+    "pad_inches": 0.1,
+    "transparent": false
+  },
+  "versions": {
+    "matplotlib": "3.11.0",
+    "pillow": "12.2.0"
+  },
+  "warnings": []
+}

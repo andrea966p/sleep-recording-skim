@@ -1,0 +1,5 @@
+site_num, center_x, center_y, radius, shape
+1, 0, 0, 6, circle
+2, 0, 25, 6, circle
+3, 60, 0, 6, circle
+4, 60, 25, 6, circle

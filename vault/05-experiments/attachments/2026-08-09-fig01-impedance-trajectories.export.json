@@ -1,0 +1,49 @@
+{
+  "notice": "Export completed with explicit settings. This report does not establish visual, accessibility, scientific-integrity, or journal-submission compliance.",
+  "outputs": [
+    {
+      "format": "png",
+      "kind": "raster",
+      "path": "/home/skimlab/Monitoring_project/Monitoring_project_obsidian_vault/05-experiments/attachments/2026-08-09-fig01-impedance-trajectories.png",
+      "size_bytes": 531254
+    },
+    {
+      "format": "pdf",
+      "kind": "vector-container",
+      "path": "/home/skimlab/Monitoring_project/Monitoring_project_obsidian_vault/05-experiments/attachments/2026-08-09-fig01-impedance-trajectories.pdf",
+      "size_bytes": 165284
+    }
+  ],
+  "provenance": {
+    "alt_text": "Eight small panels, one per rig position, showing electrode impedance on a logarithmic axis across five sweeps from 31 July to 4 August. EEG and EMG are plotted as separate markers. Values move up and down by more than an order of magnitude between consecutive sweeps in every panel; no panel shows a steady decline.",
+    "missing_data": "absent sites left as gaps",
+    "palette": "okabe_ito_on_white",
+    "raw_data": "impedance CSV sweeps, see derived/inputs.json impedance_trajectory",
+    "seed": 20260809,
+    "style": "default (scientific-visualization skill asset)",
+    "transformations": "none, magnitudes plotted as measured",
+    "uncertainty": "none available: each point is a single unrepeated measurement"
+  },
+  "schema_version": "1.0",
+  "settings": {
+    "bbox_inches": null,
+    "dpi": 300.0,
+    "facecolor": "white",
+    "figure_size_inches": [
+      11.0,
+      6.4
+    ],
+    "font_mode": "truetype",
+    "formats": [
+      "png",
+      "pdf"
+    ],
+    "pad_inches": 0.1,
+    "transparent": false
+  },
+  "versions": {
+    "matplotlib": "3.11.0",
+    "pillow": "12.2.0"
+  },
+  "warnings": []
+}

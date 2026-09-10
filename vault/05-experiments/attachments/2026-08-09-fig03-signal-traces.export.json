@@ -1,0 +1,49 @@
+{
+  "notice": "Export completed with explicit settings. This report does not establish visual, accessibility, scientific-integrity, or journal-submission compliance.",
+  "outputs": [
+    {
+      "format": "png",
+      "kind": "raster",
+      "path": "/home/skimlab/Monitoring_project/Monitoring_project_obsidian_vault/05-experiments/attachments/2026-08-09-fig03-signal-traces.png",
+      "size_bytes": 1293755
+    },
+    {
+      "format": "pdf",
+      "kind": "vector-container",
+      "path": "/home/skimlab/Monitoring_project/Monitoring_project_obsidian_vault/05-experiments/attachments/2026-08-09-fig03-signal-traces.pdf",
+      "size_bytes": 308948
+    }
+  ],
+  "provenance": {
+    "alt_text": "Seven rows of ten second traces in three columns. Working channels are small at the raw scale; failing channels and the wire free input fill the raw panel. In the third column, where each panel is auto scaled, every channel including the one with no electrode looks like plausible brain activity.",
+    "missing_data": "none",
+    "palette": "okabe_ito_on_white",
+    "raw_data": "/home/skimlab/radix/data/allego_1__uid0806-16-57-38",
+    "seed": 20260809,
+    "style": "default (scientific-visualization skill asset)",
+    "transformations": "see caption; window selected by median amplitude rule",
+    "uncertainty": "not applicable, single windows shown"
+  },
+  "schema_version": "1.0",
+  "settings": {
+    "bbox_inches": null,
+    "dpi": 300.0,
+    "facecolor": "white",
+    "figure_size_inches": [
+      12.6,
+      9.25
+    ],
+    "font_mode": "truetype",
+    "formats": [
+      "png",
+      "pdf"
+    ],
+    "pad_inches": 0.1,
+    "transparent": false
+  },
+  "versions": {
+    "matplotlib": "3.11.0",
+    "pillow": "12.2.0"
+  },
+  "warnings": []
+}

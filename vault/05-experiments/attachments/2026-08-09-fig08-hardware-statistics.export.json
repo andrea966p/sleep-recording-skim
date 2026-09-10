@@ -1,0 +1,49 @@
+{
+  "notice": "Export completed with explicit settings. This report does not establish visual, accessibility, scientific-integrity, or journal-submission compliance.",
+  "outputs": [
+    {
+      "format": "png",
+      "kind": "raster",
+      "path": "/home/skimlab/Monitoring_project/Monitoring_project_obsidian_vault/05-experiments/attachments/2026-08-09-fig08-hardware-statistics.png",
+      "size_bytes": 504140
+    },
+    {
+      "format": "pdf",
+      "kind": "vector-container",
+      "path": "/home/skimlab/Monitoring_project/Monitoring_project_obsidian_vault/05-experiments/attachments/2026-08-09-fig08-hardware-statistics.pdf",
+      "size_bytes": 81731
+    }
+  ],
+  "provenance": {
+    "alt_text": "Left: forest plot of 16 channels with confidence intervals and adjusted p values against a wire free floor of 3.1 percent; four channels are significant after Holm adjustment. Right: arrows from original to rebuilt tether at two pass marks, showing that the EEG improvement present at 2 MOhm reverses at 0.5 MOhm while the muscle channel improvement holds.",
+    "missing_data": "none",
+    "palette": "okabe_ito_on_white",
+    "raw_data": "impedance sweep CSVs, 6 August census and 5 August arms",
+    "seed": 20260809,
+    "style": "default (scientific-visualization skill asset)",
+    "transformations": "connected defined as magnitude below the stated pass mark",
+    "uncertainty": "Jeffreys 95 percent intervals; Fisher exact; Holm and BH adjustment"
+  },
+  "schema_version": "1.0",
+  "settings": {
+    "bbox_inches": null,
+    "dpi": 300.0,
+    "facecolor": "white",
+    "figure_size_inches": [
+      12.4,
+      5.6
+    ],
+    "font_mode": "truetype",
+    "formats": [
+      "png",
+      "pdf"
+    ],
+    "pad_inches": 0.1,
+    "transparent": false
+  },
+  "versions": {
+    "matplotlib": "3.11.0",
+    "pillow": "12.2.0"
+  },
+  "warnings": []
+}

@@ -1,0 +1,22 @@
+# Obsidian
+.obsidian/workspace*.json
+.obsidian/workspace-mobile.json
+.obsidian/.obsidian/workspace.json
+.obsidian/plugins/recent-files-obsidian/data.json
+.obsidian/cache
+.trash/
+
+# Syncthing conflict files
+*.sync-conflict-*
+
+# Syncthing
+.stfolder/
+.stversions/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
