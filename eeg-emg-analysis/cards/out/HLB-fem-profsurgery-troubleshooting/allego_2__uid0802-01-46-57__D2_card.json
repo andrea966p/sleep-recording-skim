@@ -1,0 +1,252 @@
+{
+  "schema_version": 2,
+  "generated": "2026-08-09T11:12:05+09:00",
+  "cohort_id": "HLB-fem-profsurgery-troubleshooting",
+  "project_id": "neurosurveillance-eeg",
+  "batch_id": "HLB-fem-profsurgery-troubleshooting",
+  "animal_id": "HLB-D2",
+  "sex": "F",
+  "position": "D2",
+  "tether_arm": "A",
+  "role": "animal",
+  "recording": "allego_2__uid0802-01-46-57",
+  "recording_base": "/home/skimlab/radix/data/allego_2__uid0802-01-46-57",
+  "recording_date": "2026-08-02",
+  "duration_h": null,
+  "zt_start": null,
+  "zt_end": null,
+  "age_weeks": null,
+  "age_is_derived": false,
+  "days_post_surgery": null,
+  "days_post_tether": 3,
+  "body_weight_g": null,
+  "body_weight_occasion": "",
+  "criterion": "hum",
+  "epoch_s_qc": 10,
+  "epoch_s_staging": 4,
+  "thresholds_hash": "c635d5245a5b",
+  "floor": {
+    "n_sites": 112,
+    "n_epochs": 7826,
+    "n_samples": 876512,
+    "hum_p1": 139.569,
+    "hum_p5": 343.26,
+    "hum_median": 2258.649,
+    "slope_p1": -3.328,
+    "slope_p5": -2.32,
+    "slope_median": -0.556,
+    "slope_min": -4.918
+  },
+  "rungs": [
+    {
+      "number": 0,
+      "name": "FILE",
+      "question": "Is the recording file physically sound?",
+      "verdict": "PASS",
+      "headline": "78,267,520 samples, 21.74 h",
+      "threshold": "data samples == timestamp samples, remainder 0",
+      "reason": "78,267,520 data samples = 78,267,520 timestamp samples, remainder 0 and 0",
+      "detail": {
+        "base": "allego_2__uid0802-01-46-57",
+        "meta_exists": true,
+        "data_exists": true,
+        "timestamp_exists": true,
+        "fs": 1000,
+        "n_channels": 262,
+        "data_bytes": 82024360960,
+        "n_data_samples": 78267520,
+        "data_remainder": 0,
+        "duration_h": 21.741,
+        "start_time_utc": "2026-08-01T16:46:57.157Z",
+        "n_timestamp_samples": 78267520,
+        "timestamp_remainder": 0,
+        "problems": [],
+        "verdict": "INTACT",
+        "reason": "78,267,520 data samples = 78,267,520 timestamp samples, remainder 0 and 0"
+      }
+    },
+    {
+      "number": 1,
+      "name": "IDENTITY",
+      "question": "Which native channels belong to this animal?",
+      "verdict": "PASS",
+      "headline": "EEG D/33  EMG D/34",
+      "threshold": "layout derived from the file, never assumed",
+      "reason": "2 channels resolved from sensors_by_port; 112 wire-free inputs available as an in-file floor",
+      "detail": {
+        "sites": {
+          "eeg": {
+            "site": "D/33",
+            "native_col": 224,
+            "median_rms_uv": 3179.2,
+            "median_hum_uv": 2795.0,
+            "median_slope": -0.17,
+            "signature": "floating"
+          },
+          "emg": {
+            "site": "D/34",
+            "native_col": 225,
+            "median_rms_uv": 85.6,
+            "median_hum_uv": 73.7,
+            "median_slope": -0.58,
+            "signature": "connected-or-quiet"
+          }
+        },
+        "layout_source": "biointerface_map in the recording's own .xdat.json",
+        "bipolar": true,
+        "n_floor_sites": 112
+      }
+    },
+    {
+      "number": 2,
+      "name": "CONNECTION",
+      "question": "Is the electrode connected, judged against wire-free inputs in the same file?",
+      "verdict": "FAIL",
+      "headline": "0.0% usable, longest unbroken block 0.0 min",
+      "threshold": "60 Hz < 139.6 uV (p1 of 112 wire-free inputs in this file), rms 10-150 uV, zero railed samples",
+      "reason": "no epoch passes on every role; weakest is EEG at 0.0%",
+      "detail": {
+        "per_role": {
+          "eeg": {
+            "n_epochs_total": 7826,
+            "n_epochs_usable": 0,
+            "epoch_s": 10,
+            "usable_fraction": 0.0,
+            "usable_hours": 0.0,
+            "longest_block_epochs": 0,
+            "longest_block_minutes": 0.0,
+            "insufficient": false,
+            "criterion": "hum",
+            "site": "D/33"
+          },
+          "emg": {
+            "n_epochs_total": 7826,
+            "n_epochs_usable": 5804,
+            "epoch_s": 10,
+            "usable_fraction": 0.7416304625606951,
+            "usable_hours": 16.122,
+            "longest_block_epochs": 249,
+            "longest_block_minutes": 41.5,
+            "insufficient": false,
+            "criterion": "hum",
+            "site": "D/34"
+          }
+        },
+        "combined": {
+          "n_epochs_total": 7826,
+          "n_epochs_usable": 0,
+          "epoch_s": 10,
+          "usable_fraction": 0.0,
+          "usable_hours": 0.0,
+          "longest_block_epochs": 0,
+          "longest_block_minutes": 0.0,
+          "insufficient": false,
+          "criterion": "hum"
+        },
+        "refusals": {},
+        "floor": {
+          "n_sites": 112,
+          "n_epochs": 7826,
+          "n_samples": 876512,
+          "hum_p1": 139.569,
+          "hum_p5": 343.26,
+          "hum_median": 2258.649,
+          "slope_p1": -3.328,
+          "slope_p5": -2.32,
+          "slope_median": -0.556,
+          "slope_min": -4.918
+        },
+        "falsification": {
+          "criterion": "hum",
+          "n_floor_sites": 112,
+          "mean_usable_fraction": 0.008845286773027638,
+          "max_usable_fraction": 0.4799386659851776,
+          "passes": true
+        }
+      }
+    },
+    {
+      "number": 3,
+      "name": "SCOREABILITY",
+      "question": "Can the sleep question even be asked?",
+      "verdict": "BLOCKED",
+      "headline": "",
+      "threshold": "",
+      "reason": "rung 2 CONNECTION did not pass",
+      "detail": {}
+    },
+    {
+      "number": 4,
+      "name": "ARCHITECTURE",
+      "question": "What did the animal do?",
+      "verdict": "BLOCKED",
+      "headline": "",
+      "threshold": "",
+      "reason": "rung 3 SCOREABILITY did not pass",
+      "detail": {}
+    },
+    {
+      "number": 5,
+      "name": "EXPORT",
+      "question": "Can a human check us?",
+      "verdict": "BLOCKED",
+      "headline": "",
+      "threshold": "",
+      "reason": "rung 3 SCOREABILITY did not pass",
+      "detail": {}
+    }
+  ],
+  "notes": "THE DEMONSTRATION THAT THE TETHER IS THE FIX. Went from 0.0 percent to 87.9 percent usable EEG after an arm C swap and nothing else: hum 916.9 to 133.2 uV, spectral slope -0.38 to -2.05, railing 29.7 to 0.0 percent, with its implant untouched. Tethered at day 8 after surgery, which is why long post-operative recovery is not required for a usable recording. \u26a0\ufe0f A 40-sweep impedance block taken just after the swap said the swap had HARMED this animal, p = 8.4e-08. The block spanned 21 minutes and caught one long open state. The recording reversed it completely. This is the origin of the rule that impedance blocks screen and only a multi-hour recording is an outcome.\n",
+  "surgery_notes": "",
+  "sampling_notes": "",
+  "timeline": [
+    {
+      "date": "2026-07-30",
+      "kind": "tether",
+      "label": "tethered"
+    },
+    {
+      "date": "2026-07-30",
+      "kind": "tether-arm",
+      "label": "arm A"
+    },
+    {
+      "date": "2026-07-31",
+      "kind": "recording",
+      "label": "allego_1__uid0731-18-06-37"
+    },
+    {
+      "date": "2026-08-02",
+      "kind": "recording",
+      "label": "allego_2__uid0802-01-46-57"
+    },
+    {
+      "date": "2026-08-06",
+      "kind": "tether-arm",
+      "label": "arm C"
+    },
+    {
+      "date": "2026-08-06",
+      "kind": "recording",
+      "label": "allego_0__uid0806-12-45-02"
+    },
+    {
+      "date": "2026-08-06",
+      "kind": "recording",
+      "label": "allego_1__uid0806-16-57-38"
+    }
+  ],
+  "weighings": [],
+  "provenance": {
+    "thresholds_file": "/home/skimlab/Monitoring_project/eeg-emg-analysis/core/qc_thresholds.py",
+    "thresholds_hash": "c635d5245a5b",
+    "git_rev": "not a git repo",
+    "cohort_manifest": "/home/skimlab/Monitoring_project/eeg-emg-analysis/cohorts/HLB-fem-profsurgery-troubleshooting.yaml",
+    "processed_files": {},
+    "epoch_s_qc": 10,
+    "n_qc_epochs": 7826,
+    "criterion": "hum",
+    "criterion_note": "SLOPE and HUM usable fractions are NOT comparable, and neither is comparable to a fraction computed at the 4 s staging epoch."
+  },
+  "top_rung": 1
+}

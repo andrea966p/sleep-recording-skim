@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "eeg-emg-analysis"
+version = "2026.8.10"
+description = "Everything that happens after Allego writes a file to disk: QC against an in-file wire-free floor, the verdict ladder, and the animal card."
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=1.24",
+    "scipy>=1.10",
+    "matplotlib>=3.7",
+    "PyYAML>=6.0",
+    "openpyxl>=3.1",
+]
+
+[project.optional-dependencies]
+# stage4 writes EDF+ for external scorers (AccuSleep, SPINDLE, IntelliSleepScorer)
+edf = ["pyedflib>=0.1.30"]
+
+[project.scripts]
+eeg-ladder = "cards.ladder:main"
+eeg-paths = "core.paths:__main__"
+
+[tool.setuptools]
+# Explicit, because a flat layout with this many top-level dirs otherwise makes
+# setuptools guess -- and a wrong guess here silently ships half the package.
+packages = ["core", "cohorts", "cards", "pipeline", "qc", "convert", "tests"]
+
+[tool.setuptools.package-data]
+cohorts = ["*.yaml"]

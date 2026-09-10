@@ -1,0 +1,138 @@
+{
+  "A1": {
+    "all": {
+      "n": 2379,
+      "r": -0.58,
+      "verdict": "STATE-DEPENDENT"
+    },
+    "light": {
+      "n": 939,
+      "r": -0.448,
+      "verdict": "STATE-DEPENDENT"
+    },
+    "dark": {
+      "n": 1440,
+      "r": -0.565,
+      "verdict": "STATE-DEPENDENT"
+    }
+  },
+  "A2": {
+    "all": {
+      "n": 2359,
+      "r": -0.524,
+      "verdict": "STATE-DEPENDENT"
+    },
+    "light": {
+      "n": 931,
+      "r": -0.375,
+      "verdict": "STATE-DEPENDENT"
+    },
+    "dark": {
+      "n": 1428,
+      "r": -0.486,
+      "verdict": "STATE-DEPENDENT"
+    }
+  },
+  "B1": {
+    "all": {
+      "n": 0,
+      "r": null,
+      "verdict": "INSUFFICIENT"
+    },
+    "light": {
+      "n": 0,
+      "r": null,
+      "verdict": "INSUFFICIENT"
+    },
+    "dark": {
+      "n": 0,
+      "r": null,
+      "verdict": "INSUFFICIENT"
+    }
+  },
+  "B2": {
+    "all": {
+      "n": 1755,
+      "r": -0.066,
+      "verdict": "none"
+    },
+    "light": {
+      "n": 786,
+      "r": 0.065,
+      "verdict": "none"
+    },
+    "dark": {
+      "n": 969,
+      "r": -0.061,
+      "verdict": "none"
+    }
+  },
+  "C1": {
+    "all": {
+      "n": 2317,
+      "r": -0.755,
+      "verdict": "STATE-DEPENDENT"
+    },
+    "light": {
+      "n": 921,
+      "r": -0.677,
+      "verdict": "STATE-DEPENDENT"
+    },
+    "dark": {
+      "n": 1396,
+      "r": -0.815,
+      "verdict": "STATE-DEPENDENT"
+    }
+  },
+  "C2": {
+    "all": {
+      "n": 626,
+      "r": -0.389,
+      "verdict": "STATE-DEPENDENT"
+    },
+    "light": {
+      "n": 381,
+      "r": -0.27,
+      "verdict": "weak, right dir"
+    },
+    "dark": {
+      "n": 245,
+      "r": -0.411,
+      "verdict": "STATE-DEPENDENT"
+    }
+  },
+  "D1": {
+    "all": {
+      "n": 291,
+      "r": -0.128,
+      "verdict": "none"
+    },
+    "light": {
+      "n": 170,
+      "r": -0.112,
+      "verdict": "none"
+    },
+    "dark": {
+      "n": 121,
+      "r": -0.157,
+      "verdict": "weak, right dir"
+    }
+  },
+  "D2": {
+    "all": {
+      "n": 2353,
+      "r": -0.488,
+      "verdict": "STATE-DEPENDENT"
+    },
+    "light": {
+      "n": 916,
+      "r": -0.448,
+      "verdict": "STATE-DEPENDENT"
+    },
+    "dark": {
+      "n": 1437,
+      "r": -0.355,
+      "verdict": "STATE-DEPENDENT"
+    }
+  }
+}

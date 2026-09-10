@@ -1,0 +1,72 @@
+allego_1__uid0806-16-57-38  fs=1000  262 ch  23.66 h  8517 epochs of 10s
+
+  ...200/8517 epochs
+  ...400/8517 epochs
+  ...600/8517 epochs
+  ...800/8517 epochs
+  ...1000/8517 epochs
+  ...1200/8517 epochs
+  ...1400/8517 epochs
+  ...1600/8517 epochs
+  ...1800/8517 epochs
+  ...2000/8517 epochs
+  ...2200/8517 epochs
+  ...2400/8517 epochs
+  ...2600/8517 epochs
+  ...2800/8517 epochs
+  ...3000/8517 epochs
+  ...3200/8517 epochs
+  ...3400/8517 epochs
+  ...3600/8517 epochs
+  ...3800/8517 epochs
+  ...4000/8517 epochs
+  ...4200/8517 epochs
+  ...4400/8517 epochs
+  ...4600/8517 epochs
+  ...4800/8517 epochs
+  ...5000/8517 epochs
+  ...5200/8517 epochs
+  ...5400/8517 epochs
+  ...5600/8517 epochs
+  ...5800/8517 epochs
+  ...6000/8517 epochs
+  ...6200/8517 epochs
+  ...6400/8517 epochs
+  ...6600/8517 epochs
+  ...6800/8517 epochs
+  ...7000/8517 epochs
+  ...7200/8517 epochs
+  ...7400/8517 epochs
+  ...7600/8517 epochs
+  ...7800/8517 epochs
+  ...8000/8517 epochs
+  ...8200/8517 epochs
+  ...8400/8517 epochs
+
+FLOOR CONTROL: 112 unwired inputs x 8517 epochs = 953904 samples
+  60 Hz amplitude uV   p1=415.0  p5=655.2  median=3075.1  min=11.8
+  ==> USABLE THRESHOLD = 60 Hz amplitude < 415.0 uV
+
+FALSIFICATION CHECK: floor control channels score 0.00% usable (must be near zero)
+
+animal        EEG      EMG     BOTH   longest block   note
+A1          0.0%    7.6%    0.0%          0.0 min   
+A2          0.0%    0.0%    0.0%          0.0 min   <<< NO MOUSE, must be ~0
+B1        100.0%   99.6%   99.6%        215.8 min   
+B2          0.0%    0.0%    0.0%          0.0 min   
+C1          0.0%   37.8%    0.0%          0.0 min   
+C2          0.1%   15.2%    0.0%          0.0 min   
+D1          0.0%    0.0%    0.0%          0.0 min   
+D2         87.9%   98.6%   86.5%         87.3 min   
+
+median 60 Hz amplitude per animal channel (uV):
+  A1   EEG   5288.4   EMG    271.2
+  A2   EEG   2599.4   EMG   4514.2   <- no mouse
+  B1   EEG     38.3   EMG     15.4
+  B2   EEG    777.7   EMG   3794.8
+  C1   EEG   5781.1   EMG    281.2
+  C2   EEG   1056.1   EMG   1295.8
+  D1   EEG   6185.3   EMG   5374.7
+  D2   EEG    133.2   EMG     26.5
+
+wrote figures_2026-08-08/derived/usable_overnight.npz

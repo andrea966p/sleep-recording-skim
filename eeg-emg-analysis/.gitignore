@@ -1,0 +1,21 @@
+# Python build/cache cruft
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+
+# Virtualenvs (the project venv lives at ~/eeg-analysis-venv, outside this tree)
+.venv/
+venv/
+
+# Editor/OS
+.DS_Store
+*.swp
+
+# Raw acquisition data is NEVER committed: it lives in ~/radix/data (775 GB)
+*.xdat
+*.xdat.json
+
+# Stray runtime log written by the radiens client when allegoserver is unreachable
+radiens.log

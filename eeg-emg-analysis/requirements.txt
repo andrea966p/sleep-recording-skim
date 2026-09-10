@@ -1,0 +1,6 @@
+# EEG+EMG analysis codebase. Matches the existing vault analysis venv
+# (/home/skimlab/eeg-analysis-venv). Python 3.12.
+numpy>=2.0
+scipy>=1.13
+pyedflib>=0.1.38
+matplotlib>=3.8
