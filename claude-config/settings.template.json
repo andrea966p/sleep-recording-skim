@@ -12,9 +12,9 @@
           },
           {
             "type": "command",
-            "command": "bash -lc '\"$HOME/claude-portable/sync.sh\" --pull-only'",
-            "timeout": 30,
-            "statusMessage": "Syncing shared memory..."
+            "command": "bash -lc '\"$HOME/sleep-recording-skim/skim\" status || true'",
+            "timeout": 25,
+            "statusMessage": "Checking workspace sync state..."
           }
         ]
       }
@@ -30,18 +30,6 @@
           }
         ]
       }
-    ],
-    "SessionEnd": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash -lc '\"$HOME/claude-portable/sync.sh\"'",
-            "timeout": 60,
-            "statusMessage": "Syncing shared config..."
-          }
-        ]
-      }
     ]
   },
   "statusLine": {
@@ -51,13 +39,20 @@
   "enabledPlugins": {
     "rust-analyzer-lsp@claude-plugins-official": true,
     "superpowers@claude-plugins-official": true,
-    "caveman@caveman": true
+    "caveman@caveman": true,
+    "humanizer@humanizer": true
   },
   "extraKnownMarketplaces": {
     "caveman": {
       "source": {
         "source": "github",
         "repo": "JuliusBrussee/caveman"
+      }
+    },
+    "humanizer": {
+      "source": {
+        "source": "github",
+        "repo": "blader/humanizer"
       }
     }
   },
