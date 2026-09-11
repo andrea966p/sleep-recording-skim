@@ -11,7 +11,7 @@
 # something, or when it has been stuck failing for a long time.
 set -uo pipefail
 
-DIR="/home/skimlab/Monitoring_project/neurosurveillance/deploy"
+DIR="/home/skimlab/sleep-recording-skim/neurosurveillance/deploy"
 LOGS="$DIR/logs"; mkdir -p "$LOGS"
 STATE="$LOGS/radix-archive.state"
 LOCK="$LOGS/radix-archive.lock"
@@ -43,7 +43,7 @@ fi
 # A live recording is a reason to wait, not a failure. Without this the
 # watchdog would start-and-defer every 20 min for the whole length of a run,
 # burning a "strike" each time and eventually Slacking that it is stuck.
-REPO="/home/skimlab/Monitoring_project/eeg-emg-analysis"
+REPO="/home/skimlab/sleep-recording-skim/eeg-emg-analysis"
 PY="/opt/neurosurveillance/venv/bin/python3"
 MODE=$(cd "$REPO" && PYTHONPATH="$REPO" timeout 30 "$PY" -c "
 from radiens.allego_client import AllegoClient

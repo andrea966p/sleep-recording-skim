@@ -1,6 +1,6 @@
 [Unit]
 Description=NeuroSurveillance daily project backup to NAS
-Documentation=file:///home/skimlab/Monitoring_project/Monitoring_project_obsidian_vault/02-procedures/installation/nas-backup.md
+Documentation=file:///home/skimlab/sleep-recording-skim/vault/02-procedures/installation/nas-backup.md
 Wants=network-online.target
 After=network-online.target
 
@@ -9,7 +9,7 @@ Type=oneshot
 User=skimlab
 Group=skimlab
 Environment=HOME=/home/skimlab
-ExecStart=/home/skimlab/Monitoring_project/neurosurveillance/deploy/nas-backup.sh
+ExecStart=/home/skimlab/sleep-recording-skim/neurosurveillance/deploy/nas-backup.sh
 # Don't let a slow/hung NAS transfer run forever
 TimeoutStartSec=1800
 Nice=10

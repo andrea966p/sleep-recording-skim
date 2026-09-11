@@ -26,7 +26,7 @@ The daemon runs from `/opt/neurosurveillance/session-daemon/` which is a **symli
 
 ```
 /opt/neurosurveillance/
-├── session-daemon -> /home/skimlab/Monitoring_project/neurosurveillance/backend/
+├── session-daemon -> /home/skimlab/sleep-recording-skim/neurosurveillance/backend/
 ├── config.yaml          # Production config (not symlinked)
 ├── venv/                # Python virtual environment
 ├── sessions/            # Session JSON sidecars

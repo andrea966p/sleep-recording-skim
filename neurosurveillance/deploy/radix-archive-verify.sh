@@ -7,7 +7,7 @@
 # decision to delete the local copy, so it reads only the NAS side and never
 # touches the local disk — it cannot compete with a live recording.
 set -uo pipefail
-DIR="/home/skimlab/Monitoring_project/neurosurveillance/deploy"
+DIR="/home/skimlab/sleep-recording-skim/neurosurveillance/deploy"
 LOGS="$DIR/logs"; NOTIFY="$DIR/nvr-notify.sh"
 MANIFEST="$LOGS/radix-archive.manifest"; LOG="$LOGS/radix-archive-verify.log"
 ND="/volume1/homes/Andrea/e10_radix_archive/data"

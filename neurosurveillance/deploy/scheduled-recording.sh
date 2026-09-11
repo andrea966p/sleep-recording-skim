@@ -18,11 +18,11 @@
 set -uo pipefail
 
 TARGET="${1:?usage: scheduled-recording.sh HH:MM[:SS]}"
-REPO="/home/skimlab/Monitoring_project/eeg-emg-analysis"
+REPO="/home/skimlab/sleep-recording-skim/eeg-emg-analysis"
 PY="/opt/neurosurveillance/venv/bin/python3"   # the only interpreter with radiens
 DEST="/home/skimlab/radix/data"
-NOTIFY="/home/skimlab/Monitoring_project/neurosurveillance/deploy/nvr-notify.sh"
-LOG="/home/skimlab/Monitoring_project/neurosurveillance/deploy/logs/recording-$(date +%F).log"
+NOTIFY="/home/skimlab/sleep-recording-skim/neurosurveillance/deploy/nvr-notify.sh"
+LOG="/home/skimlab/sleep-recording-skim/neurosurveillance/deploy/logs/recording-$(date +%F).log"
 mkdir -p "$(dirname "$LOG")"
 
 log() { echo "[$(date '+%F %T')] $*" | tee -a "$LOG"; }
@@ -66,7 +66,7 @@ for attempt in 1 2; do
 Growth verified on disk: ${RATE} GB/h
 Started at target ${TARGET}. Runs until stopped manually.
 Hourly watchdog is now checking that it keeps growing."
-    echo "$FNAME" > /home/skimlab/Monitoring_project/neurosurveillance/deploy/logs/current-recording.txt
+    echo "$FNAME" > /home/skimlab/sleep-recording-skim/neurosurveillance/deploy/logs/current-recording.txt
     exit 0
   fi
   log "attempt $attempt did not confirm growth"

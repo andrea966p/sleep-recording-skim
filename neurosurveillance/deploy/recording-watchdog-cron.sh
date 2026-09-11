@@ -12,12 +12,12 @@
 # manual stop does.
 set -uo pipefail
 
-DIR="/home/skimlab/Monitoring_project/neurosurveillance/deploy"
+DIR="/home/skimlab/sleep-recording-skim/neurosurveillance/deploy"
 LOGS="$DIR/logs"
 NOTIFY="$DIR/nvr-notify.sh"
 DEST="/home/skimlab/radix/data"
 PY="/opt/neurosurveillance/venv/bin/python3"
-REPO="/home/skimlab/Monitoring_project/eeg-emg-analysis"
+REPO="/home/skimlab/sleep-recording-skim/eeg-emg-analysis"
 CUR="$LOGS/current-recording.txt"
 LAST="$LOGS/watchdog-lastsize.txt"
 LOG="$LOGS/watchdog.log"
