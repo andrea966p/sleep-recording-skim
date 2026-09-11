@@ -98,3 +98,24 @@ for the MCP server. Also owed: archive the five source repos on GitHub, and fix 
 `Documentation=` line in `/etc/systemd/system/nas-backup.service`.
 ⚠️ A stale `watchdog2.py` from a 2026-08-26 session scratchpad has been running 15 days at 0%
 CPU with its cwd in the old tree. Left alone, not killed.
+
+🔑 **RENAMING THE WORKSPACE ORPHANS EVERY CLAUDE CODE SESSION.** `claude --resume` is scoped
+to the CURRENT WORKING DIRECTORY: transcripts live in
+`~/.claude/projects/<slug-of-abs-path>/`, so after the rename the old sessions were intact
+but unreachable from anywhere you could now `cd`. **Fix: copy the transcripts across**
+(`cp -rn ~/.claude/projects/-home-skimlab-Monitoring-project/* ~/.claude/projects/-home-skimlab-sleep-recording-skim/`)
+— 22 sessions, 22 MB, done 2026-09-11. `-n` matters: it must not clobber the live session's
+own `.jsonl`. The transcript still records the OLD cwd internally; harmless, resume uses the
+process cwd.
+
+✅ **CLAUDE CODE VERIFIED ON THE NEW PATH 2026-09-11:** 9/9 links healthy, `settings.json` a
+real file outside the repo, hooks firing (caveman + `skim status` at SessionStart), plugins
+loaded, the `obsidian-vault` MCP server reading `~/sleep-recording-skim/vault` (293 notes),
+and 22 resumable sessions. `~/claude-portable` carries a `RETIRED.md` so nothing writes there
+again.
+
+🔴 **MEMORY.md WAS SILENTLY TRUNCATED** — 26.5 KB against a 24.4 KB limit meant the last 7
+lines (Working Preferences, Operational patterns) never loaded. Fixed 2026-09-11 by trimming
+the four longest index entries to one line each, after appending their full text to the topic
+files they link to. Now 23.8 KB. ⭐ **Index entries are hooks, not content: keep each under
+~200 chars and put the detail in the topic file.**
