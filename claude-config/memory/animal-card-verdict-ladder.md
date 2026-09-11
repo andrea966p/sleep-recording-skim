@@ -16,7 +16,7 @@ animal-recording. **Start at vault `02-procedures/eeg-data-analysis/animal-card-
 one below failed — it reads BLOCKED and NO PANEL IS DRAWN.** INSUFFICIENT ("could
 not ask") is deliberately distinct from FAIL.
 
-**Code moved out of the vault** to `~/Monitoring_project/eeg-emg-analysis/`:
+**Code moved out of the vault** to `~/sleep-recording-skim/eeg-emg-analysis/`:
 `core/qc_thresholds.py` is the ONLY constants file (vault copies archived at
 `99-archive/2026-08-09-pipeline-moved-to-repo/`); `core/criteria.py` is the ONLY
 usable-fraction engine (was 3 copies) and filter chain (was 5). Reconciled:

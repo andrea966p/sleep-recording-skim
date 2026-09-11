@@ -20,7 +20,7 @@
 - 🔴⭐⭐⭐ **[ANALYSIS STACK AUDIT — 2026-08-11](analysis-stack-audit-2026-08-11.md).** ⚠️ Its "EMG gate failed by everyone" used the POOLED floor ⇒ may be an artefact. 🔴 "Filtering cannot manufacture slope" is FALSE. ⭐ Slope fractions carry ±20 pts. 🛑 Repo has zero git commits.
 - ⭐⭐⭐ **[A2 CONTROL, 48 h, TWO CIRCADIAN CYCLES — BEST DATA EVER TAKEN HERE](a2-control-48h-reference-profile.md).** 47.09/48.19 h usable, zero railed epochs. ⭐ Prefer ZT0 starts for long runs. ⭐ Replicates day to day. ⚠️ Circadian ORDERING survives a ±25% sweep, the absolute % does not.
 - 🔴⭐⭐ **[TEST SUITE: 2 OF 4 VERIFY NOTHING — 2026-08-24](test-suite-two-of-four-verify-nothing.md).** Not pytest — run as scripts with `PYTHONPATH=.`. 🔴 `test_ladder_verdicts` + `test_criteria_regression` SKIP (fixture `uid0806-16-57-38` gone) yet exit 0, and the ladder one PRINTS "all pass ... agrees on both recordings". 🛑 "3 suites green" is not currently true. venv `~/eeg-test-venv` has pytest + numpy 1.26/scipy 1.11.
-- ⭐⭐⭐ **[ANIMAL CARD + VERDICT LADDER, 2026-08-09](animal-card-verdict-ladder.md). READ BEFORE ANY ANALYSIS OR FIGURE.** Six rungs, each blocked by the one below. Code at `~/Monitoring_project/eeg-emg-analysis/`; `core/qc_thresholds.py` + `core/criteria.py` are the only engines. 🔑 Rung 2 gates on longest unbroken block ≥15 min.
+- ⭐⭐⭐ **[ANIMAL CARD + VERDICT LADDER, 2026-08-09](animal-card-verdict-ladder.md). READ BEFORE ANY ANALYSIS OR FIGURE.** Six rungs, each blocked by the one below. Code at `~/sleep-recording-skim/eeg-emg-analysis/`; `core/qc_thresholds.py` + `core/criteria.py` are the only engines. 🔑 Rung 2 gates on longest unbroken block ≥15 min.
 - ✅⭐⭐⭐ **[THE GROUND RE-PIN WORKED — 2026-08-08](ground-fix-worked-2026-08-08.md).** 🔴🔴 THE HUM CRITERION IS DEAD — use the SLOPE criterion. 🔴 Slope is a CATEGORY ERROR for EMG. 🔴 ECG dead 7/7 vs a floor null. 🔑 A low, stable, zero-flip impedance can mean NO GROUND.
 - 🔴⭐⭐⭐ **[ROOT CAUSE: CEREBELLUM GROUND ON THE WRONG PIN — 2026-08-07](ecg-cohort-ground-miswired.md).** Dura pin on the wrong colour ⇒ floating. Explains the hum collapse AND the perfect impedance at once. ✅ Fix = connector re-mate, no anaesthesia.
 - **[COHORT REPLACED: 7 EEG+EMG+ECG MICE — 2026-08-07](ecg-cohort-2026-08-07.md).** 3-role channel map and its floor. 🔴 `set_recording_config()` BROKEN — use `qc/set_recording_config_fixed.py`. ⚠️ `get_status().recording.path` LIES; always `ls` the destination.
@@ -62,7 +62,7 @@
 NeuroSurveillance: Raspberry Pi 5 + Frigate NVR video monitoring for neuroscience sleep research. **Scale-up planned to ≥4 Pi5 / 8 cameras.**
 - **Pi1** `192.168.0.11`: go2rtc 1.9.14, pi_cam_0/1. **Pi2** `192.168.0.12`: pi_cam_2/3. All 1024x768@15fps H.264.
 - **NVR** `192.168.0.50` (mini-PC `e10ubuntu`): Frigate (Docker), session daemon, Mosquitto MQTT. 4 cams/4 chambers.
-- Vault `Monitoring_project_obsidian_vault/` (docs); code repo `neurosurveillance/` (backend+frontend monorepo).
+- ONE repo `~/sleep-recording-skim/`: `vault/` (docs) + `neurosurveillance/` (backend+frontend monorepo) + `eeg-emg-analysis/` + `claude-config/`.
 
 ## Architecture (detail derivable from code — key facts only)
 - **Backend** (Python 3.12 Flask) `neurosurveillance/backend/`: `daemon.py` (Radiens poll, MQTT, Flask API `127.0.0.1:8585`, sessions) + storage_monitor · radiens_poller · session_manager · manual_session_manager · frigate_controller · session_journal (SQLite WAL) · reconciler · recording_watchdog. Export ffprobe sanity: `<0.95×` dur ⇒ partial.

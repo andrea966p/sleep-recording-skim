@@ -21,7 +21,7 @@ to re-arm the 20-min watchdog.
 ## Scheduled recording (`scheduled-recording.sh` + `recording-watchdog-cron.sh`)
 ✅ **Started 8 mice at exactly 09:00:00 on 2026-08-19 unattended** (`allego_0__uid0819-09-00-00`, ZT0).
 🔴🔴 **`radiens` lives ONLY in `/opt/neurosurveillance/venv/bin/python3`** — NOT in
-`~/eeg-analysis-venv`, NOT system python. Also needs `PYTHONPATH=~/Monitoring_project/eeg-emg-analysis`.
+`~/eeg-analysis-venv`, NOT system python. Also needs `PYTHONPATH=~/sleep-recording-skim/eeg-emg-analysis`.
 🔑 **Success = "RECORDING CONFIRMED GROWING" (bytes on disk). Nothing the client reports counts.**
 Preflight refuses if allegoserver is down, <150 GB free, or a recording is already running.
 Hourly watchdog alerts on the R_ON-but-not-growing stall signature; self-disarms on stop.

@@ -8,7 +8,7 @@ metadata:
 ---
 
 **Strong checkpoint 2026-07-18.** New standalone analysis codebase at
-`Monitoring_project/eeg-emg-analysis/` (Python-only, VSCode/MATLAB-openable), replacing the
+`sleep-recording-skim/eeg-emg-analysis/` (Python-only, VSCode/MATLAB-openable), replacing the
 stale vault scripts under `02-procedures/eeg-data-analysis/scripts/` (those archived to
 `_archive_pre_sleep64/`). Three modules over a shared `core/`: **qc/** (scorability quick check),
 **convert/** (EDF+/.mat/CSV), **sleep/** (features + first-pass NON-validated hypnogram).

@@ -8,7 +8,7 @@ metadata:
   modified: 2026-08-03T09:43:11.829Z
 ---
 
-The vault (`Monitoring_project_obsidian_vault/`) gained a `07-decisions/` top-level section on 2026-05-28. It holds long-lived strategic artifacts so they stop rotting inside daily journals and become citable.
+The vault (`sleep-recording-skim/vault/`) gained a `07-decisions/` top-level section on 2026-05-28. It holds long-lived strategic artifacts so they stop rotting inside daily journals and become citable.
 
 Current contents:
 - `07-decisions/2026-05-01-llm-council-review.md` — full LLM council output (5 advisor responses, 5 peer reviews, chairman synthesis, staged plan, status appendix). Extracted from `04-journal/2026-05/2026-05-01.md`.

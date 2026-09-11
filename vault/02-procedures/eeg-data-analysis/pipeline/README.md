@@ -7,9 +7,9 @@ status: active
 # EEG analysis pipeline — raw recording to sleep features
 
 > [!important] ⭐ 2026-08-09: THE CODE MOVED. This manual is still correct; the paths changed.
-> The stage scripts now live in `~/Monitoring_project/eeg-emg-analysis/pipeline/`, and every
+> The stage scripts now live in `~/sleep-recording-skim/eeg-emg-analysis/pipeline/`, and every
 > constant lives in `eeg-emg-analysis/core/qc_thresholds.py` and nowhere else. Replace
-> `cd ~/Monitoring_project/eeg-emg-analysis/pipeline` with `cd ~/Monitoring_project/eeg-emg-analysis/pipeline`
+> `cd ~/sleep-recording-skim/eeg-emg-analysis/pipeline` with `cd ~/sleep-recording-skim/eeg-emg-analysis/pipeline`
 > in every command below. The old copies are archived verbatim at
 > [[99-archive/2026-08-09-pipeline-moved-to-repo/README|the pipeline archive]].
 >
@@ -38,7 +38,7 @@ the science; this page is the operating manual.
 ## Quick start
 
 ```bash
-cd ~/Monitoring_project/eeg-emg-analysis/pipeline
+cd ~/sleep-recording-skim/eeg-emg-analysis/pipeline
 
 # 1. is this mouse scoreable?
 python3 stage1_qc.py allego_1__uid0731-18-06-37 --json qc.json

@@ -36,7 +36,7 @@ Operational reference for the **NeuroSurveillance Session Controller** desktop a
 ## Build and Dev Commands
 
 ```bash
-cd /home/skimlab/Monitoring_project/neurosurveillance/frontend
+cd /home/skimlab/sleep-recording-skim/neurosurveillance/frontend
 
 # Development (hot-reload with Tauri window)
 npm run tauri dev

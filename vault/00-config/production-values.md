@@ -162,7 +162,7 @@ Setup + ops: [[02-procedures/installation/nas-backup|NAS Backup procedure]].
 | `{FRIGATE_CONFIG_DIR}` | `/srv/frigate/config` |
 | `{FRIGATE_MEDIA_DIR}` | `/srv/frigate/storage` |
 | `{SESSION_DAEMON_DIR}` | `/opt/neurosurveillance` |
-| `{SESSION_DAEMON_REPO}` | `/home/skimlab/Monitoring_project/neurosurveillance` |
+| `{SESSION_DAEMON_REPO}` | `/home/skimlab/sleep-recording-skim/neurosurveillance` |
 | `{SESSION_DAEMON_GITHUB}` | `git@github.com:andrea966p/neurosurveillance.git` (private) |
 | `{UPTIME_KUMA_DIR}` | `/opt/uptime-kuma` |
 | `{NETDATA_CONFIG_DIR}` | `/etc/netdata` |

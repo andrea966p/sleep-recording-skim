@@ -17,7 +17,7 @@ with module-level asserts or a `main()`. `pytest tests/` collects nothing and re
 `no tests ran`. **Run them as scripts, and PYTHONPATH must be set or every one dies on
 `ModuleNotFoundError: No module named 'core'`:**
 ```bash
-cd ~/Monitoring_project/eeg-emg-analysis
+cd ~/sleep-recording-skim/eeg-emg-analysis
 PYTHONPATH=. /usr/bin/python3 tests/test_cohort_schema.py
 PYTHONPATH=. /usr/bin/python3 tests/test_criterion_falsification.py
 PYTHONPATH=. /usr/bin/python3 tests/test_ladder_verdicts.py

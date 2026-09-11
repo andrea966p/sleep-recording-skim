@@ -253,7 +253,7 @@ curl -s http://127.0.0.1:8585/api/session/manual | python3 -m json.tool
 
 ### Frontend Development
 ```bash
-cd /home/skimlab/Monitoring_project/neurosurveillance/frontend
+cd /home/skimlab/sleep-recording-skim/neurosurveillance/frontend
 
 # Dev mode (Tauri window + hot reload)
 npm run tauri dev

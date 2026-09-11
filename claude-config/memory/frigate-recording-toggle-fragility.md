@@ -52,7 +52,7 @@ Refcounted **lease** model replaces the boolean: `enabled = (manual_lease OR ses
 ⚠️ **The drain CANNOT help manual UI stops** — the Frigate UI publishes OFF before the daemon observes it, so the segments are already dropped. Only the daemon-controlled (Radiens) path is drainable. Mitigation = operator habit, stop ~30s late.
 ⚠️ **Startup grace-period interaction is the least-tested part** (that logic assumed startup publishes OFF).
 
-> [!warning] `/opt/neurosurveillance/session-daemon` is a SYMLINK to `~/Monitoring_project/neurosurveillance/backend`
+> [!warning] `/opt/neurosurveillance/session-daemon` is a SYMLINK to `~/sleep-recording-skim/neurosurveillance/backend`
 > Editing the repo EDITS THE DEPLOYMENT; there is no copy step. The running process holds the old code in memory (up since 2026-07-17), so **the new code activates on ANY restart — crash, reboot, or apt included. The moment is not yours to pick.** Production `config.yaml` has no `recording:` block, which is fine: code defaults match it. Flip `sessions.auto_start: true` only AFTER a deliberate restart.
 
 **Proposed fix (declined for now):** record 24/7 continuously with `retain.days`, never toggle, and use exports to carve out session spans after the fact. Removes the whole class of "did video record?" failures AND the tail loss. Budget as of 2026-07-27: measured 1.9MB/10s segment = 1.5 Mbps/cam, 4 cams = ~65 GB/day; `retain.days: 7` = ~455 GB; disk had 1.1 TB free (41% used), clears the 200 GB EEG reserve.
