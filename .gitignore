@@ -61,3 +61,8 @@ sessions/
 /.claude/skills
 /.agents/skills
 /skills-lock.json
+
+# Claude Code rewrites this as you approve permissions - same runtime-rewrite trap as
+# settings.json, so the live file stays out and bootstrap.sh seeds it from
+# claude-config/settings.local.template.json instead.
+/.claude/settings.local.json

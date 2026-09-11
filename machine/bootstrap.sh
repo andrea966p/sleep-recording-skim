@@ -100,5 +100,21 @@ else
     echo "      review with:  diff $TEMPLATE $LIVE"
 fi
 
+# settings.local.json: the per-project permission allow-list. Copied, never linked, for
+# the same reason as settings.json - Claude Code appends to it every time you approve a
+# new command, so a symlink into the repo would keep the tree permanently dirty.
+LOCAL_TEMPLATE="$CONFIG/settings.local.template.json"
+LOCAL_LIVE="$WORKSPACE/.claude/settings.local.json"
+if [[ ! -f "$LOCAL_TEMPLATE" ]]; then
+    echo "SKIP  $LOCAL_LIVE  (no settings.local.template.json in repo)"
+elif [[ ! -f "$LOCAL_LIVE" ]]; then
+    mkdir -p "$(dirname "$LOCAL_LIVE")"
+    cp "$LOCAL_TEMPLATE" "$LOCAL_LIVE"
+    echo "COPY  $LOCAL_TEMPLATE -> $LOCAL_LIVE"
+else
+    echo "KEPT  $LOCAL_LIVE (already present; merge by hand if the template has newer rules)"
+fi
+
+
 echo
 echo "Done. Verify with: $WORKSPACE/machine/check.sh"
