@@ -49,6 +49,12 @@
       "skillPath": "skills/bioservices/SKILL.md",
       "computedHash": "2ca2c7a09a1f4919de6467abf4014446a78b3c746ebec412b4f8602d208e8267"
     },
+    "brandkit": {
+      "source": "Leonxlnx/taste-skill",
+      "sourceType": "github",
+      "skillPath": "skills/brandkit/SKILL.md",
+      "computedHash": "b63012f3c3d21197e0185d3e9cc7ec40c589fb10e0b5a32a561739de31aa3f20"
+    },
     "citation-management": {
       "source": "K-Dense-AI/scientific-agent-skills",
       "sourceType": "github",
@@ -73,6 +79,18 @@
       "skillPath": "skills/dask/SKILL.md",
       "computedHash": "b5c4bd9d2f15e3e502a6e933fb19431b253a1f710a3d495998dbfc152178c388"
     },
+    "design-taste-frontend": {
+      "source": "Leonxlnx/taste-skill",
+      "sourceType": "github",
+      "skillPath": "skills/taste-skill/SKILL.md",
+      "computedHash": "6d838b246d0e35d0b53f4f23f98ba7a1dd561937e64f7d0c7553b0928e376c3e"
+    },
+    "design-taste-frontend-v1": {
+      "source": "Leonxlnx/taste-skill",
+      "sourceType": "github",
+      "skillPath": "skills/taste-skill-v1/SKILL.md",
+      "computedHash": "d704ab912c4d0ca954ffa858983da755ae4cd5cad9ba22554db5557382f5bd34"
+    },
     "docx": {
       "source": "K-Dense-AI/scientific-agent-skills",
       "sourceType": "github",
@@ -91,11 +109,29 @@
       "skillPath": "skills/exploratory-data-analysis/SKILL.md",
       "computedHash": "3c88f57786275144bfe0d3a4c72b845276e1be2945f78206916a05cb17cd3ea7"
     },
+    "full-output-enforcement": {
+      "source": "Leonxlnx/taste-skill",
+      "sourceType": "github",
+      "skillPath": "skills/output-skill/SKILL.md",
+      "computedHash": "26bd29ce4c5e02c7666b2d503609bf466bd32290822e91f0e984147048dbb924"
+    },
     "get-available-resources": {
       "source": "K-Dense-AI/scientific-agent-skills",
       "sourceType": "github",
       "skillPath": "skills/get-available-resources/SKILL.md",
       "computedHash": "21c59e75b208e58ba961838f5046476b48ce68324822b7e1ccf636bcd86b156a"
+    },
+    "gpt-taste": {
+      "source": "Leonxlnx/taste-skill",
+      "sourceType": "github",
+      "skillPath": "skills/gpt-tasteskill/SKILL.md",
+      "computedHash": "cc8f0c601d8240a124e1d11634351a2be7b8a72fd807c75e5b6bf7afcd5ddee0"
+    },
+    "high-end-visual-design": {
+      "source": "Leonxlnx/taste-skill",
+      "sourceType": "github",
+      "skillPath": "skills/soft-skill/SKILL.md",
+      "computedHash": "7db385e4c5370e5a7fca9704a1361b056e4504ea6a03924bb86f33a4f00b5c73"
     },
     "hugging-science": {
       "source": "K-Dense-AI/scientific-agent-skills",
@@ -108,6 +144,30 @@
       "sourceType": "github",
       "skillPath": "skills/hypothesis-generation/SKILL.md",
       "computedHash": "96f315a3de9973ac3acf0d03c368e77b623167443ab2f96ed08f550bfbe7ea85"
+    },
+    "image-to-code": {
+      "source": "Leonxlnx/taste-skill",
+      "sourceType": "github",
+      "skillPath": "skills/image-to-code-skill/SKILL.md",
+      "computedHash": "58517b03b2a01f4c9ba65861559d03df931400871bbc200978c975b24bb92c73"
+    },
+    "imagegen-frontend-mobile": {
+      "source": "Leonxlnx/taste-skill",
+      "sourceType": "github",
+      "skillPath": "skills/imagegen-frontend-mobile/SKILL.md",
+      "computedHash": "9ab7f4f6ce66a3cff02bbf5894e5bd5af50bf5d6ef0adffdc88e8fab772fe44f"
+    },
+    "imagegen-frontend-web": {
+      "source": "Leonxlnx/taste-skill",
+      "sourceType": "github",
+      "skillPath": "skills/imagegen-frontend-web/SKILL.md",
+      "computedHash": "65f5ae59fa317567809438310b1c54f78cd133426deb43e4d3d4ca4c8f541628"
+    },
+    "industrial-brutalist-ui": {
+      "source": "Leonxlnx/taste-skill",
+      "sourceType": "github",
+      "skillPath": "skills/brutalist-skill/SKILL.md",
+      "computedHash": "8fc355c4aadb7d29c53ca28bc41be3cd6eea765d121e3737c4dc2d0f90a8effa"
     },
     "infographics": {
       "source": "K-Dense-AI/scientific-agent-skills",
@@ -168,6 +228,12 @@
       "sourceType": "github",
       "skillPath": "skills/matplotlib/SKILL.md",
       "computedHash": "3799027c94073ff2ab1b779e6434611a658279e341ff8666a8b898f0554db34d"
+    },
+    "minimalist-ui": {
+      "source": "Leonxlnx/taste-skill",
+      "sourceType": "github",
+      "skillPath": "skills/minimalist-skill/SKILL.md",
+      "computedHash": "08873a3131d3be27bef9bf3304b310b16b44ca6e3561aebe532797be3443f6bd"
     },
     "networkx": {
       "source": "K-Dense-AI/scientific-agent-skills",
@@ -247,6 +313,12 @@
       "skillPath": "skills/pyzotero/SKILL.md",
       "computedHash": "22253304fa2b2def364491a45cc3f9f7fdadb6c08777d9b1c1f2557cf9d4d91e"
     },
+    "redesign-existing-projects": {
+      "source": "Leonxlnx/taste-skill",
+      "sourceType": "github",
+      "skillPath": "skills/redesign-skill/SKILL.md",
+      "computedHash": "b405eee0e0e80fc243f731d9aa368bca307e356db7e6157d27101d369dac6726"
+    },
     "scientific-brainstorming": {
       "source": "K-Dense-AI/scientific-agent-skills",
       "sourceType": "github",
@@ -300,6 +372,12 @@
       "sourceType": "github",
       "skillPath": "skills/statistical-power/SKILL.md",
       "computedHash": "5e886e639526c0bc8487775e3a28dc56b0f119b17738ed1073d08945ab181cd2"
+    },
+    "stitch-design-taste": {
+      "source": "Leonxlnx/taste-skill",
+      "sourceType": "github",
+      "skillPath": "skills/stitch-skill/SKILL.md",
+      "computedHash": "13322f38406cd3abf16ba45e35bdc9b18002d0153a79b4612b97aefc65d5a335"
     },
     "umap-learn": {
       "source": "K-Dense-AI/scientific-agent-skills",

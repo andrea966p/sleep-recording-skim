@@ -143,37 +143,6 @@ export default function App() {
             </div>
           )}
 
-          {/* Storage indicator */}
-          {health?.storage_level && (
-            <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-mono font-bold ${
-              health.storage_level === "critical"
-                ? "bg-error/20 text-error"
-                : health.storage_level === "warn"
-                  ? "bg-warning/20 text-warning"
-                  : "bg-success/10 text-success/70"
-            }`}>
-              <progress
-                className={`progress w-16 h-2 ${
-                  health.storage_level === "critical"
-                    ? "progress-error"
-                    : health.storage_level === "warn"
-                      ? "progress-warning"
-                      : "progress-success"
-                }`}
-                value={health.storage_used_percent ?? 0}
-                max={100}
-              />
-              <span>{health.storage_used_percent ?? 0}%</span>
-            </div>
-          )}
-
-          {/* Critical storage warning */}
-          {health?.storage_level === "critical" && (
-            <div className="badge badge-error gap-2 p-3 font-bold shadow-lg shadow-error/20">
-              Disk Critical — Recording Blocked
-            </div>
-          )}
-
           {isOffline && (
             <div className="badge badge-error gap-2 p-3 font-bold shadow-lg shadow-error/20">
               <span className="loading loading-spinner loading-xs"></span>
