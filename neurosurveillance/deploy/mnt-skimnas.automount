@@ -1,0 +1,17 @@
+# mnt-skimnas.automount — mount /mnt/skimnas on first access, drop it when idle.
+#
+# Idle-unmount matters: nothing should hold a network share open across a 24 h
+# recording. 600 s is long enough that a multi-file upload does not thrash the mount.
+#
+# See mnt-skimnas.mount for the full rationale and install steps.
+
+[Unit]
+Description=Automount for the SKIM Lab Synology share
+Documentation=file:///home/skimlab/sleep-recording-skim/vault/02-procedures/installation/skim-nas-smb-and-upload.md
+
+[Automount]
+Where=/mnt/skimnas
+TimeoutIdleSec=600
+
+[Install]
+WantedBy=multi-user.target

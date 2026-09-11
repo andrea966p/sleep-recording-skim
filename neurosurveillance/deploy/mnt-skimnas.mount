@@ -1,0 +1,50 @@
+# mnt-skimnas.mount — CIFS mount of the SKIM Lab Synology share.
+#
+# Target: //skim-nas.tailec38b9.ts.net/SKIM_DATA  ->  /mnt/skimnas
+# Data lands under /mnt/skimnas/03_Data_Mouse/<user>/
+#
+# WHY A UNIT AND NOT `mount` IN A SCRIPT
+#   `sudo mount` requires a password on this host; `sudo systemctl start` does not
+#   (see /etc/sudoers.d). So an unattended uploader can bring the share up via
+#   systemd but could never mount it directly. Pair this with mnt-skimnas.automount
+#   so the share is mounted on first access and dropped again when idle, which keeps
+#   it unmounted while the rig is recording.
+#
+# HOST NAME, NOT ADDRESS
+#   Always the MagicDNS name. A hardcoded 100.x literal has silently broken this
+#   setup three times; the worst cost six days of backups in 2026-08.
+#
+# CREDENTIALS
+#   /etc/skim-nas.cred, 0600 root:root, written by a human:
+#     username=skim.data
+#     password=<the password>
+#   systemd reads it as root. Nobody else needs to, and nothing logs it.
+#
+# DIALECT
+#   vers=3.1.1 for DSM 7. If the handshake fails, try vers=3.0 and RECORD which one
+#   worked in vault/02-procedures/installation/skim-nas-smb-and-upload.md.
+#
+# actimeo=1 is deliberate: the uploader stat()s a .part file to decide where to
+# resume, and must never be handed a cached size.
+#
+# Install:
+#   sudo cp mnt-skimnas.mount mnt-skimnas.automount /etc/systemd/system/
+#   sudo mkdir -p /mnt/skimnas
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now mnt-skimnas.automount
+
+[Unit]
+Description=SKIM Lab Synology (SKIM_DATA) over Tailscale
+Documentation=file:///home/skimlab/sleep-recording-skim/vault/02-procedures/installation/skim-nas-smb-and-upload.md
+After=tailscaled.service network-online.target
+Wants=network-online.target
+
+[Mount]
+What=//skim-nas.tailec38b9.ts.net/SKIM_DATA
+Where=/mnt/skimnas
+Type=cifs
+Options=credentials=/etc/skim-nas.cred,vers=3.1.1,uid=1000,gid=1000,file_mode=0644,dir_mode=0755,nofail,_netdev,noatime,rsize=1048576,wsize=1048576,mfsymlinks,serverino,actimeo=1
+TimeoutSec=60
+
+[Install]
+WantedBy=multi-user.target

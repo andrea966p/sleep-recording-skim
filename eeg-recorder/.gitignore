@@ -1,0 +1,8 @@
+# Runtime state, not source. The upload manifest records what this particular
+# machine has sent to the NAS; it is per-machine bookkeeping and would conflict
+# on every sync if versioned. The run database lives outside the repo entirely
+# (~/.local/state/eeg-recorder/runs.db, EEG_RECORDER_STATE).
+deploy/uploads.jsonl
+deploy/logs/
+__pycache__/
+*.pyc

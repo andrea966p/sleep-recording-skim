@@ -1,0 +1,50 @@
+# eeg-recorder.service -- the local Allego recording console.
+#
+# SEPARATE FROM neurosurveillance-session.service, DELIBERATELY. That daemon polls
+# Radiens and declares observe-only as an invariant; this one drives the recorder.
+# Keeping them in different processes means a bug in recording control cannot take
+# video recording down, and a video-daemon crash cannot strand a 24 h EEG run.
+# Different port (8600 vs 8585), different unit, different failure domain.
+#
+# HOME is required: the radiens client reads its Cognito session from
+# ~/.config/radiens/session.json, and without HOME it cannot authenticate to
+# allegoserver at all.
+#
+# NOT Restart=always on a whim: if this dies mid-recording the amplifiers keep
+# running (Allego is a separate process), and on restart the scheduler rewinds
+# in-flight runs and the post-processing worker re-queues anything waiting. So a
+# restart is safe and is the right response to a crash.
+#
+# Install:
+#   sudo cp eeg-recorder.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now eeg-recorder
+#   journalctl -u eeg-recorder -f
+# Then open http://127.0.0.1:8600
+
+[Unit]
+Description=EEG Recording Console (Allego control, strip, NAS upload)
+Documentation=file:///home/skimlab/sleep-recording-skim/vault/02-procedures/eeg-recording-console.md
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=skimlab
+Group=skimlab
+Environment=HOME=/home/skimlab
+Environment=EEG_RECORDER_HOST=127.0.0.1
+Environment=EEG_RECORDER_PORT=8600
+WorkingDirectory=/home/skimlab/sleep-recording-skim/eeg-recorder/backend
+ExecStart=/opt/neurosurveillance/venv/bin/python3 /home/skimlab/sleep-recording-skim/eeg-recorder/backend/app.py
+Restart=always
+RestartSec=5
+# It reads whole recordings when stripping; stay out of the amplifiers' way.
+Nice=5
+IOSchedulingClass=best-effort
+IOSchedulingPriority=6
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
