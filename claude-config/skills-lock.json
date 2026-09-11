@@ -379,6 +379,12 @@
       "skillPath": "skills/stitch-skill/SKILL.md",
       "computedHash": "13322f38406cd3abf16ba45e35bdc9b18002d0153a79b4612b97aefc65d5a335"
     },
+    "task-observer": {
+      "source": "rebelytics/one-skill-to-rule-them-all",
+      "sourceType": "github",
+      "skillPath": "SKILL.md",
+      "computedHash": "9e1bc7798f5d1926710d5402c2b5259d56c6b7ff27d9fc2589a808f0c5663d7c"
+    },
     "umap-learn": {
       "source": "K-Dense-AI/scientific-agent-skills",
       "sourceType": "github",
