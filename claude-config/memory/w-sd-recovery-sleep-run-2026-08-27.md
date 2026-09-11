@@ -77,3 +77,7 @@ recording.** 20 min of checking against 20 h of one-animal data.
 
 Related: [[recording-2026-08-26-b1-swap-20h-baseline]] · [[cohort-identity-every-run-is-new-mice]] ·
 [[movement-dependent-contact-root-cause]] · [[ecg-cohort-ground-miswired]]
+
+## From the memory index, trimmed there 2026-09-11 (kept here verbatim)
+
+- 🔴⭐⭐⭐ **[W-SD RECOVERY SLEEP, 7 d CSD — 2026-08-27/28](w-sd-recovery-sleep-run-2026-08-27.md). NEWEST, READ FIRST.** **Thu 12:58 → Fri 09:05, 20.121 h, RUNG 0 PASS. = recovery window after the PENULTIMATE SD day, protocol STILL RUNNING (not a post-protocol endpoint)**; sampling followed ⇒ **unrepeatable**. 🔴🔴 **ONLY D2 usable (73.0% both roles, 45 min block) ⇒ the paired pre/post comparison is n=1** (baseline had A1+A2+D2). ⭐ A1/A2 EMG worked all run (98%, dark/light 2.73×) ⇒ **EEG-side tether fault, not implant**. 🔑 **B1's ground DECAYED 825→469 µV over 20 h — first recorded decay, = conductor working loose.** ✅ Re-mate confirmed on **50 min, not 80 s** (`allego_4__uid0828-10-08-34`, 1.8 h): A1 62-87%, A2 68-95%; floors 1347→5026, 1575→4490; B1 still dead. 🔑 **Its whole-file medians look like a RELAPSE and are not — the animals were UNPLUGGED at min 50** (EEG+EMG open together on 2 chips AND the floor stepped down). ⚠️ `allego_5__uid0828-19-10-50` = EMPTY RIG, not ours. 🛑 quote only lf/hf separation from an 8-epoch file. 🔑 **A first-hour screen must GATE an unrepeatable run, not annotate it.** ✅ Map confirmed = registry XDAQ; 08-24/25/26 stay S-SD.

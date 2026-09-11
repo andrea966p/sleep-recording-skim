@@ -75,3 +75,7 @@ port good. Fix the cages, not the wiring.
 Related: [[b-slot1-was-the-tether-not-the-port]] · [[recording-2026-08-25-24h-zt0-s-sd]] ·
 [[recording-2026-08-24-new-8-mice]] · [[floor-threshold-fixed-per-chip]] ·
 [[movement-dependent-contact-root-cause]] · [[animal-card-verdict-ladder]]
+
+## From the memory index, trimmed there 2026-09-11 (kept here verbatim)
+
+- ⭐⭐⭐ **[20.3 h B1-SWAP BASELINE — 2026-08-26](recording-2026-08-26-b1-swap-20h-baseline.md). NEWEST, READ FIRST.** ✅ Swap confirmed: HLBCSD17 in B1 gives real EEG+EMG, floor 246→2186 µV, zero railing — **port good**. ✅ **D2 passes strict rung 2 a 3rd time, 18.20 h in ≥15 min blocks** ⇒ the scoring pack. 🔴 **C1's tether break is on the EMG conductor only** — its EEG railed **0 of 7317 epochs**; the bench railing is NOT in the file (A1 is the one with rail hits). 🔴🔴 **The per-chip fix killed the false PASS, not the false FAIL** — A1 unchanged yet 31%→0.0% because ITS FLOOR steepened; owed: an UNJUDGEABLE guard for a contaminated floor. 🔴 A2+C2 genuinely dead now. ⚠️ **Never quote B1's %** (±25% sweep: 99.1↔37.6). ⭐ **B1 and C1 are the CHEWING CAGES** — 4 events, 2 positions, 2 cohorts.
