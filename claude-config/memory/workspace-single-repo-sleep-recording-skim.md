@@ -130,3 +130,19 @@ credentials, only private LAN IPs `192.168.0.11/.12/.50` and the dead Tailscale 
 ⭐ `gh` 2.45.0 installed from the Ubuntu repos 2026-09-11 and authenticated (scopes: repo,
 workflow, read:org, gist). All six Docker packages remain `apt-mark hold`, so the install
 could not disturb Frigate.
+
+🧹 **OLD TREES DELETED 2026-09-11** — `~/Monitoring_project.RETIRED-2026-09-11` (4.0 GB) and
+`~/claude-portable` (19 MB). Verified first: no stashes, no unpushed branches, nothing dirty
+in any of the four retired repos, and every file unique to the old tree was junk
+(Syncthing sync-conflict copies, `.trash`, `.obsidian/workspace*.json`, egg-info, pytest
+cache, tauri `gen/schemas`, a chrome `.deb`) or an identical `.pre-bootstrap` skills backup
+(52 = 52, nothing unique).
+
+🔴 **THE ONE REAL CASUALTY, CAUGHT IN TIME: `.claude/settings.local.json`** — the project
+permission allow-list, **270 rules accumulated since February**, existed ONLY in the old
+tree. Deleting it would have meant re-approving every command from scratch. Rescued, paths
+repointed, and now carried in the repo as `claude-config/settings.local.template.json`,
+which `machine/bootstrap.sh` copies into place on a machine that lacks it. The live file is
+gitignored for the same reason as `settings.json`: Claude Code appends to it at runtime.
+⭐ **Before deleting any old workspace, diff it against the new one for files that were
+never tracked — the valuable ones are exactly the ones git never saw.**
