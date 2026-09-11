@@ -119,3 +119,14 @@ lines (Working Preferences, Operational patterns) never loaded. Fixed 2026-09-11
 the four longest index entries to one line each, after appending their full text to the topic
 files they link to. Now 23.8 KB. ⭐ **Index entries are hooks, not content: keep each under
 ~200 chars and put the detail in the topic file.**
+
+🏁 **MIGRATION CLOSED 2026-09-11.** All five source repos ARCHIVED on GitHub and verified
+read-only (a probe push to `claude-portable` was refused): `neurosurveillance-vault`,
+`neurosurveillance`, `neurosurveillance-system`, `eeg-emg-analysis`, `claude-portable`.
+**`sleep-recording-skim` is the only live repo, and it is private.**
+⚠️ `neurosurveillance-system` is PUBLIC (archived, still public). Scanned: no real
+credentials, only private LAN IPs `192.168.0.11/.12/.50` and the dead Tailscale address
+`100.120.86.10`. Low risk, left as-is.
+⭐ `gh` 2.45.0 installed from the Ubuntu repos 2026-09-11 and authenticated (scopes: repo,
+workflow, read:org, gist). All six Docker packages remain `apt-mark hold`, so the install
+could not disturb Frigate.
