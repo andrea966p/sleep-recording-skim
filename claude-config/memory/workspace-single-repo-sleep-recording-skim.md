@@ -67,3 +67,34 @@ re-run. The `.pre-bootstrap` backups and `~/claude-portable` itself stay untouch
 `.agents/skills`, `skills-lock.json`) that hold ABSOLUTE machine paths. They are gitignored
 as of 2026-09-10; if they ever get committed, every other machine gets a path that does not
 exist there.
+
+✅ **CUTOVER DONE ON e10ubuntu, 2026-09-11** (after the 24.4 h run `allego_0__uid0910-09-00-00`
+ended, 86 GB). Daemon symlink re-pointed and the daemon is `healthy: true` with MQTT and
+Radiens connected; e10 bootstrapped (9/9 links, `settings.json` a real copy); all three
+Syncthing folders removed from the config and the service disabled on BOTH machines;
+`vault-git-backup.timer` disabled; NAS backup re-pointed and verified end to end (325 MB,
+uploaded, byte-verified, rotation kept 3).
+
+🔴 **A PATH MOVE IS NEVER JUST A RENAME. Five hidden references, all silent failures:**
+(1) three **cron jobs** including the hourly recording watchdog and the 20-minute radix
+archive watchdog; (2) the **deploy scripts carried the old path inside them**, so the copies
+in the new repo were wrong too; (3) 🔑 **`nas-backup.sh` writes paths WITHOUT a leading
+slash** (`home/skimlab/...`, because `tar -C /` needs them relative) — a grep for
+`/home/skimlab/Monitoring_project` MISSES it; (4) **`deploy/logs/` is gitignored**, so it did
+not exist in the clone at all, and it holds `radix-archive.state` + the manifest = the record
+of what is already on the NAS (copied by hand with `cp -a`); (5) the **`obsidian-vault` MCP
+server path in `~/.claude.json`**.
+
+⭐ **NAS backup now takes the WHOLE workspace path** (one entry, so it also gets
+`claude-config/` and `machine/`) and **explicitly excludes the raw EEG and video**:
+`*/radix/data`, `*.xdat`, `*.mp4`, `storage`. Measured 325 MB / 2503 files / zero xdat / zero
+mp4. Raw data goes to the NAS separately via `deploy/radix-archive.sh`.
+
+⏳ **STILL OWED (post-session, Claude Code must be CLOSED for the second one):**
+`mv ~/Monitoring_project ~/Monitoring_project.RETIRED-2026-09-11` — deferred because the
+session's shell resets into that directory after every command — and
+`sed -i 's|/home/skimlab/Monitoring_project/Monitoring_project_obsidian_vault|/home/skimlab/sleep-recording-skim/vault|g' ~/.claude.json`
+for the MCP server. Also owed: archive the five source repos on GitHub, and fix the cosmetic
+`Documentation=` line in `/etc/systemd/system/nas-backup.service`.
+⚠️ A stale `watchdog2.py` from a 2026-08-26 session scratchpad has been running 15 days at 0%
+CPU with its cwd in the old tree. Left alone, not killed.
