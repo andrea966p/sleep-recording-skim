@@ -14,6 +14,7 @@ used as its default, so nothing changes for the machine this was written on and
 everything becomes overridable everywhere else:
 
     EEG_RAW_ROOT         where Allego writes .xdat recordings
+    EEG_STRIPPED_ROOT    where channel-stripped copies of those recordings go
     EEG_PROCESSED_ROOT   where stage 2 writes per-animal .npz day folders
     EEG_IMPEDANCE_ROOT   the impedance sweep CSV folders, one per date
     EEG_VAULT_ROOT       the Obsidian vault that receives figures and reports
@@ -40,6 +41,15 @@ def _env(name: str, default: Path) -> Path:
 # roots
 # --------------------------------------------------------------------------- #
 RAW_ROOT = _env("EEG_RAW_ROOT", HOME / "radix" / "data")
+
+# A SIBLING of RAW_ROOT, deliberately NOT a subdirectory of it.
+# `neurosurveillance/deploy/radix-archive.sh` archives whatever `ls -1 "$SRC"`
+# returns for SRC=RAW_ROOT, the pipeline globs the same directory, and Allego
+# itself scans it. A stripped twin placed inside RAW_ROOT would therefore be
+# archived a second time and would appear to every one of those readers as
+# another recording with the same base name and a different channel count.
+# Putting it one level across keeps it out of every existing glob for free.
+STRIPPED_ROOT = _env("EEG_STRIPPED_ROOT", HOME / "radix" / "stripped")
 PROCESSED_ROOT = _env("EEG_PROCESSED_ROOT", HOME / "eeg-processed")
 IMPEDANCE_ROOT = _env("EEG_IMPEDANCE_ROOT", HOME / "Downloads" / "impedance measurments")
 VAULT_ROOT = _env("EEG_VAULT_ROOT",
@@ -85,6 +95,7 @@ def ensure(path: Path) -> Path:
 def describe() -> str:
     """Human-readable resolution report, for a card footer or a --paths flag."""
     rows = [("EEG_RAW_ROOT", RAW_ROOT),
+            ("EEG_STRIPPED_ROOT", STRIPPED_ROOT),
             ("EEG_PROCESSED_ROOT", PROCESSED_ROOT),
             ("EEG_IMPEDANCE_ROOT", IMPEDANCE_ROOT),
             ("EEG_VAULT_ROOT", VAULT_ROOT),

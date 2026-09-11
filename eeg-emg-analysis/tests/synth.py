@@ -200,3 +200,187 @@ def floating_no_ground(n: int, rng: np.random.Generator):
 def railed(n: int, _rng: np.random.Generator):
     """Pinned at the ADC ceiling. MUST be rejected."""
     return np.full(n, 6389.5)
+
+
+# --------------------------------------------------------------------------- #
+# a STRUCTURALLY COMPLETE sidecar, for the channel stripper
+# --------------------------------------------------------------------------- #
+# `write()` above is deliberately minimal -- it carries only the three fields
+# `open_xdat` reads, and four falsification tests depend on it, so it must not
+# change. The stripper, by contrast, rewrites the WHOLE biointerface_map, recounts
+# status.signals, prunes the neighbourhood graph and recomputes dataset_checksum,
+# so testing it against the minimal sidecar would exercise almost none of that.
+#
+# This writes the real shape instead: all 35 per-channel arrays plus the scalar
+# samp_freq, the four signal counts, a site_hood graph, and a dataset_checksum
+# computed with the MEASURED formula sha256(data || timestamp). Field names and
+# value types were taken from allego_3__uid0828-09-26-12 on 2026-09-11.
+
+_PRI, _AUX, _DIN, _DOUT = "ai0", "ai4", "din0", "dout0"
+_TYPE_UNITS = {_PRI: "micro-volts", _AUX: "volts", _DIN: "binary", _DOUT: "binary"}
+
+
+def gpio_labels() -> list[tuple[str, str]]:
+    """The six non-primary channels every real recording on this rig carries.
+
+    Note the site numbers COLLIDE by design -- both aux are GPIO-AIN/0 -- which
+    is why the stripper refuses to select GPIO by label.
+    """
+    return [("GPIO-AIN/0", _AUX), ("GPIO-AIN/0", _AUX),
+            ("GPIO-DIN/0", _DIN), ("GPIO-DIN/0", _DIN),
+            ("GPIO-DOUT/0", _DOUT), ("GPIO-DOUT/0", _DOUT)]
+
+
+def write_full_sidecar(base: str | Path,
+                       channels: dict[str, np.ndarray] | list[tuple[str, np.ndarray]],
+                       *,
+                       chan_types: list[str] | None = None,
+                       selected: list[bool] | None = None,
+                       start_time_utc: str = "2026-09-11T00:00:00.000Z",
+                       fs: int = FS,
+                       headstage_id: str = "hstg__passthrough_64",
+                       probe_id: str = "probe__default_8x8",
+                       extra_array: str | None = None,
+                       biointerface_spec=None) -> str:
+    """Write a synthetic recording with a structurally complete sidecar.
+
+    `channels` may be a list of (label, samples) pairs, so DUPLICATE labels are
+    expressible -- the GPIO collision is a real property of the format and the
+    stripper must be tested against it.
+
+    `extra_array` adds a 36th per-channel array, to prove the stripper carries an
+    unknown field rather than dropping it. `biointerface_spec` sets the field the
+    stripper must REFUSE on.
+    """
+    base = str(base)
+    items = list(channels.items()) if isinstance(channels, dict) else list(channels)
+    labels = [lab for lab, _ in items]
+    n = len(items[0][1])
+    if any(len(v) != n for _, v in items):
+        raise ValueError("all channels must be the same length")
+    k = len(items)
+
+    if chan_types is None:
+        chan_types = [_PRI] * k
+    if selected is None:
+        selected = [t == _PRI for t in chan_types]
+    if not (len(chan_types) == len(selected) == k):
+        raise ValueError("chan_types and selected must match the channel count")
+
+    ports = [lab.split("/")[0] for lab in labels]
+    sites = [int(lab.split("/")[1]) for lab in labels]
+
+    # ntv_chan_idx restarts at 0 per TYPE, exactly as Allego writes it
+    ntv, per_type = [], {}
+    for t in chan_types:
+        ntv.append(per_type.get(t, 0))
+        per_type[t] = per_type.get(t, 0) + 1
+
+    names = []
+    counters = {_PRI: 0, _AUX: 1, _DIN: 1, _DOUT: 1}
+    for t in chan_types:
+        if t == _PRI:
+            names.append(f"pri_{counters[_PRI]}"); counters[_PRI] += 1
+        else:
+            stem = {_AUX: "aux", _DIN: "din", _DOUT: "dout"}[t]
+            names.append(f"{stem}_{counters[t]}"); counters[t] += 1
+
+    bm = {
+        "chan_name": names,
+        "chan_type": list(chan_types),
+        "ntv_chan_idx": ntv,
+        "ntv_chan_name": [f"port_{p}_{i}" for p, i in zip(ports, ntv)],
+        "sys_chan_idx": list(range(k)),
+        "absolute_idx": list(range(k)),
+        "port": ports,
+        "site_num": sites,
+        "sensor_units": ["um"] * k,
+        "site_shape": ["circle"] * k,
+        "site_area": [254.469004940773] * k,
+        "is_audio": [False] * k,
+        "is_audio_left": [False] * k,
+        "is_audio_right": [False] * k,
+        "is_selected": [bool(b) for b in selected],
+        "dsrc_uid": ["null________________________________"] * k,
+        "sensor_uid": [f"{headstage_id}/{probe_id}.synthetic"] * k,
+        "headstage_id": [headstage_id] * k,
+        "probe_id": [probe_id] * k,
+        "color_grp_idx": [2147483647] * k,
+        "samp_freq": None,                      # the one scalar
+    }
+    for g in ("site_ctr_x", "site_ctr_y", "site_ctr_z",
+              "site_ctr_tcs_x", "site_ctr_tcs_y", "site_ctr_tcs_z",
+              "site_lim_x_min", "site_lim_x_max", "site_lim_y_min",
+              "site_lim_y_max", "site_lim_z_min", "site_lim_z_max",
+              "scs_to_tcs_x", "scs_to_tcs_y", "scs_to_tcs_z"):
+        bm[g] = [float(i) for i in range(k)]
+    if extra_array:
+        bm[extra_array] = [f"x{i}" for i in range(k)]
+
+    counts = {"pri": 0, "aux": 0, "din": 0, "dout": 0}
+    for t in chan_types:
+        counts[{_PRI: "pri", _AUX: "aux", _DIN: "din", _DOUT: "dout"}[t]] += 1
+
+    hood = {}
+    for i, t in enumerate(chan_types):
+        if t != _PRI:
+            continue
+        friends = [{"ntv_chan_idx": ntv[j], "site_num": sites[j],
+                    "radius_um": 40, "theta_deg": 90, "phi_deg": 90}
+                   for j in range(k)
+                   if j != i and chan_types[j] == _PRI and ports[j] == ports[i]]
+        hood[str(ntv[i])] = {"home_ntv_chan_idx": ntv[i], "home_chan_nam": names[i],
+                             "home_site_num": sites[i], "port": ports[i],
+                             "max_radius": 500, "friends": friends}
+
+    # data first: the checksum is over the bytes, so they must exist
+    arr = np.empty((n, k), dtype=np.float32)
+    for i, (_, v) in enumerate(items):
+        arr[:, i] = np.asarray(v, dtype=np.float32)
+    arr.tofile(base + "_data.xdat")
+    np.arange(n, dtype=np.int64).tofile(base + "_timestamp.xdat")
+
+    import hashlib
+    h = hashlib.sha256()
+    for suffix in ("_data.xdat", "_timestamp.xdat"):     # MEASURED order
+        with open(base + suffix, "rb") as fh:
+            for blk in iter(lambda: fh.read(1 << 20), b""):
+                h.update(blk)
+
+    meta = {
+        "status": {
+            "t_range": [0.0, n / fs], "samp_freq": fs, "shape": [n, k],
+            "num_smpl": n,
+            "signals": {"total": k, **counts},
+            "timestamp_range": [0, n - 1], "dur": n / fs,
+            "start_time": start_time_utc,
+            "dataset_uid": "synthetic-0000-0000-0000-000000000000",
+            "dataset_checksum": h.hexdigest(),
+            "dataset_provenance": [], "user_label": "", "user_tags": "",
+            "ext": {}, "is_live_recording": False,
+        },
+        "sapiens_base": {
+            "biointerface_map": bm,
+            "biointerface_spec": biointerface_spec,
+            "biointerface_ancillary": {"sapiens_import_spec": {},
+                                       "datafile_name": "", "annotate_bundle": {},
+                                       "notes": "", "DSPfilter": {}},
+            "neighborhoods": {"datasource_id": "", "site_hood": hood,
+                              "max_radius": 500, "spatial_units": ""},
+            "sigUnits": {f"sig_units_{g}": _TYPE_UNITS[t] for g, t in
+                         (("pri", _PRI), ("aux", _AUX), ("din", _DIN), ("dout", _DOUT))},
+            "sensors_by_port": {p: {"num_channels": 64, "headstage_id": headstage_id,
+                                    "probe_id": probe_id, "connection_ntv_idx": 0}
+                                for p in sorted(set(ports))},
+            "zcheck_spec": {p: {"Zmag": None} for p in sorted(set(ports))},
+            "port_map": {"port": None},
+            "digital_out_spec": {"mode": ""},
+        },
+        "radiens_sen_ext": {"spec": None},
+        "radiens_proj_ext": {"spec": None},
+        "SapiensBiointerface": {"spec": None},
+        "synthetic": True,
+        "generated_by": "tests/synth.py write_full_sidecar -- NOT AN ANIMAL",
+    }
+    Path(base + ".xdat.json").write_text(json.dumps(meta, separators=(",", ":")))
+    return base
