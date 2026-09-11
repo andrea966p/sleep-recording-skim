@@ -214,7 +214,8 @@ async function renderRuns() {
     const strip = (r.results && r.results.strip) || null;
     const retry = r.state.startsWith('FAILED') || r.state === 'UPLOAD_PENDING'
       ? `<button class="ghost" style="padding:4px 10px;font-size:12px"
-           onclick="retryRun('${r.run_id}')">retry</button>` : '';
+           onclick="retryRun('${r.run_id}','${r.state}')"
+           title="${(r.error || '').replace(/"/g, '&quot;').slice(0, 300)}">retry</button>` : '';
     return `<tr>
       <td class="mono">${r.run_id}</td>
       <td>${r.owner}</td>
@@ -222,14 +223,36 @@ async function renderRuns() {
       <td><span class="tag ${STATE_CLASS(r.state)}">${r.state}</span></td>
       <td class="mono">${local(r.actual_start || r.scheduled_start)}</td>
       <td class="mono">${d}</td>
-      <td class="mono">${strip ? strip.saving_pct + '% smaller' : '–'}</td>
+      <td class="mono">${strip ? strip.saving_pct + '% smaller'
+        : (r.results && r.results.qc_bundle_skipped) ? 'no QC bundle' : '–'}</td>
       <td>${retry}</td></tr>`;
   }).join('');
 }
 
-window.retryRun = async id => {
-  try { await post(`/api/runs/${id}/postprocess`); toast(`queued ${id}`, 'ok'); }
-  catch (e) { toast(e.message, 'bad'); }
+window.retryRun = async (id, state) => {
+  let body;
+  if (state === 'FAILED_QC') {
+    // Retrying FAILED_QC unchanged just fails again the same way, so the button
+    // would be a dead end. Offer the only two real options, and make the
+    // destructive one state exactly what is lost before it is chosen.
+    const skip = confirm(
+      'This run has no QC bundle.\n\n' +
+      'Stripping removes the wire-free channels that this project measures every ' +
+      'other channel against, so once stripped the recording can NEVER be quality-' +
+      'checked again. The cached features are the only surviving record of them.\n\n' +
+      'OK  = strip it anyway, without a QC bundle (fine for a test recording)\n' +
+      'Cancel = leave it alone; compute the bundle first with cards/ladder.py\n\n' +
+      'The choice is recorded on this run either way.');
+    if (!skip) {
+      toast('Left alone. Compute the QC bundle, then press retry again.', 'ok');
+      return;
+    }
+    body = {skip_qc_bundle: true};
+  }
+  try {
+    await post(`/api/runs/${id}/postprocess`, body);
+    toast(body ? `${id} queued, stripping WITHOUT a QC bundle` : `queued ${id}`, 'ok');
+  } catch (e) { toast(e.message, 'bad'); }
   renderRuns();
 };
 

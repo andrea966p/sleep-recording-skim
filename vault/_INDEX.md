@@ -122,6 +122,7 @@ Production IPs, usernames, paths, and settings.
 - ⭐⭐⭐ [[02-procedures/eeg-recording-console|THE EEG RECORDING CONSOLE — set up a run, leave the room, find your data on the NAS]] — the local page at `http://127.0.0.1:8600` where each of the five lab members sets up their own run: who, which mouse in which slot, start/stop or schedule. On stop it strips the recording to the channels that were wired and uploads it, verified, to that person's NAS folder. 🔑 **Recording is GLOBAL — one box, one Record button, one file**, so one run owns the whole rig and per-user separation happens afterwards by stripping. 🔴 **"0 bytes" for the first ~30 s is NORMAL**, the file size lags. ⏳ The full stop→strip→upload chain has not yet run end-to-end on a real recording (added 2026-09-11)
 
 ### Troubleshooting
+- 🔴⭐ [[03-troubleshooting/symptoms/recording-console-retry-was-a-dead-end|The recording console's retry button did nothing — three defects found by the FIRST REAL RUN]] — all three passed every automated test and were found within minutes of a human using the tool. 🔴 **The worst was invisible: waiving the QC bundle flipped a flag on the SHARED worker, disabling the guard for every subsequent run by every user**, with no trace. Now per-run and recorded. 🔑 **Two copies of the same rule in different files will drift** — the API's retry map disagreed with the state machine's own table, so two of three retry paths returned HTTP 500 (added 2026-09-11)
 
 **By Symptom:**
 - [[03-troubleshooting/symptoms/no-frames-received|No frames received]]

@@ -261,13 +261,19 @@ def api_postprocess(run_id):
         run = store.get(run_id)
     except R.RunError as exc:
         return _err(exc, 404)
-    retry = {"FAILED_QC": R.STOPPED, "FAILED_STRIP": R.QC,
-             "FAILED_UPLOAD": R.UPLOAD_PENDING}
+    retry = R.RETRY_TARGET          # one definition, in runs.py, tested against LEGAL
     if run.state in retry:
         force = bool((request.get_json(silent=True) or {}).get("skip_qc_bundle"))
+        extra = {}
         if run.state == "FAILED_QC" and force:
-            worker.require_qc_bundle = False
-        run = store.transition(run_id, retry[run.state], detail="retry requested")
+            # Recorded ON THE RUN, never on the shared worker. Flipping the
+            # worker's flag would disable the guard for every later run, silently
+            # and with no trace of who did it or when.
+            extra = {"results": {"skip_qc_bundle": True}}
+        run = store.transition(run_id, retry[run.state],
+                               detail="retry requested"
+                                      + (" (QC bundle waived for this run)" if force else ""),
+                               **extra)
     elif run.state not in (R.STOPPED, R.QC, R.STRIPPED, R.UPLOAD_PENDING):
         return _err(f"run is {run.state}; nothing to post-process", 409)
     worker.submit(run_id)

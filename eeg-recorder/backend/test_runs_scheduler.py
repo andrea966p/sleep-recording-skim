@@ -158,6 +158,57 @@ def t_rewind_in_flight(tmp):
     assert s.get(r.run_id).state == R.UPLOAD_PENDING
 
 
+def t_retry_targets_are_legal(tmp):
+    """Every retry the API offers must actually be a legal transition.
+
+    THE TEST THAT WAS MISSING. The API kept its own retry map, it disagreed with
+    LEGAL, and two of the three retry buttons raised IllegalTransition and
+    returned HTTP 500. Nothing caught it until a real run failed QC and the retry
+    did nothing.
+    """
+    s = mkstore(tmp)
+    for failed, target in R.RETRY_TARGET.items():
+        allowed = R.LEGAL.get(failed, set())
+        assert target in allowed, (
+            f"retry sends {failed} -> {target}, which LEGAL forbids "
+            f"(allowed: {sorted(allowed)})")
+
+    # and drive each one for real, end to end through the store
+    for failed, target in R.RETRY_TARGET.items():
+        r = mkrun(s)
+        for st in (R.SCHEDULED, R.STARTING, R.RECORDING, R.STOPPING, R.STOPPED):
+            s.transition(r.run_id, st)
+        if failed in ("FAILED_STRIP", "FAILED_UPLOAD"):
+            s.transition(r.run_id, R.QC)
+        if failed == "FAILED_UPLOAD":
+            s.transition(r.run_id, R.STRIPPING)
+            s.transition(r.run_id, R.STRIPPED)
+            s.transition(r.run_id, R.UPLOAD_PENDING)
+        s.transition(r.run_id, failed, detail="simulated failure")
+        got = s.transition(r.run_id, target, detail="retry")
+        assert got.state == target, (failed, got.state)
+
+
+def t_qc_override_is_per_run_not_global(tmp):
+    """Waiving the QC bundle must apply to ONE run and be recorded on it.
+
+    An earlier version flipped a flag on the shared worker, which disabled the
+    guard for every later run until the service restarted, with no trace.
+    """
+    s = mkstore(tmp)
+    a, b = mkrun(s), mkrun(s)
+    for r in (a, b):
+        for st in (R.SCHEDULED, R.STARTING, R.RECORDING, R.STOPPING, R.STOPPED):
+            s.transition(r.run_id, st)
+        s.transition(r.run_id, "FAILED_QC", detail="no bundle")
+    # waive it for `a` only
+    s.transition(a.run_id, R.RETRY_TARGET["FAILED_QC"],
+                 results={"skip_qc_bundle": True})
+    assert s.get(a.run_id).results.get("skip_qc_bundle") is True
+    assert not s.get(b.run_id).results.get("skip_qc_bundle"), \
+        "waiving the bundle on one run leaked to another"
+
+
 def t_upload_pending_is_a_resting_state(tmp):
     """A NAS outage must leave runs waiting, not failed."""
     s = mkstore(tmp)
@@ -307,6 +358,7 @@ def main() -> int:
     for fn in (t_create_and_states, t_legal_transition_path, t_results_accumulate,
                t_active_is_single, t_rewind_in_flight,
                t_upload_pending_is_a_resting_state,
+               t_retry_targets_are_legal, t_qc_override_is_per_run_not_global,
                t_start_on_time, t_missed_start_fails_loudly, t_second_run_blocked,
                t_stop_fires_even_when_late, t_start_failure_is_recorded):
         d = tempfile.mkdtemp(dir=tmp)

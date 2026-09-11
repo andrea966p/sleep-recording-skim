@@ -66,6 +66,17 @@ def has_qc_bundle(base_name: str) -> bool:
     return qc_cache_path(base_name).exists()
 
 
+def _duration_s(run) -> float | None:
+    """Recorded duration in seconds, or None if the run never really started."""
+    from datetime import datetime
+    try:
+        a = datetime.fromisoformat(run.actual_start.replace("Z", "+00:00"))
+        b = datetime.fromisoformat(run.actual_stop.replace("Z", "+00:00"))
+        return (b - a).total_seconds()
+    except Exception:
+        return None
+
+
 def strip(run: R.Run, *, out_dir: str | Path | None = None,
           progress: Callable[[str], None] | None = None) -> dict:
     """Run the stripper as a subprocess and return its report.
@@ -169,26 +180,49 @@ class Worker:
         needs a cohort spec that only a person can supply, so it is not something
         to do silently behind someone's back. The chain refuses and says exactly
         which command to run.
+
+        THE OVERRIDE IS PER-RUN AND RECORDED ON THE RUN. An earlier version
+        flipped `self.require_qc_bundle` on the shared worker, which silently
+        disabled the guard for EVERY subsequent run until the service restarted,
+        and left no trace that it had happened. A guard that one click can switch
+        off for the whole lab, invisibly, is not a guard. The override now lives
+        in the run's own results, so it applies to exactly one recording and the
+        run record says plainly that the data travelled without its floor.
         """
         present = has_qc_bundle(run.base_name or "")
         if present:
             self.log(f"{run.run_id}: QC bundle present")
             return self.store.transition(run.run_id, R.QC, detail="QC bundle present",
                                          results={"qc_bundle": str(qc_cache_path(run.base_name))})
+
+        override = bool((run.results or {}).get("skip_qc_bundle"))
+        if override or not self.require_qc_bundle:
+            self.log(f"{run.run_id}: WARNING, proceeding WITHOUT a QC bundle. This "
+                     "recording's wire-free floor will not survive the strip.")
+            return self.store.transition(
+                run.run_id, R.QC,
+                detail="no QC bundle -- EXPLICITLY OVERRIDDEN for this run",
+                results={"qc_bundle": None, "qc_bundle_skipped": True})
+
+        # A recording too short to clear rung 2's unbroken-block bar cannot
+        # produce a meaningful ladder anyway, so say so rather than sending
+        # someone off to run a command that will not help them.
+        short = ""
+        dur_s = _duration_s(run)
+        if dur_s is not None and dur_s < 15 * 60:
+            short = (f" NOTE: this recording is only {dur_s / 60:.1f} min long, which "
+                     "is below the 15 min unbroken-block bar the verdict ladder gates "
+                     "on, so a QC bundle for it would not be meaningful. If this was a "
+                     "test, either abandon the run or strip it with the override.")
         msg = (
             f"no QC bundle for {run.base_name}. Stripping removes the in-file "
             "wire-free floor, after which core/criteria.py can never judge this "
             "recording again, so the cached features are the only surviving "
-            "record of it. Compute it first:\n"
+            f"record of it.{short} Compute it with:\n"
             f"  cd {ANALYSIS} && PYTHONPATH=. {PYTHON} cards/ladder.py "
             f"{run.base_name} --cohort <id> --cache {qc_cache_path(run.base_name)}")
-        if self.require_qc_bundle:
-            self.log(f"{run.run_id}: HELD -- {msg}")
-            return self.store.fail(run.run_id, "QC", msg)
-        self.log(f"{run.run_id}: WARNING, proceeding without a QC bundle")
-        return self.store.transition(run.run_id, R.QC,
-                                     detail="no QC bundle (override)",
-                                     results={"qc_bundle": None})
+        self.log(f"{run.run_id}: HELD -- {msg}")
+        return self.store.fail(run.run_id, "QC", msg)
 
     def _strip(self, run: R.Run) -> R.Run:
         self.log(f"{run.run_id}: stripping {run.base_name} "

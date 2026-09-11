@@ -147,7 +147,7 @@ State: `~/.local/state/eeg-recorder/runs.db`.
 | live panel shows 0 bytes | **normal for the first ~30 s** | wait. If it persists past the growth check the console says so explicitly |
 | "R_ON but NOT GROWING" | the recorder claims to be recording and no bytes are landing | needs a person. This is the silent-failure signature that cost a 72 h run before |
 | NAS pill red | share not mounted, or the sentinel is missing | see [[02-procedures/installation/skim-nas-smb-and-upload]] §5. Runs wait safely meanwhile |
-| a run sits in `FAILED_QC` | no QC bundle, so stripping would destroy the only record of the wire-free floor | compute the bundle, then press **retry** |
+| a run sits in `FAILED_QC` | no QC bundle, so stripping would destroy the only record of the wire-free floor | **This is the expected state for any recording that has not been QC'd yet, including every test run.** Press **retry**: it asks whether to strip anyway. Say yes for a test; for real data, compute the bundle first and then retry. The choice is recorded on the run either way, and applies to that run alone |
 | a run sits in `UPLOAD_PENDING` | the NAS is unreachable | nothing to do. It drains when the NAS returns |
 
 > [!warning] THIS TOOL DOES NOT REPLACE THE PRE-FLIGHT SCREEN
@@ -155,13 +155,23 @@ State: `~/.local/state/eeg-recorder/runs.db`.
 > still gates the run. The console tells you a recording is *writing bytes*; it says nothing about
 > whether the electrodes are connected.
 
-## 6. Still open
+## 6. Status
 
-- **The full chain has not yet run end-to-end on a real recording.** Stop → QC → strip → upload has
-  been tested as separate pieces, each verified, but never as one sequence triggered by a real stop.
-  A short watched run should do that before an unrepeatable timepoint depends on it.
+✅ **The full chain has run end-to-end on a real recording** (2026-09-11, `allego_0__uid0911-22-32-22`,
+91 s, eight slots): started on time, growth confirmed at 2.86 GB/h, stopped `R_ON → R_OFF`, held at
+QC for the missing bundle, stripped 93.18% smaller after the bundle was explicitly waived, and
+uploaded with **4 files verified, 0 size-only**. The whole sequence is in that run's event log.
+
+That first real run also exposed three defects in the retry path, all now fixed and covered by
+regression tests — see §5 and
+[[03-troubleshooting/symptoms/recording-console-retry-was-a-dead-end]].
+
+Still open:
+
 - Whether the Radiens reader accepts a stripped file is **unproven** — there is no Videre hub on this
   host to ask. Our own reader accepts it.
+- **Scheduled** start/stop has not been exercised on the real rig; only manual start/stop has. The
+  scheduler's decisions are unit-tested against a fake rig.
 
 ## 7. Related
 

@@ -103,11 +103,26 @@ def _failed(stage: str) -> str:
 # every FAILED_* may be retried back into its own stage
 for _s in (STARTING, RECORDING, STOPPING, QC, STRIPPING, UPLOADING):
     LEGAL.setdefault(_failed(_s.replace("ING", "")), set())
+# Where a retry rewinds a failed run to. THIS IS THE SINGLE SOURCE OF TRUTH and
+# the API must use it rather than keeping its own copy -- the first version had
+# the API carrying a private map that disagreed with LEGAL below, so two of the
+# three retry paths raised IllegalTransition and returned HTTP 500. The user hit
+# it on the first real run. `test_retry_targets_are_legal` now binds the two
+# together so they cannot drift again.
+#
+# Each target is the state whose handler re-runs the failed stage: STOPPED re-runs
+# the QC check, QC re-runs the strip, UPLOAD_PENDING re-runs the upload.
+RETRY_TARGET = {
+    "FAILED_QC": STOPPED,
+    "FAILED_STRIP": QC,
+    "FAILED_UPLOAD": UPLOAD_PENDING,
+}
+
 LEGAL["FAILED_START"] = {SCHEDULED, DRAFT, ABORTED}
 LEGAL["FAILED_RECORDING"] = {STOPPING, STOPPED, ABORTED}
 LEGAL["FAILED_STOP"] = {STOPPING, STOPPED, ABORTED}
-LEGAL["FAILED_QC"] = {QC, STRIPPING, ABORTED}
-LEGAL["FAILED_STRIP"] = {STRIPPING, ABORTED}
+LEGAL["FAILED_QC"] = {STOPPED, QC, STRIPPING, ABORTED}
+LEGAL["FAILED_STRIP"] = {QC, STRIPPING, ABORTED}
 LEGAL["FAILED_UPLOAD"] = {UPLOAD_PENDING, UPLOADING, ABORTED}
 
 
