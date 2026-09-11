@@ -124,9 +124,9 @@ files they link to. Now 23.8 KB. ⭐ **Index entries are hooks, not content: kee
 read-only (a probe push to `claude-portable` was refused): `neurosurveillance-vault`,
 `neurosurveillance`, `neurosurveillance-system`, `eeg-emg-analysis`, `claude-portable`.
 **`sleep-recording-skim` is the only live repo, and it is private.**
-⚠️ `neurosurveillance-system` is PUBLIC (archived, still public). Scanned: no real
+✅ `neurosurveillance-system` was public; made PRIVATE 2026-09-11. 🔑 An archived repo is READ-ONLY, so visibility cannot be changed directly — the API returns `403 Repository was archived so is read-only`; unarchive, flip, re-archive. Scanned before the change: no real
 credentials, only private LAN IPs `192.168.0.11/.12/.50` and the dead Tailscale address
-`100.120.86.10`. Low risk, left as-is.
+`100.120.86.10`.
 ⭐ `gh` 2.45.0 installed from the Ubuntu repos 2026-09-11 and authenticated (scopes: repo,
 workflow, read:org, gist). All six Docker packages remain `apt-mark hold`, so the install
 could not disturb Frigate.
