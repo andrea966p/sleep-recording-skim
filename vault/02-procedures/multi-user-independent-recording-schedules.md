@@ -13,11 +13,37 @@ status: open-todo
 
 ---
 
+> [!danger] RETRACTION 2026-09-11 — the per-port API is NOT PRESENT in the client we run. MEASURED.
+> The 2026-07-24 update below is **wrong about this installation** and must not be built on. The
+> documentation it quotes is real; the methods are simply not in the package on this machine.
+>
+> Measured by introspecting the installed client in `/opt/neurosurveillance/venv`:
+> - `radiens.AllegoClient` exposes **25 public methods and none of them is `start_recording` or
+>   `stop_recording`**. The only recording control is **global `set_recording(mode)`**, and
+>   `RecordMode` has exactly two values, `OFF:0` and `ON:1`.
+> - `grep -rn 'split_files_by_port\|splitFilesByPort'` over the whole installed package matches
+>   **only** `grpc_radiens/allegoserver_pb2.pyi` — the protobuf definition. It is a wire field
+>   with no client method behind it. (`qc/start_recording_at.py` does set `splitFilesByPort=False`
+>   by talking to gRPC directly, which is the only way to reach it at all.)
+> - **`radiens 4.0.0` IS the latest stable on PyPI.** Only `5.0.0.dev1`, a Jan-2026 dev
+>   pre-release, is newer, and its PyPI description mentions none of these methods. So this is
+>   not a case of being behind, and it must NOT be "fixed" by upgrading — least of all to a dev
+>   build under a live-animal instrument.
+>
+> **Consequence:** one recording, all four ports, one file. Per-user *recording* is impossible
+> here; per-user *slicing after the fact* is the only route, and that is what
+> `convert/strip_channels.py` now does. The §2 workaround below (union the window, slice
+> offline) is therefore not a stopgap — it is the design.
+>
+> The open TODOs in §3 that depend on `start_recording(port=)` cannot be bench-tested at all
+> until the methods exist. What remains genuinely open is whether a future release ships them.
+
 > [!important] UPDATE 2026-07-24 — the "GUI-only" constraint holds, but the Radiens PYTHON API overturns "no per-port control". DOC-VERIFIED.
 > The section below is correct **for the Allego GUI**. It is NOT correct as a blanket statement: the current **Radiens Python API (radiens v4.0.0) documents per-port recording**, which is exactly the fix this TODO was chasing. Verified 2026-07-24 against the raw API HTML (not paraphrased):
 > - **`start_recording(*, port=None)`** / **`stop_recording(*, port=None)`** — verbatim: *"Optional port to start/stop recording on. Accepts Port enum, single-letter string ("a"–"h"), or int (0–7). If omitted, applies system-level control."* (`set_record_state` is now DEPRECATED in favour of these.) Source: https://neuronexus.github.io/radiens-core-python/latest/reference/radiens_core/
 > - **`RecordingConfig.split_files_by_port: bool`** — verbatim: *"True to create separate files for each port. Defaults to False."* Source: https://neuronexus.github.io/radiens-core-python/latest/reference/radiens_core/models/status/
 > - So per-port **independent start/stop** AND per-port **separate files** are both DOCUMENTED API features — no longer "just a label / untested / impossible".
+> - ⛔ **SUPERSEDED 2026-09-11 — see the RETRACTION above. Documented upstream, absent from the installed client.**
 > - ⚠️ **Documented ≠ validated on our Gen-1 XDAQ Core.** Still needs the bench test in §3 (crash-on-churn risk on the Opal Kelly Gen-1). Treat as "documented, plausible, unproven on our box." The GUI-only facts below remain true.
 > - Cross-ref: [[2026-07-24-daq-32-mouse-final-comparison#2. Master 3-way comparison table]] Row 15 record-control callout (also compares Open Ephys, whose GUI gives separate files per animal but only GLOBAL start/stop).
 

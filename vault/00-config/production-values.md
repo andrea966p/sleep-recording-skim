@@ -46,7 +46,7 @@ status: active
 
 ### Tailscale (rewritten 2026-08-19 — the old table was six months stale and caused a multi-day misdiagnosis)
 
-> [!warning] There are THREE tailnets. A machine belongs to exactly one at a time.
+> [!warning] There are FOUR tailnets. A machine belongs to exactly one at a time.
 > Every address below changes if a machine is moved between tailnets. **Never hardcode a
 > `100.x` literal in a script — use the MagicDNS name.** Stale literals have now caused three
 > separate outages here. See [[03-troubleshooting/incidents/2026-08-19-nas-backup-wrong-address]].
@@ -56,6 +56,7 @@ status: active
 | `skimlab.kaist@gmail.com` | `tail706d43.ts.net` | the NVR and the lab laptops — **this is the NVR's tailnet** |
 | `bilab.kaist@gmail.com`   | `tail8808c0.ts.net` | the Synology NAS and the office PC's LAN |
 | `andrea.piazzola4@gmail.com` | `tail9039f9.ts.net` | home tailnet (Raspberry Pi, Home Assistant) |
+| `sleepigene@` | `tailec38b9.ts.net` | the **SKIM Lab** Synology (`SKIM_NAS`) — added 2026-09-11 |
 
 **Members of the NVR's tailnet (`skimlab.kaist@gmail.com`), as of 2026-08-19:**
 
@@ -72,6 +73,13 @@ status: active
 | Device | Tailscale IP | MagicDNS name | Shared from |
 |---|---|---|---|
 | `Bilab_Syn` (the NAS) | `100.120.86.9` | `bilab-syn.tail8808c0.ts.net` | bilab.kaist@ |
+| `SKIM_NAS` (the SKIM Lab NAS) | `100.85.231.100` | `skim-nas.tailec38b9.ts.net` | sleepigene@ |
+
+> [!tip] The SKIM_NAS path is DIRECT, not relayed
+> Measured 2026-09-11: `CurAddr 143.248.26.53:49231`, **1 ms RTT**, both ends on the KAIST
+> campus network. The first `tailscale ping` reported `via DERP(tok)` only because
+> hole-punching had not completed — wait and re-ping before concluding a peer is relayed.
+> Real throughput over CIFS: **write 94 MB/s, read 90 MB/s.**
 
 > [!note] Why `andrea.piazzola4@gmail.com` appears twice
 > That one Google account is **both** a member user of the skimlab tailnet **and** the owner of
@@ -83,6 +91,40 @@ status: active
 > `100.85.191.25` was the NVR **in the bilab tailnet**. `100.117.204.8` was the office PC in the
 > same. `100.120.86.10` was the NAS's old address. All three appear in older vault pages and in
 > `~/.config/rustdesk/RustDesk2.toml`; none of them resolve today.
+
+---
+
+## SKIM Lab NAS — EEG recording archive (since 2026-09-11)
+
+The destination for channel-stripped Allego recordings. A **different NAS** from the
+`Bilab_Syn` one used by the nightly project backup below; do not confuse the two.
+
+| Variable | Production Value | Notes |
+|----------|------------------|-------|
+| `{SKIMNAS_HOST}` | `skim-nas.tailec38b9.ts.net` | Synology `SKIM_NAS`, currently `100.85.231.100`, shared in from `sleepigene@`. **Use the name, never the IP.** |
+| `{SKIMNAS_SHARE}` | `SKIM_DATA` | SMB share |
+| `{SKIMNAS_ROOT}` | `03_Data_Mouse` | per-user folders: `andrea`, `diane`, `ahyeon`, `hyunmin`, `staci` |
+| `{SKIMNAS_USER}` | `skim.data` | read/write confirmed |
+| `{SKIMNAS_MOUNT}` | `/mnt/skimnas` | `mnt-skimnas.automount`, mounts on access, unmounts after 600 s idle |
+| `{SKIMNAS_DSM}` | `https://skim-nas.tailec38b9.ts.net:50011` | DSM web UI (`:80`/`:443` redirect to `:50000`/`:50011`) |
+| Auth | `/etc/skim-nas.cred` | 0600 root:root, written by a human. **SSH is CLOSED on this NAS** (22, 53, 222, 2022, 2222, 5022, 8022, 22022 all tried) — SMB is the only data path. |
+| Dialect | `vers=3.1.1` | worked first try on DSM 7 |
+| Capacity | 7.0 TB, **1.3 TB free** (82% used) as of 2026-09-11 | the whole stripped corpus is ~78 GB; 843 GB of raw would fit but leave ~450 GB |
+
+> [!danger] The mount guard is not optional
+> A failed CIFS mount leaves `/mnt/skimnas` as an ordinary empty directory **on the recording
+> machine's own NVMe — the same filesystem the amplifiers write to**. An uploader that cannot
+> tell the difference will quietly fill it. `mountpoint` alone does NOT catch this, because an
+> empty local directory is a valid mountpoint. Hence the sentinel
+> `/mnt/skimnas/03_Data_Mouse/.skim-nas-share`, which exists only on the share: the uploader
+> refuses to write unless it can read that file. Observed to refuse while unmounted, 2026-09-11.
+
+> [!danger] Read-back verification is VACUOUS unless the page cache is dropped
+> Measured 2026-09-11: reading a just-written 200 MB file back over the mount ran at
+> **1538 MB/s** — entirely from the local page cache, verifying our own memory rather than
+> anything on the NAS. After `os.posix_fadvise(fd, 0, 0, POSIX_FADV_DONTNEED)` the same read
+> ran at **89.8 MB/s**, the real network rate, and the hash matched. Any verification that
+> skips the fadvise is a gate that cannot fail.
 
 ---
 
@@ -145,6 +187,21 @@ Setup + ops: [[02-procedures/installation/nas-backup|NAS Backup procedure]].
 ---
 
 ## Directory Paths
+
+### EEG recording paths (on the NVR / rig)
+| Variable | Value | Notes |
+|----------|-------|-------|
+| `{RAW_ROOT}` | `/home/skimlab/radix/data` | where Allego writes recordings. **Read-only to tooling**: nothing may write, move or delete here. Env override `EEG_RAW_ROOT` |
+| `{STRIPPED_ROOT}` | `/home/skimlab/radix/stripped` | channel-stripped copies. Deliberately a **SIBLING** of `{RAW_ROOT}`, never inside it, so stripped twins stay out of `radix-archive.sh`'s `ls -1 "$SRC"` and every pipeline glob. Env override `EEG_STRIPPED_ROOT` |
+| `{CACHE_ROOT}` | `/tmp/eeg_pipeline_cache` | per-recording QC feature caches. Env override `EEG_CACHE_ROOT` |
+| `{RECORDER_STATE}` | `~/.local/state/eeg-recorder` | the recording console's run database (`runs.db`, SQLite WAL). Env override `EEG_RECORDER_STATE` |
+| `{ALLEGO_DEVICES}` | `/home/skimlab/radix/devices` | headstage/probe maps (`.hstg`, YAML). Backed up nightly |
+| `{ALLEGO_WORKSPACE}` | `/home/skimlab/radix/workspace` | Allego workspace settings. Backed up nightly |
+
+> [!warning] `~/radix/data` IS READ-ONLY TO EVERY TOOL
+> Standing instruction, 2026-09-11: tooling reads recordings from `{RAW_ROOT}` and writes derived
+> copies elsewhere. Raw recordings are moved to the NAS by a human. The stripper, the uploader and
+> the recording console all obey this.
 
 ### Raspberry Pi Paths
 | Variable | Value |

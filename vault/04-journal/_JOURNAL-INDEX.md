@@ -7,8 +7,15 @@
 >
 > Read a day here, then follow its links down. **Detail belongs in the linked notes, not in the journal.**
 
-**64 entries.** Dates with no entry had no vault activity, mostly weekends.
+**66 entries.** Dates with no entry had no vault activity, mostly weekends.
 
+
+## September 2026
+
+| Date | Day | What happened |
+|---|---|---|
+| [[2026-09-11]] | Fri | ⭐⭐ **The SKIM Lab NAS is mounted (SMB, DIRECT 1 ms path, 94 MB/s) and the recording console is live** — set up a run, start or schedule, and on stop it strips to the wired channels and uploads verified to your own folder. 🔴 **Allego's `.xdat` file size reports 0 for a FULL 30 s after a healthy start** — an 11 s growth check called a working recording dead and left the rig recording. ✅ `set_recording('off')` works. 🔴 **Read-back over CIFS verifies your own page cache** (1538 vs 90 MB/s) without `posix_fadvise`. 🔴 RETRACTED: radiens 4.0.0 has **no per-port recording** |
+| [[2026-09-01]] | Tue | ⭐⭐ Pre-flight screen run where it could still change something; ✅ **a bench re-seat fixed ALL EIGHT chip grounds**, D2 back on both roles; 🔑 the tethers are failing two different ways and only one is torsion; go/no-go AMBER; ⚠️ a **223 GB file on disk that is not ours** |
 
 ## August 2026
 
