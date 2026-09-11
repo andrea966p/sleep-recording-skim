@@ -29,12 +29,9 @@ SSH_KEY="/home/skimlab/.ssh/id_ed25519"
 SSH_OPTS=(-i "$SSH_KEY" -p "$NAS_PORT" -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o ConnectTimeout=20)
 
 # ---- what to back up --------------------------------------------------------
-PROJECT_HOME="home/skimlab/Monitoring_project"   # paths are relative to / (tar -C /)
+PROJECT_HOME="home/skimlab/sleep-recording-skim"   # paths are relative to / (tar -C /)
 INCLUDES=(
-  "${PROJECT_HOME}/Monitoring_project_obsidian_vault"
-  "${PROJECT_HOME}/neurosurveillance"
-  "${PROJECT_HOME}/neurosurveillance-system"
-  "${PROJECT_HOME}/eeg-emg-analysis"       # the EEG/EMG analysis stack (git repo since 2026-08-19)
+  "${PROJECT_HOME}"                        # the WHOLE workspace: vault, all code, claude-config, machine
   "home/skimlab/radix/devices"             # Allego device/port configuration
   "home/skimlab/radix/workspace"           # Allego workspace settings
   "opt/neurosurveillance/config.yaml"
@@ -50,6 +47,13 @@ EXCLUDES=(
   --exclude='*/venv'
   --exclude='radiens.log'
   --exclude='*.mp4'                         # drop video bulk, keep export sidecar JSONs
+  # NEVER back up the raw EEG recordings or the video. They are hundreds of GB,
+  # they are archived separately by deploy/radix-archive.sh, and including them
+  # would blow past the NAS retention of 3 daily snapshots. ~/radix/data is
+  # deliberately absent from INCLUDES; these two lines make that impossible to
+  # undo by accident.
+  --exclude='*/radix/data'                  # raw Allego recordings (xdat), archived separately
+  --exclude='*.xdat'
   --exclude='storage'                       # Frigate recording cache
   --exclude='*.db-wal' --exclude='*.db-shm' # transient SQLite WAL sidecars (see snapshot below)
   --exclude='__pycache__' --exclude='*.pyc'
