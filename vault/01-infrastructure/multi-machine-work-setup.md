@@ -509,3 +509,46 @@ versioning to the paused office PC.
 The rig still exists only on `e10ubuntu`. Allego, radiens, XDAQ, Docker, Frigate and
 `~/radix/data` are physically there, and from any other machine you drive them with
 `ssh e10 '<command>'`, or `ssh e10 -t 'tmux new -As rig'` for anything long running.
+
+## Cutover completed on e10ubuntu, 2026-09-11
+
+Done after the 24.4 h run `allego_0__uid0910-09-00-00` finished (86 GB, stopped 09:23).
+
+| Step | Result |
+|---|---|
+| Cold tar snapshot of the old vault | `~/vault-snapshots/vault-20260911-0924.tar.gz`, 4725 files |
+| `/opt/neurosurveillance/session-daemon` | re-pointed to `~/sleep-recording-skim/neurosurveillance/backend` |
+| Daemon | `active`, `/api/health` `healthy: true`, MQTT and Radiens connected, all 4 ports `R_OFF` |
+| Claude Code wiring on e10 | `machine/bootstrap.sh`, all 9 links healthy, `settings.json` a real copy |
+| Syncthing | all three folders removed from the config (files untouched), service disabled on both machines |
+| `vault-git-backup.timer` | disabled; the vault is backed up by `skim push` and the nightly NAS job |
+| NAS backup | unit re-pointed, run verified: 325 MB, uploaded and byte-verified, rotation kept 3 |
+
+### The trap this nearly walked into
+
+The rename was NOT just a rename. Five things still hardcoded the old path and every one
+of them fails silently:
+
+- **three cron jobs** — the recording watchdog (hourly) and the radix archive watchdog
+  (every 20 min) among them;
+- **the deploy scripts themselves**, which carried `/home/skimlab/Monitoring_project`
+  inside them and therefore carried it into the new repository too;
+- **`nas-backup.sh`, which writes its paths WITHOUT a leading slash** (`home/skimlab/...`,
+  because `tar -C /` wants them relative), so a search for `/home/skimlab/Monitoring_project`
+  does not find it;
+- **`deploy/logs/`**, which is gitignored and so did not exist in the clone at all. It holds
+  `radix-archive.state` and the archive manifest — the record of what is already on the NAS;
+- **the `obsidian-vault` MCP server** in `~/.claude.json`.
+
+> [!quote] Paper-ready
+> Moving a working directory is only complete when every hardcoded reference to it has been
+> found, including those written without a leading slash and those inside files the version
+> control system ignores.
+
+### What the NAS backup now contains
+
+The include list is the single workspace path rather than four named repositories, so it
+also captures `claude-config/` and `machine/`. **The raw EEG recordings and the video are
+deliberately excluded** — `~/radix/data` is absent from the includes, and `*/radix/data`,
+`*.xdat`, `*.mp4` and `storage` are explicit excludes. Raw data is archived separately by
+`deploy/radix-archive.sh`. Measured: 325 MB, 2503 files, zero `.xdat`, zero `.mp4`.
