@@ -800,6 +800,14 @@ def strip(src_base: str, dst_base: str, keep: Sequence[int], *,
     dmin = np.full(len(drop_idx), np.inf)
     dmax = np.full(len(drop_idx), -np.inf)
     dnan = np.zeros(len(drop_idx), dtype=np.int64)
+    # Gate B must tell a SIGNAL from a SPECK OF NOISE, and min/max cannot: a
+    # single one-sample glitch on an unconnected input has exactly the same min
+    # and max as a real pulse train. Count transitions, and count samples that
+    # sit away from the level the channel rests at.
+    dtrans = np.zeros(len(drop_idx), dtype=np.int64)
+    dneq = np.zeros(len(drop_idx), dtype=np.int64)
+    dfirst = np.full(len(drop_idx), np.nan)
+    dlast = np.full(len(drop_idx), np.nan)
 
     src_data_path = src_base + "_data.xdat"
     t0 = time.time()
@@ -829,6 +837,15 @@ def strip(src_base: str, dst_base: str, keep: Sequence[int], *,
                 else:
                     dmin = np.minimum(dmin, d.min(axis=0))
                     dmax = np.maximum(dmax, d.max(axis=0))
+                if bool(np.isnan(dfirst).all()):
+                    dfirst = d[0].copy()
+                if bool(np.isnan(dlast).all()):
+                    stacked = d
+                else:
+                    stacked = np.vstack([dlast.reshape(1, -1), d])
+                dtrans += (np.diff(stacked, axis=0) != 0).sum(axis=0)
+                dneq += (d != dfirst).sum(axis=0)
+                dlast = d[-1].copy()
             if (lo // chunk_samples) % 100 == 0 and lo > start_row:
                 pct = 100.0 * (lo - start_row) / max(1, n - start_row)
                 say(f"  strip {pct:5.1f}%  ({(lo - start_row) / 1e6:.1f} M samples)")
@@ -866,6 +883,21 @@ def strip(src_base: str, dst_base: str, keep: Sequence[int], *,
     table = channel_table(meta)
     dropped_report = []
     live_din = []
+    # A DROPPED DIGITAL INPUT IS REFUSED ONLY ON EVIDENCE OF A SIGNAL.
+    #
+    # The first version refused whenever a dropped din was not perfectly
+    # constant. On 2026-09-13 that blocked the strip of a 24 h, 90 GB recording
+    # because din_1 showed ONE transition pair: a single 1 ms blip 2.43 h in,
+    # flat for the other 23.99 h, on an input with nothing plugged into it. A
+    # camera frame pulse at 15 fps would be ~1.3 million transitions over the
+    # same window. "Not constant" cannot separate those; counting can.
+    #
+    # Refuse on either signature of something real:
+    #   - two or more complete pulses (>= 4 transitions), or
+    #   - a level held away from its resting value for more than a second.
+    # Anything smaller is recorded with its exact counts and does not block.
+    MIN_TRANSITIONS_TO_REFUSE = 4     # 2 complete pulses
+    MIN_SAMPLES_TO_REFUSE = 1000      # 1 s at 1 kHz
     for j, i in enumerate(drop_idx):
         row = table[i]
         # bool() around the WHOLE expression: `and` returns its second operand,
@@ -875,21 +907,33 @@ def strip(src_base: str, dst_base: str, keep: Sequence[int], *,
                "chan_type": row["chan_type"],
                "min": None if not np.isfinite(dmin[j]) else float(dmin[j]),
                "max": None if not np.isfinite(dmax[j]) else float(dmax[j]),
-               "n_nan": int(dnan[j]), "constant": const}
+               "n_nan": int(dnan[j]), "constant": const,
+               "transitions": int(dtrans[j]),
+               "samples_off_resting": int(dneq[j]),
+               "resting_level": None if not np.isfinite(dfirst[j]) else float(dfirst[j])}
         dropped_report.append(rec)
-        if not const and row["chan_type"] == "din0":
+        if row["chan_type"] == "din0" and (
+                int(dtrans[j]) >= MIN_TRANSITIONS_TO_REFUSE
+                or int(dneq[j]) > MIN_SAMPLES_TO_REFUSE):
             live_din.append(rec)
     if live_din:
         _quarantine(dst_base, [part_data, part_ts])
-        names = ", ".join(f"{r['chan_name']} ({r['min']}..{r['max']})"
-                          for r in live_din)
+        names = ", ".join(
+            f"{r['chan_name']} ({r['transitions']} transitions, "
+            f"{r['samples_off_resting']} samples off its resting level)"
+            for r in live_din)
         raise StripFailed(
             f"GATE B: dropping a LIVE digital input: {names}. din is where a "
             "camera frame pulse or TTL sync arrives; discarding a varying one is "
             "unrecoverable. Re-run with --with-gpio, or name the din channels "
             "explicitly in --keep-index.")
     for r in dropped_report:
-        if not r["constant"]:
+        if r["chan_type"] == "din0" and not r["constant"]:
+            say(f"  note: dropped {r['chan_name']} is not perfectly flat "
+                f"({r['transitions']} transitions, {r['samples_off_resting']} "
+                f"samples off resting) -- far below the threshold for a real "
+                f"signal, recorded in the report and NOT blocking")
+        elif not r["constant"]:
             # Normal for aux (an analog sensor always wanders) and for dout
             # (a line we drive ourselves, reconstructible and not data).
             say(f"  note: dropped {r['chan_name']} ({r['chan_type']}) varies "

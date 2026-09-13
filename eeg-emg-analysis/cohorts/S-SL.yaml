@@ -1,0 +1,92 @@
+# =============================================================================
+# COHORT MANIFEST -- S-SL, the 8 mice recorded ZT0-to-ZT0 on 2026-09-12
+# =============================================================================
+#
+# WHY THIS FILE EXISTS. `cards/ladder.py --cohort` needs to know which rig
+# position held which animal, because that is what separates an animal's two
+# channels from the wire-free floor sites the criterion is measured against.
+# Without it the QC bundle cannot be computed, and without the bundle the
+# recording cannot be stripped without permanently destroying that floor.
+#
+# ⚠️ PROVENANCE. The animal ids and their positions were entered by Andrea in the
+# recording console at 09:00 on 2026-09-12 and are carried in the run record
+# `be0a4fe112d6` and in that recording's `run.json`. They are NOT yet joined to a
+# husbandry sheet.
+#
+# 🔴 HUSBANDRY IS DELIBERATELY ABSENT. Sex, date of birth, arrival, surgery date,
+# surgeon, weights and tether date are NOT recorded here because nobody has read
+# them out of the intake spreadsheet for this batch yet. They are left out rather
+# than guessed: an invented surgery date is worse than a missing one, and the
+# S-SD manifest's own header records that its registry was already one day behind
+# reality. Fill them from `HLB_SOD1_Intake_Monitoring.xlsx` (sheet `Registry`,
+# header on ROW 5, openpyxl only in ~/eeg-analysis-venv) and add a provenance
+# line when you do.
+#
+# The layout is the standard eight-mouse map: a C3442 splitter puts two RHD2216
+# chips on each 64-channel port, so slot 1 is sites /1 (EEG) and /2 (EMG) and
+# slot 2 is /33 and /34. Floor sites follow from the role count and are NOT
+# listed here -- core/criteria.py derives them, deliberately, because an
+# off-by-one in a hand-written floor list silently moves a real animal channel
+# into the control group.
+# =============================================================================
+
+cohort_id: S-SL
+title: S-SL cohort, 8 mice, 24 h baseline 2026-09-12
+project_id: neurosurveillance-eeg
+description: >
+  Eight mice recorded for 24.065 h from ZT0 on 2026-09-12 to ZT0 on 2026-09-13,
+  recording allego_0__uid0912-08-55-18. Started and stopped manually through the
+  recording console; the scheduler was deliberately not used, because it had not
+  then been exercised on the rig.
+
+roles: [eeg, emg]          # /1 EEG, /2 EMG for slot 1; /33, /34 for slot 2
+criterion: slope           # EEG only; EMG is broadband and is judged on hum
+
+animals:
+
+  - animal_id: HLBSSL31
+    batch_id: S-SL
+    placements: [{from: 2026-09-12, position: A1, source: recording-console}]
+    recordings: [{base: allego_0__uid0912-08-55-18, date: 2026-09-12, position: A1, role: animal}]
+
+  - animal_id: HLBSSL32
+    batch_id: S-SL
+    placements: [{from: 2026-09-12, position: A2, source: recording-console}]
+    recordings: [{base: allego_0__uid0912-08-55-18, date: 2026-09-12, position: A2, role: animal}]
+
+  - animal_id: HLBSSL33
+    batch_id: S-SL
+    placements: [{from: 2026-09-12, position: B1, source: recording-console}]
+    recordings: [{base: allego_0__uid0912-08-55-18, date: 2026-09-12, position: B1, role: animal}]
+
+  - animal_id: HLBSSL34
+    batch_id: S-SL
+    placements: [{from: 2026-09-12, position: B2, source: recording-console}]
+    recordings: [{base: allego_0__uid0912-08-55-18, date: 2026-09-12, position: B2, role: animal}]
+
+  - animal_id: HLBSSL35
+    batch_id: S-SL
+    placements: [{from: 2026-09-12, position: C1, source: recording-console}]
+    recordings: [{base: allego_0__uid0912-08-55-18, date: 2026-09-12, position: C1, role: animal}]
+
+  - animal_id: HLBSSL39
+    batch_id: S-SL
+    placements: [{from: 2026-09-12, position: C2, source: recording-console}]
+    recordings: [{base: allego_0__uid0912-08-55-18, date: 2026-09-12, position: C2, role: animal}]
+
+  - animal_id: HLBSSL40
+    batch_id: S-SL
+    placements: [{from: 2026-09-12, position: D1, source: recording-console}]
+    recordings: [{base: allego_0__uid0912-08-55-18, date: 2026-09-12, position: D1, role: animal}]
+
+  - animal_id: HLBSSL38
+    batch_id: S-SL
+    placements: [{from: 2026-09-12, position: D2, source: recording-console}]
+    recordings: [{base: allego_0__uid0912-08-55-18, date: 2026-09-12, position: D2, role: animal}]
+
+recordings:
+  - base: allego_0__uid0912-08-55-18
+    date: 2026-09-12
+    notes: >
+      24.065 h, ZT0 to ZT0, 262 channels at 1 kHz, 90.8 GB. file_integrity INTACT,
+      86,634,624 data samples = 86,634,624 timestamp samples, remainder 0 and 0.

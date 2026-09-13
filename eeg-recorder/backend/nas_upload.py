@@ -71,6 +71,46 @@ class UploadFailed(RuntimeError):
 # guards
 # --------------------------------------------------------------------------- #
 
+def local_date_from_base(base_name: str, fallback_iso: str | None = None) -> str:
+    """The recording's date IN LOCAL TIME, from the uid Allego put in its name.
+
+    WHY NOT `status.start_time` OR `actual_start`. Both are UTC. This rig runs on
+    KST (UTC+9) and its recordings start at 09:00 local, which is 00:00 UTC the
+    SAME day only by luck -- a 08:55 KST start is 23:55 UTC on the PREVIOUS day.
+    Dating from UTC therefore labels a 2026-09-12 recording as 2026-09-11, which
+    is what happened to the first real 24 h run: its NAS folder read
+    `2026-09-11_allego_0__uid0912-08-55-18`, contradicting the uid in its own
+    filename.
+
+    The uid token IS already local (production-values records this), so it is the
+    honest source. `allego_0__uid0912-08-55-18` -> month 09, day 12. The year is
+    not in the uid, so it comes from the fallback timestamp, corrected when the
+    UTC date has rolled either way across the boundary.
+    """
+    import re
+    from datetime import datetime, timedelta, timezone
+    m = re.search(r"uid(\d{2})(\d{2})-(\d{2})-(\d{2})-(\d{2})", base_name or "")
+    fb = None
+    if fallback_iso:
+        try:
+            fb = datetime.fromisoformat(str(fallback_iso).replace("Z", "+00:00"))
+        except ValueError:
+            fb = None
+    if not m:
+        return (fb.astimezone().strftime("%Y-%m-%d") if fb
+                else datetime.now().astimezone().strftime("%Y-%m-%d"))
+    month, day = int(m.group(1)), int(m.group(2))
+    ref = (fb.astimezone() if fb else datetime.now().astimezone())
+    for cand in (ref.year, ref.year - 1, ref.year + 1):
+        try:
+            d = datetime(cand, month, day)
+        except ValueError:
+            continue
+        if abs((d.date() - ref.date()).days) <= 2:
+            return d.strftime("%Y-%m-%d")
+    return f"{ref.year:04d}-{month:02d}-{day:02d}"
+
+
 def nas_status() -> dict:
     """Everything the UI needs to show a NAS pill, and the guard needs to decide."""
     mounted = os.path.ismount(MOUNT)
@@ -332,9 +372,10 @@ def upload_recording(stripped_base: str | Path, user: str, *,
 
     # date from the recording's own metadata, not from today
     try:
-        start = json.loads(trio[2].read_text())["status"]["start_time"][:10]
+        start_iso = json.loads(trio[2].read_text())["status"]["start_time"]
     except Exception:
-        start = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        start_iso = None
+    start = local_date_from_base(name, start_iso)   # LOCAL date, not UTC
     dest = user_dir(user) / f"{start}_{name}"
     say(f"destination: {dest}")
 
