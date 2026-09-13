@@ -102,8 +102,22 @@ fi
 
 echo
 echo "=== the Allego GUI (a human launches this, nothing else does) ==="
-if pgrep -f '^/opt/allego/allego$' >/dev/null; then
-  cmd=$(tr '\0' ' ' < "/proc/$(pgrep -f '^/opt/allego/allego$' | head -1)/cmdline")
+# The MAIN window process, not its --type=zygote/gpu-process/renderer children.
+# `pgrep -f '^/opt/allego/allego$'` was WRONG: it anchors on end-of-string, so the
+# moment the --disable-gpu flag this very script asks for is present, the pattern
+# stops matching and the check reports Allego as not running. Caught 2026-09-13,
+# minutes after the flag was applied -- the checker would have called a correctly
+# launched rig broken. Pick the one process whose arguments contain no `--type=`.
+apid=""
+for p in $(pgrep -f '/opt/allego/allego' 2>/dev/null); do
+  [[ -r "/proc/$p/cmdline" ]] || continue
+  c=$(tr '\0' ' ' < "/proc/$p/cmdline")
+  case "$c" in
+    /opt/allego/allego*)  [[ "$c" != *--type=* ]] && { apid=$p; break; } ;;
+  esac
+done
+if [[ -n "$apid" ]]; then
+  cmd=$(tr '\0' ' ' < "/proc/$apid/cmdline")
   good "allego process" "running"
   # Mesa GPU crashes took down a run on 2026-08-24 and produced a 6.5 GB log
   # storm. --disable-gpu is the fix, and it is easy to forget on a relaunch.
