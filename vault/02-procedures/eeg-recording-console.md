@@ -107,6 +107,10 @@ folder. Buttons stay disabled, with the reason shown, until a name is chosen.
 | service restarts mid-run | in-flight runs rewind to the last actionable state; schedules re-arm from disk | a 24 h run outlives any process |
 | NAS unreachable when the upload comes | run rests in `UPLOAD_PENDING` and drains later | **this is designed behaviour, not a fault** |
 
+> [!info] How it works underneath
+> Every program involved, what fires each one, every failsafe and why it exists:
+> [[01-infrastructure/eeg-recorder/pipeline-architecture]]. Read that before changing any of it.
+
 ## 4. What it is made of
 
 | File | Role |
@@ -166,12 +170,20 @@ That first real run also exposed three defects in the retry path, all now fixed 
 regression tests — see §5 and
 [[03-troubleshooting/symptoms/recording-console-retry-was-a-dead-end]].
 
+✅ **Scheduling is verified on the real rig** (2026-09-13, a 9-minute bench run): the start
+fired **3 s after the instant**, the stop fired **0.5 s late**, and the full chain ran afterwards
+— including a QC bundle the system **computed for itself**, with no manifest and no human step.
+
+That bench run also found a real defect: a *scheduled* stop halted the rig and then stranded the
+run at `STOPPED`, because the handoff to post-processing existed only on the manual stop button.
+Fixed, and covered by a test that fails when the handoff is removed.
+
 Still open:
 
 - Whether the Radiens reader accepts a stripped file is **unproven** — there is no Videre hub on this
   host to ask. Our own reader accepts it.
-- **Scheduled** start/stop has not been exercised on the real rig; only manual start/stop has. The
-  scheduler's decisions are unit-tested against a fake rig.
+- **No unattended overnight run has completed yet.** The 24 h run on 2026-09-12 was started and
+  stopped by hand; scheduling has only been exercised over 9 minutes.
 
 ## 7. Related
 

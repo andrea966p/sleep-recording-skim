@@ -41,6 +41,9 @@ Production IPs, usernames, paths, and settings.
 - [[01-infrastructure/frigate/docker-compose|Docker Compose]]
 - [[01-infrastructure/frigate/config-yml|config.yml]]
 
+**EEG recording pipeline (added 2026-09-13):**
+- ⭐⭐⭐ [[01-infrastructure/eeg-recorder/pipeline-architecture|THE RECORDING PIPELINE — what runs, what fires it, and what stops it going wrong]] — the machinery behind the console: every program, what starts it, every failsafe and the specific way the rig can hurt you that each one exists for. 🔑 **§5 lists all six defects this system has had — every one was found by RUNNING it, not by testing it.** Read this before changing any guard.
+
 **Backup (added 2026-08-19):**
 - ⭐ [[01-infrastructure/raw-recording-archive-to-nas|Raw recording archive to the NAS]] — the verified copy of all 831 GB of `.xdat` data. **Read this before deleting anything from `~/radix/data`.**
 - [[02-procedures/installation/nas-backup|NAS backup (nightly project snapshot)]] — vault, code, daemon config
