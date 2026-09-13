@@ -45,6 +45,7 @@ status: active
    │               │              at a time                 │
    │               ├─► cards/ladder.py      (subprocess)    │
    │               ├─► convert/strip_channels.py (subprocess)│
+   │               ├─► naming.py     what it is called      │
    │               └─► nas_upload.py ──CIFS──► SKIM_NAS     │
    └────────────────────────────────────────────────────────┘
 ```
@@ -62,7 +63,7 @@ crash in either is a non-zero exit code, not a dead API.
 
 | # | What happens | Who does it | Fired by |
 |---|---|---|---|
-| 1 | operator fills in owner, layout, slots, times | the page | a human |
+| 1 | operator fills in owner, layout, batch name, slots, times | the page | a human |
 | 2 | `POST /api/runs` validates and stores a run | `app.py` → `runs.py` | the Start/Schedule button |
 | 3 | at the instant: preflight, configure, stream, record | `scheduler.py` → `allego.py` | the 5 s tick |
 | 4 | file exists + `R_ON` ⇒ **RECORDING** | `scheduler.py` | immediately |
@@ -71,7 +72,8 @@ crash in either is a non-zero exit code, not a dead API.
 | 7 | **STOPPED**, and handed to the worker | `on_stopped` callback | step 6 |
 | 8 | QC bundle: use it, or compute it | `postprocess.py` → `ladder.py` | the worker queue |
 | 9 | strip to the operator's channels, verify bit-exact | `strip_channels.py` | the worker queue |
-| 10 | upload, verify by cache-dropped read-back | `nas_upload.py` | the worker queue |
+| 9b | resolve the NAS folder name, once, and freeze it on the run | `naming.py` → `runs.py` | the worker queue |
+| 10 | upload under that name, verify by cache-dropped read-back | `nas_upload.py` | the worker queue |
 | 11 | **DONE** | `runs.py` | step 10 |
 
 ### The state machine
@@ -189,10 +191,14 @@ State lives at `{RECORDER_STATE}/runs.db`; upload bookkeeping at
 
 ## 5. Every defect this system has had, and the rule it produced
 
-Six of the eight were found by **running it**, not by testing it. The last two were found by
-asking one question nobody had asked — *what does this do with four mice instead of eight?* —
-which is the cheaper of the two methods and the one that scales. Both facts are worth keeping
-on this page.
+Nine defects, three provenances, and the mix is the point:
+
+- **Six were found by running it** (1-6). No test caught them.
+- **Two were found by asking one question nobody had asked** (7-8) — *what does this do with
+  four mice instead of eight?* Cheaper than running it, and the method that scales.
+- **One was found by writing a test** (9), which in the process wrote eight false `VERIFIED`
+  rows into the live upload manifest. A test that touches production state is a production
+  action; this one was caught the same hour, and the rule it produced is in the table.
 
 | # | Defect | Rule it produced |
 |---|---|---|
@@ -204,6 +210,7 @@ on this page.
 | 6 | dates came from UTC on a rig that runs on KST, filing a 09-12 recording as 09-11 | **the uid in the filename is already local; use it** |
 | 7 | a four-mouse run was graded on **eight** positions: `cards/ladder.py` falls back to `spec.positions()`, so five cards came back labelled `UNKNOWN@<slot>` and three of those read **PASS at rung 2** | **grade what the operator filled in, not what the layout could hold** — an empty slot's card is built from a floating amplifier input, and `UNKNOWN@B2 PASS` reads like an animal somebody forgot to name |
 | 8 | `unipolar_lfp` could not finish the pipeline *at all*: no floor model describes its sites, so the chain asked for a manual override on **every** run | **a guard that can never be satisfied is a guard people learn to click past** — declare "no criterion applies" in the config, and keep it distinguishable from "a person waived the check" |
+| 9 | a test wrote eight `VERIFIED` rows into the **real** upload manifest for files never uploaded, because `manifest_load(path=MANIFEST)` bound the path at import time and overriding the module constant did nothing | **a default argument is not a hook** — anything a test must redirect is read at call time; and a manifest the uploader *skips* on is a claim about the world, not a log |
 
 > [!quote] Paper-ready
 > Acquisition is controlled by a local service that records, for each run, the responsible

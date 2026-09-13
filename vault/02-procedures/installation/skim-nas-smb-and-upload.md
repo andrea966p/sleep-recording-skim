@@ -124,6 +124,48 @@ of the cache drop.
 > stripped run verifies by read-back in about a minute, which is cheap enough that the extra
 > dependency earns nothing. It remains the fallback if read-back ever becomes too slow.
 
+## 3b. What a run is called once it arrives
+
+Since 2026-09-13 the operator types a **recording batch name** in the console and the folder is
+named after the science rather than after the acquisition box:
+
+    03_Data_Mouse/<user>/YYYYMMDD_<batch>_<CODE>/
+        YYYYMMDD_<batch>_<CODE>_<N>mice_data.xdat
+        YYYYMMDD_<batch>_<CODE>_<N>mice_timestamp.xdat
+        YYYYMMDD_<batch>_<CODE>_<N>mice.xdat.json
+        YYYYMMDD_<batch>_<CODE>_<N>mice.strip-report.json
+        run.json      who, which mice in which position, which channels
+        UPLOAD.json   what was verified and how
+        qc/           the feature cache, still under its ALLEGO name
+
+    03_Data_Mouse/andrea/20260925_HLBSSL_RSR/20260925_HLBSSL_RSR_8mice_data.xdat
+
+| part | where it comes from |
+|---|---|
+| `YYYYMMDD` | the date the recording **starts**, read from the uid Allego puts in the filename, which is already local. Never from `actual_start`, which is UTC |
+| `<batch>` | what the operator typed. Letters, digits, `-`, `_`, up to 32 characters — it is a directory name on a shared share |
+| `<CODE>` | `BSR` basal · `RSR` recovery · `SDR` sleep deprivation. From `recording_type_codes` in `config/users.yaml`, never hardcoded |
+| `<N>mice` | how many slots hold a mouse id |
+
+Four properties worth knowing before you rely on it:
+
+- **A blank batch name is fine.** The folder then keeps the old
+  `YYYY-MM-DD_<allego base>` form. Nothing in the pipeline requires a name.
+- **Mixed conditions in one run name all of them**, in config order:
+  `20260925_HLBSSL_BSR-SDR`. The rig records all four ports at once, so one run can hold a basal
+  animal and an sd animal, and picking a single code would file half the animals under a condition
+  they were not in.
+- **The rename happens on the NAS only.** The local stripped copy keeps its Allego name, because
+  the strip is resumable and idempotent on exactly that name. The trail back is intact without the
+  filename: `status.dataset_provenance` in the stripped sidecar carries the source base, its uid and
+  both source hashes, and `run.json` sits beside it.
+- **The QC bundle keeps its Allego name** inside `qc/`. Those features describe the full
+  262-channel **original**, not the stripped copy, and renaming them would invite the opposite reading.
+
+Same batch, same day, same condition twice ⇒ the second becomes `...-2`, and the file base carries
+the same suffix. The chosen name is then **frozen on the run**, so a retried or resumed upload lands
+in the folder it started in instead of stepping to `-3`.
+
 ## 4. Status vocabulary — a size check is not a verification
 
 `eeg-recorder/deploy/uploads.jsonl` records one line per file:
@@ -133,6 +175,18 @@ of the cache drop.
 | `VERIFIED` | bytes were read back **from the share with the cache dropped** and the SHA-256 matched |
 | `SIZE_ONLY` | the sizes agree and **nothing else was checked**. Never counted as done; reported separately |
 | `FAILED` | hash mismatch. The `.part` is left in place for inspection |
+
+> [!danger] A STALE `VERIFIED` ROW MAKES THE UPLOADER SKIP A REAL FILE
+> The manifest is keyed on `(folder/filename, size)`, and a file found `VERIFIED` there is **not
+> uploaded again**. So a row describing a file that is not actually on the NAS causes a later run to
+> ship nothing and report success. This is not hypothetical: on 2026-09-13 a test run wrote eight
+> such rows into the real manifest, because `manifest_load(path=MANIFEST)` bound the path as a
+> **default argument at import time** and overriding `nas_upload.MANIFEST` silently had no effect.
+> The rows were removed and the path is now late-bound and overridable with `EEG_UPLOAD_MANIFEST`.
+>
+> If you ever doubt the manifest, the check is cheap — every folder it names must exist on the share:
+>
+>     python3 -c "import json;print(sorted({json.loads(l)['rel'].split('/')[0] for l in open('eeg-recorder/deploy/uploads.jsonl')}))"
 
 > [!quote] Paper-ready
 > Each stripped recording is transferred to institutional network storage and verified by reading

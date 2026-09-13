@@ -10,8 +10,8 @@ status: active
 > **What this is.** A page you open in a browser on the recording computer. You pick your name, say
 > which mouse is in which position on the rig, and press start — or set a time for it to start by
 > itself. When the recording ends, the computer shrinks the file down to just your channels and
-> copies it into your folder on the lab's network storage, checking that the copy is perfect before
-> it says so.
+> copies it into your folder on the lab's network storage — under a name you chose, not the
+> acquisition software's — checking that the copy is perfect before it says so.
 >
 > **Why it exists.** Five people share one rig. Before this, starting a recording meant clicking in
 > the acquisition software, and nothing anywhere recorded who was recording, which animal was in
@@ -39,27 +39,61 @@ network.
    | `unipolar_lfp` | 24 + all 6 GPIO | `/18`–`/23` | **4, one per port** | **none — see 2.5** |
 
    The slot grid follows the preset, so `unipolar_lfp` shows **four** slots, not eight.
-3. **Fill in the occupied slots** — mouse ID and recording type (`basal`, `recovery`, `sd`). Leave
+3. **Type a recording batch name** — e.g. `HLBSSL`. This is what the folder on the NAS will be
+   called, so it is the field that decides whether anyone can find this run in six months. Letters,
+   digits, `-` and `_`, up to 32 characters. Leave it blank and the folder keeps Allego's own name,
+   as before. **The console shows the exact folder and file names under the slot grid as you type.**
+4. **Fill in the occupied slots** — mouse ID and recording type (`basal`, `recovery`, `sd`). Leave
    empty slots empty; **any number of mice from one up is normal**, in any positions, and section
    2.4 says exactly what that changes. Mouse IDs become part of a folder name, so letters, digits,
    `-` and `_` only.
-4. **Check the line under the grid.** It says exactly which channels will be kept and which folder
-   the data will land in, *before* anything happens. This is the one decision that cannot be undone
-   after the run.
-5. **Start now**, or set **Start at** and **Stop at** and press **Schedule**. Times are local, and
+5. **Check the two lines under the grid.** They say exactly which channels will be kept and what
+   the folder and files will be called, *before* anything happens. This is the one decision that
+   cannot be undone after the run.
+6. **Start now**, or set **Start at** and **Stop at** and press **Schedule**. Times are local, and
    the header shows the current **ZT** so you do not have to do the arithmetic. Default is the next
    09:00 (ZT0) running 24 h, which is the shape most runs here have.
 
 While recording, the page shows elapsed time, the file name, bytes on disk and when it will stop.
 Pressing **Stop recording** ends it and immediately queues the post-processing.
 
+### What your folder on the NAS will be called
+
+    03_Data_Mouse/andrea/20260925_HLBSSL_RSR/
+        20260925_HLBSSL_RSR_8mice_data.xdat
+        20260925_HLBSSL_RSR_8mice_timestamp.xdat
+        20260925_HLBSSL_RSR_8mice.xdat.json
+        20260925_HLBSSL_RSR_8mice.strip-report.json
+        run.json  UPLOAD.json  qc/
+
+| part | meaning |
+|---|---|
+| `20260925` | the date the recording **starts** — not the day you filled the form |
+| `HLBSSL` | your batch name |
+| `RSR` | the condition: `BSR` basal · `RSR` recovery · `SDR` sleep deprivation |
+| `8mice` | how many slots you filled in |
+
+> [!tip] Mixed conditions in one run get all their codes
+> `20260925_HLBSSL_BSR-SDR` if some mice are basal and some are sd. One run covers all four ports,
+> so this is normal, and naming only one condition would file the other animals under something
+> they were not in.
+
+> [!warning] The date follows the START, so the two buttons can disagree
+> **Start at** is pre-filled with the next 09:00. After 09:00 that is *tomorrow*, while **Start now**
+> would be dated *today*. When they differ the console shows both names, so you can see which button
+> gives which folder before you press one.
+
+Two runs of the same batch, same day, same condition ⇒ the second gets `-2`. Files keep their Allego
+names on this machine; only the NAS copy is renamed, and the stripped sidecar still records exactly
+which Allego file it came from.
+
 ### What happens after it stops, without anyone present
 
     QC bundle  →  strip to your channels  →  upload to your folder  →  verify
 
-Your data appears at `{SKIMNAS_ROOT}/<your name>/<date>_<recording>/` containing the stripped
-recording, the strip report, `run.json` (who, which mice, which channels) and `UPLOAD.json` (what
-was verified and how).
+Your data appears at `{SKIMNAS_ROOT}/<your name>/<YYYYMMDD>_<batch>_<CODE>/` containing the stripped
+recording under the same name, the strip report, `run.json` (who, which mice, which channels) and
+`UPLOAD.json` (what was verified and how).
 
 ## 2. Three things about this rig that surprise people
 

@@ -31,6 +31,20 @@ click past.** The old behaviour demanded a manual override on every unipolar run
 been connected to this rig, and `8mice_eeg_emg_ecg` has never gone through the console end
 to end.
 
+🔴 **A STALE `VERIFIED` ROW IN `eeg-recorder/deploy/uploads.jsonl` MAKES THE UPLOADER SKIP A
+REAL FILE.** The manifest is keyed on `(folder/filename, size)` and a VERIFIED row means "do
+not upload". On 2026-09-13 a test wrote 8 such rows for files never uploaded, because
+`manifest_load(path=MANIFEST)` bound the path as a DEFAULT ARGUMENT at import time and setting
+`nas_upload.MANIFEST` did nothing. Now late-bound + `EEG_UPLOAD_MANIFEST`. Check with:
+`python3 -c "import json;print(sorted({json.loads(l)['rel'].split('/')[0] for l in open('eeg-recorder/deploy/uploads.jsonl')}))"`
+— every folder it names must exist on the share.
+
+✅ **NAS folders are now named by the operator** (2026-09-13):
+`03_Data_Mouse/<user>/YYYYMMDD_<batch>_<BSR|RSR|SDR>/` with files
+`..._<N>mice_data.xdat`. Date = the START date, from the uid (already local). Mixed
+conditions join codes (`BSR-SDR`). Rename is **NAS-side only** — the local stripped copy keeps
+its Allego name, because the strip is idempotent on that name. Blank batch name = old layout.
+
 Full write-ups: vault `02-procedures/eeg-recording-console.md` §2.4–2.5,
 `02-procedures/installation/xdat-channel-stripping.md` §4b,
 `01-infrastructure/eeg-recorder/pipeline-architecture.md` §5 (defects 7 and 8).
