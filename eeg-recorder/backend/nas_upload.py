@@ -215,10 +215,20 @@ def sha256_uncached(path: Path) -> tuple[str, float]:
 # A size check is not a verification and the manifest must not let anyone believe
 # it was.
 
-MANIFEST = Path(__file__).resolve().parent.parent / "deploy" / "uploads.jsonl"
+# Overridable at RUN TIME, not just import time. `path: Path = MANIFEST` as a
+# default argument binds the value when the module is imported, so setting
+# `nas_upload.MANIFEST` afterwards silently had no effect -- which let a test run
+# write eight rows claiming files were VERIFIED on the real NAS when nothing had
+# been uploaded. A stale VERIFIED row is not cosmetic: the uploader SKIPS files it
+# finds there, so a later real run of the same name would have shipped nothing and
+# reported success.
+MANIFEST = Path(os.environ.get(
+    "EEG_UPLOAD_MANIFEST",
+    Path(__file__).resolve().parent.parent / "deploy" / "uploads.jsonl"))
 
 
-def manifest_load(path: Path = MANIFEST) -> dict:
+def manifest_load(path: Path | None = None) -> dict:
+    path = Path(path) if path else MANIFEST
     out: dict = {}
     if not path.exists():
         return out
@@ -234,7 +244,8 @@ def manifest_load(path: Path = MANIFEST) -> dict:
     return out
 
 
-def manifest_put(rec: dict, path: Path = MANIFEST) -> None:
+def manifest_put(rec: dict, path: Path | None = None) -> None:
+    path = Path(path) if path else MANIFEST
     path.parent.mkdir(parents=True, exist_ok=True)
     with open(path, "a") as fh:
         fh.write(json.dumps(rec) + "\n")
@@ -341,19 +352,52 @@ def upload_file(src: Path, dst: Path, *, resume: bool = True,
 # uploading a whole stripped recording
 # --------------------------------------------------------------------------- #
 
+def free_dir_name(user: str, stem: str, *, limit: int = 99) -> tuple[str, int]:
+    """`stem`, or `stem-2`, `stem-3`... whichever does not exist yet. (name, n).
+
+    Only ever called ONCE per run; the answer is frozen on the run record, because
+    a resumed upload must land in the folder it started in rather than stepping
+    to the next free name every time the NAS blinks.
+    """
+    require_nas()
+    base = user_dir(user)
+    for n in range(1, limit + 1):
+        cand = stem if n == 1 else f"{stem}-{n}"
+        if not (base / cand).exists():
+            return cand, n
+    raise UploadRefused(
+        f"{limit} folders already start with {stem!r} in {base}; refusing to add "
+        "another. Something is wrong with the batch name, not with the NAS.")
+
+
 def upload_recording(stripped_base: str | Path, user: str, *,
                      run_json: dict | None = None,
                      qc_bundle: Iterable[str | Path] = (),
+                     dest_name: str | None = None,
+                     file_base: str | None = None,
                      resume: bool = True, verify: bool = True,
                      progress: Callable[[str], None] | None = print) -> dict:
     """Upload one stripped recording into its owner's folder.
 
-    Layout:  03_Data_Mouse/<user>/<YYYY-MM-DD>_<base>/
-                 <base>_data.xdat  <base>_timestamp.xdat  <base>.xdat.json
-                 <base>.strip-report.json
+    Layout:  03_Data_Mouse/<user>/<dest_name>/
+                 <file_base>_data.xdat  <file_base>_timestamp.xdat
+                 <file_base>.xdat.json  <file_base>.strip-report.json
                  run.json            who, which mice, which channels
                  qc/...              the feature cache, if one was supplied
                  UPLOAD.json         what was verified, and how
+
+    `dest_name` and `file_base` come from `naming.run_names` -- the operator's
+    batch name, the date and the condition code. Both default to the Allego
+    names, which is what every folder uploaded before 2026-09-13 uses.
+
+    THE RENAME IS REMOTE ONLY. The local stripped copy keeps its Allego name so
+    that the strip stays resumable and idempotent on it. The trail back is intact
+    without the filename: the sidecar's `dataset_provenance` carries the source
+    base, its uid and both source hashes, and `run.json` sits in the same folder.
+
+    The QC bundle deliberately keeps ITS name. Those features were computed on
+    the full 262-channel original, not on the stripped copy, and naming them
+    after the stripped copy would invite someone to read them as its own.
 
     The QC bundle matters: stripping removes the in-file wire-free floor, so the
     cached features are the only surviving record of it. A stripped recording that
@@ -376,23 +420,32 @@ def upload_recording(stripped_base: str | Path, user: str, *,
     except Exception:
         start_iso = None
     start = local_date_from_base(name, start_iso)   # LOCAL date, not UTC
-    dest = user_dir(user) / f"{start}_{name}"
+    dest = user_dir(user) / (dest_name or f"{start}_{name}")
+    stem = file_base or name
+
+    def remote_name(p: Path) -> str:
+        """Local file name -> the name it takes on the NAS."""
+        return p.name.replace(name, stem, 1) if stem != name else p.name
+
     say(f"destination: {dest}")
+    if stem != name:
+        say(f"  files renamed {name}* -> {stem}*")
 
     results = []
     man = manifest_load()
     for p in trio + [base.parent / f"{name}.strip-report.json"]:
         if not p.exists():
             continue
-        key = (f"{dest.name}/{p.name}", p.stat().st_size)
+        rname = remote_name(p)
+        key = (f"{dest.name}/{rname}", p.stat().st_size)
         prior = man.get(key)
         if prior and prior.get("status") == "VERIFIED" and not p.name.endswith(".json"):
-            say(f"  skip (already VERIFIED in the manifest): {p.name}")
+            say(f"  skip (already VERIFIED in the manifest): {rname}")
             results.append(prior)
             continue
-        rec = upload_file(p, dest / p.name, resume=resume, verify=verify,
+        rec = upload_file(p, dest / rname, resume=resume, verify=verify,
                           progress=say)
-        rec.update(rel=f"{dest.name}/{p.name}", user=user,
+        rec.update(rel=f"{dest.name}/{rname}", user=user, local_name=p.name,
                    utc=datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
                    host=socket.gethostname(), tool=TOOL, version=TOOL_VERSION)
         manifest_put(rec)
@@ -414,7 +467,8 @@ def upload_recording(stripped_base: str | Path, user: str, *,
     weak = [r for r in results if r["status"] == "SIZE_ONLY"]
     summary = {
         "status": "VERIFIED" if not weak and verified else "PARTIAL",
-        "dest": str(dest), "user": user, "base": name,
+        "dest": str(dest), "user": user, "base": name, "file_base": stem,
+        "allego_base": name,
         "files_verified": len(verified), "files_size_only": len(weak),
         "bytes": sum(r.get("size", 0) for r in results),
         "qc_bundle_uploaded": bool(list(qc_bundle)),

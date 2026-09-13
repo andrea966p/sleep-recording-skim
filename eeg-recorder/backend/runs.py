@@ -157,6 +157,8 @@ CREATE TABLE IF NOT EXISTS runs (
     slots_json       TEXT NOT NULL,
     keep_labels_json TEXT NOT NULL,
     with_gpio        INTEGER NOT NULL DEFAULT 0,
+    batch_name       TEXT,
+    nas_dir          TEXT,
     note             TEXT,
     results_json     TEXT NOT NULL DEFAULT '{}',
     error            TEXT
@@ -195,6 +197,8 @@ class Run:
     base_path: str | None = None
     data_path: str | None = None
     dest_dir: str | None = None
+    batch_name: str | None = None       # what the operator typed; may be None
+    nas_dir: str | None = None          # the folder name, FROZEN at first upload
     note: str | None = None
     results: dict = field(default_factory=dict)
     error: str | None = None
@@ -223,6 +227,14 @@ class RunStore:
         self._lock = threading.RLock()
         with self._conn() as c:
             c.executescript(SCHEMA)
+            # Columns added after databases existed in the field. CREATE TABLE IF
+            # NOT EXISTS does nothing to a table that is already there, so an
+            # existing runs.db would keep the old shape and every read would
+            # raise. Additive only: no column is ever dropped or retyped here.
+            have = {r["name"] for r in c.execute("PRAGMA table_info(runs)")}
+            for col in ("batch_name", "nas_dir"):
+                if col not in have:
+                    c.execute(f"ALTER TABLE runs ADD COLUMN {col} TEXT")
 
     @contextmanager
     def _conn(self) -> Iterator[sqlite3.Connection]:
@@ -261,6 +273,7 @@ class RunStore:
             updated_utc=r["updated_utc"],
             slots=json.loads(r["slots_json"]),
             keep_labels=json.loads(r["keep_labels_json"]),
+            batch_name=r["batch_name"], nas_dir=r["nas_dir"],
             with_gpio=bool(r["with_gpio"]),
             scheduled_start=r["scheduled_start"], scheduled_stop=r["scheduled_stop"],
             actual_start=r["actual_start"], actual_stop=r["actual_stop"],
@@ -310,7 +323,7 @@ class RunStore:
     def create(self, *, owner: str, preset: str, slots: dict, keep_labels: list,
                with_gpio: bool = False, scheduled_start: str | None = None,
                scheduled_stop: str | None = None, note: str | None = None,
-               dest_dir: str | None = None) -> Run:
+               dest_dir: str | None = None, batch_name: str | None = None) -> Run:
         if not any(v.get("mouse_id") for v in slots.values()):
             raise RunError(
                 "a run with no occupied slot records nothing about which animal "
@@ -324,10 +337,11 @@ class RunStore:
             c.execute(
                 "INSERT INTO runs (run_id,state,owner,preset,created_utc,updated_utc,"
                 "scheduled_start,scheduled_stop,slots_json,keep_labels_json,with_gpio,"
-                "note,dest_dir,results_json) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,'{}')",
+                "note,dest_dir,batch_name,results_json) "
+                "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,'{}')",
                 (run_id, state, owner, preset, now, now, scheduled_start,
                  scheduled_stop, json.dumps(slots), json.dumps(keep_labels),
-                 int(with_gpio), note, dest_dir))
+                 int(with_gpio), note, dest_dir, batch_name))
             c.execute("INSERT INTO events (run_id,utc,from_state,to_state,detail) "
                       "VALUES (?,?,?,?,?)",
                       (run_id, now, None, state, f"created by {owner}"))

@@ -40,6 +40,12 @@ from typing import Callable
 
 import runs as R
 import nas_upload
+import naming
+
+
+def _cfg():
+    import presets as _P
+    return _P.load()
 
 ANALYSIS = Path(os.environ.get(
     "EEG_ANALYSIS_DIR",
@@ -418,12 +424,40 @@ class Worker:
         if not dst:
             return self.store.fail(run.run_id, "UPLOAD",
                                    "no stripped output recorded for this run")
-        self.store.transition(run.run_id, R.UPLOADING, detail="uploading")
+        # THE FOLDER NAME IS CHOSEN ONCE AND THEN FROZEN ON THE RUN. A resumed
+        # upload must land in the folder it started in; recomputing the free name
+        # every attempt would walk a half-uploaded run into `-2`, `-3`, ... and
+        # leave partial copies scattered behind it.
+        try:
+            names = naming.run_names(run, _cfg())
+            if run.nas_dir:
+                folder = run.nas_dir
+                stem = names["file_base"]
+                if names["renamed"]:
+                    # keep the file base consistent with the frozen folder,
+                    # including any collision suffix it picked up
+                    stem = f"{folder}_{naming.n_mice(run.slots)}mice"
+            elif names["renamed"]:
+                folder, n = nas_upload.free_dir_name(run.owner, names["folder"])
+                stem = f"{folder}_{naming.n_mice(run.slots)}mice"
+                if n > 1:
+                    self.log(f"{run.run_id}: {names['folder']!r} already exists on "
+                             f"the NAS; using {folder!r}")
+                run = self.store.transition(run.run_id, run.state, nas_dir=folder,
+                                            detail=f"NAS folder reserved: {folder}")
+            else:
+                folder, stem = names["folder"], names["file_base"]
+        except (naming.NamingError, nas_upload.UploadRefused) as exc:
+            self.log(f"{run.run_id}: cannot name the destination -- {exc}")
+            return self.store.fail(run.run_id, "UPLOAD", str(exc))
+
+        self.store.transition(run.run_id, R.UPLOADING, detail=f"uploading to {folder}")
         qc = run.results.get("qc_bundle")
         try:
             summary = nas_upload.upload_recording(
                 dst, run.owner, run_json=run.to_dict(),
-                qc_bundle=[qc] if qc else (), progress=self.log)
+                qc_bundle=[qc] if qc else (),
+                dest_name=folder, file_base=stem, progress=self.log)
         except nas_upload.UploadRefused as exc:
             self.log(f"{run.run_id}: upload refused ({exc}); back to UPLOAD_PENDING")
             return self.store.transition(run.run_id, R.UPLOAD_PENDING,

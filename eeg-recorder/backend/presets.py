@@ -106,6 +106,15 @@ class Config:
     recording_types: tuple
     nas_share: str
     nas_root: str
+    recording_type_codes: dict = field(default_factory=dict)
+
+    def type_code(self, rtype: str) -> str:
+        """The three-letter code a recording type contributes to a folder name."""
+        if rtype not in self.recording_type_codes:
+            raise PresetError(
+                f"recording type {rtype!r} has no code in `recording_type_codes`; "
+                f"known types are {', '.join(self.recording_type_codes)}")
+        return self.recording_type_codes[rtype]
 
     def preset(self, name: str) -> Preset:
         if name not in self.presets:
@@ -168,17 +177,35 @@ def load(path: Path | str | None = None) -> Config:
             raise PresetError(
                 f"user {u!r} names default_preset {dp!r}, which is not defined")
 
+    types = tuple(raw.get("recording_types") or ())
+    codes = {k: str(v).strip() for k, v in (raw.get("recording_type_codes") or {}).items()}
+    # A type with no code would reach the NAS naming rule and produce a folder
+    # named after nothing. Refuse at load, where the person editing the config is
+    # still looking at it, rather than at 09:00 on the morning of a run.
+    missing = [t for t in types if not codes.get(t)]
+    if missing:
+        raise PresetError(
+            f"recording type(s) {missing} have no entry in `recording_type_codes`; "
+            "every type must have one, because it becomes part of the NAS folder name")
+    unknown = [t for t in codes if t not in types]
+    if unknown:
+        raise PresetError(
+            f"`recording_type_codes` names {unknown}, which are not in "
+            f"`recording_types` ({', '.join(types)})")
+
     nas = raw.get("nas") or {}
     return Config(users=users, presets=presets,
-                  recording_types=tuple(raw.get("recording_types") or ()),
+                  recording_types=types,
                   nas_share=nas.get("share", "SKIM_DATA"),
-                  nas_root=nas.get("root", "03_Data_Mouse"))
+                  nas_root=nas.get("root", "03_Data_Mouse"),
+                  recording_type_codes=codes)
 
 
 if __name__ == "__main__":
     cfg = load()
     print(f"users:   {', '.join(cfg.users)}")
-    print(f"types:   {', '.join(cfg.recording_types)}")
+    print(f"types:   " + ", ".join(f"{t} -> {cfg.type_code(t)}"
+                                   for t in cfg.recording_types))
     print(f"nas:     {cfg.nas_share}/{cfg.nas_root}")
     for name, p in cfg.presets.items():
         labs = p.labels()

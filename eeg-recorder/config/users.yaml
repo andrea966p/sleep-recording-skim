@@ -20,6 +20,15 @@ nas:
 
 recording_types: [basal, recovery, sd]
 
+# The three-letter code each recording type contributes to a NAS folder name.
+# `20260925_HLBSSL_RSR` = 25 Sep 2026, batch HLBSSL, recovery sleep recording.
+# Every type listed above must have a code here or the config is refused: a type
+# with no code would silently produce a folder named after nothing.
+recording_type_codes:
+  basal:    BSR          # basal sleep recording
+  recovery: RSR          # recovery sleep recording
+  sd:       SDR          # sleep deprivation recording
+
 users:
   andrea:  {default_preset: 8mice_eeg_emg}
   diane:   {default_preset: 8mice_eeg_emg}

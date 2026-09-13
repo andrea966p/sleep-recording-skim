@@ -52,6 +52,9 @@
         <select id="owner"></select></div>
       <div><label for="preset">Rig layout</label>
         <select id="preset"></select></div>
+      <div><label for="batch">Recording batch name</label>
+        <input type="text" id="batch" placeholder="HLBSSL" maxlength="32"
+               autocomplete="off" spellcheck="false"></div>
       <div><label for="start">Start at <span id="start-hint" style="color:var(--faint)"></span></label>
         <input type="datetime-local" id="start" step="1"></div>
       <div><label for="stop">Stop at</label>
@@ -66,6 +69,7 @@
     <div class="slots" id="slots" style="margin-top:12px"></div>
 
     <div class="note" id="keep-note"></div>
+    <div class="note" id="name-note"></div>
     <div class="warnbox" style="margin-top:12px">
       <b>Allego records every channel, always.</b> The selection below does not change
       what is recorded — it decides which channels survive into the stripped copy that

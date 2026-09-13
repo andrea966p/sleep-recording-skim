@@ -41,6 +41,7 @@ import nas_upload
 import postprocess
 import presets as P
 import runs as R
+import naming
 import scheduler as SCH
 import storage as ST
 
@@ -149,6 +150,48 @@ def _validate_slots(preset: P.Preset, slots: dict) -> dict:
     return clean
 
 
+@app.post("/api/naming/preview")
+def api_naming_preview():
+    """What the NAS folder and files will be called, BEFORE anything is recorded.
+
+    The console shows this under the slot grid. A name people only discover after
+    a 24 h run is a name they cannot fix.
+    """
+    body = request.get_json(silent=True) or {}
+    from datetime import datetime
+    today = datetime.now().astimezone().strftime("%Y%m%d")
+    when = str(body.get("date") or "").strip()
+    source = "explicit"
+    if not when:
+        # The date the recording will CARRY, which is the date it STARTS -- not
+        # the date this form was filled in. The console pre-fills Start at with
+        # the next 09:00, so after 09:00 the scheduled date is TOMORROW while a
+        # "Start now" run would be dated today. Both answers are right for their
+        # button; saying which one this is keeps the preview from promising a
+        # name the uploader will not produce.
+        st = body.get("start_at")
+        try:
+            when = SCH.parse_instant(st).strftime("%Y%m%d") if st else today
+            source = "scheduled start" if st else "today"
+        except Exception:
+            when, source = today, "today"
+    try:
+        pname = body.get("preset") or ""
+        preset = cfg.preset(pname) if pname else None
+        slots = _validate_slots(preset, body.get("slots")) if preset else {}
+        out = naming.preview(batch_name=body.get("batch_name"), slots=slots,
+                             cfg=cfg, date_yyyymmdd=when)
+    except (P.PresetError, naming.NamingError, ValueError) as exc:
+        return _err(exc)
+    out["user"] = body.get("owner")
+    out["date"] = when
+    out["date_source"] = source
+    out["today"] = today
+    if out.get("folder") and when != today and source == "scheduled start":
+        out["if_started_now"] = out["folder"].replace(when, today, 1)
+    return jsonify(out)
+
+
 @app.post("/api/runs")
 def api_create_run():
     body = request.get_json(silent=True) or {}
@@ -165,7 +208,12 @@ def api_create_run():
         return _err(exc)
 
     try:
-        run = store.create(owner=owner, preset=pname, slots=slots,
+        batch = naming.clean_batch(body.get("batch_name"))
+    except naming.NamingError as exc:
+        return _err(exc)
+
+    try:
+        run = store.create(owner=owner, preset=pname, slots=slots, batch_name=batch,
                            keep_labels=labels, with_gpio=preset.with_gpio,
                            scheduled_start=body.get("start_at"),
                            scheduled_stop=body.get("stop_at"),

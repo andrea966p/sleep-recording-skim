@@ -294,6 +294,53 @@ def t_qc_none_preset_needs_no_override(tmp):
         f"a judgeable preset walked through the qc:none door ({held.state})"
 
 
+def t_frozen_nas_dir_is_reused_on_retry(tmp):
+    """A retried upload goes back into the SAME folder, and never asks for a new one.
+
+    The collision rule picks the next free name (`...-2`, `...-3`). If that ran on
+    every attempt, a run whose upload was interrupted -- NAS asleep, service
+    restarted, half the bytes there -- would walk into a fresh folder each time
+    and scatter partial copies behind it, each looking like a separate recording.
+    So the name is resolved once and frozen on the run.
+    """
+    import postprocess as PP
+    s = mkstore(tmp)
+    r = s.create(owner="andrea", preset="8mice_eeg_emg",
+                 slots={"A1": {"mouse_id": "M1", "recording_type": "recovery"}},
+                 keep_labels=["A/1", "A/2"], batch_name="HLBSSL", dest_dir=str(tmp))
+    for st in (R.SCHEDULED, R.STARTING, R.RECORDING, R.STOPPING, R.STOPPED, R.QC,
+               R.STRIPPING, R.STRIPPED):
+        s.transition(r.run_id, st)
+    r = s.transition(r.run_id, R.UPLOAD_PENDING,
+                     base_name="allego_0__uid0925-09-00-01",
+                     nas_dir="20260925_HLBSSL_RSR-2",          # already frozen
+                     results={"strip": {"dst_base": str(Path(tmp) / "x")}})
+
+    seen = {}
+    real = (PP.nas_upload.nas_status, PP.nas_upload.upload_recording,
+            PP.nas_upload.free_dir_name)
+
+    def boom(*a, **k):
+        raise AssertionError("free_dir_name called for a run that already has a folder")
+
+    try:
+        PP.nas_upload.nas_status = lambda: {"ok": True}
+        PP.nas_upload.free_dir_name = boom
+        PP.nas_upload.upload_recording = lambda *a, **k: (
+            seen.update(k), {"status": "VERIFIED", "dest": k["dest_name"],
+                             "files_size_only": 0})[-1]
+        w = PP.Worker(s, on_event=lambda m: None)
+        out = w._upload(s.get(r.run_id))
+    finally:
+        (PP.nas_upload.nas_status, PP.nas_upload.upload_recording,
+         PP.nas_upload.free_dir_name) = real
+
+    assert seen["dest_name"] == "20260925_HLBSSL_RSR-2", seen
+    # the file base must carry the SAME suffix, or two runs share file names
+    assert seen["file_base"] == "20260925_HLBSSL_RSR-2_1mice", seen
+    assert out.state == R.DONE, out.state
+
+
 def t_upload_pending_is_a_resting_state(tmp):
     """A NAS outage must leave runs waiting, not failed."""
     s = mkstore(tmp)
@@ -492,6 +539,7 @@ def main() -> int:
                t_upload_pending_is_a_resting_state,
                t_retry_targets_are_legal, t_qc_override_is_per_run_not_global,
                t_qc_scores_only_occupied_slots, t_qc_none_preset_needs_no_override,
+               t_frozen_nas_dir_is_reused_on_retry,
                t_start_on_time, t_missed_start_fails_loudly, t_second_run_blocked,
                t_stop_fires_even_when_late, t_start_failure_is_recorded,
                t_scheduled_stop_hands_off_to_postprocessing):

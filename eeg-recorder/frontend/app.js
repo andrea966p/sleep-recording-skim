@@ -123,6 +123,10 @@ async function loadPreset(name) {
       div.classList.toggle('on', !!inp.value.trim());
       renderKeepNote();
     });
+    // The recording type is part of the NAS folder name (BSR/RSR/SDR), so a
+    // change to it changes where the data lands. Without this the preview would
+    // keep showing the previous condition, which is worse than showing none.
+    div.querySelector('select').addEventListener('change', renderKeepNote);
     slots.appendChild(div);
   }
   $('#preset-note').textContent =
@@ -165,6 +169,45 @@ function renderKeepNote() {
     + `${slots.length === 1 ? 'mouse' : 'mice'} — going to `
     + `<span class="mono">03_Data_Mouse/${owner}/</span>: `
     + `<span class="mono">${labels.join(', ')}</span>`;
+  renderNameNote();
+}
+
+/* The folder and file names this run will carry on the NAS, shown BEFORE it
+   starts. Asked of the server rather than rebuilt here: one rule, one place. A
+   second copy of a naming rule in the UI would drift from the one that actually
+   writes the folder, and the drift would only show up on the NAS. */
+let nameSeq = 0;
+async function renderNameNote() {
+  const el = $('#name-note');
+  const batch = $('#batch').value.trim();
+  const owner = $('#owner').value;
+  if (!batch || !owner || !PRESET) {
+    el.innerHTML = batch ? '' :
+      '<span style="color:var(--faint)">No batch name: the folder keeps '
+      + 'Allego\u2019s own name, as before.</span>';
+    return;
+  }
+  const seq = ++nameSeq;
+  try {
+    const r = await post('/api/naming/preview', {
+      owner, preset: $('#preset').value, slots: gatherSlots(),
+      batch_name: batch, start_at: $('#start').value || null});
+    if (seq !== nameSeq) return;          // a later keystroke already answered
+    el.innerHTML = `Will arrive as <span class="mono">03_Data_Mouse/${owner}/`
+      + `<b>${r.folder}</b>/</span> holding <span class="mono">${r.file_base}`
+      + `_data.xdat</span>, <span class="mono">${r.file_base}_timestamp.xdat</span> `
+      + `and <span class="mono">${r.file_base}.xdat.json</span>`
+      // The folder is dated by the day the recording STARTS. After 09:00 the
+      // pre-filled Start at is tomorrow, so the two buttons produce two
+      // different dates and the preview must not silently show one of them.
+      + (r.if_started_now
+          ? ` — dated by the scheduled start. <b>Start now</b> instead and it `
+            + `would be <span class="mono">${r.if_started_now}</span>.`
+          : '');
+  } catch (e) {
+    if (seq !== nameSeq) return;
+    el.innerHTML = `<span style="color:var(--bad)">${e.message}</span>`;
+  }
 }
 
 /* ---------- live panel ---------- */
@@ -269,7 +312,8 @@ async function createRun(schedule) {
   if (!Object.keys(slots).length) {
     toast('Enter at least one mouse ID first.', 'bad'); return null;
   }
-  const body = {owner: $('#owner').value, preset: $('#preset').value, slots};
+  const body = {owner: $('#owner').value, preset: $('#preset').value, slots,
+                batch_name: $('#batch').value.trim()};
   if (schedule) {
     if (!$('#start').value) { toast('Pick a start time.', 'bad'); return null; }
     body.start_at = $('#start').value;
@@ -313,6 +357,16 @@ $('#btn-stop').onclick = async () => {
     refresh();
   } catch (e) { toast(e.message, 'bad'); }
 };
+
+// Debounced: one request per pause in typing, not one per keystroke.
+let batchTimer = null;
+$('#batch').addEventListener('input', () => {
+  clearTimeout(batchTimer);
+  batchTimer = setTimeout(renderNameNote, 250);
+});
+// The date in the folder name is the date the recording will CARRY, so changing
+// the scheduled start changes it.
+$('#start').addEventListener('change', renderNameNote);
 
 $('#preset').onchange = e => loadPreset(e.target.value);
 $('#owner').onchange = e => {
