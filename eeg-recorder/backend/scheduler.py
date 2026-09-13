@@ -76,11 +76,20 @@ class Scheduler:
 
     def __init__(self, store: R.RunStore, *, dest_dir: str | Path,
                  on_event: Callable[[str], None] | None = None,
+                 on_stopped: Callable[[str], None] | None = None,
                  min_free_gb: float = 150.0):
         self.store = store
         self.dest_dir = Path(dest_dir)
         self.min_free_gb = min_free_gb
         self.log = on_event or (lambda m: print(f"[scheduler] {m}", flush=True))
+        # Called with a run_id once a recording has stopped, by EITHER path.
+        # Without this a scheduled stop halts the rig and then strands the run at
+        # STOPPED forever: the post-processing worker only ever learned about a
+        # run from the HTTP stop endpoint, so an unattended stop never reached QC,
+        # strip or upload until the service happened to restart. Found on the
+        # first scheduled run on the real rig, 2026-09-13, which is what a bench
+        # test is for.
+        self.on_stopped = on_stopped or (lambda _run_id: None)
         self._stop = threading.Event()
         self._thread: threading.Thread | None = None
         self._confirming: set[str] = set()
@@ -137,6 +146,7 @@ class Scheduler:
                     actual_stop=R.utcnow(),
                     results={"stop": res, "stop_late_s": round(late, 1)})
                 self.log(f"{run.run_id}: STOPPED")
+                self.on_stopped(run.run_id)      # hand to QC -> strip -> upload
             except Exception as exc:
                 self.store.fail(run.run_id, "STOP", f"{type(exc).__name__}: {exc}")
                 self.log(f"{run.run_id}: STOP FAILED -- {exc}. The rig may still "
@@ -260,5 +270,7 @@ class Scheduler:
         except Exception as exc:
             self.store.fail(run_id, "STOP", f"{type(exc).__name__}: {exc}")
             raise
-        return self.store.transition(run_id, R.STOPPED, detail="stopped manually",
-                                     actual_stop=R.utcnow(), results={"stop": res})
+        out = self.store.transition(run_id, R.STOPPED, detail="stopped manually",
+                                    actual_stop=R.utcnow(), results={"stop": res})
+        self.on_stopped(run_id)                  # same handoff as the scheduled path
+        return out

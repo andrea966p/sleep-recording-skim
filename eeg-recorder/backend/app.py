@@ -59,8 +59,11 @@ SAFE = re.compile(r"^[A-Za-z0-9_-]{1,32}$")
 app = Flask(__name__, static_folder=None)
 cfg = P.load()
 store = R.RunStore()
-sched = SCH.Scheduler(store, dest_dir=RAW_ROOT)
 worker = postprocess.Worker(store)
+# The scheduler hands a stopped run straight to the post-processing worker. Both
+# stop paths -- scheduled and manual -- go through this one callback, so an
+# unattended stop cannot silently skip QC, strip and upload.
+sched = SCH.Scheduler(store, dest_dir=RAW_ROOT, on_stopped=lambda rid: worker.submit(rid))
 
 
 def _err(msg: str, code: int = 400):
@@ -211,7 +214,8 @@ def api_stop(run_id):
         return _err(exc, 409)
     except Exception as exc:
         return _err(f"{type(exc).__name__}: {exc}", 500)
-    worker.submit(run_id)            # hand straight to QC -> strip -> upload
+    # No worker.submit() here: sched.stop_now() already fired the on_stopped
+    # callback. One handoff, one code path, no double submission.
     return jsonify(run.to_dict())
 
 

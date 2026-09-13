@@ -19,3 +19,9 @@ venv/
 
 # Stray runtime log written by the radiens client when allegoserver is unreachable
 radiens.log
+
+# Cards generated from an auto-generated cohort manifest (auto-<run_id>). They
+# are reproducible from the feature cache in seconds and are named after a run
+# id rather than a cohort, so they are working output, not a record. A curated
+# cohort (cohorts/<NAME>.yaml) and its cards ARE versioned.
+cards/out/auto-*/

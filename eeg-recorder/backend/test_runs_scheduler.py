@@ -283,6 +283,36 @@ def t_stop_fires_even_when_late(tmp):
     assert r.results.get("stop_late_s", 0) > 3600
 
 
+def t_scheduled_stop_hands_off_to_postprocessing(tmp):
+    """A SCHEDULED stop must enqueue the run, exactly like a manual one.
+
+    THE TEST THAT WAS MISSING. The worker only ever learned about a run from the
+    HTTP stop endpoint, so an unattended scheduled stop halted the rig and then
+    stranded the run at STOPPED -- no QC, no strip, no upload -- until the
+    service happened to restart. Found on the first scheduled run on the real
+    rig, 2026-09-13. Every stop path must go through on_stopped.
+    """
+    s = mkstore(tmp); fake = FakeAllego()
+    allego.start, allego.stop, allego.confirm_growing = fake.start, fake.stop, fake.confirm_growing
+    handed: list[str] = []
+    sch = S.Scheduler(s, dest_dir="/tmp/fake-dest", on_event=lambda m: None,
+                      on_stopped=handed.append)
+    now = datetime.now().astimezone()
+    r = mkrun(s, start=iso(now - timedelta(seconds=5)),
+              stop=iso(now - timedelta(seconds=1)))
+    sch.tick(now)          # start
+    sch.tick(now)          # scheduled stop
+    assert s.get(r.run_id).state == R.STOPPED, s.get(r.run_id).state
+    assert handed == [r.run_id], f"scheduled stop did not hand off: {handed}"
+
+    # and the manual path must hand off through the same callback
+    handed.clear()
+    r2 = mkrun(s)
+    sch.start_now(r2.run_id)
+    sch.stop_now(r2.run_id)
+    assert handed == [r2.run_id], f"manual stop did not hand off: {handed}"
+
+
 def t_start_failure_is_recorded(tmp):
     s = mkstore(tmp); fake = FakeAllego(); fake.fail_start = True
     allego.start, allego.stop, allego.confirm_growing = fake.start, fake.stop, fake.confirm_growing
@@ -360,7 +390,8 @@ def main() -> int:
                t_upload_pending_is_a_resting_state,
                t_retry_targets_are_legal, t_qc_override_is_per_run_not_global,
                t_start_on_time, t_missed_start_fails_loudly, t_second_run_blocked,
-               t_stop_fires_even_when_late, t_start_failure_is_recorded):
+               t_stop_fires_even_when_late, t_start_failure_is_recorded,
+               t_scheduled_stop_hands_off_to_postprocessing):
         d = tempfile.mkdtemp(dir=tmp)
         check(fn.__name__, lambda fn=fn, d=d: fn(d))
     print("\nMUST REFUSE")
