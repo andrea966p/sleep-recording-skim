@@ -189,7 +189,9 @@ State lives at `{RECORDER_STATE}/runs.db`; upload bookkeeping at
 
 ## 5. Every defect this system has had, and the rule it produced
 
-All four were found by **running it**, not by testing it. That is the single most useful fact
+Six of the eight were found by **running it**, not by testing it. The last two were found by
+asking one question nobody had asked — *what does this do with four mice instead of eight?* —
+which is the cheaper of the two methods and the one that scales. Both facts are worth keeping
 on this page.
 
 | # | Defect | Rule it produced |
@@ -200,6 +202,8 @@ on this page.
 | 4 | Gate B refused a 90 GB strip over a single 1 ms blip on an unconnected input | **count the evidence; "not constant" cannot tell a signal from a speck** |
 | 5 | a *scheduled* stop halted the rig and then stranded the run — `worker.submit` existed only on the HTTP endpoint | **every path that ends a recording goes through one handoff** |
 | 6 | dates came from UTC on a rig that runs on KST, filing a 09-12 recording as 09-11 | **the uid in the filename is already local; use it** |
+| 7 | a four-mouse run was graded on **eight** positions: `cards/ladder.py` falls back to `spec.positions()`, so five cards came back labelled `UNKNOWN@<slot>` and three of those read **PASS at rung 2** | **grade what the operator filled in, not what the layout could hold** — an empty slot's card is built from a floating amplifier input, and `UNKNOWN@B2 PASS` reads like an animal somebody forgot to name |
+| 8 | `unipolar_lfp` could not finish the pipeline *at all*: no floor model describes its sites, so the chain asked for a manual override on **every** run | **a guard that can never be satisfied is a guard people learn to click past** — declare "no criterion applies" in the config, and keep it distinguishable from "a person waived the check" |
 
 > [!quote] Paper-ready
 > Acquisition is controlled by a local service that records, for each run, the responsible
@@ -219,6 +223,13 @@ on this page.
 - **No unattended overnight run has completed yet.** Scheduling is verified on a 9-minute
   bench run (2026-09-13): started 3 s after the instant, stopped 0.5 s late, full chain
   afterwards. A real overnight is the next step.
+- **`unipolar_lfp` has never recorded anything.** Its label→index resolution and its strip are
+  proven against the one real 134-channel file on disk (2026-09-13: 30 channels out, gate A
+  exact), but no unipolar headstage has ever been connected to this rig, so nothing has
+  exercised it from a live amplifier. It also produces **no QC bundle by design** — see
+  defect 8 — so a unipolar recording carries no quality verdict from this project at all.
+- **`8mice_eeg_emg_ecg` has never been run through the console.** The strip is proven on a
+  real three-role recording; start→stop→upload for it is not.
 - **The console does not know whether electrodes are connected.** It reports that bytes are
   landing. [[02-procedures/pre-flight-connection-screen]] still gates any recording whose
   timepoint dies with the animals.

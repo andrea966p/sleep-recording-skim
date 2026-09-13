@@ -32,15 +32,17 @@ network.
 1. **Pick your name.** There is no default, on purpose — see section 2.3.
 2. **Pick the rig layout.** It fills in from your name, but change it if today is different:
 
-   | preset | channels | sites per port | animals |
-   |---|---|---|---|
-   | `8mice_eeg_emg` | 16 | `/1 /2 /33 /34` | 8, two per port |
-   | `8mice_eeg_emg_ecg` | 24 | `/1 /2 /3 /33 /34 /35` | 8, two per port |
-   | `unipolar_lfp` | 24 + all 6 GPIO | `/18`–`/23` | **4, one per port** |
+   | preset | channels | sites per port | animals | QC bundle |
+   |---|---|---|---|---|
+   | `8mice_eeg_emg` | 16 | `/1 /2 /33 /34` | 8, two per port | yes |
+   | `8mice_eeg_emg_ecg` | 24 | `/1 /2 /3 /33 /34 /35` | 8, two per port | yes |
+   | `unipolar_lfp` | 24 + all 6 GPIO | `/18`–`/23` | **4, one per port** | **none — see 2.5** |
 
    The slot grid follows the preset, so `unipolar_lfp` shows **four** slots, not eight.
 3. **Fill in the occupied slots** — mouse ID and recording type (`basal`, `recovery`, `sd`). Leave
-   empty slots empty. Mouse IDs become part of a folder name, so letters, digits, `-` and `_` only.
+   empty slots empty; **any number of mice from one up is normal**, in any positions, and section
+   2.4 says exactly what that changes. Mouse IDs become part of a folder name, so letters, digits,
+   `-` and `_` only.
 4. **Check the line under the grid.** It says exactly which channels will be kept and which folder
    the data will land in, *before* anything happens. This is the one decision that cannot be undone
    after the run.
@@ -95,6 +97,43 @@ was verified and how).
 And there is **no default name in the owner dropdown**. It is the one field nobody should be able to
 get wrong by not looking: a pre-selected name is how one person's run ends up in another person's
 folder. Buttons stay disabled, with the reason shown, until a name is chosen.
+
+### 2.4 Fewer mice than slots is ordinary, and nothing has to be told twice
+
+Put mice in whichever positions you are using and leave the rest blank. A slot with no mouse ID is
+simply not part of the run:
+
+- **Only your channels are kept.** Three mice in `A1`, `C2`, `D1` gives a six-channel file, not a
+  sixteen-channel one with ten empty columns. Measured on a real recording 2026-09-13 — bit-exact,
+  and the stripped copy reads back as exactly `A/1 A/2 C/33 C/34 D/1 D/2`.
+- **Only your animals are graded.** Quality control runs on the positions you filled in.
+
+> [!warning] THIS WAS WRONG UNTIL 2026-09-13 AND THE OUTPUT LOOKED PLAUSIBLE
+> Before that date, quality control graded **all eight positions regardless**, so a four-mouse run
+> came back with four extra cards named `UNKNOWN@B2` and similar — and three such cards read
+> **PASS at rung 2**. Those cards are built from amplifier inputs with nothing plugged into them.
+> If you have a QC bundle produced before 2026-09-13 for a partially loaded rig, **ignore every
+> `UNKNOWN@` row in it**; they are not animals somebody forgot to name.
+
+The one thing that is *not* free: the empty slots' channels are still recorded (§2.1) and still
+occupy disk at the full rate. A one-mouse run costs the same 90 GB/day as an eight-mouse run.
+
+### 2.5 `unipolar_lfp` produces no quality verdict, by design
+
+This project judges every channel against **wire-free amplifier inputs recorded in the same file** —
+sites `/3`–`/16` and `/35`–`/48` on a 64-channel chip. `unipolar_lfp` records `/18`–`/23` on
+32-channel ports, and that floor model simply does not describe it. Computing a floor for it anyway
+would measure the animals against the wrong control sites, which is worse than computing none.
+
+So the preset declares `qc: none`, the console says so under the slot grid **before you start**, and
+the run record carries `qc_not_applicable` — deliberately a different mark from `qc_bundle_skipped`,
+which means a person waived a check that *was* possible. A unipolar recording reaches the NAS with
+no quality verdict from this project attached. That is a property of the layout, not a failure of
+the run.
+
+> Until 2026-09-13 this instead demanded a manual override on **every** unipolar run. That is worse
+> than useless: a guard that can never be satisfied is a guard people learn to click past, including
+> on the runs where it is load-bearing.
 
 ## 3. Scheduling rules
 

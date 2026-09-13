@@ -158,6 +158,33 @@ Failure renames the output to `<dst>.REJECTED.<utc>.*` so it can never be mistak
   (`allego_0__uid0829-08-34-39` still claims to be live ten days on). The flag is reported separately
   as a **crash marker**.
 
+## 4b. What has actually been stripped, on real files
+
+Every row below is a completed run of the tool against a recording on this rig, not a description
+of what it should do. "Independent" means the checksum was recomputed outside the tool
+(`cat <data> <timestamp> | sha256sum`) and compared with the sidecar the tool wrote — a gate must
+not be its own witness.
+
+| date | source | layout | kept | result |
+|---|---|---|---|---|
+| 2026-09-12 | 24 h, 262 ch | `8mice_eeg_emg`, 8 mice | 16 | 90.8 → 6.24 GB, gate A exact, uploaded VERIFIED |
+| 2026-09-13 | 83 k samples, 262 ch | `8mice_eeg_emg`, **3 mice in `A1 C2 D1`** | 6 | exact; reads back as exactly those six labels |
+| 2026-09-13 | 83 k samples, 262 ch | `8mice_eeg_emg_ecg`, **4 mice** | 12 | exact; `/3` and `/35` resolve correctly |
+| 2026-09-13 | 59.2 h, 262 ch | `8mice_eeg_emg_ecg`, 8 mice | 24 | dry run only — 225 → 22.17 GB, and all 24 match the operator's own Allego selection |
+| 2026-09-13 | **30 h, 134 ch** | `unipolar_lfp`, 4 animals, **GPIO kept** | 30 | 58.75 → **13.82 GB**, gate A exact over 107,987,328 samples, checksum confirmed independently |
+
+The last row is the one that matters for the format: **134 channels with 32-channel ports**, where
+index 160 does not exist and index 128 is an aux channel rather than an electrode. It is the reason
+presets are written as site labels and resolved per file, and it is now demonstrated end to end
+rather than argued. Kept channels came out as `A/18`–`D/23` plus all six GPIO, `signals` recounted
+to `{pri: 24, aux: 2, din: 2, dout: 2, total: 30}`, integrity `INTACT`.
+
+⚠️ **No unipolar headstage has ever been connected to this rig.** The file above was recorded with
+that preset selected, so the format work is real, but nothing has yet exercised the preset from a
+live amplifier. And a `unipolar_lfp` recording carries **no QC bundle at all** — no wire-free floor
+exists for `/18`–`/23` on a 32-channel port, so this project's ladder does not describe it. See
+[[02-procedures/eeg-recording-console]] §2.5.
+
 ## 5. Tests
 
 `eeg-emg-analysis/tests/test_strip_channels.py` — 27 checks, **15 of them refusals**, including a
