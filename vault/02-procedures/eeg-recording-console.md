@@ -23,6 +23,11 @@ status: active
 > three things about this rig that are surprising and worth knowing before you trust what you see.
 > Section 5 is what to do when something looks wrong. Background: [[01-infrastructure/system-overview]].
 
+> [!tip] The page will not load, or something looks down?
+> [[02-procedures/starting-the-rig-after-a-restart]] — one command tells you what is up and what is not.
+> Short version: the console, the NAS mount and the network start themselves and survive a desktop crash;
+> the Allego GUI is the only thing a human launches.
+
 **Open it at <http://127.0.0.1:8600>** on the recording computer. It is bound to localhost only —
 this drives amplifiers with animals attached, so it is deliberately not reachable from the lab
 network.
