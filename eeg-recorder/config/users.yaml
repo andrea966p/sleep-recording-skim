@@ -69,6 +69,15 @@ presets:
   unipolar_lfp:
     label: "4 mice, unipolar, 6 sites each"
     sites: [18, 19, 20, 21, 22, 23]
+    # NO QC CRITERION EXISTS FOR THIS LAYOUT. core/criteria.py judges every
+    # channel against wire-free amplifier inputs at base+n../16 on a 64-channel
+    # chip. These sites are /18../23 on 32-channel ports, which that model does
+    # not describe, so computing a floor for them would measure the animals
+    # against the wrong control sites. Declaring it here means the post-stop
+    # chain records "no criterion applies" and carries on, instead of demanding
+    # that the operator override a guard that can never be satisfied. A guard
+    # people are trained to click past is not a guard.
+    qc: none
     slots:
       A: {port: A, base: 0}
       B: {port: B, base: 0}

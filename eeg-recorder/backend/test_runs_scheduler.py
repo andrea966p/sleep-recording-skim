@@ -209,6 +209,91 @@ def t_qc_override_is_per_run_not_global(tmp):
         "waiving the bundle on one run leaked to another"
 
 
+def t_qc_scores_only_occupied_slots(tmp):
+    """A four-mouse run must not be graded on eight positions.
+
+    cards/ladder.py defaults to `spec.positions()` -- every slot the LAYOUT has,
+    not every slot the OPERATOR filled. Measured 2026-09-13 on the 24 h S-SL run:
+    dropping five animals from the manifest still produced eight cards, five of
+    them `UNKNOWN@<slot>`, and three of those read PASS at rung 2. A card built
+    from an amplifier input with nothing plugged into it, labelled UNKNOWN and
+    marked PASS, is exactly the kind of output someone later reads as a real
+    animal. So the occupied slots are passed explicitly.
+    """
+    import postprocess as PP
+    s = mkstore(tmp)
+    r = mkrun(s, slots={"A1": {"mouse_id": "M1", "recording_type": "basal"},
+                        "C2": {"mouse_id": "M2", "recording_type": "basal"},
+                        "D1": {"mouse_id": "M3", "recording_type": "basal"}})
+    s.transition(r.run_id, R.SCHEDULED)
+    r = s.transition(r.run_id, R.STARTING, base_name="allego_9__uidTEST",
+                     base_path=str(Path(tmp) / "allego_9__uidTEST"))
+
+    seen = {}
+    real_run, real_cache = PP.subprocess.run, PP.qc_cache_path
+
+    class Done:
+        returncode = 0
+        stdout = stderr = ""
+
+    cache = Path(tmp) / "fake.npz"
+    try:
+        PP.subprocess.run = lambda cmd, **kw: (seen.update(cmd=cmd),
+                                               cache.write_bytes(b"x"), Done())[-1]
+        PP.qc_cache_path = lambda base: cache
+        ok, detail = PP.compute_qc_bundle(r)
+    finally:
+        PP.subprocess.run, PP.qc_cache_path = real_run, real_cache
+
+    assert ok, detail
+    cmd = seen["cmd"]
+    assert "--positions" in cmd, f"ladder invoked without --positions: {cmd}"
+    assert cmd[cmd.index("--positions") + 1] == "A1,C2,D1", cmd
+
+
+def t_qc_none_preset_needs_no_override(tmp):
+    """A layout this project cannot judge must not demand a waiver every run.
+
+    `unipolar_lfp` records /18../23 on 32-channel ports. CohortSpec derives its
+    wire-free floor as base+n../16 on a 64-channel chip, so no floor exists for
+    those sites and the bundle can never be computed. Until 2026-09-13 the chain
+    asked the operator to override the missing-bundle guard on EVERY such run.
+    A guard that can never be satisfied is a guard people learn to click past,
+    including on the runs where it is load-bearing.
+
+    The two outcomes stay distinguishable in the record: `qc_not_applicable`
+    (no criterion exists) is not `qc_bundle_skipped` (a person waived one).
+    """
+    import postprocess as PP
+    s = mkstore(tmp)
+    r = s.create(owner="andrea", preset="unipolar_lfp",
+                 slots={"A": {"mouse_id": "M1", "recording_type": "basal"}},
+                 keep_labels=["A/18", "A/19"], dest_dir=str(tmp))
+    for st in (R.SCHEDULED, R.STARTING, R.RECORDING, R.STOPPING):
+        s.transition(r.run_id, st)
+    r = s.transition(r.run_id, R.STOPPED, base_name="allego_9__uidNOBUNDLE")
+
+    w = PP.Worker(s, require_qc_bundle=True, auto_compute_qc=True,
+                  on_event=lambda m: None)
+    out = w._qc(r)
+    assert out.state == R.QC, f"qc:none run stalled at {out.state}"
+    assert out.results.get("qc_not_applicable") is True, out.results
+    assert not out.results.get("qc_bundle_skipped"), \
+        "a layout with no criterion was recorded as a waived guard"
+
+    # and the opposite still refuses: a role-based preset with no bundle, whose
+    # auto-computation cannot run here, must NOT walk through this door.
+    r2 = mkrun(s)
+    for st in (R.SCHEDULED, R.STARTING, R.RECORDING, R.STOPPING):
+        s.transition(r2.run_id, st)
+    r2 = s.transition(r2.run_id, R.STOPPED, base_name="allego_8__uidNOBUNDLE")
+    w2 = PP.Worker(s, require_qc_bundle=True, auto_compute_qc=False,
+                   on_event=lambda m: None)
+    held = w2._qc(r2)
+    assert held.state == "FAILED_QC", \
+        f"a judgeable preset walked through the qc:none door ({held.state})"
+
+
 def t_upload_pending_is_a_resting_state(tmp):
     """A NAS outage must leave runs waiting, not failed."""
     s = mkstore(tmp)
@@ -374,6 +459,23 @@ def refusals(tmp):
     import importlib.util
     spec = importlib.util.spec_from_file_location(
         "_allego_pristine", Path(__file__).resolve().parent / "allego.py")
+    # A site-based preset whose author forgot `qc: none` would reach the chain
+    # and stall there on an override nobody can satisfy. Refuse it at load.
+    import presets as _P
+    cfg_path = Path(tmp) / "bad-preset.yaml"
+    cfg_path.write_text(
+        "users: {}\npresets:\n  lfp_no_qc:\n    sites: [18, 19]\n"
+        "    slots:\n      A: {port: A, base: 0}\n")
+    expect("refuse: site-based preset that does not declare `qc: none`",
+           lambda: _P.load(cfg_path), _P.PresetError, "qc: none")
+    ok_path = Path(tmp) / "ok-preset.yaml"
+    ok_path.write_text(
+        "users: {}\npresets:\n  lfp_no_qc:\n    sites: [18, 19]\n    qc: none\n"
+        "    slots:\n      A: {port: A, base: 0}\n")
+    check("declaring qc: none makes the same preset load",
+          lambda: (_ for _ in ()).throw(AssertionError("qc flag lost"))
+          if _P.load(ok_path).preset("lfp_no_qc").qc_applies else None)
+
     pristine = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(pristine)
     expect("refuse: growth window shorter than the 30 s size flush",
@@ -389,6 +491,7 @@ def main() -> int:
                t_active_is_single, t_rewind_in_flight,
                t_upload_pending_is_a_resting_state,
                t_retry_targets_are_legal, t_qc_override_is_per_run_not_global,
+               t_qc_scores_only_occupied_slots, t_qc_none_preset_needs_no_override,
                t_start_on_time, t_missed_start_fails_loudly, t_second_run_blocked,
                t_stop_fires_even_when_late, t_start_failure_is_recorded,
                t_scheduled_stop_hands_off_to_postprocessing):

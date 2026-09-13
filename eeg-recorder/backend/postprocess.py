@@ -92,6 +92,26 @@ def roles_for_preset(preset_name: str) -> tuple[str, ...] | None:
     return tuple(sorted(p.roles, key=lambda r: p.roles[r]))
 
 
+def qc_applies_to_preset(preset_name: str) -> bool:
+    """Does this project's verdict ladder describe this layout at all?
+
+    A preset that declares `qc: none` is not opting out of a check it could pass.
+    core/criteria.py judges every channel against wire-free inputs at
+    base+n../16 on a 64-channel chip, and `unipolar_lfp` records /18../23 on
+    32-channel ports, which that model simply does not describe. Before this
+    existed the chain asked the operator to override the missing-bundle guard on
+    EVERY unipolar run -- a guard that could never be satisfied, and therefore a
+    guard people would learn to click past on the runs where it matters.
+
+    An unknown preset returns True, so a config typo fails closed.
+    """
+    import presets as _P
+    try:
+        return _P.load().preset(preset_name).qc_applies
+    except Exception:
+        return True
+
+
 def write_run_manifest(run, roles: tuple[str, ...], out_dir: Path | None = None) -> Path:
     """Build a cohort manifest FROM THE RUN ITSELF. No human step.
 
@@ -161,7 +181,17 @@ def compute_qc_bundle(run, *, progress=None) -> tuple[bool, str]:
     cache.parent.mkdir(parents=True, exist_ok=True)
     cmd = [PYTHON, "cards/ladder.py", run.base_path or run.base_name,
            "--cohort", str(manifest), "--cache", str(cache)]
-    say(f"  computing QC bundle: roles={roles}, manifest={manifest.name}")
+    # SCORE ONLY THE SLOTS THAT HOLD AN ANIMAL. Without this, ladder.py falls back
+    # to `spec.positions()` -- all eight, whatever the operator filled in -- and a
+    # four-mouse run comes back with four extra `UNKNOWN@B2` cards built from
+    # amplifier inputs with nothing plugged into them. Measured 2026-09-13: such a
+    # card can read PASS at rung 2, so the noise is not self-evidently noise.
+    # Empty slots never contaminate the floor itself (floor sites are /3../16 and
+    # /35../48, which no slot occupies), so this only removes false cards.
+    if run.occupied:
+        cmd += ["--positions", ",".join(sorted(run.occupied))]
+    say(f"  computing QC bundle: roles={roles}, manifest={manifest.name}, "
+        f"positions={','.join(sorted(run.occupied)) or 'all'}")
     env = dict(os.environ, PYTHONPATH=str(ANALYSIS))
     r = subprocess.run(cmd, cwd=ANALYSIS, env=env, capture_output=True, text=True)
     if r.returncode != 0 or not cache.exists():
@@ -300,6 +330,21 @@ class Worker:
             self.log(f"{run.run_id}: QC bundle present")
             return self.store.transition(run.run_id, R.QC, detail="QC bundle present",
                                          results={"qc_bundle": str(qc_cache_path(run.base_name))})
+
+        # NO CRITERION FOR THIS LAYOUT. Distinct from a waiver, and recorded as
+        # such: `qc_not_applicable` says the recording was never judgeable by
+        # this project's criterion, where `qc_bundle_skipped` says a person chose
+        # to send data without its floor. Reading the second as the first later
+        # would turn a deliberate exception into an apparent routine.
+        if not qc_applies_to_preset(run.preset):
+            self.log(f"{run.run_id}: preset {run.preset!r} declares no QC "
+                     "criterion -- no bundle is expected or possible")
+            return self.store.transition(
+                run.run_id, R.QC,
+                detail=(f"preset {run.preset!r} declares `qc: none`: this "
+                        "project's floor model does not describe its layout, so "
+                        "no bundle exists to lose"),
+                results={"qc_bundle": None, "qc_not_applicable": True})
 
         # NO BUNDLE YET: compute it, rather than blocking on a human.
         # A new mouse id must never stop the pipeline -- people introduce animals

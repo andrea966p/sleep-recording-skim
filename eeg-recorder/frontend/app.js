@@ -127,7 +127,14 @@ async function loadPreset(name) {
   }
   $('#preset-note').textContent =
     `${Object.keys(PRESET.slots).length} slots, ${PRESET.all_labels.length} channels total`
-    + (PRESET.with_gpio ? ', GPIO kept' : ', GPIO dropped');
+    + (PRESET.with_gpio ? ', GPIO kept' : ', GPIO dropped')
+    // Said BEFORE the run, not in a failure afterwards. This layout has no
+    // wire-free floor under core/criteria.py, so no QC bundle will be made and
+    // the strip cannot be re-judged from the original later. Last in the line
+    // because it is the sentence, not a modifier on the channel count.
+    + (PRESET.qc === 'none'
+        ? ' \u2014 no QC criterion applies to this layout, so no QC bundle is produced'
+        : '');
   renderKeepNote();
 }
 

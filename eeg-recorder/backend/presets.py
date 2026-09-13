@@ -40,6 +40,17 @@ class Preset:
     roles: dict = field(default_factory=dict)    # role -> site offset
     sites: tuple = ()                 # bare site offsets, when roles are unnamed
     with_gpio: bool = False
+    qc: str = "auto"                  # "auto" = this project's ladder applies; "none" = it does not
+
+    @property
+    def qc_applies(self) -> bool:
+        """Whether core/criteria.py's verdict ladder means anything for this layout.
+
+        False is not a waiver. It says the recording was never judgeable by this
+        project's criterion in the first place, which is a different claim from
+        "we chose to skip the check", and the run record keeps them apart.
+        """
+        return self.qc == "auto"
 
     @property
     def slot_names(self) -> list[str]:
@@ -130,9 +141,25 @@ def load(path: Path | str | None = None) -> Config:
             if "port" not in s or "base" not in s:
                 raise PresetError(
                     f"preset {name!r} slot {slot!r} needs both `port` and `base`")
+        qc = str(d.get("qc", "auto")).lower()
+        if qc not in ("auto", "none"):
+            raise PresetError(
+                f"preset {name!r} has qc: {qc!r}; it must be `auto` (this "
+                "project's verdict ladder applies) or `none` (it does not)")
+        # A site-based preset has no role order, so CohortSpec cannot derive its
+        # wire-free floor -- `roles_for_preset` returns None and the QC stage can
+        # never succeed for it. Leaving that implicit is how `unipolar_lfp` came
+        # to block its own pipeline on an override nobody could satisfy. Say it
+        # in the config or the config is refused.
+        if not roles and qc == "auto":
+            raise PresetError(
+                f"preset {name!r} defines `sites` rather than `roles`, so this "
+                "project's floor model does not describe it and its QC bundle "
+                "can never be computed. Declare `qc: none` on it to say so "
+                "explicitly, or give it named roles")
         presets[name] = Preset(name=name, label=d.get("label", name), slots=slots,
                                roles=roles, sites=sites,
-                               with_gpio=bool(d.get("with_gpio", False)))
+                               with_gpio=bool(d.get("with_gpio", False)), qc=qc)
 
     users = raw.get("users") or {}
     for u, d in users.items():
@@ -157,7 +184,7 @@ if __name__ == "__main__":
         labs = p.labels()
         print(f"\n{name}  ({p.label})")
         print(f"  {len(p.slot_names)} slots x {p.channels_per_animal} ch "
-              f"= {len(labs)} channels, gpio={p.with_gpio}")
+              f"= {len(labs)} channels, gpio={p.with_gpio}, qc={p.qc}")
         for slot in p.slot_names:
             per = p.labels_for_slot(slot)
             roles = [p.role_of(slot, l) for l in per]

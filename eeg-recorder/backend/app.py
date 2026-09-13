@@ -101,7 +101,7 @@ def api_users():
         "presets": {n: {"label": p.label, "slots": p.slot_names,
                         "channels_per_animal": p.channels_per_animal,
                         "roles": p.roles, "sites": list(p.sites),
-                        "with_gpio": p.with_gpio,
+                        "with_gpio": p.with_gpio, "qc": p.qc,
                         "total_channels": len(p.labels())}
                     for n, p in cfg.presets.items()},
     })
@@ -114,7 +114,7 @@ def api_preset(name):
     except P.PresetError as exc:
         return _err(exc, 404)
     return jsonify({
-        "name": p.name, "label": p.label, "with_gpio": p.with_gpio,
+        "name": p.name, "label": p.label, "with_gpio": p.with_gpio, "qc": p.qc,
         "slots": {s: {"labels": p.labels_for_slot(s),
                       "roles": [p.role_of(s, l) for l in p.labels_for_slot(s)]}
                   for s in p.slot_names},
