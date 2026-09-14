@@ -141,10 +141,36 @@ def t_the_enumeration_check_both_ways():
     assert "port C" in msg and "32" in msg and "64" in msg, msg
 
 
-def t_a_port_with_nothing_connected_is_named():
+def t_a_port_with_nothing_connected_is_named_and_offers_the_way_out():
+    """An unplugged headstage must not be a dead end.
+
+    FOUND 2026-09-14 while listing what to bench test. A port with no headstage
+    enumerates 0, the check refused, and the page had NO control to say "I am
+    not recording on that port" -- `ports_used` existed in the backend and the
+    UI never sent it. So the refusal was correct and unescapable.
+
+    ⚠️ The half of this that needs hardware -- Allego actually reporting 0 --
+    cannot be exercised on the rig without unplugging a headstage, so it is
+    tested here and nowhere else. What WAS verified live is the other half:
+    marking a port unused exempts it and drops its slots.
+    """
     r = lay().check({"A": 64, "B": 64, "C": 64, "D": 0})
     assert r["ok"] is False
-    assert "nothing is connected" in " ".join(r["problems"])
+    msg = " ".join(r["problems"])
+    assert "nothing is connected" in msg
+    # the message must name the escape, or it is a wall
+    assert "In use" in msg, msg
+    assert "port D" in msg
+
+    # ...and taking that escape works
+    three = L.resolve(CFG, "eeg_emg", {p: True for p in L.PORTS},
+                      ports_used=("A", "B", "C"))
+    ok = three.check({"A": 64, "B": 64, "C": 64, "D": 0})
+    assert ok["ok"] is True, ok["problems"]
+    assert three.slots == ["A1", "A2", "B1", "B2", "C1", "C2"]
+    assert "D" not in three.cohort_ports()
+    # an unused port contributes no channels to the strip
+    assert not any(l.startswith("D/") for l in three.labels())
 
 
 def t_unused_ports_are_exempt():
@@ -354,7 +380,7 @@ def main() -> int:
                t_bare_letter_translates_to_a_position_once,
                t_occupancy_is_free, t_one_setting_for_every_animal,
                t_the_enumeration_check_both_ways,
-               t_a_port_with_nothing_connected_is_named,
+               t_a_port_with_nothing_connected_is_named_and_offers_the_way_out,
                t_unused_ports_are_exempt,
                t_unverified_combination_is_refused_until_confirmed,
                t_cohort_extras_only_for_non_contiguous,

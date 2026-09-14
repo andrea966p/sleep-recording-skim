@@ -29,6 +29,11 @@ let CFG = null, PRESET = null, STATE = null, SELECTED = 'andrea';
 // What the operator says is physically on each port. A splitter puts TWO chips
 // on a port: 64 enumerated channels, two animals. Without one, 32 and one animal.
 let SPLIT = {A: true, B: true, C: true, D: true};
+// Which ports are part of this run at all. A port with no headstage plugged in
+// enumerates 0, and with no way to say "I am not using it" the console refused
+// to start and offered no way out -- the backend had ports_used all along and
+// the page never sent it. Found 2026-09-14 while listing what to bench test.
+let USED = {A: true, B: true, C: true, D: true};
 // A channel selection made for ONE run and not saved to the config. It goes
 // through the same validator as a saved setting (presets.make_setting), so an
 // inline choice cannot be looser than a stored one.
@@ -213,10 +218,19 @@ function renderPorts() {
     div.innerHTML = `
       <div class="hd"><span class="name">Port ${port}</span>
         <span class="ch" data-k="ch"></span></div>
+      <label class="sw"><input type="checkbox" data-k="used"> In use</label>
       <label class="sw"><input type="checkbox" data-k="split"> SPI splitter</label>
       <div class="derived" data-k="derived"></div>`;
+    const use = div.querySelector('[data-k=used]');
     const cb = div.querySelector('[data-k=split]');
+    use.checked = !!USED[port];
     cb.checked = !!SPLIT[port];
+    cb.disabled = !USED[port];
+    use.addEventListener('change', () => {
+      USED[port] = use.checked;
+      cb.disabled = !use.checked;
+      loadLayout();
+    });
     cb.addEventListener('change', () => {
       SPLIT[port] = cb.checked;
       loadLayout();          // syncLayoutSelect() runs inside
@@ -242,7 +256,8 @@ async function loadLayout() {
     }
     PRESET = await post('/api/layout/resolve',
                         {setting: custom ? '' : $('#setting').value,
-                         splitters: SPLIT, custom});
+                         splitters: SPLIT, custom,
+                         ports_used: CFG.ports.filter(p => USED[p])});
   } catch (e) {
     // A channel problem belongs in the channel box, not in the port row, and
     // the old preview must go -- showing a valid-looking line that contradicts
@@ -368,6 +383,7 @@ async function renderNameNote() {
     const r = await post('/api/naming/preview', {
       owner, setting: customPayload() ? '' : $('#setting').value,
       custom: customPayload(), splitters: SPLIT,
+      ports_used: CFG.ports.filter(p => USED[p]),
       slots: gatherSlots(),
       batch_name: batch, start_at: $('#start').value || null});
     if (seq !== nameSeq) return;          // a later keystroke already answered
@@ -498,6 +514,7 @@ async function createRun(schedule) {
                 layout: custom ? 'custom' : $('#layout').value,
                 setting: custom ? '' : $('#setting').value,
                 custom, splitters: SPLIT,
+                ports_used: CFG.ports.filter(p => USED[p]),
                 batch_name: $('#batch').value.trim()};
   if (schedule) {
     if (!$('#start').value) { toast('Pick a start time.', 'bad'); return null; }
@@ -575,8 +592,9 @@ $('#layout').onchange = e => {
   if (!t) return;                       // "Custom": keep whatever is set
   $('#setting').value = t.setting;
   SPLIT = Object.assign({}, t.splitters);
-  renderPorts();
-  loadLayout();
+  renderPorts();              // USED is deliberately left alone: whether a port
+  loadLayout();               // is plugged in is a fact about the rig, not a
+                              // property of the layout you picked.
 };
 $('#owner').onchange = e => {
   SELECTED = e.target.value;
@@ -586,6 +604,10 @@ $('#owner').onchange = e => {
   if (t) {
     $('#setting').value = t.setting;
     SPLIT = Object.assign({}, t.splitters);
+    // Choosing a person is the start of a fresh setup, so every port comes back
+    // into use; a port left switched off from someone else's session would
+    // silently drop animals from this one.
+    USED = Object.fromEntries(CFG.ports.map(p => [p, true]));
     renderPorts();
     loadLayout();
     return;

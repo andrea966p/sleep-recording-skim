@@ -148,7 +148,9 @@ class RigLayout:
                 row["ok"] = False
                 problems.append(
                     f"port {p}: nothing is connected (Allego enumerates 0 "
-                    f"channels), but the layout expects {want}.")
+                    f"channels), but the layout expects {want}. Check the SPI "
+                    f"cable and the bottom socket -- or if you are simply not "
+                    f"recording on port {p} today, untick 'In use' on it.")
             elif got != want:
                 row["ok"] = False
                 chips = 2 if self.splitters.get(p) else 1
