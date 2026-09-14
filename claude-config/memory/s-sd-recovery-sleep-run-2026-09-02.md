@@ -1,8 +1,11 @@
 ---
 name: s-sd-recovery-sleep-run-2026-09-02
-description: The S-SD terminal recovery-sleep endpoint, Wed 2026-09-02 13:00 to Thu 09-03 09:00, its pre-flight screen and its AMBER go/no-go.
-metadata:
+description: "The S-SD terminal recovery-sleep endpoint, Wed 2026-09-02 13:00 to Thu 09-03 09:00, its pre-flight screen and its AMBER go/no-go."
+metadata: 
+  node_type: memory
   type: project
+  originSessionId: 96a1ed89-9db0-4f3f-bf96-57a4fbc53432
+  modified: 2026-09-14T07:49:25.467Z
 ---
 
 **Wednesday 2026-09-02 13:00 KST → Thursday 2026-09-03 09:00 KST, 20.0 h**, eight S-SD positions.
@@ -46,7 +49,16 @@ not an empty rig though: 7 of 8 positions carry EEG above their own floors with 
 all 59 h. Most likely Allego left recording unattended. Identify or delete before Thursday, 223 GB
 of 1019 GB free.
 
-Log: vault `05-experiments/active/2026-09-02-S-SD-recovery-sleep.md` and `04-journal/2026-09/2026-09-01.md`.
+## The recording file, found 2026-09-14
+
+Never catalogued — page sat in `active/` at `status: planned` for 12 days after sampling. Confirmed
+on `e10ubuntu` at `/home/skimlab/radix/data/allego_2__uid0902-13-00-28_data.xdat`, **75.7 GB**
+(75,749,372,928 B), start `13-00-28` and mtime 09-03 09:05 matching the planned 20.0 h window.
+Companions `_timestamp.xdat` (578 MB) and `.xdat.json` (metadata). **Not yet scored, not moved to
+NAS** — this is unscored raw data, not a completed analysis.
+
+Log: vault `05-experiments/completed/2026-09-02-S-SD-recovery-sleep.md` (moved from `active/`
+2026-09-14) and `04-journal/2026-09/2026-09-01.md`.
 
 ## From the memory index, trimmed there 2026-09-11 (kept here verbatim)
 
