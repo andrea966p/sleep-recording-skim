@@ -179,11 +179,33 @@ presets are written as site labels and resolved per file, and it is now demonstr
 rather than argued. Kept channels came out as `A/18`–`D/23` plus all six GPIO, `signals` recounted
 to `{pri: 24, aux: 2, din: 2, dout: 2, total: 30}`, integrity `INTACT`.
 
-⚠️ **No unipolar headstage has ever been connected to this rig.** The file above was recorded with
-that preset selected, so the format work is real, but nothing has yet exercised the preset from a
-live amplifier. And a `unipolar_lfp` recording carries **no QC bundle at all** — no wire-free floor
-exists for `/18`–`/23` on a 32-channel port, so this project's ladder does not describe it. See
-[[02-procedures/eeg-recording-console]] §2.5.
+> [!danger] CORRECTION, 2026-09-14 — the line that stood here was false
+> It read *"No unipolar headstage has ever been connected to this rig."* **It has.**
+> [[05-experiments/completed/2026-08-05-unipolar-lfp-mouse-reference]] documents a real unipolar
+> Intan headstage streaming on port A on 2026-08-05, with **all six sites live at once and clean
+> physiological signal on each** — the only time this project has achieved that. The true statement
+> is that no unipolar headstage has run through the **console**.
+>
+> The error mattered: that page is the source of the `/18`–`/23` site map and of the measurement
+> that forbids deriving a floor for it, so a wrong disclaimer was hiding the evidence the feature
+> depends on.
+
+⚠️ **No unipolar headstage has run through the recording console.** The 134-channel file above was
+recorded with that layout selected but no unipolar headstage attached, so the format work is real
+while the console path is still unexercised from a live amplifier.
+
+🔴 **A unipolar recording carries no QC bundle at all, and the reason is EVIDENCE-ABSENT rather than
+shape-mismatch.** An RHD2132 has **32 real unipolar inputs**, so `/18`–`/23` are real amplifiers and
+roughly 26 real inputs sit unused. A floor *could* be derived from them. It must not be: the
+2026-08-05 page measured those unused inputs at a median **0.17 MΩ** and warns that *"on this
+headstage the unused inputs are tied to ground, so a low magnitude proves nothing at all"*. A floor
+built from ground-tied inputs flatters the control and condemns every real animal — the same failure
+the RHD2216's inactive slots cause, reached from the opposite direction.
+>
+> Why the distinction is load-bearing: *"the shape does not fit"* invites the next person to fix the
+> shape and derive a floor from `/24`–`/32`. *"Nobody characterised these inputs"* does not.
+
+See [[02-procedures/eeg-recording-console]] §2.5.
 
 ## 5. Tests
 

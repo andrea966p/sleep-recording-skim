@@ -46,6 +46,7 @@ status: active
    │               ├─► cards/ladder.py      (subprocess)    │
    │               ├─► convert/strip_channels.py (subprocess)│
    │               ├─► naming.py     what it is called      │
+   │               ├─► layout.py     what the rig IS          │
    │               └─► nas_upload.py ──CIFS──► SKIM_NAS     │
    └────────────────────────────────────────────────────────┘
 ```
@@ -63,7 +64,9 @@ crash in either is a non-zero exit code, not a dead API.
 
 | # | What happens | Who does it | Fired by |
 |---|---|---|---|
-| 1 | operator fills in owner, layout, batch name, slots, times | the page | a human |
+| 0 | declare the rig: setting + a splitter per port | the page | a human |
+| 0b | **refuse if that disagrees with what Allego enumerated** | `layout.py` → `app.py` | creating the run |
+| 1 | operator fills in owner, batch name, slots, times | the page | a human |
 | 2 | `POST /api/runs` validates and stores a run | `app.py` → `runs.py` | the Start/Schedule button |
 | 3 | at the instant: preflight, configure, stream, record | `scheduler.py` → `allego.py` | the 5 s tick |
 | 4 | file exists + `R_ON` ⇒ **RECORDING** | `scheduler.py` | immediately |

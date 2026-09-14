@@ -35,15 +35,11 @@ network.
 ## 1. Running a recording
 
 1. **Pick your name.** There is no default, on purpose — see section 2.3.
-2. **Pick the rig layout.** It fills in from your name, but change it if today is different:
+2. **Check the rig layout.** It fills in from your name. The four port boxes show what is plugged
+   in — a splitter means two animals on that port, none means one — and whether that agrees with
+   what Allego actually found. **A disagreement disables Start until you fix it.**
+   Full detail, and how to add your own settings: [[02-procedures/rig-layout-and-recording-settings]].
 
-   | preset | channels | sites per port | animals | QC bundle |
-   |---|---|---|---|---|
-   | `8mice_eeg_emg` | 16 | `/1 /2 /33 /34` | 8, two per port | yes |
-   | `8mice_eeg_emg_ecg` | 24 | `/1 /2 /3 /33 /34 /35` | 8, two per port | yes |
-   | `unipolar_lfp` | 24 + all 6 GPIO | `/18`–`/23` | **4, one per port** | **none — see 2.5** |
-
-   The slot grid follows the preset, so `unipolar_lfp` shows **four** slots, not eight.
 3. **Type a recording batch name** — e.g. `HLBSSL`. This is what the folder on the NAS will be
    called, so it is the field that decides whether anyone can find this run in six months. Letters,
    digits, `-` and `_`, up to 32 characters. Leave it blank and the folder keeps Allego's own name,
@@ -157,14 +153,25 @@ simply not part of the run:
 The one thing that is *not* free: the empty slots' channels are still recorded (§2.1) and still
 occupy disk at the full rate. A one-mouse run costs the same 90 GB/day as an eight-mouse run.
 
-### 2.5 `unipolar_lfp` produces no quality verdict, by design
+### 2.5 The unipolar layout produces no quality verdict, by design
 
 This project judges every channel against **wire-free amplifier inputs recorded in the same file** —
-sites `/3`–`/16` and `/35`–`/48` on a 64-channel chip. `unipolar_lfp` records `/18`–`/23` on
-32-channel ports, and that floor model simply does not describe it. Computing a floor for it anyway
-would measure the animals against the wrong control sites, which is worse than computing none.
+sites `/3`–`/16` and `/35`–`/48` on a 64-channel chip.
 
-So the preset declares `qc: none`, the console says so under the slot grid **before you start**, and
+> [!danger] CORRECTED 2026-09-14 — the reason is EVIDENCE-ABSENT, not shape-mismatch
+> This section used to say the floor model "simply does not describe" `/18`–`/23`. That is the wrong
+> reason and a dangerous one. An **RHD2132 has 32 real unipolar inputs**, so those six sites are real
+> amplifiers and about 26 real inputs sit unused — a floor *could* be derived from them.
+>
+> It must not be. [[05-experiments/completed/2026-08-05-unipolar-lfp-mouse-reference]] measured those
+> unused inputs at a median **0.17 MΩ** and warns that *"on this headstage the unused inputs are tied
+> to ground, so a low magnitude proves nothing at all."* A floor built from ground-tied inputs
+> flatters the control and condemns every real animal.
+>
+> Why it matters which reason is recorded: *"the shape does not fit"* invites the next person to fix
+> the shape and derive a floor from `/24`–`/32`. *"Nobody characterised these inputs"* does not.
+
+So the recording setting declares `qc: none` with its reason, the console says so under the slot grid **before you start**, and
 the run record carries `qc_not_applicable` — deliberately a different mark from `qc_bundle_skipped`,
 which means a person waived a check that *was* possible. A unipolar recording reaches the NAS with
 no quality verdict from this project attached. That is a property of the layout, not a failure of
