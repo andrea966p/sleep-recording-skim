@@ -315,8 +315,11 @@ function renderKeepNote() {
   // recording stopped: the cohort schema refuses duplicate ids, so no QC bundle
   // can be computed, so the run holds at FAILED_QC. Reported 2026-09-14.
   const filled = gatherSlots();
+  // Case-folded: "HLBSSL31" and "hlbssl31" are one animal to everyone except a
+  // string comparison, and two cards for one mouse is exactly what this guards.
   const seen = {};
-  Object.entries(filled).forEach(([k, v]) => (seen[v.mouse_id] ||= []).push(k));
+  Object.entries(filled).forEach(([k, v]) =>
+    (seen[v.mouse_id.toLowerCase()] ||= []).push(k));
   const dupes = Object.entries(seen).filter(([, ss]) => ss.length > 1);
 
   const why = !owner ? 'Choose who is recording first.'
@@ -325,7 +328,8 @@ function renderKeepNote() {
             : !slots.length ? 'Enter at least one mouse ID.'
             : dupes.length
               ? 'The same mouse ID is in more than one slot: '
-                + dupes.map(([m, ss]) => `"${m}" in ${ss.join(' and ')}`).join('; ')
+                + dupes.map(([, ss]) => ss.map(k => `${k} (${filled[k].mouse_id})`)
+                    .join(' and ')).join('; ')
                 + '. Each animal needs its own ID.'
             : '';
   const clashing = new Set(dupes.flatMap(([, ss]) => ss));

@@ -231,12 +231,24 @@ def validate_slots(lay: "RigLayout", slots: dict, recording_types=()) -> dict:
     # that was discovered SEVEN MINUTES AFTER the recording finished, by which
     # time the operator had left. Reported 2026-09-14 with six slots all reading
     # "dfdf" during a trial. Say it while the form is still on screen.
+    # Compared CASE-INSENSITIVELY. "HLBSSL31" and "hlbssl31" are one animal to
+    # everyone except a string comparison, and letting both through produces two
+    # QC cards for one mouse -- the same failure this check exists to stop, just
+    # spelled differently. The typed form is kept as typed; only the comparison
+    # folds case.
     seen: dict = {}
     for slot, v in sorted(clean.items()):
-        seen.setdefault(v["mouse_id"], []).append(slot)
-    dupes = {m: ss for m, ss in seen.items() if len(ss) > 1}
+        seen.setdefault(v["mouse_id"].casefold(), []).append((slot, v["mouse_id"]))
+    dupes = {k: ss for k, ss in seen.items() if len(ss) > 1}
     if dupes:
-        parts = [f"{m!r} in {' and '.join(ss)}" for m, ss in sorted(dupes.items())]
+        parts = []
+        for _, entries in sorted(dupes.items()):
+            shown = sorted({m for _, m in entries})
+            ids = " / ".join(repr(m) for m in shown)
+            slots = " and ".join(sl for sl, _ in entries)
+            parts.append(f"{ids} in {slots}"
+                         + (" (the same id, differing only in case)"
+                            if len(shown) > 1 else ""))
         raise ValueError(
             "the same mouse id is in more than one slot: " + "; ".join(parts)
             + ". Each animal needs its own id -- the QC cards, the cohort record "

@@ -374,10 +374,29 @@ def t_two_slots_cannot_hold_the_same_animal(tmp):
     else:
         raise AssertionError("NOT REFUSED")
 
+    # CASE IS FOLDED. "HLBSSL31" and "hlbssl31" are one animal to everyone
+    # except a string comparison, and letting both through makes two QC cards
+    # for one mouse -- the same failure, spelled differently. Slipped through
+    # the first version of this check; caught 2026-09-14.
+    try:
+        _L.validate_slots(lay, {
+            "A1": {"mouse_id": "HLBSSL31", "recording_type": "basal"},
+            "A2": {"mouse_id": "hlbssl31", "recording_type": "basal"}},
+            cfg.recording_types)
+    except ValueError as e:
+        assert "differing only in case" in str(e), str(e)
+    else:
+        raise AssertionError("case-only duplicate NOT REFUSED")
+
     # distinct ids pass, and one id may repeat across DIFFERENT runs
     ok = {k: {"mouse_id": f"M{i}", "recording_type": "basal"}
           for i, k in enumerate(dup)}
     assert len(_L.validate_slots(lay, ok, cfg.recording_types)) == 4
+    # ...and the typed form is preserved, not folded
+    kept = _L.validate_slots(lay, {
+        "A1": {"mouse_id": "HLBSSL31", "recording_type": "basal"}},
+        cfg.recording_types)
+    assert kept["A1"]["mouse_id"] == "HLBSSL31"
 
 
 def t_upload_pending_is_a_resting_state(tmp):
