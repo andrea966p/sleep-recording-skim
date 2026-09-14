@@ -194,9 +194,9 @@ State lives at `{RECORDER_STATE}/runs.db`; upload bookkeeping at
 
 ## 5. Every defect this system has had, and the rule it produced
 
-Nine defects, three provenances, and the mix is the point:
+Ten defects, three provenances, and the mix is the point:
 
-- **Six were found by running it** (1-6). No test caught them.
+- **Seven were found by running it** (1-6, 10). No test caught them. Number 10 is the sharpest: it had been latent on every real run, passing only because an unrelated stage happened to be slow enough.
 - **Two were found by asking one question nobody had asked** (7-8) — *what does this do with
   four mice instead of eight?* Cheaper than running it, and the method that scales.
 - **One was found by writing a test** (9), which in the process wrote eight false `VERIFIED`
@@ -214,6 +214,7 @@ Nine defects, three provenances, and the mix is the point:
 | 7 | a four-mouse run was graded on **eight** positions: `cards/ladder.py` falls back to `spec.positions()`, so five cards came back labelled `UNKNOWN@<slot>` and three of those read **PASS at rung 2** | **grade what the operator filled in, not what the layout could hold** — an empty slot's card is built from a floating amplifier input, and `UNKNOWN@B2 PASS` reads like an animal somebody forgot to name |
 | 8 | `unipolar_lfp` could not finish the pipeline *at all*: no floor model describes its sites, so the chain asked for a manual override on **every** run | **a guard that can never be satisfied is a guard people learn to click past** — declare "no criterion applies" in the config, and keep it distinguishable from "a person waived the check" |
 | 9 | a test wrote eight `VERIFIED` rows into the **real** upload manifest for files never uploaded, because `manifest_load(path=MANIFEST)` bound the path at import time and overriding the module constant did nothing | **a default argument is not a hook** — anything a test must redirect is read at call time; and a manifest the uploader *skips* on is a claim about the world, not a log |
+| 10 | the strip REFUSED the file it was asked to strip: `--require-idle` uses mtime, which cannot tell "stopped four seconds ago" from "being written right now", and every strip follows a stop by seconds | **a guard must test the thing it means, not a proxy that usually correlates** — and note it had never fired because QC runs first and on a 24 h file takes long enough for the mtime to age out BY ACCIDENT, so the protection on every real run was incidental |
 
 > [!quote] Paper-ready
 > Acquisition is controlled by a local service that records, for each run, the responsible
