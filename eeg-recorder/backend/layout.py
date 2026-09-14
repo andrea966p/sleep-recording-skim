@@ -262,7 +262,8 @@ def validate_slots(lay: "RigLayout", slots: dict, recording_types=()) -> dict:
 
 
 def resolve(cfg: P.Config, setting: str, splitters: dict,
-            ports_used=None, custom: dict | None = None) -> RigLayout:
+            ports_used=None, custom: dict | None = None,
+            validate_names: bool = True) -> RigLayout:
     """Build a layout from what the operator declared. Refuses on anything odd.
 
     `custom` is a channel selection made for THIS RUN and not saved to the
@@ -276,7 +277,8 @@ def resolve(cfg: P.Config, setting: str, splitters: dict,
             name=CUSTOM, label=custom.get("label") or "Custom channels",
             headstage=hs, roles={str(k): int(v)
                                  for k, v in (custom.get("roles") or {}).items()},
-            qc=custom.get("qc", "auto"), qc_reason=str(custom.get("qc_reason", "")))
+            qc=custom.get("qc", "auto"), qc_reason=str(custom.get("qc_reason", "")),
+            validate_names=validate_names)
     else:
         s = cfg.setting(setting)
         hs = cfg.headstage(s.headstage)
@@ -311,6 +313,9 @@ def from_dict(cfg: P.Config, d: dict) -> RigLayout:
     if roles:
         return resolve(cfg, "", d.get("splitters") or {},
                        ports_used=d.get("ports_used"),
+                       # replay, not input: a run recorded before the role-name
+                       # rule existed must still open
+                       validate_names=False,
                        custom={"headstage": d.get("headstage"), "roles": roles,
                                "qc": d.get("qc", "auto"),
                                "qc_reason": d.get("qc_reason", ""),

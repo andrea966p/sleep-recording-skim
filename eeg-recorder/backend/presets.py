@@ -32,6 +32,7 @@ starts at slot 32, so its EEG is /33 and not /29 -- the "+32 trap" in
 from __future__ import annotations
 
 import os
+import re
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -117,9 +118,12 @@ class RecordingSetting:
         return None
 
 
+ROLE_NAME_RE = re.compile(r"^[A-Za-z0-9_]{1,24}$")
+
+
 def make_setting(*, name: str, label: str, headstage: Headstage, roles: dict,
-                 qc: str = "auto", qc_reason: str = "",
-                 seen_in: str = "") -> RecordingSetting:
+                 qc: str = "auto", qc_reason: str = "", seen_in: str = "",
+                 validate_names: bool = True) -> RecordingSetting:
     """Validate and build one recording setting.
 
     🔑 THE ONLY PLACE A SETTING IS VALIDATED. `load()` uses it for the config
@@ -130,6 +134,25 @@ def make_setting(*, name: str, label: str, headstage: Headstage, roles: dict,
     where = f"recording setting {name!r}"
     if not roles:
         raise PresetError(f"{where} defines no roles")
+
+    # 🔑 CHECKED ON INPUT, NOT ON REPLAY. A role name labels a channel in every
+    # downstream card and export, so a space or a slash in one is a problem --
+    # but `validate_names=False` when REBUILDING a stored run, because a run
+    # recorded before this rule existed must stay readable. Tightening a rule
+    # must never make yesterday's data unopenable.
+    #
+    # This lived only in settings_store.add_setting until 2026-09-14, so the
+    # settings panel refused "trial 2" while the inline picker accepted it --
+    # and a real run went to the NAS carrying role names with spaces. Extracting
+    # make_setting was supposed to end exactly that kind of divergence; this rule
+    # was left behind.
+    if validate_names:
+        for role in roles:
+            if not ROLE_NAME_RE.match(str(role)):
+                raise PresetError(
+                    f"{where}: role name {role!r} -- letters, digits and "
+                    "underscore, up to 24 characters. It labels a channel in "
+                    "every card and export produced from this recording.")
 
     offs = list(roles.values())
     if len(set(offs)) != len(offs):

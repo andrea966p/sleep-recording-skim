@@ -225,6 +225,39 @@ def t_a_run_carries_its_own_roles():
     assert L.from_dict(CFG, d).labels() == lay.labels()
 
 
+def t_role_names_are_checked_on_input_but_not_on_replay():
+    """One rule for role names -- and yesterday's data must still open.
+
+    FOUND 2026-09-14 by a real scheduled run. Extracting make_setting was meant
+    to stop the inline picker and the settings panel from disagreeing, but the
+    role-NAME rule was left behind in settings_store, so the panel refused
+    "trial 2" while the picker accepted it. A run reached the NAS carrying role
+    names with spaces.
+
+    🔑 THE SUBTLETY. `layout.from_dict` rebuilds a stored run through the same
+    function. Validating names there too would make that already-recorded run
+    unreadable -- so the rule applies to INPUT and not to REPLAY. Tightening a
+    rule must never make yesterday's data unopenable.
+    """
+    bad = {"headstage": "rhd2216_bipolar", "roles": {"trial 2": 5},
+           "qc": "none", "qc_reason": "x"}
+    try:
+        L.resolve(CFG, "", {"A": True}, custom=bad)
+    except P.PresetError as e:
+        assert "role name" in str(e), str(e)
+    else:
+        raise AssertionError("a role name with a space was accepted")
+
+    # the same names, REPLAYED from a stored run, must still resolve
+    stored = {"setting": "custom", "headstage": "rhd2216_bipolar",
+              "roles": {"trial1": 4, "trial 2": 5, "trial 3": 6},
+              "qc": "none", "qc_reason": "x",
+              "splitters": {p: True for p in L.PORTS}}
+    lay = L.from_dict(CFG, stored)
+    assert lay.labels_for_slot("A1") == ["A/4", "A/5", "A/6"]
+    assert lay.labels_for_slot("A2") == ["A/36", "A/37", "A/38"]
+
+
 def refusals():
     expect("refuse: custom channels the floor rule cannot describe, with qc auto",
            lambda: L.resolve(CFG, "", {"A": True},
@@ -326,7 +359,8 @@ def main() -> int:
                t_unverified_combination_is_refused_until_confirmed,
                t_cohort_extras_only_for_non_contiguous,
                t_custom_channels_for_one_run,
-               t_a_run_carries_its_own_roles):
+               t_a_run_carries_its_own_roles,
+               t_role_names_are_checked_on_input_but_not_on_replay):
         check(fn.__name__, fn)
     print("\nMUST REFUSE")
     refusals()

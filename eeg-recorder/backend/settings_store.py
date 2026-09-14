@@ -168,15 +168,14 @@ def add_setting(*, name: str, label: str, headstage: str, roles: dict,
 
     clean: dict = {}
     for role, site in (roles or {}).items():
-        r = str(role).strip()
-        if not re.match(r"^[A-Za-z0-9_]{1,24}$", r):
-            raise SettingsRefused(
-                f"role name {role!r}: letters, digits and underscore, up to 24 "
-                "characters. It labels a channel in every downstream card.")
+        # The NAME rule now lives in presets.make_setting, which _commit runs via
+        # a full config load -- one rule, one place. Only the site has to be a
+        # number before it gets there.
         try:
-            clean[r] = int(site)
+            clean[str(role).strip()] = int(site)
         except (TypeError, ValueError):
-            raise SettingsRefused(f"role {r!r} has site {site!r}, which is not a number")
+            raise SettingsRefused(
+                f"role {role!r} has site {site!r}, which is not a number")
     if not clean:
         raise SettingsRefused("a recording setting with no roles selects nothing")
 
