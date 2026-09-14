@@ -84,10 +84,16 @@ VERDICT_COLOR = {
     "INSUFFICIENT": OKABE_ITO["sky_blue"],       # the question could not be asked
     "FAIL":         OKABE_ITO["vermillion"],     # critical
     "BLOCKED":      C_FLOOR,                     # neutral: never evaluated
+    # Absent until 2026-09-14, so it fell through to the unknown-verdict default
+    # and rendered grey with "?" -- the SAME glyph as INSUFFICIENT, directly
+    # under the comment below insisting the two must never read alike. rung 2 has
+    # emitted UNJUDGEABLE for ungrounded chips since August, so this was already
+    # wrong on real cards; per-port layouts make it routine.
+    "UNJUDGEABLE":  OKABE_ITO["reddish_purple"],
 }
 VERDICT_GLYPH = {
     "PASS": "✓", "PROVISIONAL": "◐", "INSUFFICIENT": "?",
-    "FAIL": "✗", "BLOCKED": "–",
+    "FAIL": "✗", "BLOCKED": "–", "UNJUDGEABLE": "⊘",
 }
 # 🔑 INSUFFICIENT IS NOT FAIL, and the card must never let them read as the same
 # thing. "The question could not be asked" has been misread as "the answer was
@@ -99,6 +105,8 @@ VERDICT_MEANING = {
     "INSUFFICIENT": "the question could not be asked",
     "FAIL": "asked and answered no",
     "BLOCKED": "a lower rung failed, so this was never evaluated",
+    "UNJUDGEABLE": "no valid control exists, so the question cannot be asked of "
+                   "this chip at all",
 }
 
 

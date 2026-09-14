@@ -268,6 +268,21 @@ def rung2_connection(feat: C.EpochFeatures, position: str, spec: C.CohortSpec,
     if floor.scope != "chip" or floor.position != position:
         floor = C.floor_stats(feat, position)
 
+    # 🛑 THIS CHIP DECLARES NO WIRE-FREE CONTROL AT ALL. Must be tested BEFORE
+    # `grounded`, because an unavailable floor reports grounded=False: without
+    # this branch a unipolar prep that was perfectly grounded would be told its
+    # headstage has no ground reference, and the .0f format on a None median
+    # would crash on the way. Two different facts:
+    #   available=False  a SPEC fact, known before a byte is read
+    #   grounded=False   a MEASURED fact, from a floor that does exist
+    if not floor.available:
+        r.verdict = "UNJUDGEABLE"
+        r.reason = floor.unavailable_reason
+        r.headline = ("no wire-free floor is declared for this chip -- "
+                      "no connection verdict can be drawn")
+        r.detail = {"floor": floor.as_dict()}      # key must exist: render_card indexes it
+        return r
+
     # 🛑 AN UNGROUNDED CHIP HAS NO VALID NEGATIVE CONTROL. Its wire-free inputs
     # go quiet and steep, which makes the threshold unbeatable and reports a
     # hardware fault as a dead animal. Say UNJUDGEABLE and say why.

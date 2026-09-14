@@ -556,13 +556,13 @@ class FloorStats:
     n_sites: int
     n_epochs: int
     n_samples: int
-    hum_p1: float
-    hum_p5: float
-    hum_median: float
-    slope_p1: float
-    slope_p5: float
-    slope_median: float
-    slope_min: float
+    hum_p1: float | None
+    hum_p5: float | None
+    hum_median: float | None
+    slope_p1: float | None
+    slope_p5: float | None
+    slope_median: float | None
+    slope_min: float | None
     # Provenance of THIS floor. Reported on every card so a number can never be
     # quoted without saying which wire-free inputs produced it.
     scope: str = "pooled"          # "chip" | "pooled"
@@ -570,6 +570,31 @@ class FloorStats:
     estimator: str = "pooled_p1"   # see qc_thresholds.FLOOR_ESTIMATOR
     grounded: bool = True          # False => floor is not a valid control
     validity_reason: str = ""
+    # `available` is a SPEC fact, known before a byte is read: this chip's layout
+    # declares no characterised wire-free control. `grounded` is a MEASURED fact:
+    # a floor exists and says the chip is floating. Keeping them apart matters --
+    # conflating them would print "the headstage has no ground reference" about a
+    # unipolar prep that was perfectly grounded.
+    available: bool = True
+    unavailable_reason: str = ""
+
+    @classmethod
+    def unavailable(cls, position: str, reason: str) -> "FloorStats":
+        """A floor that does not exist. Percentiles are None, never NaN.
+
+        🔴 NaN WOULD FABRICATE A VERDICT. `_raw_mask` does
+        `feat.slope[:, c] < floor.slope_p1`; every comparison against NaN is
+        False, so a NaN floor yields an all-False mask, which reads as a
+        perfectly ordinary 0% usable -- a FAIL invented for an animal nobody can
+        judge. None raises instead.
+        """
+        return cls(n_sites=0, n_epochs=0, n_samples=0,
+                   hum_p1=None, hum_p5=None, hum_median=None,
+                   slope_p1=None, slope_p5=None, slope_median=None,
+                   slope_min=None,
+                   scope="chip", position=position, estimator="none",
+                   grounded=False, validity_reason=reason,
+                   available=False, unavailable_reason=reason)
 
     def as_dict(self) -> dict:
         return {k: (round(v, 3) if isinstance(v, float) else v)
@@ -620,9 +645,19 @@ def floor_stats(feat: EpochFeatures,
     """
     estimator = estimator or T.FLOOR_ESTIMATOR
     if position is None:
+        # A pooled floor across a MIXED rig is not a number about anything: it
+        # would average chips whose control sites differ in count and in kind.
+        if not feat.spec.is_uniform:
+            raise LayoutError(
+                "floor_stats(position=None) pools every chip on the rig, but "
+                "this spec is not uniform:\n" + feat.spec.describe() +
+                "\nPass a position.")
         sites, scope = feat.spec.floor_sites(), "pooled"
     else:
         sites, scope = floor_sites_of(feat.spec, position), "chip"
+        if not sites:
+            return FloorStats.unavailable(
+                position, feat.spec.chip_of(position).floor_reason.strip())
     fc = np.array([feat.col(s) for s in sites])
     fh = feat.hum[:, fc]
     fs_ = feat.slope[:, fc]
@@ -669,6 +704,14 @@ def floor_threshold_ci(feat: EpochFeatures, criterion: str = "slope",
     rng = np.random.default_rng(seed)
     sites = (floor_sites_of(feat.spec, position) if position
              else feat.spec.floor_sites())
+    # An empty site list used to reach np.percentile and raise there, which read
+    # as a numpy bug rather than as the real situation: this chip declares no
+    # characterised control, so there is no threshold to put an interval around.
+    if not sites:
+        reason = (feat.spec.chip_of(position).floor_reason.strip() if position
+                  else "no floor sites on this rig")
+        return {"available": False, "criterion": criterion, "position": position,
+                "reason": reason, "n_sites": 0}
     fc = np.array([feat.col(s) for s in sites])
     src = feat.slope if criterion == "slope" else feat.hum
     p = T.FLOOR_PERCENTILE
@@ -723,6 +766,13 @@ def falsification_check(feat: EpochFeatures, floor: FloorStats,
     sites = (floor_sites_of(feat.spec, floor.position)
              if floor.scope == "chip" and floor.position
              else feat.spec.floor_sites())
+    # Same as above: scoring the floor against itself is meaningless when there
+    # is no floor. Saying so beats an arr.max() on an empty array.
+    if not floor.available or not sites:
+        return {"applicable": False, "criterion": criterion,
+                "position": floor.position,
+                "reason": floor.unavailable_reason or "no floor sites",
+                "n_sites": 0}
     fracs = []
     for site in sites:
         m = _raw_mask(feat, site, floor, criterion)
@@ -757,7 +807,16 @@ def falsification_check(feat: EpochFeatures, floor: FloorStats,
 
 def _raw_mask(feat: EpochFeatures, site: str, floor: FloorStats,
               criterion: str) -> np.ndarray:
-    """Per-epoch boolean mask, with NO validity guard. Internal use only."""
+    """Per-epoch boolean mask, with NO validity guard. Internal use only.
+
+    🔑 THE SINGLE CHOKEPOINT. Every criterion reaches the floor through here, so
+    this is the one place that can stop a missing floor from becoming a number.
+    """
+    if not floor.available:
+        raise CriterionRefused(
+            f"no wire-free floor exists for {site}: {floor.unavailable_reason} "
+            "No usable fraction can be computed against a control that was "
+            "never characterised.")
     c = feat.col(site)
     amplitude_ok = (feat.rms[:, c] >= T.RMS_LO_UV) & (feat.rms[:, c] <= T.RMS_HI_UV)
     no_railing = feat.rail[:, c] == 0
