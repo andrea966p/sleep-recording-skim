@@ -341,6 +341,45 @@ def t_frozen_nas_dir_is_reused_on_retry(tmp):
     assert out.state == R.DONE, out.state
 
 
+def t_two_slots_cannot_hold_the_same_animal(tmp):
+    """A duplicate mouse id is refused AT SETUP, not seven minutes later.
+
+    REPORTED 2026-09-14: a trial run had the same id typed into six slots. The
+    console accepted it, recorded for six minutes, and only then failed --
+    cohorts/schema.py refuses duplicate animal_ids, so no QC bundle could be
+    computed, so the chain held at FAILED_QC. The operator had already left.
+
+    Everything downstream is keyed on that id: the cohort record, every QC card,
+    the per-animal export. It cannot be waved through, so it is caught while the
+    form is still on screen.
+    """
+    import presets as _P
+    import layout as _L
+
+    cfg = _P.load()
+    lay = _L.from_template(cfg, "8mice_eeg_emg")
+    dup = {"A1": {"mouse_id": "dfdf", "recording_type": "basal"},
+           "A2": {"mouse_id": "dfdf", "recording_type": "basal"},
+           "B1": {"mouse_id": "other", "recording_type": "basal"},
+           "B2": {"mouse_id": "dfdf", "recording_type": "basal"}}
+    try:
+        _L.validate_slots(lay, dup, cfg.recording_types)
+    except ValueError as e:
+        msg = str(e)
+        assert "more than one slot" in msg, msg
+        # it must name every clashing slot, not just say "duplicate"
+        for slot in ("A1", "A2", "B2"):
+            assert slot in msg, f"{slot} not named: {msg}"
+        assert "B1" not in msg.split(".")[0], "an innocent slot was blamed"
+    else:
+        raise AssertionError("NOT REFUSED")
+
+    # distinct ids pass, and one id may repeat across DIFFERENT runs
+    ok = {k: {"mouse_id": f"M{i}", "recording_type": "basal"}
+          for i, k in enumerate(dup)}
+    assert len(_L.validate_slots(lay, ok, cfg.recording_types)) == 4
+
+
 def t_upload_pending_is_a_resting_state(tmp):
     """A NAS outage must leave runs waiting, not failed."""
     s = mkstore(tmp)
@@ -548,6 +587,7 @@ def main() -> int:
                t_retry_targets_are_legal, t_qc_override_is_per_run_not_global,
                t_qc_scores_only_occupied_slots, t_qc_none_preset_needs_no_override,
                t_frozen_nas_dir_is_reused_on_retry,
+               t_two_slots_cannot_hold_the_same_animal,
                t_start_on_time, t_missed_start_fails_loudly, t_second_run_blocked,
                t_stop_fires_even_when_late, t_start_failure_is_recorded,
                t_scheduled_stop_hands_off_to_postprocessing):

@@ -310,11 +310,28 @@ function renderKeepNote() {
   if (!PRESET) return;
   const slots = Object.keys(gatherSlots());
   const owner = $('#owner').value;
+  // Two slots cannot hold the same animal. Said HERE, while the form is on
+  // screen, because the alternative is finding out seven minutes after the
+  // recording stopped: the cohort schema refuses duplicate ids, so no QC bundle
+  // can be computed, so the run holds at FAILED_QC. Reported 2026-09-14.
+  const filled = gatherSlots();
+  const seen = {};
+  Object.entries(filled).forEach(([k, v]) => (seen[v.mouse_id] ||= []).push(k));
+  const dupes = Object.entries(seen).filter(([, ss]) => ss.length > 1);
+
   const why = !owner ? 'Choose who is recording first.'
             : (PRESET && PRESET.check && !PRESET.check.ok)
               ? 'The declared rig does not match what Allego sees.'
             : !slots.length ? 'Enter at least one mouse ID.'
+            : dupes.length
+              ? 'The same mouse ID is in more than one slot: '
+                + dupes.map(([m, ss]) => `"${m}" in ${ss.join(' and ')}`).join('; ')
+                + '. Each animal needs its own ID.'
             : '';
+  const clashing = new Set(dupes.flatMap(([, ss]) => ss));
+  document.querySelectorAll('.slot').forEach(d =>
+    d.classList.toggle('dupe', clashing.has(d.dataset.slot)));
+
   $('#btn-now').disabled = !!why;
   $('#btn-schedule').disabled = !!why;
   if (why) { $('#keep-note').textContent = why; return; }

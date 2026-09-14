@@ -116,3 +116,9 @@ tr:last-child td { border-bottom:0; }
 .port.bad { border-color: var(--bad); }
 .port.bad .ch { color: var(--bad); }
 .port.off { opacity: .5; }
+
+/* A slot whose mouse ID is also in another slot. Everything downstream is keyed
+   on that ID, so a duplicate makes the run unjudgeable -- shown while the form
+   is still on screen rather than after the recording. */
+.slot.dupe { border-color: var(--bad); }
+.slot.dupe input[data-k="mouse"] { color: var(--bad); }

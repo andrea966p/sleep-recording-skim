@@ -25,12 +25,18 @@ nobody has to infer the mapping later.
 """
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass, field
 
 import presets as P
 
 PORTS = P.PORTS
 SLOT_BASES = (1, 33)          # site of the first channel of each chip on a port
+
+
+# A mouse id becomes part of a directory name on the NAS and a key in every
+# downstream record, so the character class is deliberately narrow.
+MOUSE_ID_RE = re.compile(r"^[A-Za-z0-9_-]{1,32}$")
 
 
 class LayoutError(ValueError):
@@ -188,6 +194,59 @@ class RigLayout:
 
 
 CUSTOM = "custom"          # the name a per-run channel selection carries
+
+
+def validate_slots(lay: "RigLayout", slots: dict, recording_types=()) -> dict:
+    """Which slots hold an animal, checked. Raises ValueError naming the fix.
+
+    LIVES HERE, NOT IN THE HTTP LAYER. These are rules about the rig, not about
+    requests, and keeping them in app.py meant they could only be tested with
+    Flask installed -- which the test venv does not have, so they were not tested
+    at all until 2026-09-14.
+    """
+    clean = {}
+    for slot, v in (slots or {}).items():
+        if slot not in lay.slots:
+            raise ValueError(
+                f"{slot!r} is not a slot in this layout; it has "
+                f"{', '.join(lay.slots)}")
+        mouse = str((v or {}).get("mouse_id", "")).strip()
+        rtype = str((v or {}).get("recording_type", "")).strip()
+        if not mouse:
+            continue                        # slot left empty, fine
+        if not MOUSE_ID_RE.match(mouse):
+            raise ValueError(
+                f"mouse id {mouse!r} in slot {slot}: letters, digits, hyphen and "
+                "underscore only, max 32 characters. It becomes part of a path.")
+        if rtype and rtype not in recording_types:
+            raise ValueError(
+                f"recording type {rtype!r} in slot {slot}; known types are "
+                f"{', '.join(recording_types)}")
+        clean[slot] = {"mouse_id": mouse, "recording_type": rtype or "basal"}
+
+    # 🔴 TWO SLOTS CANNOT HOLD THE SAME ANIMAL, AND THIS IS CAUGHT HERE.
+    # Everything downstream is keyed on the mouse id: the cohort manifest, every
+    # QC card, the per-animal export. A duplicate makes the cohort schema refuse,
+    # so the QC bundle cannot be computed, so the run holds at FAILED_QC -- and
+    # that was discovered SEVEN MINUTES AFTER the recording finished, by which
+    # time the operator had left. Reported 2026-09-14 with six slots all reading
+    # "dfdf" during a trial. Say it while the form is still on screen.
+    seen: dict = {}
+    for slot, v in sorted(clean.items()):
+        seen.setdefault(v["mouse_id"], []).append(slot)
+    dupes = {m: ss for m, ss in seen.items() if len(ss) > 1}
+    if dupes:
+        parts = [f"{m!r} in {' and '.join(ss)}" for m, ss in sorted(dupes.items())]
+        raise ValueError(
+            "the same mouse id is in more than one slot: " + "; ".join(parts)
+            + ". Each animal needs its own id -- the QC cards, the cohort record "
+            "and the per-animal export are all keyed on it, and a duplicate makes "
+            "the whole run unjudgeable.")
+    if not clean:
+        raise ValueError("no slot has a mouse id, so nothing could be attributed "
+                         "to an animal afterwards")
+    return clean
+
 
 
 def resolve(cfg: P.Config, setting: str, splitters: dict,

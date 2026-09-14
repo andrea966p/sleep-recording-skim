@@ -364,6 +364,7 @@ class Worker:
         in the run's own results, so it applies to exactly one recording and the
         run record says plainly that the data travelled without its floor.
         """
+        auto_failed = ""        # why the automatic computation could not run
         present = has_qc_bundle(run.base_name or "")
         if present:
             self.log(f"{run.run_id}: QC bundle present")
@@ -398,6 +399,10 @@ class Worker:
                     results={"qc_bundle": str(qc_cache_path(run.base_name)),
                              "qc_bundle_auto": True})
             self.log(f"{run.run_id}: could not compute a QC bundle -- {detail}")
+            # Keep WHY on the run. Without this the operator sees only the
+            # generic hold message and the actual cause -- "duplicate animal_id
+            # dfdf" -- lives in the journal, where nobody looks first.
+            auto_failed = detail
 
         override = bool((run.results or {}).get("skip_qc_bundle"))
         if override or not self.require_qc_bundle:
@@ -412,6 +417,10 @@ class Worker:
         # produce a meaningful ladder anyway, so say so rather than sending
         # someone off to run a command that will not help them.
         short = ""
+        why = auto_failed or ""
+        if why:
+            why = ("\n\nAUTOMATIC COMPUTATION FAILED, and this is the reason:\n  "
+                   + why.strip().replace("\n", "\n  ") + "\n")
         dur_s = _duration_s(run)
         if dur_s is not None and dur_s < 15 * 60:
             short = (f" NOTE: this recording is only {dur_s / 60:.1f} min long, which "
@@ -419,7 +428,7 @@ class Worker:
                      "on, so a QC bundle for it would not be meaningful. If this was a "
                      "test, either abandon the run or strip it with the override.")
         msg = (
-            f"no QC bundle for {run.base_name}. Stripping removes the in-file "
+            f"no QC bundle for {run.base_name}.{why} Stripping removes the in-file "
             "wire-free floor, after which core/criteria.py can never judge this "
             "recording again, so the cached features are the only surviving "
             f"record of it.{short} Compute it with:\n"

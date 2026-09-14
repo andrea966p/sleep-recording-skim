@@ -149,31 +149,6 @@ def api_layout_resolve():
 # --------------------------------------------------------------------------- #
 # runs
 # --------------------------------------------------------------------------- #
-def _validate_slots(lay: "LY.RigLayout", slots: dict) -> dict:
-    clean = {}
-    for slot, v in (slots or {}).items():
-        if slot not in lay.slots:
-            raise ValueError(
-                f"{slot!r} is not a slot in this layout; it has "
-                f"{', '.join(lay.slots)}")
-        mouse = str((v or {}).get("mouse_id", "")).strip()
-        rtype = str((v or {}).get("recording_type", "")).strip()
-        if not mouse:
-            continue                        # slot left empty, fine
-        if not SAFE.match(mouse):
-            raise ValueError(
-                f"mouse id {mouse!r} in slot {slot}: letters, digits, hyphen and "
-                "underscore only, max 32 characters. It becomes part of a path.")
-        if rtype and rtype not in cfg.recording_types:
-            raise ValueError(
-                f"recording type {rtype!r} in slot {slot}; known types are "
-                f"{', '.join(cfg.recording_types)}")
-        clean[slot] = {"mouse_id": mouse, "recording_type": rtype or "basal"}
-    if not clean:
-        raise ValueError("no slot has a mouse id, so nothing could be attributed "
-                         "to an animal afterwards")
-    return clean
-
 
 @app.post("/api/naming/preview")
 def api_naming_preview():
@@ -206,7 +181,7 @@ def api_naming_preview():
                           ports_used=body.get("ports_used"),
                           custom=body.get("custom"))
                if (sname or body.get("custom")) else None)
-        slots = _validate_slots(lay, body.get("slots")) if lay else {}
+        slots = LY.validate_slots(lay, body.get("slots"), cfg.recording_types) if lay else {}
         out = naming.preview(batch_name=body.get("batch_name"), slots=slots,
                              cfg=cfg, date_yyyymmdd=when)
     except (P.PresetError, LY.LayoutError, naming.NamingError, ValueError) as exc:
@@ -319,7 +294,7 @@ def api_create_run():
             tname = body.get("layout") or "custom"
         else:
             lay = LY.from_template(cfg, tname)
-        slots = _validate_slots(lay, body.get("slots"))
+        slots = LY.validate_slots(lay, body.get("slots"), cfg.recording_types)
         labels = lay.labels(list(slots))
     except (P.PresetError, LY.LayoutError, ValueError) as exc:
         return _err(exc)
