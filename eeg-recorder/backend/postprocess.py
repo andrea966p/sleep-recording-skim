@@ -72,48 +72,66 @@ def has_qc_bundle(base_name: str) -> bool:
     return qc_cache_path(base_name).exists()
 
 
-def roles_for_preset(preset_name: str) -> tuple[str, ...] | None:
-    """The role list the QC engine needs -- and the ONLY thing it needs.
-
-    cards/ladder.py line 676 is the whole story:
-
-        spec = C.CohortSpec(roles=tuple(cohort.roles))
-
-    That is all the QC computation takes from a cohort manifest. Ports and slot
-    bases use defaults; every animal id, placement and husbandry field in a
-    manifest exists to LABEL the output cards, not to compute them.
-
-    Returns None for a site-based preset such as unipolar_lfp, whose sites
-    (/18../23 on 32-channel ports) do not fit CohortSpec's floor model of
-    "base+n .. base+16". Computing a floor for it anyway would silently measure
-    the animals against the wrong control sites, so we decline instead.
-    """
+def layout_of(run):
+    """The RigLayout this run declared, or None for a run made before layouts."""
     import presets as _P
+    import layout as _L
+    d = getattr(run, "layout", None) or {}
+    if not d.get("setting"):
+        return None
     try:
-        p = _P.load().preset(preset_name)
+        cfg = _P.load()
+        return _L.resolve(cfg, d["setting"], d.get("splitters") or {},
+                          ports_used=d.get("ports_used"))
     except Exception:
         return None
-    if not p.roles:
-        return None
-    return tuple(sorted(p.roles, key=lambda r: p.roles[r]))
 
 
-def qc_applies_to_preset(preset_name: str) -> bool:
-    """Does this project's verdict ladder describe this layout at all?
+def roles_for_run(run) -> tuple[str, ...] | None:
+    """The role list the QC engine needs, in site order.
 
-    A preset that declares `qc: none` is not opting out of a check it could pass.
-    core/criteria.py judges every channel against wire-free inputs at
-    base+n../16 on a 64-channel chip, and `unipolar_lfp` records /18../23 on
-    32-channel ports, which that model simply does not describe. Before this
-    existed the chain asked the operator to override the missing-bundle guard on
-    EVERY unipolar run -- a guard that could never be satisfied, and therefore a
-    guard people would learn to click past on the runs where it matters.
+    cards/ladder.py takes only `roles` from a manifest to build the spec; every
+    animal id and placement field exists to LABEL the output, not to compute it.
 
-    An unknown preset returns True, so a config typo fails closed.
+    Returns None when this project's ladder does not describe the layout -- the
+    unipolar case -- so the chain records `qc_not_applicable` rather than
+    demanding an override nobody can satisfy.
     """
+    lay = layout_of(run)
+    if lay is not None:
+        if not lay.setting.qc_applies:
+            return None
+        return tuple(sorted(lay.setting.roles, key=lambda r: lay.setting.roles[r]))
+
+    # A run recorded before layouts existed. Its `preset` still names a template.
     import presets as _P
     try:
-        return _P.load().preset(preset_name).qc_applies
+        cfg = _P.load()
+        st = cfg.setting(cfg.template(run.preset).setting)
+    except Exception:
+        return None
+    return None if not st.qc_applies else tuple(
+        sorted(st.roles, key=lambda r: st.roles[r]))
+
+
+def qc_applies_to_run(run) -> bool:
+    """Does this project's verdict ladder describe this run's layout at all?
+
+    False is not a waiver. It says the recording was never judgeable by this
+    project's criterion, which is a different claim from "we chose to skip the
+    check". Before this existed the chain asked for a manual override on EVERY
+    unipolar run -- a guard that could never be satisfied, and therefore one
+    people would learn to click past on the runs where it matters.
+
+    Unknown layouts return True, so a config typo fails closed.
+    """
+    lay = layout_of(run)
+    if lay is not None:
+        return lay.setting.qc_applies
+    import presets as _P
+    try:
+        cfg = _P.load()
+        return cfg.setting(cfg.template(run.preset).setting).qc_applies
     except Exception:
         return True
 
@@ -142,18 +160,26 @@ def write_run_manifest(run, roles: tuple[str, ...], out_dir: Path | None = None)
     from nas_upload import local_date_from_base
     date = local_date_from_base(run.base_name or "", run.actual_start)
     cohort_id = f"auto-{run.run_id}"
+    # 🔑 THE MANIFEST SPEAKS THE ANALYSIS SIDE'S VOCABULARY. A port without a
+    # splitter is slot `A` to the operator and position `A1` everywhere
+    # downstream -- ladder.find_processed and figs_common.pos_to_file both parse
+    # position[1]. Translate once, here, and record BOTH names so nobody has to
+    # infer the mapping from a card six months from now.
+    import layout as _L
     animals = []
     for slot, v in sorted((run.slots or {}).items()):
         mid = (v or {}).get("mouse_id")
         if not mid:
             continue
+        pos = _L.RigLayout.to_position(slot)
         animals.append({
             "animal_id": mid, "batch_id": cohort_id,
-            "placements": [{"from": date, "position": slot,
+            "placements": [{"from": date, "position": pos, "console_slot": slot,
                             "source": "recording-console"}],
             "recordings": [{"base": run.base_name, "date": date,
-                            "position": slot, "role": "animal"}],
+                            "position": pos, "role": "animal"}],
         })
+    lay = layout_of(run)
     doc = {
         "cohort_id": cohort_id,
         "title": f"auto-generated from run {run.run_id} ({run.owner})",
@@ -164,6 +190,11 @@ def write_run_manifest(run, roles: tuple[str, ...], out_dir: Path | None = None)
             "husbandry is absent because it is not known here. The QC engine uses "
             "only `roles` from this file -- everything else labels the cards."),
         "roles": list(roles),
+        # How many amplifier chips each port carries: 2 behind a splitter, 1
+        # without. Absent on runs made before layouts existed, which then get
+        # the historical four-ports-of-two assumption.
+        **({"ports": lay.cohort_ports()} if lay is not None else {}),
+        **(lay.cohort_extras() if lay is not None else {}),
         "criterion": "slope",
         "animals": animals,
         "recordings": [{"base": run.base_name, "date": date}],
@@ -176,10 +207,10 @@ def write_run_manifest(run, roles: tuple[str, ...], out_dir: Path | None = None)
 def compute_qc_bundle(run, *, progress=None) -> tuple[bool, str]:
     """Compute the QC bundle for a run, with no human step. (ok, detail)."""
     say = progress or (lambda m: None)
-    roles = roles_for_preset(run.preset)
+    roles = roles_for_run(run)
     if roles is None:
         return False, (
-            f"preset {run.preset!r} has no named roles, so CohortSpec's floor "
+            f"layout {run.preset!r} has no floor model, so CohortSpec's floor "
             "model does not apply to it and a QC bundle cannot be computed "
             "automatically without risking the wrong control sites.")
     manifest = write_run_manifest(run, roles)
@@ -195,7 +226,9 @@ def compute_qc_bundle(run, *, progress=None) -> tuple[bool, str]:
     # Empty slots never contaminate the floor itself (floor sites are /3../16 and
     # /35../48, which no slot occupies), so this only removes false cards.
     if run.occupied:
-        cmd += ["--positions", ",".join(sorted(run.occupied))]
+        import layout as _L
+        cmd += ["--positions",
+                ",".join(sorted(_L.RigLayout.to_position(s) for s in run.occupied))]
     say(f"  computing QC bundle: roles={roles}, manifest={manifest.name}, "
         f"positions={','.join(sorted(run.occupied)) or 'all'}")
     env = dict(os.environ, PYTHONPATH=str(ANALYSIS))
@@ -342,12 +375,12 @@ class Worker:
         # this project's criterion, where `qc_bundle_skipped` says a person chose
         # to send data without its floor. Reading the second as the first later
         # would turn a deliberate exception into an apparent routine.
-        if not qc_applies_to_preset(run.preset):
+        if not qc_applies_to_run(run):
             self.log(f"{run.run_id}: preset {run.preset!r} declares no QC "
                      "criterion -- no bundle is expected or possible")
             return self.store.transition(
                 run.run_id, R.QC,
-                detail=(f"preset {run.preset!r} declares `qc: none`: this "
+                detail=(f"layout {run.preset!r} declares `qc: none`: this "
                         "project's floor model does not describe its layout, so "
                         "no bundle exists to lose"),
                 results={"qc_bundle": None, "qc_not_applicable": True})

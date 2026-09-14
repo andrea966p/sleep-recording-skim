@@ -159,6 +159,8 @@ CREATE TABLE IF NOT EXISTS runs (
     with_gpio        INTEGER NOT NULL DEFAULT 0,
     batch_name       TEXT,
     nas_dir          TEXT,
+    layout_json      TEXT,      -- the declared rig: setting, splitters, ports used
+    enumerated_json  TEXT,      -- what Allego reported at start: EVIDENCE, not a promise
     note             TEXT,
     results_json     TEXT NOT NULL DEFAULT '{}',
     error            TEXT
@@ -199,6 +201,8 @@ class Run:
     dest_dir: str | None = None
     batch_name: str | None = None       # what the operator typed; may be None
     nas_dir: str | None = None          # the folder name, FROZEN at first upload
+    layout: dict = field(default_factory=dict)      # the declared rig
+    enumerated: dict = field(default_factory=dict)  # what Allego actually saw
     note: str | None = None
     results: dict = field(default_factory=dict)
     error: str | None = None
@@ -232,7 +236,8 @@ class RunStore:
             # existing runs.db would keep the old shape and every read would
             # raise. Additive only: no column is ever dropped or retyped here.
             have = {r["name"] for r in c.execute("PRAGMA table_info(runs)")}
-            for col in ("batch_name", "nas_dir"):
+            for col in ("batch_name", "nas_dir",
+                        "layout_json", "enumerated_json"):
                 if col not in have:
                     c.execute(f"ALTER TABLE runs ADD COLUMN {col} TEXT")
 
@@ -274,6 +279,8 @@ class RunStore:
             slots=json.loads(r["slots_json"]),
             keep_labels=json.loads(r["keep_labels_json"]),
             batch_name=r["batch_name"], nas_dir=r["nas_dir"],
+            layout=json.loads(r["layout_json"] or "{}"),
+            enumerated=json.loads(r["enumerated_json"] or "{}"),
             with_gpio=bool(r["with_gpio"]),
             scheduled_start=r["scheduled_start"], scheduled_stop=r["scheduled_stop"],
             actual_start=r["actual_start"], actual_stop=r["actual_stop"],
@@ -323,7 +330,8 @@ class RunStore:
     def create(self, *, owner: str, preset: str, slots: dict, keep_labels: list,
                with_gpio: bool = False, scheduled_start: str | None = None,
                scheduled_stop: str | None = None, note: str | None = None,
-               dest_dir: str | None = None, batch_name: str | None = None) -> Run:
+               dest_dir: str | None = None, batch_name: str | None = None,
+               layout: dict | None = None) -> Run:
         if not any(v.get("mouse_id") for v in slots.values()):
             raise RunError(
                 "a run with no occupied slot records nothing about which animal "
@@ -337,11 +345,12 @@ class RunStore:
             c.execute(
                 "INSERT INTO runs (run_id,state,owner,preset,created_utc,updated_utc,"
                 "scheduled_start,scheduled_stop,slots_json,keep_labels_json,with_gpio,"
-                "note,dest_dir,batch_name,results_json) "
-                "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,'{}')",
+                "note,dest_dir,batch_name,layout_json,results_json) "
+                "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,'{}')",
                 (run_id, state, owner, preset, now, now, scheduled_start,
                  scheduled_stop, json.dumps(slots), json.dumps(keep_labels),
-                 int(with_gpio), note, dest_dir, batch_name))
+                 int(with_gpio), note, dest_dir, batch_name,
+                 json.dumps(layout or {})))
             c.execute("INSERT INTO events (run_id,utc,from_state,to_state,detail) "
                       "VALUES (?,?,?,?,?)",
                       (run_id, now, None, state, f"created by {owner}"))
@@ -379,6 +388,9 @@ class RunStore:
                     prev.update(v)
                     sets.append("results_json=?")
                     args.append(json.dumps(prev))
+                elif k in ("layout", "enumerated"):
+                    sets.append(f"{k}_json=?")
+                    args.append(json.dumps(v))
                 elif k in ("slots", "keep_labels"):
                     sets.append(f"{k}_json=?")
                     args.append(json.dumps(v))

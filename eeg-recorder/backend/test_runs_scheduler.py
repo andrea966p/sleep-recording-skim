@@ -254,7 +254,7 @@ def t_qc_scores_only_occupied_slots(tmp):
 def t_qc_none_preset_needs_no_override(tmp):
     """A layout this project cannot judge must not demand a waiver every run.
 
-    `unipolar_lfp` records /18../23 on 32-channel ports. CohortSpec derives its
+    `4mice_unipolar_lfp` records /18../23 on 32-channel ports. CohortSpec derives its
     wire-free floor as base+n../16 on a 64-channel chip, so no floor exists for
     those sites and the bundle can never be computed. Until 2026-09-13 the chain
     asked the operator to override the missing-bundle guard on EVERY such run.
@@ -266,7 +266,7 @@ def t_qc_none_preset_needs_no_override(tmp):
     """
     import postprocess as PP
     s = mkstore(tmp)
-    r = s.create(owner="andrea", preset="unipolar_lfp",
+    r = s.create(owner="andrea", preset="4mice_unipolar_lfp",
                  slots={"A": {"mouse_id": "M1", "recording_type": "basal"}},
                  keep_labels=["A/18", "A/19"], dest_dir=str(tmp))
     for st in (R.SCHEDULED, R.STARTING, R.RECORDING, R.STOPPING):
@@ -506,22 +506,30 @@ def refusals(tmp):
     import importlib.util
     spec = importlib.util.spec_from_file_location(
         "_allego_pristine", Path(__file__).resolve().parent / "allego.py")
-    # A site-based preset whose author forgot `qc: none` would reach the chain
-    # and stall there on an override nobody can satisfy. Refuse it at load.
+    # A setting whose sites cannot be described by the floor rule, with no
+    # `qc: none`, would reach the chain and stall there on an override nobody
+    # can satisfy. Refuse it at load instead.
     import presets as _P
-    cfg_path = Path(tmp) / "bad-preset.yaml"
-    cfg_path.write_text(
-        "users: {}\npresets:\n  lfp_no_qc:\n    sites: [18, 19]\n"
-        "    slots:\n      A: {port: A, base: 0}\n")
-    expect("refuse: site-based preset that does not declare `qc: none`",
-           lambda: _P.load(cfg_path), _P.PresetError, "qc: none")
-    ok_path = Path(tmp) / "ok-preset.yaml"
-    ok_path.write_text(
-        "users: {}\npresets:\n  lfp_no_qc:\n    sites: [18, 19]\n    qc: none\n"
-        "    slots:\n      A: {port: A, base: 0}\n")
-    check("declaring qc: none makes the same preset load",
+    head = """
+nas: {share: S, root: R}
+recording_types: [basal]
+recording_type_codes: {basal: BSR}
+users: {}
+headstages:
+  hs: {label: H, slots_per_chip: 32, real_channels: 32}
+recording_settings:
+"""
+    bad = Path(tmp) / "bad.yaml"
+    bad.write_text(head + "  s: {label: S, headstage: hs, roles: {a: 18, b: 19}}\n")
+    expect("refuse: a setting the floor rule cannot describe, without `qc: none`",
+           lambda: _P.load(bad), _P.PresetError, "declare `qc: none`")
+
+    ok = Path(tmp) / "ok.yaml"
+    ok.write_text(head + "  s: {label: S, headstage: hs, roles: {a: 18, b: 19}, "
+                         "qc: none, qc_reason: 'never characterised'}\n")
+    check("declaring qc: none makes the same setting load",
           lambda: (_ for _ in ()).throw(AssertionError("qc flag lost"))
-          if _P.load(ok_path).preset("lfp_no_qc").qc_applies else None)
+          if _P.load(ok).setting("s").qc_applies else None)
 
     pristine = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(pristine)

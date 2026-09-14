@@ -100,3 +100,19 @@ tr:last-child td { border-bottom:0; }
 .offline { text-align:center; padding:8px; background:var(--bad); color:#fff;
            font-weight:600; border-radius:8px; margin-bottom:12px; }
 .hide { display:none !important; }
+
+/* --- per-port declaration ------------------------------------------------ */
+.ports { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+.port {
+  flex: 1 1 150px; border: 1px solid var(--line); border-radius: 8px;
+  padding: 8px 10px; background: var(--panel2, transparent);
+}
+.port .hd { display: flex; justify-content: space-between; align-items: baseline; }
+.port .name { font-weight: 600; letter-spacing: .04em; }
+.port .ch { font-size: 11px; color: var(--faint); font-variant-numeric: tabular-nums; }
+.port label.sw { display: flex; align-items: center; gap: 6px; margin-top: 6px;
+                 font-size: 12px; cursor: pointer; }
+.port .derived { font-size: 11px; color: var(--faint); margin-top: 4px; }
+.port.bad { border-color: var(--bad); }
+.port.bad .ch { color: var(--bad); }
+.port.off { opacity: .5; }

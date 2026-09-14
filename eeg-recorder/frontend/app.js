@@ -25,6 +25,9 @@ const post = (p, b) => api(p, {
 });
 
 let CFG = null, PRESET = null, STATE = null, SELECTED = 'andrea';
+// What the operator says is physically on each port. A splitter puts TWO chips
+// on a port: 64 enumerated channels, two animals. Without one, 32 and one animal.
+let SPLIT = {A: true, B: true, C: true, D: true};
 
 /* ---------- toast ---------- */
 function toast(msg, kind) {
@@ -92,23 +95,104 @@ function renderPills(s) {
 
 /* ---------- setup form ---------- */
 function renderPresetPicker() {
-  const sel = $('#preset');
-  sel.innerHTML = '';
-  for (const [name, p] of Object.entries(CFG.presets)) {
+  const lsel = $('#layout');
+  lsel.innerHTML = '';
+  for (const [name, t] of Object.entries(CFG.layouts)) {
+    const o = document.createElement('option');
+    o.value = name; o.textContent = t.label;
+    lsel.appendChild(o);
+  }
+  lsel.appendChild(Object.assign(document.createElement('option'),
+                                 {value: 'custom', textContent: 'Custom'}));
+
+  const ssel = $('#setting');
+  ssel.innerHTML = '';
+  for (const [name, st] of Object.entries(CFG.settings)) {
     const o = document.createElement('option');
     o.value = name;
-    o.textContent = `${p.label} — ${p.slots.length} slots, ${p.total_channels} ch`;
-    sel.appendChild(o);
+    o.textContent = `${st.label} — ${st.channels_per_animal} ch/mouse`;
+    ssel.appendChild(o);
+  }
+  renderPorts();
+}
+
+/* THE TEMPLATE SELECT IS A VIEW, NOT A SOURCE OF TRUTH.
+   The declaration is (setting + SPLIT). A template is just a name for one
+   combination of those, so the select shows whichever template matches, or
+   "Custom". Keeping it as independent state is how it came to read
+   "4 mice, unipolar LFP" over a rig declared as 8-mouse EEG/EMG: functionally
+   harmless, and exactly the kind of label someone later believes. */
+function syncLayoutSelect() {
+  const setting = $('#setting').value;
+  const match = Object.entries(CFG.layouts).find(([, t]) =>
+    t.setting === setting && CFG.ports.every(p => !!t.splitters[p] === !!SPLIT[p]));
+  $('#layout').value = match ? match[0] : 'custom';
+}
+
+/* The declaration versus what Allego actually enumerated. A disagreement means
+   the strip would keep the wrong channels, discovered after the animals are
+   done -- so it disables the buttons rather than warning. */
+function renderPortCheck() {
+  const chk = PRESET.check || {ok: true, ports: {}, problems: []};
+  for (const div of document.querySelectorAll('.port')) {
+    const p = div.dataset.port, row = chk.ports[p] || {};
+    div.querySelector('[data-k=ch]').textContent =
+      row.used === false ? 'not in use'
+        : `${row.enumerated ?? '?'} ch, expects ${row.expected ?? '?'}`;
+    div.querySelector('[data-k=derived]').textContent =
+      (PRESET.slots || []).filter(s => s[0] === p).join(' · ') || '—';
+    div.classList.toggle('bad', row.ok === false);
+    div.classList.toggle('off', row.used === false);
+  }
+  $('#port-note').innerHTML = chk.ok
+    ? '<span style="color:var(--ok)">The declared rig matches what Allego sees.</span>'
+    : '<b style="color:var(--bad)">Cannot record:</b> '
+      + chk.problems.map(x => `<div style="color:var(--bad)">• ${x}</div>`).join('');
+  renderKeepNote();
+}
+
+/* ---------- the four ports ---------- */
+function renderPorts() {
+  const box = $('#ports');
+  box.innerHTML = '';
+  for (const port of CFG.ports) {
+    const div = document.createElement('div');
+    div.className = 'port';
+    div.dataset.port = port;
+    div.innerHTML = `
+      <div class="hd"><span class="name">Port ${port}</span>
+        <span class="ch" data-k="ch"></span></div>
+      <label class="sw"><input type="checkbox" data-k="split"> SPI splitter</label>
+      <div class="derived" data-k="derived"></div>`;
+    const cb = div.querySelector('[data-k=split]');
+    cb.checked = !!SPLIT[port];
+    cb.addEventListener('change', () => {
+      SPLIT[port] = cb.checked;
+      loadLayout();          // syncLayoutSelect() runs inside
+    });
+    box.appendChild(div);
   }
 }
 
-async function loadPreset(name) {
-  PRESET = await api(`/api/presets/${name}`);
+/* Resolve the declaration server-side: slots, channels, roles and the
+   enumeration check all come from ONE call, so the page never reimplements the
+   slot rule or the expected channel count. A second copy of either would drift
+   from the one that actually decides what gets recorded. */
+async function loadLayout() {
+  try {
+    PRESET = await post('/api/layout/resolve',
+                        {setting: $('#setting').value, splitters: SPLIT});
+  } catch (e) {
+    $('#port-note').innerHTML = `<span style="color:var(--bad)">${e.message}</span>`;
+    return;
+  }
+  syncLayoutSelect();
+  renderPortCheck();
   const slots = $('#slots');
   slots.innerHTML = '';
-  for (const [slot, info] of Object.entries(PRESET.slots)) {
-    const chans = info.labels.map((l, i) =>
-      info.roles[i] ? `${l} ${info.roles[i]}` : l).join(' · ');
+  for (const slot of PRESET.slots) {
+    const labels = PRESET.slot_channels[slot], roles = PRESET.roles[slot];
+    const chans = labels.map((l, i) => roles[i] ? `${l} ${roles[i]}` : l).join(' · ');
     const div = document.createElement('div');
     div.className = 'slot';
     div.dataset.slot = slot;
@@ -130,8 +214,7 @@ async function loadPreset(name) {
     slots.appendChild(div);
   }
   $('#preset-note').textContent =
-    `${Object.keys(PRESET.slots).length} slots, ${PRESET.all_labels.length} channels total`
-    + (PRESET.with_gpio ? ', GPIO kept' : ', GPIO dropped')
+    `${PRESET.slots.length} slots, ${PRESET.all_labels.length} channels total`
     // Said BEFORE the run, not in a failure afterwards. This layout has no
     // wire-free floor under core/criteria.py, so no QC bundle will be made and
     // the strip cannot be re-judged from the original later. Last in the line
@@ -158,12 +241,14 @@ function renderKeepNote() {
   const slots = Object.keys(gatherSlots());
   const owner = $('#owner').value;
   const why = !owner ? 'Choose who is recording first.'
+            : (PRESET && PRESET.check && !PRESET.check.ok)
+              ? 'The declared rig does not match what Allego sees.'
             : !slots.length ? 'Enter at least one mouse ID.'
             : '';
   $('#btn-now').disabled = !!why;
   $('#btn-schedule').disabled = !!why;
   if (why) { $('#keep-note').textContent = why; return; }
-  const labels = slots.flatMap(s => PRESET.slots[s].labels).sort();
+  const labels = slots.flatMap(s => PRESET.slot_channels[s]).sort();
   $('#keep-note').innerHTML =
     `<b>${labels.length} channels will be kept</b> for ${slots.length} `
     + `${slots.length === 1 ? 'mouse' : 'mice'} — going to `
@@ -190,7 +275,8 @@ async function renderNameNote() {
   const seq = ++nameSeq;
   try {
     const r = await post('/api/naming/preview', {
-      owner, preset: $('#preset').value, slots: gatherSlots(),
+      owner, setting: $('#setting').value, splitters: SPLIT,
+      slots: gatherSlots(),
       batch_name: batch, start_at: $('#start').value || null});
     if (seq !== nameSeq) return;          // a later keystroke already answered
     el.innerHTML = `Will arrive as <span class="mono">03_Data_Mouse/${owner}/`
@@ -312,7 +398,12 @@ async function createRun(schedule) {
   if (!Object.keys(slots).length) {
     toast('Enter at least one mouse ID first.', 'bad'); return null;
   }
-  const body = {owner: $('#owner').value, preset: $('#preset').value, slots,
+  if (PRESET && PRESET.check && !PRESET.check.ok) {
+    toast('The declared rig does not match what Allego sees.', 'bad'); return null;
+  }
+  const body = {owner: $('#owner').value, slots,
+                layout: $('#layout').value,
+                setting: $('#setting').value, splitters: SPLIT,
                 batch_name: $('#batch').value.trim()};
   if (schedule) {
     if (!$('#start').value) { toast('Pick a start time.', 'bad'); return null; }
@@ -368,12 +459,27 @@ $('#batch').addEventListener('input', () => {
 // the scheduled start changes it.
 $('#start').addEventListener('change', renderNameNote);
 
-$('#preset').onchange = e => loadPreset(e.target.value);
+$('#setting').onchange = () => loadLayout();
+$('#layout').onchange = e => {
+  const t = CFG.layouts[e.target.value];
+  if (!t) return;                       // "Custom": keep whatever is set
+  $('#setting').value = t.setting;
+  SPLIT = Object.assign({}, t.splitters);
+  renderPorts();
+  loadLayout();
+};
 $('#owner').onchange = e => {
   SELECTED = e.target.value;
   if (!SELECTED) { renderKeepNote(); return; }
-  const want = CFG.users[SELECTED].default_preset;
-  if ($('#preset').value !== want) { $('#preset').value = want; loadPreset(want); }
+  const want = CFG.users[SELECTED].default_layout;
+  const t = CFG.layouts[want];
+  if (t) {
+    $('#setting').value = t.setting;
+    SPLIT = Object.assign({}, t.splitters);
+    renderPorts();
+    loadLayout();
+    return;
+  }
   renderKeepNote();
 };
 
@@ -409,7 +515,7 @@ async function refresh() {
     o.value = u; o.textContent = u; os.appendChild(o);
   }
   renderPresetPicker();
-  await loadPreset($('#preset').value);
+  await loadLayout();
 
   // default: next 09:00 (ZT0), running 24 h -- the shape almost every run here has
   const d = new Date(); d.setSeconds(0, 0);

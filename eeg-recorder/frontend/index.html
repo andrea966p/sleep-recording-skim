@@ -50,8 +50,10 @@
     <div class="row">
       <div><label for="owner">Who is recording</label>
         <select id="owner"></select></div>
-      <div><label for="preset">Rig layout</label>
-        <select id="preset"></select></div>
+      <div><label for="layout">Rig layout</label>
+        <select id="layout"></select></div>
+      <div><label for="setting">Recording setting</label>
+        <select id="setting"></select></div>
       <div><label for="batch">Recording batch name</label>
         <input type="text" id="batch" placeholder="HLBSSL" maxlength="32"
                autocomplete="off" spellcheck="false"></div>
@@ -64,6 +66,13 @@
         <button id="btn-now">Start now</button>
       </div>
     </div>
+
+    <!-- What is physically on each port. A splitter puts TWO chips on a port
+         (64 channels, two animals); without one there is a single animal.
+         Allego reports what it actually enumerated, and a disagreement is a
+         refusal, not a warning. -->
+    <div id="ports" class="ports"></div>
+    <div class="note" id="port-note"></div>
 
     <div class="note" id="preset-note"></div>
     <div class="slots" id="slots" style="margin-top:12px"></div>

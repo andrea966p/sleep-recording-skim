@@ -40,6 +40,7 @@ import allego
 import nas_upload
 import postprocess
 import presets as P
+import layout as LY
 import runs as R
 import naming
 import scheduler as SCH
@@ -96,41 +97,63 @@ def api_state():
 @app.get("/api/users")
 def api_users():
     return jsonify({
-        "users": {u: {"default_preset": d["default_preset"]}
+        "users": {u: {"default_layout": d["default_layout"]}
                   for u, d in cfg.users.items()},
         "recording_types": list(cfg.recording_types),
-        "presets": {n: {"label": p.label, "slots": p.slot_names,
-                        "channels_per_animal": p.channels_per_animal,
-                        "roles": p.roles, "sites": list(p.sites),
-                        "with_gpio": p.with_gpio, "qc": p.qc,
-                        "total_channels": len(p.labels())}
-                    for n, p in cfg.presets.items()},
+        "ports": list(P.PORTS),
+        "headstages": {n: {"label": h.label, "slots_per_chip": h.slots_per_chip,
+                           "real_channels": h.real_channels,
+                           "bipolar_in_hardware": h.bipolar_in_hardware,
+                           "splitter_verified": h.splitter_verified,
+                           "source": h.source}
+                       for n, h in cfg.headstages.items()},
+        "settings": {n: {"label": st.label, "headstage": st.headstage,
+                         "roles": st.roles, "qc": st.qc,
+                         "qc_reason": st.qc_reason, "seen_in": st.seen_in,
+                         "channels_per_animal": len(st.roles)}
+                     for n, st in cfg.settings.items()},
+        "layouts": {n: {"label": t.label, "setting": t.setting,
+                        "splitters": t.splitters}
+                    for n, t in cfg.templates.items()},
     })
 
 
-@app.get("/api/presets/<name>")
-def api_preset(name):
+@app.post("/api/layout/resolve")
+def api_layout_resolve():
+    """Resolve a declaration into slots, channels and the enumeration check.
+
+    One call so the page never has to reimplement the slot rule or the expected
+    channel count -- a second copy of either would drift from the one that
+    actually decides what gets recorded.
+    """
+    body = request.get_json(silent=True) or {}
     try:
-        p = cfg.preset(name)
-    except P.PresetError as exc:
-        return _err(exc, 404)
-    return jsonify({
-        "name": p.name, "label": p.label, "with_gpio": p.with_gpio, "qc": p.qc,
-        "slots": {s: {"labels": p.labels_for_slot(s),
-                      "roles": [p.role_of(s, l) for l in p.labels_for_slot(s)]}
-                  for s in p.slot_names},
-        "all_labels": p.labels(),
-    })
+        lay = LY.resolve(cfg, body.get("setting") or "",
+                         body.get("splitters") or {},
+                         ports_used=body.get("ports_used"))
+    except (P.PresetError, LY.LayoutError) as exc:
+        return _err(exc)
+    out = lay.to_dict()
+    out["slot_channels"] = {s: lay.labels_for_slot(s) for s in lay.slots}
+    out["all_labels"] = lay.labels()
+    out["roles"] = {s: [lay.role_of(s, l) for l in lay.labels_for_slot(s)]
+                    for s in lay.slots}
+    st = allego.status()
+    out["check"] = lay.check(st.get("ports") or {})
+    out["enumerated"] = st.get("ports") or {}
+    return jsonify(out)
 
 
 # --------------------------------------------------------------------------- #
 # runs
 # --------------------------------------------------------------------------- #
-def _validate_slots(preset: P.Preset, slots: dict) -> dict:
+def _validate_slots(lay: "LY.RigLayout", slots: dict) -> dict:
     clean = {}
     for slot, v in (slots or {}).items():
-        if slot not in preset.slots:
-            raise ValueError(f"{slot!r} is not a slot in preset {preset.name!r}")
+        if slot not in lay.slots:
+            raise ValueError(
+                f"{slot!r} is not a slot in this layout; it has "
+                f"{', '.join(lay.slots)}")
         mouse = str((v or {}).get("mouse_id", "")).strip()
         rtype = str((v or {}).get("recording_type", "")).strip()
         if not mouse:
@@ -176,12 +199,13 @@ def api_naming_preview():
         except Exception:
             when, source = today, "today"
     try:
-        pname = body.get("preset") or ""
-        preset = cfg.preset(pname) if pname else None
-        slots = _validate_slots(preset, body.get("slots")) if preset else {}
+        sname = body.get("setting") or ""
+        lay = (LY.resolve(cfg, sname, body.get("splitters") or {},
+                          ports_used=body.get("ports_used")) if sname else None)
+        slots = _validate_slots(lay, body.get("slots")) if lay else {}
         out = naming.preview(batch_name=body.get("batch_name"), slots=slots,
                              cfg=cfg, date_yyyymmdd=when)
-    except (P.PresetError, naming.NamingError, ValueError) as exc:
+    except (P.PresetError, LY.LayoutError, naming.NamingError, ValueError) as exc:
         return _err(exc)
     out["user"] = body.get("owner")
     out["date"] = when
@@ -199,13 +223,30 @@ def api_create_run():
     if owner not in cfg.users:
         return _err(f"unknown user {owner!r}; known users are "
                     f"{', '.join(cfg.users)}")
-    pname = body.get("preset") or cfg.users[owner]["default_preset"]
+    # A declaration, or the operator's default layout template.
+    tname = body.get("layout") or cfg.users[owner]["default_layout"]
     try:
-        preset = cfg.preset(pname)
-        slots = _validate_slots(preset, body.get("slots"))
-        labels = preset.labels(list(slots))
-    except (P.PresetError, ValueError) as exc:
+        if body.get("setting"):
+            lay = LY.resolve(cfg, body["setting"], body.get("splitters") or {},
+                             ports_used=body.get("ports_used"))
+            tname = body.get("layout") or "custom"
+        else:
+            lay = LY.from_template(cfg, tname)
+        slots = _validate_slots(lay, body.get("slots"))
+        labels = lay.labels(list(slots))
+    except (P.PresetError, LY.LayoutError, ValueError) as exc:
         return _err(exc)
+
+    # 🔴 THE DECLARATION MUST MATCH THE HARDWARE BEFORE A RUN EXISTS.
+    # Allego reports what each port actually enumerated; a declaration that
+    # disagrees means the strip would keep the wrong channels, and that is
+    # discovered after the animals are done. Refuse here rather than warn.
+    st = allego.status()
+    enumerated = st.get("ports") or {}
+    chk = lay.check(enumerated)
+    if not chk["ok"] and not body.get("ignore_layout_mismatch"):
+        return _err("the declared rig does not match what Allego sees:\n  - "
+                    + "\n  - ".join(chk["problems"]))
 
     try:
         batch = naming.clean_batch(body.get("batch_name"))
@@ -213,11 +254,18 @@ def api_create_run():
         return _err(exc)
 
     try:
-        run = store.create(owner=owner, preset=pname, slots=slots, batch_name=batch,
-                           keep_labels=labels, with_gpio=preset.with_gpio,
+        run = store.create(owner=owner, preset=tname, slots=slots, batch_name=batch,
+                           keep_labels=labels, with_gpio=bool(body.get("with_gpio")),
+                           layout=lay.to_dict(),
                            scheduled_start=body.get("start_at"),
                            scheduled_stop=body.get("stop_at"),
                            note=body.get("note"), dest_dir=str(RAW_ROOT))
+        store.transition(run.run_id, run.state, enumerated=enumerated,
+                         detail=f"layout: {lay.setting.label}, "
+                                f"{len(lay.slots)} slots, "
+                                + ", ".join(f"{p}={enumerated.get(p, 0)}"
+                                            for p in P.PORTS))
+        run = store.get(run.run_id)
     except R.RunError as exc:
         return _err(exc)
     return jsonify(run.to_dict()), 201
