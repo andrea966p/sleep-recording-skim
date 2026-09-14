@@ -2,7 +2,8 @@
 tags: [experiment, eeg, S-SD, recovery-sleep, endpoint]
 date: 2026-09-02
 created: 2026-09-01
-status: planned
+updated: 2026-09-14
+status: completed
 ---
 
 # S-SD recovery sleep, Wednesday 13:00 to Thursday 09:00, the terminal endpoint
@@ -17,6 +18,20 @@ status: planned
 > two positions are solid, three flicker, three read as continuous breaks.
 > Expect **n = 2 guaranteed, up to n = 5 if the mechanical faults settle.**
 > Write the final go / no-go line in [[2026-09-02]] before pressing record.
+
+> [!info] Recording file, found 2026-09-14
+> The run happened but was never catalogued here — this page sat in `active/` at `status: planned`
+> for 12 days after the animals were sampled. Confirmed present on `e10ubuntu` at
+> `/home/skimlab/radix/data/`:
+>
+> - `allego_2__uid0902-13-00-28_data.xdat` — **75,749,372,928 bytes (75.7 GB)**
+> - `allego_2__uid0902-13-00-28_timestamp.xdat` — 578,239,488 bytes
+> - `allego_2__uid0902-13-00-28.xdat.json` — metadata, 139,846 bytes
+>
+> File start (`13-00-28`) and mtime (2026-09-03 09:05) match the planned 20.0 h window. It has not
+> been scored, moved to the NAS, or written up — the "What we do with it on Thursday" section below
+> is still open work, not a completed analysis. Per [[cohort-identity-every-run-is-new-mice]], treat
+> this as unscored raw data until someone runs it through the pipeline.
 
 ## The protocol state, written out so it cannot be misread
 

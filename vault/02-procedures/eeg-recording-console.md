@@ -48,6 +48,12 @@ network.
    empty slots empty; **any number of mice from one up is normal**, in any positions, and section
    2.4 says exactly what that changes. Mouse IDs become part of a folder name, so letters, digits,
    `-` and `_` only.
+
+   > [!warning] Each animal needs its own ID, and case does not make one different
+   > `HLBSSL31` and `hlbssl31` are the same mouse. Two slots sharing an ID makes the whole run
+   > **unjudgeable** — the cohort record, every QC card and the per-animal export are all keyed on
+   > it — so Start and Schedule stay disabled until you fix it, and the clashing slots are outlined.
+   > Before 2026-09-14 this was accepted and the run failed QC minutes after it finished.
 5. **Check the two lines under the grid.** They say exactly which channels will be kept and what
    the folder and files will be called, *before* anything happens. This is the one decision that
    cannot be undone after the run.

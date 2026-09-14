@@ -53,6 +53,21 @@ This is the piece most worth understanding, because it is also what the console 
 A port without a splitter is called by its bare letter. The second animal on a split port sits at
 **`/33`, not `/29`** — the +32 trap in [[02-procedures/eight-mouse-acquisition-setup]] §6.
 
+### A port you are not using at all
+
+Each port also has an **In use** checkbox. Untick it and that port leaves the run entirely: its
+slots disappear, its splitter setting is greyed out, it is exempt from the check in §3, and none of
+its channels reach the stripped copy.
+
+> [!important] This is what you need when a headstage is unplugged
+> A port with nothing connected enumerates **0**, which the check refuses — correctly, since the
+> alternative is recording a port you think is live and finding out afterwards. Until 2026-09-14
+> there was no way to say "I am not recording on that port today", so an unplugged headstage was a
+> dead end that looked like the console being broken.
+>
+> Leaving slots **blank** is different and unrelated: that is how you record fewer mice on a port
+> that *is* connected. Both are normal.
+
 > [!warning] The headstage does NOT change the channel count. It changes what is real.
 > 64-vs-32 is a **splitter** property. What the chip decides is how many of those enumerated slots
 > are real amplifiers: an RHD2216 exposes 16, an RHD2132 exposes 32. That is why `/18`–`/23` carry
@@ -121,6 +136,25 @@ the control and condemns every real animal.
 A unipolar recording therefore reaches the NAS with **no quality verdict from this project**. Animals
 on such a chip come out `UNJUDGEABLE` — not `FAIL`, and never a fabricated pass.
 
+## 5b. Channels for one run only
+
+The **Recording setting** dropdown ends with **＋ Custom channels for this run…**. It opens the same
+picker the settings panel has, but scoped to this run and not written to the config: one row per
+signal, a name and a site number.
+
+It starts as a **copy of the setting you were already using**, so you are editing your rig rather
+than building one from nothing. The preview shows the sites for both animals on a split port, and
+whether a QC floor will exist, as you type. A **Save as a named setting…** button turns the
+selection into a reusable entry.
+
+The selection goes through **exactly the same validator** as a setting stored in YAML, so nothing
+typed here can be looser than something written into the config file by hand.
+
+> [!info] A run remembers its own channels
+> The role map is stored **on the run**, not just the name of a setting to look up later. So a
+> recording stays readable after its setting is renamed or deleted — and a custom selection has no
+> config entry to look up at all.
+
 ## 6. Adding your own recording setting
 
 **Rig settings** at the bottom of the console → *Add a recording setting*. Give it a key, a label, a
@@ -170,7 +204,8 @@ appended to an audit log shown at the bottom of the panel.
 | Symptom | Meaning | Fix |
 |---|---|---|
 | a port is red, "Allego reports 64" | you declared no splitter on a split port | tick the splitter, or check the hardware |
-| a port is red, "nothing is connected" | Allego enumerates 0 | check the SPI cable and the bottom socket |
+| a port is red, "nothing is connected" | Allego enumerates 0 | check the SPI cable and the bottom socket — or untick **In use** if you are not recording on it today |
+| Start is greyed and mentions a mouse ID | the same ID is in two slots | give each animal its own. Capitalisation does not make them different: `HLBSSL31` and `hlbssl31` are one mouse |
 | "has never been recorded on this rig" | a splitter with two unipolar headstages | someone must see it enumerate, then set `splitter_verified: true` |
 | the layout dropdown says **Custom** | your ports no longer match any saved layout | normal; save it as one if you will use it again |
 | "cannot change while a run is in flight" | a run has not finished stripping or uploading | wait for it, or abort it |

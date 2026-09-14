@@ -194,7 +194,7 @@ State lives at `{RECORDER_STATE}/runs.db`; upload bookkeeping at
 
 ## 5. Every defect this system has had, and the rule it produced
 
-Ten defects, three provenances, and the mix is the point:
+Fourteen defects, four provenances, and the mix is the point:
 
 - **Seven were found by running it** (1-6, 10). No test caught them. Number 10 is the sharpest: it had been latent on every real run, passing only because an unrelated stage happened to be slow enough.
 - **Two were found by asking one question nobody had asked** (7-8) — *what does this do with
@@ -202,6 +202,10 @@ Ten defects, three provenances, and the mix is the point:
 - **One was found by writing a test** (9), which in the process wrote eight false `VERIFIED`
   rows into the live upload manifest. A test that touches production state is a production
   action; this one was caught the same hour, and the rule it produced is in the table.
+- **Four were found by an operator using it** (11-14). Three of those were reported in the
+  plainest possible terms — "failed QC label again", "i have no way to select the allego
+  channels" — and each took minutes to find once someone had actually tried to do the thing.
+  Number 14 was found by listing what still needed bench testing, before anyone hit it.
 
 | # | Defect | Rule it produced |
 |---|---|---|
@@ -215,6 +219,10 @@ Ten defects, three provenances, and the mix is the point:
 | 8 | `unipolar_lfp` could not finish the pipeline *at all*: no floor model describes its sites, so the chain asked for a manual override on **every** run | **a guard that can never be satisfied is a guard people learn to click past** — declare "no criterion applies" in the config, and keep it distinguishable from "a person waived the check" |
 | 9 | a test wrote eight `VERIFIED` rows into the **real** upload manifest for files never uploaded, because `manifest_load(path=MANIFEST)` bound the path at import time and overriding the module constant did nothing | **a default argument is not a hook** — anything a test must redirect is read at call time; and a manifest the uploader *skips* on is a claim about the world, not a log |
 | 10 | the strip REFUSED the file it was asked to strip: `--require-idle` uses mtime, which cannot tell "stopped four seconds ago" from "being written right now", and every strip follows a stop by seconds | **a guard must test the thing it means, not a proxy that usually correlates** — and note it had never fired because QC runs first and on a 24 h file takes long enough for the mtime to age out BY ACCIDENT, so the protection on every real run was incidental |
+| 11 | the same mouse id in six slots was accepted, recorded for six minutes, and only then failed: the cohort schema refuses duplicate animal_ids, so no QC bundle could be computed | **check what makes a run unjudgeable while the form is still on screen** — and fold case, because `HLBSSL31` and `hlbssl31` are one mouse to everyone except a string comparison |
+| 12 | "Custom" was a selectable dropdown entry whose handler was `if (!t) return;` — it did nothing, and there was no way anywhere to choose channels at the point of use | **a control that does nothing is worse than no control**; and the picker that replaced it seeded from whichever headstage sorted first alphabetically, which gave the wrong floor and a failing rig check |
+| 13 | after extracting one shared validator to stop the config file and the console diverging, the role-NAME rule was left behind in the settings panel — so it refused `trial 2` while the inline picker accepted it, and a real run reached the NAS with spaces in its role names | **extracting a shared rule is not finished until the old copies are gone**; and validate on INPUT, not on REPLAY, or tightening a rule makes yesterday's data unopenable |
+| 14 | a port with no headstage enumerates 0, the check refused it, and the page had no way to say "I am not using that port" — `ports_used` existed in the backend and the UI never sent it | **a refusal must name its escape**, or a correct guard reads as a broken feature |
 
 > [!quote] Paper-ready
 > Acquisition is controlled by a local service that records, for each run, the responsible
