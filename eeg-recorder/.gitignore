@@ -6,3 +6,9 @@ deploy/uploads.jsonl
 deploy/logs/
 __pycache__/
 *.pyc
+
+# Machine-written config and its backups. The CURATED config (config/users.yaml)
+# is tracked; these are what the console's settings panel produced, and they are
+# per-machine state rather than shared truth.
+config/custom.yaml
+config/backups/

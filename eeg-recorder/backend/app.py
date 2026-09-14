@@ -43,6 +43,7 @@ import presets as P
 import layout as LY
 import runs as R
 import naming
+import settings_store as SS
 import scheduler as SCH
 import storage as ST
 
@@ -214,6 +215,84 @@ def api_naming_preview():
     if out.get("folder") and when != today and source == "scheduled start":
         out["if_started_now"] = out["folder"].replace(when, today, 1)
     return jsonify(out)
+
+
+# --------------------------------------------------------------------------- #
+# rig settings -- see settings_store.py for what each guard is for
+# --------------------------------------------------------------------------- #
+@app.get("/api/settings")
+def api_settings():
+    global cfg
+    cfg = P.load()
+    return jsonify({
+        "headstages": {n: {"label": h.label, "slots_per_chip": h.slots_per_chip,
+                           "real_channels": h.real_channels,
+                           "bipolar_in_hardware": h.bipolar_in_hardware,
+                           "splitter_verified": h.splitter_verified,
+                           "source": h.source, "editable": False}
+                       for n, h in cfg.headstages.items()},
+        "settings": {n: {"label": s.label, "headstage": s.headstage,
+                         "roles": s.roles, "qc": s.qc, "qc_reason": s.qc_reason,
+                         "seen_in": s.seen_in,
+                         "contiguous": s.contiguous_from_one,
+                         "editable": n in P.CUSTOM_NAMES}
+                     for n, s in cfg.settings.items()},
+        "layouts": {n: {"label": t.label, "setting": t.setting,
+                        "splitters": t.splitters,
+                        "editable": n in P.CUSTOM_NAMES}
+                    for n, t in cfg.templates.items()},
+        "history": SS.history(20),
+    })
+
+
+def _reload(new_cfg):
+    """Adopt a validated config. The scheduler and worker hold no copy of it."""
+    global cfg
+    cfg = new_cfg
+    return jsonify({"ok": True})
+
+
+@app.post("/api/settings/recording")
+def api_add_setting():
+    b = request.get_json(silent=True) or {}
+    try:
+        return _reload(SS.add_setting(
+            name=b.get("name", ""), label=b.get("label", ""),
+            headstage=b.get("headstage", ""), roles=b.get("roles") or {},
+            qc=b.get("qc", "auto"), qc_reason=b.get("qc_reason", ""),
+            seen_in=b.get("seen_in", ""), store=store, who=b.get("who", "")))
+    except (SS.SettingsRefused, P.PresetError) as exc:
+        return _err(exc)
+
+
+@app.delete("/api/settings/recording/<name>")
+def api_del_setting(name):
+    try:
+        return _reload(SS.delete_setting(name, store=store,
+                                         who=request.args.get("who", "")))
+    except (SS.SettingsRefused, P.PresetError) as exc:
+        return _err(exc)
+
+
+@app.post("/api/settings/layout")
+def api_save_layout():
+    b = request.get_json(silent=True) or {}
+    try:
+        return _reload(SS.save_layout(
+            name=b.get("name", ""), label=b.get("label", ""),
+            setting=b.get("setting", ""), splitters=b.get("splitters") or {},
+            store=store, who=b.get("who", "")))
+    except (SS.SettingsRefused, P.PresetError) as exc:
+        return _err(exc)
+
+
+@app.delete("/api/settings/layout/<name>")
+def api_del_layout(name):
+    try:
+        return _reload(SS.delete_layout(name, store=store,
+                                        who=request.args.get("who", "")))
+    except (SS.SettingsRefused, P.PresetError) as exc:
+        return _err(exc)
 
 
 @app.post("/api/runs")

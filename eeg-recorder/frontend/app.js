@@ -23,6 +23,7 @@ const post = (p, b) => api(p, {
   method: 'POST', headers: {'Content-Type': 'application/json'},
   body: b ? JSON.stringify(b) : undefined,
 });
+const remove = (p) => api(p, {method: 'DELETE'});
 
 let CFG = null, PRESET = null, STATE = null, SELECTED = 'andrea';
 // What the operator says is physically on each port. A splitter puts TWO chips
@@ -530,3 +531,175 @@ async function refresh() {
   await refresh();
   setInterval(refresh, 2000);
 })();
+
+/* ====================================================================== */
+/* RIG SETTINGS                                                            */
+/*                                                                         */
+/* Collapsed by default: it is not part of the daily path, and the daily    */
+/* path should not have to scroll past it.                                  */
+/* ====================================================================== */
+let SETTINGS = null;
+
+$('#settings-head').onclick = async () => {
+  const body = $('#settings-body'), shown = !body.classList.contains('hide');
+  body.classList.toggle('hide', shown);
+  $('#settings-caret').textContent = shown ? '▸ show' : '▾ hide';
+  if (!shown) await loadSettings();
+};
+
+async function loadSettings() {
+  SETTINGS = await api('/api/settings');
+
+  $('#set-list').innerHTML = Object.entries(SETTINGS.settings).map(([n, s]) => {
+    const sites = Object.entries(s.roles)
+      .sort((a, b) => a[1] - b[1]).map(([r, o]) => `${r}=/${o}`).join(', ');
+    // "no QC criterion" is a property of the layout, not a failure of the run,
+    // and it is said here as well as before a run so nobody meets it first in
+    // an error message.
+    const qc = s.qc === 'none'
+      ? ` <span style="color:var(--warn)">no QC criterion</span>` : '';
+    const del = s.editable
+      ? ` <a href="#" data-del-set="${n}" style="color:var(--bad)">delete</a>`
+      : ` <span style="color:var(--faint)">curated</span>`;
+    return `<div><span class="mono">${n}</span> — ${s.label}: `
+         + `<span class="mono">${sites}</span>${qc}${del}`
+         + (s.seen_in ? `<br><span style="color:var(--faint)">seen in ${s.seen_in}</span>` : '')
+         + `</div>`;
+  }).join('');
+
+  $('#lay-list').innerHTML = Object.entries(SETTINGS.layouts).map(([n, t]) => {
+    const split = CFG.ports.filter(p => t.splitters[p]).join(', ') || 'none';
+    const del = t.editable
+      ? ` <a href="#" data-del-lay="${n}" style="color:var(--bad)">delete</a>`
+      : ` <span style="color:var(--faint)">curated</span>`;
+    return `<div><span class="mono">${n}</span> — ${t.label}: `
+         + `${t.setting}, splitters on ${split}${del}</div>`;
+  }).join('');
+
+  $('#hs-list').innerHTML = Object.entries(SETTINGS.headstages).map(([n, h]) =>
+    `<div><span class="mono">${n}</span> — ${h.label}: ${h.slots_per_chip} slots, `
+    + `${h.real_channels} real, ${h.bipolar_in_hardware ? 'bipolar' : 'unipolar'}`
+    + (h.splitter_verified ? '' : ', <span style="color:var(--warn)">splitter unverified</span>')
+    + (h.source ? `<br><span style="color:var(--faint)">${h.source}</span>` : '')
+    + `</div>`).join('');
+
+  $('#audit-list').innerHTML = (SETTINGS.history || []).length
+    ? SETTINGS.history.map(h =>
+        `<div><span class="mono">${h.utc}</span> ${h.action} `
+        + `<b>${h.name || ''}</b>${h.who ? ' by ' + h.who : ''}</div>`).join('')
+    : '<span style="color:var(--faint)">nothing changed yet</span>';
+
+  const hs = $('#ns-hs');
+  hs.innerHTML = Object.entries(SETTINGS.headstages).map(([n, h]) =>
+    `<option value="${n}">${h.label}</option>`).join('');
+  if (!$('#ns-roles').children.length) { addRoleRow(); addRoleRow(); }
+  previewSetting();
+
+  document.querySelectorAll('[data-del-set]').forEach(a => a.onclick = async e => {
+    e.preventDefault();
+    const n = a.dataset.delSet;
+    if (!confirm(`Delete the recording setting "${n}"?`)) return;
+    try { await remove(`/api/settings/recording/${n}`); toast(`deleted ${n}`, 'ok'); }
+    catch (err) { toast(err.message, 'bad'); }
+    await loadSettings(); await boot();
+  });
+  document.querySelectorAll('[data-del-lay]').forEach(a => a.onclick = async e => {
+    e.preventDefault();
+    const n = a.dataset.delLay;
+    if (!confirm(`Delete the layout "${n}"?`)) return;
+    try { await remove(`/api/settings/layout/${n}`); toast(`deleted ${n}`, 'ok'); }
+    catch (err) { toast(err.message, 'bad'); }
+    await loadSettings(); await boot();
+  });
+}
+
+function addRoleRow(role = '', site = '') {
+  const div = document.createElement('div');
+  div.className = 'row';
+  div.style.marginTop = '6px';
+  div.innerHTML =
+    `<div><input data-k="role" placeholder="signal name, e.g. eeg" maxlength="24" value="${role}"></div>`
+  + `<div><input data-k="site" type="number" min="1" max="64" placeholder="site" value="${site}" style="width:90px"></div>`
+  + `<div><button class="ghost" data-k="drop">−</button></div>`;
+  div.querySelector('[data-k=drop]').onclick = () => { div.remove(); previewSetting(); };
+  div.querySelectorAll('input').forEach(i => i.addEventListener('input', previewSetting));
+  $('#ns-roles').appendChild(div);
+}
+$('#ns-addrole').onclick = () => { addRoleRow(); previewSetting(); };
+$('#ns-hs').onchange = previewSetting;
+
+function gatherRoles() {
+  const out = {};
+  document.querySelectorAll('#ns-roles .row').forEach(d => {
+    const r = d.querySelector('[data-k=role]').value.trim();
+    const s = d.querySelector('[data-k=site]').value.trim();
+    if (r && s) out[r] = parseInt(s, 10);
+  });
+  return out;
+}
+
+/* Show the exact sites the strip would keep, and whether a QC floor exists,
+   BEFORE the setting is saved. The floor rule derives base+n..base+real, which
+   only describes sites running 1..n; anything else has no criterion and must
+   say why. Telling someone that at save time is far better than at 09:00. */
+function previewSetting() {
+  const roles = gatherRoles();
+  const hs = SETTINGS && SETTINGS.headstages[$('#ns-hs').value];
+  const el = $('#ns-preview'), qcbox = $('#ns-qcbox');
+  if (!hs || !Object.keys(roles).length) {
+    el.textContent = 'Add at least one signal.'; qcbox.classList.add('hide'); return;
+  }
+  const sites = Object.values(roles).sort((a, b) => a - b);
+  const over = sites.filter(s => s > hs.real_channels);
+  const dup = sites.length !== new Set(sites).size;
+  const contiguous = sites.every((s, i) => s === i + 1);
+  qcbox.classList.toggle('hide', contiguous);
+
+  const slot1 = Object.entries(roles).sort((a, b) => a[1] - b[1])
+    .map(([r, o]) => `A/${o} ${r}`).join(' · ');
+  const slot2 = Object.entries(roles).sort((a, b) => a[1] - b[1])
+    .map(([, o]) => `A/${o + 32}`).join(' · ');
+  let msg = `<b>${sites.length} channels per mouse.</b> First animal on port A: `
+          + `<span class="mono">${slot1}</span>. Second animal on a split port: `
+          + `<span class="mono">${slot2}</span>.`;
+  if (dup) msg += `<div style="color:var(--bad)">Two signals share a site number.</div>`;
+  if (over.length) msg += `<div style="color:var(--bad)">Site(s) ${over.join(', ')} `
+    + `are beyond this headstage's ${hs.real_channels} real channels — nothing is wired there.</div>`;
+  msg += contiguous
+    ? `<div style="color:var(--ok)">QC applies: the wire-free floor is /${sites.length + 1}–/${hs.real_channels} on each chip.</div>`
+    : `<div style="color:var(--warn)">No QC criterion: the floor rule does not describe these sites, so no QC bundle will ever be produced for this layout. Say why below.</div>`;
+  el.innerHTML = msg;
+}
+
+$('#ns-save').onclick = async () => {
+  try {
+    await post('/api/settings/recording', {
+      name: $('#ns-name').value.trim(),
+      label: $('#ns-label').value.trim(),
+      headstage: $('#ns-hs').value,
+      roles: gatherRoles(),
+      qc: $('#ns-qcbox').classList.contains('hide') ? 'auto' : 'none',
+      qc_reason: $('#ns-reason').value.trim(),
+      who: $('#owner').value || '',
+    });
+    toast('recording setting saved', 'ok');
+    $('#ns-name').value = ''; $('#ns-label').value = ''; $('#ns-reason').value = '';
+    $('#ns-roles').innerHTML = ''; addRoleRow(); addRoleRow();
+    await loadSettings(); await boot();
+  } catch (e) { toast(e.message, 'bad'); }
+};
+
+$('#nl-save').onclick = async () => {
+  try {
+    await post('/api/settings/layout', {
+      name: $('#nl-name').value.trim(),
+      label: $('#nl-label').value.trim(),
+      setting: $('#setting').value,
+      splitters: SPLIT,
+      who: $('#owner').value || '',
+    });
+    toast('layout saved', 'ok');
+    $('#nl-name').value = ''; $('#nl-label').value = '';
+    await loadSettings(); await boot();
+  } catch (e) { toast(e.message, 'bad'); }
+};

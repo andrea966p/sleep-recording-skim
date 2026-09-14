@@ -86,6 +86,72 @@
     </div>
   </section>
 
+  <!-- rig settings ---------------------------------------------------- -->
+  <section class="panel" id="settings-panel">
+    <h2 style="cursor:pointer" id="settings-head">Rig settings <span
+       class="ch" id="settings-caret" style="font-weight:400">▸ show</span></h2>
+    <div id="settings-body" class="hide">
+      <div class="warnbox" style="margin-bottom:12px">
+        <b>A recording setting says which site number carries which signal.</b>
+        Get it wrong and the strip keeps the wrong channels, and you find out
+        after the animals are done. Nothing here can be changed while a run is in
+        flight, every change is validated before it is saved, and the previous
+        version is always kept.
+      </div>
+
+      <h3>Recording settings</h3>
+      <div id="set-list" class="note"></div>
+
+      <details style="margin-top:10px">
+        <summary>Add a recording setting</summary>
+        <div class="row" style="margin-top:10px">
+          <div><label for="ns-name">Key</label>
+            <input id="ns-name" placeholder="eeg_emg_lfp" maxlength="40"></div>
+          <div><label for="ns-label">Shown as</label>
+            <input id="ns-label" placeholder="EEG + EMG + LFP" maxlength="60"></div>
+          <div><label for="ns-hs">Headstage</label>
+            <select id="ns-hs"></select></div>
+        </div>
+        <div class="note" style="margin-top:8px">
+          One row per signal: what to call it, and which site number on the chip
+          carries it.
+        </div>
+        <div id="ns-roles"></div>
+        <button class="ghost" id="ns-addrole" style="margin-top:6px">+ another signal</button>
+        <div class="note" id="ns-preview" style="margin-top:10px"></div>
+        <div id="ns-qcbox" class="hide" style="margin-top:8px">
+          <label for="ns-reason">Why is there no wire-free control on this layout?</label>
+          <textarea id="ns-reason" rows="2" style="width:100%"
+            placeholder="e.g. the unused inputs are tied to ground and were never characterised"></textarea>
+        </div>
+        <button id="ns-save" style="margin-top:10px">Save recording setting</button>
+      </details>
+
+      <h3 style="margin-top:18px">Saved layouts</h3>
+      <div id="lay-list" class="note"></div>
+      <div class="row" style="margin-top:8px">
+        <div><label for="nl-name">Save the current declaration as</label>
+          <input id="nl-name" placeholder="four_mice_ac" maxlength="40"></div>
+        <div><label for="nl-label">Shown as</label>
+          <input id="nl-label" placeholder="4 mice, A and C split" maxlength="60"></div>
+        <div style="align-self:end"><button class="ghost" id="nl-save">Save layout</button></div>
+      </div>
+
+      <h3 style="margin-top:18px">Headstages <span class="ch"
+          style="font-weight:400">read-only</span></h3>
+      <div class="note" id="hs-list"></div>
+      <div class="note" style="margin-top:4px; color:var(--faint)">
+        Chip physics: how many slots a chip occupies and how many of them are real
+        amplifiers. A wrong value here silently breaks the check that compares the
+        declared rig against what Allego enumerates, so it is edited in
+        <span class="mono">config/users.yaml</span> by hand.
+      </div>
+
+      <h3 style="margin-top:18px">Recent changes</h3>
+      <div class="note" id="audit-list"></div>
+    </div>
+  </section>
+
   <!-- history --------------------------------------------------------- -->
   <section class="panel">
     <h2>Runs</h2>

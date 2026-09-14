@@ -41,6 +41,22 @@ CONFIG = Path(os.environ.get(
     "EEG_RECORDER_CONFIG",
     Path(__file__).resolve().parent.parent / "config" / "users.yaml"))
 
+# 🔑 TWO FILES, AND THE SERVICE ONLY EVER WRITES THE SECOND.
+#
+# `users.yaml` is curated by hand and carries the provenance this project runs
+# on: which recording the layout was measured from, why the unipolar floor is
+# absent, what the 2026-08-05 page says about ground-tied inputs. A machine
+# rewriting it would strip every one of those comments, because no YAML dumper
+# in the standard library round-trips them.
+#
+# So additions made through the web form land in `custom.yaml`, which is
+# machine-written and expected to be comment-free. The curated file stays
+# readable, a UI bug cannot corrupt it, and `git diff` shows at a glance what a
+# person wrote versus what a form generated.
+CUSTOM = Path(os.environ.get(
+    "EEG_RECORDER_CUSTOM",
+    Path(__file__).resolve().parent.parent / "config" / "custom.yaml"))
+
 PORTS = ("A", "B", "C", "D")
 
 
@@ -156,7 +172,11 @@ class Config:
         return self.template(self.users[user]["default_layout"])
 
 
-def load(path: Path | str | None = None) -> Config:
+CUSTOM_NAMES: set = set()
+
+
+def load(path: Path | str | None = None,
+         custom: Path | str | None = None) -> Config:
     """Read and VALIDATE the configuration. Refuses rather than guessing.
 
     Every refusal names the fix, because the person reading it is looking at the
@@ -165,6 +185,25 @@ def load(path: Path | str | None = None) -> Config:
     """
     p = Path(path) if path else CONFIG
     raw = yaml.safe_load(p.read_text()) or {}
+
+    # Overlay the machine-written additions. A custom entry may NOT shadow a
+    # curated one: silently replacing `eeg_emg` from a web form, with the
+    # curated definition still sitting in the file looking authoritative, is a
+    # way to record the wrong channels and never find out why.
+    custom_path = Path(custom) if custom else (CUSTOM if not path else None)
+    if custom_path and custom_path.exists():
+        cus = yaml.safe_load(custom_path.read_text()) or {}
+        for block in ("headstages", "recording_settings", "layout_templates"):
+            added = cus.get(block) or {}
+            clash = sorted(set(added) & set(raw.get(block) or {}))
+            if clash:
+                raise PresetError(
+                    f"{custom_path.name} redefines {block} {clash}, which "
+                    f"{p.name} already defines. A custom entry may not shadow a "
+                    "curated one -- rename it, or edit the curated file by hand.")
+            raw.setdefault(block, {}).update(added)
+            for name in added:
+                CUSTOM_NAMES.add(name)
 
     # ---- layer 1: headstages ------------------------------------------- #
     headstages = {}
