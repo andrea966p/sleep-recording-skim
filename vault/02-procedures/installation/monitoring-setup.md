@@ -572,8 +572,40 @@ DEFAULT_RECIPIENT_SLACK="#"
 role_recipients_slack[sysadmin]="#"
 ```
 
-> [!tip] Same Webhook
-> Uses the same Slack webhook as Uptime Kuma. Both tools post to the same channel — Uptime Kuma for up/down events, Netdata for threshold alerts.
+> [!history] Historical note (pre-2026-09-14)
+> Both tools posted to the same Slack webhook/channel — Uptime Kuma for up/down events, Netdata for threshold alerts. Replaced 2026-09-14 with ntfy (below) to stop cluttering a private Slack DM; the webhook itself is left in the config, commented off via `SEND_SLACK="NO"`, in case Slack is ever wanted again.
+
+### 8.3b Switched to ntfy (2026-09-14)
+
+Netdata alerts and Uptime Kuma alerts now both push to a phone via [ntfy](https://ntfy.sh) (public server, no self-hosting — a self-hosted container was tried first and abandoned because it only worked over Tailscale, not off-network) instead of Slack.
+
+Topic: `nvr-b39a24e80833bb95` (generated with `openssl rand -hex 8` — long and random on purpose, since ntfy.sh topics have no auth and anyone who knows the name can publish/read it).
+
+`/etc/netdata/health_alarm_notify.conf`:
+
+```bash
+SEND_EMAIL="NO"
+# ... (disable all other methods)
+
+SEND_NTFY="YES"
+DEFAULT_RECIPIENT_NTFY="https://ntfy.sh/nvr-b39a24e80833bb95"
+role_recipients_ntfy[sysadmin]="https://ntfy.sh/nvr-b39a24e80833bb95"
+role_recipients_ntfy[nvr]="https://ntfy.sh/nvr-b39a24e80833bb95"
+
+SEND_SLACK="NO"
+SLACK_WEBHOOK_URL="https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
+DEFAULT_RECIPIENT_SLACK="#"
+```
+
+> [!warning] `DEFAULT_RECIPIENT_NTFY` must be the FULL URL, not just the topic
+> This Netdata build (v2.11.0) has no `NTFY_SERVER` variable — despite that name appearing in some online examples/older docs. `send_ntfy()` in `/usr/libexec/netdata/plugins.d/alarm-notify.sh` passes `${recipient}` straight to curl as the request URL. Setting `DEFAULT_RECIPIENT_NTFY` to just the topic name (e.g. `nvr-b39a24e80833bb95`) makes curl try to resolve it as a bare hostname — `curl: (6) Could not resolve host` — with **no visible config error**, it just silently fails every send. Always use the full `https://ntfy.sh/<topic>` (or self-hosted server URL) as the recipient value.
+
+Uptime Kuma: Settings → Notifications → Add → type `ntfy` → server `https://ntfy.sh`, topic `nvr-b39a24e80833bb95` → apply to all monitors. No equivalent gotcha there — Kuma has separate server/topic fields.
+
+Phone: ntfy app → subscribe → topic `nvr-b39a24e80833bb95` → server `ntfy.sh` (default, no need to override).
+
+- [x] Netdata → ntfy tested via `alarm-notify.sh test`, all 3 (WARNING/CRITICAL/CLEAR) `httpcode 200` ✅ 2026-09-14
+- [x] Uptime Kuma → ntfy notification added and applied to all monitors ✅ 2026-09-14
 
 ### 8.4 Apply and Verify
 
