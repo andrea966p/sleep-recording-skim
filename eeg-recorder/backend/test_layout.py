@@ -179,7 +179,73 @@ def t_cohort_extras_only_for_non_contiguous():
     assert e["role_sites"]["eeg_f"] == 21
 
 
+def t_custom_channels_for_one_run():
+    """Channels chosen for a single run, not saved to the config.
+
+    REPORTED 2026-09-14: "when i select custom, i have no way to select the
+    allego channels". There genuinely was none -- the only paths were three
+    fixed entries or a form in a collapsed panel. A per-run selection goes
+    through the SAME validator as a stored one, so it cannot be looser.
+    """
+    lay = L.resolve(CFG, "", {p: True for p in L.PORTS},
+                    custom={"headstage": "rhd2216_bipolar",
+                            "roles": {"eeg": 1, "emg": 2, "ecg": 3}})
+    assert lay.setting.name == L.CUSTOM
+    assert lay.labels_for_slot("A1") == ["A/1", "A/2", "A/3"]
+    assert lay.labels_for_slot("A2") == ["A/33", "A/34", "A/35"]
+    assert lay.setting.qc == "auto"
+
+    # non-contiguous is allowed WITH a reason, and the +32 shift still applies
+    uni = L.resolve(CFG, "", {p: True for p in L.PORTS},
+                    custom={"headstage": "rhd2216_bipolar",
+                            "roles": {"eeg": 1, "emg": 2, "lfp": 9},
+                            "qc": "none", "qc_reason": "never characterised"})
+    assert uni.labels_for_slot("A2") == ["A/33", "A/34", "A/41"]
+    assert not uni.setting.qc_applies
+
+
+def t_a_run_carries_its_own_roles():
+    """A run must stay readable after its setting is renamed or deleted.
+
+    `to_dict` records the role map, not just a name to look up later -- and for
+    a custom selection there is no config entry to look up at all.
+    """
+    lay = L.resolve(CFG, "", {"A": True}, ports_used=("A",),
+                    custom={"headstage": "rhd2216_bipolar",
+                            "roles": {"a": 1, "b": 2}})
+    d = lay.to_dict()
+    assert d["roles"] == {"a": 1, "b": 2}
+    back = L.from_dict(CFG, d)
+    assert back.labels() == lay.labels()
+    assert back.setting.roles == lay.setting.roles
+
+    # a stored layout naming a setting that no longer exists still resolves,
+    # because the roles travelled with it
+    d["setting"] = "deleted_setting"
+    assert L.from_dict(CFG, d).labels() == lay.labels()
+
+
 def refusals():
+    expect("refuse: custom channels the floor rule cannot describe, with qc auto",
+           lambda: L.resolve(CFG, "", {"A": True},
+                             custom={"headstage": "rhd2216_bipolar",
+                                     "roles": {"a": 1, "b": 9}}),
+           P.PresetError, "do not run 1..2")
+    expect("refuse: custom qc none with no reason",
+           lambda: L.resolve(CFG, "", {"A": True},
+                             custom={"headstage": "rhd2216_bipolar",
+                                     "roles": {"a": 1, "b": 9}, "qc": "none"}),
+           P.PresetError, "qc_reason")
+    expect("refuse: custom naming an unknown headstage",
+           lambda: L.resolve(CFG, "", {"A": True},
+                             custom={"headstage": "nope", "roles": {"a": 1}}),
+           P.PresetError, "unknown headstage")
+    expect("refuse: custom with a site beyond the chip",
+           lambda: L.resolve(CFG, "", {"A": True},
+                             custom={"headstage": "rhd2216_bipolar",
+                                     "roles": {"a": 1, "b": 30}}),
+           P.PresetError, "real channels")
+
     expect("refuse: an unknown recording setting",
            lambda: L.resolve(CFG, "nope", {}), P.PresetError, "unknown recording setting")
     expect("refuse: an unknown port in the splitter map",
@@ -258,7 +324,9 @@ def main() -> int:
                t_a_port_with_nothing_connected_is_named,
                t_unused_ports_are_exempt,
                t_unverified_combination_is_refused_until_confirmed,
-               t_cohort_extras_only_for_non_contiguous):
+               t_cohort_extras_only_for_non_contiguous,
+               t_custom_channels_for_one_run,
+               t_a_run_carries_its_own_roles):
         check(fn.__name__, fn)
     print("\nMUST REFUSE")
     refusals()

@@ -29,6 +29,37 @@ let CFG = null, PRESET = null, STATE = null, SELECTED = 'andrea';
 // What the operator says is physically on each port. A splitter puts TWO chips
 // on a port: 64 enumerated channels, two animals. Without one, 32 and one animal.
 let SPLIT = {A: true, B: true, C: true, D: true};
+// A channel selection made for ONE run and not saved to the config. It goes
+// through the same validator as a saved setting (presets.make_setting), so an
+// inline choice cannot be looser than a stored one.
+const CUSTOM_SETTING = '__custom__';
+// The setting in use before switching to Custom. "Custom channels" then starts
+// as a COPY of what the rig is already set to, which is what someone means by
+// customising -- and it removes a bad default: the picker used to seed from
+// whichever headstage sorted first alphabetically, which is the exotic unipolar
+// one, silently giving the wrong expected channel count and the wrong floor.
+let LAST_SETTING = null;
+function customPayload() {
+  if ($('#setting').value !== CUSTOM_SETTING) return null;
+  const roles = {};
+  document.querySelectorAll('#cs-roles .row').forEach(d => {
+    const r = d.querySelector('[data-k=role]').value.trim();
+    const v = d.querySelector('[data-k=site]').value.trim();
+    if (r && v) roles[r] = parseInt(v, 10);
+  });
+  // Contiguity is decided HERE, from what is typed, not from the server's
+  // answer. Inferring it from the response was a dead end: a non-contiguous
+  // selection makes the request fail, the failure says "declare qc: none with a
+  // reason", and the reason box only appeared on a successful response. The
+  // server remains the authority -- it refuses an empty reason.
+  const sites = Object.values(roles).sort((a, b) => a - b);
+  const contiguous = sites.length > 0 && sites.every((v, i) => v === i + 1);
+  $('#cs-qcbox').classList.toggle('hide', contiguous);
+  return {headstage: $('#cs-hs').value, roles,
+          qc: contiguous ? 'auto' : 'none',
+          qc_reason: $('#cs-reason').value.trim(),
+          label: 'Custom channels'};
+}
 
 /* ---------- toast ---------- */
 function toast(msg, kind) {
@@ -100,6 +131,7 @@ function renderPills(s) {
 async function reloadConfig() {
   CFG = await api('/api/users');
   renderPresetPicker();
+  LAST_SETTING = $('#setting').value;
   await loadLayout();
 }
 
@@ -111,8 +143,12 @@ function renderPresetPicker() {
     o.value = name; o.textContent = t.label;
     lsel.appendChild(o);
   }
+  // Shown when the ports match no saved layout. DISABLED: it is a description
+  // of the current state, not an action. As a selectable option it did nothing,
+  // which read as a broken control -- reported 2026-09-14.
   lsel.appendChild(Object.assign(document.createElement('option'),
-                                 {value: 'custom', textContent: 'Custom'}));
+    {value: 'custom', textContent: 'Custom (ports match no saved layout)',
+     disabled: true}));
 
   const ssel = $('#setting');
   ssel.innerHTML = '';
@@ -122,6 +158,12 @@ function renderPresetPicker() {
     o.textContent = `${st.label} — ${st.channels_per_animal} ch/mouse`;
     ssel.appendChild(o);
   }
+  ssel.appendChild(Object.assign(document.createElement('option'),
+    {value: CUSTOM_SETTING, textContent: '＋ Custom channels for this run…'}));
+
+  const chs = $('#cs-hs');
+  chs.innerHTML = Object.entries(CFG.headstages).map(([n, h]) =>
+    `<option value="${n}">${h.label}</option>`).join('');
   renderPorts();
 }
 
@@ -189,13 +231,32 @@ function renderPorts() {
    from the one that actually decides what gets recorded. */
 async function loadLayout() {
   try {
+    const custom = customPayload();
+    $('#custom-box').classList.toggle('hide', !custom);
+    if (custom && !Object.keys(custom.roles).length) {
+      $('#cs-preview').textContent = 'Add at least one signal.';
+      $('#port-note').textContent = '';
+      $('#slots').innerHTML = ''; $('#keep-note').textContent = '';
+      $('#btn-now').disabled = $('#btn-schedule').disabled = true;
+      return;
+    }
     PRESET = await post('/api/layout/resolve',
-                        {setting: $('#setting').value, splitters: SPLIT});
+                        {setting: custom ? '' : $('#setting').value,
+                         splitters: SPLIT, custom});
   } catch (e) {
-    $('#port-note').innerHTML = `<span style="color:var(--bad)">${e.message}</span>`;
+    // A channel problem belongs in the channel box, not in the port row, and
+    // the old preview must go -- showing a valid-looking line that contradicts
+    // what is typed is worse than showing nothing.
+    const where = customPayload() ? '#cs-preview' : '#port-note';
+    $(where).innerHTML = `<span style="color:var(--bad)">${e.message}</span>`;
+    if (where === '#cs-preview') $('#port-note').textContent = '';
+    $('#slots').innerHTML = '';
+    $('#keep-note').textContent = '';
+    $('#btn-now').disabled = $('#btn-schedule').disabled = true;
     return;
   }
   syncLayoutSelect();
+  if (customPayload()) renderCustomPreview();
   renderPortCheck();
   const slots = $('#slots');
   slots.innerHTML = '';
@@ -284,7 +345,8 @@ async function renderNameNote() {
   const seq = ++nameSeq;
   try {
     const r = await post('/api/naming/preview', {
-      owner, setting: $('#setting').value, splitters: SPLIT,
+      owner, setting: customPayload() ? '' : $('#setting').value,
+      custom: customPayload(), splitters: SPLIT,
       slots: gatherSlots(),
       batch_name: batch, start_at: $('#start').value || null});
     if (seq !== nameSeq) return;          // a later keystroke already answered
@@ -410,9 +472,11 @@ async function createRun(schedule) {
   if (PRESET && PRESET.check && !PRESET.check.ok) {
     toast('The declared rig does not match what Allego sees.', 'bad'); return null;
   }
+  const custom = customPayload();
   const body = {owner: $('#owner').value, slots,
-                layout: $('#layout').value,
-                setting: $('#setting').value, splitters: SPLIT,
+                layout: custom ? 'custom' : $('#layout').value,
+                setting: custom ? '' : $('#setting').value,
+                custom, splitters: SPLIT,
                 batch_name: $('#batch').value.trim()};
   if (schedule) {
     if (!$('#start').value) { toast('Pick a start time.', 'bad'); return null; }
@@ -468,7 +532,23 @@ $('#batch').addEventListener('input', () => {
 // the scheduled start changes it.
 $('#start').addEventListener('change', renderNameNote);
 
-$('#setting').onchange = () => loadLayout();
+$('#setting').onchange = (e) => {
+  if (e.target.value === CUSTOM_SETTING) seedCustomFrom(LAST_SETTING);
+  else LAST_SETTING = e.target.value;
+  loadLayout();
+};
+
+/* Start Custom as a copy of the setting already in use, so the headstage and
+   the sites are the rig's, not an arbitrary first entry. */
+function seedCustomFrom(name) {
+  const st = (CFG.settings || {})[name] || (CFG.settings || {})[LAST_SETTING]
+           || Object.values(CFG.settings || {})[0];
+  if (!st) return;
+  $('#cs-hs').value = st.headstage;
+  $('#cs-roles').innerHTML = '';
+  Object.entries(st.roles).sort((a, b) => a[1] - b[1])
+    .forEach(([r, o]) => addCustomRole(r, o));
+}
 $('#layout').onchange = e => {
   const t = CFG.layouts[e.target.value];
   if (!t) return;                       // "Custom": keep whatever is set
@@ -709,5 +789,74 @@ $('#nl-save').onclick = async () => {
     toast('layout saved', 'ok');
     $('#nl-name').value = ''; $('#nl-label').value = '';
     await loadSettings(); await reloadConfig();
+  } catch (e) { toast(e.message, 'bad'); }
+};
+
+/* ====================================================================== */
+/* CUSTOM CHANNELS FOR ONE RUN                                             */
+/*                                                                         */
+/* The same picker the settings panel has, but scoped to this run and not  */
+/* written to the config. Validation is the server's -- one rule, one       */
+/* place -- so this cannot be looser than a saved setting.                 */
+/* ====================================================================== */
+function addCustomRole(role = '', site = '') {
+  const div = document.createElement('div');
+  div.className = 'row';
+  div.style.marginTop = '6px';
+  div.innerHTML =
+    `<div><input data-k="role" placeholder="signal name, e.g. eeg" maxlength="24" value="${role}"></div>`
+  + `<div><input data-k="site" type="number" min="1" max="64" placeholder="site" value="${site}" style="width:90px"></div>`
+  + `<div><button class="ghost" data-k="drop">−</button></div>`;
+  div.querySelector('[data-k=drop]').onclick = () => { div.remove(); loadLayout(); };
+  div.querySelectorAll('input').forEach(i =>
+    i.addEventListener('input', () => { clearTimeout(window.__csT);
+      window.__csT = setTimeout(loadLayout, 350); }));
+  $('#cs-roles').appendChild(div);
+}
+
+function renderCustomPreview() {
+  if (!PRESET) return;
+  const roles = PRESET.roles[PRESET.slots[0]] || [];
+  const first = PRESET.slot_channels[PRESET.slots[0]] || [];
+  const second = PRESET.slots.length > 1 ? PRESET.slot_channels[PRESET.slots[1]] : null;
+  const hs = (CFG.headstages || {})[$('#cs-hs').value] || {};
+  const n = first.length;
+  const contiguous = PRESET.qc !== 'none';
+  // The floor is the in-file control every verdict is judged against. Saying
+  // whether one will exist -- and which sites it is -- belongs here, before the
+  // run, not in a failure afterwards.
+  $('#cs-preview').innerHTML =
+      `<b>${n} channel${n === 1 ? '' : 's'} per mouse.</b> `
+    + `First animal on port ${PRESET.slots[0][0]}: `
+    + `<span class="mono">${first.map((l, i) => `${l} ${roles[i] || ''}`).join(' · ')}</span>`
+    + (second ? `<br>Second animal on that port: <span class="mono">${second.join(' · ')}</span>` : '')
+    + (contiguous
+        ? `<div style="color:var(--ok)">QC applies: the wire-free floor is `
+          + `/${n + 1}–/${hs.real_channels || 16} on each chip.</div>`
+        : `<div style="color:var(--warn)">No QC criterion: the floor rule does not `
+          + `describe these sites, so no QC bundle will ever be produced for this `
+          + `run. Say why below.</div>`);
+}
+
+$('#cs-addrole').onclick = () => { addCustomRole(); loadLayout(); };
+$('#cs-hs').onchange = loadLayout;
+$('#cs-reason').addEventListener('input', () => {
+  clearTimeout(window.__csR); window.__csR = setTimeout(loadLayout, 400);
+});
+
+/* Turn the current selection into a reusable named setting. Same endpoint and
+   same guards as the settings panel -- this is a shortcut, not a second door. */
+$('#cs-save').onclick = async () => {
+  const c = customPayload();
+  if (!c || !Object.keys(c.roles).length) { toast('Add at least one signal first.', 'bad'); return; }
+  const name = prompt('Save as a recording setting.\n\nKey (lower-case, digits, underscore):');
+  if (!name) return;
+  const label = prompt('Shown as:', name) || name;
+  try {
+    await post('/api/settings/recording', {...c, name: name.trim(), label, who: $('#owner').value || ''});
+    await reloadConfig();
+    $('#setting').value = name.trim();
+    await loadLayout();
+    toast(`saved "${name.trim()}" — now in the dropdown`, 'ok');
   } catch (e) { toast(e.message, 'bad'); }
 };

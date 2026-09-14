@@ -169,8 +169,15 @@ class RigLayout:
                 "floor_reason": self.setting.qc_reason}
 
     def to_dict(self) -> dict:
+        # 🔑 SELF-DESCRIBING. The role map travels WITH the run, not just the
+        # name of a setting to look up later. A run must stay interpretable
+        # after someone deletes or renames the setting it used -- and for a
+        # custom selection there is no config entry to look up at all.
         return {"setting": self.setting.name,
                 "setting_label": self.setting.label,
+                "roles": dict(self.setting.roles),
+                "qc": self.setting.qc,
+                "qc_reason": self.setting.qc_reason,
                 "headstage": self.headstage.name,
                 "headstage_label": self.headstage.label,
                 "splitters": dict(self.splitters),
@@ -180,11 +187,28 @@ class RigLayout:
                 "expected_channels": {p: self.expected_channels(p) for p in PORTS}}
 
 
+CUSTOM = "custom"          # the name a per-run channel selection carries
+
+
 def resolve(cfg: P.Config, setting: str, splitters: dict,
-            ports_used=None) -> RigLayout:
-    """Build a layout from what the operator declared. Refuses on anything odd."""
-    s = cfg.setting(setting)
-    hs = cfg.headstage(s.headstage)
+            ports_used=None, custom: dict | None = None) -> RigLayout:
+    """Build a layout from what the operator declared. Refuses on anything odd.
+
+    `custom` is a channel selection made for THIS RUN and not saved to the
+    config: {headstage, roles, qc, qc_reason, label}. It goes through exactly
+    the same validator as a config entry -- `presets.make_setting` -- so an
+    inline selection cannot be looser than a saved one.
+    """
+    if custom:
+        hs = cfg.headstage(custom.get("headstage") or "")
+        s = P.make_setting(
+            name=CUSTOM, label=custom.get("label") or "Custom channels",
+            headstage=hs, roles={str(k): int(v)
+                                 for k, v in (custom.get("roles") or {}).items()},
+            qc=custom.get("qc", "auto"), qc_reason=str(custom.get("qc_reason", "")))
+    else:
+        s = cfg.setting(setting)
+        hs = cfg.headstage(s.headstage)
     spl = {str(k).upper(): bool(v) for k, v in (splitters or {}).items()}
     unknown = [k for k in spl if k not in PORTS]
     if unknown:
@@ -203,6 +227,25 @@ def resolve(cfg: P.Config, setting: str, splitters: dict,
     return RigLayout(setting=s, headstage=hs,
                      splitters={p: spl.get(p, False) for p in PORTS},
                      ports_used=used)
+
+
+def from_dict(cfg: P.Config, d: dict) -> RigLayout:
+    """Rebuild a layout from a run's own stored record.
+
+    Reads the roles the run CARRIES rather than looking the setting up again, so
+    a run stays interpretable after the config moves on. Falls back to the config
+    only for runs recorded before the role map was stored.
+    """
+    roles = d.get("roles")
+    if roles:
+        return resolve(cfg, "", d.get("splitters") or {},
+                       ports_used=d.get("ports_used"),
+                       custom={"headstage": d.get("headstage"), "roles": roles,
+                               "qc": d.get("qc", "auto"),
+                               "qc_reason": d.get("qc_reason", ""),
+                               "label": d.get("setting_label") or d.get("setting")})
+    return resolve(cfg, d.get("setting") or "", d.get("splitters") or {},
+                   ports_used=d.get("ports_used"))
 
 
 def from_template(cfg: P.Config, name: str) -> RigLayout:

@@ -80,9 +80,9 @@ def layout_of(run):
     if not d.get("setting"):
         return None
     try:
-        cfg = _P.load()
-        return _L.resolve(cfg, d["setting"], d.get("splitters") or {},
-                          ports_used=d.get("ports_used"))
+        # from_dict reads the roles the RUN carries, so a run whose setting was
+        # custom -- or has since been renamed or deleted -- still resolves.
+        return _L.from_dict(_P.load(), d)
     except Exception:
         return None
 

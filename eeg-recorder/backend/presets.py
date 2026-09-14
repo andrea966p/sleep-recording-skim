@@ -117,6 +117,62 @@ class RecordingSetting:
         return None
 
 
+def make_setting(*, name: str, label: str, headstage: Headstage, roles: dict,
+                 qc: str = "auto", qc_reason: str = "",
+                 seen_in: str = "") -> RecordingSetting:
+    """Validate and build one recording setting.
+
+    🔑 THE ONLY PLACE A SETTING IS VALIDATED. `load()` uses it for the config
+    file and `layout.resolve` uses it for a setting typed into the console for a
+    single run. Two copies of these rules would drift, and the drift would show
+    up as a run that kept the wrong channels.
+    """
+    where = f"recording setting {name!r}"
+    if not roles:
+        raise PresetError(f"{where} defines no roles")
+
+    offs = list(roles.values())
+    if len(set(offs)) != len(offs):
+        raise PresetError(
+            f"{where}: two roles share a site number {sorted(offs)}. One site "
+            "cannot carry two signals.")
+    bad = [o for o in offs if not (1 <= o <= headstage.real_channels)]
+    if bad:
+        raise PresetError(
+            f"{where}: site(s) {sorted(bad)} are outside headstage "
+            f"{headstage.name!r}'s {headstage.real_channels} real channels. On a "
+            "bipolar chip the slots beyond that are inactive and internally tied "
+            "-- recording them captures nothing.")
+
+    qc = str(qc or "auto").lower()
+    if qc not in ("auto", "none"):
+        raise PresetError(
+            f"{where} has qc: {qc!r}; it must be `auto` (this project's verdict "
+            "ladder applies) or `none` (it does not)")
+
+    st = RecordingSetting(name=name, label=label or name, headstage=headstage.name,
+                          roles=dict(roles), qc=qc, qc_reason=qc_reason,
+                          seen_in=seen_in)
+
+    # The floor rule in core/criteria.py derives base+n .. base+real_channels,
+    # which only describes roles sitting contiguously from site 1. Anything else
+    # cannot be judged by this project's criterion, and saying so here is how
+    # the unipolar layout stopped demanding an impossible override every run.
+    if qc == "auto" and not st.contiguous_from_one:
+        raise PresetError(
+            f"{where} has sites {list(st.sites)}, which do not run "
+            f"1..{len(roles)}, so this project's floor model does not describe "
+            "it and its QC bundle can never be computed. Declare `qc: none` with "
+            "a reason, or use contiguous sites.")
+    if qc == "none" and not qc_reason.strip():
+        raise PresetError(
+            f"{where} declares `qc: none` but gives no `qc_reason`. A missing "
+            "control "
+            "must say WHY it is missing: 'no characterised control exists' and "
+            "'the shape does not fit' lead the next reader to opposite actions.")
+    return st
+
+
 @dataclass(frozen=True)
 class LayoutTemplate:
     """A one-click starting point: a setting plus which ports are split."""
@@ -231,56 +287,16 @@ def load(path: Path | str | None = None,
     settings = {}
     for name, d in (raw.get("recording_settings") or {}).items():
         roles = dict(d.get("roles") or {})
-        if not roles:
-            raise PresetError(f"recording setting {name!r} defines no roles")
         hs_name = d.get("headstage")
         if hs_name not in headstages:
             raise PresetError(
                 f"recording setting {name!r} names headstage {hs_name!r}, which "
                 f"is not defined. Known: {', '.join(headstages) or '(none)'}")
-        hs = headstages[hs_name]
-
-        offs = list(roles.values())
-        if len(set(offs)) != len(offs):
-            raise PresetError(
-                f"recording setting {name!r}: two roles share a site number "
-                f"{sorted(offs)}. One site cannot carry two signals.")
-        bad = [o for o in offs if not (1 <= o <= hs.real_channels)]
-        if bad:
-            raise PresetError(
-                f"recording setting {name!r}: site(s) {sorted(bad)} are outside "
-                f"headstage {hs_name!r}'s {hs.real_channels} real channels. On a "
-                "bipolar chip the slots beyond that are inactive and internally "
-                "tied -- recording them captures nothing.")
-
-        qc = str(d.get("qc", "auto")).lower()
-        if qc not in ("auto", "none"):
-            raise PresetError(
-                f"recording setting {name!r} has qc: {qc!r}; it must be `auto` "
-                "(this project's verdict ladder applies) or `none` (it does not)")
-
-        s = RecordingSetting(
-            name=name, label=d.get("label", name), headstage=hs_name, roles=roles,
-            qc=qc, qc_reason=str(d.get("qc_reason", "")),
-            seen_in=str(d.get("seen_in", "")))
-
-        # The floor rule in core/criteria.py derives base+n .. base+real_channels,
-        # which only describes roles sitting contiguously from site 1. Anything
-        # else cannot be judged by this project's criterion, and saying so here
-        # is how `unipolar_lfp` stopped demanding an impossible override on every
-        # single run.
-        if qc == "auto" and not s.contiguous_from_one:
-            raise PresetError(
-                f"recording setting {name!r} has sites {list(s.sites)}, which do "
-                f"not run 1..{len(roles)}, so this project's floor model does not "
-                "describe it and its QC bundle can never be computed. Declare "
-                "`qc: none` with a `qc_reason`, or use contiguous sites.")
-        if qc == "none" and not s.qc_reason.strip():
-            raise PresetError(
-                f"recording setting {name!r} declares `qc: none` but gives no "
-                "`qc_reason`. A missing control must say WHY it is missing: "
-                "'no characterised control exists' and 'the shape does not fit' "
-                "lead the next reader to opposite actions.")
+        s = make_setting(name=name, label=d.get("label", name),
+                         headstage=headstages[hs_name], roles=roles,
+                         qc=d.get("qc", "auto"),
+                         qc_reason=str(d.get("qc_reason", "")),
+                         seen_in=str(d.get("seen_in", "")))
         settings[name] = s
 
     # ---- layer 3: layout templates -------------------------------------- #

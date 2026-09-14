@@ -131,7 +131,8 @@ def api_layout_resolve():
     try:
         lay = LY.resolve(cfg, body.get("setting") or "",
                          body.get("splitters") or {},
-                         ports_used=body.get("ports_used"))
+                         ports_used=body.get("ports_used"),
+                         custom=body.get("custom"))
     except (P.PresetError, LY.LayoutError) as exc:
         return _err(exc)
     out = lay.to_dict()
@@ -202,7 +203,9 @@ def api_naming_preview():
     try:
         sname = body.get("setting") or ""
         lay = (LY.resolve(cfg, sname, body.get("splitters") or {},
-                          ports_used=body.get("ports_used")) if sname else None)
+                          ports_used=body.get("ports_used"),
+                          custom=body.get("custom"))
+               if (sname or body.get("custom")) else None)
         slots = _validate_slots(lay, body.get("slots")) if lay else {}
         out = naming.preview(batch_name=body.get("batch_name"), slots=slots,
                              cfg=cfg, date_yyyymmdd=when)
@@ -305,7 +308,12 @@ def api_create_run():
     # A declaration, or the operator's default layout template.
     tname = body.get("layout") or cfg.users[owner]["default_layout"]
     try:
-        if body.get("setting"):
+        if body.get("custom"):
+            lay = LY.resolve(cfg, "", body.get("splitters") or {},
+                             ports_used=body.get("ports_used"),
+                             custom=body["custom"])
+            tname = "custom"
+        elif body.get("setting"):
             lay = LY.resolve(cfg, body["setting"], body.get("splitters") or {},
                              ports_used=body.get("ports_used"))
             tname = body.get("layout") or "custom"

@@ -67,6 +67,29 @@
       </div>
     </div>
 
+    <!-- Choosing the channels for THIS run, without saving a config entry.
+         Hidden unless "Custom channels" is picked above. -->
+    <div id="custom-box" class="hide" style="margin-top:12px; border:1px solid var(--line);
+         border-radius:8px; padding:10px 12px">
+      <div class="row" style="align-items:end">
+        <div><label for="cs-hs">Headstage</label><select id="cs-hs"></select></div>
+        <div class="note" style="flex:1">
+          One row per signal: what to call it, and which site number on the chip carries it.
+        </div>
+      </div>
+      <div id="cs-roles"></div>
+      <div style="margin-top:6px; display:flex; gap:8px; align-items:center">
+        <button class="ghost" id="cs-addrole">+ another signal</button>
+        <button class="ghost" id="cs-save">Save as a named setting…</button>
+      </div>
+      <div class="note" id="cs-preview" style="margin-top:8px"></div>
+      <div id="cs-qcbox" class="hide" style="margin-top:6px">
+        <label for="cs-reason">Why is there no wire-free control on this layout?</label>
+        <textarea id="cs-reason" rows="2" style="width:100%"
+          placeholder="e.g. the unused inputs are tied to ground and were never characterised"></textarea>
+      </div>
+    </div>
+
     <!-- What is physically on each port. A splitter puts TWO chips on a port
          (64 channels, two animals); without one there is a single animal.
          Allego reports what it actually enumerated, and a disagreement is a
