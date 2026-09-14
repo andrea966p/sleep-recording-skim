@@ -78,14 +78,161 @@ from core import qc_thresholds as T
 # --------------------------------------------------------------------------- #
 
 CHIP_REAL_CHANNELS = 16
-# An RHD2216 exposes 16 amplifiers. On a C3442-split port each chip occupies 32
-# native slots, of which only the first 16 are real. Sites beyond 16 per slot
-# (/17-/32, /49-/64) are INACTIVE and internally tied: they read low almost
-# always, so including them in a floor would flatter the control and condemn
-# every real animal. They are excluded by construction below, not by a filter.
+# THE DEFAULT, NOT A LAW. An RHD2216 exposes 16 amplifiers; on a C3442-split port
+# each chip occupies 32 native slots, of which only the first 16 are real. Sites
+# beyond 16 on such a chip (/17-/32, /49-/64) are INACTIVE and internally tied:
+# they read low almost always, so including them in a floor would flatter the
+# control and condemn every real animal. They are excluded by construction below,
+# not by a filter.
+#
+# 🔴 THIS IS AN RHD2216 PROPERTY AND IT DOES NOT GENERALISE. An RHD2132 is 32
+# REAL unipolar inputs, which is why the 2026-08-05 unipolar prep carries signal
+# on /18../23 -- sites this constant would call inactive. Until 2026-09-14 the
+# comment above stated the 16 as universal and the repo therefore held two
+# contradictory claims about those six sites. Per-chip truth now lives in
+# `ChipSpec.real_channels`; this constant is only its default.
+#
+# ⚠️ A larger `real_channels` does NOT mean a floor can be derived. On the
+# unipolar headstage the unused real inputs are TIED TO GROUND (median 0.17 MOhm,
+# measured 2026-08-05), so a floor built from them would flatter the control in
+# exactly the way the inactive slots do. Such a chip must declare `floor=()` with
+# a reason. See ChipSpec.
 
 PORTS_DEFAULT = "ABCD"
 SLOT_BASES_DEFAULT = (1, 33)   # site number of the first channel of each slot
+
+
+class LayoutError(RuntimeError):
+    """A rig layout that cannot be judged. Never guessed around."""
+
+
+@dataclass(frozen=True)
+class ChipSpec:
+    """One amplifier chip: its animal sites, and the wire-free floor beside them.
+
+    A 64-channel port carries TWO of these (a C3442 splitter, bases 1 and 33); a
+    32-channel port carries one (base 1). This is the unit the floor belongs to,
+    because "through the same chip" is what the usable-fraction definition means.
+
+    `floor` has three meanings and they are not interchangeable:
+
+        None     derive `base+n .. base+real_channels-1`. PERMITTED ONLY when the
+                 role sites are exactly base+0 .. base+n-1, because that is the
+                 only arrangement the derivation describes. Anything else raises
+                 rather than silently producing a plausible wrong answer.
+        (a,b,..) use these absolute site numbers, validated.
+        ()       THIS CHIP HAS NO FLOOR. Requires `floor_reason`.
+
+    🔑 The empty case is not "the model does not fit". It is "no characterised
+    wire-free control exists here", and the distinction decides what a future
+    reader does about it. On the unipolar RHD2132 a floor COULD be derived from
+    its 26 unused real inputs -- and must not be, because those inputs are tied
+    to ground and would flatter the control. Encoding that as a shape mismatch
+    invites someone to fix the shape; encoding it as absent evidence does not.
+    """
+    base: int
+    role_sites: tuple[tuple[str, int], ...]      # (role, ABSOLUTE site number)
+    real_channels: int = CHIP_REAL_CHANNELS
+    floor: tuple[int, ...] | None = None
+    floor_reason: str = ""
+
+    def __post_init__(self):
+        if not self.role_sites:
+            raise LayoutError(f"chip at base {self.base} declares no roles")
+        roles = [r for r, _ in self.role_sites]
+        if len(set(roles)) != len(roles):
+            raise LayoutError(f"chip at base {self.base} repeats a role: {roles}")
+        sites = [n for _, n in self.role_sites]
+        if len(set(sites)) != len(sites):
+            raise LayoutError(
+                f"chip at base {self.base}: two roles share a site number {sites}")
+        lo, hi = self.base, self.base + self.real_channels - 1
+        for role, n in self.role_sites:
+            if not (lo <= n <= hi):
+                raise LayoutError(
+                    f"role {role!r} at site {n} is outside this chip's real "
+                    f"channels {lo}..{hi}")
+
+        if self.floor is None:
+            # Derivation is only valid for the contiguous-from-base arrangement.
+            want = tuple(range(self.base, self.base + len(self.role_sites)))
+            if tuple(sites) != want:
+                raise LayoutError(
+                    f"chip at base {self.base} has role sites {sites}, which are "
+                    f"not {list(want)}, so the floor `base+n .. base+"
+                    f"{self.real_channels}` does not describe it. Declare the "
+                    "floor explicitly, or declare `floor=()` with a reason if no "
+                    "characterised wire-free control exists on this chip.")
+            derived = tuple(range(self.base + len(self.role_sites),
+                                  self.base + self.real_channels))
+            object.__setattr__(self, "floor", derived)
+
+        if self.floor == ():
+            if not self.floor_reason.strip():
+                raise LayoutError(
+                    f"chip at base {self.base} declares no floor but gives no "
+                    "reason. A missing control must say why it is missing, or "
+                    "the next reader will assume it was an oversight and derive "
+                    "one.")
+            return
+
+        f = set(self.floor)
+        if f & set(sites):
+            raise LayoutError(
+                f"chip at base {self.base}: sites {sorted(f & set(sites))} are "
+                "both an animal role and floor. An animal in its own control "
+                "group makes the comparison meaningless.")
+        outside = sorted(n for n in f if not (lo <= n <= hi))
+        if outside:
+            raise LayoutError(
+                f"chip at base {self.base}: floor sites {outside} lie outside "
+                f"the real channels {lo}..{hi}. On an RHD2216 those slots are "
+                "inactive and internally tied; they read low and would flatter "
+                "the control while condemning every real animal.")
+        if len(f) < T.FLOOR_MIN_SITES:
+            raise LayoutError(
+                f"chip at base {self.base}: {len(f)} floor sites, fewer than "
+                f"FLOOR_MIN_SITES={T.FLOOR_MIN_SITES}. A percentile over that "
+                "few numbers is not an estimate.")
+
+    @property
+    def roles(self) -> tuple[str, ...]:
+        return tuple(r for r, _ in self.role_sites)
+
+    @property
+    def has_floor(self) -> bool:
+        return bool(self.floor)
+
+
+@dataclass(frozen=True)
+class PortSpec:
+    """One XDAQ port: one chip without a splitter, two with one."""
+    port: str
+    chips: tuple[ChipSpec, ...]
+
+    def __post_init__(self):
+        if not self.chips:
+            raise LayoutError(f"port {self.port} declares no chips")
+        bases = [c.base for c in self.chips]
+        if len(set(bases)) != len(bases):
+            raise LayoutError(f"port {self.port} repeats a chip base: {bases}")
+
+
+def _uniform_layout(roles: tuple[str, ...], ports: str,
+                    slot_bases: tuple[int, ...]) -> tuple[PortSpec, ...]:
+    """The legacy whole-rig layout, expressed in the per-port model.
+
+    🔑 THE ONLY PLACE THE LEGACY FORMULA LIVES. Every accessor reads the layout
+    this produces, so there is exactly one thing to prove identical, and
+    tests/test_cohortspec_compat.py proves it against verbatim frozen copies.
+    """
+    return tuple(
+        PortSpec(port=p, chips=tuple(
+            ChipSpec(base=base,
+                     role_sites=tuple((role, base + k)
+                                      for k, role in enumerate(roles)))
+            for base in slot_bases))
+        for p in ports)
 
 
 @dataclass(frozen=True)
@@ -106,29 +253,101 @@ class CohortSpec:
     roles: tuple[str, ...] = ("eeg", "emg")
     ports: str = PORTS_DEFAULT
     slot_bases: tuple[int, ...] = SLOT_BASES_DEFAULT
+    # ADDED 2026-09-14, LAST and defaulting to empty, so every existing call site
+    # -- CohortSpec(roles=("eeg","emg")) in eight files -- constructs exactly as
+    # before, and equality, hashing and asdict() are unchanged.
+    ports_spec: tuple[PortSpec, ...] = ()
+
+    def __post_init__(self):
+        # ONE internal representation. A legacy construction expands into the
+        # same per-port layout an explicit one supplies, so there is one code
+        # path rather than two that must be kept in step.
+        layout = self.ports_spec or _uniform_layout(
+            tuple(self.roles), self.ports, tuple(self.slot_bases))
+        seen = [p.port for p in layout]
+        if len(set(seen)) != len(seen):
+            raise LayoutError(f"a port is declared twice: {seen}")
+        object.__setattr__(self, "_layout", layout)
+
+    # ---- the layout ----------------------------------------------------- #
+    @property
+    def layout(self) -> tuple[PortSpec, ...]:
+        return self._layout          # type: ignore[attr-defined]
+
+    @property
+    def is_uniform(self) -> bool:
+        """True when every chip on every port carries the same roles."""
+        sigs = {c.roles for p in self.layout for c in p.chips}
+        counts = {len(p.chips) for p in self.layout}
+        return len(sigs) <= 1 and len(counts) <= 1
+
+    def chip_of(self, position: str) -> ChipSpec:
+        port, slot_i = position[0], int(position[1:])
+        for p in self.layout:
+            if p.port == port:
+                if not (1 <= slot_i <= len(p.chips)):
+                    raise LayoutError(
+                        f"{position} does not exist: port {port} has "
+                        f"{len(p.chips)} chip(s)")
+                return p.chips[slot_i - 1]
+        raise LayoutError(
+            f"{position} names port {port}, which this spec does not describe "
+            f"(it has {', '.join(p.port for p in self.layout)})")
+
+    def roles_at(self, position: str) -> tuple[str, ...]:
+        """The roles at ONE position. On a mixed rig, `spec.roles` is a union."""
+        return self.chip_of(position).roles
 
     def positions(self) -> list[str]:
-        return [f"{p}{slot}" for p in self.ports
-                for slot in range(1, len(self.slot_bases) + 1)]
+        return [f"{p.port}{i}"
+                for p in self.layout
+                for i in range(1, len(p.chips) + 1)]
 
     def animal_sites(self) -> dict[str, dict[str, str]]:
         """{"B1": {"eeg": "B/1", "emg": "B/2"}, ...}"""
         out: dict[str, dict[str, str]] = {}
-        for p in self.ports:
-            for slot_i, base in enumerate(self.slot_bases, start=1):
-                out[f"{p}{slot_i}"] = {
-                    role: f"{p}/{base + k}" for k, role in enumerate(self.roles)}
+        for p in self.layout:
+            for slot_i, chip in enumerate(p.chips, start=1):
+                out[f"{p.port}{slot_i}"] = {
+                    role: f"{p.port}/{n}" for role, n in chip.role_sites}
         return out
 
     def floor_sites(self) -> list[str]:
-        n = len(self.roles)
-        return [f"{p}/{i}"
-                for p in self.ports
-                for base in self.slot_bases
-                for i in range(base + n, base + CHIP_REAL_CHANNELS)]
+        """Every wire-free site on the rig, in layout order.
+
+        🔑 ORDER IS PART OF THE CONTRACT. floor_threshold_ci draws
+        rng.integers against a fixed seed and indexes this list BY POSITION, so
+        a reordering with an identical set moves every published confidence
+        interval. tests/test_cohortspec_compat.py compares lists, not sets.
+        """
+        return [f"{p.port}/{i}"
+                for p in self.layout
+                for chip in p.chips
+                for i in (chip.floor or ())]
 
     def site_of(self, position: str, role: str) -> str:
-        return self.animal_sites()[position][role]
+        sites = self.animal_sites().get(position)
+        if sites is None:
+            raise LayoutError(
+                f"{position} is not a position in this spec; it has "
+                f"{', '.join(self.positions())}")
+        if role not in sites:
+            raise LayoutError(
+                f"{position} has no role {role!r}; it carries "
+                f"{', '.join(sites)}. On a mixed rig `spec.roles` is the union "
+                "across ports -- use roles_at(position) for one position.")
+        return sites[role]
+
+    def describe(self) -> str:
+        """One line per port, for logs and card provenance."""
+        out = []
+        for p in self.layout:
+            for i, c in enumerate(p.chips, start=1):
+                floor = (f"floor {len(c.floor)} sites" if c.has_floor
+                         else f"NO FLOOR ({c.floor_reason.strip().splitlines()[0]})")
+                out.append(f"{p.port}{i}: {'+'.join(c.roles)} @ base {c.base}, "
+                           f"{floor}")
+        return "\n".join(out)
 
 
 # --------------------------------------------------------------------------- #
@@ -380,12 +599,12 @@ def floor_sites_of(spec: CohortSpec, position: str) -> list[str]:
     """The wire-free sites on the SAME port and slot as `position`.
 
     This is what "through the same chip" in USABLE_FRACTION_DEFINITION means.
+
+    An EMPTY list means this chip has no characterised wire-free control -- see
+    ChipSpec. It does not mean zero sites were found; callers must treat it as
+    "no verdict is available", never as "the floor is zero".
     """
-    port = position[0]
-    slot_i = int(position[1:])
-    base = spec.slot_bases[slot_i - 1]
-    n = len(spec.roles)
-    return [f"{port}/{i}" for i in range(base + n, base + CHIP_REAL_CHANNELS)]
+    return [f"{position[0]}/{i}" for i in (spec.chip_of(position).floor or ())]
 
 
 def floor_stats(feat: EpochFeatures,

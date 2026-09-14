@@ -357,6 +357,20 @@ FLOOR_SCOPE = "chip"
 # DIRECTION RULE, measured repeatedly: a FAIL under the pooled floor is suspect,
 # a PASS under it is conservative and survives the change to per-chip.
 
+FLOOR_MIN_SITES = 8
+# A chip must offer at least this many wire-free sites before its floor is an
+# estimate rather than an anecdote. STRUCTURAL GUARD, NOT A THRESHOLD MOVE: the
+# legacy 2-role chip has 14 and the 3-role chip has 13, so no existing verdict
+# changes. It exists because the per-chip layout model now lets a layout DECLARE
+# its floor, and a declared floor of three sites would give `site_p1_median` a
+# median of three numbers while still looking like a measurement.
+
+FLOOR_MODEL_NOTE = (
+    "The 16 in CHIP_REAL_CHANNELS is an RHD2216 property (16 bipolar amplifiers "
+    "occupying 32 native slots), not a law about amplifier chips. An RHD2132 has "
+    "32 real unipolar inputs. Per-chip truth lives in criteria.ChipSpec."
+)
+
 FLOOR_ESTIMATOR = "site_p1_median"
 # How the percentile is estimated from a chip's wire-free sites.
 #   "pooled_p1"       -- percentile over every (epoch, site) value together
