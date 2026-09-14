@@ -1,19 +1,33 @@
 #!/usr/bin/env python3
-"""presets.py -- who records, and which channels their layout uses.
+"""presets.py -- the rig configuration, in three layers of decreasing stability.
 
-A preset answers one question: given a rig layout and which slots are occupied,
-WHICH CHANNELS should survive the strip? It answers in SITE LABELS (`A/1`,
-`D/33`), never in file indices, because indices are not portable between
-recordings on this rig -- `allego_0__uid0904-08-55-25` has 134 channels with
+    headstages          chip physics. YAML only. Changes when hardware changes.
+    recording_settings  which site carries which signal. Guided form in the UI.
+    layout_templates    one-click starting points. Freely savable.
+
+WHY THREE. Each is a different kind of truth with a different blast radius. A
+wrong `slots_per_chip` silently breaks the enumeration check that every other
+guard leans on; a wrong role offset silently records the wrong channels; a wrong
+template only costs a click. They get correspondingly different editing rights.
+
+🔑 A RUN HAS ONE RECORDING SETTING, SHARED BY EVERY ANIMAL. Andrea, 2026-09-14:
+"there will never be mice connected to the rig with different configuration at
+the same time. When someone records, the mice have all the same settings. What
+changes is just the amount of mice connected."
+
+So what varies between runs is exactly two things: which ports carry a C3442 SPI
+splitter (2 chips, 64 enumerated channels; without one, 1 chip and 32), and which
+slots hold an animal. `layout.py` resolves those into slots and keep-labels.
+
+CHANNELS ARE ALWAYS SITE LABELS, NEVER FILE INDICES. A keep list written as
+indices is not portable: allego_0__uid0904-08-55-25 has 134 channels with
 32-channel ports, so index 160 does not exist in it and index 128 is an aux
 channel rather than an electrode. `convert.strip_channels` resolves labels
 against each file's own biointerface_map and refuses on any miss.
 
-Two preset shapes:
-  role-based  (`roles: {eeg: 1, emg: 2}`) -- site = slot base + role offset.
-              Eight slots, two animals per 64-channel splitter port.
-  site-based  (`sites: [18..23]`)         -- site = slot base + site, roles unnamed.
-              Four slots, one animal per 32-channel port.
+Site numbering: `D/n` is native index n-1. The second animal on a splitter port
+starts at slot 32, so its EEG is /33 and not /29 -- the "+32 trap" in
+02-procedures/eight-mouse-acquisition-setup.md section 6.
 """
 from __future__ import annotations
 
@@ -27,161 +41,239 @@ CONFIG = Path(os.environ.get(
     "EEG_RECORDER_CONFIG",
     Path(__file__).resolve().parent.parent / "config" / "users.yaml"))
 
+PORTS = ("A", "B", "C", "D")
+
 
 class PresetError(ValueError):
-    """A preset or slot request that cannot be honoured. Never guessed around."""
+    """A configuration that cannot be honoured. Never guessed around."""
 
 
 @dataclass(frozen=True)
-class Preset:
+class Headstage:
+    """One amplifier chip. Physics, not preference."""
     name: str
     label: str
-    slots: dict                       # slot -> {port, base}
-    roles: dict = field(default_factory=dict)    # role -> site offset
-    sites: tuple = ()                 # bare site offsets, when roles are unnamed
-    with_gpio: bool = False
-    qc: str = "auto"                  # "auto" = this project's ladder applies; "none" = it does not
+    slots_per_chip: int      # native slots it consumes in the RHD2000 stream
+    real_channels: int       # ...of which this many are real amplifiers
+    bipolar_in_hardware: bool = True
+    splitter_verified: bool = True
+    source: str = ""
+
+
+@dataclass(frozen=True)
+class RecordingSetting:
+    """Which site number carries which signal, within one chip."""
+    name: str
+    label: str
+    headstage: str
+    roles: dict              # role -> site offset within the chip
+    qc: str = "auto"         # "auto" = this project's ladder applies
+    qc_reason: str = ""
+    seen_in: str = ""
 
     @property
     def qc_applies(self) -> bool:
-        """Whether core/criteria.py's verdict ladder means anything for this layout.
+        """Whether core/criteria.py's verdict ladder means anything here.
 
-        False is not a waiver. It says the recording was never judgeable by this
-        project's criterion in the first place, which is a different claim from
-        "we chose to skip the check", and the run record keeps them apart.
+        False is not a waiver. It says the layout was never judgeable by this
+        project's criterion, which is a different claim from "we chose to skip
+        the check", and the run record keeps them apart.
         """
         return self.qc == "auto"
 
     @property
-    def slot_names(self) -> list[str]:
-        return list(self.slots)
+    def sites(self) -> tuple[int, ...]:
+        return tuple(sorted(self.roles.values()))
 
     @property
-    def channels_per_animal(self) -> int:
-        return len(self.roles) if self.roles else len(self.sites)
+    def contiguous_from_one(self) -> bool:
+        """True when the floor rule `base+n .. base+real` describes this layout."""
+        return self.sites == tuple(range(1, len(self.roles) + 1))
 
-    def labels_for_slot(self, slot: str) -> list[str]:
-        """The site labels this slot contributes, in file order."""
-        if slot not in self.slots:
-            raise PresetError(
-                f"{slot!r} is not a slot in preset {self.name!r}; "
-                f"slots are {', '.join(self.slots)}")
-        s = self.slots[slot]
-        offsets = (sorted(self.roles.values()) if self.roles else list(self.sites))
-        return [f"{s['port']}/{s['base'] + o}" for o in offsets]
+    def labels_for(self, port: str, base: int) -> list[str]:
+        """Site labels for one animal on `port`, whose chip starts at `base`."""
+        return [f"{port}/{base - 1 + off}" for off in self.sites]
 
-    def role_of(self, slot: str, label: str) -> str | None:
-        """Which role a label plays, or None for a site-based preset."""
-        if not self.roles:
-            return None
-        s = self.slots[slot]
+    def role_of(self, port: str, base: int, label: str) -> str | None:
         for role, off in self.roles.items():
-            if label == f"{s['port']}/{s['base'] + off}":
+            if label == f"{port}/{base - 1 + off}":
                 return role
         return None
 
-    def labels(self, occupied: list[str] | None = None) -> list[str]:
-        """Every label to keep, for the occupied slots, in file order.
 
-        Sorted by (port, site) so the keep set matches the order the channels
-        appear in the file -- `strip_channels` refuses a keep set whose sections
-        are out of order, and an unsorted preset would trip that for no reason.
-        """
-        slots = list(self.slots) if occupied is None else list(occupied)
-        unknown = [s for s in slots if s not in self.slots]
-        if unknown:
-            raise PresetError(
-                f"unknown slot(s) {unknown} for preset {self.name!r}; "
-                f"slots are {', '.join(self.slots)}")
-        out = []
-        for slot in slots:
-            out.extend(self.labels_for_slot(slot))
-        return sorted(set(out), key=lambda l: (l.split("/")[0], int(l.split("/")[1])))
+@dataclass(frozen=True)
+class LayoutTemplate:
+    """A one-click starting point: a setting plus which ports are split."""
+    name: str
+    label: str
+    setting: str
+    splitters: dict          # port -> bool
 
 
 @dataclass(frozen=True)
 class Config:
     users: dict
-    presets: dict
     recording_types: tuple
     nas_share: str
     nas_root: str
     recording_type_codes: dict = field(default_factory=dict)
+    headstages: dict = field(default_factory=dict)
+    settings: dict = field(default_factory=dict)
+    templates: dict = field(default_factory=dict)
 
     def type_code(self, rtype: str) -> str:
-        """The three-letter code a recording type contributes to a folder name."""
         if rtype not in self.recording_type_codes:
             raise PresetError(
                 f"recording type {rtype!r} has no code in `recording_type_codes`; "
                 f"known types are {', '.join(self.recording_type_codes)}")
         return self.recording_type_codes[rtype]
 
-    def preset(self, name: str) -> Preset:
-        if name not in self.presets:
+    def setting(self, name: str) -> RecordingSetting:
+        if name not in self.settings:
             raise PresetError(
-                f"unknown preset {name!r}; known presets are "
-                f"{', '.join(self.presets)}")
-        return self.presets[name]
+                f"unknown recording setting {name!r}; known settings are "
+                f"{', '.join(self.settings) or '(none)'}")
+        return self.settings[name]
 
-    def preset_for_user(self, user: str) -> Preset:
+    def headstage(self, name: str) -> Headstage:
+        if name not in self.headstages:
+            raise PresetError(
+                f"unknown headstage {name!r}; known headstages are "
+                f"{', '.join(self.headstages) or '(none)'}")
+        return self.headstages[name]
+
+    def template(self, name: str) -> LayoutTemplate:
+        if name not in self.templates:
+            raise PresetError(
+                f"unknown layout {name!r}; known layouts are "
+                f"{', '.join(self.templates) or '(none)'}")
+        return self.templates[name]
+
+    def template_for_user(self, user: str) -> LayoutTemplate:
         if user not in self.users:
             raise PresetError(
                 f"unknown user {user!r}; known users are {', '.join(self.users)}")
-        return self.preset(self.users[user]["default_preset"])
+        return self.template(self.users[user]["default_layout"])
 
 
 def load(path: Path | str | None = None) -> Config:
-    p = Path(path) if path else CONFIG
-    raw = yaml.safe_load(p.read_text())
+    """Read and VALIDATE the configuration. Refuses rather than guessing.
 
-    presets = {}
-    for name, d in (raw.get("presets") or {}).items():
-        roles = dict(d.get("roles") or {})
-        sites = tuple(d.get("sites") or ())
-        if bool(roles) == bool(sites):
-            raise PresetError(
-                f"preset {name!r} must define EXACTLY ONE of `roles` or `sites`; "
-                "a preset with both is ambiguous about what each channel is, and "
-                "a preset with neither selects nothing")
-        slots = d.get("slots") or {}
-        if not slots:
-            raise PresetError(f"preset {name!r} defines no slots")
-        for slot, s in slots.items():
-            if "port" not in s or "base" not in s:
+    Every refusal names the fix, because the person reading it is looking at the
+    file. The alternative is a config that loads and produces a wrong folder or a
+    wrong keep-set at 09:00 on the morning of a 24 h run.
+    """
+    p = Path(path) if path else CONFIG
+    raw = yaml.safe_load(p.read_text()) or {}
+
+    # ---- layer 1: headstages ------------------------------------------- #
+    headstages = {}
+    for name, d in (raw.get("headstages") or {}).items():
+        for key in ("slots_per_chip", "real_channels"):
+            if not isinstance(d.get(key), int) or d[key] <= 0:
                 raise PresetError(
-                    f"preset {name!r} slot {slot!r} needs both `port` and `base`")
+                    f"headstage {name!r} needs a positive integer `{key}`. It "
+                    "decides how many channels a port is expected to enumerate, "
+                    "and the console refuses to record when the declaration and "
+                    "the hardware disagree.")
+        if d["real_channels"] > d["slots_per_chip"]:
+            raise PresetError(
+                f"headstage {name!r} claims {d['real_channels']} real channels "
+                f"in {d['slots_per_chip']} slots. A chip cannot expose more "
+                "amplifiers than it occupies slots.")
+        headstages[name] = Headstage(
+            name=name, label=d.get("label", name),
+            slots_per_chip=d["slots_per_chip"], real_channels=d["real_channels"],
+            bipolar_in_hardware=bool(d.get("bipolar_in_hardware", True)),
+            splitter_verified=bool(d.get("splitter_verified", True)),
+            source=str(d.get("source", "")))
+
+    # ---- layer 2: recording settings ----------------------------------- #
+    settings = {}
+    for name, d in (raw.get("recording_settings") or {}).items():
+        roles = dict(d.get("roles") or {})
+        if not roles:
+            raise PresetError(f"recording setting {name!r} defines no roles")
+        hs_name = d.get("headstage")
+        if hs_name not in headstages:
+            raise PresetError(
+                f"recording setting {name!r} names headstage {hs_name!r}, which "
+                f"is not defined. Known: {', '.join(headstages) or '(none)'}")
+        hs = headstages[hs_name]
+
+        offs = list(roles.values())
+        if len(set(offs)) != len(offs):
+            raise PresetError(
+                f"recording setting {name!r}: two roles share a site number "
+                f"{sorted(offs)}. One site cannot carry two signals.")
+        bad = [o for o in offs if not (1 <= o <= hs.real_channels)]
+        if bad:
+            raise PresetError(
+                f"recording setting {name!r}: site(s) {sorted(bad)} are outside "
+                f"headstage {hs_name!r}'s {hs.real_channels} real channels. On a "
+                "bipolar chip the slots beyond that are inactive and internally "
+                "tied -- recording them captures nothing.")
+
         qc = str(d.get("qc", "auto")).lower()
         if qc not in ("auto", "none"):
             raise PresetError(
-                f"preset {name!r} has qc: {qc!r}; it must be `auto` (this "
-                "project's verdict ladder applies) or `none` (it does not)")
-        # A site-based preset has no role order, so CohortSpec cannot derive its
-        # wire-free floor -- `roles_for_preset` returns None and the QC stage can
-        # never succeed for it. Leaving that implicit is how `unipolar_lfp` came
-        # to block its own pipeline on an override nobody could satisfy. Say it
-        # in the config or the config is refused.
-        if not roles and qc == "auto":
-            raise PresetError(
-                f"preset {name!r} defines `sites` rather than `roles`, so this "
-                "project's floor model does not describe it and its QC bundle "
-                "can never be computed. Declare `qc: none` on it to say so "
-                "explicitly, or give it named roles")
-        presets[name] = Preset(name=name, label=d.get("label", name), slots=slots,
-                               roles=roles, sites=sites,
-                               with_gpio=bool(d.get("with_gpio", False)), qc=qc)
+                f"recording setting {name!r} has qc: {qc!r}; it must be `auto` "
+                "(this project's verdict ladder applies) or `none` (it does not)")
 
+        s = RecordingSetting(
+            name=name, label=d.get("label", name), headstage=hs_name, roles=roles,
+            qc=qc, qc_reason=str(d.get("qc_reason", "")),
+            seen_in=str(d.get("seen_in", "")))
+
+        # The floor rule in core/criteria.py derives base+n .. base+real_channels,
+        # which only describes roles sitting contiguously from site 1. Anything
+        # else cannot be judged by this project's criterion, and saying so here
+        # is how `unipolar_lfp` stopped demanding an impossible override on every
+        # single run.
+        if qc == "auto" and not s.contiguous_from_one:
+            raise PresetError(
+                f"recording setting {name!r} has sites {list(s.sites)}, which do "
+                f"not run 1..{len(roles)}, so this project's floor model does not "
+                "describe it and its QC bundle can never be computed. Declare "
+                "`qc: none` with a `qc_reason`, or use contiguous sites.")
+        if qc == "none" and not s.qc_reason.strip():
+            raise PresetError(
+                f"recording setting {name!r} declares `qc: none` but gives no "
+                "`qc_reason`. A missing control must say WHY it is missing: "
+                "'no characterised control exists' and 'the shape does not fit' "
+                "lead the next reader to opposite actions.")
+        settings[name] = s
+
+    # ---- layer 3: layout templates -------------------------------------- #
+    templates = {}
+    for name, d in (raw.get("layout_templates") or {}).items():
+        sname = d.get("setting")
+        if sname not in settings:
+            raise PresetError(
+                f"layout {name!r} names recording setting {sname!r}, which is "
+                f"not defined. Known: {', '.join(settings) or '(none)'}")
+        spl = {str(k).upper(): bool(v) for k, v in (d.get("splitters") or {}).items()}
+        unknown = [k for k in spl if k not in PORTS]
+        if unknown:
+            raise PresetError(
+                f"layout {name!r} names port(s) {unknown}; this rig has "
+                f"{', '.join(PORTS)}")
+        templates[name] = LayoutTemplate(
+            name=name, label=d.get("label", name), setting=sname,
+            splitters={p: spl.get(p, False) for p in PORTS})
+
+    # ---- users ---------------------------------------------------------- #
     users = raw.get("users") or {}
     for u, d in users.items():
-        dp = d.get("default_preset")
-        if dp not in presets:
+        dl = (d or {}).get("default_layout")
+        if dl not in templates:
             raise PresetError(
-                f"user {u!r} names default_preset {dp!r}, which is not defined")
+                f"user {u!r} names default_layout {dl!r}, which is not defined. "
+                f"Known: {', '.join(templates) or '(none)'}")
 
+    # ---- recording types ------------------------------------------------ #
     types = tuple(raw.get("recording_types") or ())
     codes = {k: str(v).strip() for k, v in (raw.get("recording_type_codes") or {}).items()}
-    # A type with no code would reach the NAS naming rule and produce a folder
-    # named after nothing. Refuse at load, where the person editing the config is
-    # still looking at it, rather than at 09:00 on the morning of a run.
     missing = [t for t in types if not codes.get(t)]
     if missing:
         raise PresetError(
@@ -194,26 +286,28 @@ def load(path: Path | str | None = None) -> Config:
             f"`recording_types` ({', '.join(types)})")
 
     nas = raw.get("nas") or {}
-    return Config(users=users, presets=presets,
-                  recording_types=types,
+    return Config(users=users, recording_types=types,
                   nas_share=nas.get("share", "SKIM_DATA"),
                   nas_root=nas.get("root", "03_Data_Mouse"),
-                  recording_type_codes=codes)
+                  recording_type_codes=codes, headstages=headstages,
+                  settings=settings, templates=templates)
 
 
 if __name__ == "__main__":
     cfg = load()
     print(f"users:   {', '.join(cfg.users)}")
-    print(f"types:   " + ", ".join(f"{t} -> {cfg.type_code(t)}"
-                                   for t in cfg.recording_types))
+    print("types:   " + ", ".join(f"{t} -> {cfg.type_code(t)}"
+                                  for t in cfg.recording_types))
     print(f"nas:     {cfg.nas_share}/{cfg.nas_root}")
-    for name, p in cfg.presets.items():
-        labs = p.labels()
-        print(f"\n{name}  ({p.label})")
-        print(f"  {len(p.slot_names)} slots x {p.channels_per_animal} ch "
-              f"= {len(labs)} channels, gpio={p.with_gpio}, qc={p.qc}")
-        for slot in p.slot_names:
-            per = p.labels_for_slot(slot)
-            roles = [p.role_of(slot, l) for l in per]
-            shown = ", ".join(f"{l}" + (f" ({r})" if r else "") for l, r in zip(per, roles))
-            print(f"    {slot:3s}  {shown}")
+    print("\nheadstages")
+    for n, h in cfg.headstages.items():
+        print(f"  {n:20s} {h.slots_per_chip} slots, {h.real_channels} real, "
+              f"{'bipolar' if h.bipolar_in_hardware else 'UNIPOLAR'}")
+    print("\nrecording settings")
+    for n, s in cfg.settings.items():
+        print(f"  {n:20s} {len(s.roles)} ch on {s.headstage}, qc={s.qc}")
+        print(f"  {'':20s} {', '.join(f'{r}=/{o}' for r, o in s.roles.items())}")
+    print("\nlayouts")
+    for n, t in cfg.templates.items():
+        split = ", ".join(p for p in PORTS if t.splitters[p]) or "none"
+        print(f"  {n:20s} {t.setting}, splitters: {split}")
