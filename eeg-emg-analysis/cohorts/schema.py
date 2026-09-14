@@ -411,6 +411,26 @@ class Cohort:
     # offsets are this animal's and which are wire-free floor. Set per cohort
     # because the ECG cohort added a third role and moved the floor.
     roles: tuple[str, ...] = ("eeg", "emg")
+    # HOW MANY AMPLIFIER CHIPS EACH PORT CARRIES. A C3442 SPI splitter puts two
+    # on a port (64 enumerated channels, animals at bases 1 and 33); without one
+    # a port carries one (32 channels, base 1 only).
+    #
+    # Empty means the historical assumption: four ports, two chips each. That is
+    # the backward-compatibility hinge -- every manifest written before
+    # 2026-09-14 omits this key and must keep producing exactly the old spec.
+    #
+    # 🔑 ROLES ARE RIG-WIDE, NOT PER PORT. Mice on this rig always share one
+    # configuration; what changes between runs is how many are connected and
+    # which ports carry splitters. core.criteria.CohortSpec can express differing
+    # roles per port, and nothing here may produce that -- see
+    # tests/test_port_chip_counts.py.
+    ports: dict[str, int] = field(default_factory=dict)
+    # For a layout whose roles do not sit contiguously from the chip base -- the
+    # unipolar prep at /18../23. Absent for every bipolar cohort.
+    role_sites: dict[str, int] = field(default_factory=dict)
+    real_channels: int = 0          # 0 = the RHD2216 default of 16
+    floor: str = ""                 # "none" = this layout has no wire-free control
+    floor_reason: str = ""
     criterion: str = "slope"        # "slope" | "hum"; see core/criteria.py
     animals: list[Animal] = field(default_factory=list)
     recordings: list[RecordingRef] = field(default_factory=list)
@@ -461,6 +481,53 @@ class Cohort:
                     f"position {pos} claimed by {len(ids)} animals from {d}: {', '.join(ids)}")
         return problems
 
+    def to_spec(self):
+        """The CohortSpec this manifest describes. THE ONLY place that mapping lives.
+
+        BACKWARD COMPATIBILITY IS THE FIRST BRANCH. A manifest with no `ports:`
+        key -- which is every manifest written before 2026-09-14 -- returns
+        exactly `CohortSpec(roles=...)`, the same object the old code built, so
+        the whole historical corpus keeps producing identical sites. Proven in
+        tests/test_cohortspec_compat.py.
+        """
+        from core import criteria as C
+
+        uniform = not self.ports and not self.role_sites
+        if uniform:
+            return C.CohortSpec(roles=tuple(self.roles))
+
+        real = self.real_channels or C.CHIP_REAL_CHANNELS
+        no_floor = self.floor.strip().lower() == "none"
+        if no_floor and not self.floor_reason.strip():
+            raise C.LayoutError(
+                f"cohort {self.cohort_id!r} declares floor: none but gives no "
+                "floor_reason. A missing control must say why it is missing.")
+
+        def chip(base: int):
+            if self.role_sites:
+                # explicit sites: the unipolar case. Offsets are absolute within
+                # the chip, so a second chip on a splitter shifts them by base-1.
+                rs = tuple((r, base - 1 + n) for r, n in self.role_sites.items())
+            else:
+                rs = tuple((r, base + k) for k, r in enumerate(self.roles))
+            return C.ChipSpec(
+                base=base, role_sites=rs, real_channels=real,
+                floor=() if no_floor else None,
+                floor_reason=self.floor_reason if no_floor else "")
+
+        ports = self.ports or {p: 2 for p in C.PORTS_DEFAULT}
+        specs = []
+        for port in sorted(ports):
+            n_chips = ports[port]
+            if n_chips not in (1, 2):
+                raise C.LayoutError(
+                    f"port {port} declares {n_chips} chips. An XDAQ port carries "
+                    "one, or two behind a C3442 splitter -- nothing else.")
+            bases = C.SLOT_BASES_DEFAULT[:n_chips]
+            specs.append(C.PortSpec(port=port,
+                                    chips=tuple(chip(b) for b in bases)))
+        return C.CohortSpec(roles=tuple(self.roles), ports_spec=tuple(specs))
+
     @classmethod
     def from_obj(cls, obj: dict[str, Any]) -> "Cohort":
         c = cls(
@@ -469,6 +536,13 @@ class Cohort:
             description=str(obj.get("description", "") or ""),
             project_id=str(obj.get("project_id", "") or ""),
             roles=tuple(obj.get("roles", ("eeg", "emg")) or ("eeg", "emg")),
+            ports={str(k).upper(): int(v)
+                   for k, v in (obj.get("ports") or {}).items()},
+            role_sites={str(k): int(v)
+                        for k, v in (obj.get("role_sites") or {}).items()},
+            real_channels=int(obj.get("real_channels", 0) or 0),
+            floor=str(obj.get("floor", "") or ""),
+            floor_reason=str(obj.get("floor_reason", "") or ""),
             criterion=str(obj.get("criterion", "slope") or "slope"),
             notes=str(obj.get("notes", "") or ""),
         )

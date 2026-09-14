@@ -688,8 +688,26 @@ def main(argv: list[str]) -> int:
 
     cohort = load_cohort(args.cohort, args.husbandry, verbose=True)
     criterion = args.criterion or cohort.criterion
-    spec = C.CohortSpec(roles=tuple(cohort.roles))
-    positions = (args.positions.split(",") if args.positions else spec.positions())
+    # The manifest decides the layout. A manifest with no `ports:` key -- every
+    # one written before 2026-09-14 -- yields exactly CohortSpec(roles=...), the
+    # object this line used to build.
+    spec = cohort.to_spec()
+    if args.positions:
+        positions = [p.strip() for p in args.positions.split(",") if p.strip()]
+        # Was unvalidated: an unknown position reached spec.animal_sites()[...]
+        # and surfaced as a bare KeyError with no hint of what was wrong.
+        # postprocess.py feeds run.occupied straight in here.
+        unknown = [p for p in positions if p not in spec.positions()]
+        if unknown:
+            raise SystemExit(
+                f"--positions names {', '.join(unknown)}, which this cohort's "
+                f"layout does not have. It has: {', '.join(spec.positions())}\n"
+                + spec.describe())
+    else:
+        positions = spec.positions()
+    if not spec.is_uniform:
+        print("layout: NOT uniform -- each animal is judged against its own chip")
+        print(spec.describe())
 
     cache = Path(args.cache) if args.cache else None
     if cache and cache.exists():
