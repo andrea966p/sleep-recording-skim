@@ -22,6 +22,7 @@ import os
 import shutil
 import sys
 import tempfile
+import time
 import traceback
 from pathlib import Path
 
@@ -297,6 +298,56 @@ def test_stale_live_flag_is_not_read_as_busy(tmp: Path):
 # MUST REFUSE
 # --------------------------------------------------------------------------- #
 
+def t_the_source_being_stripped_is_judged_by_growth(tmp: Path):
+    """The file we are about to strip must not be refused for being recent.
+
+    FOUND BY RUNNING IT, 2026-09-14. Every strip follows a stop by seconds, and
+    mtime cannot tell "stopped four seconds ago" from "being written right now".
+    So `--require-idle` refused the very file it was asked to strip.
+
+    It was invisible on real runs and certain on short ones: the QC bundle goes
+    first, and on a 24 h recording that takes tens of minutes, so the mtime aged
+    out of the window BY ACCIDENT. A five-minute bench run computed QC in two
+    seconds and the guard fired.
+
+    The source is judged by whether anything is still appending to it. Other
+    recordings keep the mtime rule, because for them recent IS the danger.
+    """
+    import threading
+    d = tmp / "busy"
+    d.mkdir(parents=True, exist_ok=True)
+    base = d / "src__uid0101-00-00-00"
+    src = Path(str(base) + "_data.xdat")
+    src.write_bytes(b"x" * 1000)
+
+    stop = threading.Event()
+
+    def grow():
+        while not stop.is_set():
+            with open(src, "ab") as fh:
+                fh.write(b"y" * 4096)
+            time.sleep(0.05)
+
+    th = threading.Thread(target=grow, daemon=True)
+    th.start()
+    try:
+        busy = SC.rig_is_busy(d, source_base=base, settle_s=0.5)
+        assert busy and "STILL GROWING" in busy, busy
+    finally:
+        stop.set()
+        th.join(timeout=2)
+    time.sleep(0.2)
+
+    # stopped: the strip may proceed, however recent the file is
+    assert SC.rig_is_busy(d, source_base=base, settle_s=0.3) is None
+
+    # but a DIFFERENT recording, freshly written, still blocks
+    other = Path(str(d / "other__uid0202-00-00-00") + "_data.xdat")
+    other.write_bytes(b"z" * 100)
+    busy = SC.rig_is_busy(d, source_base=base, settle_s=0.1)
+    assert busy and "other__" in busy, busy
+
+
 def refusals(tmp: Path):
     base, _ = make_recording(tmp, name="ref")
     meta = SC.read_meta(base)
@@ -422,6 +473,9 @@ def main() -> int:
                    test_stale_live_flag_is_not_read_as_busy):
             d = Path(tempfile.mkdtemp(dir=tmp))
             check(fn.__name__, lambda fn=fn, d=d: fn(d))
+        check("the source being stripped is judged by growth, not mtime",
+              lambda: t_the_source_being_stripped_is_judged_by_growth(
+                  Path(tempfile.mkdtemp(dir=tmp))))
         print("\nMUST REFUSE")
         refusals(Path(tempfile.mkdtemp(dir=tmp)))
     finally:

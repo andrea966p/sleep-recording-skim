@@ -612,7 +612,9 @@ def verify_bit_exact(src_base: str, dst_data: str, keep: Sequence[int], *,
 # guards that need the filesystem, not just the metadata
 # --------------------------------------------------------------------------- #
 
-def rig_is_busy(raw_root: Path | None = None, *, within_s: float = 120.0) -> str | None:
+def rig_is_busy(raw_root: Path | None = None, *, within_s: float = 120.0,
+                source_base: str | Path | None = None,
+                settle_s: float = 5.0) -> str | None:
     """Is Allego writing right now? Returns a reason string, or None if idle.
 
     Deliberately radiens-free, so this works from `~/eeg-analysis-venv` too, and
@@ -631,18 +633,52 @@ def rig_is_busy(raw_root: Path | None = None, *, within_s: float = 120.0) -> str
     Reading 223 GB while the amplifiers write to the same filesystem is exactly
     what `neurosurveillance/deploy/radix-archive.sh` goes to such lengths to
     avoid, and this tool reads just as hard.
+
+    🔴 THE FILE BEING STRIPPED IS JUDGED BY GROWTH, NOT BY MTIME. `source_base`
+    names the recording this strip is about to read, and mtime cannot tell "a
+    recording that stopped four seconds ago" from "a recording being written
+    right now" -- both are recent. Every strip that follows a stop starts within
+    seconds of it, so the mtime rule refused the file it was asked to strip.
+
+    That defect was invisible on real runs and certain on short ones: the QC
+    bundle runs first, and on a 24 h recording it takes tens of minutes, so the
+    mtime aged past the window BY ACCIDENT. On a five-minute bench run QC took
+    two seconds and the guard fired. Found 2026-09-14 by running it.
+
+    The honest test for the source is whether anything is still appending to it:
+    measure, wait, measure again. Other recordings keep the mtime rule, because
+    for them "recently written" is exactly the danger.
     """
     root = Path(raw_root) if raw_root else PATHS.RAW_ROOT
     if not root.exists():
         return None
+
+    src_data = None
+    if source_base:
+        src_data = Path(str(source_base) + "_data.xdat").resolve()
+
     now = time.time()
     for p in root.glob("*_data.xdat"):
         try:
+            if src_data and p.resolve() == src_data:
+                continue                      # judged separately, below
             age = now - p.stat().st_mtime
         except OSError:
             continue
         if age < within_s:
             return f"{p.name} was written {age:.0f} s ago"
+
+    # The source: is anything still appending to it?
+    if src_data and src_data.exists():
+        try:
+            a = src_data.stat().st_size
+            time.sleep(settle_s)
+            b = src_data.stat().st_size
+        except OSError:
+            return None
+        if b != a:
+            return (f"{src_data.name} is STILL GROWING ({a} -> {b} bytes over "
+                    f"{settle_s:.0f} s) -- the recording has not stopped")
     return None
 
 
@@ -724,7 +760,7 @@ def strip(src_base: str, dst_base: str, keep: Sequence[int], *,
                       allow_truncated=allow_truncated, meta=meta)
 
     if require_idle:
-        busy = rig_is_busy()
+        busy = rig_is_busy(source_base=src_base)
         if busy:
             raise StripRefused(f"the rig looks busy: {busy}. Refusing to compete "
                                "with a live recording for the same disk.")
@@ -1174,7 +1210,9 @@ def _print_dry_run(plan: StripPlan, meta: dict, src_base: str,
               "be QC'd again.")
         print("           Run: cards/ladder.py <base> --cohort <id> --cache "
               f"{PATHS.CACHE_ROOT}/{os.path.basename(src_base)}.npz")
-    busy = rig_is_busy()
+    # settle_s=0 here: the dry run is a report, not a gate, and it must not
+    # pause five seconds to print a line.
+    busy = rig_is_busy(source_base=src_base, settle_s=0)
     if busy:
         print(f"RIG BUSY:  {busy}")
     stale = stale_live_flags()

@@ -95,6 +95,14 @@ function renderPills(s) {
 }
 
 /* ---------- setup form ---------- */
+/* Re-read the configuration and rebuild the pickers. The settings panel calls
+   this after adding or deleting something; init() is an IIFE and cannot be. */
+async function reloadConfig() {
+  CFG = await api('/api/users');
+  renderPresetPicker();
+  await loadLayout();
+}
+
 function renderPresetPicker() {
   const lsel = $('#layout');
   lsel.innerHTML = '';
@@ -601,7 +609,7 @@ async function loadSettings() {
     if (!confirm(`Delete the recording setting "${n}"?`)) return;
     try { await remove(`/api/settings/recording/${n}`); toast(`deleted ${n}`, 'ok'); }
     catch (err) { toast(err.message, 'bad'); }
-    await loadSettings(); await boot();
+    await loadSettings(); await reloadConfig();
   });
   document.querySelectorAll('[data-del-lay]').forEach(a => a.onclick = async e => {
     e.preventDefault();
@@ -609,7 +617,7 @@ async function loadSettings() {
     if (!confirm(`Delete the layout "${n}"?`)) return;
     try { await remove(`/api/settings/layout/${n}`); toast(`deleted ${n}`, 'ok'); }
     catch (err) { toast(err.message, 'bad'); }
-    await loadSettings(); await boot();
+    await loadSettings(); await reloadConfig();
   });
 }
 
@@ -685,7 +693,7 @@ $('#ns-save').onclick = async () => {
     toast('recording setting saved', 'ok');
     $('#ns-name').value = ''; $('#ns-label').value = ''; $('#ns-reason').value = '';
     $('#ns-roles').innerHTML = ''; addRoleRow(); addRoleRow();
-    await loadSettings(); await boot();
+    await loadSettings(); await reloadConfig();
   } catch (e) { toast(e.message, 'bad'); }
 };
 
@@ -700,6 +708,6 @@ $('#nl-save').onclick = async () => {
     });
     toast('layout saved', 'ok');
     $('#nl-name').value = ''; $('#nl-label').value = '';
-    await loadSettings(); await boot();
+    await loadSettings(); await reloadConfig();
   } catch (e) { toast(e.message, 'bad'); }
 };
