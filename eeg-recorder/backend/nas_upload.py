@@ -440,9 +440,28 @@ def upload_recording(stripped_base: str | Path, user: str, *,
         key = (f"{dest.name}/{rname}", p.stat().st_size)
         prior = man.get(key)
         if prior and prior.get("status") == "VERIFIED" and not p.name.endswith(".json"):
-            say(f"  skip (already VERIFIED in the manifest): {rname}")
-            results.append(prior)
-            continue
+            # 🔴 THE MANIFEST IS A CLAIM ABOUT THE NAS, SO CHECK THE NAS.
+            # A VERIFIED row means "do not upload this again". If the file is not
+            # actually there, that row makes the uploader ship nothing and report
+            # success -- and the file is gone for good.
+            #
+            # Deleting things from a share is a completely ordinary act. On
+            # 2026-09-15 four folders of test data were tidied up and the
+            # manifest still swore all of it was verified. Trusting the record
+            # over the filesystem is what turns someone's housekeeping into
+            # silent data loss, so the record is now checked against the world
+            # before it is believed. One stat per file.
+            dst = dest / rname
+            try:
+                there = dst.exists() and dst.stat().st_size == prior.get("size")
+            except OSError:
+                there = False
+            if there:
+                say(f"  skip (already VERIFIED in the manifest): {rname}")
+                results.append(prior)
+                continue
+            say(f"  manifest says {rname} is VERIFIED but it is NOT on the share "
+                "-- uploading it again")
         rec = upload_file(p, dest / rname, resume=resume, verify=verify,
                           progress=say)
         rec.update(rel=f"{dest.name}/{rname}", user=user, local_name=p.name,

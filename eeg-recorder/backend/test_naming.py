@@ -233,6 +233,59 @@ def t_upload_lands_renamed(tmp: Path):
         "an Allego-named file reached the NAS alongside the renamed ones"
 
 
+def t_a_verified_row_is_not_believed_over_the_share(tmp: Path):
+    """A manifest row must never stop an upload of a file that is not there.
+
+    THE HAZARD. A VERIFIED row means "do not upload this again". If someone has
+    since deleted the file from the share -- ordinary housekeeping -- that row
+    makes the uploader ship nothing and report success, and the data is gone.
+
+    Found 2026-09-15: four folders of test data were tidied off the NAS and the
+    manifest still swore every file was verified. The manifest is a CLAIM about
+    the share, so it is checked against the share before it is believed.
+    """
+    import nas_upload as NU
+
+    src = tmp / "stripped"
+    src.mkdir(parents=True)
+    base = "allego_0__uid0925-09-00-01"
+    for suf in ("_data.xdat", "_timestamp.xdat", ".xdat.json", ".strip-report.json"):
+        (src / f"{base}{suf}").write_bytes(b"x" * 4096)
+    (src / f"{base}.xdat.json").write_text('{"status": {"start_time": "2026-09-25T00:00:01Z"}}')
+
+    fake_nas = tmp / "nas" / "andrea"
+    fake_nas.mkdir(parents=True)
+    real = (NU.require_nas, NU.user_dir, NU.MANIFEST)
+    try:
+        NU.require_nas = lambda: {"ok": True}
+        NU.user_dir = lambda u: fake_nas
+        NU.MANIFEST = tmp / "uploads.jsonl"
+
+        first = NU.upload_recording(src / base, "andrea", dest_name="D",
+                                    file_base="F", progress=lambda _m: None)
+        assert first["status"] == "VERIFIED"
+        landed = fake_nas / "D" / "F_data.xdat"
+        assert landed.exists()
+
+        # someone tidies the share, exactly as happened
+        landed.unlink()
+
+        second = NU.upload_recording(src / base, "andrea", dest_name="D",
+                                     file_base="F", progress=lambda _m: None)
+        assert second["status"] == "VERIFIED", second
+        assert landed.exists(), "the deleted file was NOT re-uploaded"
+        assert landed.stat().st_size == 4096
+
+        # and an untouched file is still skipped, so this costs nothing normally
+        ts = fake_nas / "D" / "F_timestamp.xdat"
+        before = ts.stat().st_mtime_ns
+        NU.upload_recording(src / base, "andrea", dest_name="D", file_base="F",
+                            progress=lambda _m: None)
+        assert ts.stat().st_mtime_ns == before, "an intact file was re-sent"
+    finally:
+        NU.require_nas, NU.user_dir, NU.MANIFEST = real
+
+
 def main() -> int:
     print("NAMING")
     for fn in (t_the_example_from_the_request, t_each_code,
@@ -242,6 +295,9 @@ def main() -> int:
                t_preview_matches_the_real_thing):
         check(fn.__name__, fn)
     import tempfile
+    check("a VERIFIED row is not believed over the share",
+          lambda: t_a_verified_row_is_not_believed_over_the_share(
+              Path(tempfile.mkdtemp(prefix="naming-"))))
     check("t_upload_lands_renamed",
           lambda: t_upload_lands_renamed(Path(tempfile.mkdtemp(prefix="naming-"))))
     print("\nMUST REFUSE")

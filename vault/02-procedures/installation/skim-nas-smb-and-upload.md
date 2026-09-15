@@ -184,6 +184,12 @@ in the folder it started in instead of stepping to `-3`.
 > **default argument at import time** and overriding `nas_upload.MANIFEST` silently had no effect.
 > The rows were removed and the path is now late-bound and overridable with `EEG_UPLOAD_MANIFEST`.
 >
+> ✅ **Since 2026-09-15 the uploader checks before it trusts.** A `VERIFIED` row is only believed
+> when the file is actually on the share at the recorded size; otherwise it says so and uploads it
+> again. Deleting things from a share is an ordinary act — on 2026-09-15 four folders of test data
+> were tidied up and the manifest still swore all of it was verified — and housekeeping must not be
+> able to turn into silent data loss. It costs one `stat` per file.
+>
 > If you ever doubt the manifest, the check is cheap — every folder it names must exist on the share:
 >
 >     python3 -c "import json;print(sorted({json.loads(l)['rel'].split('/')[0] for l in open('eeg-recorder/deploy/uploads.jsonl')}))"
