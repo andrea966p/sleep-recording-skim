@@ -207,24 +207,53 @@ experiment with. Full detail in [[radiens-software-reference]].
 
 ---
 
-## 6. The tool
+## 6. The two live tools
 
-`eeg-emg-analysis/qc/preflight_screen.py` runs the stage 1 QC measurement against
-a few minutes of live stream and prints a per-animal verdict. Every threshold is
-imported from `core/qc_thresholds.py`; nothing is redefined locally, so it can
-never pass a channel the real gate would later reject.
+They answer different questions and are meant to be run in that order.
+
+### `qc/preflight_screen.py` — is it connected?
+
+Runs the stage 1 QC measurement against a few minutes of live stream and prints a
+per-animal verdict. Every threshold is imported from `core/qc_thresholds.py`;
+nothing is redefined locally, so it can never pass a channel the real gate would
+later reject.
 
 ```bash
 cd ~/sleep-recording-skim/eeg-emg-analysis && /usr/bin/python3 -m qc.preflight_screen --secs 300
 ```
 
-It is split across two interpreters on purpose: `radiens` lives only in
+### `qc/biology_probe.py` — is it neural?
+
+A connected electrode sitting in saline passes the screen above. This one asks
+whether the signal has the *shape* of neural tissue, using the spectral-slope
+measurement from `core/criteria.py`: real EEG is steep 1/f (working animals
+**-1.5 to -2.1**), a wire-free input is flat (**-1.29 to -0.07**). It also reports
+the band-limit guard, delta fraction, and the EEG↔EMG correlation that catches a
+shared-path fault.
+
+```bash
+cd ~/sleep-recording-skim/eeg-emg-analysis && /usr/bin/python3 -m qc.biology_probe --secs 300
+```
+
+🛑 **Slope tracks vigilance state as well as electrode quality.** The reference
+range comes from full recordings dominated by sleep; awake EEG is legitimately
+flatter because there is less delta in it. A flat reading in the dark phase means
+*inconclusive, look again in the light phase* — not *bad electrode*. The tool
+prints the circadian time and warns for exactly this reason.
+
+Both are split across two interpreters on purpose: `radiens` lives only in
 `/opt/neurosurveillance/venv`, whose scipy is broken, so `preflight_grab.py`
-captures under the venv and `preflight_screen.py` measures under
-`/usr/bin/python3`.
+captures under the venv and the measuring half runs under `/usr/bin/python3`.
+Pass `--keep` to retain the capture, then `--npz FILE` to run the other tool on
+the same data rather than capturing twice.
 
 Verdict names are stage 1's: `CLEAN`, `DIRTY`, `OPEN`, `DEAD`, `CLIPPED`.
 `INSUFFICIENT` is not a negative result — it means the test could not be run.
+
+⚠️ **Neither tool can tell you whether an animal is scorable.** That needs an
+unbroken usable block of at least 15 minutes (`MIN_BLOCK_MINUTES`) and the state
+variation that only a multi-hour recording contains. Passing both tools means the
+rig is worth pressing record on, nothing more.
 
 ---
 
