@@ -211,3 +211,30 @@ Production daemon `neurosurveillance-session.service` and Frigate / mosquitto / 
 - Public repo (unaffected): `https://github.com/andrea966p/neurosurveillance-system`
 - Private repo (recovered to HEAD `40b0330` + WIP overlay): `https://github.com/andrea966p/neurosurveillance`
 - See also: [[../../00-config/production-values|production-values.md]] for system identifiers used here.
+
+## Closing note, 2026-09-16
+
+The root cause of this incident stopped existing today. **Syncthing was uninstalled
+from `e10ubuntu`**, so nothing on this machine can propagate a deletion any more. It
+had already been dead since 2026-09-10, when the whole workspace became ONE git
+repository (`sleep-recording-skim`) that syncs by hand with `./skim pull` and
+`./skim push`.
+
+The lesson this incident taught is the one that shaped the replacement, so it is
+worth restating: **two sync systems on one directory, with a live `.git` replicated
+and no file versioning, is how a vault dies.** Git alone has none of those three
+properties. Every change is a commit, a delete is reversible, and nothing moves
+unless a human types a verb.
+
+> [!warning] Syncthing is still installed on the office PC and on the ThinkPad.
+> Everything below still applies on those two machines until they are cleaned up the
+> same way. In particular: **never remove a folder with the "delete on disk" option**,
+> and check which configuration directory is live first — on the ThinkPad it is
+> `~/.local/state/syncthing`, not `~/.config/syncthing`.
+
+`./skim check` still carries a Syncthing tripwire and it is deliberately NOT being
+removed. If anyone ever reinstalls Syncthing and points it at this repository, the
+check fails loudly.
+
+See [[../../04-journal/2026-09/2026-09-16|the 2026-09-16 journal]] for the removal
+itself and for what was kept.

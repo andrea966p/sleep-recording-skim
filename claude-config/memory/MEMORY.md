@@ -56,7 +56,7 @@
 
 ## Working across machines
 - ✅🔴⭐⭐⭐ **[ONE REPO NOW: `sleep-recording-skim`](workspace-single-repo-sleep-recording-skim.md). NEWEST, READ FIRST.** Vault + all code + Claude config in ONE git repo, subtree, full history. Sync = MANUAL `./skim status|pull|push|check`. 🔑 The 19-day memory deadlock was `settings.json` keeping the tree dirty ⇒ `git rebase` refuses ⇒ push AND pull locked. 🛑 Syncthing RETIRED. ⚠️ e10 cutover NOT done (daemon symlink).
-- ⚠️ **[The Syncthing-era setup, SUPERSEDED 2026-09-10](multi-machine-setup-and-vault-safety.md).** Why the vault died in 2026-04 (no versioning + replicated live `.git`), the office-PC relay surprise, the `claude-portable` design. Historical; the workflow it describes is retired.
+- ❌⚠️ **[Syncthing UNINSTALLED from e10 2026-09-16; the Syncthing-era setup, SUPERSEDED 2026-09-10](multi-machine-setup-and-vault-safety.md).** Removal moved no data (both folders were empty shells); identity parked at `~/syncthing-config-retired-2026-09-16`; ⚠️ still installed on the office PC + ThinkPad (ThinkPad's live config is `~/.local/state/syncthing`). Why the vault died in 2026-04 (no versioning + replicated live `.git`), the office-PC relay surprise, the `claude-portable` design. Historical; the workflow it describes is retired.
 
 ## Other big findings
 - ✅ **RustDesk + HDMI-switch crash FIXED + VALIDATED** (2026-07-15). `GRUB_CMDLINE_LINUX_DEFAULT="quiet splash video=HDMI-A-1:1920x1080@60e"` (`e` = forced-enabled). 1080p not 4K (thermal). Journal `2026-07-13.md`.

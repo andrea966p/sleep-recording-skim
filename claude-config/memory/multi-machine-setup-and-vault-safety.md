@@ -5,6 +5,14 @@ metadata:
   type: project
 ---
 
+**❌ SYNCTHING UNINSTALLED FROM `e10ubuntu` 2026-09-16** — packages, units, config dir.
+It had been dead since the 09-10 one-repo cutover; both its folders were empty shells,
+so removing it moved no data. Device identity parked at `~/syncthing-config-retired-2026-09-16`
+(delete it and a reinstall looks like a NEW device to the peers). ⚠️ STILL INSTALLED on the
+office PC and the ThinkPad — on the ThinkPad the live config is `~/.local/state/syncthing`,
+NOT `~/.config/syncthing`. 🔑 The Syncthing tripwire in `./skim check` was KEPT on purpose.
+See [[workspace-single-repo-sleep-recording-skim]].
+
 Set up 2026-08-16. `e10ubuntu` is needed for live recordings, so day to day work moves
 to the ThinkPad laptop (`thinkpadubuntu`, `100.66.98.20`) and later the office PC.
 `e10ubuntu` is `100.82.250.62`, reachable over Tailscale.

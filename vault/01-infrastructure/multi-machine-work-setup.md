@@ -2,6 +2,24 @@
 
 Created 2026-08-16.
 
+> [!warning] SUPERSEDED 2026-09-10. HISTORICAL, DO NOT FOLLOW THE WORKFLOW BELOW.
+> Everything on this page that describes **Syncthing** is retired. The whole
+> workspace is now ONE git repository, `sleep-recording-skim`, cloned on every
+> machine, and it syncs by hand with `./skim status`, `./skim pull`, `./skim push`.
+> Nothing syncs by itself any more.
+>
+> **Syncthing was uninstalled from `e10ubuntu` on 2026-09-16** — packages, units,
+> configuration directory and all. The device identity is parked at
+> `~/syncthing-config-retired-2026-09-16`. It is still installed on the office PC
+> and the ThinkPad. See [[../04-journal/2026-09/2026-09-16|the 2026-09-16 journal]].
+>
+> **Read this page for WHY, not for HOW.** The diagnosis of what destroyed the vault
+> on 2026-04-29 (no file versioning, a live `.git` replicated between machines) is
+> the reason the current setup looks the way it does, and the Tailscale address
+> findings further down are still correct. The Syncthing folder inventories, the
+> configuration directory pin and the device identifiers below are now dead
+> reference.
+
 ## TL;DR
 
 The NVR machine `e10ubuntu` is increasingly needed for live recordings, so I moved
