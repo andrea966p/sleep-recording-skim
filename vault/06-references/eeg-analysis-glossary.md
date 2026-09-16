@@ -362,6 +362,7 @@ status: active
 > (electromyogram) with a zero-phase fourth-order Butterworth filter.
 
 ## Related
+- [[live-signal-quality-terms]] — the same job for the numbers Allego shows LIVE
 - [[_eeg-analysis-hub]] — the ordered procedure these terms appear in
 - [[analysis-methods-and-justification]] — what is standard and what is ours, with citations
 - [[eeg-analysis-problems]] — what to do when a step misbehaves
