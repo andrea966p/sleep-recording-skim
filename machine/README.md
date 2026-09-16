@@ -32,9 +32,44 @@ dirty tree, which is exactly how the previous shared config repo deadlocked on
 2026-08-22 and stayed stuck for 19 days: it could neither push nor pull, silently.
 
 The Claude memory slug is derived from the workspace's absolute path, so it differs
-per machine (`-home-skimlab-sleep-recording-skim` vs `-home-andrea-sleep-recording-skim`).
+per machine (`-home-skimlab-sleep-recording-skim` vs `-home-skim-sleep-recording-skim`).
 `bootstrap.sh` computes it, which is why a different username on another machine does
 not matter.
+
+### On a machine that already had Claude Code, diff settings.json
+
+`bootstrap.sh` never overwrites an existing `~/.claude/settings.json`. It prints
+`KEPT ... differs from the template` and moves on. **That line is not a clean result.**
+On the SKIM office workstation on 2026-09-16 it was hiding a file with no `hooks` block
+and no `statusLine`, so that machine would have run every session with no `skim status`
+at SessionStart, which is the only thing that tells you the clone is behind.
+
+```bash
+diff claude-config/settings.template.json ~/.claude/settings.json
+```
+
+Take `hooks`, `statusLine` and `effortLevel` from the template. Keep the machine's own
+`model`, `theme` and any plugins it already has installed. Delete any `autoMode.environment`
+block, which is machine-specific and goes stale the moment the workspace path changes.
+Validate before restarting Claude Code:
+
+```bash
+python3 -m json.tool ~/.claude/settings.json > /dev/null && echo VALID
+```
+
+### The e10 alias
+
+Not in the repository, since `~/.ssh/config` is machine state. Once per machine:
+
+```
+Host e10
+  HostName 100.82.250.62
+  User skimlab
+  ForwardAgent yes
+```
+
+then `ssh-copy-id e10`, and verify with
+`ssh e10 'hostname && tmux -V && docker ps --format "{{.Names}}"'`.
 
 ## systemd/
 

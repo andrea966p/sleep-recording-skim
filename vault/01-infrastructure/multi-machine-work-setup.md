@@ -8,10 +8,11 @@ Created 2026-08-16.
 > machine, and it syncs by hand with `./skim status`, `./skim pull`, `./skim push`.
 > Nothing syncs by itself any more.
 >
-> **Syncthing was uninstalled from `e10ubuntu` on 2026-09-16** — packages, units,
-> configuration directory and all. The device identity is parked at
-> `~/syncthing-config-retired-2026-09-16`. It is still installed on the office PC
-> and the ThinkPad. See [[../04-journal/2026-09/2026-09-16|the 2026-09-16 journal]].
+> **Syncthing was uninstalled from `e10ubuntu` AND from the office PC on 2026-09-16** —
+> packages, units, configuration directories and all. Each machine's device identity is
+> parked at `~/syncthing-config-retired-2026-09-16` on that machine. **Only the ThinkPad
+> still has it installed**, and it has nothing left to talk to. See
+> [[../04-journal/2026-09/2026-09-16|the 2026-09-16 journal]].
 >
 > **Read this page for WHY, not for HOW.** The diagnosis of what destroyed the vault
 > on 2026-04-29 (no file versioning, a live `.git` replicated between machines) is
@@ -19,6 +20,35 @@ Created 2026-08-16.
 > findings further down are still correct. The Syncthing folder inventories, the
 > configuration directory pin and the device identifiers below are now dead
 > reference.
+
+## The machines, as of 2026-09-16
+
+This part is current, unlike the Syncthing material below.
+
+| Machine | Host / user | Workspace | Claude memory slug | Role |
+|---|---|---|---|---|
+| `e10ubuntu` | `100.82.250.62`, user `skimlab` | `~/sleep-recording-skim` | `-home-skimlab-sleep-recording-skim` | **the rig.** Allego, Docker, Frigate, the EEG data. Only this machine runs them |
+| SKIM office workstation | user `skim` | `/home/skim/sleep-recording-skim` | `-home-skim-sleep-recording-skim` | day to day work, added 2026-09-16 |
+| ThinkPad | `thinkpadubuntu`, `100.66.98.20` | `~/sleep-recording-skim` | per its own path | day to day work |
+| Office PC | `Andrea-KAIST-PC-ubuntu`, user `andrea` | old tree only, at `~/Monitoring_project` | — | **not yet on the one repo.** Holds uncommitted work, see the 2026-09-16 journal |
+
+Every machine needs the same five things: git with an SSH key on GitHub, Obsidian,
+Claude Code wired by `machine/bootstrap.sh`, Tailscale, and tmux. Only `e10ubuntu` runs
+the rig; from anywhere else use `ssh e10 '<command>'`, and `ssh e10 -t 'tmux new -As rig'`
+for anything long running.
+
+`~/.ssh/config` is deliberately NOT in the repository, so the `e10` alias is set up by
+hand once per machine:
+
+```
+Host e10
+  HostName 100.82.250.62
+  User skimlab
+  ForwardAgent yes
+```
+
+Then `ssh-copy-id e10`. Password authentication on `e10ubuntu` is left enabled on purpose
+so no lab member is locked out, which is what makes that first copy possible.
 
 ## TL;DR
 

@@ -5,12 +5,36 @@ metadata:
   type: project
 ---
 
-**❌ SYNCTHING UNINSTALLED FROM `e10ubuntu` 2026-09-16** — packages, units, config dir.
-It had been dead since the 09-10 one-repo cutover; both its folders were empty shells,
-so removing it moved no data. Device identity parked at `~/syncthing-config-retired-2026-09-16`
-(delete it and a reinstall looks like a NEW device to the peers). ⚠️ STILL INSTALLED on the
-office PC and the ThinkPad — on the ThinkPad the live config is `~/.local/state/syncthing`,
-NOT `~/.config/syncthing`. 🔑 The Syncthing tripwire in `./skim check` was KEPT on purpose.
+**❌ SYNCTHING UNINSTALLED FROM `e10ubuntu` AND THE OFFICE PC, 2026-09-16** — packages,
+units, config dirs. Both identities parked at `~/syncthing-config-retired-2026-09-16` on
+their own machine (delete it and a reinstall looks like a NEW device to the peers).
+⚠️ **ONLY THE THINKPAD STILL HAS IT.** 🔑 The `./skim check` tripwire was KEPT on purpose.
+
+🔑 **`~/.local/state/syncthing` IS THE NORMAL LAYOUT, not a ThinkPad quirk** — the office PC
+used it too. `e10ubuntu` was the odd one out only because of its pin drop-in. Check which
+config dir is live before touching anything.
+
+🔴 **`apt purge` DOES NOT STOP A RUNNING DAEMON.** On the office PC `which syncthing` went
+quiet while `pgrep -x syncthing` still returned 2 PIDs and `systemctl --user list-units`
+still showed it `active running` — systemd keeps a running unit loaded after its unit file
+is deleted, so `disable --now` then fails with `Unit file ... does not exist`. `pkill -x
+syncthing` is what ends it. Stop the service BEFORE purging.
+
+🔴🔴 **`sudo apt autoremove` HAS NO FIXED BLAST RADIUS.** Same command: 13 Qt libs on
+`e10ubuntu`, **52 packages / 984 MB on the office PC** including the whole NVIDIA 570 stack
+and kernel 6.8.0-117. Survivable there only by luck (570 was dead weight; 580.173.02 still
+built against the live 6.8.0-136). **Worse, purging the stranded `nvidia-driver-570-open`
+then left the WORKING 580 stack marked "automatically installed"** — one unattended
+autoremove from deleting the RTX 3080 Ti driver. Fixed with
+`sudo apt-mark manual nvidia-driver-580-open nvidia-dkms-580-open dkms`.
+⭐ READ THE AUTOREMOVE LIST ON THE MACHINE YOU ARE SITTING AT, EVERY TIME.
+
+🔴 **UNCOMMITTED WORK STRANDED ON THE OFFICE PC**, `~/Monitoring_project/neurosurveillance`:
+`backend/daemon.py`, `backend/frigate_controller.py`, `config/config.yaml` modified, plus
+untracked `backend/scripts/frame_integrity_check.py` and `backend/tests/`. No unpushed
+commits. Nothing syncs it any more ⇒ ONE copy. NOT yet triaged.
+`neurosurveillance-system` there is clean. Office PC is `Andrea-KAIST-PC-ubuntu`, user
+`andrea`, device `TP5LGIP…` (the journal's old `Andrea-ubuntu-desktop` name was WRONG).
 See [[workspace-single-repo-sleep-recording-skim]].
 
 Set up 2026-08-16. `e10ubuntu` is needed for live recordings, so day to day work moves

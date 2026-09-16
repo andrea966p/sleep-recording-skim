@@ -62,8 +62,8 @@
 - [DAQ comparison](daq-ecosystem-comparison.md) (confidential) · [16→32 device](acquisition-device-16-32-mice.md) · [Open Ephys](openephys-scale-up-option.md). Kontex quote 262024 = $10,002.89.
 
 ## Working across machines
-- ✅🔴⭐⭐⭐ **[ONE REPO: `sleep-recording-skim`](workspace-single-repo-sleep-recording-skim.md).** Vault + code + Claude config, full history. Sync = MANUAL `./skim status|pull|push|check`. 🛑 Syncthing RETIRED. ⚠️ e10 cutover NOT done.
-- ❌ **[Syncthing UNINSTALLED from e10 2026-09-16](multi-machine-setup-and-vault-safety.md).** Identity parked at `~/syncthing-config-retired-2026-09-16`; still installed on office PC + ThinkPad. Why the vault died in 2026-04.
+- ✅🔴⭐⭐⭐ **[ONE REPO: `sleep-recording-skim`](workspace-single-repo-sleep-recording-skim.md).** Vault + code + Claude config. Sync = MANUAL `./skim status|pull|push|check`. **4 machines**; e10 cutover DONE 09-11. 🔴 `bootstrap.sh` KEEPS an existing `settings.json` ⇒ can leave a machine with NO hooks. DIFF IT.
+- ❌🔴 **[Syncthing UNINSTALLED from e10 + the OFFICE PC, 2026-09-16](multi-machine-setup-and-vault-safety.md).** Only the ThinkPad still has it. Identities parked, not deleted. 🔴 `apt purge` does NOT stop the daemon; **`apt autoremove` blast radius VARIES** (52 pkgs / NVIDIA stack on the office PC). Why the vault died in 2026-04.
 
 ## Host hardware / infrastructure
 - `e10ubuntu` @ `192.168.0.50`: Intel Core Ultra 5 125H (14c/18t, iGPU), 30GiB RAM, 1.9TB NVMe. (CLAUDE.md says Ultra 7 — actual Ultra 5.)

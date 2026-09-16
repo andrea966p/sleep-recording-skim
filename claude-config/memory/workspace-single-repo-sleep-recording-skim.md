@@ -146,3 +146,26 @@ which `machine/bootstrap.sh` copies into place on a machine that lacks it. The l
 gitignored for the same reason as `settings.json`: Claude Code appends to it at runtime.
 ⭐ **Before deleting any old workspace, diff it against the new one for files that were
 never tracked — the valuable ones are exactly the ones git never saw.**
+
+✅ **FOURTH MACHINE: THE SKIM OFFICE WORKSTATION, 2026-09-16.** `/home/skim/sleep-recording-skim`,
+Unix user `skim`, slug `-home-skim-sleep-recording-skim`, on the tailnet. Clone →
+`machine/bootstrap.sh` → `machine/check.sh`, 8/8 links healthy first try. ⚠️ **It is NOT the
+office PC** — that is a different box (`Andrea-KAIST-PC-ubuntu`, user `andrea`) still on the
+old `~/Monitoring_project` tree.
+
+🔴⭐⭐ **`bootstrap.sh` CAN REPORT SUCCESS AND LEAVE A MACHINE WITH NO HOOKS.** It KEEPS an
+existing `~/.claude/settings.json` (correct — it is runtime-rewritten) and only prints
+`KEPT ... differs from the template`. On the workstation that line hid a file with **no
+`hooks` block and no `statusLine`** ⇒ no caveman hook, no statusline, and **no `skim status`
+at SessionStart**, the one thing that tells you the clone is behind. `effortLevel` missing,
+`caveman@caveman` not enabled. **`KEPT ... differs` IS NOT A CLEAN RESULT — DIFF IT.** Merge
+`hooks` + `statusLine` + `effortLevel` from the template, keep the machine's own `model`,
+`theme` and already-installed plugins, and DROP any `autoMode.environment` block (stale the
+moment the workspace path changes — this one still described `/home/skim` with 0 tracked
+files and no remote). Validate with `python3 -m json.tool` before restarting.
+
+🔑 **`~/.ssh/config` is deliberately NOT in the repo**, so the `e10` alias is per-machine by
+hand (`Host e10` / `HostName 100.82.250.62` / `User skimlab` / `ForwardAgent yes`), then
+`ssh-copy-id e10` — possible because password auth on e10 is left enabled on purpose.
+⚠️ **Pasting a large heredoc into the user's shell mangles it** (prompt left in quote
+continuation). Use `printf` for a few lines, an editor for a file, and verify after.

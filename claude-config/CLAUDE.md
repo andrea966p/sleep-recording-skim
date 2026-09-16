@@ -86,7 +86,12 @@ Execute phases from `Frigate NVR Server Preparation.md` sequentially:
 The rig, the NVR, Allego/Radiens, Docker, Frigate and the EEG data all live on
 `e10ubuntu` (Tailscale `100.82.250.62`). Only that machine can run those commands.
 
-From the ThinkPad laptop or the office PC, run them over SSH instead:
+Four machines share this workspace: `e10ubuntu` (the rig), the **SKIM office workstation**
+(`/home/skim`, added 2026-09-16), the ThinkPad, and the office PC (`Andrea-KAIST-PC-ubuntu`,
+still on the old tree). The table in
+`vault/01-infrastructure/multi-machine-work-setup.md` has the paths and memory slugs.
+
+From any machine that is not `e10ubuntu`, run rig commands over SSH instead:
 
 ```bash
 ssh e10 'docker ps'
@@ -121,7 +126,14 @@ start; every writing verb is typed by a human.
 > [!warning] Syncthing is RETIRED for this workspace
 > Syncthing and git both syncing one directory, with a live `.git` replicated and no
 > file versioning, destroyed the vault on 2026-04-29. `./skim check` fails if Syncthing
-> is ever pointed back at this repository.
+> is ever pointed back at this repository. Uninstalled from `e10ubuntu` and the office PC
+> on 2026-09-16; **only the ThinkPad still has it**, where the live config is
+> `~/.local/state/syncthing`, not `~/.config/syncthing`.
+
+> [!tip] On a new machine, `bootstrap.sh` success is not the whole story
+> It KEEPS an existing `~/.claude/settings.json` and only prints `KEPT ... differs from
+> the template`. Diff it: a machine that used Claude Code before this repo can end up with
+> no hooks and therefore no `skim status` at SessionStart. See `machine/README.md`.
 
 Full setup and the workspace rules: `vault/01-infrastructure/multi-machine-work-setup.md`
 and `machine/README.md`.
