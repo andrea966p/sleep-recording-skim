@@ -42,7 +42,10 @@ Obsidian, Claude Code wired by `machine/bootstrap.sh`, Tailscale, and tmux.
 > in sync. Neither command looks at the git identity, and `./skim push` commits before it
 > pushes, so the first attempt to send work back would have failed. Set it per machine:
 > `git config --global user.name "andrea966p"` and
-> `git config --global user.email "andrea96p@kaist.ac.kr"`. Only `e10ubuntu` runs
+> `git config --global user.email "andrea96p@kaist.ac.kr"`.
+>
+> `./skim check` tests for this as of 2026-09-19 and exits non-zero when it is missing, so
+> running it on a new machine is now enough to catch it. Only `e10ubuntu` runs
 the rig; from anywhere else use `ssh e10 '<command>'`, and `ssh e10 -t 'tmux new -As rig'`
 for anything long running.
 

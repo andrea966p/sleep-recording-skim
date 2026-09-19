@@ -180,7 +180,8 @@ pulled.
 🔴⭐⭐ **ITS ONLY REAL GAP WAS A MISSING GIT IDENTITY** — `user.name`/`user.email` empty at
 every level. **`machine/check.sh` and `./skim status` BOTH PASS without one**, and `./skim
 push` commits before it pushes, so the first attempt to send work back would have failed.
-Set per machine. Candidate improvement: add the identity check to `./skim check`.
+Set per machine. ✅ **`./skim check` now tests for it** (third section, exits non-zero when
+missing). ⚠️ On e10 the identity is REPO-LOCAL in `.git/config`, not `~/.gitconfig`.
 
 🔑⭐⭐ **REACHING A LAPTOP FROM e10 = TAILSCALE SSH + A TAG.** The laptops have NO sshd
 (always clients). Enabling `--ssh` is not enough: default policy only allows

@@ -162,6 +162,25 @@ cmd_check() {
     else
         grn "syncthing not running"
     fi
+
+    echo
+    bold "Git identity"
+    # A machine with no user.name/user.email passes every other check here and still
+    # cannot push: `skim push` commits before it pushes, and `git commit` refuses
+    # without an identity. The ThinkPad was in exactly that state on 2026-09-19 while
+    # reporting nine healthy links and a clean tree.
+    local gname gemail
+    gname="$(git config user.name || true)"
+    gemail="$(git config user.email || true)"
+    if [[ -n "$gname" && -n "$gemail" ]]; then
+        grn "$gname <$gemail>"
+    else
+        red "MISSING: this machine cannot commit, so ./skim push will fail."
+        red "  git config --global user.name \"andrea966p\""
+        red "  git config --global user.email \"andrea96p@kaist.ac.kr\""
+        rc=1
+    fi
+
     return $rc
 }
 
