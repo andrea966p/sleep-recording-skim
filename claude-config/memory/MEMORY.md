@@ -36,6 +36,7 @@
 - ⭐⭐ **Artefact policy:** `02-procedures/eeg-artefact-and-railing-rejection-policy.md`. Reject at EPOCH level, never repair or interpolate.
 
 ## EEG rig — runs
+- ✅🔴⭐⭐⭐ **[HLBW_SL 28 h DONE — 2026-09-17→18](recording-2026-09-17-HLBW_SL-28h.md). NEWEST.** **Unattended workflow ran CLEAN: stop 5 s late, strip bit-exact on every sample, NAS-verified in 13 min, QC bundle with it.** 7/8 rung 2 CLEAN, A1 EEG dead. **3 scoreable (B1 B2 D2), all grounded**; A2/C1/D1 UNJUDGEABLE (floors 582/7/2). Sleep + figures → `05-experiments/completed/2026-09-18-W-SL-light-phase-sleep.md`. 🔑 Only B2 pairs with the 09-10 baseline ⇒ n=1.
 - 🎉⭐⭐⭐ **[8-CORE TETHER, 8 MICE — 2026-09-09](recording-2026-09-09-8core-tether-screen.md).** Best screen this rig ever made: 7/8 grounded, 7/8 EEG 96.6-100%. 🔴 `RMS_HI_UV=150` CLIPS REAL EMG.
 - ⏳🔴⭐⭐⭐ **[S-SD RECOVERY SLEEP — 2026-09-02](s-sd-recovery-sleep-run-2026-09-02.md).** 20.0 h, animals SAMPLED ⇒ UNREPEATABLE. Pre-flight screen GATED for the first time.
 - 🏁🔴⭐⭐⭐ **[W-SD BATCH CLOSED — 2026-08-28](w-sd-batch-closeout-2026-08-28.md).** Best full-cohort data: 5 with EEG, 4 pass rung 2. 🔴 7 d CSD collapsed 4 grounds ⇒ recovery comparison n=1.
@@ -63,7 +64,8 @@
 
 ## Working across machines
 - ✅🔴⭐⭐⭐ **[ONE REPO: `sleep-recording-skim`](workspace-single-repo-sleep-recording-skim.md).** Vault + code + Claude config. Sync = MANUAL `./skim status|pull|push|check`. **4 machines**; e10 cutover DONE 09-11. 🔴 `bootstrap.sh` KEEPS an existing `settings.json` ⇒ can leave a machine with NO hooks. DIFF IT.
-- ❌🔴 **[Syncthing UNINSTALLED from e10 + the OFFICE PC, 2026-09-16](multi-machine-setup-and-vault-safety.md).** Only the ThinkPad still has it. Identities parked, not deleted. 🔴 `apt purge` does NOT stop the daemon; **`apt autoremove` blast radius VARIES** (52 pkgs / NVIDIA stack on the office PC). Why the vault died in 2026-04.
+- ✅🔴⭐⭐ **[THE THINKPAD IS ON THE WORKFLOW, set up remotely from e10 — 2026-09-19](workspace-single-repo-sleep-recording-skim.md).** 🔴 Its only gap was a **MISSING GIT IDENTITY — `check.sh` AND `skim status` both pass without one**. 🔑 e10→laptop = **Tailscale SSH + a TAG** (`dst` can only be `autogroup:self` or a tag). 🔴🔴 **Enabling Tailscale SSH HIJACKS port 22 and bypasses the real sshd** — it broke `ssh e10`; `--ssh=false` fixed it.
+- ❌🔴 **[Syncthing UNINSTALLED from e10 + the OFFICE PC, 2026-09-16](multi-machine-setup-and-vault-safety.md).** ✅ Gone from the ThinkPad too ⇒ **retired everywhere**. Identities parked, not deleted. 🔴 `apt purge` does NOT stop the daemon; **`apt autoremove` blast radius VARIES** (52 pkgs / NVIDIA stack on the office PC). Why the vault died in 2026-04.
 
 ## Host hardware / infrastructure
 - `e10ubuntu` @ `192.168.0.50`: Intel Core Ultra 5 125H (14c/18t, iGPU), 30GiB RAM, 1.9TB NVMe. (CLAUDE.md says Ultra 7 — actual Ultra 5.)
@@ -100,6 +102,7 @@
 - Environment: NVR hostname `e10ubuntu` (not `frigate-server`); user `skimlab`. We are ON the NVR — no SSH for local commands.
 
 ## Working preferences
+- 🛑 **[NEVER strip or run heavy disk jobs while the rig is recording](feedback-never-strip-during-a-live-recording.md).** A console-started run strips itself on stop; `RIG BUSY` in a dry run = stop.
 - [No dashes in emails](feedback_no_dashes_in_emails.md) · [Implementation guides preferred](feedback_leave_guides.md) · [Verify operational details](feedback_verify_operational_details.md) · [Don't suggest `record.enabled: false`](feedback_record_enabled_false_off_limits.md) · [Sudo command style](feedback_sudo_command_style.md) · [Report writing style](feedback_report_writing_style.md)
 
 ## Operational patterns

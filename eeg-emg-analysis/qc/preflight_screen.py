@@ -9,6 +9,13 @@ Every threshold comes from core.qc_thresholds. Nothing is defined here: a
 pre-flight that used its own numbers could pass a channel the real gate will
 later reject, which is worse than no pre-flight at all.
 
+🛑 IT CANNOT CHECK GROUNDING UNDER THE NORMAL MONTAGE. The per-chip floor lives on
+the 14 wire-free inputs of each chip, `get_signals()` returns only SELECTED channels,
+and radiens 4.0.0 has no setter for the selection. With 16 channels selected the
+screen reports NO FLOOR rather than CLEAN, because a floating chip looks perfect on
+its animal channels -- on 2026-09-17 this tool passed A2, C1 and D1 as CLEAN while
+their floors were 454, 7 and 5 uV.
+
 🛑 THIS IS A SMOKE TEST, NOT A VERDICT. It shares stage 1's measurement but not
 its evidence base. Contact state flips within minutes, so a clean screen does
 not promise a clean 20 h recording, and a channel that screens badly may recover.
@@ -64,8 +71,36 @@ def layout(sites, ntv):
             eeg, emg = rows.get(base + off), rows.get(base + off + 1)
             if eeg is None or emg is None:
                 continue
-            animals.append(dict(name="%s%d" % (port, slot), eeg=eeg, emg=emg))
+            animals.append(dict(name="%s%d" % (port, slot), eeg=eeg, emg=emg,
+                                ntv=base + off))
     return animals
+
+
+# An RHD2216 presents 16 real inputs, and the animal uses the first two of them.
+# The other 14 are wire-free and are the in-file control. The remaining 16 slots of
+# each 32-slot block have no amplifier behind them at all and read 3-8 uV, so they
+# must NOT be counted as floor sites -- including them drags a grounded chip's floor
+# down by a factor of ~20 and calls every chip ungrounded.
+CHIP_REAL_SLOTS = 16
+
+
+def chip_floor(X, fs, ntv_to_row, eeg_ntv):
+    """Ground floor for the chip carrying `eeg_ntv`: 55-65 Hz on its wire-free inputs.
+
+    Returns (floor_uv, n_sites); NaN when too few of those inputs were captured.
+
+    🛑 THE FLOOR IS ONLY VISIBLE IF THE MONTAGE SELECTS IT. `get_signals()` returns
+    the SELECTED channels and nothing else, `get_metrics()` computes only those too
+    (verified 2026-09-18: exactly 16 of 256 non-zero), and radiens 4.0.0 exposes no
+    way to change the selection. So with the normal 16-channel montage this cannot
+    be measured at all, and the screen says so instead of passing the chip.
+    """
+    rows = [ntv_to_row[n] for n in range(eeg_ntv + 2, eeg_ntv + CHIP_REAL_SLOTS)
+            if n in ntv_to_row]
+    if len(rows) < T.FLOOR_MIN_SITES:
+        return float("nan"), len(rows)
+    sos = sg.butter(4, list(T.FILT_MAINS), btype="band", fs=fs, output="sos")
+    return float(np.median(sg.sosfiltfilt(sos, X[rows], axis=1).std(1))), len(rows)
 
 
 def measure(X, fs):
@@ -92,12 +127,25 @@ def measure(X, fs):
     )
 
 
-def verdict(eeg_mains, emg_mains, eeg_rms, clip):
-    """Stage 1's gate and its failure names, for one animal."""
+def verdict(eeg_mains, emg_mains, eeg_rms, clip, floor):
+    """Stage 1's gate and its failure names, for one animal.
+
+    The floor is checked FIRST. Every other test on this chip is measured against
+    its own wire-free inputs, so once those are floating nothing on the chip means
+    anything -- and the channel still looks entirely normal. An ungrounded chip is
+    UNJUDGEABLE, never FAIL.
+    """
     not_open = (eeg_mains < T.OPEN_UV) & (emg_mains < T.OPEN_UV)
     not_flat = eeg_rms >= T.FLAT_UV
     not_clip = clip <= T.CLIP_FRAC
     ok = not_open & not_flat & not_clip
+
+    if np.isnan(floor):
+        return ok, "NO FLOOR", ("wire-free inputs not in the montage; "
+                                "grounding cannot be checked")
+    if floor < T.FLOOR_MIN_HUM_UV:
+        return ok, "UNJUDGEABLE", ("chip floor %.0f uV < %.0f: ungrounded, nothing on "
+                                   "this chip is measurable" % (floor, T.FLOOR_MIN_HUM_UV))
 
     med_rms = float(np.median(eeg_rms))
     if med_rms < T.DEAD_CHANNEL_UV:
@@ -133,10 +181,12 @@ def main():
     try:
         cap = np.load(path, allow_pickle=False)
         X, sites, ntv, fs = cap["signals"], cap["sites"], cap["ntv"], float(cap["fs"])
+
     finally:
         if temporary and os.path.exists(path):
             os.unlink(path)
 
+    ntv_to_row = dict((int(n), row) for row, n in enumerate(ntv))
     animals = layout(sites, ntv)
     if not animals:
         sys.exit("no EEG/EMG pairs in the selection - select /1 /2 /33 /34 per port")
@@ -146,7 +196,8 @@ def main():
     print("\n%d channels, %.1f min, %d QC epochs of %d s, fs %g Hz"
           % (X.shape[0], mins, m["nep"], T.EPOCH_S_QC, fs))
     print("thresholds from core/qc_thresholds.py: open %.0f, dead %.0f, flat %.0f, "
-          "rail %.0f uV" % (T.OPEN_UV, T.DEAD_CHANNEL_UV, T.FLAT_UV, T.RAIL_UV_EFF))
+          "rail %.0f, floor %.0f uV"
+          % (T.OPEN_UV, T.DEAD_CHANNEL_UV, T.FLAT_UV, T.RAIL_UV_EFF, T.FLOOR_MIN_HUM_UV))
 
     # OPEN_UV is a 55-65 Hz amplitude test, so a mains notch anywhere at the
     # Hardware or Data stage removes the very quantity it measures and every
@@ -171,19 +222,42 @@ def main():
               "row below as indicative only." % (m["nep"], T.MIN_USABLE_EPOCHS,
                                                  T.MIN_USABLE_EPOCHS * T.EPOCH_S_QC / 60))
 
-    print("\n%-7s %9s %9s %9s %9s %7s  %-9s %s"
-          % ("animal", "EEG rms", "EMG rms", "EEG 60Hz", "EMG 60Hz", "pass%",
-             "verdict", "reason"))
-    print("-" * 96)
+    print("\n%-7s %9s %9s %9s %9s %8s %7s  %-11s %s"
+          % ("animal", "EEG rms", "EMG rms", "EEG 60Hz", "EMG 60Hz", "floor",
+             "pass%", "verdict", "reason"))
+    print("-" * 108)
+    disputed = []
     for a in animals:
         eeg_rms = m["rms_eeg"][a["eeg"]]
         emg_rms = m["rms_emg"][a["emg"]]
         eeg_mn = m["mains_eeg"][a["eeg"]]
         emg_mn = m["mains_emg"][a["emg"]]
-        ok, tag, why = verdict(eeg_mn, emg_mn, eeg_rms, m["clip"][a["eeg"]])
-        print("%-7s %9.1f %9.1f %9.1f %9.1f %6.0f%%  %-9s %s"
+        floor, n_sites = chip_floor(X, fs, ntv_to_row, int(a["ntv"]))
+        ok, tag, why = verdict(eeg_mn, emg_mn, eeg_rms, m["clip"][a["eeg"]], floor)
+        if T.FLOOR_MIN_HUM_UV <= floor < 2000:
+            disputed.append((a["name"], floor))
+        print("%-7s %9.1f %9.1f %9.1f %9.1f %8s %6.0f%%  %-11s %s"
               % (a["name"], np.median(eeg_rms), np.median(emg_rms),
-                 np.median(eeg_mn), np.median(emg_mn), 100 * ok.mean(), tag, why))
+                 np.median(eeg_mn), np.median(emg_mn),
+                 "-" if np.isnan(floor) else "%.0f" % floor,
+                 100 * ok.mean(), tag, why))
+
+    if disputed:
+        print("\n⚠️  floor between %.0f and 2000 uV on %s. FLOOR_MIN_HUM_UV is still "
+              "%.0f;\n   2000 has been proposed and NOT applied, so these pass here and "
+              "might not\n   survive the decision. See weak-chip-ground-hides-as-electrode-"
+              "failure."
+              % (T.FLOOR_MIN_HUM_UV,
+                 ", ".join("%s %.0f uV" % d for d in disputed), T.FLOOR_MIN_HUM_UV))
+
+    if any(np.isnan(chip_floor(X, fs, ntv_to_row, int(a["ntv"]))[0]) for a in animals):
+        print("\n🛑 NO GROUNDING CHECK WAS POSSIBLE. The chip's wire-free inputs are its "
+              "only\n   in-file control, and they are not in the montage, so a floating "
+              "chip reads\n   completely normal here -- that is how A2, C1 and D1 passed "
+              "this screen as CLEAN\n   on 2026-09-17 while their floors were 454, 7 and "
+              "5 uV.\n   To check it: select ALL channels in Allego (System -> Signals), "
+              "screen, then\n   re-select the montage. Never during a recording. "
+              "Otherwise rely on stage 1.")
 
     print("\nA clean screen is not a promise: contact state flips within minutes.")
 

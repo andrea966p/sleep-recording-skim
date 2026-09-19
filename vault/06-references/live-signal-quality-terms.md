@@ -195,6 +195,19 @@ experiment with. Full detail in [[radiens-software-reference]].
   EMG channel and the steadiest thing on the rig. Muscle does not do that. A
   constant large amplitude is hum or a loose ground.
 
+**Chip ground floor**
+: The 55-65 Hz amplitude of a chip's **wire-free** inputs — the amplifier channels
+  with no electrode attached. They sit in mains hum, and how much they pick up is
+  set by the ground/reference return, so the floor reads the **ground screw's
+  contact**, not any electrode's.
+: An RHD2216 presents **16 real inputs per chip**; the animal uses the first two and
+  the other 14 are the control. ⚠️ The remaining 16 slots of each 32-slot block have
+  no amplifier behind them and read 3-8 µV — counting those as floor sites drags a
+  grounded chip down ~20× and calls everything ungrounded.
+: `FLOOR_MIN_HUM_UV` is **800**; **2000 has been proposed and NOT applied**. Under
+  2000, nothing measured on that chip means anything, so the animal is
+  **UNJUDGEABLE, never FAIL**.
+
 **Flat / dead (`FLAT_UV`, `DEAD_CHANNEL_UV`)**
 : Below about 20 µV median, a channel never carried EEG — open or shorted. Dead
   is a property of the **channel** (tested on its median across the recording);
@@ -221,6 +234,20 @@ later reject.
 ```bash
 cd ~/sleep-recording-skim/eeg-emg-analysis && /usr/bin/python3 -m qc.preflight_screen --secs 300
 ```
+
+🛑 **Under the normal 16-channel montage it CANNOT check grounding, and says so.**
+The per-chip floor lives on the 14 wire-free inputs of each chip. `get_signals()`
+returns only SELECTED channels, `get_metrics()` computes only those too (verified:
+exactly 16 of 256 non-zero), and radiens 4.0.0 has **no setter for the selection**.
+So the screen reports `NO FLOOR` instead of `CLEAN`.
+
+This matters because a floating chip looks perfect on its animal channels. On
+2026-09-17 an earlier version of this tool passed **A2, C1 and D1 as CLEAN while
+their floors were 454, 7 and 5 µV** — all three were ungrounded and unjudgeable.
+
+To get the grounding check: select **all** channels in Allego (System → Signals),
+run the screen, then re-select the montage. **Never during a recording.** Otherwise
+rely on stage 1 after the file exists.
 
 ### `qc/biology_probe.py` — is it neural?
 

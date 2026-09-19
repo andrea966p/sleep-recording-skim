@@ -1,0 +1,53 @@
+{
+  "notice": "Export completed with explicit settings. This report does not establish visual, accessibility, scientific-integrity, or journal-submission compliance.",
+  "outputs": [
+    {
+      "format": "pdf",
+      "kind": "vector-container",
+      "path": "/tmp/claude-1000/-home-skimlab-sleep-recording-skim/6ac52e19-d272-4acf-9208-5e857b939775/scratchpad/figs/fig3_architecture.pdf",
+      "size_bytes": 23263
+    },
+    {
+      "format": "png",
+      "kind": "raster",
+      "path": "/tmp/claude-1000/-home-skimlab-sleep-recording-skim/6ac52e19-d272-4acf-9208-5e857b939775/scratchpad/figs/fig3_architecture.png",
+      "size_bytes": 402292
+    }
+  ],
+  "provenance": {
+    "constants": "core/qc_thresholds.py",
+    "derived": "pipeline/stage1_qc.py -> stage2_split.py -> stage3_features.py, ZT0-12 window",
+    "exclusions": "chips with ground floor < 800 uV (FLOOR_MIN_HUM_UV) are drawn in grey and excluded from inference; animals the pipeline did not accept are dashed",
+    "figure": "per-mouse architecture metrics",
+    "n": "per mouse; no averaging across animals. Only B2 is judgeable and accepted on both days.",
+    "raw_data": "~/radix/data/allego_0__uid0910-09-00-00*, allego_0__uid0917-09-00-09*",
+    "transformations": [
+      "4 s epochs; states from stage3 (Otsu split of log EMG rms per animal, then theta/delta split of non-wake)",
+      "hourly bins = 900 epochs, no smoothing or interpolation",
+      "SWA = mean 1-4 Hz power within NREM epochs, normalised per animal to its own ZT0-1 mean"
+    ],
+    "uncertainty": "none plotted: epochs within an animal are strongly autocorrelated, so a binomial or bootstrap interval over epochs would be anticonservative and is not shown"
+  },
+  "schema_version": "1.0",
+  "settings": {
+    "bbox_inches": null,
+    "dpi": 600.0,
+    "facecolor": "white",
+    "figure_size_inches": [
+      7.086614173228346,
+      4.52755905511811
+    ],
+    "font_mode": "truetype",
+    "formats": [
+      "pdf",
+      "png"
+    ],
+    "pad_inches": 0.1,
+    "transparent": false
+  },
+  "versions": {
+    "matplotlib": "3.6.3",
+    "pillow": "10.2.0"
+  },
+  "warnings": []
+}

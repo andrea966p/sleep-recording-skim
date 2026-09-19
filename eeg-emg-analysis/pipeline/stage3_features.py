@@ -358,6 +358,44 @@ def rem_entry_order(lab, blocks):
 
 
 # ---------------------------------------------------------------------------
+class InconsistentEpochGrid(Exception):
+    """A stage 2 file whose per-epoch arrays do not match its own signal."""
+
+
+def check_epoch_grid(npz_path, n_signal, arrays):
+    """Refuse a stage 2 file whose epoch arrays disagree with its signal length.
+
+    HOW THIS HAPPENS. Stage 1 fixes the epoch grid from the file length it saw;
+    stage 2 re-reads the signal later. If the recording was STILL BEING WRITTEN
+    between them, stage 2 gets more samples than stage 1 made epochs for, and the
+    per-epoch arrays come out short -- measured 2026-09-18 on a live
+    allego_0__uid0917-09-00-09: 14,963 epochs of signal against 14,918 rows.
+
+    WHY IT MUST REFUSE RATHER THAN TRIM. `analyse` used to do `ok = ok[:n]`,
+    which leaves `ok` SHORT rather than padding it, so the trailing epochs are
+    never labelled and quietly vanish from every downstream number. The crash
+    that eventually followed, deep in otsu_sensitivity, was luck: had `zt` been
+    trimmed the same way, this would have produced a plausible wrong answer with
+    no error at all. Silently analysing part of a recording is worse than
+    stopping.
+    """
+    bad = {k: len(v) for k, v in arrays.items() if len(v) != n_signal}
+    if not bad:
+        return
+    raise InconsistentEpochGrid(
+        "%s: signal holds %d epochs of %d s but %s.\n"
+        "    Stage 1 and stage 2 saw different file lengths, which happens when "
+        "the recording\n"
+        "    was still being written. Re-run stage 1 and stage 2 on the FINISHED "
+        "file:\n"
+        "      python3 -m pipeline.stage1_qc <base> --force\n"
+        "      python3 -m pipeline.stage2_split <base>\n"
+        "    and move any older stage 2 output for the same recording out of the "
+        "day folder."
+        % (os.path.basename(npz_path), n_signal, T.EPOCH_S,
+           ", ".join("%s has %d" % (k, v) for k, v in sorted(bad.items()))))
+
+
 def analyse(npz_path):
     z = np.load(npz_path, allow_pickle=True)
     meta = json.loads(str(z["meta"]))
@@ -369,6 +407,9 @@ def analyse(npz_path):
 
     f = epoch_features(eeg, emg, fs)
     n = f["n"]
+    check_epoch_grid(npz_path, n,
+                     {"epoch_ok": ok, "zt": zt,
+                      **({"is_light": z["is_light"]} if "is_light" in z.files else {})})
     ok = ok[:n]
     blocks = [(a, min(b, n)) for a, b in blocks if a < n and min(b, n) - a >= T.MIN_BLOCK]
     lab, thr, lab_otsu = stage(f, ok)
@@ -691,14 +732,27 @@ def main():
             targets.append(p)
     if not targets:
         raise SystemExit("no per-mouse .npz files found -- run stage 2 first")
+    refused = []
     for t in targets:
-        r = analyse(t)
+        try:
+            r = analyse(t)
+        except InconsistentEpochGrid as exc:
+            # Report and carry on: one stale file in a day folder must not block
+            # the recordings that are fine. The non-zero exit still flags it.
+            refused.append(os.path.basename(t))
+            print(f"\n{os.path.basename(t)}")
+            print(f"  REFUSED: {exc}")
+            continue
         print(f"\n{r['file']}")
         print(f"  {r['verdict']}")
         print(f"  {r['hours_in_blocks']:.2f} h in blocks, "
               f"r@1min {r['persistence']['1min']['r']}, "
               f"WAKE {r['wake_pct']}% / NREM {r['nrem_pct']}%, "
               f"REM from NREM {r['rem_from_nrem_pct']}%")
+
+    if refused:
+        raise SystemExit("\n%d file(s) refused for an inconsistent epoch grid: %s"
+                         % (len(refused), ", ".join(refused)))
 
 
 if __name__ == "__main__":
