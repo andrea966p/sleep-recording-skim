@@ -67,6 +67,9 @@
 - ✅🔴⭐⭐ **[THE THINKPAD IS ON THE WORKFLOW, set up remotely from e10 — 2026-09-19](workspace-single-repo-sleep-recording-skim.md).** 🔴 Its only gap was a **MISSING GIT IDENTITY — `check.sh` AND `skim status` both pass without one**. 🔑 e10→laptop = **Tailscale SSH + a TAG** (`dst` can only be `autogroup:self` or a tag). 🔴🔴 **Enabling Tailscale SSH HIJACKS port 22 and bypasses the real sshd** — it broke `ssh e10`; `--ssh=false` fixed it.
 - ❌🔴 **[Syncthing UNINSTALLED from e10 + the OFFICE PC, 2026-09-16](multi-machine-setup-and-vault-safety.md).** ✅ Gone from the ThinkPad too ⇒ **retired everywhere**. Identities parked, not deleted. 🔴 `apt purge` does NOT stop the daemon; **`apt autoremove` blast radius VARIES** (52 pkgs / NVIDIA stack on the office PC). Why the vault died in 2026-04.
 
+## Cloud / AWS
+- ✅🔴⭐⭐ **[AWS ACCESS + AGENT TOOLKIT — 2026-09-19](aws-access-and-agent-toolkit.md). NEWEST.** Account 760396521414, profile `andrea`, `ap-northeast-2`, 12 h creds. 🔴 Ubuntu apt `awscli` HAS NO `aws login` — use the official installer. 🔴 `aws-mcp` needs `AWS_MCP_PROXY_PROFILES`.
+
 ## Host hardware / infrastructure
 - `e10ubuntu` @ `192.168.0.50`: Intel Core Ultra 5 125H (14c/18t, iGPU), 30GiB RAM, 1.9TB NVMe. (CLAUDE.md says Ultra 7 — actual Ultra 5.)
 - ⚠️ **Kernel 7.0.0-31 blocklists the Intel GPU in Chromium; 7.0.0-28 does not.** Rollback via `grub-reboot` is ONE BOOT ONLY. See [[allego-blank-monitor-canvas-texture-limit]].
