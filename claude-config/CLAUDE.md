@@ -87,9 +87,14 @@ The rig, the NVR, Allego/Radiens, Docker, Frigate and the EEG data all live on
 `e10ubuntu` (Tailscale `100.82.250.62`). Only that machine can run those commands.
 
 Four machines share this workspace: `e10ubuntu` (the rig), the **SKIM office workstation**
-(`/home/skim`, added 2026-09-16), the ThinkPad, and the office PC (`Andrea-KAIST-PC-ubuntu`,
-still on the old tree). The table in
-`vault/01-infrastructure/multi-machine-work-setup.md` has the paths and memory slugs.
+(`/home/skim`, added 2026-09-16), the **ThinkPad** (`thinkpadubuntu`, user `andrea`, live on
+the workflow 2026-09-19), and the office PC (`Andrea-KAIST-PC-ubuntu`, still on the old
+tree). The table in `vault/01-infrastructure/multi-machine-work-setup.md` has the paths and
+memory slugs.
+
+To drive the ThinkPad from here: `tailscale ssh andrea@thinkpadubuntu '<command>'`. It has
+no sshd, so ordinary `ssh` will not reach it. 🛑 Do not enable Tailscale SSH on `e10ubuntu`
+— it hijacks port 22 for tailnet peers and breaks the laptops' key based `ssh e10`.
 
 From any machine that is not `e10ubuntu`, run rig commands over SSH instead:
 
@@ -126,9 +131,13 @@ start; every writing verb is typed by a human.
 > [!warning] Syncthing is RETIRED for this workspace
 > Syncthing and git both syncing one directory, with a live `.git` replicated and no
 > file versioning, destroyed the vault on 2026-04-29. `./skim check` fails if Syncthing
-> is ever pointed back at this repository. Uninstalled from `e10ubuntu` and the office PC
-> on 2026-09-16; **only the ThinkPad still has it**, where the live config is
-> `~/.local/state/syncthing`, not `~/.config/syncthing`.
+> is ever pointed back at this repository. **Gone from every machine** as of 2026-09-19.
+
+> [!tip] A machine can pass every check and still be unable to push
+> `machine/check.sh` and `./skim status` do not look at the git identity, and `./skim push`
+> commits before it pushes. On a new machine set
+> `git config --global user.name "andrea966p"` and
+> `git config --global user.email "andrea96p@kaist.ac.kr"`.
 
 > [!tip] On a new machine, `bootstrap.sh` success is not the whole story
 > It KEEPS an existing `~/.claude/settings.json` and only prints `KEPT ... differs from

@@ -8,11 +8,12 @@ Created 2026-08-16.
 > machine, and it syncs by hand with `./skim status`, `./skim pull`, `./skim push`.
 > Nothing syncs by itself any more.
 >
-> **Syncthing was uninstalled from `e10ubuntu` AND from the office PC on 2026-09-16** —
-> packages, units, configuration directories and all. Each machine's device identity is
-> parked at `~/syncthing-config-retired-2026-09-16` on that machine. **Only the ThinkPad
-> still has it installed**, and it has nothing left to talk to. See
-> [[../04-journal/2026-09/2026-09-16|the 2026-09-16 journal]].
+> **Syncthing is gone from every machine.** Uninstalled from `e10ubuntu` and the office PC
+> on 2026-09-16 — packages, units, configuration directories and all, with each machine's
+> device identity parked at `~/syncthing-config-retired-2026-09-16` on that machine. The
+> ThinkPad was confirmed clean on 2026-09-19: no binary, no `~/.local/state/syncthing`, no
+> `~/.config/syncthing`. See [[../04-journal/2026-09/2026-09-16|2026-09-16]] and
+> [[../04-journal/2026-09/2026-09-19|2026-09-19]].
 >
 > **Read this page for WHY, not for HOW.** The diagnosis of what destroyed the vault
 > on 2026-04-29 (no file versioning, a live `.git` replicated between machines) is
@@ -29,11 +30,19 @@ This part is current, unlike the Syncthing material below.
 |---|---|---|---|---|
 | `e10ubuntu` | `100.82.250.62`, user `skimlab` | `~/sleep-recording-skim` | `-home-skimlab-sleep-recording-skim` | **the rig.** Allego, Docker, Frigate, the EEG data. Only this machine runs them |
 | SKIM office workstation | user `skim` | `/home/skim/sleep-recording-skim` | `-home-skim-sleep-recording-skim` | day to day work, added 2026-09-16 |
-| ThinkPad | `thinkpadubuntu`, `100.66.98.20` | `~/sleep-recording-skim` | per its own path | day to day work |
+| ThinkPad | `thinkpadubuntu`, `100.66.98.20`, user `andrea` | `/home/andrea/sleep-recording-skim` | `-home-andrea-sleep-recording-skim` | day to day work. Tagged `tag:thinkpad` so e10 can SSH in |
 | Office PC | `Andrea-KAIST-PC-ubuntu`, user `andrea` | old tree only, at `~/Monitoring_project` | — | **not yet on the one repo.** Holds uncommitted work, see the 2026-09-16 journal |
 
-Every machine needs the same five things: git with an SSH key on GitHub, Obsidian,
-Claude Code wired by `machine/bootstrap.sh`, Tailscale, and tmux. Only `e10ubuntu` runs
+Every machine needs the same six things: git with an SSH key on GitHub, **a git identity**,
+Obsidian, Claude Code wired by `machine/bootstrap.sh`, Tailscale, and tmux.
+
+> [!warning] A machine can pass every check and still be unable to push
+> The ThinkPad had no `user.name` or `user.email` at any level on 2026-09-19, while
+> `machine/check.sh` reported all nine links healthy and `skim status` reported clean and
+> in sync. Neither command looks at the git identity, and `./skim push` commits before it
+> pushes, so the first attempt to send work back would have failed. Set it per machine:
+> `git config --global user.name "andrea966p"` and
+> `git config --global user.email "andrea96p@kaist.ac.kr"`. Only `e10ubuntu` runs
 the rig; from anywhere else use `ssh e10 '<command>'`, and `ssh e10 -t 'tmux new -As rig'`
 for anything long running.
 
@@ -49,6 +58,39 @@ Host e10
 
 Then `ssh-copy-id e10`. Password authentication on `e10ubuntu` is left enabled on purpose
 so no lab member is locked out, which is what makes that first copy possible.
+
+### Reaching a machine FROM e10, which is the harder direction
+
+The laptops have no sshd; they were only ever clients. To drive one from `e10ubuntu`, as
+was done to set the ThinkPad up on 2026-09-19, the route is Tailscale SSH:
+
+1. On the target: `sudo tailscale set --ssh`
+2. Tag the target, because a Tailscale SSH rule's **destination can only be
+   `autogroup:self` or a tag, never another user's login**. Our machines belong to two
+   different tailnet users, so the tag is unavoidable. The API rejects the alternative
+   outright: `400 users in dst are only allowed from the same user`.
+3. Add the rule in the console's visual SSH editor: source `skimlab.kaist@gmail.com`,
+   destination `tag:thinkpad`, as destination user `autogroup:nonroot`, **check mode Off**.
+
+Then `tailscale ssh andrea@thinkpadubuntu '<command>'` from `e10ubuntu`.
+
+Two things that cost time, both worth knowing before repeating this:
+
+> [!warning] Tagging moves a device's ownership
+> A tagged device belongs to the tag, not to the person. It drops out of every
+> `autogroup:self` rule, its keys stop expiring, and applying the tag can force it to
+> re-authenticate. Do it while you can still physically reach that machine.
+
+> [!warning] Tailscale SSH takes over port 22, it does not add to it
+> Turning it on makes `tailscaled` intercept port 22 for tailnet peers and bypass the real
+> sshd, so existing `authorized_keys` stop being consulted. On 2026-09-19 it was enabled on
+> `e10ubuntu` by mistake and silently broke `ssh e10` from the ThinkPad, which had worked on
+> a key for weeks. `sudo tailscale set --ssh=false` gives port 22 back. **On a machine that
+> already has working key based SSH, leave Tailscale SSH off.**
+
+Note also that `tailscale` has no ACL or policy subcommand. Tailnet policy can only be
+changed in the admin console or through the HTTP API, and the API needs an access token
+minted in that same console. Being logged in on a node grants no admin authority.
 
 ## TL;DR
 

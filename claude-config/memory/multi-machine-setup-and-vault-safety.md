@@ -8,7 +8,8 @@ metadata:
 **❌ SYNCTHING UNINSTALLED FROM `e10ubuntu` AND THE OFFICE PC, 2026-09-16** — packages,
 units, config dirs. Both identities parked at `~/syncthing-config-retired-2026-09-16` on
 their own machine (delete it and a reinstall looks like a NEW device to the peers).
-⚠️ **ONLY THE THINKPAD STILL HAS IT.** 🔑 The `./skim check` tripwire was KEPT on purpose.
+✅ **AND GONE FROM THE THINKPAD TOO, verified 2026-09-19** (no binary, neither config dir)
+⇒ **SYNCTHING IS RETIRED ON EVERY MACHINE.** 🔑 The `./skim check` tripwire was KEPT on purpose.
 
 🔑 **`~/.local/state/syncthing` IS THE NORMAL LAYOUT, not a ThinkPad quirk** — the office PC
 used it too. `e10ubuntu` was the odd one out only because of its pin drop-in. Check which

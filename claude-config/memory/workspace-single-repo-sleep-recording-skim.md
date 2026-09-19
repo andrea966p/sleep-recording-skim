@@ -169,3 +169,46 @@ hand (`Host e10` / `HostName 100.82.250.62` / `User skimlab` / `ForwardAgent yes
 `ssh-copy-id e10` — possible because password auth on e10 is left enabled on purpose.
 ⚠️ **Pasting a large heredoc into the user's shell mangles it** (prompt left in quote
 continuation). Use `printf` for a few lines, an editor for a file, and verify after.
+
+✅⭐⭐ **THE THINKPAD IS ON THE PUSH/PULL WORKFLOW, 2026-09-19** — set up remotely from e10,
+nobody sat at the laptop. `thinkpadubuntu` / `100.66.98.20`, user `andrea`,
+`/home/andrea/sleep-recording-skim`, slug `-home-andrea-sleep-recording-skim`, kernel
+6.17.0-1017-oem, tmux 3.6, git 2.53.0, node v22.22.1. 9/9 links, `settings.json` a real file
+**WITH hooks + statusLine** (unlike the workstation), 84 memory files. Was 51 commits behind;
+pulled.
+
+🔴⭐⭐ **ITS ONLY REAL GAP WAS A MISSING GIT IDENTITY** — `user.name`/`user.email` empty at
+every level. **`machine/check.sh` and `./skim status` BOTH PASS without one**, and `./skim
+push` commits before it pushes, so the first attempt to send work back would have failed.
+Set per machine. Candidate improvement: add the identity check to `./skim check`.
+
+🔑⭐⭐ **REACHING A LAPTOP FROM e10 = TAILSCALE SSH + A TAG.** The laptops have NO sshd
+(always clients). Enabling `--ssh` is not enough: default policy only allows
+`autogroup:self`, and our machines have two different tailnet owners
+(`skimlab.kaist@gmail.com` vs `andrea.piazzola4@gmail.com`). **A Tailscale SSH rule's `dst`
+can ONLY be `autogroup:self` or a TAG** — the API rejects a cross-owner user with
+`400 users in dst are only allowed from the same user`. So: tag the target
+(`tag:thinkpad`), rule = src `skimlab.kaist@gmail.com` → dst `tag:thinkpad`, users
+`autogroup:nonroot`, **check mode OFF** ("check" forces a browser re-auth per session and
+blocks all unattended use). Then `tailscale ssh andrea@thinkpadubuntu '<cmd>'`.
+⚠️ **Tagging MOVES the device's ownership to the tag**: it leaves every `autogroup:self`
+rule, its keys stop expiring, and applying the tag can force a re-auth — do it while you can
+still reach that machine.
+
+🔴🔴⭐⭐⭐ **TAILSCALE SSH TAKES OVER PORT 22, IT DOES NOT ADD TO IT.** `sudo tailscale set
+--ssh` run on **e10 by mistake** made `tailscaled` intercept port 22 for tailnet peers and
+BYPASS the real sshd ⇒ the ThinkPad's key-based `ssh e10`, working for weeks, started
+returning `tailnet policy does not permit you to SSH to this node` (compounded because the
+ThinkPad had just become tag-owned, so `autogroup:member` no longer matched it).
+**`sudo tailscale set --ssh=false` gives port 22 back.** 🛑 On a machine that already has
+working key-based SSH, LEAVE TAILSCALE SSH OFF.
+
+⚠️ **`tailscale` CLI CANNOT EDIT TAILNET POLICY** (no acl/policy subcommand in 1.102.4; node
+auth ≠ admin auth). Only the console or the HTTP API, and the API token is minted in the
+console. API route: `GET /api/v2/tailnet/-/acl` with `Accept: application/hujson` (plain
+`application/json` blanks every comment to whitespace), edit, `POST` back with `If-Match` on
+the ETag. Keep the token in a 0600 file, never on a command line; deleting the file does NOT
+revoke it.
+
+**SSH now: e10 → ThinkPad = Tailscale SSH via `tag:thinkpad`. ThinkPad → e10 = ordinary sshd
++ ed25519 key, `Host e10` in `~/.ssh/config`.** Different machinery each way.
