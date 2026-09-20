@@ -1,0 +1,181 @@
+# Backup architecture — where everything goes
+
+> [!abstract] TL;DR — for non-technical readers
+> **What this is.** The lab keeps three separate copies of its work, each in a
+> different place and each with a different job. This page says which is which,
+> so nobody has to guess where a file lives or whether it is safe.
+>
+> **Why it exists.** Backups grew one script at a time. On 2026-09-20 an audit
+> found 83% of the raw electrophysiology had no second copy anywhere, because a
+> one-off migration script had quietly retired itself in August and nothing
+> replaced it. Nobody noticed because nobody could say what the rules were.
+>
+> **How to read this page.** Start at the three-line summary. Use the "where does
+> X live?" table when you are looking for a specific file. The per-destination
+> sections are only needed when something breaks. Big picture:
+> [[01-infrastructure/system-overview]].
+
+## The three destinations, in one line each
+
+| Destination | Its one job |
+|---|---|
+| **bilab NAS** | *How to rebuild the rig.* Configuration, code, settings. No bulk data. |
+| **SKIM NAS** | *What the lab works on today.* The active working copy. |
+| **AWS S3** | *What must survive the building burning down.* Archive, rarely read. |
+
+If you only remember one thing: **the SKIM NAS is not a backup.** It is where work
+happens. A file that exists only there is a file with one copy.
+
+## Where does X live?
+
+| Data | e10 local | bilab NAS | SKIM NAS | AWS S3 |
+|---|---|---|---|---|
+| Raw xdat (262 ch) | `~/radix/data` | until 2026-08-19 only | ❌ never | ✅ `radix/data/` |
+| Stripped xdat (16 ch) | `~/radix/stripped` | ❌ | ✅ `03_Data_Mouse/<user>/` | ✅ `radix/stripped/` |
+| Git repo + vault | `~/sleep-recording-skim` | ✅ nightly tarball | ❌ | ❌ (GitHub is the off-site copy) |
+| e10 settings, daemon state, Frigate config | various | ✅ nightly tarball | ❌ | ❌ |
+| Video MP4s | `/opt/neurosurveillance/exports/` | ❌ (sidecar JSONs only) | ❌ | 🔜 `video/` — planned |
+| Frigate rolling segments | `/srv/frigate/storage` | ❌ | ❌ | ❌ regenerable, never backed up |
+
+## bilab NAS — how to rebuild the rig
+
+Synology at `bilab-syn.tail8808c0.ts.net`, shared into this tailnet from the
+`bilab.kaist@` account. 21 TB, ~12 TB free. Reached over SSH on **port 53**, key
+auth as user `Andrea`.
+
+- **Script** `neurosurveillance/deploy/nas-backup.sh`, systemd timer, **00:00 daily**.
+- **Holds** one dated tarball per run, `e10_backup_<YYYY-MM-DD>.tar.gz` (~350 MB),
+  rolling **3-day** retention.
+- **Contains** the whole workspace repo, Allego device/workspace config,
+  `/opt/neurosurveillance` config + sessions + export sidecar JSONs, and the
+  Frigate compose/config/mosquitto trees.
+- **Deliberately excludes** all bulk data. Two separate exclude lines block
+  `*/radix/data` and `*.xdat` so it cannot be undone by accident.
+- **Notifies** on success and on all three failure modes (tar failed, NAS
+  unreachable, upload corrupt) — see below.
+
+Full page: [[02-procedures/installation/nas-backup]].
+
+## SKIM NAS — what the lab works on today
+
+Synology at `skim-nas.tailec38b9.ts.net`, shared in from `sleepigene@`. Mounted
+over CIFS at `/mnt/skimnas` (autofs, mounts on access). 7 TB, ~4.6 TB free.
+
+- **Written by** `eeg-recorder/backend/nas_upload.py` when a recording stops.
+- **Layout** `03_Data_Mouse/<user>/<YYYY-MM-DD>_<base>/`, one directory per
+  recording, with the stripped xdat, its `strip-report.json`, a QC bundle and
+  `UPLOAD.json`.
+- **Holds the stripped data only** — 16 of 262 channels, roughly 6% of raw size.
+
+> [!warning] "NAS-verified" in a run note means the STRIPPED file
+> The verification is real, and 16 channels is the analysed montage. But the
+> 262-channel original never went to this NAS. `uid0912` is 90.8 GB on e10 and
+> 5.5 GB here. If you need the other 246 channels, S3 is the only other copy.
+
+> [!tip] The uploader renames remotely
+> `20260917_HLBW_SL_RSR` is `allego_0__uid0917-09-00-09`. Matching NAS directories
+> by Allego uid undercounts. Resolve via the `allego_base` key in each directory's
+> `UPLOAD.json`, never by filename.
+
+## AWS S3 — what must survive the building burning down
+
+Bucket `s3://skim-eeg-radix-archive-760396521414`, region `ap-northeast-2`,
+class `GLACIER_IR`. Versioning on, AES256 on, public access blocked, and a
+lifecycle rule aborts incomplete multipart uploads after 7 days.
+
+| Prefix | Source on e10 | Job | Size |
+|---|---|---|---|
+| `radix/data/` | `~/radix/data` | `raw` | 1.1 TB |
+| `radix/stripped/` | `~/radix/stripped` | `stripped` | 22 GB |
+| `video/` | `/opt/neurosurveillance/exports/` | *planned* | — |
+
+One script serves every prefix. `RADIX_S3_JOB` keeps each run's log, lock and
+state file distinct so jobs never share a lock:
+
+```bash
+RADIX_S3_JOB=stripped \
+RADIX_S3_SRC=/home/skimlab/radix/stripped \
+RADIX_S3_PREFIX=radix/stripped \
+  neurosurveillance/deploy/radix-s3-archive.sh --dry-run
+```
+
+Runs **01:30 nightly**, stripped first (small, finishes fast), then raw. Both
+hard-stop at 08:30 for the morning recording window.
+
+Full page: [[02-procedures/installation/radix-s3-archive]].
+
+### Video — planned, not yet built
+
+Cameras have been offline since 2026-08-04, so no uploader exists yet. The
+structure is decided so that turning it on later is wiring, not design:
+
+- **Prefix** mirrors the on-disk export tree exactly:
+  `video/<researcher>/<mouse-id>/<YYYY-MM-DD>/YYMMDDHHMM_mouseID_type.mp4`
+- **Source** is `/opt/neurosurveillance/exports/` — the stitched session MP4s.
+  **Never** `/srv/frigate/storage/`, which holds regenerable rolling segments.
+- **Sidecar JSONs** stay in the bilab NAS tarball as today; only MP4s go to S3.
+- **Storage class** to be decided when volume is real.
+
+> [!warning] Video will dominate the bill
+> Measured from the one existing export: **~0.32 GB/h per camera**. Four chambers
+> recording continuously is **~31 GB/day, ~930 GB/month** — roughly the entire
+> current EEG archive every month. Revisit Deep Archive versus Glacier IR, and
+> revisit spend monitoring, before switching this on.
+
+## Notifications
+
+All scripts push to **ntfy** via the single shared notifier
+`neurosurveillance/deploy/nvr-notify.sh`:
+
+```bash
+nvr-notify.sh <ok|warn|fail|info> "<title>" "<body>"
+```
+
+- Recipient is read from `DEFAULT_RECIPIENT_NTFY` in
+  `/etc/netdata/health_alarm_notify.conf` — the same source of truth Netdata and
+  Uptime Kuma use. One place to rotate.
+- Level sets ntfy `Priority`: `fail` → `max`, which bypasses Do Not Disturb.
+- **It never fails loudly.** Always exits 0, so a broken notifier cannot take down
+  a backup. Trouble goes to stderr, which lands in the journal or the cron log.
+- `NVR_NOTIFY_SLACK=1` falls back to the still-live Slack webhook.
+
+> [!warning] The recipient must be a full URL
+> A bare topic name makes curl treat it as a hostname and fail silently with no
+> config error. Always `https://ntfy.sh/<topic>`. See
+> [[02-procedures/installation/monitoring-setup]] §8.3b.
+
+## Verifying each path
+
+```bash
+# bilab NAS — did last night's tarball land?
+ssh e10 'systemctl status nas-backup.service --no-pager | head -5'
+
+# SKIM NAS — is it mounted, and what is the newest recording?
+ssh e10 'findmnt /mnt/skimnas && ls -1t /mnt/skimnas/03_Data_Mouse/andrea | head -3'
+
+# S3 — what is actually up there?
+aws s3 ls s3://skim-eeg-radix-archive-760396521414/ --recursive --summarize | tail -3
+
+# S3 jobs — last outcome of each
+ssh e10 'cat sleep-recording-skim/neurosurveillance/deploy/logs/radix-s3-archive-*.state'
+
+# notifier
+ssh e10 'neurosurveillance/deploy/nvr-notify.sh info "test" "reachable"'
+```
+
+## Things that are deliberately NOT backed up
+
+- **Frigate rolling segments** (`/srv/frigate/storage`) — regenerable buffer.
+- **`node_modules`, Rust `target/`, venvs** — rebuildable.
+- **`radiens.log`** — grows to gigabytes, no lasting value.
+- **The raw xdat on the bilab NAS** — its archiver retired itself on 2026-08-21 by
+  design (`radix-archive-watchdog.sh` stands down permanently once its state file
+  reads `COMPLETE`). S3 now covers raw. Re-arming it with
+  `rm logs/radix-archive.state` would add a second raw copy; that is a decision,
+  not a fix.
+
+## Related
+
+- [[02-procedures/installation/nas-backup]] · [[02-procedures/installation/radix-s3-archive]]
+- [[02-procedures/installation/monitoring-setup]] — Netdata, Uptime Kuma, ntfy
+- [[01-infrastructure/system-overview]] — the whole system

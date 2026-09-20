@@ -31,9 +31,14 @@
 # Usage: radix-s3-archive.sh [--dry-run]
 set -uo pipefail
 
-SRC="/home/skimlab/radix/data"
+# One script, several jobs. JOB keeps the log/lock/state files distinct so the
+# raw and stripped runs never share a lock or overwrite each other's state.
+#   raw      (default) : ~/radix/data     -> radix/data/
+#   stripped           : ~/radix/stripped -> radix/stripped/
+JOB="${RADIX_S3_JOB:-raw}"
+SRC="${RADIX_S3_SRC:-/home/skimlab/radix/data}"
 BUCKET="${RADIX_S3_BUCKET:-skim-eeg-radix-archive-760396521414}"
-PREFIX="radix/data"
+PREFIX="${RADIX_S3_PREFIX:-radix/data}"
 REGION="ap-northeast-2"
 STORAGE_CLASS="GLACIER_IR"
 AWS_PROFILE_NAME="radix-backup"
@@ -41,9 +46,9 @@ AWS_BIN="/home/skimlab/.local/bin/aws"
 
 DIR="/home/skimlab/sleep-recording-skim/neurosurveillance/deploy"
 LOGS="$DIR/logs"; mkdir -p "$LOGS"
-LOG="$LOGS/radix-s3-archive.log"
-LOCK="$LOGS/radix-s3-archive.lock"
-STATE="$LOGS/radix-s3-archive.state"
+LOG="$LOGS/radix-s3-archive-$JOB.log"
+LOCK="$LOGS/radix-s3-archive-$JOB.lock"
+STATE="$LOGS/radix-s3-archive-$JOB.state"
 NOTIFY="$DIR/nvr-notify.sh"
 REPO="/home/skimlab/sleep-recording-skim/eeg-emg-analysis"
 PY="/opt/neurosurveillance/venv/bin/python3"
@@ -101,6 +106,13 @@ remote_size() {
 }
 
 # ---- preflight --------------------------------------------------------------
+if [[ ! -d "$SRC" ]]; then
+  log "FATAL: source directory $SRC does not exist"
+  "$NOTIFY" fail "S3 archive ($JOB) has no source" "\`$SRC\` does not exist on e10.
+Nothing was transferred. If the directory was renamed, update RADIX_S3_SRC."
+  exit 1
+fi
+
 if [[ ! -x "$AWS_BIN" ]]; then
   log "FATAL: $AWS_BIN not found"
   exit 1
@@ -108,7 +120,7 @@ fi
 
 if ! "$AWS_BIN" s3api head-bucket --bucket "$BUCKET" >/dev/null 2>>"$LOG"; then
   log "FATAL: cannot reach bucket $BUCKET (credentials or network)"
-  "$NOTIFY" fail "S3 archive cannot start" "Could not reach \`s3://$BUCKET\`.
+  "$NOTIFY" fail "S3 archive ($JOB) cannot start" "Could not reach \`s3://$BUCKET\`.
 Nothing was transferred. Check the \`$AWS_PROFILE_NAME\` credentials on e10.
 See \`$LOG\`."
   exit 1
@@ -117,7 +129,7 @@ fi
 mapfile -t FILES < <(cd "$SRC" && ls -1 2>/dev/null | sort)
 TOTAL_FILES=${#FILES[@]}
 TOTAL_BYTES=$(du -sb "$SRC" | cut -f1)
-log "=== radix-s3-archive start: $TOTAL_FILES files, $(human "$TOTAL_BYTES") -> s3://$BUCKET/$PREFIX ==="
+log "=== radix-s3-archive [$JOB] start: $TOTAL_FILES files, $(human "$TOTAL_BYTES") -> s3://$BUCKET/$PREFIX ==="
 (( DRY_RUN )) && log "DRY RUN — nothing will be uploaded"
 
 if recording_active; then
@@ -137,7 +149,7 @@ for name in "${FILES[@]}"; do
 
   if past_hard_stop; then
     log "HARD STOP ($HARD_STOP) reached — pausing before the recording window"
-    "$NOTIFY" warn "S3 archive paused for the recording window" "Stopped at $HARD_STOP so the 09:00 recording has the disk to itself.
+    "$NOTIFY" warn "S3 archive ($JOB) paused for the recording window" "Stopped at $HARD_STOP so the 09:00 recording has the disk to itself.
 Progress: $done_files/$TOTAL_FILES files, $(human $done_bytes) accounted for ($uploaded newly uploaded).
 It resumes automatically tonight; nothing is lost."
     echo "PAUSED $(date '+%F %T')" > "$STATE"
@@ -214,13 +226,13 @@ fi
 
 if (( failed_files == 0 && done_files == TOTAL_FILES )); then
   log "=== COMPLETE: all $TOTAL_FILES files present in S3 ==="
-  "$NOTIFY" ok "Raw recordings OFF-SITE — all $TOTAL_FILES files in S3" "$SUMMARY
+  "$NOTIFY" ok "S3 archive ($JOB) COMPLETE — all $TOTAL_FILES files" "$SUMMARY
 
 Nothing was deleted from e10 or from the NAS. This is a third copy."
   echo "COMPLETE $(date '+%F %T')" > "$STATE"
 else
   log "=== INCOMPLETE: $failed_files failed ==="
-  "$NOTIFY" warn "S3 archive incomplete — $failed_files file(s) failed" "$SUMMARY
+  "$NOTIFY" warn "S3 archive ($JOB) incomplete — $failed_files file(s) failed" "$SUMMARY
 
 Failed:$FAILED_LIST
 The next nightly run retries automatically. Nothing was deleted."

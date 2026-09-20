@@ -14,8 +14,9 @@ Set up 2026-09-20.
 |---|---|
 | Script | `neurosurveillance/deploy/radix-s3-archive.sh` |
 | Schedule | `crontab` entry for `skimlab` (no sudo on e10; matches `radix-archive-watchdog`) |
-| Runs | 01:30 daily via cron, hard-stops at 08:30 |
-| Bucket | `s3://skim-eeg-radix-archive-760396521414/radix/data` |
+| Runs | 01:30 daily via cron — stripped first, then raw. Hard-stops at 08:30 |
+| Bucket | `s3://skim-eeg-radix-archive-760396521414` |
+| Prefixes | `radix/data/` (raw, 1.1 TB) · `radix/stripped/` (22 GB) · `video/` planned |
 | Region | `ap-northeast-2` (Seoul) |
 | Storage class | `GLACIER_IR` (Glacier Instant Retrieval) |
 | AWS account | 760396521414, inside the Brain Repair Laboratory org |
@@ -38,6 +39,34 @@ This script never gets to compete with the rig. Three independent brakes:
 
 `ARCHIVE_IGNORE_WINDOW=1` skips only the clock guard, for a deliberate manual run
 with the rig idle. It does **not** skip the recording check.
+
+## One script, several jobs
+
+`RADIX_S3_JOB` names the run and keeps its log, lock and state files distinct, so
+the raw and stripped jobs can never share a lock or clobber each other's state:
+
+| Job | `RADIX_S3_SRC` | `RADIX_S3_PREFIX` |
+|---|---|---|
+| `raw` (default) | `/home/skimlab/radix/data` | `radix/data` |
+| `stripped` | `/home/skimlab/radix/stripped` | `radix/stripped` |
+
+```bash
+RADIX_S3_JOB=stripped \
+RADIX_S3_SRC=/home/skimlab/radix/stripped \
+RADIX_S3_PREFIX=radix/stripped \
+  neurosurveillance/deploy/radix-s3-archive.sh --dry-run
+```
+
+State lands in `logs/radix-s3-archive-<job>.{log,lock,state}`.
+
+The stripped job runs **before** raw in the same cron line: it is only 22 GB, so it
+finishes in minutes and gets protected immediately rather than waiting the two or
+three nights the first raw pass takes. A missing `RADIX_S3_SRC` directory is a hard
+failure with a notification, never a silent zero-file success.
+
+⚠️ The stripped source is **e10-local**, so S3 covers only what e10 still holds
+(22 GB), not the fuller history on the SKIM NAS (84 GB). Deliberate: it removes any
+dependency on the CIFS mount being healthy at 01:30.
 
 ## How "skip what is already there" works
 
@@ -115,8 +144,8 @@ is configured on top of this.
 ssh e10 'neurosurveillance/deploy/radix-s3-archive.sh --dry-run'
 
 # progress / last outcome
-ssh e10 'tail -30 sleep-recording-skim/neurosurveillance/deploy/logs/radix-s3-archive.log'
-ssh e10 'cat sleep-recording-skim/neurosurveillance/deploy/logs/radix-s3-archive.state'
+ssh e10 'tail -30 sleep-recording-skim/neurosurveillance/deploy/logs/radix-s3-archive-raw.log'
+ssh e10 'cat  sleep-recording-skim/neurosurveillance/deploy/logs/radix-s3-archive-*.state'
 
 # schedule + recent cron output
 ssh e10 'crontab -l | grep s3-archive'
@@ -139,7 +168,16 @@ aws s3 cp s3://skim-eeg-radix-archive-760396521414/radix/data/<file> .
 Budget for the retrieval charge on a large restore; pulling the whole 1.1 TB back
 is not free.
 
+## Notifications
+
+Via the shared `nvr-notify.sh`, which pushes to **ntfy** (topic in
+`DEFAULT_RECIPIENT_NTFY`, `/etc/netdata/health_alarm_notify.conf`). Failures use
+priority `max` so they bypass Do Not Disturb. The notifier always exits 0 — it can
+never take down a backup.
+
 ## Related
+
+- [[02-procedures/backup-architecture]] — the whole picture, all three destinations
 
 - `radix-archive.sh` — the NAS copy. Deliberately a separate script so either
   destination keeps working if the other's access is revoked.

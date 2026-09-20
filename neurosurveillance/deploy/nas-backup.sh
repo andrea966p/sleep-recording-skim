@@ -25,6 +25,8 @@ NAS_USER="Andrea"
 NAS_DIR="e10_setup_backups"   # relative to NAS user's home
 RETAIN=3                      # number of daily snapshots to keep on the NAS
 
+NOTIFY="/home/skimlab/sleep-recording-skim/neurosurveillance/deploy/nvr-notify.sh"
+
 SSH_KEY="/home/skimlab/.ssh/id_ed25519"
 SSH_OPTS=(-i "$SSH_KEY" -p "$NAS_PORT" -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o ConnectTimeout=20)
 
@@ -96,7 +98,11 @@ set -e
 # tar exit 1 = "some files changed/vanished while reading" (benign on a live tree);
 # exit >=2 = fatal (e.g. permission denied) — refuse to ship a broken snapshot.
 if [[ $rc -gt 1 ]]; then
-  log "tar FAILED (exit $rc)"; exit 1
+  log "tar FAILED (exit $rc)"
+  "$NOTIFY" fail "Nightly backup FAILED to build" "tar exited $rc while building \`${ARCHIVE}\`.
+Nothing was uploaded; the NAS still holds yesterday's snapshot.
+See the journal: \`journalctl -u nas-backup.service -n 50\`."
+  exit 1
 fi
 [[ $rc -eq 1 ]] && log "tar warning (exit 1: files changed during read) — continuing"
 
@@ -107,7 +113,13 @@ log "tarball OK (${SIZE})"
 
 # ---- upload -----------------------------------------------------------------
 log "ensuring remote dir + uploading"
-ssh "${SSH_OPTS[@]}" "${NAS_USER}@${NAS_HOST}" "mkdir -p ${NAS_DIR}"
+if ! ssh "${SSH_OPTS[@]}" "${NAS_USER}@${NAS_HOST}" "mkdir -p ${NAS_DIR}"; then
+  log "FATAL: cannot reach ${NAS_HOST} or create ${NAS_DIR}"
+  "$NOTIFY" fail "Nightly backup cannot reach the bilab NAS" "Could not reach \`${NAS_HOST}\` or create \`${NAS_DIR}\`.
+The tarball built fine (${SIZE}) but nothing was uploaded.
+Check Tailscale: the NAS is shared in from the bilab tailnet."
+  exit 1
+fi
 # Stream the tarball over the SAME ssh invocation that is proven to work on this
 # NAS. Synology's rsync forced-command and OpenSSH-9 scp's SFTP backend both
 # misbehave here; piping into a remote `cat` depends only on plain ssh + a shell.
@@ -121,7 +133,11 @@ ssh "${SSH_OPTS[@]}" "${NAS_USER}@${NAS_HOST}" \
 local_bytes=$(wc -c < "$TARBALL")
 remote_bytes=$(ssh "${SSH_OPTS[@]}" "${NAS_USER}@${NAS_HOST}" "wc -c < ${NAS_DIR}/${ARCHIVE}" | tr -d '[:space:]')
 if [[ "$local_bytes" != "$remote_bytes" ]]; then
-  log "upload size mismatch (local=${local_bytes} remote=${remote_bytes})"; exit 1
+  log "upload size mismatch (local=${local_bytes} remote=${remote_bytes})"
+  "$NOTIFY" fail "Nightly backup upload is CORRUPT" "\`${ARCHIVE}\` uploaded short or long.
+local=${local_bytes} bytes, remote=${remote_bytes} bytes.
+Treat the newest snapshot on the NAS as untrustworthy."
+  exit 1
 fi
 log "uploaded ${ARCHIVE} (${remote_bytes} bytes verified)"
 
@@ -130,4 +146,9 @@ log "rotating: keeping newest ${RETAIN}"
 ssh "${SSH_OPTS[@]}" "${NAS_USER}@${NAS_HOST}" \
   "cd ${NAS_DIR} && ls -1t e10_backup_*.tar.gz 2>/dev/null | tail -n +$((RETAIN+1)) | xargs -r rm -f && echo 'remaining:' && ls -1t e10_backup_*.tar.gz"
 
+REMAINING="$(ssh "${SSH_OPTS[@]}" "${NAS_USER}@${NAS_HOST}" \
+  "cd ${NAS_DIR} && ls -1t e10_backup_*.tar.gz 2>/dev/null" | tr '\n' ' ')"
+"$NOTIFY" ok "Nightly backup on the bilab NAS" "Uploaded \`${ARCHIVE}\` (${SIZE}, ${remote_bytes} bytes verified).
+Repo, vault, e10 settings, daemon state and Frigate config. No bulk data by design.
+Kept (newest ${RETAIN}): ${REMAINING}"
 log "done"
