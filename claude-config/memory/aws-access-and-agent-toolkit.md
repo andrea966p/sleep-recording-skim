@@ -13,9 +13,16 @@ ThinkPad ([[workspace-single-repo-sleep-recording-skim]]).
 
 - Account **760396521414**, SSO role `AWSReservedSSO_AdministratorAccess`, user `andreap`.
 - CLI profile **`andrea`**, default region **`ap-northeast-2`** (Seoul).
-- `aws login --profile andrea` opens a browser once, then issues a **15-minute**
-  STS token plus a **refresh token**, so the CLI renews silently and you never
-  hit an expiry mid-task. The short `expiresAt` in
+- `aws login --profile andrea` opens a browser, then issues a **15-minute** STS
+  token plus a **refresh token**. The CLI renews silently *within* a session, but
+  the session itself **does expire — it was dead the next morning** (2026-09-19
+  17:16 KST login, expired by 2026-09-20 12:00). So: fine mid-task, useless for
+  anything unattended. 🔴 An unattended job needs its OWN IAM user with a static
+  key, never SSO — see [[radix-s3-offsite-archive]].
+- 🔴 `aws login` **blocks until you finish the sign-in in the browser** and only
+  then prints `Updated profile ... credentials`. No success line = not logged in,
+  whatever the browser looked like. A stale attempt keeps holding its callback
+  port, so a second `aws login` silently does nothing until you kill the first. The short `expiresAt` in
   `~/.aws/login/cache/*.json` is NOT the session length — do not re-login on
   seeing it. Browser re-auth needed again after 90 days. Agent Toolkit service
   itself is **us-east-1 only**, whatever the profile region.
