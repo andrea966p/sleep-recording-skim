@@ -11,7 +11,10 @@ the SKIM NAS is local backup, S3 is off-site. Procedure page:
 
 - Bucket **`skim-eeg-radix-archive-760396521414`**, `ap-northeast-2`, class
   **`GLACIER_IR`** (~$5.50/mo at 1.1 TB). Versioning + AES256 + public access blocked.
-- Script `neurosurveillance/deploy/radix-s3-archive.sh`, **cron 01:30 nightly**.
+- Script `neurosurveillance/deploy/radix-s3-archive.sh`, **cron 01:30 nightly**,
+  **stripped first then raw, sequential in one cron line** so they never contend.
+  `RADIX_S3_JOB` (raw|stripped) picks SRC/PREFIX and keeps `logs/radix-s3-archive-$JOB.{log,lock,state}`
+  distinct. Prefixes: `radix/data/` 1.1 TB, `radix/stripped/` 23 GB, `video/` planned.
   Reuses `radix-archive.sh`'s guards verbatim: `recording_active()` before every
   file, `past_hard_stop()` at 08:30, `ionice -c3 nice -n 19`.
 - Skip logic is **one `head-object` per file, compare `ContentLength`** — a file
