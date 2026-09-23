@@ -28,10 +28,38 @@ status: completed
 > - `allego_2__uid0902-13-00-28_timestamp.xdat` — 578,239,488 bytes
 > - `allego_2__uid0902-13-00-28.xdat.json` — metadata, 139,846 bytes
 >
-> File start (`13-00-28`) and mtime (2026-09-03 09:05) match the planned 20.0 h window. It has not
-> been scored, moved to the NAS, or written up — the "What we do with it on Thursday" section below
-> is still open work, not a completed analysis. Per [[cohort-identity-every-run-is-new-mice]], treat
-> this as unscored raw data until someone runs it through the pipeline.
+> File start (`13-00-28`) and mtime (2026-09-03 09:05) match the 20.0 h window as run.
+> ⚠️ Superseded in part — see the 2026-09-23 update below.
+
+> [!success] Updated 2026-09-23 — it is now stripped, archived and carded
+> The text above said this recording had "not been scored, moved to the NAS, or
+> written up". Two of those three are now done.
+>
+> - **On the SKIM NAS** as `20260902_HLBSSD_RSR/`, stripped to 16 channels,
+>   bit-exact, with its QC bundle. Raw is in S3 too, so it has three copies.
+> - **Carded.** Eight verdict cards under `cards/out/S-SD/`.
+>   ⚠️ Until 2026-09-23 every one read `animal_id: UNKNOWN@<position>` — the
+>   recording was missing from `cohorts/S-SD.yaml` entirely, so nothing could
+>   resolve who sat in which position. Fixed; the identities below are real.
+> - **Still not staged.** Rung 3 is INSUFFICIENT throughout, so no sleep
+>   architecture exists for this recording and "What we do with it on Thursday"
+>   remains open work.
+>
+> **Outcome: n = 1 at rung 2.**
+>
+> | pos | animal | rung 2 CONNECTION |
+> |---|---|---|
+> | D2 | HLBSSD18 | ✅ **PASS** — 60.6% usable, longest unbroken block 19.7 min |
+> | B1 | HLBSSD17 | ⚠️ UNJUDGEABLE — chip floor 769 µV, under the 800 µV gate |
+> | B2 | HLBSSD14 | ⚠️ UNJUDGEABLE — chip floor 124 µV |
+> | A1 A2 C1 C2 D1 | SSD11 12 15 16 19 | ❌ FAIL, 0.0–0.9% usable |
+>
+> 🔴 **It is also 3 h 55 m SHORT of the protocol window.** The standard for a
+> sleep-deprivation recovery is 13:00 → 13:00, 24 h, ending at sampling. This
+> stopped at 09:05, so the four hours immediately before the terminal endpoint
+> were never recorded. The animals were sampled; it cannot be repeated. The
+> protocol was only written down on 2026-09-23, after this run:
+> [[02-procedures/CANONICAL-recording-windows-and-protocol]].
 
 ## The protocol state, written out so it cannot be misread
 
