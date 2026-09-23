@@ -43,7 +43,7 @@ flat to beat any spectral test. **The verdict engine then calls the animal a FAI
 Twenty hours of recovery sleep, cohort W-SD. See
 [[2026-08-27-W-SD-recovery-sleep|the run report]].
 
-| | A1 (HLBCSD01) | A2 (HLBCSD02) | D2 (HLBCSD08), working |
+| | A1 (HLBWSD01) | A2 (HLBWSD02) | D2 (HLBWSD08), working |
 |---|---|---|---|
 | chip floor 60 Hz, the day before | 4314 µV | 4606 µV | 3175 µV |
 | chip floor 60 Hz, this run | **1347** | **1575** | 4761 |

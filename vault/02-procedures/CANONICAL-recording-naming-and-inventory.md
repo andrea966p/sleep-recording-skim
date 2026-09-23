@@ -108,6 +108,10 @@ in the table is a screen, a test, or an unexplained run.
 | W-SL | `allego_0__uid0910-09-00-00` | `allego_0__uid0917-09-00-09` |
 | S-SL | `allego_0__uid0912-08-55-18` | `allego_0__uid0920-09-00-07` + `allego_0__uid0921-00-17-34` |
 
+⚠️ **The whole file is rarely the analysis window.** Which hours of each of these
+to use, the protocol they are judged against, and the discard list live in
+[[02-procedures/CANONICAL-recording-windows-and-protocol]].
+
 Two of these are **split across two files**, with a real gap in the middle:
 
 - W-SD baseline, gap 2026-08-19 17:16 → 17:25

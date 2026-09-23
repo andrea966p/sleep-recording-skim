@@ -82,13 +82,13 @@ reported as dead animals.
 
 ### D2 came back on both roles
 
-`HLBCSD18` at D2 had a collapsing ground at 12:24 (floor 684-2014 µV, sagging, EEG flat at 22 µV)
+`HLBSSD18` at D2 had a collapsing ground at 12:24 (floor 684-2014 µV, sagging, EEG flat at 22 µV)
 and after the re-seat reads **EEG rms 114-153 µV, slope −1.73, lf/hf 24 to 38 against its own floor
 99th percentile of 3.33, above it in 21 of 21 epochs**, with **EMG locked at 50 µV and 69 µV of
 60 Hz**, inside the 9 to 90 µV connected band. Both roles, cleanly.
 
 D2 has now passed the strict rung 2 gate on three consecutive full-length recordings and is the
-animal to protect. A2 (`HLBCSD12`) is the other solid EEG, lf/hf 9.8 → 38.8, above its floor in
+animal to protect. A2 (`HLBSSD12`) is the other solid EEG, lf/hf 9.8 → 38.8, above its floor in
 21 of 21 epochs.
 
 ## 🔑 The failures split in two, and only one half is torsion
@@ -102,14 +102,14 @@ Measured over the 21 four-second epochs of the 12:38 file, with the chip floor s
 
 | pos | animal | EEG rms variability | rms max/min | lf/hf range | epochs above own floor p99 | read |
 |---|---|---|---|---|---|---|
-| **A1** | HLBCSD11 | **150%** | **49×** | 1.3 – 15.4 | 16/21 | 🔧 **FLICKER** |
-| **C2** | HLBCSD16 | **80%** | **55×** | 1.3 – 27.3 | 13/21 | 🔧 **FLICKER** |
-| **C1** | HLBCSD15 | **101%** | 7.3× | 1.1 – 18.5 | 3/21 | 🔧 **FLICKER** |
-| D1 | HLBCSD19 | 13.6% | 1.8× | 1.5 – 2.2 | 0/21 | ❌ STATIC |
-| B2 | HLBCSD14 | 4.3% | 1.1× | 2.1 – 2.7 | 0/21 | ❌ STATIC |
-| B1 | HLBCSD17 | 4.0% | 1.2× | 2.6 – 3.2 | 0/21 | ❌ STATIC |
-| A2 | HLBCSD12 | 11.1% | 1.6× | 9.8 – 38.8 | 21/21 | ✅ working |
-| D2 | HLBCSD18 | 17.7% | 2.1× | 6.3 – 38.2 | 21/21 | ✅ working |
+| **A1** | HLBSSD11 | **150%** | **49×** | 1.3 – 15.4 | 16/21 | 🔧 **FLICKER** |
+| **C2** | HLBSSD16 | **80%** | **55×** | 1.3 – 27.3 | 13/21 | 🔧 **FLICKER** |
+| **C1** | HLBSSD15 | **101%** | 7.3× | 1.1 – 18.5 | 3/21 | 🔧 **FLICKER** |
+| D1 | HLBSSD19 | 13.6% | 1.8× | 1.5 – 2.2 | 0/21 | ❌ STATIC |
+| B2 | HLBSSD14 | 4.3% | 1.1× | 2.1 – 2.7 | 0/21 | ❌ STATIC |
+| B1 | HLBSSD17 | 4.0% | 1.2× | 2.6 – 3.2 | 0/21 | ❌ STATIC |
+| A2 | HLBSSD12 | 11.1% | 1.6× | 9.8 – 38.8 | 21/21 | ✅ working |
+| D2 | HLBSSD18 | 17.7% | 2.1× | 6.3 – 38.2 | 21/21 | ✅ working |
 
 ### The three that flicker
 

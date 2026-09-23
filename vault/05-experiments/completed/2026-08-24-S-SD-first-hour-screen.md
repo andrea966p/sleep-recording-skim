@@ -18,7 +18,7 @@ cohort: S-SD
 
 > [!abstract] TL;DR
 > `allego_0__uid0824-17-56-51`, **2026-08-24 17:56:51 KST, 60.0 min, 3.6 GiB, RUNG 0 PASS.** First
-> recording of cohort `S-SD` (HLBCSD11 to HLBCSD19), and **the first recording in this project with
+> recording of cohort `S-SD` (HLBSSD11 to HLBSSD19), and **the first recording in this project with
 > real animal identities** rather than position labels.
 >
 > **Four positions give a full clean hour of EEG: A2, C1, C2, D2.** Three of those four are EEG
@@ -28,8 +28,8 @@ cohort: S-SD
 > 🔴 **B1 gives nothing on either channel** and its chip's wire-free floor is the weakest on the rig
 > at 1491 µV. That was later shown to be **a chewed tether**, not the port.
 > 🔴 **Surgical notes do not predict signal quality.** The two animals with the worst bleeding notes
-> (HLBCSD11, HLBCSD18) are the ones with the best EMG, and the animal with no adverse note at all
-> (HLBCSD13, at B1) gives nothing.
+> (HLBSSD11, HLBSSD18) are the ones with the best EMG, and the animal with no adverse note at all
+> (HLBSSD13, at B1) gives nothing.
 > 🛑 **An hour badly overstates a long run.** A2 and C2 both read 100% here. Over the following
 > 24 h they read 79.7% and 50.3%, and by 26 August both had failed outright.
 
@@ -54,14 +54,14 @@ with `--disable-gpu` for this recording and stayed up.
 
 | pos | mouse | floor 60 Hz median | floor 60 Hz p1 | floor slope p1 | grounded |
 |---|---|---|---|---|---|
-| A1 | HLBCSD11 | 4396 µV | 3253 | **−1.862** | yes |
-| A2 | HLBCSD12 | 4131 | 3994 | −0.379 | yes |
-| **B1** | **HLBCSD13** | **1491** | **54** | −1.723 | yes, barely |
-| B2 | HLBCSD14 | 5047 | 4669 | −0.892 | yes |
-| C1 | HLBCSD15 | 5062 | 4781 | −0.399 | yes |
-| C2 | HLBCSD16 | 5398 | 5162 | −0.394 | yes |
-| D1 | HLBCSD19 | 2890 | 1400 | **−1.543** | yes |
-| D2 | HLBCSD18 | 2807 | 1939 | −0.686 | yes |
+| A1 | HLBSSD11 | 4396 µV | 3253 | **−1.862** | yes |
+| A2 | HLBSSD12 | 4131 | 3994 | −0.379 | yes |
+| **B1** | **HLBSSD13** | **1491** | **54** | −1.723 | yes, barely |
+| B2 | HLBSSD14 | 5047 | 4669 | −0.892 | yes |
+| C1 | HLBSSD15 | 5062 | 4781 | −0.399 | yes |
+| C2 | HLBSSD16 | 5398 | 5162 | −0.394 | yes |
+| D1 | HLBSSD19 | 2890 | 1400 | **−1.543** | yes |
+| D2 | HLBSSD18 | 2807 | 1939 | −0.686 | yes |
 
 B1's floor is a third of the rig's typical value and its 1st percentile is 54 µV. It clears the
 800 µV grounded bar on the median only. **The day after this recording it fell to 246 µV and the
@@ -71,14 +71,14 @@ guard refused a verdict outright.**
 
 | pos | mouse | EEG rms | slope | lf/hf | EEG % | longest | EMG rms | EMG % | BOTH % | longest BOTH | EEG rail | verdict |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| **D2** | HLBCSD18 | 79 µV | −1.57 | 16.62 | **100.0** | **60.0 min** | **33** | **89.2** | **89.2** | **23.8 min** | 0.0% | ✅ **PASS** |
-| A2 | HLBCSD12 | 118 | −1.71 | 24.34 | **100.0** | **60.0 min** | 531 | 0.0 | 0.0 | — | 0.0% | EEG only |
-| C2 | HLBCSD16 | 94 | −1.71 | 25.41 | **100.0** | **60.0 min** | 1001 | 0.0 | 0.0 | — | 0.0% | EEG only |
-| C1 | HLBCSD15 | 105 | −1.84 | 28.29 | **99.7** | 41.3 min | 453 | 0.0 | 0.0 | — | 0.0% | EEG only |
-| D1 | HLBCSD19 | 99 | −1.46 | 17.82 | 41.7 | 4.2 min | 928 | 0.0 | 0.0 | — | 15.3% | intermittent |
-| A1 | HLBCSD11 | 98 | −1.39 | 17.49 | 3.3 | 0.3 min | **15** | **92.8** | 3.3 | 0.3 min | 18.3% | EMG only |
-| B1 | HLBCSD13 | 3137 | +0.00 | 2.80 | 8.1 | 1.0 min | 2932 | 16.4 | 7.5 | 1.0 min | 66.9% | 🔴 nothing |
-| B2 | HLBCSD14 | 4431 | −0.64 | 2.19 | 0.0 | — | 91 | 88.1 | 0.0 | — | 100.0% | EMG only |
+| **D2** | HLBSSD18 | 79 µV | −1.57 | 16.62 | **100.0** | **60.0 min** | **33** | **89.2** | **89.2** | **23.8 min** | 0.0% | ✅ **PASS** |
+| A2 | HLBSSD12 | 118 | −1.71 | 24.34 | **100.0** | **60.0 min** | 531 | 0.0 | 0.0 | — | 0.0% | EEG only |
+| C2 | HLBSSD16 | 94 | −1.71 | 25.41 | **100.0** | **60.0 min** | 1001 | 0.0 | 0.0 | — | 0.0% | EEG only |
+| C1 | HLBSSD15 | 105 | −1.84 | 28.29 | **99.7** | 41.3 min | 453 | 0.0 | 0.0 | — | 0.0% | EEG only |
+| D1 | HLBSSD19 | 99 | −1.46 | 17.82 | 41.7 | 4.2 min | 928 | 0.0 | 0.0 | — | 15.3% | intermittent |
+| A1 | HLBSSD11 | 98 | −1.39 | 17.49 | 3.3 | 0.3 min | **15** | **92.8** | 3.3 | 0.3 min | 18.3% | EMG only |
+| B1 | HLBSSD13 | 3137 | +0.00 | 2.80 | 8.1 | 1.0 min | 2932 | 16.4 | 7.5 | 1.0 min | 66.9% | 🔴 nothing |
+| B2 | HLBSSD14 | 4431 | −0.64 | 2.19 | 0.0 | — | 91 | 88.1 | 0.0 | — | 100.0% | EMG only |
 
 The lf/hf separation test — animal median against its own chip's wire-free floor p99 — agrees on
 six of eight: **A1 17.49 vs 12.18 · A2 24.34 vs 3.17 · C1 28.29 vs 2.74 · C2 25.41 vs 4.96 · D1
@@ -153,11 +153,11 @@ C1 and C2 have perfect EEG and no muscle. Only D2 has both. **Never describe a p
 
 | mouse | pos | surgical note | result |
 |---|---|---|---|
-| HLBCSD18 | D2 | *lots superficial bleeding after skin incision, lots of bleeding from 4 holes* | ✅ the only full PASS |
-| HLBCSD11 | A1 | *bleeding F-L eeg, struggle to induce anesthesia, hiccups strong* | best EMG on the rig |
-| HLBCSD15 | C1 | *bleeding P-L eeg* | 99.7% EEG |
-| **HLBCSD13** | **B1** | **none** | **nothing on either channel** |
-| HLBCSD12, 14, 16, 19 | A2, B2, C2, D1 | none | mixed |
+| HLBSSD18 | D2 | *lots superficial bleeding after skin incision, lots of bleeding from 4 holes* | ✅ the only full PASS |
+| HLBSSD11 | A1 | *bleeding F-L eeg, struggle to induce anesthesia, hiccups strong* | best EMG on the rig |
+| HLBSSD15 | C1 | *bleeding P-L eeg* | 99.7% EEG |
+| **HLBSSD13** | **B1** | **none** | **nothing on either channel** |
+| HLBSSD12, 14, 16, 19 | A2, B2, C2, D1 | none | mixed |
 
 **The animal with the cleanest surgery gives the worst data and the animal with the worst bleeding
 gives the best.** Do not use intraoperative notes to triage animals, and do not offer them to the
@@ -167,7 +167,7 @@ professor as an explanation for a failure.
 
 - 2026-08-25: 24 h ZT0-to-ZT0 run, [[2026-08-25-S-SD-24h-ZT0-run]]. B1's chip fell to 246 µV and
   the code refused a verdict. A2 and C2's perfect hours became 79.7% and 50.3%.
-- 2026-08-26: B1's animal HLBCSD13 was pulled with a **chewed tether**, HLBCSD17 put in the same
+- 2026-08-26: B1's animal HLBSSD13 was pulled with a **chewed tether**, HLBSSD17 put in the same
   slot, and the port was exonerated. [[2026-08-27-B1-swap-baseline-20h-run]].
 - 2026-08-26: `floor_stats()` was fixed to be per-chip with the `site_p1_median` estimator, which is
   why this report can be recomputed at all.

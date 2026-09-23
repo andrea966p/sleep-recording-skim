@@ -33,28 +33,28 @@ B slot 2: floor 60 Hz  4896 uV    floor rms  3723 uV     <- normal
 are INNOCENT.** The fault is in the slot-1 branch only.
 🔴🔴 **MY CAUSAL READING OF THIS IS RETRACTED.** I called it "the ground PIN POSITION in the
 connector housing" and "a standing PORT fault across four cohorts". On 2026-08-26 the B1 animal
-was pulled (**its tether was CHEWED**) and the spare HLBCSD17 put in the **same slot**: the floor
+was pulled (**its tether was CHEWED**) and the spare HLBSSD17 put in the **same slot**: the floor
 went **246 → 2338 µV, grounded, with real EEG**. The fault followed the ANIMAL AND ITS TETHER.
 The measurements above stand; the causal claim does not. See [[b-slot1-was-the-tether-not-the-port]].
 
 ## ✅ D1's CHIP IS FINE — its failure is the TETHER, not the ground
 D1 floor 60 Hz **3189 µV, normal all 24 h** ⇒ that chip is properly grounded and seating was never
 D1's problem. But D1's own channels are open: **EEG rms 2760 µV, slope −0.10, 1.4% usable, zero
-recovery in any hourly bin; EMG 1167 µV.** Matches HLBCSD19's registry note *"might have tether
+recovery in any hourly bin; EMG 1167 µV.** Matches HLBSSD19's registry note *"might have tether
 damaged due to climbing"*. 🔑 **A floating CHIP and an open ELECTRODE look nothing alike — separate
 them with the chip's own wire-free floor before blaming anything.**
 
 ## VERDICTS, 24.28 h, per-chip trimmed floor (8739 epochs)
 | pos | mouse | EEG rms/slope | EEG % | longest | EMG rms | EMG % | BOTH % | longest |
 |---|---|---|---|---|---|---|---|---|
-| **D2** | HLBCSD18 | 86 / −1.53 | 96.2 | 0.94 h | **49** | 79.3 | **77.3** | **0.35 h ✅ PASS** |
-| A2 | HLBCSD12 | 124 / −1.49 | 79.5 | **3.62 h** | 492 | 0.7 | 0.7 | — |
-| C1 | HLBCSD15 | 102 / −1.51 | 85.2 | 0.47 h | 455 | 0.0 | 0.0 | — |
-| C2 | HLBCSD16 | 124 / −1.27 | 48.8 | 0.62 h | 877 | 0.0 | 0.0 | — |
-| A1 | HLBCSD11 | 94 / −1.36 | 31.0 | 0.09 h | **47** | **94.5** | 30.4 | 0.09 h |
-| B2 | HLBCSD14 | 4425 / −0.23 | 0.0 | — | 107 | 68.5 | 0.0 | — |
-| D1 | HLBCSD19 | 2760 / −0.10 | 1.4 | — | 1167 | 0.0 | 0.0 | — |
-| B1 | HLBCSD13 | 486 / −1.58 | 1.0 | — | 2761 | 0.0 | 0.0 | — |
+| **D2** | HLBSSD18 | 86 / −1.53 | 96.2 | 0.94 h | **49** | 79.3 | **77.3** | **0.35 h ✅ PASS** |
+| A2 | HLBSSD12 | 124 / −1.49 | 79.5 | **3.62 h** | 492 | 0.7 | 0.7 | — |
+| C1 | HLBSSD15 | 102 / −1.51 | 85.2 | 0.47 h | 455 | 0.0 | 0.0 | — |
+| C2 | HLBSSD16 | 124 / −1.27 | 48.8 | 0.62 h | 877 | 0.0 | 0.0 | — |
+| A1 | HLBSSD11 | 94 / −1.36 | 31.0 | 0.09 h | **47** | **94.5** | 30.4 | 0.09 h |
+| B2 | HLBSSD14 | 4425 / −0.23 | 0.0 | — | 107 | 68.5 | 0.0 | — |
+| D1 | HLBSSD19 | 2760 / −0.10 | 1.4 | — | 1167 | 0.0 | 0.0 | — |
+| B1 | HLBSSD13 | 486 / −1.58 | 1.0 | — | 2761 | 0.0 | 0.0 | — |
 
 **Only D2 passes strict rung 2** (EEG AND EMG in the same epoch, ≥15 min block: 21 min).
 EEG-only ≥15 min: **A2, D2, C2, C1**. 🛑 **A1 has EXCELLENT EMG and failing EEG** — do not describe

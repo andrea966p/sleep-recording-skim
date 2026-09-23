@@ -43,7 +43,7 @@
 - 🔴⭐⭐⭐ **[W-SD RECOVERY SLEEP — 2026-08-27/28](w-sd-recovery-sleep-run-2026-08-27.md).** B1 ground DECAYED 825→469 µV over 20 h = conductor working loose.
 - ⭐⭐⭐ **[20.3 h B1-SWAP BASELINE — 2026-08-26](recording-2026-08-26-b1-swap-20h-baseline.md).** B1+C1 are the CHEWING CAGES. Never quote B1 %.
 - ⭐⭐⭐ **[24 h ZT0-TO-ZT0, S-SD — 2026-08-25](recording-2026-08-25-24h-zt0-S-SD.md).** 🔴 EEG usability drops 15-34 pts in the DARK phase. 🛑 1 h snapshots badly overstate a 24 h run.
-- ⭐⭐⭐ **[S-SD BATCH, 8 MICE — 2026-08-24](recording-2026-08-24-new-8-mice.md).** First cohort with REAL ids (HLBCSD11-19); manifest `cohorts/S-SD.yaml`. 🔴 Surgical bleeding notes do NOT predict signal quality. 🔴🔴 The PER-CHIP floor can itself be CONTAMINATED.
+- ⭐⭐⭐ **[S-SD BATCH, 8 MICE — 2026-08-24](recording-2026-08-24-new-8-mice.md).** First cohort with REAL ids (HLBSSD11-19); manifest `cohorts/S-SD.yaml`. 🔴 Surgical bleeding notes do NOT predict signal quality. 🔴🔴 The PER-CHIP floor can itself be CONTAMINATED.
 - ⭐⭐⭐ **[8 W-SD MICE — 2026-08-18](recording-2026-08-18-eight-new-mice.md).** Never call a channel animal-side before a re-seat + re-record. Strict rung 2 = EEG AND EMG in the SAME epoch.
 - ⭐⭐⭐ **[A2 CONTROL, 48 h — BEST DATA EVER TAKEN HERE](a2-control-48h-reference-profile.md).** 47.09/48.19 h usable, zero railed epochs. Prefer ZT0 starts.
 - ⭐⭐⭐ **[TWO ANIMALS WORK; THE TETHER IS THE FIX](overnight-two-animals-tether-is-the-fix.md).** Impedance SCREENS; only a multi-hour recording is an OUTCOME.

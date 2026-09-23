@@ -19,8 +19,8 @@
 # 🔴 RETRACTION, 2026-08-26. An earlier version of this file said "B slot 1 has
 #   failed across three consecutive cohorts, so a failure at B1 is evidence about
 #   the PORT before it is evidence about the mouse." THAT IS WRONG. On 2026-08-26
-#   HLBCSD13 was pulled from B1 BECAUSE ITS TETHER WAS CHEWED and the spare
-#   HLBCSD17 was put in the same slot: the chip floor went 246 -> 2186 uV, the
+#   HLBSSD13 was pulled from B1 BECAUSE ITS TETHER WAS CHEWED and the spare
+#   HLBSSD17 was put in the same slot: the chip floor went 246 -> 2186 uV, the
 #   chip came up grounded, and real EEG and EMG appeared. THE FAULT FOLLOWED THE
 #   ANIMAL AND ITS TETHER. B slot 1, its cable, its splitter branch and its XDAQ
 #   input are all GOOD.
@@ -34,17 +34,17 @@ cohort_id: S-SD
 title: SOD1 + CSD cohort, batch S-SD
 project_id: neurosurveillance-eeg
 description: >
-  Ten male mice, HLBCSD11 to HLBCSD20, surgeries 2026-08-10 to 2026-08-12, all
-  tethered 2026-08-18. Eight were on the rig from 2026-08-18; HLBCSD13 came off
-  on 2026-08-26 with a chewed tether and HLBCSD17 replaced it in the same slot.
-  HLBCSD20 is excluded. This is the batch that followed W-SD.
+  Ten male mice, HLBSSD11 to HLBSSD20, surgeries 2026-08-10 to 2026-08-12, all
+  tethered 2026-08-18. Eight were on the rig from 2026-08-18; HLBSSD13 came off
+  on 2026-08-26 with a chewed tether and HLBSSD17 replaced it in the same slot.
+  HLBSSD20 is excluded. This is the batch that followed W-SD.
 
 roles: [eeg, emg]          # /1 EEG, /2 EMG for slot 1; /33, /34 for slot 2
 criterion: slope           # EEG only; EMG is broadband, so it is judged on hum
 
 notes: >
-  Position labels are RIG POSITIONS, not animals. B1 held HLBCSD13 up to
-  2026-08-26 and HLBCSD17 from 2026-08-26 12:50 onwards, so no B1 number crosses
+  Position labels are RIG POSITIONS, not animals. B1 held HLBSSD13 up to
+  2026-08-26 and HLBSSD17 from 2026-08-26 12:50 onwards, so no B1 number crosses
   that boundary.
 
 # -----------------------------------------------------------------------------
@@ -62,7 +62,7 @@ recordings:
       24.276 h, 91.59 GB, ZT0 to ZT0, rung 0 PASS. 726 watchdog checks, zero
       stalls. Only D2 passes strict rung 2 (21 min EEG+EMG block). EEG-only with
       a block of 15 min or more: A2, D2, C2, C1. B1 chip read FLOATING all 24 h
-      (floor 60 Hz 246 uV) -- later shown to be HLBCSD13's chewed tether, not the
+      (floor 60 Hz 246 uV) -- later shown to be HLBSSD13's chewed tether, not the
       port. EEG usability drops 15 to 34 points in the dark phase; D2 immune.
 
   - base: allego_1__uid0826-12-50-16
@@ -70,7 +70,7 @@ recordings:
     notes: >
       20.326 h, 12:50:15 on 08-26 to 09:09 on 08-27 KST, 71.4 GiB, rung 0 PASS
       (73,173,248 data = timestamp samples, remainders 0/0). 608 watchdog checks,
-      zero stalls. FIRST RECORDING WITH HLBCSD17 IN B1. All eight chips grounded.
+      zero stalls. FIRST RECORDING WITH HLBSSD17 IN B1. All eight chips grounded.
       Strict rung 2: D2 only, again (81.0% both, 37 min block, 18.20 h inside
       blocks of 15 min or more).
       🔴 A1's EEG reads 0.0% but is UNJUDGEABLE, not FAIL: its chip's wire-free
@@ -121,7 +121,7 @@ recordings:
 # -----------------------------------------------------------------------------
 animals:
 
-  - animal_id: HLBCSD11
+  - animal_id: HLBSSD11
     batch_id: S-SD
     project_id: neurosurveillance-eeg
     sex: M
@@ -153,7 +153,7 @@ animals:
       verdict_2026_09_01: 🔧 INTERMITTENT, torsion signature. EEG flips between rms 62-78 uV with real signal (lf/hf up to 15.4 vs floor p99 3.98, above it in 16 of 21 epochs) and rms 410-3050 uV open, SEVEN times in 84 s, while its chip floor sits unmoved at 5361 uV. EMG OPEN, rms 1064 and 1370 uV of 60 Hz, against 9 uV three days earlier.
     sources: {husbandry: HLB_SOD1_Intake_Monitoring.xlsx Registry, read 2026-08-24}
 
-  - animal_id: HLBCSD12
+  - animal_id: HLBSSD12
     batch_id: S-SD
     project_id: neurosurveillance-eeg
     sex: M
@@ -182,7 +182,7 @@ animals:
       verdict_2026_09_01: ✅ EEG SOLID. rms 113-176 uV, slope -1.73, lf/hf 9.8-38.8 against its own floor p99 of 2.06, above it in 21 of 21 epochs, chip floor 4707 uV varying 0.2%. ⚠️ EMG is a FIXED ARTEFACT, not muscle: rms locked at 352-354 uV with 479 uV of 60 Hz. A2 is EEG-ONLY for the endpoint run.
     sources: {husbandry: HLB_SOD1_Intake_Monitoring.xlsx Registry, read 2026-08-24}
 
-  - animal_id: HLBCSD13
+  - animal_id: HLBSSD13
     batch_id: S-SD
     project_id: neurosurveillance-eeg
     sex: M
@@ -209,7 +209,7 @@ animals:
       🔑 ROOT CAUSE, established by swap on 2026-08-26: THE TETHER WAS CHEWED THROUGH. Replacing the animal in the same slot restored the chip ground (246 -> 2186 uV). No fault was ever found at the port.
     sources: {husbandry: HLB_SOD1_Intake_Monitoring.xlsx Registry, read 2026-08-24}
 
-  - animal_id: HLBCSD14
+  - animal_id: HLBSSD14
     batch_id: S-SD
     project_id: neurosurveillance-eeg
     sex: M
@@ -238,7 +238,7 @@ animals:
       verdict_2026_09_01: ❌ CONTINUOUS BREAK, not torsion. At 12:24 its chip was UNGROUNDED (floor 117 uV) so nothing was judgeable; after the re-seat the chip grounds properly at 2486 uV and BOTH roles read open and static -- EEG rms 2974-3382 uV (variability 4.3%, max/min 1.1), EMG rms 3009-3327 uV, lf/hf 2.1-2.7 against a floor p99 of 4.75, 0 of 21 epochs above. A bending conductor cannot hold a level that steady.
     sources: {husbandry: HLB_SOD1_Intake_Monitoring.xlsx Registry, read 2026-08-24}
 
-  - animal_id: HLBCSD15
+  - animal_id: HLBSSD15
     batch_id: S-SD
     project_id: neurosurveillance-eeg
     sex: M
@@ -272,7 +272,7 @@ animals:
       verdict_2026_09_01: 🔧 INTERMITTENT, and the event is in the TETHER BODY. Flat at rms 29 uV for 68 s, then at epoch 17 its EEG (29 -> 189 uV, lf/hf 18.5 vs floor p99 5.90), its EMG (99 -> 567 uV) AND its chip floor (2917 -> 4476 uV) all jump in the SAME epoch. Two roles plus the floor moving together is not an electrode. The identical event appears in the 12:24 file at t = 68 s. Agrees with the 08-27 note that this tether failed structurally at its centre.
     sources: {husbandry: HLB_SOD1_Intake_Monitoring.xlsx Registry, read 2026-08-24}
 
-  - animal_id: HLBCSD16
+  - animal_id: HLBSSD16
     batch_id: S-SD
     project_id: neurosurveillance-eeg
     sex: M
@@ -301,7 +301,7 @@ animals:
       verdict_2026_09_01: 🔧 INTERMITTENT -- the clearest recording of intermittent contact this rig has made. In 84 s: open (rms 4558 uV, lf/hf 1.4) -> CLOSED for 40 s (rms falls to 90-159 uV, lf/hf climbs to 27.3 against a floor p99 of 2.21, real EEG) -> open again (rms 4900 uV). Its EMG tracks it in lockstep, 1375 -> 880 -> 1363 uV, while the chip floor does not move. Above its floor in 13 of 21 epochs.
     sources: {husbandry: HLB_SOD1_Intake_Monitoring.xlsx Registry, read 2026-08-24}
 
-  - animal_id: HLBCSD17
+  - animal_id: HLBSSD17
     batch_id: S-SD
     project_id: neurosurveillance-eeg
     sex: M
@@ -317,19 +317,19 @@ animals:
       - {date: 2026-08-18, grams: 30.6, occasion: tethering, source: husbandry-sheet}
     placements:
       - {from: 2026-08-26 12:00, position: B1, source: bench-note,
-         tether_notes: "spare animal, tethered 08-18 but never on the rig; put into B slot 1 on 2026-08-26 after HLBCSD13's tether was found chewed"}
+         tether_notes: "spare animal, tethered 08-18 but never on the rig; put into B slot 1 on 2026-08-26 after HLBSSD13's tether was found chewed"}
     recordings:
       - {base: allego_1__uid0826-12-50-16, date: 2026-08-26, position: B1, role: animal}
       - {base: allego_0__uid0901-12-24-03, date: 2026-09-01, position: B1, role: animal}
       - {base: allego_1__uid0901-12-38-53, date: 2026-09-01, position: B1, role: animal}
     notes: >
       Operated and tethered with the rest of the batch but held OFF the rig until 2026-08-26. The registry lists XDAQ position "/" for this animal; that is now out of date.
-      verdict_2026_08_26: CONNECTED on both roles. EEG rms 93 uV, slope -1.47, lf/hf 17.34 against a chip floor p99 of 3.81 -- the widest separation on the rig. EMG 44 uV, 94.9% usable. ZERO railing on either channel. Chip grounded at 2186 uV where HLBCSD13 left it at 246 uV.
+      verdict_2026_08_26: CONNECTED on both roles. EEG rms 93 uV, slope -1.47, lf/hf 17.34 against a chip floor p99 of 3.81 -- the widest separation on the rig. EMG 44 uV, 94.9% usable. ZERO railing on either channel. Chip grounded at 2186 uV where HLBSSD13 left it at 246 uV.
       ⚠️ DO NOT QUOTE ITS USABLE PERCENTAGE. 77.8% at the point threshold, 99.1% at a 25% looser one, 37.6% at a 25% tighter one; failing epochs miss by a median slope margin of only 0.091, and 747 blocks with a median length of 20 s means no block reaches 15 min. Report it as CONNECTED.
       verdict_2026_09_01: ❌ CONTINUOUS BREAK, not torsion. Chip grounds fine once seated (354 uV for 3 epochs then 2400-3300 uV) but both roles are open and STATIC across all 21 epochs -- EEG rms 2052-2428 uV (variability 4.0%, max/min 1.2), EMG rms 3188-3654 uV, lf/hf pinned at 2.6-3.2 against a floor p99 of 7.05, 0 of 21 epochs above. B1 and C1 are the two cage positions where animals can reach their tethers.
     sources: {husbandry: HLB_SOD1_Intake_Monitoring.xlsx Registry, read 2026-08-24; placement: bench note 2026-08-26}
 
-  - animal_id: HLBCSD18
+  - animal_id: HLBSSD18
     batch_id: S-SD
     project_id: neurosurveillance-eeg
     sex: M
@@ -361,7 +361,7 @@ animals:
       verdict_2026_09_01: ✅ RECOVERED ON BOTH ROLES, and it was a GROUND fault. At 12:24 its chip floor was sagging at 684-2014 uV with the EEG flat at 22 uV; after the re-seat the floor is 4541 uV varying 1.1% and the EEG reads rms 114-153 uV, slope -1.73, lf/hf 24-38 against a floor p99 of 3.33, above it in 21 of 21 epochs, with EMG locked at 50 uV and 69 uV of 60 Hz. 🔴 Note that 1052 uV PASSED the current FLOOR_MIN_HUM_UV of 800 while the chip was physically ungrounded.
     sources: {husbandry: HLB_SOD1_Intake_Monitoring.xlsx Registry, read 2026-08-24}
 
-  - animal_id: HLBCSD19
+  - animal_id: HLBSSD19
     batch_id: S-SD
     project_id: neurosurveillance-eeg
     sex: M
@@ -391,7 +391,7 @@ animals:
       verdict_2026_09_01: ❌ CONTINUOUS BREAK, not torsion, and consistent with the 08-26 shared-path signature. Chip floor recovered 2691 -> 3793 uV on the re-seat, and both roles are open and static -- EEG rms 1510-2708 uV (variability 13.6%, max/min 1.8), EMG rms 1568-2158 uV, 0 of 21 epochs above floor. ⚠️ D1's OWN wire-free floor is CONTAMINATED, lf/hf p99 of 4.6 here and 18-29 in longer files where other chips read 2-7. Judge D1 on rms and slope, never on its ratio.
     sources: {husbandry: HLB_SOD1_Intake_Monitoring.xlsx Registry, read 2026-08-24}
 
-  - animal_id: HLBCSD20
+  - animal_id: HLBSSD20
     batch_id: S-SD
     project_id: neurosurveillance-eeg
     sex: M

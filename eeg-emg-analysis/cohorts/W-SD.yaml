@@ -11,7 +11,7 @@
 #   positions below are therefore the assignment AS OF the spreadsheet's last save
 #   (2026-08-24), carried forward. Two things it cannot express:
 #     1. B1 held a DIFFERENT, UNIDENTIFIED animal until 2026-08-19, when that
-#        animal chewed and cut its tether and came off the rig. HLBCSD09, which
+#        animal chewed and cut its tether and came off the rig. HLBWSD09, which
 #        had been living tethered in the habituation rack, went into B1 that
 #        evening. The identity of the earlier B1 animal is NOT RECOVERABLE from
 #        the spreadsheet and is recorded as unknown rather than guessed.
@@ -21,8 +21,8 @@
 #        it IS the registry map. A1 01 · A2 02 · B1 09 · B2 04 · C1 03 · C2 06 ·
 #        D1 07 · D2 08, with 05 sacrificed and 10 untethered in the chamber.
 #
-# ⭐ B1 AND C1 ARE THE CHEWING CAGES. This batch's own registry says HLBCSD03 (C1)
-#   "ate the tether 08/19" and HLBCSD09 (B1) "08/21 ate the tether", and the S-SD
+# ⭐ B1 AND C1 ARE THE CHEWING CAGES. This batch's own registry says HLBWSD03 (C1)
+#   "ate the tether 08/19" and HLBWSD09 (B1) "08/21 ate the tether", and the S-SD
 #   batch then lost its B1 tether on 08-26 and its C1 tether on 08-27. Four events,
 #   two positions, two cohorts. It is mechanical at those CAGE locations; the swap
 #   test of 2026-08-26 proved the PORTS are good.
@@ -36,7 +36,7 @@ cohort_id: W-SD
 title: UV water + chronic sleep deprivation, batch W-SD
 project_id: neurosurveillance-eeg
 description: >
-  Ten male C57BL/6J (B6J-BomTac), HLBCSD01 to HLBCSD10, arrived 2026-07-21,
+  Ten male C57BL/6J (B6J-BomTac), HLBWSD01 to HLBWSD10, arrived 2026-07-21,
   surgeries 2026-08-03 to 2026-08-05, all tethered 2026-08-10. Drinking treatment
   is UV-sterilised water, NOT SOD1, so this batch is the water arm: its SOD1
   intake is 0 U by construction. Sleep condition is CHRONIC SLEEP DEPRIVATION,
@@ -90,7 +90,7 @@ recordings:
       failure. Different rungs; both statements are true.
       🔴 B1's chip floor was ALREADY 1275 uV here, below the ~2000 uV level that
       separates working from dead chips on this rig, and its EEG channel sat at 1.487x
-      its own chip floor = an open input riding the rail. HLBCSD09 never produced
+      its own chip floor = an open input riding the rail. HLBWSD09 never produced
       anything from the day it went on the rig.
       Hypnograms: 3 of 6 usable, bar r@1min 0.30. Per-mouse export 35 GB.
 
@@ -105,7 +105,7 @@ recordings:
       with daily bouts ending at 13:00; Thursday 08-27 was the SECOND TO LAST day and
       the protocol was still running across this window. Seven days had ELAPSED since
       CSD began, which is not the same as CSD having finished.
-      🔴 ONE ANIMAL CARRIES THE TIMEPOINT: D2 / HLBCSD08, EEG 74.2% with a 45.3 min
+      🔴 ONE ANIMAL CARRIES THE TIMEPOINT: D2 / HLBWSD08, EEG 74.2% with a 45.3 min
       block and 2.90 h inside blocks of 15 min or more, EMG 98.5%, BOTH 73.0% with a
       45.0 min block, unmoved by a +-25% threshold sweep.
       🔴🔴 THE PAIRED RECOVERY COMPARISON IS n=1. The pre-CSD baseline
@@ -181,7 +181,7 @@ recordings:
 # -----------------------------------------------------------------------------
 animals:
 
-  - animal_id: HLBCSD01
+  - animal_id: HLBWSD01
     batch_id: W-SD
     project_id: neurosurveillance-eeg
     sex: M
@@ -208,7 +208,7 @@ animals:
       verdict_2026_08_28 (80 s check): ✅ BACK. Chip floor 1347 -> 5026 uV, EEG 91 uV, slope -1.43, lf/hf 13.75 against a floor p99 of 1.88. Recoverable, and recovered 20 h too late.
     sources: {husbandry: HLB_SOD1_Intake_Monitoring.xlsx Registry, read 2026-08-27}
 
-  - animal_id: HLBCSD02
+  - animal_id: HLBWSD02
     batch_id: W-SD
     project_id: neurosurveillance-eeg
     sex: M
@@ -235,7 +235,7 @@ animals:
       verdict_2026_08_28 (80 s check): ✅ BACK. Chip floor 1575 -> 4490 uV, EEG 134 uV, slope -1.53, lf/hf 10.73 against a floor p99 of 3.48.
     sources: {husbandry: HLB_SOD1_Intake_Monitoring.xlsx Registry, read 2026-08-27}
 
-  - animal_id: HLBCSD03
+  - animal_id: HLBWSD03
     batch_id: W-SD
     project_id: neurosurveillance-eeg
     sex: M
@@ -261,7 +261,7 @@ animals:
       verdict_2026_08_28 (80 s check): unchanged, both channels still railing 100%.
     sources: {husbandry: HLB_SOD1_Intake_Monitoring.xlsx Registry, read 2026-08-27}
 
-  - animal_id: HLBCSD04
+  - animal_id: HLBWSD04
     batch_id: W-SD
     project_id: neurosurveillance-eeg
     sex: M
@@ -288,7 +288,7 @@ animals:
       verdict_2026_08_28 (80 s check): unchanged.
     sources: {husbandry: HLB_SOD1_Intake_Monitoring.xlsx Registry, read 2026-08-27}
 
-  - animal_id: HLBCSD05
+  - animal_id: HLBWSD05
     batch_id: W-SD
     project_id: neurosurveillance-eeg
     sex: M
@@ -309,7 +309,7 @@ animals:
       ⭐ THE ELECTRODE WAS FOUND INTACT AT POST MORTEM. This animal is evidence that the implants survive; the failures are downstream of the skull.
     sources: {husbandry: HLB_SOD1_Intake_Monitoring.xlsx Registry, read 2026-08-27}
 
-  - animal_id: HLBCSD06
+  - animal_id: HLBWSD06
     batch_id: W-SD
     project_id: neurosurveillance-eeg
     sex: M
@@ -337,7 +337,7 @@ animals:
       verdict_2026_08_28 (80 s check): EEG 70 uV, slope -1.11, lf/hf 8.38 against a floor p99 of 2.25 -- separated in the check, unlike in the run.
     sources: {husbandry: HLB_SOD1_Intake_Monitoring.xlsx Registry, read 2026-08-27}
 
-  - animal_id: HLBCSD07
+  - animal_id: HLBWSD07
     batch_id: W-SD
     project_id: neurosurveillance-eeg
     sex: M
@@ -362,7 +362,7 @@ animals:
       verdict_2026_08_28 (80 s check): unchanged, EEG 1151 uV, lf/hf 1.61 under a floor p99 of 6.85.
     sources: {husbandry: HLB_SOD1_Intake_Monitoring.xlsx Registry, read 2026-08-27}
 
-  - animal_id: HLBCSD08
+  - animal_id: HLBWSD08
     batch_id: W-SD
     project_id: neurosurveillance-eeg
     sex: M
@@ -388,7 +388,7 @@ animals:
       verdict_2026_08_28 (80 s check): still connected, lf/hf 10.05 against a floor p99 of 1.59.
     sources: {husbandry: HLB_SOD1_Intake_Monitoring.xlsx Registry, read 2026-08-27}
 
-  - animal_id: HLBCSD09
+  - animal_id: HLBWSD09
     batch_id: W-SD
     project_id: neurosurveillance-eeg
     sex: M
@@ -416,7 +416,7 @@ animals:
       verdict_2026_08_28 (80 s check): 🔴 STILL UNGROUNDED at 485 uV. It did NOT recover when A1 and A2 did, so this is the one position with a physical fault.
     sources: {husbandry: HLB_SOD1_Intake_Monitoring.xlsx Registry, read 2026-08-27; placement: vault journal 2026-08-19}
 
-  - animal_id: HLBCSD10
+  - animal_id: HLBWSD10
     batch_id: W-SD
     project_id: neurosurveillance-eeg
     sex: M
@@ -441,5 +441,5 @@ animals:
   # cut its tether on 2026-08-19 and came off the rig. It produced the 08-18 B1
   # screen verdict (dead, no usable signal) and the first hours of the 39.7 h run.
   # The spreadsheet cannot name it because `XDAQ position` holds one current value
-  # per animal. Do NOT attribute those numbers to HLBCSD09.
+  # per animal. Do NOT attribute those numbers to HLBWSD09.
   # ---------------------------------------------------------------------------

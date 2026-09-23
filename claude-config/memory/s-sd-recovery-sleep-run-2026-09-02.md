@@ -25,7 +25,7 @@ no usable percentage may be quoted from either.**
 floor stopped swinging 1734-4106. ⭐ Second batch running where a bench re-mate recovered chips the
 code would otherwise call dead animals — see [[weak-chip-ground-hides-as-electrode-failure]].
 
-🎉 **D2 (HLBCSD18) came back on BOTH roles and it was a GROUND fault**: EEG rms 114-153 µV, lf/hf
+🎉 **D2 (HLBSSD18) came back on BOTH roles and it was a GROUND fault**: EEG rms 114-153 µV, lf/hf
 24-38 vs its own floor p99 3.33, above in 21/21 epochs; EMG locked at 50 µV. Fourth passing
 recording in a row for D2.
 

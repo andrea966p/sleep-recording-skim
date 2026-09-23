@@ -36,7 +36,7 @@ it moves A1's threshold by 0.07 and does not change A1's verdict.
 A chip whose wire-free inputs sit below 800 µV of 60 Hz has **no ground reference**, so its floor is
 not a valid negative control. `FloorStats.grounded` is False and rung 2 returns **`UNJUDGEABLE`**
 with the reason, instead of FAIL. 🔑 **This stops a hardware fault being reported as a dead mouse:
-B1/HLBCSD13 (floor 246 µV) was being published as a failing animal for days.** 800 sits in an empty
+B1/HLBSSD13 (floor 246 µV) was being published as a failing animal for days.** 800 sits in an empty
 gap — grounded chips measure 1138-5609 µV across every recording since 2026-08-07, floating ones
 82-466 µV.
 

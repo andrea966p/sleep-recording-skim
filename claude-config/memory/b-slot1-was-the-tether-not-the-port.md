@@ -1,6 +1,6 @@
 ---
 name: b-slot1-was-the-tether-not-the-port
-description: "2026-08-26 swap test: putting a new mouse with an intact tether into B slot 1 restored the chip ground, falsifying the 'B1 is a port fault' conclusion — HLBCSD13's tether had been chewed through"
+description: "2026-08-26 swap test: putting a new mouse with an intact tether into B slot 1 restored the chip ground, falsifying the 'B1 is a port fault' conclusion — HLBSSD13's tether had been chewed through"
 metadata: 
   node_type: memory
   type: project
@@ -13,19 +13,19 @@ Stated in [[recording-2026-08-24-new-8-mice]] and [[recording-2026-08-25-24h-zt0
 swap on 2026-08-26 falsified it.
 
 ## THE SWAP TEST
-Andrea pulled the B1 animal (HLBCSD13) on 2026-08-26 **because its tether was chewed**, and plugged
-a spare animal, **HLBCSD17**, into the same slot. Same port, same slot, same cable, same XDAQ input,
+Andrea pulled the B1 animal (HLBSSD13) on 2026-08-26 **because its tether was chewed**, and plugged
+a spare animal, **HLBSSD17**, into the same slot. Same port, same slot, same cable, same XDAQ input,
 same splitter branch. Only the animal and its tether changed.
 
 | recording | animal in B1 | chip floor 60 Hz | grounded? | EEG rms | slope | lf/hf |
 |---|---|---|---|---|---|---|
-| `allego_0__uid0825-09-00-00` | HLBCSD13 | **246 µV** | ❌ no | 486 µV | −1.58 | 11.0 |
-| `allego_1__uid0826-12-50-16` | **HLBCSD17** | **2338 µV** | ✅ yes | 84 µV | −1.23 | 10.0 |
+| `allego_0__uid0825-09-00-00` | HLBSSD13 | **246 µV** | ❌ no | 486 µV | −1.58 | 11.0 |
+| `allego_1__uid0826-12-50-16` | **HLBSSD17** | **2338 µV** | ✅ yes | 84 µV | −1.23 | 10.0 |
 
 ✅✅ **THE FAULT FOLLOWED THE ANIMAL, NOT THE POSITION. B slot 1, its cable, its splitter branch and
 its XDAQ input are all GOOD.** A chewed tether severing the ground conductor produces exactly the
 floating-chip signature ([[ecg-cohort-ground-miswired]]), and that is the parsimonious explanation
-for HLBCSD13's whole run.
+for HLBSSD13's whole run.
 
 ## WHY I GOT IT WRONG — the reasoning error worth remembering
 The evidence I had was real: B slot 1 had failed in several cohorts, its floor was the lowest on the
@@ -38,7 +38,7 @@ one, and it predicts the same recurrence.
 that this swap changed BOTH animal and tether at once, so it exonerates the PORT but does not by
 itself separate "animal ground wire" from "tether conductor".
 
-## HLBCSD17 — the extra baseline animal
+## HLBSSD17 — the extra baseline animal
 Batch `S-SD`, male, DOB 2026-05-04, surgery 2026-08-11 (Andrea), tethered 2026-08-18, BW
 30.0 → 30.6 g, no adverse surgical note. Registry had **XDAQ position `/`** — operated and tethered
 but never on the rig; it was **sitting outside, still tethered**, and is now in B1. Update

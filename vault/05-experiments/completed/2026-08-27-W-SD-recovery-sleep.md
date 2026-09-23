@@ -28,7 +28,7 @@ cohort: W-SD
 > RUNG 0 PASS** (72,435,328 data = timestamp samples, remainders 0 and 0). Cohort `W-SD`, the UV
 > water arm, recorded from the moment the SD day ended at 13:00 through to sampling.
 >
-> 🔴 **ONE ANIMAL CARRIES THIS TIMEPOINT. D2 / HLBCSD08:** EEG 74.2% with a 45.3 min longest block
+> 🔴 **ONE ANIMAL CARRIES THIS TIMEPOINT. D2 / HLBWSD08:** EEG 74.2% with a 45.3 min longest block
 > and **2.90 h inside blocks of 15 min or more**, EMG 98.5%, **both roles in the same epoch 73.0%
 > with a 45.0 min block**, and it does not move under a ±25% threshold sweep. Everything else fails.
 >
@@ -65,7 +65,7 @@ Features at `~/eeg-processed/2026-08-27/feat_allego_2__uid0827-12-58-32.npz`.
 
 | | |
 |---|---|
-| Batch | `W-SD`, HLBCSD01 to HLBCSD10, male C57BL/6J (B6J-BomTac) |
+| Batch | `W-SD`, HLBWSD01 to HLBWSD10, male C57BL/6J (B6J-BomTac) |
 | Drinking arm | **UV-sterilised water, 0 U** — this is the water control arm, not the SOD1 arm |
 | Sleep condition | chronic sleep deprivation, **CSD 2026-08-21 → 2026-08-28, seven days** |
 | This recording | the **recovery-sleep** window, the endpoint the arm exists for |
@@ -76,24 +76,24 @@ Positions, from the registry's `XDAQ position` column and confirmed at the bench
 
 | A1 | A2 | B1 | B2 | C1 | C2 | D1 | D2 |
 |---|---|---|---|---|---|---|---|
-| HLBCSD01 | HLBCSD02 | HLBCSD09 | HLBCSD04 | HLBCSD03 | HLBCSD06 | HLBCSD07 | HLBCSD08 |
+| HLBWSD01 | HLBWSD02 | HLBWSD09 | HLBWSD04 | HLBWSD03 | HLBWSD06 | HLBWSD07 | HLBWSD08 |
 
-HLBCSD05 was sacrificed on 08-21 and HLBCSD10 sits in the deprivation chamber untethered, so
-neither is on the rig. ⚠️ **B1 has held HLBCSD09 only since 2026-08-19 17:20**, when the previous,
+HLBWSD05 was sacrificed on 08-21 and HLBWSD10 sits in the deprivation chamber untethered, so
+neither is on the rig. ⚠️ **B1 has held HLBWSD09 only since 2026-08-19 17:20**, when the previous,
 unidentified B1 animal chewed and cut its tether. Nothing from before that carries.
 
 ## Rung 2 — CONNECTION, 20.119 h
 
 | pos | mouse | EEG rms | slope | lf/hf | floor lf/hf p99 | separated | EEG % | longest | h in ≥15 min blocks | EMG rms | EMG % | BOTH % | longest BOTH | verdict |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| **D2** | **HLBCSD08** | **139 µV** | **−1.45** | **15.89** | 2.50 | ✅ | **74.2** | **45.3 min** | **2.90** | **38** | **98.5** | **73.0** | **45.0 min** | ✅ **PASS** |
-| C2 | HLBCSD06 | 1537 | −0.73 | 3.32 | 3.79 | ❌ | 40.1 | 11.2 min | 0.00 | 40 | 65.6 | 38.2 | 11.2 min | ⚠️ not separated |
-| A2 | HLBCSD02 | 67 | −0.07 | 1.21 | 5.66 | ❌ | 3.2 | 1.2 min | 0.00 | **51** | **99.2** | 3.2 | 1.2 min | EMG only |
-| A1 | HLBCSD01 | 55 | −0.10 | 1.25 | 5.06 | ❌ | 0.3 | 0.3 min | 0.00 | **30** | **98.4** | 0.3 | 0.3 min | EMG only |
-| D1 | HLBCSD07 | 2087 | −0.03 | 2.14 | 3.51 | ❌ | 0.7 | 0.3 min | 0.00 | 1248 | 5.6 | 0.1 | — | FAIL |
-| B2 | HLBCSD04 | 4002 | +0.04 | 1.70 | 2.70 | ❌ | 0.0 | — | 0.00 | 736 | 0.0 | 0.0 | — | FAIL, EEG railing 100% |
-| C1 | HLBCSD03 | 3901 | −0.07 | 0.98 | 5.38 | ❌ | 0.0 | — | 0.00 | 3599 | 0.0 | 0.0 | — | FAIL, **both** railing 100% |
-| **B1** | HLBCSD09 | — | — | — | — | — | — | — | — | — | — | — | — | 🔴 **UNJUDGEABLE**, chip never grounded |
+| **D2** | **HLBWSD08** | **139 µV** | **−1.45** | **15.89** | 2.50 | ✅ | **74.2** | **45.3 min** | **2.90** | **38** | **98.5** | **73.0** | **45.0 min** | ✅ **PASS** |
+| C2 | HLBWSD06 | 1537 | −0.73 | 3.32 | 3.79 | ❌ | 40.1 | 11.2 min | 0.00 | 40 | 65.6 | 38.2 | 11.2 min | ⚠️ not separated |
+| A2 | HLBWSD02 | 67 | −0.07 | 1.21 | 5.66 | ❌ | 3.2 | 1.2 min | 0.00 | **51** | **99.2** | 3.2 | 1.2 min | EMG only |
+| A1 | HLBWSD01 | 55 | −0.10 | 1.25 | 5.06 | ❌ | 0.3 | 0.3 min | 0.00 | **30** | **98.4** | 0.3 | 0.3 min | EMG only |
+| D1 | HLBWSD07 | 2087 | −0.03 | 2.14 | 3.51 | ❌ | 0.7 | 0.3 min | 0.00 | 1248 | 5.6 | 0.1 | — | FAIL |
+| B2 | HLBWSD04 | 4002 | +0.04 | 1.70 | 2.70 | ❌ | 0.0 | — | 0.00 | 736 | 0.0 | 0.0 | — | FAIL, EEG railing 100% |
+| C1 | HLBWSD03 | 3901 | −0.07 | 0.98 | 5.38 | ❌ | 0.0 | — | 0.00 | 3599 | 0.0 | 0.0 | — | FAIL, **both** railing 100% |
+| **B1** | HLBWSD09 | — | — | — | — | — | — | — | — | — | — | — | — | 🔴 **UNJUDGEABLE**, chip never grounded |
 
 Threshold sensitivity, ±25% on the floor slope threshold:
 
@@ -111,14 +111,14 @@ failing the separation test, so C2 does not enter any result.
 
 | pos | mouse | pre-CSD, 39.7 h run of 08-19 | recovery, this run |
 |---|---|---|---|
-| **D2** | HLBCSD08 | ✅ scoreable, hypnogram r@1min 0.446 | ✅ **73.0% both roles, 45 min block** |
-| A1 | HLBCSD01 | ✅ scoreable, r@1min 0.495 | 🔴 **no EEG** (floating) |
-| A2 | HLBCSD02 | ✅ scoreable, r@1min 0.592, the best on the rig | 🔴 **no EEG** (floating) |
-| C2 | HLBCSD06 | ❌ hypnogram rejected, r@1min 0.11 | ⚠️ not separated |
-| D1 | HLBCSD07 | ❌ hypnogram rejected, r@1min 0.001 | ❌ |
-| B2 | HLBCSD04 | EEG good, EMG open, no states | ❌ |
-| C1 | HLBCSD03 | withdrawn under falsification | ❌ both channels open |
-| B1 | HLBCSD09 | — | 🔴 unjudgeable |
+| **D2** | HLBWSD08 | ✅ scoreable, hypnogram r@1min 0.446 | ✅ **73.0% both roles, 45 min block** |
+| A1 | HLBWSD01 | ✅ scoreable, r@1min 0.495 | 🔴 **no EEG** (floating) |
+| A2 | HLBWSD02 | ✅ scoreable, r@1min 0.592, the best on the rig | 🔴 **no EEG** (floating) |
+| C2 | HLBWSD06 | ❌ hypnogram rejected, r@1min 0.11 | ⚠️ not separated |
+| D1 | HLBWSD07 | ❌ hypnogram rejected, r@1min 0.001 | ❌ |
+| B2 | HLBWSD04 | EEG good, EMG open, no states | ❌ |
+| C1 | HLBWSD03 | withdrawn under falsification | ❌ both channels open |
+| B1 | HLBWSD09 | — | 🔴 unjudgeable |
 
 🛑 **Only D2 has rung-2-passing data on both sides of the seven days of deprivation.** A
 before-and-after recovery-sleep statement from this batch is a statement about one mouse. That is
@@ -154,14 +154,14 @@ own.** That rules out settling after handling.
 
 | pos | mouse | floor 60 Hz, 20 h run → check | EEG rms | slope | lf/hf vs floor p99 | separated |
 |---|---|---|---|---|---|---|
-| **A1** | HLBCSD01 | **1347 → 5026** | 91 µV | −1.43 | **13.75** vs 1.88 | ✅ |
-| **A2** | HLBCSD02 | **1575 → 4490** | 134 | −1.53 | **10.73** vs 3.48 | ✅ |
-| C2 | HLBCSD06 | 4501 → 5377 | 70 | −1.11 | **8.38** vs 2.25 | ✅ |
-| D2 | HLBCSD08 | 4761 → 4547 | 155 | −1.41 | **10.05** vs 1.59 | ✅ |
-| D1 | HLBCSD07 | 1814 → 1654 | 1151 | −0.02 | 1.61 vs 6.85 | ❌ |
-| C1 | HLBCSD03 | 3524 → 3195 | 4015 | −0.12 | 1.94 vs 3.67 | ❌ both railing |
-| B2 | HLBCSD04 | 4434 → 4622 | 4346 | −0.05 | 1.50 vs 2.97 | ❌ |
-| **B1** | HLBCSD09 | **593 → 485** | — | — | — | 🔴 still ungrounded |
+| **A1** | HLBWSD01 | **1347 → 5026** | 91 µV | −1.43 | **13.75** vs 1.88 | ✅ |
+| **A2** | HLBWSD02 | **1575 → 4490** | 134 | −1.53 | **10.73** vs 3.48 | ✅ |
+| C2 | HLBWSD06 | 4501 → 5377 | 70 | −1.11 | **8.38** vs 2.25 | ✅ |
+| D2 | HLBWSD08 | 4761 → 4547 | 155 | −1.41 | **10.05** vs 1.59 | ✅ |
+| D1 | HLBWSD07 | 1814 → 1654 | 1151 | −0.02 | 1.61 vs 6.85 | ❌ |
+| C1 | HLBWSD03 | 3524 → 3195 | 4015 | −0.12 | 1.94 vs 3.67 | ❌ both railing |
+| B2 | HLBWSD04 | 4434 → 4622 | 4346 | −0.05 | 1.50 vs 2.97 | ❌ |
+| **B1** | HLBWSD09 | **593 → 485** | — | — | — | 🔴 still ungrounded |
 
 > [!warning] Read the separation, not the percentages
 > Eighty seconds is **eight epochs**. A 1st-percentile threshold estimated from eight numbers per
@@ -236,7 +236,7 @@ Added 2026-08-29, after the batch was sampled.
 **Neither channel carried anything at any point in the twenty hours.** This is not a degraded or
 flickering channel; it is a flat line that never moved.
 
-| | A1 (HLBCSD01) | A2 (HLBCSD02) | D2 (HLBCSD08), for contrast |
+| | A1 (HLBWSD01) | A2 (HLBWSD02) | D2 (HLBWSD08), for contrast |
 |---|---|---|---|
 | EEG rms, full range across 21 hourly bins | **47-57 µV** | **62-72 µV** | 129-151 µV |
 | slope, every hourly bin | −0.03 to −0.17 | +0.09 to −0.30 | −1.45 |

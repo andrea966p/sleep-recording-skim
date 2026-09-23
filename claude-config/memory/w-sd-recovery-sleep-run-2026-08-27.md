@@ -15,7 +15,7 @@ REPEATED.** Features `~/eeg-processed/2026-08-27/feat_uid0827-12-58-32.npz`. Rep
 ✅ **POSITION MAP CONFIRMED BY THE USER 2026-08-28 — it IS the registry `XDAQ position` map:**
 **A1 CSD01 · A2 CSD02 · B1 CSD09 · B2 CSD04 · C1 CSD03 · C2 CSD06 · D1 CSD07 · D2 CSD08**;
 CSD05 sacrificed 08-21, CSD10 untethered in the chamber. ✅ The 08-24/08-25/08-26 runs **stay
-S-SD** (HLBCSD11-19) — that was checked, not assumed.
+S-SD** (HLBSSD11-19) — that was checked, not assumed.
 
 ## VERDICTS, 20.1 h, per-chip floor
 | pos | mouse | EEG rms/slope/lfhf | floor lfhf p99 | sep | EEG % | longest | h≥15min | EMG % | BOTH % |

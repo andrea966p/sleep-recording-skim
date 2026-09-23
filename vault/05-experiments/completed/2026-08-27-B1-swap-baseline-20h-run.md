@@ -11,10 +11,10 @@ cohort: S-SD
 > [!abstract] TL;DR
 > `allego_1__uid0826-12-50-16`, **2026-08-26 12:50:15 → 2026-08-27 09:09 KST, 20.326 h,
 > 71.4 GiB, RUNG 0 PASS**, 608 watchdog checks with **zero stalls**. Cohort `S-SD`, eight rig
-> positions, **B slot 1 now holds a different animal (HLBCSD17)** after the previous B1 mouse
+> positions, **B slot 1 now holds a different animal (HLBSSD17)** after the previous B1 mouse
 > chewed through its tether.
 >
-> ✅ **THE B1 SWAP WORKED.** HLBCSD17 gives real EEG and real EMG through the same port, the same
+> ✅ **THE B1 SWAP WORKED.** HLBSSD17 gives real EEG and real EMG through the same port, the same
 > cable and the same XDAQ input that read floating a day earlier. Chip floor 60 Hz went
 > **246 → 2186 µV**, EEG 486 → 93 µV, lf/hf 11.0 → 17.3 against a floor p99 of 3.8, the widest
 > separation on the rig. **B slot 1 is a good port. The previous failure was the tether.**
@@ -60,8 +60,8 @@ Watchdog log at `~/eeg-processed/2026-08-26/watchdog_allego_1__uid0826-12-50-16.
 ## What changed since the 24 h run
 
 The 24 h ZT0-to-ZT0 run `allego_0__uid0825-09-00-00` ended at 09:16 on 26 August. Between then and
-12:50 the B1 animal, **HLBCSD13, was pulled because its tether was chewed**, and the spare
-**HLBCSD17** was plugged into the same slot. HLBCSD17 had been operated on 2026-08-11 and tethered
+12:50 the B1 animal, **HLBSSD13, was pulled because its tether was chewed**, and the spare
+**HLBSSD17** was plugged into the same slot. HLBSSD17 had been operated on 2026-08-11 and tethered
 on 2026-08-18 with the rest of the batch but had never been on the rig. Nothing else on the rig was
 touched. **This is a single-variable swap at the position, and it is the reason the earlier "B1 is
 a port fault" reading is retracted.**
@@ -73,14 +73,14 @@ animal, in this same file, with the `site_p1_median` estimator.
 
 | pos | mouse | floor 60 Hz median | floor 60 Hz p1 | floor slope p1 | grounded |
 |---|---|---|---|---|---|
-| A1 | HLBCSD11 | 4314 µV | 2343 | **−2.437** | yes |
-| A2 | HLBCSD12 | 4606 | 3596 | −0.746 | yes |
-| **B1** | **HLBCSD17** | **2186** | 1953 | −1.266 | **yes** |
-| B2 | HLBCSD14 | 4371 | 1753 | −1.290 | yes |
-| C1 | HLBCSD15 | 5215 | 4784 | −0.963 | yes |
-| C2 | HLBCSD16 | 4964 | 3310 | −1.021 | yes |
-| D1 | HLBCSD19 | 3425 | 1116 | −1.721 | yes |
-| D2 | HLBCSD18 | 3175 | 1527 | −0.861 | yes |
+| A1 | HLBSSD11 | 4314 µV | 2343 | **−2.437** | yes |
+| A2 | HLBSSD12 | 4606 | 3596 | −0.746 | yes |
+| **B1** | **HLBSSD17** | **2186** | 1953 | −1.266 | **yes** |
+| B2 | HLBSSD14 | 4371 | 1753 | −1.290 | yes |
+| C1 | HLBSSD15 | 5215 | 4784 | −0.963 | yes |
+| C2 | HLBSSD16 | 4964 | 3310 | −1.021 | yes |
+| D1 | HLBSSD19 | 3425 | 1116 | −1.721 | yes |
+| D2 | HLBSSD18 | 3175 | 1527 | −0.861 | yes |
 
 ✅ **All eight chips read grounded.** There is no floating headstage anywhere on the rig for the
 first time in this cohort. B1 is the lowest at 2186 µV but is far above the 800 µV bar and is
@@ -93,14 +93,14 @@ real muscle is broadband and therefore spectrally flat, so a slope test calls a 
 
 | pos | mouse | EEG rms | slope | lf/hf | EEG % | longest EEG block | EMG rms | EMG % | BOTH % | longest BOTH | EEG railing | verdict |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| **D2** | HLBCSD18 | 92 µV | −1.51 | 14.29 | **99.3** | **3.09 h** | 52 µV | 81.1 | **81.0** | **0.61 h** | 0.03% | ✅ **PASS** |
-| **C1** | HLBCSD15 | 103 | −1.48 | 15.32 | **92.2** | **1.53 h** | 458 | 0.0 | 0.0 | — | **0.00%** | EEG only |
-| **B1** | **HLBCSD17** | **93** | **−1.47** | **17.34** | 77.8 | 0.21 h | **44** | **94.9** | 75.0 | 0.21 h | **0.00%** | connected, ⚠️ not robust |
-| C2 | HLBCSD16 | 3284 | −0.43 | 2.99 | 42.8 | 0.41 h | 1010 | 0.0 | 0.0 | — | 54.0% | EEG only, intermittent |
-| A2 | HLBCSD12 | 3856 | −0.39 | 3.42 | 26.6 | 0.47 h | 554 | 0.2 | 0.0 | — | 68.7% | EEG only, **degraded** |
-| D1 | HLBCSD19 | 2701 | −0.02 | 1.75 | 3.9 | 0.02 h | 1124 | 0.0 | 0.0 | — | 75.4% | FAIL |
-| A1 | HLBCSD11 | **94** | **−1.33** | **13.46** | **0.0** | — | 48 | **93.9** | 0.0 | — | 6.1% | 🔴 **EEG UNJUDGEABLE**, EMG excellent |
-| B2 | HLBCSD14 | 4394 | −0.11 | 1.56 | 0.0 | — | 104 | 68.2 | 0.0 | — | 99.1% | EEG open, EMG good |
+| **D2** | HLBSSD18 | 92 µV | −1.51 | 14.29 | **99.3** | **3.09 h** | 52 µV | 81.1 | **81.0** | **0.61 h** | 0.03% | ✅ **PASS** |
+| **C1** | HLBSSD15 | 103 | −1.48 | 15.32 | **92.2** | **1.53 h** | 458 | 0.0 | 0.0 | — | **0.00%** | EEG only |
+| **B1** | **HLBSSD17** | **93** | **−1.47** | **17.34** | 77.8 | 0.21 h | **44** | **94.9** | 75.0 | 0.21 h | **0.00%** | connected, ⚠️ not robust |
+| C2 | HLBSSD16 | 3284 | −0.43 | 2.99 | 42.8 | 0.41 h | 1010 | 0.0 | 0.0 | — | 54.0% | EEG only, intermittent |
+| A2 | HLBSSD12 | 3856 | −0.39 | 3.42 | 26.6 | 0.47 h | 554 | 0.2 | 0.0 | — | 68.7% | EEG only, **degraded** |
+| D1 | HLBSSD19 | 2701 | −0.02 | 1.75 | 3.9 | 0.02 h | 1124 | 0.0 | 0.0 | — | 75.4% | FAIL |
+| A1 | HLBSSD11 | **94** | **−1.33** | **13.46** | **0.0** | — | 48 | **93.9** | 0.0 | — | 6.1% | 🔴 **EEG UNJUDGEABLE**, EMG excellent |
+| B2 | HLBSSD14 | 4394 | −0.11 | 1.56 | 0.0 | — | 104 | 68.2 | 0.0 | — | 99.1% | EEG open, EMG good |
 
 "Usable fraction" is this project's own term: the percentage of 10 s epochs in which the channel's
 spectrum beats the 1st percentile of **amplifier inputs with no wire attached**, recorded through
@@ -123,7 +123,7 @@ Read the sensitivity section before concluding anything from that.
 
 ## ✅ The B1 swap: the fault followed the animal and its tether
 
-| | 24 h run, HLBCSD13 | this run, HLBCSD17 |
+| | 24 h run, HLBSSD13 | this run, HLBSSD17 |
 |---|---|---|
 | chip floor 60 Hz | **246 µV** (floating) | **2186 µV** (grounded) |
 | EEG rms | 486 µV | **93 µV** |
@@ -197,7 +197,7 @@ epochs spread across the run:
 
 Working animals sit at 0.07 to 0.09. One damaged cable feeding both channels sits at 0.5 to 0.75.
 **C1 is at 0.091.** D1 at 0.208, with a 75th percentile of 0.51, is the one that looks like a
-shared path fault, which agrees with HLBCSD19's registry note about a tether damaged by climbing.
+shared path fault, which agrees with HLBSSD19's registry note about a tether damaged by climbing.
 
 > [!warning] What this means, stated carefully
 > C1's EMG conductor is damaged and has been since at least the 24 h run of 25 August, where it read
@@ -306,7 +306,7 @@ A1 reproduces its 4.29× from the 24 h run and stays the closest match to the 48
 
 The warning written on 26 August is confirmed. These are real electrode failures, not thresholds:
 
-| | A2 (HLBCSD12) 0825 → 0826 | C2 (HLBCSD16) 0825 → 0826 |
+| | A2 (HLBSSD12) 0825 → 0826 | C2 (HLBSSD16) 0825 → 0826 |
 |---|---|---|
 | EEG rms | 124 → **3856 µV** | 124 → **3284 µV** |
 | EEG slope | −1.49 → **−0.39** | −1.27 → **−0.43** |
@@ -320,13 +320,13 @@ movement-dependent contact pattern, at a slower cadence than usual.
 
 ## What this run is good for
 
-- **D2 (HLBCSD18)** is a genuine 18.2 h scoreable EEG+EMG animal and the obvious candidate for the
+- **D2 (HLBSSD18)** is a genuine 18.2 h scoreable EEG+EMG animal and the obvious candidate for the
   blind-scoring pack. It has now passed strict rung 2 on three consecutive recordings.
-- **C1 (HLBCSD15)** gives 12.26 h of EEG inside long blocks and is EEG-only. Usable for spectral
+- **C1 (HLBSSD15)** gives 12.26 h of EEG inside long blocks and is EEG-only. Usable for spectral
   work, not for anything that needs muscle tone.
-- **A1 (HLBCSD11)** gives excellent EMG with the rig's strongest circadian amplitude ratio, and its
+- **A1 (HLBSSD11)** gives excellent EMG with the rig's strongest circadian amplitude ratio, and its
   EEG is probably fine but currently unjudgeable.
-- **B1 (HLBCSD17)** is a working new animal whose number cannot yet be trusted.
+- **B1 (HLBSSD17)** is a working new animal whose number cannot yet be trusted.
 
 ## Still open
 

@@ -1,6 +1,6 @@
 ---
 name: recording-2026-08-26-b1-swap-20h-baseline
-description: "2026-08-26 20.3 h S-SD baseline with HLBCSD17 newly in B1: the swap works, D2 passes strict rung 2 with 18.2 h, C1's tether damage is on the EMG conductor only, and A1's 0.0% is a contaminated floor not a dead animal"
+description: "2026-08-26 20.3 h S-SD baseline with HLBSSD17 newly in B1: the swap works, D2 passes strict rung 2 with 18.2 h, C1's tether damage is on the EMG conductor only, and A1's 0.0% is a contaminated floor not a dead animal"
 metadata:
   node_type: memory
   type: project
@@ -15,20 +15,20 @@ Report: vault `05-experiments/completed/2026-08-27-B1-swap-baseline-20h-run.md`.
 ## VERDICTS, per-chip floor, 7317 epochs
 | pos | mouse | EEG rms/slope/lfhf | EEG % | longest | h in ≥15 min blocks | EMG rms | EMG % | BOTH % |
 |---|---|---|---|---|---|---|---|---|
-| **D2** | HLBCSD18 | 92 / −1.51 / 14.3 | **99.3** | **185 min** | **18.20** | **52** | 81.1 | **81.0 ✅ PASS** |
-| C1 | HLBCSD15 | 103 / −1.48 / 15.3 | 92.2 | 91.8 min | 12.26 | 458 | 0.0 | 0.0 |
-| **B1** | **HLBCSD17** | **93 / −1.47 / 17.3** | 77.8 | 12.8 min | 0.00 | **44** | **94.9** | 75.0 |
-| C2 | HLBCSD16 | 3284 / −0.43 / 3.0 | 42.8 | 24.5 min | 2.42 | 1010 | 0.0 | 0.0 |
-| A2 | HLBCSD12 | 3856 / −0.39 / 3.4 | 26.6 | 28.5 min | 0.73 | 554 | 0.2 | 0.0 |
-| D1 | HLBCSD19 | 2701 / −0.02 / 1.8 | 3.9 | — | 0.00 | 1124 | 0.0 | 0.0 |
-| A1 | HLBCSD11 | **94 / −1.33 / 13.5** | **0.0 🔴** | — | — | 48 | **93.9** | 0.0 |
-| B2 | HLBCSD14 | 4394 / −0.11 / 1.6 | 0.0 | — | — | 104 | 68.2 | 0.0 |
+| **D2** | HLBSSD18 | 92 / −1.51 / 14.3 | **99.3** | **185 min** | **18.20** | **52** | 81.1 | **81.0 ✅ PASS** |
+| C1 | HLBSSD15 | 103 / −1.48 / 15.3 | 92.2 | 91.8 min | 12.26 | 458 | 0.0 | 0.0 |
+| **B1** | **HLBSSD17** | **93 / −1.47 / 17.3** | 77.8 | 12.8 min | 0.00 | **44** | **94.9** | 75.0 |
+| C2 | HLBSSD16 | 3284 / −0.43 / 3.0 | 42.8 | 24.5 min | 2.42 | 1010 | 0.0 | 0.0 |
+| A2 | HLBSSD12 | 3856 / −0.39 / 3.4 | 26.6 | 28.5 min | 0.73 | 554 | 0.2 | 0.0 |
+| D1 | HLBSSD19 | 2701 / −0.02 / 1.8 | 3.9 | — | 0.00 | 1124 | 0.0 | 0.0 |
+| A1 | HLBSSD11 | **94 / −1.33 / 13.5** | **0.0 🔴** | — | — | 48 | **93.9** | 0.0 |
+| B2 | HLBSSD14 | 4394 / −0.11 / 1.6 | 0.0 | — | — | 104 | 68.2 | 0.0 |
 
 **Strict rung 2 (EEG AND EMG, same epoch, ≥15 min block): D2 ONLY, third run running.** D2 is the
 blind-scoring pack. ✅ All 8 chips grounded (2186-5215 µV) for the first time this cohort.
 
 ## ✅ THE B1 SWAP WORKED — port exonerated
-HLBCSD17 into HLBCSD13's slot: floor **246 → 2186 µV**, EEG **486 → 93 µV**, EMG **2761 → 44 µV**,
+HLBSSD17 into HLBSSD13's slot: floor **246 → 2186 µV**, EEG **486 → 93 µV**, EMG **2761 → 44 µV**,
 lf/hf 11.0 → **17.34 against a floor p99 of 3.81** (widest separation on the rig), **zero railing**.
 Confirms [[b-slot1-was-the-tether-not-the-port]].
 🔴 **DO NOT QUOTE B1's PERCENTAGE.** ±25% threshold sweep: **99.1% / 210 min ↔ 77.8% / 12.8 min ↔
@@ -78,4 +78,4 @@ Related: [[b-slot1-was-the-tether-not-the-port]] · [[recording-2026-08-25-24h-z
 
 ## From the memory index, trimmed there 2026-09-11 (kept here verbatim)
 
-- ⭐⭐⭐ **[20.3 h B1-SWAP BASELINE — 2026-08-26](recording-2026-08-26-b1-swap-20h-baseline.md). NEWEST, READ FIRST.** ✅ Swap confirmed: HLBCSD17 in B1 gives real EEG+EMG, floor 246→2186 µV, zero railing — **port good**. ✅ **D2 passes strict rung 2 a 3rd time, 18.20 h in ≥15 min blocks** ⇒ the scoring pack. 🔴 **C1's tether break is on the EMG conductor only** — its EEG railed **0 of 7317 epochs**; the bench railing is NOT in the file (A1 is the one with rail hits). 🔴🔴 **The per-chip fix killed the false PASS, not the false FAIL** — A1 unchanged yet 31%→0.0% because ITS FLOOR steepened; owed: an UNJUDGEABLE guard for a contaminated floor. 🔴 A2+C2 genuinely dead now. ⚠️ **Never quote B1's %** (±25% sweep: 99.1↔37.6). ⭐ **B1 and C1 are the CHEWING CAGES** — 4 events, 2 positions, 2 cohorts.
+- ⭐⭐⭐ **[20.3 h B1-SWAP BASELINE — 2026-08-26](recording-2026-08-26-b1-swap-20h-baseline.md). NEWEST, READ FIRST.** ✅ Swap confirmed: HLBSSD17 in B1 gives real EEG+EMG, floor 246→2186 µV, zero railing — **port good**. ✅ **D2 passes strict rung 2 a 3rd time, 18.20 h in ≥15 min blocks** ⇒ the scoring pack. 🔴 **C1's tether break is on the EMG conductor only** — its EEG railed **0 of 7317 epochs**; the bench railing is NOT in the file (A1 is the one with rail hits). 🔴🔴 **The per-chip fix killed the false PASS, not the false FAIL** — A1 unchanged yet 31%→0.0% because ITS FLOOR steepened; owed: an UNJUDGEABLE guard for a contaminated floor. 🔴 A2+C2 genuinely dead now. ⚠️ **Never quote B1's %** (±25% sweep: 99.1↔37.6). ⭐ **B1 and C1 are the CHEWING CAGES** — 4 events, 2 positions, 2 cohorts.

@@ -9,7 +9,7 @@ batch_status: SAMPLED 2026-08-28
 # W-SD batch close-out: everything the cohort produced, first screen to sampling
 
 > [!info] The batch is gone
-> HLBCSD01 to HLBCSD10 were sampled on **2026-08-28**. Nothing on this page can be re-measured, and
+> HLBWSD01 to HLBWSD10 were sampled on **2026-08-28**. Nothing on this page can be re-measured, and
 > no intervention is possible. This is the complete record of what the batch produced and what it
 > cost, written on 2026-08-29 from the raw files with the current analysis code.
 
@@ -43,7 +43,7 @@ batch_status: SAMPLED 2026-08-28
 
 | | |
 |---|---|
-| Batch code | `W-SD`, HLBCSD01 to HLBCSD10 |
+| Batch code | `W-SD`, HLBWSD01 to HLBWSD10 |
 | Strain, sex | C57BL/6J (B6J-BomTac), male, n = 10 |
 | DOB | 2026-04-27, so 17.6 weeks at sampling |
 | Arrival | 2026-07-21 |
@@ -58,18 +58,18 @@ Rig positions, confirmed with Andrea on 2026-08-28:
 
 | A1 | A2 | B1 | B2 | C1 | C2 | D1 | D2 |
 |---|---|---|---|---|---|---|---|
-| HLBCSD01 | HLBCSD02 | HLBCSD09 | HLBCSD04 | HLBCSD03 | HLBCSD06 | HLBCSD07 | HLBCSD08 |
+| HLBWSD01 | HLBWSD02 | HLBWSD09 | HLBWSD04 | HLBWSD03 | HLBWSD06 | HLBWSD07 | HLBWSD08 |
 
-**HLBCSD05** was sacrificed on 08-21 — *"08/20 kept jumping, 08/21 compromised, electrode ok,
+**HLBWSD05** was sacrificed on 08-21 — *"08/20 kept jumping, 08/21 compromised, electrode ok,
 internal bleeding intestines and spine dislocated cervical"*. ⭐ **Its electrode was found intact at
 post mortem**, which is independent evidence that the implants survive and the failures are
-downstream of the skull. **HLBCSD10** was added to the deprivation chamber on 08-21 untethered, so
+downstream of the skull. **HLBWSD10** was added to the deprivation chamber on 08-21 untethered, so
 it carries the treatment for the tissue endpoints and not for the sleep ones.
 
 ⚠️ **B1 held a different, unidentifiable animal until 2026-08-19 17:20**, when that animal chewed
-and cut its tether. HLBCSD09 was moved in from the habituation rack that evening. The spreadsheet's
+and cut its tether. HLBWSD09 was moved in from the habituation rack that evening. The spreadsheet's
 `XDAQ position` column holds one current value per animal, not a history, so the earlier animal
-cannot be named. Nothing from before that time belongs to HLBCSD09.
+cannot be named. Nothing from before that time belongs to HLBWSD09.
 
 ### Water intake
 
@@ -78,7 +78,7 @@ Group mean **4.04 mL per mouse per day** (SD of daily means 1.46, SEM 0.46, n = 
 different from the reference volume. Per mouse: 01 2.98 · 02 4.43 · 03 4.48 · 04 5.68 · 05 4.29
 (7 days) · 06 3.00 · 07 4.91 · 08 3.03 · 09 3.40 · 10 no data.
 
-HLBCSD01 has the lowest intake in the batch and the registry note *"struggling to drink water from
+HLBWSD01 has the lowest intake in the batch and the registry note *"struggling to drink water from
 the glass tube after tethering"*, which is consistent.
 
 ## Every recording this batch produced
@@ -107,14 +107,14 @@ floor was too harsh for seven of the eight chips.
 
 | pos | mouse | chip floor | EEG rms | slope | lf/hf | floor p99 | sep | EEG % | longest | h in ≥15 min blocks | EMG % | BOTH % |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| **A1** | HLBCSD01 | 4976 µV | 84 | −1.56 | 16.74 | 2.65 | ✅ | **99.9** | **457.5 min** | **39.49** | **96.2** | **96.1** |
-| **D2** | HLBCSD08 | 4844 | 74 | −1.45 | 13.76 | 2.71 | ✅ | **98.5** | 86.2 min | **34.32** | **94.1** | **92.8** |
-| **A2** | HLBCSD02 | 4396 | 115 | −1.49 | 14.32 | 3.85 | ✅ | **99.1** | 252.0 min | **36.05** | 82.8 | **82.2** |
-| **C1** | HLBCSD03 | 5333 | 90 | −1.31 | 9.64 | 4.12 | ✅ | **98.8** | **536.7 min** | **36.47** | 67.3 | **66.4** |
-| B2 | HLBCSD04 | 4336 | 108 | −1.42 | 13.49 | 2.98 | ✅ | 92.4 | 261.5 min | 22.38 | 0.0 | 0.0 |
-| C2 | HLBCSD06 | 4483 | 2943 | −0.23 | 2.86 | 3.53 | ❌ | 32.8 | 20.7 min | 1.49 | 40.9 | 32.6 |
-| D1 | HLBCSD07 | 4441 | 3901 | −0.71 | 2.68 | 7.15 | ❌ | 31.4 | 26.3 min | 1.28 | 6.5 | 3.3 |
-| **B1** | HLBCSD09 | **1275** | 2080 | −0.48 | 2.91 | 9.78 | ❌ | 0.1 | — | 0.00 | 3.0 | 0.0 |
+| **A1** | HLBWSD01 | 4976 µV | 84 | −1.56 | 16.74 | 2.65 | ✅ | **99.9** | **457.5 min** | **39.49** | **96.2** | **96.1** |
+| **D2** | HLBWSD08 | 4844 | 74 | −1.45 | 13.76 | 2.71 | ✅ | **98.5** | 86.2 min | **34.32** | **94.1** | **92.8** |
+| **A2** | HLBWSD02 | 4396 | 115 | −1.49 | 14.32 | 3.85 | ✅ | **99.1** | 252.0 min | **36.05** | 82.8 | **82.2** |
+| **C1** | HLBWSD03 | 5333 | 90 | −1.31 | 9.64 | 4.12 | ✅ | **98.8** | **536.7 min** | **36.47** | 67.3 | **66.4** |
+| B2 | HLBWSD04 | 4336 | 108 | −1.42 | 13.49 | 2.98 | ✅ | 92.4 | 261.5 min | 22.38 | 0.0 | 0.0 |
+| C2 | HLBWSD06 | 4483 | 2943 | −0.23 | 2.86 | 3.53 | ❌ | 32.8 | 20.7 min | 1.49 | 40.9 | 32.6 |
+| D1 | HLBWSD07 | 4441 | 3901 | −0.71 | 2.68 | 7.15 | ❌ | 31.4 | 26.3 min | 1.28 | 6.5 | 3.3 |
+| **B1** | HLBWSD09 | **1275** | 2080 | −0.48 | 2.91 | 9.78 | ❌ | 0.1 | — | 0.00 | 3.0 | 0.0 |
 
 **Five positions carry real EEG. Four pass strict rung 2** — both roles usable in the same epoch,
 inside blocks of fifteen minutes or more. A1 alone gives **39.5 hours** of EEG inside long blocks
@@ -127,10 +127,10 @@ out of a 39.7 hour recording.
 > whether the electrode is connected, and C1 was. **Both statements are true and they are not in
 > conflict.** For any sleep-architecture purpose C1 stays withdrawn.
 >
-> ⚠️ C1's animal, HLBCSD03, has *"ate the tether 08/19"* in the registry and was found missing with
+> ⚠️ C1's animal, HLBWSD03, has *"ate the tether 08/19"* in the registry and was found missing with
 > its tether after this run was stopped. The withdrawal and the tether damage are the same story.
 
-🔴 **B1 was never good.** HLBCSD09's chip floor read **1275 µV at the baseline**, already below the
+🔴 **B1 was never good.** HLBWSD09's chip floor read **1275 µV at the baseline**, already below the
 2000 µV level that separates working from dead chips on this rig, and its EEG channel's 60 Hz sat at
 **1.487× its own chip floor**, which is an open input riding the rail. It went on the rig on 08-19
 and produced nothing at any point.
@@ -145,14 +145,14 @@ window** — Thursday was the second to last day, not the end. Full report:
 
 | pos | mouse | EEG rms | slope | lf/hf | sep | EEG % | longest | h ≥15 min | EMG % | BOTH % |
 |---|---|---|---|---|---|---|---|---|---|---|
-| **D2** | HLBCSD08 | 139 µV | −1.45 | 15.89 | ✅ | **74.2** | **45.3 min** | **2.90** | **98.5** | **73.0 ✅** |
-| C2 | HLBCSD06 | 1537 | −0.73 | 3.32 | ❌ | 40.1 | 11.2 min | 0.00 | 65.6 | 38.2 🛑 |
-| A2 | HLBCSD02 | 67 | −0.07 | 1.21 | ❌ | 3.2 | — | 0 | **99.2** | — |
-| A1 | HLBCSD01 | 55 | −0.10 | 1.25 | ❌ | 0.3 | — | 0 | **98.4** | — |
-| D1 | HLBCSD07 | 2087 | −0.03 | 2.14 | ❌ | 0.7 | — | 0 | 5.6 | — |
-| B2 | HLBCSD04 | 4002 | +0.04 | 1.70 | ❌ | 0.0 | — | 0 | 0.0 | — |
-| C1 | HLBCSD03 | 3901 | −0.07 | 0.98 | ❌ | 0.0 | — | 0 | 0.0 | — |
-| B1 | HLBCSD09 | — | — | — | — | 🔴 UNJUDGEABLE, chip never grounded | | | | |
+| **D2** | HLBWSD08 | 139 µV | −1.45 | 15.89 | ✅ | **74.2** | **45.3 min** | **2.90** | **98.5** | **73.0 ✅** |
+| C2 | HLBWSD06 | 1537 | −0.73 | 3.32 | ❌ | 40.1 | 11.2 min | 0.00 | 65.6 | 38.2 🛑 |
+| A2 | HLBWSD02 | 67 | −0.07 | 1.21 | ❌ | 3.2 | — | 0 | **99.2** | — |
+| A1 | HLBWSD01 | 55 | −0.10 | 1.25 | ❌ | 0.3 | — | 0 | **98.4** | — |
+| D1 | HLBWSD07 | 2087 | −0.03 | 2.14 | ❌ | 0.7 | — | 0 | 5.6 | — |
+| B2 | HLBWSD04 | 4002 | +0.04 | 1.70 | ❌ | 0.0 | — | 0 | 0.0 | — |
+| C1 | HLBWSD03 | 3901 | −0.07 | 0.98 | ❌ | 0.0 | — | 0 | 0.0 | — |
+| B1 | HLBWSD09 | — | — | — | — | 🔴 UNJUDGEABLE, chip never grounded | | | | |
 
 D2 is threshold-proof: 74.2 / 74.2 / 74.1% across a ±25% sweep of the floor threshold. C2's 40.1%
 is not usable — its longest block is 11.2 min, nothing sits inside a 15 min block, and its lf/hf of
@@ -166,14 +166,14 @@ tether.
 
 | pos | mouse | pre-CSD baseline | recovery run | |
 |---|---|---|---|---|
-| **A1** | HLBCSD01 | 4976 µV | **1347** | 🔴 **−73%** |
-| **A2** | HLBCSD02 | 4396 | **1575** | 🔴 **−64%** |
-| **D1** | HLBCSD07 | 4441 | **1814** | 🔴 **−59%** |
-| **B1** | HLBCSD09 | 1275 | **593** | 🔴 already weak, then **−53%** |
-| C1 | HLBCSD03 | 5333 | 3524 | −34% |
-| B2 | HLBCSD04 | 4336 | 4434 | unchanged |
-| C2 | HLBCSD06 | 4483 | 4501 | unchanged |
-| D2 | HLBCSD08 | 4844 | 4761 | unchanged |
+| **A1** | HLBWSD01 | 4976 µV | **1347** | 🔴 **−73%** |
+| **A2** | HLBWSD02 | 4396 | **1575** | 🔴 **−64%** |
+| **D1** | HLBWSD07 | 4441 | **1814** | 🔴 **−59%** |
+| **B1** | HLBWSD09 | 1275 | **593** | 🔴 already weak, then **−53%** |
+| C1 | HLBWSD03 | 5333 | 3524 | −34% |
+| B2 | HLBWSD04 | 4336 | 4434 | unchanged |
+| C2 | HLBWSD06 | 4483 | 4501 | unchanged |
+| D2 | HLBWSD08 | 4844 | 4761 | unchanged |
 
 **A1 and A2 were the two best animals in the cohort** — 96.1% and 82.2% on both roles across 39.7
 hours — and both were lost to a ground fault, not to an electrode fault. The proof is in three
@@ -214,7 +214,7 @@ on the rig.
 | Animals scoreable on **both** sides | **1** (D2) |
 
 🛑 **The recovery-sleep comparison for batch W-SD is n = 1.** It is reportable as a single-animal
-case and it is not reportable as a group result. D2 / HLBCSD08, both roles:
+case and it is not reportable as a group result. D2 / HLBWSD08, both roles:
 
 | | pre-CSD, 39.7 h | recovery, 20.1 h |
 |---|---|---|
@@ -231,7 +231,7 @@ Both files clear rung 2 comfortably, so the pair is analysable. 🛑 **The sleep
 stays PROVISIONAL.** No human has scored an epoch of it, and the blind-scoring **kappa** is the gate
 on every rung 4 statement in this project.
 
-⚠️ The tissue endpoints are unaffected by any of this. All ten animals, including HLBCSD10 which was
+⚠️ The tissue endpoints are unaffected by any of this. All ten animals, including HLBWSD10 which was
 never tethered, carry the treatment.
 
 ## What this batch taught the rig

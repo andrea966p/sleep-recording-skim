@@ -18,34 +18,34 @@ row 1; `openpyxl` lives ONLY in `~/eeg-analysis-venv`). Manifest written and sch
 
 | pos | mouse | surgery | BW pre→teth | surgery note |
 |---|---|---|---|---|
-| A1 | HLBCSD11 | 08-10 | 31.4→32.2 | **bleeding F-L eeg**, struggle to induce anaesthesia, hiccups strong |
-| A2 | HLBCSD12 | 08-10 | 28.9→29.5 | — |
-| B1 | HLBCSD13 | 08-10 | 29.7→30.4 | — |
-| B2 | HLBCSD14 | 08-10 | 29.3→28.8 | — |
-| C1 | HLBCSD15 | 08-11 | 28.4→31.5 | **bleeding P-L eeg** |
-| C2 | HLBCSD16 | 08-11 | 31.4→30.9 | — |
-| D1 | HLBCSD19 | 08-12 | 31.0→31.4 | *"tethered in the habituation rack. Might have tether damaged due to climbing"* |
-| D2 | HLBCSD18 | 08-11 | 29.0→28.6 | lots superficial bleeding, lots of bleeding from 4 holes |
+| A1 | HLBSSD11 | 08-10 | 31.4→32.2 | **bleeding F-L eeg**, struggle to induce anaesthesia, hiccups strong |
+| A2 | HLBSSD12 | 08-10 | 28.9→29.5 | — |
+| B1 | HLBSSD13 | 08-10 | 29.7→30.4 | — |
+| B2 | HLBSSD14 | 08-10 | 29.3→28.8 | — |
+| C1 | HLBSSD15 | 08-11 | 28.4→31.5 | **bleeding P-L eeg** |
+| C2 | HLBSSD16 | 08-11 | 31.4→30.9 | — |
+| D1 | HLBSSD19 | 08-12 | 31.0→31.4 | *"tethered in the habituation rack. Might have tether damaged due to climbing"* |
+| D2 | HLBSSD18 | 08-11 | 29.0→28.6 | lots superficial bleeding, lots of bleeding from 4 holes |
 
-All male, DOB 2026-05-04, arrived 07-28, **all tethered 2026-08-18**. HLBCSD17 operated+tethered but
-**no XDAQ position**; HLBCSD20 **Excluded**. ⚠️ Registry says `Recording start = 2026-08-25` but the
+All male, DOB 2026-05-04, arrived 07-28, **all tethered 2026-08-18**. HLBSSD17 operated+tethered but
+**no XDAQ position**; HLBSSD20 **Excluded**. ⚠️ Registry says `Recording start = 2026-08-25` but the
 run was actually 08-24 — **the sheet is a day behind**. CSD start 08-27, sampling 09-03.
 
 8 mice on the rig. 2 roles (EEG `/1` `/33`, EMG `/2` `/34`), NO ECG; `/3` and `/35` are
 bare floor on every port. See [[cohort-identity-every-run-is-new-mice]].
 
 ## ⭐⭐ SURGERY NOTES vs MEASURED OUTCOME — the notes are NOT predictive, with one exception
-- ✅ **D1 = HLBCSD19, "might have tether damaged due to climbing"** → its EEG dips to 8% mid-run and
+- ✅ **D1 = HLBSSD19, "might have tether damaged due to climbing"** → its EEG dips to 8% mid-run and
   recovers to 92%. **A damaged tether IS movement-dependent intermittent contact. ACT ON THIS ONE:
   replace D1's tether.**
-- 🟡 A1 = HLBCSD11 "bleeding F-L eeg" → EEG intermittent (35.3%), EMG fine. Consistent, but see below.
+- 🟡 A1 = HLBSSD11 "bleeding F-L eeg" → EEG intermittent (35.3%), EMG fine. Consistent, but see below.
 - 🔴 **C1 "bleeding P-L eeg" gives 99.7% EEG, and D2 "lots of bleeding from 4 holes" is the BEST
   animal in the cohort and the only strict pass.** ⇒ **Surgical bleeding notes do NOT predict signal
   quality. Do not triage animals on them.**
-- ⭐⭐ **B1 = HLBCSD13 has NO adverse note, normal weight gain, and gives NOTHING.** Combined with B
+- ⭐⭐ **B1 = HLBSSD13 has NO adverse note, normal weight gain, and gives NOTHING.** Combined with B
   slot 1 failing across three cohorts and having the rig's weakest floor, I read this as **B1 being a PORT FAULT**.
-  🔴 **WRONG — RETRACTED 2026-08-26 by a swap test: [[b-slot1-was-the-tether-not-the-port]].** 🔑 **TESTABLE: move HLBCSD13 to a working
-  position (or put the spare HLBCSD17 into B1). If the fault follows the position, it is the rig.**
+  🔴 **WRONG — RETRACTED 2026-08-26 by a swap test: [[b-slot1-was-the-tether-not-the-port]].** 🔑 **TESTABLE: move HLBSSD13 to a working
+  position (or put the spare HLBSSD17 into B1). If the fault follows the position, it is the rig.**
 
 ## 🔴🔴 NEW FINDING — THE PER-CHIP FLOOR CAN ITSELF BE CONTAMINATED
 The per-chip fix from [[emg-gate-passes-and-floor-bug]] is necessary but **not sufficient**. On
