@@ -1,0 +1,445 @@
+{
+  "schema_version": 2,
+  "generated": "2026-09-23T12:15:04+09:00",
+  "cohort_id": "W-SD",
+  "project_id": "neurosurveillance-eeg",
+  "batch_id": "W-SD",
+  "animal_id": "HLBWSD03",
+  "sex": "M",
+  "position": "C1",
+  "tether_arm": "",
+  "role": "animal",
+  "recording": "allego_1__uid0819-17-25-20",
+  "recording_base": "/home/skimlab/radix/data/allego_1__uid0819-17-25-20",
+  "recording_date": "2026-08-19",
+  "duration_h": 39.673813333333335,
+  "zt_start": 8.42,
+  "zt_end": 0.09,
+  "age_weeks": 16,
+  "age_is_derived": false,
+  "days_post_surgery": 16,
+  "days_post_tether": 9,
+  "body_weight_g": 31.3,
+  "body_weight_occasion": "tethering",
+  "criterion": "slope",
+  "epoch_s_qc": 10,
+  "epoch_s_staging": 4,
+  "thresholds_hash": "01e11630dcbf",
+  "floor": {
+    "n_sites": 14,
+    "n_epochs": 14282,
+    "n_samples": 199948,
+    "hum_p1": 4839.117,
+    "hum_p5": 4993.674,
+    "hum_median": 5332.564,
+    "slope_p1": -0.575,
+    "slope_p5": -0.405,
+    "slope_median": -0.053,
+    "slope_min": -1.894,
+    "scope": "chip",
+    "position": "C1",
+    "estimator": "site_p1_median",
+    "grounded": true,
+    "validity_reason": "",
+    "available": true,
+    "unavailable_reason": ""
+  },
+  "rungs": [
+    {
+      "number": 0,
+      "name": "FILE",
+      "question": "Is the recording file physically sound?",
+      "verdict": "PASS",
+      "headline": "142,825,728 samples, 39.67 h",
+      "threshold": "data samples == timestamp samples, remainder 0",
+      "reason": "142,825,728 data samples = 142,825,728 timestamp samples, remainder 0 and 0",
+      "detail": {
+        "base": "allego_1__uid0819-17-25-20",
+        "meta_exists": true,
+        "data_exists": true,
+        "timestamp_exists": true,
+        "fs": 1000,
+        "n_channels": 262,
+        "data_bytes": 149681362944,
+        "n_data_samples": 142825728,
+        "data_remainder": 0,
+        "duration_h": 39.674,
+        "start_time_utc": "2026-08-19T08:25:20.533Z",
+        "n_timestamp_samples": 142825728,
+        "timestamp_remainder": 0,
+        "problems": [],
+        "verdict": "INTACT",
+        "reason": "142,825,728 data samples = 142,825,728 timestamp samples, remainder 0 and 0"
+      }
+    },
+    {
+      "number": 1,
+      "name": "IDENTITY",
+      "question": "Which native channels belong to this animal?",
+      "verdict": "PASS",
+      "headline": "EEG C/1  EMG C/2",
+      "threshold": "layout derived from the file, never assumed",
+      "reason": "2 channels resolved from sensors_by_port; 14 wire-free inputs available as an in-file floor",
+      "detail": {
+        "sites": {
+          "eeg": {
+            "site": "C/1",
+            "native_col": 128,
+            "median_rms_uv": 89.9,
+            "median_hum_uv": 61.2,
+            "median_slope": -1.31,
+            "signature": "connected-or-quiet"
+          },
+          "emg": {
+            "site": "C/2",
+            "native_col": 129,
+            "median_rms_uv": 90.7,
+            "median_hum_uv": 30.2,
+            "median_slope": -0.73,
+            "signature": "connected-or-quiet"
+          }
+        },
+        "layout_source": "biointerface_map in the recording's own .xdat.json",
+        "bipolar": true,
+        "n_floor_sites": 14
+      }
+    },
+    {
+      "number": 2,
+      "name": "CONNECTION",
+      "question": "Is the electrode connected, judged against wire-free inputs in the same file?",
+      "verdict": "PASS",
+      "headline": "66.4% usable, longest unbroken block 47.0 min",
+      "threshold": "slope < -0.57 (p1 of 14 wire-free inputs in this file), rms 10-150 uV, zero railed samples",
+      "reason": "9,486 of 14,282 epochs usable on every role, with an unbroken block of 47.0 min",
+      "detail": {
+        "per_role": {
+          "eeg": {
+            "n_epochs_total": 14282,
+            "n_epochs_usable": 14108,
+            "epoch_s": 10,
+            "usable_fraction": 0.9878168323764178,
+            "usable_hours": 39.189,
+            "longest_block_epochs": 3220,
+            "longest_block_minutes": 536.7,
+            "insufficient": false,
+            "criterion": "slope",
+            "site": "C/1"
+          },
+          "emg": {
+            "n_epochs_total": 14282,
+            "n_epochs_usable": 9612,
+            "epoch_s": 10,
+            "usable_fraction": 0.6730149838958129,
+            "usable_hours": 26.7,
+            "longest_block_epochs": 282,
+            "longest_block_minutes": 47.0,
+            "insufficient": false,
+            "criterion": "hum",
+            "site": "C/2"
+          }
+        },
+        "combined": {
+          "n_epochs_total": 14282,
+          "n_epochs_usable": 9486,
+          "epoch_s": 10,
+          "usable_fraction": 0.6641926900994258,
+          "usable_hours": 26.35,
+          "longest_block_epochs": 282,
+          "longest_block_minutes": 47.0,
+          "insufficient": false,
+          "criterion": "slope"
+        },
+        "refusals": {},
+        "floor": {
+          "n_sites": 14,
+          "n_epochs": 14282,
+          "n_samples": 199948,
+          "hum_p1": 4839.117,
+          "hum_p5": 4993.674,
+          "hum_median": 5332.564,
+          "slope_p1": -0.575,
+          "slope_p5": -0.405,
+          "slope_median": -0.053,
+          "slope_min": -1.894,
+          "scope": "chip",
+          "position": "C1",
+          "estimator": "site_p1_median",
+          "grounded": true,
+          "validity_reason": "",
+          "available": true,
+          "unavailable_reason": ""
+        },
+        "floor_threshold_ci": {
+          "criterion": "slope",
+          "n_floor_sites": 14,
+          "point": -0.5746406316757202,
+          "lo": -0.7064887881278992,
+          "hi": -0.42608004808425903,
+          "ci": 95.0,
+          "n_boot": 2000,
+          "note": "resampled over SITES; epochs within a site are not independent"
+        },
+        "usable_fraction_intervals": {
+          "eeg": {
+            "fraction": 0.9878168323764178,
+            "fraction_lo": 0.984525976753956,
+            "fraction_hi": 0.9894272510852822,
+            "threshold_ci": {
+              "criterion": "slope",
+              "n_floor_sites": 14,
+              "point": -0.5746406316757202,
+              "lo": -0.7064887881278992,
+              "hi": -0.42608004808425903,
+              "ci": 95.0,
+              "n_boot": 2000,
+              "note": "resampled over SITES; epochs within a site are not independent"
+            }
+          },
+          "emg": {
+            "fraction": 0.6730149838958129,
+            "fraction_lo": 0.6730149838958129,
+            "fraction_hi": 0.6730149838958129,
+            "threshold_ci": {
+              "criterion": "hum",
+              "n_floor_sites": 14,
+              "point": 4839.1171875,
+              "lo": 2766.560546875,
+              "hi": 5527.02392578125,
+              "ci": 95.0,
+              "n_boot": 2000,
+              "note": "resampled over SITES; epochs within a site are not independent"
+            }
+          }
+        },
+        "usable_fraction_definition": "\"Usable fraction\" is this project's own term and is not standard in the sleep literature, so it is defined wherever it is first used. It is the percentage of 10 s epochs in which a channel's spectrum beats the 1st percentile of AMPLIFIER INPUTS WITH NO WIRE ATTACHED, recorded simultaneously through the same chip, cable and room in the same file. It is a CONNECTION measure, not a data-quality score and not an artefact-rejection rate: the discarded epochs are ones in which the electrode was not demonstrably connected, NOT ones judged too noisy to use.",
+        "falsification": {
+          "criterion": "slope",
+          "n_floor_sites": 14,
+          "mean_usable_fraction": 0.0,
+          "max_usable_fraction": 0.0,
+          "expected_by_construction": 0.01,
+          "passes": true
+        }
+      }
+    },
+    {
+      "number": 3,
+      "name": "SCOREABILITY",
+      "question": "Can the sleep question even be asked?",
+      "verdict": "PASS",
+      "headline": "39.66 h in 7 block(s), r@1min 0.544",
+      "threshold": ">= 15 min inside blocks of >= 124 s, within-block r@1min > 0.30, wake 15-90%",
+      "reason": "longest block 1356.3 min; persistence 0.544 against a shuffled 0.001",
+      "detail": {
+        "qc_verdict": "CLEAN",
+        "verdict": "SCOREABLE",
+        "hours_in_blocks": 39.663,
+        "n_blocks": 7,
+        "longest_block_min": 1356.3,
+        "r_1min": 0.544,
+        "r_1min_shuffled": 0.001,
+        "wake_pct": 45.7,
+        "physiology_informative_pass": true,
+        "reasons": []
+      }
+    },
+    {
+      "number": 4,
+      "name": "ARCHITECTURE",
+      "question": "What did the animal do?",
+      "verdict": "PROVISIONAL",
+      "headline": "wake 45.7%, NREM 53.0%, asleep in light 54.7%",
+      "threshold": "no pass mark: this rung reports, it does not judge",
+      "reason": "the light-phase figure swings 17.2 points across a +/-25% threshold sweep; no human has scored any epoch, so accuracy is unmeasured; no REM percentage is reportable",
+      "detail": {
+        "wake_pct": 45.7,
+        "nrem_pct": 53.0,
+        "rem_pct_CONSTRUCTED": 1.4,
+        "asleep_in_light_pct": 54.7,
+        "asleep_in_light_swing_pts": 17.2,
+        "otsu_sensitivity": [
+          {
+            "multiplier": 0.75,
+            "threshold_uv": 33.47,
+            "wake_pct": 56.8,
+            "nrem_pct": 42.3,
+            "asleep_in_light_pct": 46.7,
+            "r_1min_raw": 0.602
+          },
+          {
+            "multiplier": 0.9,
+            "threshold_uv": 40.16,
+            "wake_pct": 47.7,
+            "nrem_pct": 51.2,
+            "asleep_in_light_pct": 51.7,
+            "r_1min_raw": 0.584
+          },
+          {
+            "multiplier": 1.0,
+            "threshold_uv": 44.63,
+            "wake_pct": 45.7,
+            "nrem_pct": 53.0,
+            "asleep_in_light_pct": 54.7,
+            "r_1min_raw": 0.544
+          },
+          {
+            "multiplier": 1.1,
+            "threshold_uv": 49.09,
+            "wake_pct": 43.3,
+            "nrem_pct": 54.9,
+            "asleep_in_light_pct": 57.5,
+            "r_1min_raw": 0.496
+          },
+          {
+            "multiplier": 1.25,
+            "threshold_uv": 55.78,
+            "wake_pct": 38.2,
+            "nrem_pct": 59.0,
+            "asleep_in_light_pct": 63.9,
+            "r_1min_raw": 0.391
+          }
+        ],
+        "rem_from_nrem_pct": 63.5,
+        "rem_from_nrem_null": {
+          "null_mean_pct": 54.3,
+          "null_sd_pct": 1.4,
+          "observed_percentile_of_null": 100.0,
+          "method": "run-order shuffle within blocks; run lengths and state composition preserved, sequence destroyed",
+          "note": "If the observed value sits inside the null, 'REM is entered from NREM' is forced by label composition and is NOT evidence."
+        },
+        "bouts": {
+          "WAKE": {
+            "n": 390,
+            "median_s": 26,
+            "mean_s": 167.2,
+            "max_s": 3256
+          },
+          "NREM": {
+            "n": 405,
+            "median_s": 68,
+            "mean_s": 186.8,
+            "max_s": 8420
+          },
+          "REM": {
+            "n": 79,
+            "median_s": 16,
+            "mean_s": 24.6,
+            "max_s": 80
+          }
+        },
+        "min_bout_s": {
+          "min_bout_epochs": 3,
+          "min_bout_s": 12,
+          "epochs_relabelled": 2644,
+          "pct_of_scored_epochs": 7.41,
+          "rule": "runs shorter than the minimum are merged into the longer neighbouring state, within blocks only",
+          "provenance": "LAB CONVENTION, not from the IIIS reference (see qc_thresholds.MIN_BOUT_EPOCHS)"
+        },
+        "by_light_phase": {
+          "light": {
+            "hours": 15.67,
+            "wake_pct": 45.3,
+            "nrem_pct": 51.7,
+            "rem_pct_CONSTRUCTED": 3.0
+          },
+          "dark": {
+            "hours": 23.99,
+            "wake_pct": 45.9,
+            "nrem_pct": 53.8,
+            "rem_pct_CONSTRUCTED": 0.3
+          }
+        },
+        "physiology_informative_checks": {
+          "nrem_largest_amplitude": true
+        },
+        "caveats": [
+          "PROVISIONAL until a blind-scoring Cohen kappa exists. No human has scored any epoch from this project, so these labels have no known accuracy.",
+          "The light-phase sleep figure moves 17.2 points across a +/-25% sweep of the wake threshold, so it is NOT threshold-independent and agreement with the literature is not independent confirmation.",
+          "NO REM PERCENTAGE IS REPORTED: the percentile rule and an independent Otsu cut disagree by roughly a factor of five on this montage.",
+          "Four of the five physiology checks restate the staging rule and cannot fail. Only 'NREM carries the largest amplitude' is informative."
+        ]
+      }
+    },
+    {
+      "number": 5,
+      "name": "EXPORT",
+      "question": "Can a human check us?",
+      "verdict": "INSUFFICIENT",
+      "headline": "2/4 pipeline artifacts, NO plain text",
+      "threshold": "EDF for a scorer, plain text for the professor, both present",
+      "reason": "missing: EDF (run pipeline/stage4_export_edf.py); plain text (run cards/export_text.py)",
+      "detail": {
+        "artifacts": {
+          "edf": null,
+          "scorer_readme": null,
+          "tsv": null,
+          "tsv_gz": null,
+          "epochs_tsv": null,
+          "hypnogram": "/home/skimlab/eeg-processed/2026-08-19/portC-slot1_2026-08-19_172520_39h40m_hypnogram.csv",
+          "summary": "/home/skimlab/eeg-processed/2026-08-19/portC-slot1_2026-08-19_172520_39h40m_summary.txt"
+        },
+        "scoring_packs": [],
+        "packs_scored": [],
+        "kappa_available": false
+      }
+    }
+  ],
+  "notes": "Mean water intake 4.48 mL/day. verdict_2026_08_19: initially counted as SCOREABLE and then WITHDRAWN. Its EMG state-dependence collapsed under falsification (-0.733 -> -0.009 on absolute delta power) and its circadian EMG was inverted. The tether damage is the parsimonious explanation. verdict_2026_08_27 (first hour, live): EEG OPEN and railing 100% of epochs (3855 uV); EMG OPEN and railing 100% (3336 uV). Nothing on either role. verdict_2026_08_27 (full 20.1 h): NOTHING. BOTH channels open and railing 100% of 7,243 epochs, EEG 3901 uV and EMG 3599 uV, flat and stable all run. Consistent with the registry's \"ate the tether 08/19\". verdict_2026_08_28 (80 s check): unchanged, both channels still railing 100%.\n",
+  "surgery_notes": "",
+  "sampling_notes": "",
+  "timeline": [
+    {
+      "date": "2026-07-21",
+      "kind": "arrival",
+      "label": "arrival"
+    },
+    {
+      "date": "2026-08-03",
+      "kind": "surgery",
+      "label": "surgery"
+    },
+    {
+      "date": "2026-08-10",
+      "kind": "tether",
+      "label": "tethered"
+    },
+    {
+      "date": "2026-08-28",
+      "kind": "sampling",
+      "label": "sampling"
+    }
+  ],
+  "weighings": [
+    {
+      "date": "2026-08-03",
+      "grams": 29.1,
+      "occasion": "surgery",
+      "source": "husbandry-sheet"
+    },
+    {
+      "date": "2026-08-10",
+      "grams": 31.3,
+      "occasion": "tethering",
+      "source": "husbandry-sheet"
+    }
+  ],
+  "provenance": {
+    "thresholds_file": "/home/skimlab/sleep-recording-skim/eeg-emg-analysis/core/qc_thresholds.py",
+    "thresholds_hash": "01e11630dcbf",
+    "git_rev": "44806ef",
+    "cohort_manifest": "/home/skimlab/sleep-recording-skim/eeg-emg-analysis/cohorts/W-SD.yaml",
+    "processed_files": {
+      "npz": "/home/skimlab/eeg-processed/2026-08-19/portC-slot1_2026-08-19_172520_39h40m.npz",
+      "features": "/home/skimlab/eeg-processed/2026-08-19/portC-slot1_2026-08-19_172520_39h40m_features.json",
+      "hypnogram": "/home/skimlab/eeg-processed/2026-08-19/portC-slot1_2026-08-19_172520_39h40m_hypnogram.csv",
+      "summary": "/home/skimlab/eeg-processed/2026-08-19/portC-slot1_2026-08-19_172520_39h40m_summary.txt",
+      "day_dir": "/home/skimlab/eeg-processed/2026-08-19"
+    },
+    "epoch_s_qc": 10,
+    "n_qc_epochs": 14282,
+    "criterion": "slope",
+    "criterion_note": "SLOPE and HUM usable fractions are NOT comparable, and neither is comparable to a fraction computed at the 4 s staging epoch."
+  },
+  "top_rung": 4
+}

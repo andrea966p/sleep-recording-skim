@@ -1,0 +1,219 @@
+{
+  "schema_version": 2,
+  "generated": "2026-09-23T12:33:19+09:00",
+  "cohort_id": "W-SD",
+  "project_id": "neurosurveillance-eeg",
+  "batch_id": "W-SD",
+  "animal_id": "HLBWSD09",
+  "sex": "M",
+  "position": "B1",
+  "tether_arm": "",
+  "role": "animal",
+  "recording": "allego_2__uid0827-12-58-32",
+  "recording_base": "/home/skimlab/radix/data/allego_2__uid0827-12-58-32",
+  "recording_date": "2026-08-27",
+  "duration_h": null,
+  "zt_start": null,
+  "zt_end": null,
+  "age_weeks": 17,
+  "age_is_derived": false,
+  "days_post_surgery": 22,
+  "days_post_tether": 17,
+  "body_weight_g": 31.0,
+  "body_weight_occasion": "tethering",
+  "criterion": "slope",
+  "epoch_s_qc": 10,
+  "epoch_s_staging": 4,
+  "thresholds_hash": "01e11630dcbf",
+  "floor": {
+    "n_sites": 14,
+    "n_epochs": 7243,
+    "n_samples": 101402,
+    "hum_p1": 465.306,
+    "hum_p5": 482.058,
+    "hum_median": 592.726,
+    "slope_p1": -0.84,
+    "slope_p5": -0.608,
+    "slope_median": -0.026,
+    "slope_min": -3.536,
+    "scope": "chip",
+    "position": "B1",
+    "estimator": "site_p1_median",
+    "grounded": false,
+    "validity_reason": "wire-free inputs on this chip sit at 593 uV of 60 Hz, below the 800 uV that a GROUNDED chip shows. The headstage has no ground reference, so its wire-free inputs are not a valid negative control and no connection verdict can be drawn from them. This is a HARDWARE fault at the chip, not a statement about the animal.",
+    "available": true,
+    "unavailable_reason": ""
+  },
+  "rungs": [
+    {
+      "number": 0,
+      "name": "FILE",
+      "question": "Is the recording file physically sound?",
+      "verdict": "PASS",
+      "headline": "72,435,328 samples, 20.12 h",
+      "threshold": "data samples == timestamp samples, remainder 0",
+      "reason": "72,435,328 data samples = 72,435,328 timestamp samples, remainder 0 and 0",
+      "detail": {
+        "base": "allego_2__uid0827-12-58-32",
+        "meta_exists": true,
+        "data_exists": true,
+        "timestamp_exists": true,
+        "fs": 1000,
+        "n_channels": 262,
+        "data_bytes": 75912223744,
+        "n_data_samples": 72435328,
+        "data_remainder": 0,
+        "duration_h": 20.121,
+        "start_time_utc": "2026-08-27T03:58:30.328Z",
+        "n_timestamp_samples": 72435328,
+        "timestamp_remainder": 0,
+        "problems": [],
+        "verdict": "INTACT",
+        "reason": "72,435,328 data samples = 72,435,328 timestamp samples, remainder 0 and 0"
+      }
+    },
+    {
+      "number": 1,
+      "name": "IDENTITY",
+      "question": "Which native channels belong to this animal?",
+      "verdict": "PASS",
+      "headline": "EEG B/1  EMG B/2",
+      "threshold": "layout derived from the file, never assumed",
+      "reason": "2 channels resolved from sensors_by_port; 14 wire-free inputs available as an in-file floor",
+      "detail": {
+        "sites": {
+          "eeg": {
+            "site": "B/1",
+            "native_col": 64,
+            "median_rms_uv": 214.8,
+            "median_hum_uv": 285.9,
+            "median_slope": -0.16,
+            "signature": "floating"
+          },
+          "emg": {
+            "site": "B/2",
+            "native_col": 65,
+            "median_rms_uv": 2705.2,
+            "median_hum_uv": 3438.3,
+            "median_slope": -0.34,
+            "signature": "floating"
+          }
+        },
+        "layout_source": "biointerface_map in the recording's own .xdat.json",
+        "bipolar": true,
+        "n_floor_sites": 14
+      }
+    },
+    {
+      "number": 2,
+      "name": "CONNECTION",
+      "question": "Is the electrode connected, judged against wire-free inputs in the same file?",
+      "verdict": "UNJUDGEABLE",
+      "headline": "chip floor is 593 uV of 60 Hz (grounded chips show >800) -- no verdict can be drawn",
+      "threshold": "",
+      "reason": "wire-free inputs on this chip sit at 593 uV of 60 Hz, below the 800 uV that a GROUNDED chip shows. The headstage has no ground reference, so its wire-free inputs are not a valid negative control and no connection verdict can be drawn from them. This is a HARDWARE fault at the chip, not a statement about the animal.",
+      "detail": {
+        "floor": {
+          "n_sites": 14,
+          "n_epochs": 7243,
+          "n_samples": 101402,
+          "hum_p1": 465.306,
+          "hum_p5": 482.058,
+          "hum_median": 592.726,
+          "slope_p1": -0.84,
+          "slope_p5": -0.608,
+          "slope_median": -0.026,
+          "slope_min": -3.536,
+          "scope": "chip",
+          "position": "B1",
+          "estimator": "site_p1_median",
+          "grounded": false,
+          "validity_reason": "wire-free inputs on this chip sit at 593 uV of 60 Hz, below the 800 uV that a GROUNDED chip shows. The headstage has no ground reference, so its wire-free inputs are not a valid negative control and no connection verdict can be drawn from them. This is a HARDWARE fault at the chip, not a statement about the animal.",
+          "available": true,
+          "unavailable_reason": ""
+        }
+      }
+    },
+    {
+      "number": 3,
+      "name": "SCOREABILITY",
+      "question": "Can the sleep question even be asked?",
+      "verdict": "BLOCKED",
+      "headline": "",
+      "threshold": "",
+      "reason": "rung 2 CONNECTION did not pass",
+      "detail": {}
+    },
+    {
+      "number": 4,
+      "name": "ARCHITECTURE",
+      "question": "What did the animal do?",
+      "verdict": "BLOCKED",
+      "headline": "",
+      "threshold": "",
+      "reason": "rung 3 SCOREABILITY did not pass",
+      "detail": {}
+    },
+    {
+      "number": 5,
+      "name": "EXPORT",
+      "question": "Can a human check us?",
+      "verdict": "BLOCKED",
+      "headline": "",
+      "threshold": "",
+      "reason": "rung 3 SCOREABILITY did not pass",
+      "detail": {}
+    }
+  ],
+  "notes": "Mean water intake 3.40 mL/day. \u26a0\ufe0f NOT the animal that produced the 08-18 B1 screen verdict. Rig position is not animal identity; nothing from before 2026-08-19 17:20 carries to this animal. verdict_2026_08_27 (first hour, live): EEG quiet and FLAT (277 uV, slope -0.18, lf/hf 1.46) = floating. EMG OPEN and railing 100% (4364 uV). Its chip's ground is nearly gone (floor 60 Hz 2186 -> 825 uV, against an 800 uV bar). verdict_2026_08_27 (full 20.1 h): \ud83d\udd34 UNJUDGEABLE. Its chip was never grounded, and the floor 60 Hz DECAYED across the run from 825 to 469 uV, falling in nearly every hourly bin. That decay is new: every previous floating chip in this project was flat from the first epoch to the last, so this looks like a conductor working loose rather than a mis-seated connector. verdict_2026_08_28 (80 s check): \ud83d\udd34 STILL UNGROUNDED at 485 uV. It did NOT recover when A1 and A2 did, so this is the one position with a physical fault.\n",
+  "surgery_notes": "",
+  "sampling_notes": "",
+  "timeline": [
+    {
+      "date": "2026-07-21",
+      "kind": "arrival",
+      "label": "arrival"
+    },
+    {
+      "date": "2026-08-05",
+      "kind": "surgery",
+      "label": "surgery"
+    },
+    {
+      "date": "2026-08-10",
+      "kind": "tether",
+      "label": "tethered"
+    },
+    {
+      "date": "2026-08-28",
+      "kind": "sampling",
+      "label": "sampling"
+    }
+  ],
+  "weighings": [
+    {
+      "date": "2026-08-05",
+      "grams": 29.2,
+      "occasion": "surgery",
+      "source": "husbandry-sheet"
+    },
+    {
+      "date": "2026-08-10",
+      "grams": 31.0,
+      "occasion": "tethering",
+      "source": "husbandry-sheet"
+    }
+  ],
+  "provenance": {
+    "thresholds_file": "/home/skimlab/sleep-recording-skim/eeg-emg-analysis/core/qc_thresholds.py",
+    "thresholds_hash": "01e11630dcbf",
+    "git_rev": "2ac1ca0",
+    "cohort_manifest": "/home/skimlab/sleep-recording-skim/eeg-emg-analysis/cohorts/W-SD.yaml",
+    "processed_files": {},
+    "epoch_s_qc": 10,
+    "n_qc_epochs": 7243,
+    "criterion": "slope",
+    "criterion_note": "SLOPE and HUM usable fractions are NOT comparable, and neither is comparable to a fraction computed at the 4 s staging epoch."
+  },
+  "top_rung": 1
+}

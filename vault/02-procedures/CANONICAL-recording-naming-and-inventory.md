@@ -60,9 +60,11 @@ This is the base name Allego writes. Three files share it:
 
 ## Every recording on e10
 
-Generated from the `.xdat.json` headers on 2026-09-23, not typed.
-Start and end are KST. `pri ch` is primary amplifier channels: 256 is the full
-eight-mouse rig, 128 is half of it.
+Generated from the `.xdat.json` headers, regenerated 2026-09-23 after
+`allego_0__uid0904-08-55-25` was deleted. **28 recordings.**
+Start and end are KST. `pri ch` is primary amplifier channels; every surviving
+recording is 256, the full eight-mouse rig. The only 128-channel file was
+`allego_0__uid0904-08-55-25`, now deleted.
 
 | recording | start KST | end KST | h | GB | pri ch |
 |---|---|---|---|---|---|
@@ -81,7 +83,6 @@ eight-mouse rig, 128 is half of it.
 | `allego_0__uid0901-12-24-03` | 2026-09-01 12:24 | 09-01 12:25 | 0.03 | 0.1 | 256 |
 | `allego_1__uid0901-12-38-53` | 2026-09-01 12:38 | 09-01 12:40 | 0.02 | 0.1 | 256 |
 | `allego_2__uid0902-13-00-28` | 2026-09-02 13:00 | 09-03 09:05 | 20.08 | 75.7 | 256 |
-| `allego_0__uid0904-08-55-25` | 2026-09-04 08:55 | 09-05 14:55 | 30.00 | 57.9 | 128 |
 | `allego_1__uid0909-21-17-52` | 2026-09-09 21:17 | 09-09 22:40 | 1.38 | 5.2 | 256 |
 | `allego_0__uid0910-09-00-00` | 2026-09-10 08:59 | 09-11 09:23 | 24.39 | 92.0 | 256 |
 | `allego_0__uid0911-22-32-22` | 2026-09-11 22:32 | 09-11 22:33 | 0.03 | 0.1 | 256 |
@@ -137,8 +138,11 @@ i.e. it did not shut down cleanly. Anything trusting `num_smpl` silently drops
 its last eight seconds. It has no registry row, and at 59.2 h / 223 GB it is the
 largest file on the rig.
 
-**`allego_0__uid0904-08-55-25` recorded 128 primary channels**, half the rig,
-on the S-SL tethering day. No registry row either.
+**`allego_0__uid0904-08-55-25` was deleted on 2026-09-23.** 30 h at 128 primary
+channels, half the rig, recorded on the S-SL tethering day with no registry row.
+Andrea identified it as belonging to something else entirely. Removed from e10;
+its three S3 objects still need deleting with an identity that has delete rights,
+because the `radix-s3-backup` user is explicitly denied that, by design.
 
 **The 09-17 run record has a typo.** It lists D1 as `HLBWSL7`; no such animal
 exists and the registry has HLBWSL27 there. Corrected in `cohorts/W-SL.yaml`,
