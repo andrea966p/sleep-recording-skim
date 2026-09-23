@@ -13,7 +13,7 @@ ROOT = Path(__file__).resolve().parent.parent
 
 from cohorts.load import load_cohort  # noqa: E402
 from cohorts.schema import (          # noqa: E402
-    Animal, Cohort, RigPlacement, weeks_between,
+    Animal, Cohort, RigPlacement, moment_from_base, weeks_between,
 )
 
 FAILURES: list[str] = []
@@ -126,6 +126,48 @@ check_raises("strict load of a bad manifest", lambda: load_cohort(bad_yaml, verb
 bad_yaml.unlink()
 
 # --------------------------------------------------------------------------- #
+print("\nidentity resolves at the recording's START MOMENT, not at midnight")
+# REGRESSION, 2026-09-23. build_card resolved a recording at its DATE whenever
+# stage 2 had not run, i.e. at 00:00. On 2026-08-26 that named HLBSSD13 in B1:
+# its 10:00 move OFF-RIG had not happened yet at midnight and HLBSSD17's 12:00
+# arrival was still in the future. The card named a mouse already off the rig.
+ssd = load_cohort("S-SD", verbose=False)
+check("B1 at midnight is the outgoing animal",
+      ssd.animal_at("B1", "2026-08-26").animal_id, "HLBSSD13")
+check("B1 at the real 12:50 start is the incoming animal",
+      ssd.animal_at("B1", moment_from_base("allego_1__uid0826-12-50-16")).animal_id,
+      "HLBSSD17")
+check("moment_from_base reads the uid token",
+      moment_from_base("allego_1__uid0826-12-50-16"),
+      dt.datetime(2026, 8, 26, 12, 50, 16))
+check("moment_from_base declines a name without one",
+      moment_from_base("not-a-recording"), None)
+
+print("\nDATE-ONLY placements still resolve: the <= comparison is load-bearing")
+# 16 animal-recordings in W-SL and S-SL have a placement whose `from` is the
+# DATE of the recording, with no time. They resolve only because the comparison
+# in placement_at is inclusive. Anyone tightening it to `<` to "fix" the case
+# above breaks every one of them, so both facts are asserted together.
+wsl = load_cohort("W-SL", verbose=False)
+for pos, want in (("A1", "HLBWSL21"), ("D1", "HLBWSL27"), ("D2", "HLBWSL29")):
+    check(f"W-SL {pos} resolves on its own placement date",
+          wsl.animal_at(pos, "2026-09-10").animal_id, want)
+ssl = load_cohort("S-SL", verbose=False)
+for pos, want in (("A1", "HLBSSL31"), ("C2", "HLBSSL39"), ("D1", "HLBSSL40")):
+    check(f"S-SL {pos} resolves on its own placement date",
+          ssl.animal_at(pos, "2026-09-12").animal_id, want)
+
+print("\na recordings row that contradicts the placements is refused")
+clash = ROOT / "tests" / "_tmp_clash_cohort.yaml"
+clash.write_text(
+    "cohort_id: clash\nanimals:\n"
+    "  - animal_id: m1\n    placements: [{from: 2026-08-01, position: B1}]\n"
+    "  - animal_id: m2\n    recordings: [{base: allego_0__uid0805-09-00-00, "
+    "date: 2026-08-05, position: B1, role: animal}]\n")
+check_raises("strict load of a manifest whose row and placements disagree",
+             lambda: load_cohort(clash, verbose=False))
+clash.unlink()
+
 print()
 if FAILURES:
     print(f"{len(FAILURES)} FAILURE(S)")

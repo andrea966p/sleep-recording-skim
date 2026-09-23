@@ -1,10 +1,10 @@
 {
   "schema_version": 2,
-  "generated": "2026-09-23T12:57:25+09:00",
+  "generated": "2026-09-23T17:54:51+09:00",
   "cohort_id": "S-SD",
   "project_id": "neurosurveillance-eeg",
   "batch_id": "S-SD",
-  "animal_id": "HLBSSD13",
+  "animal_id": "HLBSSD17",
   "sex": "M",
   "position": "B1",
   "tether_arm": "",
@@ -17,9 +17,9 @@
   "zt_end": null,
   "age_weeks": 16,
   "age_is_derived": false,
-  "days_post_surgery": 16,
+  "days_post_surgery": 15,
   "days_post_tether": 8,
-  "body_weight_g": 30.4,
+  "body_weight_g": 30.6,
   "body_weight_occasion": "tethering",
   "criterion": "slope",
   "epoch_s_qc": 10,
@@ -254,7 +254,7 @@
       "detail": {}
     }
   ],
-  "notes": "verdict_2026_08_24: NOTHING. EEG open (slope +0.00, 3137 uV), EMG open (2932 uV). Chip floor 60 Hz 1491 uV, weakest on the rig. verdict_2026_08_25: NOTHING, and its CHIP read floating for all 24 h (floor 60 Hz 246 uV, flat across every hourly bin). EEG 1.0%, EMG 0.0%. \ud83d\udd11 ROOT CAUSE, established by swap on 2026-08-26: THE TETHER WAS CHEWED THROUGH. Replacing the animal in the same slot restored the chip ground (246 -> 2186 uV). No fault was ever found at the port.\n",
+  "notes": "Operated and tethered with the rest of the batch but held OFF the rig until 2026-08-26. The registry lists XDAQ position \"/\" for this animal; that is now out of date. verdict_2026_08_26: CONNECTED on both roles. EEG rms 93 uV, slope -1.47, lf/hf 17.34 against a chip floor p99 of 3.81 -- the widest separation on the rig. EMG 44 uV, 94.9% usable. ZERO railing on either channel. Chip grounded at 2186 uV where HLBSSD13 left it at 246 uV. \u26a0\ufe0f DO NOT QUOTE ITS USABLE PERCENTAGE. 77.8% at the point threshold, 99.1% at a 25% looser one, 37.6% at a 25% tighter one; failing epochs miss by a median slope margin of only 0.091, and 747 blocks with a median length of 20 s means no block reaches 15 min. Report it as CONNECTED. verdict_2026_09_01: \u274c CONTINUOUS BREAK, not torsion. Chip grounds fine once seated (354 uV for 3 epochs then 2400-3300 uV) but both roles are open and STATIC across all 21 epochs -- EEG rms 2052-2428 uV (variability 4.0%, max/min 1.2), EMG rms 3188-3654 uV, lf/hf pinned at 2.6-3.2 against a floor p99 of 7.05, 0 of 21 epochs above. B1 and C1 are the two cage positions where animals can reach their tethers.\n",
   "surgery_notes": "",
   "sampling_notes": "",
   "timeline": [
@@ -264,7 +264,7 @@
       "label": "arrival"
     },
     {
-      "date": "2026-08-10",
+      "date": "2026-08-11",
       "kind": "surgery",
       "label": "surgery"
     },
@@ -274,14 +274,19 @@
       "label": "tethered"
     },
     {
-      "date": "2026-08-24",
+      "date": "2026-08-26",
       "kind": "recording",
-      "label": "allego_0__uid0824-17-56-51"
+      "label": "allego_1__uid0826-12-50-16"
     },
     {
-      "date": "2026-08-25",
+      "date": "2026-09-01",
       "kind": "recording",
-      "label": "allego_0__uid0825-09-00-00"
+      "label": "allego_0__uid0901-12-24-03"
+    },
+    {
+      "date": "2026-09-01",
+      "kind": "recording",
+      "label": "allego_1__uid0901-12-38-53"
     },
     {
       "date": "2026-09-03",
@@ -291,14 +296,14 @@
   ],
   "weighings": [
     {
-      "date": "2026-08-10",
-      "grams": 29.7,
+      "date": "2026-08-11",
+      "grams": 30.0,
       "occasion": "surgery",
       "source": "husbandry-sheet"
     },
     {
       "date": "2026-08-18",
-      "grams": 30.4,
+      "grams": 30.6,
       "occasion": "tethering",
       "source": "husbandry-sheet"
     }
@@ -306,7 +311,7 @@
   "provenance": {
     "thresholds_file": "/home/skimlab/sleep-recording-skim/eeg-emg-analysis/core/qc_thresholds.py",
     "thresholds_hash": "01e11630dcbf",
-    "git_rev": "2ac1ca0",
+    "git_rev": "90bbad2",
     "cohort_manifest": "/home/skimlab/sleep-recording-skim/eeg-emg-analysis/cohorts/S-SD.yaml",
     "processed_files": {},
     "epoch_s_qc": 10,

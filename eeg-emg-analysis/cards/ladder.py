@@ -557,6 +557,12 @@ def build_card(base: str, cohort: Cohort, position: str,
     processed_early = find_processed(recording, position)
     # Resolve identity at the recording's START MOMENT, not merely its date.
     # Two recordings on 2026-08-06 sit either side of a 16:27 tether swap.
+    #
+    # A BARE DATE RESOLVES AT MIDNIGHT, WHICH NAMES THE WRONG MOUSE. as_moment()
+    # combines a date with time.min, so a 12:50 recording was resolved as if at
+    # 00:00. On 2026-08-26 that put HLBSSD13 in B1 -- its 10:00 move OFF-RIG had
+    # not "happened" yet at midnight, and HLBSSD17's 12:00 arrival was still in
+    # the future. The card named the animal that had already been pulled.
     rec_moment = rec_date
     start_local = processed_early.get("meta", {}).get("start_local")
     if start_local:
@@ -564,8 +570,28 @@ def build_card(base: str, cohort: Cohort, position: str,
             rec_moment = dt.datetime.fromisoformat(start_local).replace(tzinfo=None)
         except ValueError:
             pass
-    animal: Animal | None = (cohort.animal_at(position, rec_moment)
-                             if rec_moment else None)
+    else:
+        # Stage 2 has not run for this animal-recording. Allego writes the local
+        # start time into the file name, and pipeline_common already parses it;
+        # that is a better answer than midnight.
+        try:
+            from pipeline.pipeline_common import parse_start_local
+            parsed, _src = parse_start_local(recording, "")
+            if parsed is not None:
+                rec_moment = parsed.replace(tzinfo=None)
+        except Exception:
+            pass
+
+    # THE MANIFEST'S OWN WORD COMES FIRST. A per-animal recordings row states
+    # (base, position) outright, needs no timestamp, and survives a missing
+    # stage 2 entirely. Fall back to the placement timeline only when no row
+    # declares this position for this recording.
+    animal: Animal | None = next(
+        (a for a in cohort.animals
+         for r in a.recordings
+         if r.base == recording and r.position == position), None)
+    if animal is None:
+        animal = (cohort.animal_at(position, rec_moment) if rec_moment else None)
 
     card = AnimalCard()
     card.generated = dt.datetime.now().astimezone().isoformat(timespec="seconds")

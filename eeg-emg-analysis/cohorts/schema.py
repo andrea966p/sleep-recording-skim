@@ -43,6 +43,7 @@ animal that has not been sacrificed.
 from __future__ import annotations
 
 import datetime as _dt
+import re as _re
 from dataclasses import dataclass, field
 from decimal import Decimal, ROUND_HALF_UP
 from typing import Any, Iterable
@@ -93,6 +94,26 @@ def as_time(value: Any) -> _dt.time | None:
         except ValueError:
             continue
     return None
+
+
+def moment_from_base(base: str) -> _dt.datetime | None:
+    """The LOCAL start moment encoded in an Allego base name, or None.
+
+    `allego_1__uid0826-12-50-16` started at 12:50:16 on 08-26. Resolving that
+    recording at its DATE means midnight, and midnight names whichever animal
+    held the position the night before -- which is how a card came to name a
+    mouse that had already been pulled from the rig. The year is not in the
+    token; recordings here are 2026 and a wrong year would only ever widen the
+    search, never pick a different animal within the day.
+    """
+    m = _re.search(r"uid(\d{2})(\d{2})-(\d{2})-(\d{2})-(\d{2})", base or "")
+    if not m:
+        return None
+    mo, da, hh, mi, ss = (int(x) for x in m.groups())
+    try:
+        return _dt.datetime(2026, mo, da, hh, mi, ss)
+    except ValueError:
+        return None
 
 
 def as_moment(value: Any) -> _dt.datetime | None:
@@ -479,6 +500,23 @@ class Cohort:
             if len(ids) > 1:
                 problems.append(
                     f"position {pos} claimed by {len(ids)} animals from {d}: {', '.join(ids)}")
+
+        # A recordings row and the placement timeline must name the SAME animal.
+        # When they disagree the card generator has to pick one, and until
+        # 2026-09-23 it silently picked the placement -- which named the animal
+        # that had already been pulled from B1 before the 2026-08-26 run. The
+        # row is the operator's explicit word and needs no timestamp, so a
+        # disagreement is a manifest bug and is reported rather than resolved.
+        for a in self.animals:
+            for r in a.recordings:
+                if not r.position or r.date is None:
+                    continue
+                held = self.animal_at(r.position, moment_from_base(r.base) or r.date)
+                if held is not None and held.animal_id != a.animal_id:
+                    problems.append(
+                        f"{a.animal_id}: recordings row puts it at {r.position} on "
+                        f"{r.date} ({r.base}), but placements put {held.animal_id} "
+                        f"there. One of the two is wrong.")
         return problems
 
     def to_spec(self):
