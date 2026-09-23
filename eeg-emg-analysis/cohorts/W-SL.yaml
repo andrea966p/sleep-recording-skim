@@ -1,0 +1,144 @@
+# =============================================================================
+# COHORT MANIFEST -- W-SL, the 8 mice recorded on 2026-09-10 and 2026-09-17
+# =============================================================================
+#
+# WHY THIS FILE EXISTS. `cards/ladder.py --cohort` needs to know which rig
+# position held which animal, because that is what separates an animal's two
+# channels from the wire-free floor sites the criterion is measured against.
+# Without it the QC bundle cannot be computed, and without the bundle the
+# recording cannot be stripped without permanently destroying that floor.
+#
+# This batch had NO manifest until 2026-09-22. The 09-17 recovery run was
+# stripped and QC'd anyway because its bundle was built while a cache still
+# existed; the 09-10 baseline was never stripped at all, and that is what this
+# file was written to unblock.
+#
+# ⚠️ PROVENANCE, AND IT IS NOT THE SAME FOR BOTH RECORDINGS.
+#
+#   allego_0__uid0917-09-00-09 (09-17, recovery)
+#       Positions come from the recording console's own run record
+#       `6255ffcf2575`, preset `8mice_eeg_emg`, carried in that recording's
+#       `run.json` on the NAS. This is a RECORD.
+#
+#   allego_0__uid0910-09-00-00 (09-10, baseline)
+#       There is NO run record. That recording was started by the one-shot cron
+#       entry `scheduled-recording.sh 09:00:00`, which predates the run-record
+#       workflow, so nothing captured a slot map at the time. The positions below
+#       are carried over from the `XDAQ position` column of the intake registry
+#       (Google Sheet `HLB SOD1, Mouse Intake Monitoring`, tab `Registry`, read
+#       2026-09-22) and are corroborated by the 09-17 run record agreeing with
+#       that column on all eight slots. Two independent sources agreeing is good
+#       evidence, but it is still an INFERENCE, not an observation. If a slot
+#       ever has to be disputed for the 09-10 baseline, this is the weak link.
+#
+# 🔴 ONE TRANSCRIPTION ERROR IS ON RECORD, AND IS CORRECTED HERE. The 09-17 run
+# record lists D1 as `HLBWSL7`. There is no mouse HLBWSL7 in this batch; the
+# registry has HLBWSL27 at D1 and the ids run 21 to 30. Read as a dropped digit
+# and written as HLBWSL27 below. The run record itself is left untouched.
+#
+# 🔴 HUSBANDRY IS DELIBERATELY ABSENT, as in the S-SL manifest. Sex, date of
+# birth, arrival, surgery date, surgeon, weights and tether date exist in the
+# registry but are not copied here, because the ladder does not read them and
+# every hand-copied date is a chance to introduce one that is wrong. Fill them
+# from the registry in one deliberate pass, with a provenance line, if a later
+# analysis needs them.
+#
+# HLBWSL28 and HLBWSL30 are absent on purpose: both are in the batch, neither was
+# ever tethered (no XDAQ position in the registry), so neither appears in any
+# recording. All eight rig slots were occupied, which means there are NO floating
+# inputs in either recording and no `UNKNOWN@slot` cards.
+#
+# The layout is the standard eight-mouse map: a C3442 splitter puts two RHD2216
+# chips on each 64-channel port, so slot 1 is sites /1 (EEG) and /2 (EMG) and
+# slot 2 is /33 and /34. Floor sites follow from the role count and are NOT
+# listed here -- core/criteria.py derives them, deliberately, because an
+# off-by-one in a hand-written floor list silently moves a real animal channel
+# into the control group.
+# =============================================================================
+
+cohort_id: W-SL
+title: W-SL cohort, 8 mice, 24 h baseline 2026-09-10 and 28 h recovery 2026-09-17
+project_id: neurosurveillance-eeg
+description: >
+  Eight mice, UV water and sleep ad libitum, so no CSD between the two
+  recordings. Baseline allego_0__uid0910-09-00-00 ran 24.386 h from ZT0 on
+  2026-09-10; recovery allego_0__uid0917-09-00-09 ran 28.000 h from ZT0 on
+  2026-09-17. Both at 262 channels, 1 kHz. The baseline was started by a one-shot
+  cron entry, the recovery by the scheduler through the recording console.
+
+roles: [eeg, emg]          # /1 EEG, /2 EMG for slot 1; /33, /34 for slot 2
+criterion: slope           # EEG only; EMG is broadband and is judged on hum
+
+animals:
+
+  - animal_id: HLBWSL21
+    batch_id: W-SL
+    placements: [{from: 2026-09-10, position: A1, source: registry}]
+    recordings:
+      - {base: allego_0__uid0910-09-00-00, date: 2026-09-10, position: A1, role: animal}
+      - {base: allego_0__uid0917-09-00-09, date: 2026-09-17, position: A1, role: animal}
+
+  - animal_id: HLBWSL22
+    batch_id: W-SL
+    placements: [{from: 2026-09-10, position: A2, source: registry}]
+    recordings:
+      - {base: allego_0__uid0910-09-00-00, date: 2026-09-10, position: A2, role: animal}
+      - {base: allego_0__uid0917-09-00-09, date: 2026-09-17, position: A2, role: animal}
+
+  - animal_id: HLBWSL23
+    batch_id: W-SL
+    placements: [{from: 2026-09-10, position: B1, source: registry}]
+    recordings:
+      - {base: allego_0__uid0910-09-00-00, date: 2026-09-10, position: B1, role: animal}
+      - {base: allego_0__uid0917-09-00-09, date: 2026-09-17, position: B1, role: animal}
+
+  - animal_id: HLBWSL24
+    batch_id: W-SL
+    placements: [{from: 2026-09-10, position: B2, source: registry}]
+    recordings:
+      - {base: allego_0__uid0910-09-00-00, date: 2026-09-10, position: B2, role: animal}
+      - {base: allego_0__uid0917-09-00-09, date: 2026-09-17, position: B2, role: animal}
+
+  - animal_id: HLBWSL25
+    batch_id: W-SL
+    placements: [{from: 2026-09-10, position: C1, source: registry}]
+    recordings:
+      - {base: allego_0__uid0910-09-00-00, date: 2026-09-10, position: C1, role: animal}
+      - {base: allego_0__uid0917-09-00-09, date: 2026-09-17, position: C1, role: animal}
+
+  - animal_id: HLBWSL26
+    batch_id: W-SL
+    placements: [{from: 2026-09-10, position: C2, source: registry}]
+    recordings:
+      - {base: allego_0__uid0910-09-00-00, date: 2026-09-10, position: C2, role: animal}
+      - {base: allego_0__uid0917-09-00-09, date: 2026-09-17, position: C2, role: animal}
+
+  # D1: the 09-17 run record says `HLBWSL7`, corrected to HLBWSL27. See header.
+  - animal_id: HLBWSL27
+    batch_id: W-SL
+    placements: [{from: 2026-09-10, position: D1, source: registry}]
+    recordings:
+      - {base: allego_0__uid0910-09-00-00, date: 2026-09-10, position: D1, role: animal}
+      - {base: allego_0__uid0917-09-00-09, date: 2026-09-17, position: D1, role: animal}
+
+  - animal_id: HLBWSL29
+    batch_id: W-SL
+    placements: [{from: 2026-09-10, position: D2, source: registry}]
+    recordings:
+      - {base: allego_0__uid0910-09-00-00, date: 2026-09-10, position: D2, role: animal}
+      - {base: allego_0__uid0917-09-00-09, date: 2026-09-17, position: D2, role: animal}
+
+recordings:
+  - base: allego_0__uid0910-09-00-00
+    date: 2026-09-10
+    notes: >
+      24.386 h, ZT0 on 09-10 to 09:23 on 09-11, 262 channels at 1 kHz, 92.0 GB.
+      file_integrity INTACT, 87,787,776 data samples = 87,787,776 timestamp
+      samples, remainder 0 and 0. Started by the one-shot cron entry, so there is
+      no run record; positions are inferred, see the header.
+  - base: allego_0__uid0917-09-00-09
+    date: 2026-09-17
+    notes: >
+      28.000 h, ZT0 on 09-17 to 13:00 on 09-18, 262 channels at 1 kHz, 105.6 GB.
+      file_integrity INTACT, 100,800,512 data samples = 100,800,512 timestamp
+      samples, remainder 0 and 0. Run record 6255ffcf2575, preset 8mice_eeg_emg.

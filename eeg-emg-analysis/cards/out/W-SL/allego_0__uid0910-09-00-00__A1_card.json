@@ -1,0 +1,202 @@
+{
+  "schema_version": 2,
+  "generated": "2026-09-22T18:54:53+09:00",
+  "cohort_id": "W-SL",
+  "project_id": "neurosurveillance-eeg",
+  "batch_id": "W-SL",
+  "animal_id": "HLBWSL21",
+  "sex": "",
+  "position": "A1",
+  "tether_arm": "",
+  "role": "animal",
+  "recording": "allego_0__uid0910-09-00-00",
+  "recording_base": "/home/skimlab/radix/data/allego_0__uid0910-09-00-00",
+  "recording_date": "2026-09-10",
+  "duration_h": 24.385493333333333,
+  "zt_start": 23.98,
+  "zt_end": 0.37,
+  "age_weeks": null,
+  "age_is_derived": false,
+  "days_post_surgery": null,
+  "days_post_tether": null,
+  "body_weight_g": null,
+  "body_weight_occasion": "",
+  "criterion": "slope",
+  "epoch_s_qc": 10,
+  "epoch_s_staging": 4,
+  "thresholds_hash": "01e11630dcbf",
+  "floor": {
+    "n_sites": 14,
+    "n_epochs": 8778,
+    "n_samples": 122892,
+    "hum_p1": 42.871,
+    "hum_p5": 45.579,
+    "hum_median": 66.44,
+    "slope_p1": -1.836,
+    "slope_p5": -1.667,
+    "slope_median": -1.071,
+    "slope_min": -3.133,
+    "scope": "chip",
+    "position": "A1",
+    "estimator": "site_p1_median",
+    "grounded": false,
+    "validity_reason": "wire-free inputs on this chip sit at 66 uV of 60 Hz, below the 800 uV that a GROUNDED chip shows. The headstage has no ground reference, so its wire-free inputs are not a valid negative control and no connection verdict can be drawn from them. This is a HARDWARE fault at the chip, not a statement about the animal.",
+    "available": true,
+    "unavailable_reason": ""
+  },
+  "rungs": [
+    {
+      "number": 0,
+      "name": "FILE",
+      "question": "Is the recording file physically sound?",
+      "verdict": "PASS",
+      "headline": "87,787,776 samples, 24.39 h",
+      "threshold": "data samples == timestamp samples, remainder 0",
+      "reason": "87,787,776 data samples = 87,787,776 timestamp samples, remainder 0 and 0",
+      "detail": {
+        "base": "allego_0__uid0910-09-00-00",
+        "meta_exists": true,
+        "data_exists": true,
+        "timestamp_exists": true,
+        "fs": 1000,
+        "n_channels": 262,
+        "data_bytes": 92001589248,
+        "n_data_samples": 87787776,
+        "data_remainder": 0,
+        "duration_h": 24.385,
+        "start_time_utc": "2026-09-09T23:59:59.243Z",
+        "n_timestamp_samples": 87787776,
+        "timestamp_remainder": 0,
+        "problems": [],
+        "verdict": "INTACT",
+        "reason": "87,787,776 data samples = 87,787,776 timestamp samples, remainder 0 and 0"
+      }
+    },
+    {
+      "number": 1,
+      "name": "IDENTITY",
+      "question": "Which native channels belong to this animal?",
+      "verdict": "PASS",
+      "headline": "EEG A/1  EMG A/2",
+      "threshold": "layout derived from the file, never assumed",
+      "reason": "2 channels resolved from sensors_by_port; 14 wire-free inputs available as an in-file floor",
+      "detail": {
+        "sites": {
+          "eeg": {
+            "site": "A/1",
+            "native_col": 0,
+            "median_rms_uv": 73.5,
+            "median_hum_uv": 44.4,
+            "median_slope": -1.52,
+            "signature": "connected-or-quiet"
+          },
+          "emg": {
+            "site": "A/2",
+            "native_col": 1,
+            "median_rms_uv": 56.8,
+            "median_hum_uv": 40.6,
+            "median_slope": -0.67,
+            "signature": "connected-or-quiet"
+          }
+        },
+        "layout_source": "biointerface_map in the recording's own .xdat.json",
+        "bipolar": true,
+        "n_floor_sites": 14
+      }
+    },
+    {
+      "number": 2,
+      "name": "CONNECTION",
+      "question": "Is the electrode connected, judged against wire-free inputs in the same file?",
+      "verdict": "UNJUDGEABLE",
+      "headline": "chip floor is 66 uV of 60 Hz (grounded chips show >800) -- no verdict can be drawn",
+      "threshold": "",
+      "reason": "wire-free inputs on this chip sit at 66 uV of 60 Hz, below the 800 uV that a GROUNDED chip shows. The headstage has no ground reference, so its wire-free inputs are not a valid negative control and no connection verdict can be drawn from them. This is a HARDWARE fault at the chip, not a statement about the animal.",
+      "detail": {
+        "floor": {
+          "n_sites": 14,
+          "n_epochs": 8778,
+          "n_samples": 122892,
+          "hum_p1": 42.871,
+          "hum_p5": 45.579,
+          "hum_median": 66.44,
+          "slope_p1": -1.836,
+          "slope_p5": -1.667,
+          "slope_median": -1.071,
+          "slope_min": -3.133,
+          "scope": "chip",
+          "position": "A1",
+          "estimator": "site_p1_median",
+          "grounded": false,
+          "validity_reason": "wire-free inputs on this chip sit at 66 uV of 60 Hz, below the 800 uV that a GROUNDED chip shows. The headstage has no ground reference, so its wire-free inputs are not a valid negative control and no connection verdict can be drawn from them. This is a HARDWARE fault at the chip, not a statement about the animal.",
+          "available": true,
+          "unavailable_reason": ""
+        }
+      }
+    },
+    {
+      "number": 3,
+      "name": "SCOREABILITY",
+      "question": "Can the sleep question even be asked?",
+      "verdict": "BLOCKED",
+      "headline": "",
+      "threshold": "",
+      "reason": "rung 2 CONNECTION did not pass",
+      "detail": {}
+    },
+    {
+      "number": 4,
+      "name": "ARCHITECTURE",
+      "question": "What did the animal do?",
+      "verdict": "BLOCKED",
+      "headline": "",
+      "threshold": "",
+      "reason": "rung 3 SCOREABILITY did not pass",
+      "detail": {}
+    },
+    {
+      "number": 5,
+      "name": "EXPORT",
+      "question": "Can a human check us?",
+      "verdict": "BLOCKED",
+      "headline": "",
+      "threshold": "",
+      "reason": "rung 3 SCOREABILITY did not pass",
+      "detail": {}
+    }
+  ],
+  "notes": "",
+  "surgery_notes": "",
+  "sampling_notes": "",
+  "timeline": [
+    {
+      "date": "2026-09-10",
+      "kind": "recording",
+      "label": "allego_0__uid0910-09-00-00"
+    },
+    {
+      "date": "2026-09-17",
+      "kind": "recording",
+      "label": "allego_0__uid0917-09-00-09"
+    }
+  ],
+  "weighings": [],
+  "provenance": {
+    "thresholds_file": "/home/skimlab/sleep-recording-skim/eeg-emg-analysis/core/qc_thresholds.py",
+    "thresholds_hash": "01e11630dcbf",
+    "git_rev": "da81fcf",
+    "cohort_manifest": "/home/skimlab/sleep-recording-skim/eeg-emg-analysis/cohorts/W-SL.yaml",
+    "processed_files": {
+      "npz": "/home/skimlab/eeg-processed/2026-09-10/portA-slot1_2026-09-10_085959_24h23m.npz",
+      "features": "/home/skimlab/eeg-processed/2026-09-10/portA-slot1_2026-09-10_085959_24h23m_features.json",
+      "hypnogram": "/home/skimlab/eeg-processed/2026-09-10/portA-slot1_2026-09-10_085959_24h23m_hypnogram.csv",
+      "summary": "/home/skimlab/eeg-processed/2026-09-10/portA-slot1_2026-09-10_085959_24h23m_summary.txt",
+      "day_dir": "/home/skimlab/eeg-processed/2026-09-10"
+    },
+    "epoch_s_qc": 10,
+    "n_qc_epochs": 8778,
+    "criterion": "slope",
+    "criterion_note": "SLOPE and HUM usable fractions are NOT comparable, and neither is comparable to a fraction computed at the 4 s staging epoch."
+  },
+  "top_rung": 1
+}
