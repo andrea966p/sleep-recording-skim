@@ -746,6 +746,7 @@ def strip(src_base: str, dst_base: str, keep: Sequence[int], *,
           min_free_gb: float = 300.0,
           allow_truncated: bool = False,
           require_idle: bool = False,
+          gpio_never_connected: bool = False,
           meta: dict | None = None,
           progress: Callable[[str], None] | None = print) -> dict:
     """Write the stripped triple and RAISE unless every gate passes.
@@ -952,6 +953,25 @@ def strip(src_base: str, dst_base: str, keep: Sequence[int], *,
                 int(dtrans[j]) >= MIN_TRANSITIONS_TO_REFUSE
                 or int(dneq[j]) > MIN_SAMPLES_TO_REFUSE):
             live_din.append(rec)
+    gate_b_override = None
+    if live_din and gpio_never_connected:
+        # THE OPERATOR ASSERTS NOTHING WAS EVER WIRED TO THE GPIO HEADER.
+        #
+        # The thresholds below stay as they are, because they will be
+        # load-bearing the moment the XDAQ -> Pi hardware sync is wired. This
+        # escape hatch is for recordings from the era when the header was
+        # empty, where a "live" din can only be noise on a floating input. It
+        # is recorded in the report so the claim is auditable, never silent.
+        gate_b_override = {
+            "reason": "operator asserts nothing was connected to the GPIO header",
+            "asserted_via": "--gpio-never-connected",
+            "channels": live_din,
+        }
+        for r in live_din:
+            say(f"  GATE B OVERRIDDEN for {r['chan_name']}: "
+                f"{r['transitions']} transitions, {r['samples_off_resting']} samples "
+                f"off resting, on an input asserted to be unconnected")
+        live_din = []
     if live_din:
         _quarantine(dst_base, [part_data, part_ts])
         names = ", ".join(
@@ -1033,6 +1053,7 @@ def strip(src_base: str, dst_base: str, keep: Sequence[int], *,
         "dropped_gpio": dropped_report,
         "radiens_probe": probe,
         "qc_bundle_present": qc_bundle_present(src_base),
+        "gate_b_override": gate_b_override,
         "source_unclean_shutdown": os.path.basename(src_base) + ".xdat.json"
                                    in stale_live_flags(),
         "elapsed_s": round(time.time() - t0, 1),
@@ -1254,6 +1275,10 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--allow-truncated", action="store_true")
     ap.add_argument("--require-idle", action="store_true",
                     help="refuse if Allego looks like it is writing")
+    ap.add_argument("--gpio-never-connected", action="store_true",
+                    help="gate B: drop a 'live' din anyway, because nothing was "
+                         "wired to the GPIO header when this was recorded. "
+                         "Recorded in the report as gate_b_override.")
     ap.add_argument("--chunk-samples", type=int, default=DEFAULT_CHUNK_SAMPLES)
     ap.add_argument("--report", default=None,
                     help="where to write the JSON report "
@@ -1297,6 +1322,7 @@ def main(argv: list[str] | None = None) -> int:
                        min_free_gb=a.min_free_gb,
                        allow_truncated=a.allow_truncated,
                        require_idle=a.require_idle,
+                       gpio_never_connected=a.gpio_never_connected,
                        meta=meta)
     except StripRefused as exc:
         print(f"REFUSED: {exc}", file=sys.stderr)
