@@ -94,7 +94,7 @@ lifecycle rule aborts incomplete multipart uploads after 7 days.
 
 | Prefix | Source on e10 | Job | Size |
 |---|---|---|---|
-| `radix/data/` | `~/radix/data` | `raw` | 81 objects, 1.017 TB |
+| `radix/data/` | `~/radix/data` | `raw` | 84 objects, 1.018 TB, quarantine included |
 | `radix/stripped/` | `~/radix/stripped` | `stripped` | 49 objects, 27.4 GB |
 | `video/` | `/opt/neurosurveillance/exports/` | *planned* | — |
 
@@ -112,7 +112,7 @@ Runs **01:30 nightly**, stripped first (small, finishes fast), then raw. Both
 hard-stop at 08:30 for the morning recording window.
 
 > [!success] The archive is real as of 2026-09-23
-> **130 objects, 1.045 TB**, both jobs `COMPLETE`, every object SHA256-verified by
+> **133 objects, 1.046 TB**, both jobs `COMPLETE`, every object SHA256-verified by
 > S3 on upload. Before this the bucket held **zero bytes**: the job was installed
 > on 09-20 and every scheduled run since had deferred, because a recording was
 > live at 01:30 each night. A backup that has never once run is indistinguishable
@@ -130,8 +130,12 @@ hard-stop at 08:30 for the morning recording window.
 >   "0 file(s) failed". Both source directories contain exactly one such
 >   subdirectory, so both jobs raised a false alarm on every successful run.
 >
-> ⚠️ `_quarantine-2026-08-24-crashed-run/` is still skipped, being a subdirectory.
-> It holds a real 13 min recording, 822 MB, with **no off-site copy**.
+> ✅ **The archiver recurses as of 2026-09-23.** It used to stop at `-maxdepth 1`,
+> which silently excluded `_quarantine-2026-08-24-crashed-run/` — a real 13 min
+> recording that therefore had no off-site copy at all. A subdirectory under
+> `~/radix/data` is a quarantined run, which is exactly what an archive is for.
+> The relative path becomes the S3 key, so the tree is reproduced as it stands.
+> **Everything in `~/radix/data` now has an off-site copy.**
 
 > [!tip] Verify the mirror, do not assume it
 > The archive matches e10 only if every local file has an object of the same size

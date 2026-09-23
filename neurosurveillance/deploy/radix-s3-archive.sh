@@ -127,15 +127,21 @@ See \`$LOG\`."
 fi
 
 # Count exactly what the loop will upload, or the run can never report COMPLETE.
-# `ls -1` also lists SUBDIRECTORIES (`test-resume/`, `_quarantine-.../`). Those
-# inflate TOTAL_FILES, the loop then skips them as non-files, done_files stops one
-# short forever, and every run ends on the INCOMPLETE branch warning about "0
-# file(s) failed". -type f counts and iterates the same set.
+# `ls -1` also lists SUBDIRECTORIES. Those inflate TOTAL_FILES, the loop then
+# skips them as non-files, done_files stops one short forever, and every run ends
+# on the INCOMPLETE branch warning about "0 file(s) failed". -type f counts and
+# iterates the same set.
+#
+# RECURSES DELIBERATELY. It used to stop at -maxdepth 1, which silently excluded
+# `_quarantine-2026-08-24-crashed-run/` - a real 13 min recording that therefore
+# had no off-site copy at all. A subdirectory under ~/radix/data is a quarantined
+# run, which is exactly the kind of thing an archive is for. %P keeps the path
+# relative, so it becomes the S3 key and the tree is reproduced as it stands.
 #
 # A *.part is a strip that is still being written, or one that died partway. Its
 # bytes will change, so uploading it stores garbage in GLACIER_IR that the backup
 # IAM user is explicitly denied permission to delete again. Never archive one.
-mapfile -t FILES < <(cd "$SRC" && find . -maxdepth 1 -type f -printf '%P\n' 2>/dev/null \
+mapfile -t FILES < <(cd "$SRC" && find . -type f -printf '%P\n' 2>/dev/null \
                        | grep -v '\.part$' | sort)
 TOTAL_FILES=${#FILES[@]}
 # Sum the SAME list, not the directory: `du -sb` counts subdirectories and .part
