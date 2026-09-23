@@ -42,21 +42,44 @@ This is the base name Allego writes. Three files share it:
 | **On disk, e10** | `~/radix/data/<base>_data.xdat` | `allego_0__uid0910-09-00-00_data.xdat` |
 | **Stripped, e10** | `~/radix/stripped/<base>_data.xdat` | same base, fewer channels |
 | **S3** | `s3://…/radix/data/<base>_data.xdat` | base preserved exactly |
-| **SKIM NAS, older** | `03_Data_Mouse/<user>/<YYYY-MM-DD>_<base>/` | `2026-09-10_allego_0__uid0910-09-00-00/` |
-| **SKIM NAS, newer** | `03_Data_Mouse/<user>/<YYYYMMDD>_<batch>_<type>/` | `20260917_HLBW_SL_RSR/` |
+| **SKIM NAS, experiment** | `03_Data_Mouse/<user>/<YYYYMMDD>_<batch><type>/` | `20260910_HLBWSL_BSR/` |
+| **SKIM NAS, screens and tests** | `03_Data_Mouse/<user>/<YYYY-MM-DD>_<base>/` | `2026-09-13_allego_0__uid0913-11-20-07/` |
 | **QC bundle** | `<CACHE_ROOT>/<base>.npz` | `/tmp/eeg_pipeline_cache/allego_0__uid0910-09-00-00.npz` |
 | **Note title** | `recording-<YYYY-MM-DD>-<short label>.md` | a label, never an identifier |
 
-> [!warning] The newer NAS directory name does NOT contain the recording name
-> `20260917_HLBW_SL_RSR` is built from the run record's batch name, not from the
-> Allego base. Two of them can differ in style for the same batch — the 09-17
-> directory is `HLBW_SL` while 09-20 and 09-21 are `HLBSSL`. **Never match NAS
-> directories to recordings by filename.** Read the `allego_base` key inside that
-> directory's `UPLOAD.json`; it is there precisely for this.
+> [!warning] The experiment NAS directory name does NOT contain the recording name
+> `20260910_HLBWSL_BSR` says date, batch and condition. Nothing in it identifies
+> which Allego file it holds. **Never match NAS directories to recordings by
+> filename.** Read the `allego_base` key inside that directory's `UPLOAD.json`;
+> it is there precisely for this.
 >
-> A recording with no run record gets the older `<date>_<base>` form instead,
-> which is why `allego_0__uid0910-09-00-00` sits in a differently shaped
-> directory from its own 09-17 partner.
+> ⚠️ The four screen and test folders predate that key and do not carry it. For
+> those, the directory name itself is the base. Anything walking the NAS has to
+> handle both.
+
+> [!history] All eleven experiment folders were renamed to registry naming on 2026-09-23
+> Three shapes had accumulated: `HLBW_SL` from a run record where the batch was
+> typed with an underscore, `HLBSSL` from ones where it was not, and
+> `2026-09-10_allego_0__uid0910-09-00-00` for recordings with no run record at
+> all. The batch stem now always follows the intake registry ids — `HLBWSD`,
+> `HLBSSD`, `HLBWSL`, `HLBSSL`.
+>
+> Each was a **re-upload, not a `mv`**. `UPLOAD.json` is a verification record:
+> sha256 at both ends, read back with the CIFS cache dropped so the read hits the
+> wire. Renaming the folder and editing that file by hand would turn a
+> measurement into a claim. The old folder was removed only after the new one
+> verified.
+>
+> 🔴 **Three QC bundles existed ONLY on the NAS** — `uid0910`, `uid0912`,
+> `uid0917`. `CACHE_ROOT` is `/tmp/eeg_pipeline_cache` and the 2026-09-22 reboot
+> emptied it. Each was copied back before anything was deleted. A rename that
+> deleted first would have destroyed the only surviving record of those
+> recordings' wire-free floor, and they could never have been QC'd again.
+>
+> ⚠️ **A directory listing of `/mnt/skimnas` can be stale right after a delete.**
+> `ls` and `find` both kept returning a removed folder while `[ -d ]` said it was
+> gone — a cached CIFS dentry. Verify with a stat, not a glob; touching the
+> parent directory clears it.
 
 ## Every recording on e10
 

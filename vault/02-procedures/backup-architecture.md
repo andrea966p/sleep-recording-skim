@@ -62,9 +62,9 @@ Synology at `skim-nas.tailec38b9.ts.net`, shared in from `sleepigene@`. Mounted
 over CIFS at `/mnt/skimnas` (autofs, mounts on access). 7 TB, ~4.6 TB free.
 
 - **Written by** `eeg-recorder/backend/nas_upload.py` when a recording stops.
-- **Layout** `03_Data_Mouse/<user>/<YYYY-MM-DD>_<base>/`, one directory per
-  recording, with the stripped xdat, its `strip-report.json`, a QC bundle and
-  `UPLOAD.json`.
+- **Layout** `03_Data_Mouse/<user>/<YYYYMMDD>_<batch><condition>/`, one directory
+  per recording, with the stripped xdat, its `strip-report.json`, a QC bundle,
+  `run.json` and `UPLOAD.json`. Screens and tests keep `<YYYY-MM-DD>_<base>/`.
 - **Holds the stripped data only** — 16 of 262 channels, roughly 6% of raw size.
 
 > [!warning] "NAS-verified" in a run note means the STRIPPED file
@@ -73,14 +73,16 @@ over CIFS at `/mnt/skimnas` (autofs, mounts on access). 7 TB, ~4.6 TB free.
 > 5.5 GB here. If you need the other 246 channels, S3 is the only other copy.
 
 > [!tip] The uploader renames remotely
-> `20260917_HLBW_SL_RSR` is `allego_0__uid0917-09-00-09`. Matching NAS directories
+> `20260917_HLBWSL_RSR` is `allego_0__uid0917-09-00-09`. Matching NAS directories
 > by Allego uid undercounts. Resolve via the `allego_base` key in each directory's
 > `UPLOAD.json`, never by filename.
 >
-> Two directory shapes exist, and which one you get depends on whether the
-> recording has a run record: `<YYYYMMDD>_<batch>_<type>` when it does,
-> `<YYYY-MM-DD>_<allego base>` when it does not. The batch half is not even
-> spelled consistently — 09-17 is `HLBW_SL`, 09-20 and 09-21 are `HLBSSL`.
+> Two directory shapes exist. Every experiment folder is
+> `<YYYYMMDD>_<batch><condition>` with the batch stem from the intake registry —
+> all eleven were renamed to that on 2026-09-23. The four screen and test folders
+> keep `<YYYY-MM-DD>_<allego base>`, which is right: they have no batch or
+> condition to be named after. Only the experiment folders carry `allego_base` in
+> their `UPLOAD.json`; for the older four the directory name IS the base.
 > Naming rules and the full recording inventory:
 > [[02-procedures/CANONICAL-recording-naming-and-inventory]].
 
@@ -92,8 +94,8 @@ lifecycle rule aborts incomplete multipart uploads after 7 days.
 
 | Prefix | Source on e10 | Job | Size |
 |---|---|---|---|
-| `radix/data/` | `~/radix/data` | `raw` | 1.1 TB |
-| `radix/stripped/` | `~/radix/stripped` | `stripped` | 22 GB |
+| `radix/data/` | `~/radix/data` | `raw` | 87 objects, 1.301 TB |
+| `radix/stripped/` | `~/radix/stripped` | `stripped` | 49 objects, 27.4 GB |
 | `video/` | `/opt/neurosurveillance/exports/` | *planned* | — |
 
 One script serves every prefix. `RADIX_S3_JOB` keeps each run's log, lock and
