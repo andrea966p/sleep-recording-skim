@@ -79,3 +79,10 @@ sessions/
 # the contents include vendored schema sets (the ISO-IEC29500 XSDs alone are
 # most of 8.7 MB). Nothing here is authored in this repo.
 claude-config/skills/synced/
+
+# Local-only job monitor (rig-jobs.sh). Deliberately NOT in the repo: it is a
+# scratch tool for watching strips and uploads on e10, not shared workflow.
+# Ignored because `./skim push` commits everything untracked before it pushes,
+# which swept it in once already.
+/neurosurveillance/deploy/rig-jobs.sh
+/neurosurveillance/deploy/rig_jobs.py
