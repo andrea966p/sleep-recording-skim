@@ -24,7 +24,7 @@ than a new script.
 # 1. verdicts  ->  one JSON per animal-recording
 ~/eeg-analysis-venv/bin/python cards/ladder.py <recording> \
     --cohort HLB-fem-profsurgery-troubleshooting \
-    --cache /tmp/eeg_pipeline_cache/feat_<recording>.npz
+    --cache /home/skimlab/eeg-qc-cache/feat_<recording>.npz
 
 # 2. the pages
 ~/eeg-analysis-venv/bin/python cards/render_card.py cards/out/<cohort>/

@@ -28,7 +28,7 @@ The cached features are therefore the only surviving record of it, and the chain
 destroying the evidence. Compute one with:
 
     cd ../eeg-emg-analysis && PYTHONPATH=. /opt/neurosurveillance/venv/bin/python3 \
-        cards/ladder.py <base> --cohort <id> --cache /tmp/eeg_pipeline_cache/<base>.npz
+        cards/ladder.py <base> --cohort <id> --cache /home/skimlab/eeg-qc-cache/<base>.npz
 
 Nothing is ever deleted locally. The original 262-channel file stays where Allego
 wrote it; removing it is a human decision.

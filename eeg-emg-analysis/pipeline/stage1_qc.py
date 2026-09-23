@@ -35,7 +35,11 @@ from pipeline import pipeline_common as P
 _trapz = getattr(np, "trapezoid", None) or np.trapz
 
 
-CACHE = os.environ.get("EEG_QC_CACHE", "/tmp/eeg_pipeline_cache/")
+# Derived from the single root rather than carrying its own /tmp default, which
+# is how this ended up with two independent cache locations that could disagree.
+# EEG_QC_CACHE still wins if set, for anything that already exports it.
+from core import paths as _PATHS
+CACHE = os.environ.get("EEG_QC_CACHE", str(_PATHS.CACHE_ROOT) + "/")
 os.makedirs(CACHE, exist_ok=True)
 
 

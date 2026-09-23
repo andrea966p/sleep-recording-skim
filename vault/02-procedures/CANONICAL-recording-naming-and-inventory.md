@@ -44,7 +44,7 @@ This is the base name Allego writes. Three files share it:
 | **S3** | `s3://…/radix/data/<base>_data.xdat` | base preserved exactly |
 | **SKIM NAS, experiment** | `03_Data_Mouse/<user>/<YYYYMMDD>_<batch><type>/` | `20260910_HLBWSL_BSR/` |
 | **SKIM NAS, screens and tests** | `03_Data_Mouse/<user>/<YYYY-MM-DD>_<base>/` | `2026-09-13_allego_0__uid0913-11-20-07/` |
-| **QC bundle** | `<CACHE_ROOT>/<base>.npz` | `/tmp/eeg_pipeline_cache/allego_0__uid0910-09-00-00.npz` |
+| **QC bundle** | `<CACHE_ROOT>/<base>.npz` | `~/eeg-qc-cache/allego_0__uid0910-09-00-00.npz` |
 | **Note title** | `recording-<YYYY-MM-DD>-<short label>.md` | a label, never an identifier |
 
 > [!warning] The experiment NAS directory name does NOT contain the recording name
@@ -70,8 +70,13 @@ This is the base name Allego writes. Three files share it:
 > measurement into a claim. The old folder was removed only after the new one
 > verified.
 >
+> ✅ **`CACHE_ROOT` moved out of `/tmp` on 2026-09-23**, to `~/eeg-qc-cache`.
+> `pipeline/stage1_qc.py` carried its own second `/tmp` default under
+> `EEG_QC_CACHE`; it now derives from the same root, so the two cannot disagree.
+> The nine surviving bundles were copied across and checksummed.
+>
 > 🔴 **Three QC bundles existed ONLY on the NAS** — `uid0910`, `uid0912`,
-> `uid0917`. `CACHE_ROOT` is `/tmp/eeg_pipeline_cache` and the 2026-09-22 reboot
+> `uid0917`. `CACHE_ROOT` was `/tmp/eeg_pipeline_cache` and the 2026-09-22 reboot
 > emptied it. Each was copied back before anything was deleted. A rename that
 > deleted first would have destroyed the only surviving record of those
 > recordings' wire-free floor, and they could never have been QC'd again.
@@ -84,7 +89,8 @@ This is the base name Allego writes. Three files share it:
 ## Every recording on e10
 
 Generated from the `.xdat.json` headers, regenerated 2026-09-23 after
-`allego_0__uid0904-08-55-25` was deleted. **28 recordings.**
+`allego_0__uid0904-08-55-25` and `allego_0__uid0829-08-34-39` were deleted.
+**27 recordings.**
 Start and end are KST. `pri ch` is primary amplifier channels; every surviving
 recording is 256, the full eight-mouse rig. The only 128-channel file was
 `allego_0__uid0904-08-55-25`, now deleted.
@@ -102,7 +108,6 @@ recording is 256, the full eight-mouse rig. The only 128-channel file was
 | `allego_3__uid0828-09-26-12` | 2026-08-28 09:26 | 08-28 09:27 | 0.02 | 0.1 | 256 |
 | `allego_4__uid0828-10-08-34` | 2026-08-28 10:08 | 08-28 11:56 | 1.80 | 6.8 | 256 |
 | `allego_5__uid0828-19-10-50` | 2026-08-28 19:10 | 08-28 19:46 | 0.59 | 2.2 | 256 |
-| `allego_0__uid0829-08-34-39` | 2026-08-29 08:34 | 08-31 19:46 | 59.20 | 223.4 | 256 |
 | `allego_0__uid0901-12-24-03` | 2026-09-01 12:24 | 09-01 12:25 | 0.03 | 0.1 | 256 |
 | `allego_1__uid0901-12-38-53` | 2026-09-01 12:38 | 09-01 12:40 | 0.02 | 0.1 | 256 |
 | `allego_2__uid0902-13-00-28` | 2026-09-02 13:00 | 09-03 09:05 | 20.08 | 75.7 | 256 |
@@ -153,13 +158,12 @@ baseline as 2026-09-09 and S-SL as 2026-09-11; the recordings ran on 09-10 and
 dates never corrected after the runs slipped. The SD batches match to the day.
 The recordings are right; the registry is not.
 
-**`allego_0__uid0829-08-34-39` has a short header.** Its `num_smpl` says
-213,124,096 while both data and timestamp files hold 213,132,160 — they agree
-with each other, so nothing is corrupt, but the header is 8.06 s behind the
-files. It is also the one recording still flagged `is_live_recording` while idle,
-i.e. it did not shut down cleanly. Anything trusting `num_smpl` silently drops
-its last eight seconds. It has no registry row, and at 59.2 h / 223 GB it is the
-largest file on the rig.
+**`allego_0__uid0829-08-34-39` was deleted on 2026-09-23.** 59.2 h, 223 GB, the
+largest file the rig had ever produced, and an **ECG recording** — not part of
+any sleep batch, which is why it had no registry row. It was also the one
+recording flagged `is_live_recording` while idle, with a `num_smpl` 8.06 s behind
+what its files actually held. Gone from e10; its three S3 objects still need
+deleting.
 
 **`allego_0__uid0904-08-55-25` was deleted on 2026-09-23.** 30 h at 128 primary
 channels, half the rig, recorded on the S-SL tethering day with no registry row.

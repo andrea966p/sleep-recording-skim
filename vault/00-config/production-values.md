@@ -193,7 +193,7 @@ Setup + ops: [[02-procedures/installation/nas-backup|NAS Backup procedure]].
 |----------|-------|-------|
 | `{RAW_ROOT}` | `/home/skimlab/radix/data` | where Allego writes recordings. **Read-only to tooling**: nothing may write, move or delete here. Env override `EEG_RAW_ROOT` |
 | `{STRIPPED_ROOT}` | `/home/skimlab/radix/stripped` | channel-stripped copies. Deliberately a **SIBLING** of `{RAW_ROOT}`, never inside it, so stripped twins stay out of `radix-archive.sh`'s `ls -1 "$SRC"` and every pipeline glob. Env override `EEG_STRIPPED_ROOT` |
-| `{CACHE_ROOT}` | `/tmp/eeg_pipeline_cache` | per-recording QC feature caches. Env override `EEG_CACHE_ROOT` |
+| `{CACHE_ROOT}` | `/home/skimlab/eeg-qc-cache` | per-recording QC feature caches. Env override `EEG_CACHE_ROOT` |
 | `{RECORDER_STATE}` | `~/.local/state/eeg-recorder` | the recording console's run database (`runs.db`, SQLite WAL). Env override `EEG_RECORDER_STATE` |
 | `{ALLEGO_DEVICES}` | `/home/skimlab/radix/devices` | headstage/probe maps (`.hstg`, YAML). Backed up nightly |
 | `{ALLEGO_WORKSPACE}` | `/home/skimlab/radix/workspace` | Allego workspace settings. Backed up nightly |

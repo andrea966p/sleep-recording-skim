@@ -18,7 +18,7 @@ everything becomes overridable everywhere else:
     EEG_PROCESSED_ROOT   where stage 2 writes per-animal .npz day folders
     EEG_IMPEDANCE_ROOT   the impedance sweep CSV folders, one per date
     EEG_VAULT_ROOT       the Obsidian vault that receives figures and reports
-    EEG_CACHE_ROOT       scratch for the per-recording feature caches
+    EEG_CACHE_ROOT       per-recording feature caches. NOT scratch: see below
     EEG_FIGURE_STYLE_DIR the scientific-visualization skill's scripts/assets
 
 Nothing here creates a directory as a side effect of being imported. Ask for one
@@ -54,7 +54,15 @@ PROCESSED_ROOT = _env("EEG_PROCESSED_ROOT", HOME / "eeg-processed")
 IMPEDANCE_ROOT = _env("EEG_IMPEDANCE_ROOT", HOME / "Downloads" / "impedance measurments")
 VAULT_ROOT = _env("EEG_VAULT_ROOT",
                   HOME / "Monitoring_project" / "Monitoring_project_obsidian_vault")
-CACHE_ROOT = _env("EEG_CACHE_ROOT", Path("/tmp/eeg_pipeline_cache"))
+# NOT /tmp. A feature cache looks disposable and is not: once a recording has
+# been stripped to 16 channels its wire-free floor is gone from the file forever,
+# and this .npz is the only surviving record of it -- which is why
+# convert/strip_channels refuses to strip a recording that has none. The default
+# was /tmp/eeg_pipeline_cache until 2026-09-23, and tmpfiles.d empties /tmp on
+# every boot: the 2026-09-22 reboot destroyed the bundles for three recordings
+# that had already been stripped, recoverable only because each had been copied
+# to the NAS beside its upload.
+CACHE_ROOT = _env("EEG_CACHE_ROOT", HOME / "eeg-qc-cache")
 FIGURE_STYLE_DIR = _env(
     "EEG_FIGURE_STYLE_DIR",
     HOME / "Monitoring_project" / ".claude" / "skills" / "scientific-visualization")

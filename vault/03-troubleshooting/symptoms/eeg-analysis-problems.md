@@ -158,7 +158,7 @@ python3 stage2_split.py --force <recording_base>  # overwrite existing files
 it to be instant — is the same mechanism. The cache lives in `/tmp`:
 
 ```
-EEG_QC_CACHE   default /tmp/eeg_pipeline_cache/
+EEG_QC_CACHE   default /home/skimlab/eeg-qc-cache/  (was /tmp until 2026-09-23)
 ```
 
 `/tmp` is cleared on reboot, so the first run after a restart is always slow.

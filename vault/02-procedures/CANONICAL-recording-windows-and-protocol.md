@@ -109,7 +109,7 @@ W-SL is the only batch needing no windowing on either run.
 | `allego_0__uid0819-09-00-00` | 8.3 | superseded — day 2 of its own restart is continuous |
 | `allego_0__uid0920-09-00-07` | 15.1 | superseded — day 2 of `allego_0__uid0921-00-17-34` is continuous |
 | `allego_1__uid0826-12-50-16` | 20.3 | B1-swap re-record, 08-26 12:50 → 08-27 09:09. Not a standard window: it is neither a 09:00 baseline nor a 13:00 recovery. Stripped and archived, but it answers no protocol question |
-| `allego_0__uid0829-08-34-39` | 59.2 | no registry row, header 8.06 s short of the files, only recording flagged `is_live_recording` while idle |
+| `allego_0__uid0829-08-34-39` | 59.2 | **deleted 2026-09-23** — an ECG recording, not a sleep batch, which is why it had no registry row. Also had a header 8.06 s short and an unclean shutdown. Gone from e10; S3 objects still to remove |
 | `allego_0__uid0904-08-55-25` | 30.0 | **deleted 2026-09-23** — no registry row, 128 primary channels, identified as belonging to something else. Gone from e10; S3 objects still to remove |
 | twelve runs under 2 h | — | pre-flight screens and tests |
 
