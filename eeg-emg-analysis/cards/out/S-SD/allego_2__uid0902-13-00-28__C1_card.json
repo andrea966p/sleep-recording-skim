@@ -1,26 +1,26 @@
 {
   "schema_version": 2,
-  "generated": "2026-09-23T13:10:40+09:00",
+  "generated": "2026-09-23T17:57:04+09:00",
   "cohort_id": "S-SD",
-  "project_id": "",
-  "batch_id": "",
-  "animal_id": "UNKNOWN@C1",
-  "sex": "",
+  "project_id": "neurosurveillance-eeg",
+  "batch_id": "S-SD",
+  "animal_id": "HLBSSD15",
+  "sex": "M",
   "position": "C1",
   "tether_arm": "",
   "role": "animal",
   "recording": "allego_2__uid0902-13-00-28",
   "recording_base": "/home/skimlab/radix/data/allego_2__uid0902-13-00-28",
-  "recording_date": "",
+  "recording_date": "2026-09-02",
   "duration_h": null,
   "zt_start": null,
   "zt_end": null,
-  "age_weeks": null,
+  "age_weeks": 17,
   "age_is_derived": false,
-  "days_post_surgery": null,
-  "days_post_tether": null,
-  "body_weight_g": null,
-  "body_weight_occasion": "",
+  "days_post_surgery": 22,
+  "days_post_tether": 15,
+  "body_weight_g": 31.5,
+  "body_weight_occasion": "tethering",
   "criterion": "slope",
   "epoch_s_qc": 10,
   "epoch_s_staging": 4,
@@ -254,15 +254,79 @@
       "detail": {}
     }
   ],
-  "notes": "No animal is recorded in the C1 position on this date in cohort S-SD. The card is still produced, because the measurements are real, but the identity is not known.",
-  "surgery_notes": "",
+  "notes": "verdict_2026_08_24: EEG 99.7% / 41.3 min. EMG OPEN (453 uV). verdict_2026_08_25: EEG 85.2% / 0.47 h. EMG OPEN (455 uV, 0.0%). verdict_2026_08_26: EEG 92.2%, longest block 91.8 min, 12.26 h inside blocks of 15 min or more -- the second best channel on the rig. EMG still open (458 uV, 0.0%). \ud83d\udd34 THE TETHER DAMAGE IS IN THE DATA, ON THE EMG CONDUCTOR ONLY. C1's EMG sits at 599 uV of 60 Hz against a 5215 uV chip floor with 0.08% railing = the documented damaged/partially-conducting cable signature. Its two channels correlate at |r| 0.091, the working-animal value, NOT the 0.5-0.75 of a shared-path fault. \u26a0\ufe0f C1's EEG RAILED IN 0 OF 7,317 EPOCHS over 20.3 h; max rms 297 uV against a 6377 uV rail. The railing seen on the bench is NOT in this file. Resolve which cage that observation came from before replacing the tether. verdict_2026_09_01: \ud83d\udd27 INTERMITTENT, and the event is in the TETHER BODY. Flat at rms 29 uV for 68 s, then at epoch 17 its EEG (29 -> 189 uV, lf/hf 18.5 vs floor p99 5.90), its EMG (99 -> 567 uV) AND its chip floor (2917 -> 4476 uV) all jump in the SAME epoch. Two roles plus the floor moving together is not an electrode. The identical event appears in the 12:24 file at t = 68 s. Agrees with the 08-27 note that this tether failed structurally at its centre.\n",
+  "surgery_notes": "bleeding P-L eeg\n",
   "sampling_notes": "",
-  "timeline": [],
-  "weighings": [],
+  "timeline": [
+    {
+      "date": "2026-07-28",
+      "kind": "arrival",
+      "label": "arrival"
+    },
+    {
+      "date": "2026-08-11",
+      "kind": "surgery",
+      "label": "surgery"
+    },
+    {
+      "date": "2026-08-18",
+      "kind": "tether",
+      "label": "tethered"
+    },
+    {
+      "date": "2026-08-24",
+      "kind": "recording",
+      "label": "allego_0__uid0824-17-56-51"
+    },
+    {
+      "date": "2026-08-25",
+      "kind": "recording",
+      "label": "allego_0__uid0825-09-00-00"
+    },
+    {
+      "date": "2026-08-26",
+      "kind": "recording",
+      "label": "allego_1__uid0826-12-50-16"
+    },
+    {
+      "date": "2026-09-01",
+      "kind": "recording",
+      "label": "allego_0__uid0901-12-24-03"
+    },
+    {
+      "date": "2026-09-01",
+      "kind": "recording",
+      "label": "allego_1__uid0901-12-38-53"
+    },
+    {
+      "date": "2026-09-02",
+      "kind": "recording",
+      "label": "allego_2__uid0902-13-00-28"
+    },
+    {
+      "date": "2026-09-03",
+      "kind": "sampling",
+      "label": "sampling"
+    }
+  ],
+  "weighings": [
+    {
+      "date": "2026-08-11",
+      "grams": 28.4,
+      "occasion": "surgery",
+      "source": "husbandry-sheet"
+    },
+    {
+      "date": "2026-08-18",
+      "grams": 31.5,
+      "occasion": "tethering",
+      "source": "husbandry-sheet"
+    }
+  ],
   "provenance": {
     "thresholds_file": "/home/skimlab/sleep-recording-skim/eeg-emg-analysis/core/qc_thresholds.py",
     "thresholds_hash": "01e11630dcbf",
-    "git_rev": "b97c97b",
+    "git_rev": "c44e2c2",
     "cohort_manifest": "/home/skimlab/sleep-recording-skim/eeg-emg-analysis/cohorts/S-SD.yaml",
     "processed_files": {},
     "epoch_s_qc": 10,

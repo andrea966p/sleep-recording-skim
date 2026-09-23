@@ -45,10 +45,11 @@ Production IPs, usernames, paths, and settings.
 - ⭐⭐⭐ [[01-infrastructure/eeg-recorder/pipeline-architecture|THE RECORDING PIPELINE — what runs, what fires it, and what stops it going wrong]] — the machinery behind the console: every program, what starts it, every failsafe and the specific way the rig can hurt you that each one exists for. 🔑 **§5 lists all six defects this system has had — every one was found by RUNNING it, not by testing it.** Read this before changing any guard.
 
 **Backup (added 2026-08-19):**
+- ⭐⭐ [[02-procedures/backup-architecture|CANONICAL — the three destinations and the one job each]] — **START HERE for backups.** bilab NAS = how to rebuild the rig · SKIM NAS = the working copy, **NOT a backup** · S3 = what survives the building burning down. The four pages below each describe ONE destination; this one says which is which (added 2026-09-20)
 - ⭐ [[01-infrastructure/raw-recording-archive-to-nas|Raw recording archive to the NAS]] — the verified copy of all 831 GB of `.xdat` data. **Read this before deleting anything from `~/radix/data`.**
 - [[02-procedures/installation/nas-backup|NAS backup (nightly project snapshot)]] — vault, code, daemon config
 - ⭐⭐ [[02-procedures/installation/skim-nas-smb-and-upload|SKIM Lab NAS — mounting it over SMB, and uploading recordings safely]] — **a DIFFERENT NAS from the nightly backup above**: `SKIM_NAS`, SMB only (SSH is closed), per-member folders under `03_Data_Mouse`. 🔴 **A failed mount turns the destination into the rig's OWN system disk** — `mountpoint` does not catch it, hence the sentinel file. 🔴 **Reading a file back over CIFS verifies your own page cache** (1538 MB/s vs 90 MB/s) unless you `posix_fadvise` it away first (added 2026-09-11)
-- ⭐⭐ [[02-procedures/installation/xdat-channel-stripping|Stripping an XDAT recording to the channels that were actually wired]] — 262 channels → 16, a **93.2% reduction**, verified bit-exact. 🔴 **Stripping DELETES the in-file wire-free floor**, so `compute_features` can never judge the recording again — the QC bundle is a PRECONDITION, not a follow-up. 🔴 **A keep list written as indices is not portable**: one recording here is 134 channels with 32-channel ports. Use site labels (added 2026-09-11)
+- ⭐⭐ [[02-procedures/installation/xdat-channel-stripping|Stripping an XDAT recording to the channels that were actually wired]] — 262 channels → 16, a **93.2% reduction**, verified bit-exact. 🔴 **Stripping DELETES the in-file wire-free floor**, so `compute_features` can never judge the recording again — the QC bundle is a PRECONDITION, not a follow-up. 🔴 **A keep list written as indices is not portable**: one recording here *was* 134 channels with 32-channel ports (deleted 2026-09-23; the rule stands, its counter-example does not). Use site labels (added 2026-09-11)
 - 🔴 [[03-troubleshooting/incidents/2026-08-19-nas-backup-wrong-address|Incident: backup dead 6 days from one wrong IP]] — **why you must never hardcode a `100.x` address**
 
 **Sleep recording (Intan RHD2216 + Allego) — operator docs:**
@@ -140,7 +141,7 @@ Production IPs, usernames, paths, and settings.
 - ⭐ [[03-troubleshooting/symptoms/eeg-analysis-problems|EEG analysis problems — symptom lookup]] — wrong Python, missing mice, wrong day folder, blank EDF, **plus the two SILENT failures**: `nperseg` zeroing theta, and persistence measured across contact gaps
 
 **Incident Log:**
-- [[03-troubleshooting/incidents/|Incidents]]
+- **Incidents** — `03-troubleshooting/incidents/`, one page per dated failure. A folder, so it is a path, not a link
 - [[03-troubleshooting/incidents/2026-02-23-session-daemon-radiens-auth-cors|2026-02-23 Session Daemon Auth + CORS]]
 
 ### 📓 Daily Journal
@@ -219,7 +220,8 @@ procedures to `02-procedures/`, vendor call prep to
 - [[07-decisions/2026-05-stabilization-sprint-week-1-plan|2026-05 Stabilization Sprint Week 1 — Plan + live status]] — single source of truth for sprint-item status
 
 ### Archive
-- [[99-archive/notion-import-2025-02/|Notion Import]]
+- `99-archive/` — the 2026-05 rehaul snapshots and superseded pages. The old
+  Notion import folder it used to list was removed and no longer exists.
 
 ---
 
@@ -262,9 +264,27 @@ ffprobe rtsp://192.168.0.11:8554/pi_cam_0
 
 ## Emergency
 
-1. Check [[03-troubleshooting/symptoms/|Symptom Index]]
+1. Check the symptom pages in `03-troubleshooting/symptoms/` — start with [[03-troubleshooting/symptoms/eeg-analysis-problems|analysis problems]] or [[03-troubleshooting/symptoms/no-frames-received|no frames received]]
 2. Run: `sudo systemctl restart go2rtc.service`
 3. See [[06-references/command-cheatsheet|Command Cheatsheet]]
+
+---
+
+## 🔗 Links that do not resolve, and are not meant to
+
+> [!warning] `[[eeg-60hz-saga]]` and about 22 other slugs are NOT missing pages
+> They are **memory notes**, living in `claude-config/memory/*.md` — Claude's
+> persistent memory, which is in this repository but **outside the vault**, so
+> Obsidian cannot resolve them. `eeg-60hz-saga` alone is linked 48 times from 20
+> pages and is a real 25 KB document; it is simply not a vault page.
+>
+> 🛑 **Do not "fix" them by creating stub pages.** That would put the same fact in
+> two places with no way to tell which is current — the exact failure this vault
+> spent 2026-09-23 undoing. A link checker will keep reporting roughly 86 of
+> these; that count is expected, not a backlog.
+>
+> To read one: `claude-config/memory/<slug>.md` at the repository root.
+> Whether the two namespaces should be merged is an open question, not a bug.
 
 ---
 

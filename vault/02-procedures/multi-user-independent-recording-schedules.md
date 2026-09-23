@@ -77,5 +77,5 @@ No new code beyond what already exists (`xdat_io.py` / `multimouse_scan.py`). No
 - [[session-recording-workflow]] — confirms the single global R_ON/R_OFF
 - [[radiens-api-reference]] — SDK method names, incl. `start_recording(port)`/`stop_recording(port)`
 - [[eight-mouse-acquisition-setup]] — per-port channel selection, known crash gotchas
-- [[eeg-data-analysis/scripts/multimouse_scan.py]] — existing memmap-based multi-headstage scan tool, base for the future slice-export option
+- `multimouse_scan.py` (retired; see 2026-07-16, superseded by `state_scan.py`) — memmap-based multi-headstage scan tool, base for the future slice-export option
 - [[neuronexus-inquiry-email]] — existing KonteX/NeuroNexus contact thread to ask the per-port question

@@ -163,7 +163,7 @@ Sleep-rich at hours 0 and 2, near-continuous wake at 4 and 7. Real structure.
 > - ⚠️ **THE ANIMAL ROOM LIGHT SCHEDULE IS NOT DOCUMENTED ANYWHERE IN THIS VAULT.** Every circadian claim depends on it. Record lights-on/lights-off in `00-config/production-values.md`.
 > - **Thresholds are data-driven** (EMG dip at 25 µV; theta/delta at the 80th percentile), **not validated against a human scorer**. The state percentages carry real uncertainty.
 > - **REM bouts average only 8.6 s**, which suggests the REM threshold is catching transitional epochs a human scorer would merge. Treat REM % as provisional.
-> - The positive-control validation demanded by the [[2026-08-01-council-eeg-pipeline-review|council]] is still owed: run the pipeline on a public, human-scored mouse dataset and confirm it detects sleep there.
+> - The positive-control validation demanded by the [[07-decisions/2026-08-07-council-review-of-the-analysis-pipeline|council]] is still owed: run the pipeline on a public, human-scored mouse dataset and confirm it detects sleep there.
 > - What is NOT threshold-dependent: the physiology table and the persistence numbers.
 
 ## 3b. ⭐ REPLICATION — n=3, all physiology correct

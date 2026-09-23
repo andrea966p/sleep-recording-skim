@@ -47,42 +47,58 @@ animals:
   - animal_id: HLBSSL31
     batch_id: S-SL
     placements: [{from: 2026-09-12, position: A1, source: recording-console}]
-    recordings: [{base: allego_0__uid0912-08-55-18, date: 2026-09-12, position: A1, role: animal}]
+    recordings:
+      - {base: allego_0__uid0912-08-55-18, date: 2026-09-12, position: A1, role: animal}
+      - {base: allego_0__uid0921-00-17-34, date: 2026-09-21, position: A1, role: animal}
 
   - animal_id: HLBSSL32
     batch_id: S-SL
     placements: [{from: 2026-09-12, position: A2, source: recording-console}]
-    recordings: [{base: allego_0__uid0912-08-55-18, date: 2026-09-12, position: A2, role: animal}]
+    recordings:
+      - {base: allego_0__uid0912-08-55-18, date: 2026-09-12, position: A2, role: animal}
+      - {base: allego_0__uid0921-00-17-34, date: 2026-09-21, position: A2, role: animal}
 
   - animal_id: HLBSSL33
     batch_id: S-SL
     placements: [{from: 2026-09-12, position: B1, source: recording-console}]
-    recordings: [{base: allego_0__uid0912-08-55-18, date: 2026-09-12, position: B1, role: animal}]
+    recordings:
+      - {base: allego_0__uid0912-08-55-18, date: 2026-09-12, position: B1, role: animal}
+      - {base: allego_0__uid0921-00-17-34, date: 2026-09-21, position: B1, role: animal}
 
   - animal_id: HLBSSL34
     batch_id: S-SL
     placements: [{from: 2026-09-12, position: B2, source: recording-console}]
-    recordings: [{base: allego_0__uid0912-08-55-18, date: 2026-09-12, position: B2, role: animal}]
+    recordings:
+      - {base: allego_0__uid0912-08-55-18, date: 2026-09-12, position: B2, role: animal}
+      - {base: allego_0__uid0921-00-17-34, date: 2026-09-21, position: B2, role: animal}
 
   - animal_id: HLBSSL35
     batch_id: S-SL
     placements: [{from: 2026-09-12, position: C1, source: recording-console}]
-    recordings: [{base: allego_0__uid0912-08-55-18, date: 2026-09-12, position: C1, role: animal}]
+    recordings:
+      - {base: allego_0__uid0912-08-55-18, date: 2026-09-12, position: C1, role: animal}
+      - {base: allego_0__uid0921-00-17-34, date: 2026-09-21, position: C1, role: animal}
 
   - animal_id: HLBSSL39
     batch_id: S-SL
     placements: [{from: 2026-09-12, position: C2, source: recording-console}]
-    recordings: [{base: allego_0__uid0912-08-55-18, date: 2026-09-12, position: C2, role: animal}]
+    recordings:
+      - {base: allego_0__uid0912-08-55-18, date: 2026-09-12, position: C2, role: animal}
+      - {base: allego_0__uid0921-00-17-34, date: 2026-09-21, position: C2, role: animal}
 
   - animal_id: HLBSSL40
     batch_id: S-SL
     placements: [{from: 2026-09-12, position: D1, source: recording-console}]
-    recordings: [{base: allego_0__uid0912-08-55-18, date: 2026-09-12, position: D1, role: animal}]
+    recordings:
+      - {base: allego_0__uid0912-08-55-18, date: 2026-09-12, position: D1, role: animal}
+      - {base: allego_0__uid0921-00-17-34, date: 2026-09-21, position: D1, role: animal}
 
   - animal_id: HLBSSL38
     batch_id: S-SL
     placements: [{from: 2026-09-12, position: D2, source: recording-console}]
-    recordings: [{base: allego_0__uid0912-08-55-18, date: 2026-09-12, position: D2, role: animal}]
+    recordings:
+      - {base: allego_0__uid0912-08-55-18, date: 2026-09-12, position: D2, role: animal}
+      - {base: allego_0__uid0921-00-17-34, date: 2026-09-21, position: D2, role: animal}
 
 recordings:
   - base: allego_0__uid0912-08-55-18
@@ -90,3 +106,19 @@ recordings:
     notes: >
       24.065 h, ZT0 to ZT0, 262 channels at 1 kHz, 90.8 GB. file_integrity INTACT,
       86,634,624 data samples = 86,634,624 timestamp samples, remainder 0 and 0.
+
+  - base: allego_0__uid0921-00-17-34
+    date: 2026-09-21
+    notes: >
+      THE RECOVERY ENDPOINT. 36.707 h, 132,146,304 samples, 1 kHz, 262 ch,
+      Monday 2026-09-21 00:17:34 KST to Tuesday 2026-09-22 13:00. rung 0 PASS.
+      🔑 The protocol window is the LAST 28 h of this file, 09-21 09:00 to
+      09-22 13:00, which is unbroken inside it. Sampling slipped from 09-21 to
+      09-22 because of the mouse problem, and the recording was extended to meet
+      it. The first 8.71 h are outside the window.
+      ⚠️ The cards were computed over the WHOLE 36.707 h file, not the 28 h
+      window, so every percentage describes the longer span.
+      ⚠️ Added to this manifest on 2026-09-23. Until then this recording was
+      absent from S-SL entirely and its cards lived under the throwaway console
+      cohort auto-a91ef30eab66. allego_0__uid0913-11-20-07 and
+      allego_0__uid0920-09-00-07 are still in that state.

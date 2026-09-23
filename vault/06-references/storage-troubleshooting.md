@@ -52,7 +52,7 @@ If `status_level: "blocked"` and you need to record now, choices in order of pre
 
 ### "Storage full" but disk shows space
 
-The reserve cap is taking effect. The daemon is doing exactly what it's supposed to do. See [[../04-journal/2026-04-02|Apr 2 storage system rollout]] for design rationale.
+The reserve cap is taking effect. The daemon is doing exactly what it's supposed to do. See the Apr 2 storage system rollout (no journal entry was written for that day) for design rationale.
 
 ### `df` shows space but Frigate stops recording
 
@@ -98,6 +98,6 @@ sqlite3 /srv/frigate/storage/frigate.db \
 
 ## References
 
-- [[../04-journal/2026-04-02|2026-04-02]] — storage management system rollout
+- 2026-04-02 — storage management system rollout. No journal entry exists for that date
 - [[../02-procedures/installation/storage-management-implementation|storage-management-implementation]] — full implementation guide
 - [[../03-troubleshooting/emergency-runbook|emergency-runbook]] (Symptom A) — first 10 min for disk full

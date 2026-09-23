@@ -17,7 +17,7 @@ status: completed
 > Pre-flight connection screen ran on Tuesday 2026-09-01, twice, and the verdict is **AMBER**:
 > two positions are solid, three flicker, three read as continuous breaks.
 > Expect **n = 2 guaranteed, up to n = 5 if the mechanical faults settle.**
-> Write the final go / no-go line in [[2026-09-02]] before pressing record.
+> Write the final go / no-go line in the 2026-09-02 journal before pressing record. (No entry was ever written for that date.)
 
 > [!info] Recording file, found 2026-09-14
 > The run happened but was never catalogued here — this page sat in `active/` at `status: planned`
@@ -164,7 +164,7 @@ RED, because unlike 2026-08-27 the chip grounds are all healthy and two animals 
    score it. Every chip floor must read **≥ 2000 µV**.
 3. Confirm the file is **1000 Hz and 262 channels**. A fresh Allego launch comes up at 30 kHz in
    `SMARTBOX_PRO` mode. Launch with `--disable-gpu`. See [[allego-mesa-gpu-crash-and-log-storm]].
-4. Write the go / no-go line into [[2026-09-02]] with the positions started and the positions
+4. Write the go / no-go line into the 2026-09-02 journal with the positions started and the positions
    knowingly started without.
 5. Start the 20 h run and arm the byte-rate watchdog on the new file.
 6. Kill any `allegoserver` thread left spinning after the GUI closes, it costs +10 W and +11 °C.

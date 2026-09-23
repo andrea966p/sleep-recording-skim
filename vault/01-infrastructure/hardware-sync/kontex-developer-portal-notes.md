@@ -82,7 +82,7 @@ libxdaq/0.5.2
 
 Packages in the index: `libxdaq`, `libxdaqnp` (Neuropixels), `libxvc` (ThorVision), `xdaqmetadata`.
 
-**C++ API shape (`xdaq::` namespace).** Register-level — no named `DAQ_ON` / `DI 03` symbols; those mappings live in Allego/Radiens. Core surface (see [[https://developer.kontex.io/libxdaq-docs/device.html|libxdaq Device API]]):
+**C++ API shape (`xdaq::` namespace).** Register-level — no named `DAQ_ON` / `DI 03` symbols; those mappings live in Allego/Radiens. Core surface (see [libxdaq Device API](https://developer.kontex.io/libxdaq-docs/device.html)):
 
 - `set_register(addr, value, mask)` / `set_register_sync(...)` / `send_registers()`
 - `get_register(addr)` / `get_register_sync(addr)` / `read_registers()`

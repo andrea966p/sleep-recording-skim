@@ -155,7 +155,7 @@ After restore, **regenerate** what was deliberately excluded: `npm install` (fro
 - `/srv/frigate/logs/frigate/` — Frigate Python log (post-Phase 1.2 mount; before that, `/dev/shm/logs/` and lost on restart)
 - `http://localhost:19999` — Netdata dashboard, system metrics + custom NVR alerts
 - `http://localhost:3001` — Uptime Kuma, service availability + Slack alerts
-- [[incidents/|incident archive]] — past patterns
+- `03-troubleshooting/incidents/` — past patterns. A folder, so it is a path, not a link
 
 ## Escalation
 

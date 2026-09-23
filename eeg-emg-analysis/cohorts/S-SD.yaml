@@ -110,13 +110,28 @@ recordings:
       ⚠️ 84 s cannot rule out a SLOW intermittent on the static three.
       Full report: vault 05-experiments/active/2026-09-02-S-SD-recovery-sleep.md
 
-# PLANNED. Recovery-sleep endpoint, Wednesday 2026-09-02 13:00 KST to Thursday
-# 2026-09-03 09:00 KST, 20.0 h, on all eight positions. CSD is FINISHED across
-# this window -- unlike the W-SD 08-27 run, which sat after the PENULTIMATE bout
-# with the protocol still running. Animals are SAMPLED Thursday 13:00, four hours
-# after it stops, so THE RECORDING CANNOT BE REPEATED. Pre-flight verdict AMBER:
-# n = 2 guaranteed (A2 EEG, D2 both roles), up to n = 5 if A1/C2/C1 settle.
-# A 10 minute re-screen GATES the start. Add the uid here once it exists.
+  - base: allego_2__uid0902-13-00-28
+    date: 2026-09-02
+    notes: >
+      THE TERMINAL ENDPOINT. 20.078 h, 72,279,936 samples, 1000 Hz, 262 ch,
+      Wednesday 2026-09-02 13:00:26 KST to Thursday 09:05. rung 0 PASS.
+      CSD is FINISHED across this window, unlike the W-SD 08-27 run which sat
+      after the PENULTIMATE bout with the protocol still running.
+      🛑 THE ANIMALS WERE SAMPLED. This recording cannot be repeated, ever.
+      🔴 It is 3 h 55 m SHORT of the protocol window. The standard for a
+      sleep-deprivation recovery is 13:00 -> 13:00, 24 h, ending at sampling;
+      this stopped at 09:05, so the four hours immediately before the terminal
+      endpoint are missing. See vault
+      02-procedures/CANONICAL-recording-windows-and-protocol.md.
+      Outcome n = 1 at rung 2: D2/HLBSSD18 CONNECTED (60.6% usable, longest
+      unbroken block 19.7 min). B1 and B2 UNJUDGEABLE on chip floor (769 uV,
+      124 uV against the 800 uV gate). A1, A2, C1, C2, D1 FAIL at 0.0-0.9%.
+      ⚠️ Added to this manifest on 2026-09-23. Until then the recording was
+      absent from this block entirely, so every card it produced carried
+      animal_id UNKNOWN@<position> -- no rec_ref means no date, no date means no
+      resolution moment. The eight endpoint cards were unidentified for three
+      weeks.
+
 
 # -----------------------------------------------------------------------------
 animals:
@@ -145,6 +160,7 @@ animals:
       - {base: allego_1__uid0826-12-50-16, date: 2026-08-26, position: A1, role: animal}
       - {base: allego_0__uid0901-12-24-03, date: 2026-09-01, position: A1, role: animal}
       - {base: allego_1__uid0901-12-38-53, date: 2026-09-01, position: A1, role: animal}
+      - {base: allego_2__uid0902-13-00-28, date: 2026-09-02, position: A1, role: animal}
     notes: >
       verdict_2026_08_24: EEG INTERMITTENT 35.3% / 3.0 min longest block, dropped out entirely min 30-50. EMG GOOD 92.8% / 21.3 min.
       verdict_2026_08_25: EEG 31.0% / 0.09 h, EMG EXCELLENT 94.5%, BOTH 30.4%. EMG dark/light amplitude 4.29x, the strongest on the rig.
@@ -175,6 +191,7 @@ animals:
       - {base: allego_1__uid0826-12-50-16, date: 2026-08-26, position: A2, role: animal}
       - {base: allego_0__uid0901-12-24-03, date: 2026-09-01, position: A2, role: animal}
       - {base: allego_1__uid0901-12-38-53, date: 2026-09-01, position: A2, role: animal}
+      - {base: allego_2__uid0902-13-00-28, date: 2026-09-02, position: A2, role: animal}
     notes: >
       verdict_2026_08_24: EEG 100% usable, unbroken the whole 60.0 min. EMG OPEN (531 uV).
       verdict_2026_08_25: EEG 79.5% with the run's longest block, 3.62 h. EMG OPEN. Declined progressively over the last 5 h (hours 19-23: 14/10/21/38/41%).
@@ -231,6 +248,7 @@ animals:
       - {base: allego_1__uid0826-12-50-16, date: 2026-08-26, position: B2, role: animal}
       - {base: allego_0__uid0901-12-24-03, date: 2026-09-01, position: B2, role: animal}
       - {base: allego_1__uid0901-12-38-53, date: 2026-09-01, position: B2, role: animal}
+      - {base: allego_2__uid0902-13-00-28, date: 2026-09-02, position: B2, role: animal}
     notes: >
       verdict_2026_08_24: EEG OPEN (4431 uV). EMG GOOD 88.1% / 30.8 min.
       verdict_2026_08_25: EEG OPEN (4425 uV, 0.0%). EMG 68.5%, BOTH 0.0%.
@@ -263,6 +281,7 @@ animals:
       - {base: allego_1__uid0826-12-50-16, date: 2026-08-26, position: C1, role: animal}
       - {base: allego_0__uid0901-12-24-03, date: 2026-09-01, position: C1, role: animal}
       - {base: allego_1__uid0901-12-38-53, date: 2026-09-01, position: C1, role: animal}
+      - {base: allego_2__uid0902-13-00-28, date: 2026-09-02, position: C1, role: animal}
     notes: >
       verdict_2026_08_24: EEG 99.7% / 41.3 min. EMG OPEN (453 uV).
       verdict_2026_08_25: EEG 85.2% / 0.47 h. EMG OPEN (455 uV, 0.0%).
@@ -294,6 +313,7 @@ animals:
       - {base: allego_1__uid0826-12-50-16, date: 2026-08-26, position: C2, role: animal}
       - {base: allego_0__uid0901-12-24-03, date: 2026-09-01, position: C2, role: animal}
       - {base: allego_1__uid0901-12-38-53, date: 2026-09-01, position: C2, role: animal}
+      - {base: allego_2__uid0902-13-00-28, date: 2026-09-02, position: C2, role: animal}
     notes: >
       verdict_2026_08_24: EEG 100% usable, unbroken the whole 60.0 min. EMG OPEN (1001 uV).
       verdict_2026_08_25: EEG 48.8% / 0.62 h. EMG OPEN (877 uV).
@@ -322,6 +342,7 @@ animals:
       - {base: allego_1__uid0826-12-50-16, date: 2026-08-26, position: B1, role: animal}
       - {base: allego_0__uid0901-12-24-03, date: 2026-09-01, position: B1, role: animal}
       - {base: allego_1__uid0901-12-38-53, date: 2026-09-01, position: B1, role: animal}
+      - {base: allego_2__uid0902-13-00-28, date: 2026-09-02, position: B1, role: animal}
     notes: >
       Operated and tethered with the rest of the batch but held OFF the rig until 2026-08-26. The registry lists XDAQ position "/" for this animal; that is now out of date.
       verdict_2026_08_26: CONNECTED on both roles. EEG rms 93 uV, slope -1.47, lf/hf 17.34 against a chip floor p99 of 3.81 -- the widest separation on the rig. EMG 44 uV, 94.9% usable. ZERO railing on either channel. Chip grounded at 2186 uV where HLBSSD13 left it at 246 uV.
@@ -353,6 +374,7 @@ animals:
       - {base: allego_1__uid0826-12-50-16, date: 2026-08-26, position: D2, role: animal}
       - {base: allego_0__uid0901-12-24-03, date: 2026-09-01, position: D2, role: animal}
       - {base: allego_1__uid0901-12-38-53, date: 2026-09-01, position: D2, role: animal}
+      - {base: allego_2__uid0902-13-00-28, date: 2026-09-02, position: D2, role: animal}
     notes: >
       verdict_2026_08_24: PASS. Only animal usable on EEG AND EMG in the same epoch: 89.2%, 23.8 min unbroken. EEG 99.7% / 36.7 min, EMG 89.2%.
       verdict_2026_08_25: PASS. EEG 96.2% / 0.94 h, EMG 79.3%, BOTH 77.3% with a 21 min block. Immune to the dark-phase drop (-2.7 points).
@@ -384,6 +406,7 @@ animals:
       - {base: allego_1__uid0826-12-50-16, date: 2026-08-26, position: D1, role: animal}
       - {base: allego_0__uid0901-12-24-03, date: 2026-09-01, position: D1, role: animal}
       - {base: allego_1__uid0901-12-38-53, date: 2026-09-01, position: D1, role: animal}
+      - {base: allego_2__uid0902-13-00-28, date: 2026-09-02, position: D1, role: animal}
     notes: >
       verdict_2026_08_24: EEG INTERMITTENT 53.3% / 9.0 min, deep mid-run dip then full recovery to 92% in the last block. EMG OPEN (928 uV).
       verdict_2026_08_25: EEG 1.4%, EMG 0.0%. ITS CHIP IS FINE (floor 3189 uV, normal all 24 h) so the fault is the TETHER, not the ground.

@@ -1,26 +1,26 @@
 {
   "schema_version": 2,
-  "generated": "2026-09-23T13:10:50+09:00",
+  "generated": "2026-09-23T17:57:14+09:00",
   "cohort_id": "S-SD",
-  "project_id": "",
-  "batch_id": "",
-  "animal_id": "UNKNOWN@D1",
-  "sex": "",
+  "project_id": "neurosurveillance-eeg",
+  "batch_id": "S-SD",
+  "animal_id": "HLBSSD19",
+  "sex": "M",
   "position": "D1",
   "tether_arm": "",
   "role": "animal",
   "recording": "allego_2__uid0902-13-00-28",
   "recording_base": "/home/skimlab/radix/data/allego_2__uid0902-13-00-28",
-  "recording_date": "",
+  "recording_date": "2026-09-02",
   "duration_h": null,
   "zt_start": null,
   "zt_end": null,
-  "age_weeks": null,
+  "age_weeks": 17,
   "age_is_derived": false,
-  "days_post_surgery": null,
-  "days_post_tether": null,
-  "body_weight_g": null,
-  "body_weight_occasion": "",
+  "days_post_surgery": 21,
+  "days_post_tether": 15,
+  "body_weight_g": 31.4,
+  "body_weight_occasion": "tethering",
   "criterion": "slope",
   "epoch_s_qc": 10,
   "epoch_s_staging": 4,
@@ -254,15 +254,79 @@
       "detail": {}
     }
   ],
-  "notes": "No animal is recorded in the D1 position on this date in cohort S-SD. The card is still produced, because the measurements are real, but the identity is not known.",
+  "notes": "verdict_2026_08_24: EEG INTERMITTENT 53.3% / 9.0 min, deep mid-run dip then full recovery to 92% in the last block. EMG OPEN (928 uV). verdict_2026_08_25: EEG 1.4%, EMG 0.0%. ITS CHIP IS FINE (floor 3189 uV, normal all 24 h) so the fault is the TETHER, not the ground. verdict_2026_08_26: unchanged, EEG 3.9%, EMG 0.0%, 75.4% EEG railing. Its two channels correlate at |r| 0.208 with a 75th percentile of 0.51 -- the SHARED-PATH signature, i.e. one damaged cable feeding both channels. Agrees with the registry note. verdict_2026_09_01: \u274c CONTINUOUS BREAK, not torsion, and consistent with the 08-26 shared-path signature. Chip floor recovered 2691 -> 3793 uV on the re-seat, and both roles are open and static -- EEG rms 1510-2708 uV (variability 13.6%, max/min 1.8), EMG rms 1568-2158 uV, 0 of 21 epochs above floor. \u26a0\ufe0f D1's OWN wire-free floor is CONTAMINATED, lf/hf p99 of 4.6 here and 18-29 in longer files where other chips read 2-7. Judge D1 on rms and slope, never on its ratio.\n",
   "surgery_notes": "",
   "sampling_notes": "",
-  "timeline": [],
-  "weighings": [],
+  "timeline": [
+    {
+      "date": "2026-07-28",
+      "kind": "arrival",
+      "label": "arrival"
+    },
+    {
+      "date": "2026-08-12",
+      "kind": "surgery",
+      "label": "surgery"
+    },
+    {
+      "date": "2026-08-18",
+      "kind": "tether",
+      "label": "tethered"
+    },
+    {
+      "date": "2026-08-24",
+      "kind": "recording",
+      "label": "allego_0__uid0824-17-56-51"
+    },
+    {
+      "date": "2026-08-25",
+      "kind": "recording",
+      "label": "allego_0__uid0825-09-00-00"
+    },
+    {
+      "date": "2026-08-26",
+      "kind": "recording",
+      "label": "allego_1__uid0826-12-50-16"
+    },
+    {
+      "date": "2026-09-01",
+      "kind": "recording",
+      "label": "allego_0__uid0901-12-24-03"
+    },
+    {
+      "date": "2026-09-01",
+      "kind": "recording",
+      "label": "allego_1__uid0901-12-38-53"
+    },
+    {
+      "date": "2026-09-02",
+      "kind": "recording",
+      "label": "allego_2__uid0902-13-00-28"
+    },
+    {
+      "date": "2026-09-03",
+      "kind": "sampling",
+      "label": "sampling"
+    }
+  ],
+  "weighings": [
+    {
+      "date": "2026-08-12",
+      "grams": 31.0,
+      "occasion": "surgery",
+      "source": "husbandry-sheet"
+    },
+    {
+      "date": "2026-08-18",
+      "grams": 31.4,
+      "occasion": "tethering",
+      "source": "husbandry-sheet"
+    }
+  ],
   "provenance": {
     "thresholds_file": "/home/skimlab/sleep-recording-skim/eeg-emg-analysis/core/qc_thresholds.py",
     "thresholds_hash": "01e11630dcbf",
-    "git_rev": "b97c97b",
+    "git_rev": "c44e2c2",
     "cohort_manifest": "/home/skimlab/sleep-recording-skim/eeg-emg-analysis/cohorts/S-SD.yaml",
     "processed_files": {},
     "epoch_s_qc": 10,

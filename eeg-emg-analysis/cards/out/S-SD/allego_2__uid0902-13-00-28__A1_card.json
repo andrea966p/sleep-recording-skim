@@ -1,26 +1,26 @@
 {
   "schema_version": 2,
-  "generated": "2026-09-23T13:10:30+09:00",
+  "generated": "2026-09-23T17:56:55+09:00",
   "cohort_id": "S-SD",
-  "project_id": "",
-  "batch_id": "",
-  "animal_id": "UNKNOWN@A1",
-  "sex": "",
+  "project_id": "neurosurveillance-eeg",
+  "batch_id": "S-SD",
+  "animal_id": "HLBSSD11",
+  "sex": "M",
   "position": "A1",
   "tether_arm": "",
   "role": "animal",
   "recording": "allego_2__uid0902-13-00-28",
   "recording_base": "/home/skimlab/radix/data/allego_2__uid0902-13-00-28",
-  "recording_date": "",
+  "recording_date": "2026-09-02",
   "duration_h": null,
   "zt_start": null,
   "zt_end": null,
-  "age_weeks": null,
+  "age_weeks": 17,
   "age_is_derived": false,
-  "days_post_surgery": null,
-  "days_post_tether": null,
-  "body_weight_g": null,
-  "body_weight_occasion": "",
+  "days_post_surgery": 23,
+  "days_post_tether": 15,
+  "body_weight_g": 32.2,
+  "body_weight_occasion": "tethering",
   "criterion": "slope",
   "epoch_s_qc": 10,
   "epoch_s_staging": 4,
@@ -254,15 +254,79 @@
       "detail": {}
     }
   ],
-  "notes": "No animal is recorded in the A1 position on this date in cohort S-SD. The card is still produced, because the measurements are real, but the identity is not known.",
-  "surgery_notes": "",
+  "notes": "verdict_2026_08_24: EEG INTERMITTENT 35.3% / 3.0 min longest block, dropped out entirely min 30-50. EMG GOOD 92.8% / 21.3 min. verdict_2026_08_25: EEG 31.0% / 0.09 h, EMG EXCELLENT 94.5%, BOTH 30.4%. EMG dark/light amplitude 4.29x, the strongest on the rig. verdict_2026_08_26: EEG UNJUDGEABLE -- the code returns 0.0% but chip A1's own wire-free floor steepened to slope p1 -2.437 (7 of 14 sites below -2.4, floor lf/hf p99 27.78) while the animal is unchanged (rms 94, slope -1.33, lf/hf 13.46). EMG EXCELLENT 93.9%, dark/light 4.40x. \u2b50 A1 is the ONLY channel in the 08-26 run with brief rail hits on a healthy-amplitude EEG: 6.11% of epochs, median railed fraction 0.0022, clustered 22:50-02:50. That is a mechanical contact transient, not an open input. verdict_2026_09_01: \ud83d\udd27 INTERMITTENT, torsion signature. EEG flips between rms 62-78 uV with real signal (lf/hf up to 15.4 vs floor p99 3.98, above it in 16 of 21 epochs) and rms 410-3050 uV open, SEVEN times in 84 s, while its chip floor sits unmoved at 5361 uV. EMG OPEN, rms 1064 and 1370 uV of 60 Hz, against 9 uV three days earlier.\n",
+  "surgery_notes": "bleeding F-L eeg, struggle to induce anesthesia, hiccups strong\n",
   "sampling_notes": "",
-  "timeline": [],
-  "weighings": [],
+  "timeline": [
+    {
+      "date": "2026-07-28",
+      "kind": "arrival",
+      "label": "arrival"
+    },
+    {
+      "date": "2026-08-10",
+      "kind": "surgery",
+      "label": "surgery"
+    },
+    {
+      "date": "2026-08-18",
+      "kind": "tether",
+      "label": "tethered"
+    },
+    {
+      "date": "2026-08-24",
+      "kind": "recording",
+      "label": "allego_0__uid0824-17-56-51"
+    },
+    {
+      "date": "2026-08-25",
+      "kind": "recording",
+      "label": "allego_0__uid0825-09-00-00"
+    },
+    {
+      "date": "2026-08-26",
+      "kind": "recording",
+      "label": "allego_1__uid0826-12-50-16"
+    },
+    {
+      "date": "2026-09-01",
+      "kind": "recording",
+      "label": "allego_0__uid0901-12-24-03"
+    },
+    {
+      "date": "2026-09-01",
+      "kind": "recording",
+      "label": "allego_1__uid0901-12-38-53"
+    },
+    {
+      "date": "2026-09-02",
+      "kind": "recording",
+      "label": "allego_2__uid0902-13-00-28"
+    },
+    {
+      "date": "2026-09-03",
+      "kind": "sampling",
+      "label": "sampling"
+    }
+  ],
+  "weighings": [
+    {
+      "date": "2026-08-10",
+      "grams": 31.4,
+      "occasion": "surgery",
+      "source": "husbandry-sheet"
+    },
+    {
+      "date": "2026-08-18",
+      "grams": 32.2,
+      "occasion": "tethering",
+      "source": "husbandry-sheet"
+    }
+  ],
   "provenance": {
     "thresholds_file": "/home/skimlab/sleep-recording-skim/eeg-emg-analysis/core/qc_thresholds.py",
     "thresholds_hash": "01e11630dcbf",
-    "git_rev": "b97c97b",
+    "git_rev": "c44e2c2",
     "cohort_manifest": "/home/skimlab/sleep-recording-skim/eeg-emg-analysis/cohorts/S-SD.yaml",
     "processed_files": {},
     "epoch_s_qc": 10,
