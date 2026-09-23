@@ -47,7 +47,7 @@ never get a folder. Use it whenever you want every position exported, not just t
   README.md   manifest.json
   <POS>/
     <POS>_raw_1000Hz.mat     1.1 GB   full rate, MATLAB v5
-    <POS>_raw_1000Hz.txt     3.1-3.5 GB   time_s,eeg_uV,emg_uV
+    <POS>_raw_1000Hz.txt     3.1-3.5 GB   OPT IN, pass --txt
     <POS>_hypnogram_4s.csv   35,706 epochs
     <POS>_summary.txt        staging verdict and its caveats
     <POS>_features.json      per-position feature summary
@@ -55,7 +55,19 @@ never get a folder. Use it whenever you want every position exported, not just t
     _VERDICT.txt             one line: is this usable, and why not
 ```
 
-About **4.4 GB per position**, so ~35 GB for eight.
+About **1.1 GB per position**, so ~9 GB for eight. With `--txt` it is 4.4 GB and
+~35 GB, which is why the text file is no longer written by default.
+
+> [!warning] The .txt is a LOSSY copy of the .mat, at three times the size
+> It rounds to two decimals: 61.815 µV is written `61.81`. The `.mat` beside it
+> holds the same signal at full float32 precision in a third of the space. Pass
+> `--txt` only for a tool that genuinely cannot read MATLAB v5.
+>
+> Written unconditionally until 2026-09-23, which had put **27.6 GB** of rounded
+> text on the rig for a single recording. Those files were deleted after checking
+> that all eight `.mat` files load, agree on sample count, and match the text
+> values. `--skip-text` is still accepted and ignored, so old callers do not
+> break — they simply get the new default.
 
 ## Loading in MATLAB
 
