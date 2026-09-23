@@ -45,9 +45,15 @@ stay out of `radix-archive.sh`'s `ls -1 "$SRC"` and out of every pipeline glob.
 Typical result: **262 channels → 16, a 93.2% reduction.** A 75 GB twenty-hour run becomes ~5.8 GB.
 
 > [!danger] A KEEP LIST WRITTEN AS INDICES IS NOT PORTABLE BETWEEN RECORDINGS ON THIS RIG
-> `allego_0__uid0904-08-55-25` has **134 channels**, ports of 32, and uses sites `/18`–`/23`. The
+> `allego_0__uid0904-08-55-25` had **134 channels**, ports of 32, and used sites `/18`–`/23`. The
 > usual index list `[0,1,32,33,64,…,225]` applied to it would read **aux channels instead of
 > electrodes** and run off the end of the file. Neither failure announces itself.
+>
+> ⚠️ Both recordings cited on this page — `allego_0__uid0904-08-55-25` and
+> `allego_0__uid0829-08-34-39` — were **deleted on 2026-09-23**, so neither example can be
+> reproduced here any more. All 27 recordings now on e10 are 256 primary channels with
+> 64-channel ports. **The rule stands; only its counter-example is gone.** Keep lists must
+> still be written as labels, because the next odd recording will not announce itself either.
 >
 > **Always express a selection as site labels.** The tool resolves labels against each file's own
 > `biointerface_map` and refuses on any miss. `--keep-index` is validated and refused rather than
@@ -155,7 +161,7 @@ Failure renames the output to `<dst>.REJECTED.<utc>.*` so it can never be mistak
 - **`--require-idle`** refuses while a data file under `{RAW_ROOT}` has been touched in the last
   120 s. ⚠️ It deliberately does **not** consult `status.is_live_recording`: a recording that ends
   abnormally never has its sidecar rewritten, so that flag stays `true` forever
-  (`allego_0__uid0829-08-34-39` still claims to be live ten days on). The flag is reported separately
+  (`allego_0__uid0829-08-34-39` still claimed to be live ten days on). The flag is reported separately
   as a **crash marker**.
 
 ## 4b. What has actually been stripped, on real files

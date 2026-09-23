@@ -168,7 +168,7 @@ section on implausibly low wake. The two sets are allowed to differ and do.
 The baseline is now stripped (**22 channels, not 16** — gate B refused to drop
 `din_1`, which carries 460 transitions in this recording where every other
 recording has it flat) and verified on the SKIM NAS at
-`2026-09-10_allego_0__uid0910-09-00-00/`, with its QC bundle alongside. Naming
+`20260910_HLBWSL_BSR/`, with its QC bundle alongside. Naming
 and inventory: [[02-procedures/CANONICAL-recording-naming-and-inventory]].
 
 ## Related

@@ -162,22 +162,22 @@ The recordings are right; the registry is not.
 largest file the rig had ever produced, and an **ECG recording** — not part of
 any sleep batch, which is why it had no registry row. It was also the one
 recording flagged `is_live_recording` while idle, with a `num_smpl` 8.06 s behind
-what its files actually held. Gone from e10; its three S3 objects still need
-deleting.
+what its files actually held. Gone from e10 and from S3.
 
 **`allego_0__uid0904-08-55-25` was deleted on 2026-09-23.** 30 h at 128 primary
 channels, half the rig, recorded on the S-SL tethering day with no registry row.
-Andrea identified it as belonging to something else entirely. Removed from e10;
-its three S3 objects still need deleting with an identity that has delete rights,
-because the `radix-s3-backup` user is explicitly denied that, by design.
+Andrea identified it as belonging to something else entirely. Removed from e10 and from S3 —
+the S3 versions had to go too, since versioning means a plain delete leaves a
+marker and the version still billing.
 
 **The 09-17 run record has a typo.** It lists D1 as `HLBWSL7`; no such animal
 exists and the registry has HLBWSL27 there. Corrected in `cohorts/W-SL.yaml`,
 left as-is in the run record.
 
 **`_quarantine-2026-08-24-crashed-run/`** holds a real 13 min recording
-(`allego_0__uid0824-17-23-21`, 822 MB) inside `~/radix/data`. Because it is a
-subdirectory, the S3 archiver skips it, so it has no off-site copy.
+(`allego_0__uid0824-17-23-21`, 822 MB) inside `~/radix/data`. The archiver used to
+skip it, being a subdirectory, so it had no off-site copy at all while every file
+beside it had two. **Fixed 2026-09-23** — the archiver recurses and it is in S3.
 
 ## Related
 

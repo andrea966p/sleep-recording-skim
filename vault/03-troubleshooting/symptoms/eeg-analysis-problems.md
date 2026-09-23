@@ -155,13 +155,13 @@ python3 stage2_split.py --force <recording_base>  # overwrite existing files
 ```
 
 **The mirror image of this** — stage 1 taking 15 minutes again when you expected
-it to be instant — is the same mechanism. The cache lives in `/tmp`:
+it to be instant — is the same mechanism. The cache lives under `$HOME`:
 
 ```
 EEG_QC_CACHE   default /home/skimlab/eeg-qc-cache/  (was /tmp until 2026-09-23)
 ```
 
-`/tmp` is cleared on reboot, so the first run after a restart is always slow.
+It used to live in `/tmp`, which is cleared on reboot; that destroyed three QC bundles on 2026-09-22 and the cache moved to `$HOME` on 2026-09-23.
 Point it somewhere persistent if that matters:
 
 ```bash
