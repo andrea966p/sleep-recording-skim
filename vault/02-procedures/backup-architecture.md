@@ -30,7 +30,7 @@ happens. A file that exists only there is a file with one copy.
 
 | Data | e10 local | bilab NAS | SKIM NAS | AWS S3 |
 |---|---|---|---|---|
-| Raw xdat (262 ch) | `~/radix/data` | until 2026-08-19 only | ❌ never | ✅ `radix/data/` |
+| Raw xdat (262 ch) | `~/radix/data` | until 2026-08-19 only | ❌ never | ✅ `radix/data/`, verified 1:1 |
 | Stripped xdat (16 ch) | `~/radix/stripped` | ❌ | ✅ `03_Data_Mouse/<user>/` | ✅ `radix/stripped/` |
 | Git repo + vault | `~/sleep-recording-skim` | ✅ nightly tarball | ❌ | ❌ (GitHub is the off-site copy) |
 | e10 settings, daemon state, Frigate config | various | ✅ nightly tarball | ❌ | ❌ |
@@ -94,7 +94,7 @@ lifecycle rule aborts incomplete multipart uploads after 7 days.
 
 | Prefix | Source on e10 | Job | Size |
 |---|---|---|---|
-| `radix/data/` | `~/radix/data` | `raw` | 87 objects, 1.301 TB |
+| `radix/data/` | `~/radix/data` | `raw` | 81 objects, 1.017 TB |
 | `radix/stripped/` | `~/radix/stripped` | `stripped` | 49 objects, 27.4 GB |
 | `video/` | `/opt/neurosurveillance/exports/` | *planned* | — |
 
@@ -112,7 +112,7 @@ Runs **01:30 nightly**, stripped first (small, finishes fast), then raw. Both
 hard-stop at 08:30 for the morning recording window.
 
 > [!success] The archive is real as of 2026-09-23
-> **136 objects, 1.329 TB**, both jobs `COMPLETE`, every object SHA256-verified by
+> **130 objects, 1.045 TB**, both jobs `COMPLETE`, every object SHA256-verified by
 > S3 on upload. Before this the bucket held **zero bytes**: the job was installed
 > on 09-20 and every scheduled run since had deferred, because a recording was
 > live at 01:30 each night. A backup that has never once run is indistinguishable
@@ -132,6 +132,33 @@ hard-stop at 08:30 for the morning recording window.
 >
 > ⚠️ `_quarantine-2026-08-24-crashed-run/` is still skipped, being a subdirectory.
 > It holds a real 13 min recording, 822 MB, with **no off-site copy**.
+
+> [!tip] Verify the mirror, do not assume it
+> The archive matches e10 only if every local file has an object of the same size
+> and nothing is orphaned the other way. Checked 2026-09-23 after two recordings
+> were deleted:
+>
+> ```
+> RAW: 81 local, 81 in S3
+>    on e10 but NOT in S3 : none
+>    in S3 but NOT on e10 : none
+>    size mismatches      : none
+> ```
+>
+> The stripped prefix legitimately lags: anything stripped after the last 01:30
+> run waits for the next one. On 2026-09-23 that was 28 files, 40.73 GB. A lag is
+> only a problem if it survives a night, which happens when a recording is live at
+> 01:30 and the job defers.
+>
+> 🔴 **Deleting a recording is a THREE place job.** `~/radix/data`, the S3 objects,
+> and — because versioning is on — the S3 **versions** behind them. A console
+> delete with "Show versions" off writes a delete marker: the object leaves the
+> listing and the version keeps billing. `radix-s3-backup` is explicitly denied
+> `s3:DeleteObject`, so this is done from an identity that has delete rights,
+> never by loosening that policy.
+>
+> ⚠️ GLACIER_IR bills a **90 day minimum** per object, so deleting something
+> recently uploaded still costs the remainder of its 90 days.
 
 Full page: [[02-procedures/installation/radix-s3-archive]].
 
