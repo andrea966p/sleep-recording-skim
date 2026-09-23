@@ -406,6 +406,10 @@ animals:
     placements:
       - {from: 2026-08-10, position: HABITUATION-RACK, source: bench-note,
          tether_notes: "tethered in the habituation rack; registry says the tether may have been damaged by climbing"}
+      # 17:20 is AFTER allego_0__uid0819-09-00-00 ended at 17:16, so that
+      # recording's B1 card correctly reads UNKNOWN@B1: nobody was in the
+      # position while it ran. That is the truth, not a gap to be filled. The
+      # 17:25 restart (allego_1__uid0819-17-25-20) is the one this animal is in.
       - {from: 2026-08-19 17:20, position: B1, source: journal-2026-08-19,
          tether_notes: "moved into B1 the evening the previous B1 animal chewed and cut its tether; registry then records 08/21 ate the tether"}
     notes: >
