@@ -135,6 +135,42 @@ day colours ("review"), so recording day is **also** encoded by marker shape.
 PDF properties were NOT machine-inspected (`pypdf` absent) and nothing here is
 checked against a journal's requirements.
 
+## Added 2026-09-23 — the baseline now has a manifest, a QC bundle and a stripped copy
+
+None of this changes a number above. The sleep analysis on this page was run
+against the raw file and stands. What was missing was everything *around* it.
+
+**The W-SL batch had no cohort manifest until 2026-09-23.** `cards/ladder.py`
+requires `--cohort`, so the baseline had never been through the verdict ladder,
+and `convert/strip_channels` refuses to strip a recording with no QC bundle —
+stripping to 16 channels deletes the wire-free floor the connection criterion is
+measured against, permanently. So the baseline had also never been stripped and
+had never reached the NAS. It existed as raw on e10 and nowhere else.
+
+`cohorts/W-SL.yaml` now exists. Ladder verdicts for the baseline:
+
+| pos | animal | 2 CONN | 3 SCORE | 4 ARCH |
+|---|---|---|---|---|
+| A1 | HLBWSL21 | UNJUDGEABLE | BLOCKED | BLOCKED |
+| A2 | HLBWSL22 | PASS | PASS | PROVISIONAL |
+| B1 | HLBWSL23 | PASS | FAIL | BLOCKED |
+| B2 | HLBWSL24 | PASS | PASS | PROVISIONAL |
+| C1 | HLBWSL25 | FAIL | BLOCKED | BLOCKED |
+| C2 | HLBWSL26 | FAIL | BLOCKED | BLOCKED |
+| D1 | HLBWSL27 | PASS | PASS | PROVISIONAL |
+| D2 | HLBWSL29 | PASS | FAIL | BLOCKED |
+
+⚠️ **These are rung verdicts, not this page's accepted set.** The ladder asks
+whether the sleep question can be asked at all; the analysis above then applies
+its own stage-3 criteria on top, including the `WAKE_LO` rejections in the
+section on implausibly low wake. The two sets are allowed to differ and do.
+
+The baseline is now stripped (**22 channels, not 16** — gate B refused to drop
+`din_1`, which carries 460 transitions in this recording where every other
+recording has it flat) and verified on the SKIM NAS at
+`2026-09-10_allego_0__uid0910-09-00-00/`, with its QC bundle alongside. Naming
+and inventory: [[02-procedures/CANONICAL-recording-naming-and-inventory]].
+
 ## Related
 
 [[recording-2026-09-17-HLBW_SL-28h]] · [[animal-card-verdict-ladder]] ·

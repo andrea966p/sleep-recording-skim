@@ -55,6 +55,7 @@ Production IPs, usernames, paths, and settings.
 - [[02-procedures/sleep-recording-operator-manual|⭐ Sleep-Recording Operator Manual — START HERE, ordered phases from assembly to EEG/EMG analysis]]
 - [[06-references/radiens-software-reference|⭐ Radiens Software — PRIMARY Reference (Allego + Videre)]] — **main software reference; embeds the full 177-page NeuroNexus manual + our load-bearing facts (mode, channel select, no in-GUI rename)**
 - [[06-references/intan-rhd2216-reference|⭐ Intan RHD2216 Chip Reference — bipolar, ±5 mV rail, filters (datasheet-cited)]]
+- ⭐⭐ [[02-procedures/CANONICAL-recording-naming-and-inventory|CANONICAL — what a recording is called, and every recording there is]] — **always `allego_N__uidMMDD-HH-MM-SS`; a bare `uid0910-09-00-00` names no file.** Holds the generated inventory of all 29 recordings on e10, which eight are the experiment, and the known discrepancies. **If any other page disagrees, this one wins.**
 - ⭐⭐ [[02-procedures/CANONICAL-allego-channel-selection|CANONICAL — which Allego channels to select. SETTLED.]] — **select `/1`,`/2`,`/33`,`/34` per port. 16 channels for 8 mice.** Proven from the datasheet, the recorded metadata, and a measurement of all 64 slots on all 4 ports. **If any other page disagrees, this one wins.**
 - [[02-procedures/signal-mapping-guide|⭐ Signal Mapping Guide — which channel is which electrode (EEG/EMG, step-by-step)]]
 - [[02-procedures/signal-quality-and-grounding|⭐ Signal Quality & Grounding — fix the ground, then judge the signal]]

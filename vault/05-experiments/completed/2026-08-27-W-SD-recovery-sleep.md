@@ -59,7 +59,7 @@ cohort: W-SD
 | Data vs timestamps | equal, remainder 0 and 0 |
 | Watchdog | ran throughout, **zero stalls** until the hand stop |
 
-Features at `~/eeg-processed/2026-08-27/feat_uid0827-12-58-32.npz`.
+Features at `~/eeg-processed/2026-08-27/feat_allego_2__uid0827-12-58-32.npz`.
 
 ## The design
 
@@ -311,7 +311,7 @@ morning, twenty minutes of checking is cheap and twenty hours of one-animal data
 
 - Raw: `~/radix/data/allego_2__uid0827-12-58-32{_data,_timestamp}.xdat`, and
   `allego_3__uid0828-09-26-12` for the check
-- Features: `~/eeg-processed/2026-08-27/feat_uid0827-12-58-32.npz`, 7,243 × 128
+- Features: `~/eeg-processed/2026-08-27/feat_allego_2__uid0827-12-58-32.npz`, 7,243 × 128
 - Engine: `core/criteria.py`, `core/qc_thresholds.py` as of 2026-08-28
 - Cohort: `eeg-emg-analysis/cohorts/W-SD.yaml`; husbandry from
   `HLB_SOD1_Intake_Monitoring.xlsx`, sheets `Registry` (header row 5) and `W-SD`

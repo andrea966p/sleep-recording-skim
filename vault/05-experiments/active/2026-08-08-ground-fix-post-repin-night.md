@@ -24,7 +24,7 @@ tags: [eeg, emg, ecg, impedance, ground, cohort, overnight]
 
 ## What changed since last night
 
-| Thing | Last night (`uid0807-19-14-58`) | Tonight |
+| Thing | Last night (`allego_0__uid0807-19-14-58`) | Tonight |
 |---|---|---|
 | Cerebellum ground on the new mice | mated to the **orange** wire = **floating** | **re-pinned to brown, which lands on the headstage GND pad** |
 | Mice with a working ground | 0 of 7 | **6 of 7** |

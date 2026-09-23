@@ -22,7 +22,7 @@ sourced-from: 04-journal/2026-07/2026-07-15.md
 ---
 
 > [!success] OUTCOME, same evening — the council's framework held, but the winning lever was one nobody named: SHIELDING. See [[headstage-shielding-faraday-foil]].
-> Hours after this council reported, Andrea wrapped the headstages in aluminium foil and single-ended 60 Hz collapsed by up to 450x (3604 → 8 µV), producing **the first channel in project history to show real sleep architecture** (A1 of `uid0715-18-58-54`, td_sep -0.65). Re-analysing every archive with a corrected, scorer-style method confirmed **0 sleep biology across 111 h of previous recordings** (the 72 h run scored circadian power 0.0% on all 8 slots), so the council's "zero scoreable data" verdict is now DEFINITIVE rather than provisional.
+> Hours after this council reported, Andrea wrapped the headstages in aluminium foil and single-ended 60 Hz collapsed by up to 450x (3604 → 8 µV), producing **the first channel in project history to show real sleep architecture** (A1 of `allego_0__uid0715-18-58-54`, td_sep -0.65). Re-analysing every archive with a corrected, scorer-style method confirmed **0 sleep biology across 111 h of previous recordings** (the 72 h run scored circadian power 0.0% on all 8 slots), so the council's "zero scoreable data" verdict is now DEFINITIVE rather than provisional.
 >
 > **What the council got right:** the equation `differential_60Hz ≈ common_mode(floor) × electrode_Z_imbalance(binding)`; contact as the binding variable; "no scoreable data, NO-GO"; that the floating-slot control was invalid; that `60Hz%raw` was the wrong metric.
 > **What it missed:** all five advisors reasoned about *earth* and *electrodes*, and none proposed **shielding the input node** — which is step 4 of Intan's own noise checklist and turned out to be the dominant coupling path. A reminder that a council reasoning from the packet you give it will not find the option you didn't put in the packet.
@@ -60,7 +60,7 @@ differential_60Hz_at_amplifier  ≈  common_mode_mains_voltage  ×  electrode_im
 
 **Q2 — zero scoreable sleep data exists, and the current state is NO-GO for a real run. Unanimous (5/5).**
 
-- The only physiological trace in the entire dataset is A2 of `uid0714-16-58-16`: post-notch 126–137 µV, **delta 60% / theta 10%** — genuine delta-dominant cortical EEG. But it is **~42 seconds** long → cannot stage sleep (needs continuous Wake/NREM/REM cycling over minutes-hours). Real signal, not a dataset.
+- The only physiological trace in the entire dataset is A2 of `allego_0__uid0714-16-58-16`: post-notch 126–137 µV, **delta 60% / theta 10%** — genuine delta-dominant cortical EEG. But it is **~42 seconds** long → cannot stage sleep (needs continuous Wake/NREM/REM cycling over minutes-hours). Real signal, not a dataset.
 - **The rest is not "hum over buried biology" — the biology is absent.** Killer test (metrologist): 07-15 connected mouse A2 (residual 183 µV, beta 40%, delta 16%) is spectrally indistinguishable from the OPEN, wire-to-nowhere floating slot C1 (181 µV, beta 39%, delta 11%). A connected animal and an unconnected input produce the same residual. Post-hoc filtering cannot recover what isn't there.
 - **These recordings are differential (bip/cm≈2), same regime as the failed 72 h/20 h runs → notch+bipolar CANNOT rescue them.** Add irreversible rail-clipping (legs clip ±6390 µV 4–8% of the time on 07-15) — clipped samples are gone.
 
@@ -81,7 +81,7 @@ In Allego, pause acquisition, run the built-in impedance measurement. Read BOTH 
 > - **A2 EEG:** frontal A/33 = **8.927 MΩ**, parietal A/34 = **8.416 MΩ** → BOTH legs open. No usable EEG contact → matches A2 = worst HUM.
 > - EMG: A1 2.15/2.41 MΩ (mediocre, matched); A2 0.665/2.70 MΩ (imbalanced 4×).
 > - Sanity: grounded floor sites (A/17–32, /49–64 ≈ 0.04–0.2 MΩ) read correctly → amp + measurement fine; failure is specifically the electrodes.
-> - Post-impedance recording `uid0715-10-28-40` (1.5 min): A1 phys 10% MARGINAL, A2 phys 10% HUM — unchanged (measured, not reseated). A1 frontal now rails 11% → likely nudged during the sweep.
+> - Post-impedance recording `allego_2__uid0715-10-28-40` (1.5 min): A1 phys 10% MARGINAL, A2 phys 10% HUM — unchanged (measured, not reseated). A1 frontal now rails 11% → likely nudged during the sweep.
 > - **Does NOT clear H1:** with legs this open, bad contact alone produces the differential hum, so the earth floor is untestable until contacts are fixed. Run TEST 3 AFTER reseating. **FIX FIRST:** reseat/replace A2 both EEG + A1 parietal (protect A1 frontal 0.82 MΩ), clean dried blood, re-measure to 0.1–1 MΩ matched within 2–3×.
 
 **TEST 2 — verify a REAL earth, then the single-ended collapse test (the H1 discriminator, done right).**

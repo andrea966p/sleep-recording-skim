@@ -44,7 +44,7 @@ cohort: S-SD
 | Data vs timestamps | equal, remainder 0 and 0 |
 | Size | 3.6 GiB |
 
-Features cached at `~/eeg-processed/2026-08-24/feat_uid0824-17-56-51.npz`.
+Features cached at `~/eeg-processed/2026-08-24/feat_allego_0__uid0824-17-56-51.npz`.
 
 This is the run that followed the two Allego GPU crashes and the 6.5 GB log storm of the same day;
 the crashed attempt sits in `~/radix/data/_quarantine-2026-08-24-crashed-run/`. Allego was launched
@@ -182,6 +182,6 @@ professor as an explanation for a failure.
 ## Provenance
 
 - Raw: `~/radix/data/allego_0__uid0824-17-56-51{_data,_timestamp}.xdat` + `.xdat.json`
-- Features: `~/eeg-processed/2026-08-24/feat_uid0824-17-56-51.npz`, 360 × 128
+- Features: `~/eeg-processed/2026-08-24/feat_allego_0__uid0824-17-56-51.npz`, 360 × 128
 - Engine: `core/criteria.py`, `core/qc_thresholds.py` as of 2026-08-27
 - Cohort: `cohorts/S-SD.yaml`; husbandry from `HLB_SOD1_Intake_Monitoring.xlsx` sheet `Registry`

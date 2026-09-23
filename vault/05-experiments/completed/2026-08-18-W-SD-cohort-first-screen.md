@@ -178,10 +178,10 @@ all. That is why it is legitimate to compare it across files that hold completel
 
 | recording | A1 | A2 | B1 | B2 | C1 | C2 | D1 | D2 |
 |---|---|---|---|---|---|---|---|---|
-| `uid0818` (today) | 5192 | 3952 | **162** | 4132 | 4596 | 3088 | **82** | 5006 |
-| `uid0816` | 5609 | **119** | 4613 | 3368 | 3264 | 5097 | 3614 | 1138 |
-| `uid0814` | 3785 | **114** | 5592 | 4555 | 2846 | 5153 | 4443 | 1278 |
-| `uid0809` | 1611 | 4753 | 3286 | 3601 | 1640 | 4686 | 4871 | 4763 |
+| `allego_0__uid0818-18-56-33` (today) | 5192 | 3952 | **162** | 4132 | 4596 | 3088 | **82** | 5006 |
+| `allego_1__uid0816-08-37-33` | 5609 | **119** | 4613 | 3368 | 3264 | 5097 | 3614 | 1138 |
+| `allego_0__uid0814-18-26-18` | 3785 | **114** | 5592 | 4555 | 2846 | 5153 | 4443 | 1278 |
+| `allego_0__uid0809-09-00-00` | 1611 | 4753 | 3286 | 3601 | 1640 | 4686 | 4871 | 4763 |
 
 A grounded chip sees the room's mains hum on its unconnected inputs, thousands of microvolts of it.
 A chip whose ground is not connected rejects mains as common mode and goes silent. **On 14 and 16

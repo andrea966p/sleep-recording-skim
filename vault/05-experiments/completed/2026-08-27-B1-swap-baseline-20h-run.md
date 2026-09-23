@@ -54,8 +54,8 @@ cohort: S-SD
 | Size | 76,685,563,904 bytes |
 | Watchdog | 608 checks, **zero stalls**, `allegoserver` up throughout, write rate 100.6 to 100.7% of nominal |
 
-Features cached at `~/eeg-processed/2026-08-26/feat_uid0826-12-50-16.npz`.
-Watchdog log at `~/eeg-processed/2026-08-26/watchdog_uid0826-12-50-16.log`.
+Features cached at `~/eeg-processed/2026-08-26/feat_allego_1__uid0826-12-50-16.npz`.
+Watchdog log at `~/eeg-processed/2026-08-26/watchdog_allego_1__uid0826-12-50-16.log`.
 
 ## What changed since the 24 h run
 
@@ -232,7 +232,7 @@ straight" would look like in a file.
 
 The animal did not change between the two runs. The floor did.
 
-| | 24 h run `uid0825` | this run `uid0826` |
+| | 24 h run `allego_0__uid0825-09-00-00` | this run `allego_1__uid0826-12-50-16` |
 |---|---|---|
 | A1 EEG rms | 94 µV | **94 µV** |
 | A1 EEG slope | −1.36 | **−1.33** |
@@ -349,7 +349,7 @@ movement-dependent contact pattern, at a slower cadence than usual.
 ## Provenance
 
 - Raw: `~/radix/data/allego_1__uid0826-12-50-16{_data,_timestamp}.xdat` + `.xdat.json`
-- Features: `~/eeg-processed/2026-08-26/feat_uid0826-12-50-16.npz`, 7,317 × 128, 10 s epochs
+- Features: `~/eeg-processed/2026-08-26/feat_allego_1__uid0826-12-50-16.npz`, 7,317 × 128, 10 s epochs
 - Engine: `~/Monitoring_project/eeg-emg-analysis/core/criteria.py` and `core/qc_thresholds.py`
 - Cohort: `~/Monitoring_project/eeg-emg-analysis/cohorts/S-SD.yaml`
 - Related: [[2026-08-21-39h-run-score]] · [[03-troubleshooting/symptoms/per-animal-failure-signatures|per-animal failure signatures]] · [[02-procedures/eeg-artefact-and-railing-rejection-policy|artefact and railing policy]]

@@ -230,7 +230,7 @@ population.
 - 🔴 **The rest of the cohort.** A2 looks like this. On 2026-08-08 the six re-pinned mice gave
   57 to 72 percent usable EEG at best, **their EMG showed no state dependence**, and **the
   electrocardiogram was dead on 7 of 7**. This page is the control, not the fleet.
-- 🔴 **The dark phase of `uid0808-16-17-36` is still unscored.**
+- 🔴 **The dark phase of `allego_0__uid0808-16-17-36` is still unscored.**
 - **A1's ground wiring** is still not fixed. Excellent control, one animal producing no data.
 - **No video** since the cameras were removed on 2026-08-04, so nothing here can be checked
   against behaviour.

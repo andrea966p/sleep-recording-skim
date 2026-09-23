@@ -266,8 +266,8 @@ never tethered, carry the treatment.
 ## Provenance
 
 - Raw: `~/radix/data/allego_{0,1,2,3}__uid08{18,19,27,28}-*` — seven files, all rung 0 INTACT
-- Features: `~/eeg-processed/2026-08-19/feat_uid0819-17-25-20.npz` (14,282 × 128) and
-  `~/eeg-processed/2026-08-27/feat_uid0827-12-58-32.npz` (7,243 × 128)
+- Features: `~/eeg-processed/2026-08-19/feat_allego_1__uid0819-17-25-20.npz` (14,282 × 128) and
+  `~/eeg-processed/2026-08-27/feat_allego_2__uid0827-12-58-32.npz` (7,243 × 128)
 - Engine: `core/criteria.py`, `core/qc_thresholds.py` as of 2026-08-29
 - Manifest: `eeg-emg-analysis/cohorts/W-SD.yaml`
 - Husbandry: `HLB_SOD1_Intake_Monitoring.xlsx`, sheets `Registry`, `W-SD`, `Sampling`

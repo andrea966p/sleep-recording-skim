@@ -9,7 +9,7 @@ priority: high
 # ⭐ Headstage shielding (Faraday foil) — the intervention that killed the mains floor
 
 > [!danger] 🛑 CORRECTION 2026-07-16 — the sleep claim on this page is RETRACTED
-> This page originally read *"the intervention that produced the first real sleep signal"*. **It did not.** The channel in question (A1 of `uid0715-18-58-54`, td_sep −0.65) was **hard-saturated against the ±6390 µV rail** — only **1 of its 493 epochs** was free of clipped samples. Excluding railed epochs flips the effect to **+0.63**, i.e. the "sleep" was an artifact of clipping severity tracking EMG. **The project still has zero scoreable sleep data.** Full post-mortem in [[2026-07-16]].
+> This page originally read *"the intervention that produced the first real sleep signal"*. **It did not.** The channel in question (A1 of `allego_0__uid0715-18-58-54`, td_sep −0.65) was **hard-saturated against the ±6390 µV rail** — only **1 of its 493 epochs** was free of clipped samples. Excluding railed epochs flips the effect to **+0.63**, i.e. the "sleep" was an artifact of clipping severity tracking EMG. **The project still has zero scoreable sleep data.** Full post-mortem in [[2026-07-16]].
 >
 > **What survives, and it is real:** the **60 Hz collapse**. That is a direct single-ended voltage measurement, not a derived statistic, and it reproduces. Foil remains the right call and stays on the rig.
 >
@@ -35,7 +35,7 @@ priority: high
 ## The evidence
 
 ### Before and after the foil, same rig, minutes apart
-Single-ended 60 Hz amplitude per electrode leg (`uid0715-17-58-36` → `uid0715-18-18-43`):
+Single-ended 60 Hz amplitude per electrode leg (`allego_0__uid0715-17-58-36` → `allego_1__uid0715-18-18-43`):
 
 | slot | leg | before foil | after foil | change |
 |---|---|---|---|---|
@@ -46,7 +46,7 @@ Single-ended 60 Hz amplitude per electrode leg (`uid0715-17-58-36` → `uid0715-
 | D2 | frontal | 631 µV | **66 µV** | 10x |
 
 ### The result that matters — the first sleep ever recorded here
-A 164-minute run (`uid0715-18-58-54`) on the foiled rig. Slot **A1** showed textbook architecture: EMG high (~1000 µV, active) for 0.2 h, then **dropped to ~250 µV and held for a solid hour**, then jumped back with bouts. During that quiet hour **theta/delta sat at ~0.2** (delta dominating theta 5 to 1 = NREM). The delta-versus-EMG scatter is **bimodal, two distinct clusters** = two behavioural states.
+A 164-minute run (`allego_0__uid0715-18-58-54`) on the foiled rig. Slot **A1** showed textbook architecture: EMG high (~1000 µV, active) for 0.2 h, then **dropped to ~250 µV and held for a solid hour**, then jumped back with bouts. During that quiet hour **theta/delta sat at ~0.2** (delta dominating theta 5 to 1 = NREM). The delta-versus-EMG scatter is **bimodal, two distinct clusters** = two behavioural states.
 
 ### The comparison that proves it was the foil
 Every archival recording on this PC, re-analysed with the same corrected method ([[#See also]]):
@@ -107,7 +107,7 @@ Our headstages sit at the **top of the chambers**, roughly **36 cm** of analog r
 So the lid-mounted headstage is the **noisier trade-off**, which you compensate for with shielding, grounding and low-impedance matched contacts. Intan's under-10 cm rule assumes their head-mounted design. **The foil is exactly that compensation, and it worked.**
 
 > [!check] Slip-ring rotation was TESTED and is NOT the problem
-> Hypothesis: animal rotation changes slip-ring contact resistance and causes the clean-to-bad swings. **Refuted by direct experiment** (`uid0715-18-36-10`): deliberately twisting B1's slip ring barely moved it (201 µV, CV 9%, the steadiest slot), while an UNTOUCHED control (C1) swung 18x on its own. A well-matched low-impedance pair is robust even to deliberate slip-ring movement; a bad leg is unstable all by itself.
+> Hypothesis: animal rotation changes slip-ring contact resistance and causes the clean-to-bad swings. **Refuted by direct experiment** (`allego_2__uid0715-18-36-10`): deliberately twisting B1's slip ring barely moved it (201 µV, CV 9%, the steadiest slot), while an UNTOUCHED control (C1) swung 18x on its own. A well-matched low-impedance pair is robust even to deliberate slip-ring movement; a bad leg is unstable all by itself.
 
 ## Commutators the field uses
 

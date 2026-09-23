@@ -69,13 +69,20 @@ over CIFS at `/mnt/skimnas` (autofs, mounts on access). 7 TB, ~4.6 TB free.
 
 > [!warning] "NAS-verified" in a run note means the STRIPPED file
 > The verification is real, and 16 channels is the analysed montage. But the
-> 262-channel original never went to this NAS. `uid0912` is 90.8 GB on e10 and
+> 262-channel original never went to this NAS. `allego_0__uid0912-08-55-18` is 90.8 GB on e10 and
 > 5.5 GB here. If you need the other 246 channels, S3 is the only other copy.
 
 > [!tip] The uploader renames remotely
 > `20260917_HLBW_SL_RSR` is `allego_0__uid0917-09-00-09`. Matching NAS directories
 > by Allego uid undercounts. Resolve via the `allego_base` key in each directory's
 > `UPLOAD.json`, never by filename.
+>
+> Two directory shapes exist, and which one you get depends on whether the
+> recording has a run record: `<YYYYMMDD>_<batch>_<type>` when it does,
+> `<YYYY-MM-DD>_<allego base>` when it does not. The batch half is not even
+> spelled consistently — 09-17 is `HLBW_SL`, 09-20 and 09-21 are `HLBSSL`.
+> Naming rules and the full recording inventory:
+> [[02-procedures/CANONICAL-recording-naming-and-inventory]].
 
 ## AWS S3 — what must survive the building burning down
 
@@ -101,6 +108,28 @@ RADIX_S3_PREFIX=radix/stripped \
 
 Runs **01:30 nightly**, stripped first (small, finishes fast), then raw. Both
 hard-stop at 08:30 for the morning recording window.
+
+> [!success] The archive is real as of 2026-09-23
+> **136 objects, 1.329 TB**, both jobs `COMPLETE`, every object SHA256-verified by
+> S3 on upload. Before this the bucket held **zero bytes**: the job was installed
+> on 09-20 and every scheduled run since had deferred, because a recording was
+> live at 01:30 each night. A backup that has never once run is indistinguishable
+> from a backup that works, unless somebody looks in the bucket.
+>
+> Two defects surfaced the first time it ran against a real directory, both fixed
+> in `radix-s3-archive.sh`:
+>
+> - **It uploaded `*.part` files.** The first live run began sending a dead
+>   24-channel partial from a crashed strip — bytes that were going to change,
+>   into GLACIER_IR, under an IAM user explicitly denied `s3:DeleteObject`.
+> - **It could never report COMPLETE.** `TOTAL_FILES` came from `ls -1`, which
+>   counts subdirectories, while the upload loop skipped them. `done_files` stopped
+>   one short forever, so every run took the INCOMPLETE branch and warned about
+>   "0 file(s) failed". Both source directories contain exactly one such
+>   subdirectory, so both jobs raised a false alarm on every successful run.
+>
+> ⚠️ `_quarantine-2026-08-24-crashed-run/` is still skipped, being a subdirectory.
+> It holds a real 13 min recording, 822 MB, with **no off-site copy**.
 
 Full page: [[02-procedures/installation/radix-s3-archive]].
 
