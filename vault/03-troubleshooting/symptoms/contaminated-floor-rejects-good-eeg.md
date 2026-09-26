@@ -194,7 +194,7 @@ threshold, never on a comparison with the animal:
 slope_valid = slope_p1 >= T.FLOOR_STEEPEST_VALID_SLOPE_P1   # -1.90
 ```
 
-Across every grounded chip in 13 recordings, chips carrying a healthy EEG that
+Across every grounded chip in 11 recordings (79 chips), chips carrying a healthy EEG that
 read 0.0% have thresholds of −2.10 to −3.51, and every other chip sits at −1.73
 or flatter. −1.90 is in that empty gap. `tests/test_contaminated_floor.py` pins
 the behaviour, including a dead EEG on a clean floor that must still FAIL.

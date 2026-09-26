@@ -1,6 +1,6 @@
 ---
 name: s-sd-recovery-sleep-run-2026-09-02
-description: "The S-SD terminal endpoint 2026-09-02 (unrepeatable). OUTCOME 2026-09-26: n = 0 scoreable at every S-SD timepoint; D2/HLBSSD18 passes rung 2 but has a NON-FUNCTIONAL EMG."
+description: "The S-SD terminal endpoint 2026-09-02 (unrepeatable). OUTCOME 2026-09-26: n = 0 scoreable at every S-SD timepoint; D2/HLBSSD18 passes rung 2 but has a EMG with NO MUSCLE-BAND modulation (not proven dead)."
 metadata: 
   node_type: memory
   type: project
@@ -10,10 +10,12 @@ metadata:
 
 🔴🔴 **OUTCOME, 2026-09-26 (stage 3 run for the first time): S-SD recovery sleep is n = 0.**
 No animal reaches ladder rung 3 at ANY S-SD timepoint (08-25, 08-26, 09-02); the endpoint has
-none even in stage 3. 🔑 **D2/HLBSSD18 passes rung 2 everywhere but its EMG is dead**: p95/p5
-1.4–1.7 (working EMG 4–6), p5 ~30 µV (working 7–9), no light/dark change, EEG-like slope on
-`D/34`. Stage 3 rejects it for wake 0.2–1.6%. The "EMG locked at 50 µV" below was read as healthy
-— **a LOCKED EMG is a non-functional EMG.** Rung 2 judges EMG on hum+rms only and cannot see it.
+none even in stage 3. 🔑 **D2/HLBSSD18 passes rung 2 everywhere but its EMG has NO
+MUSCLE-BAND modulation**: after the 10–300 Hz band-pass p95/p5 1.41–1.75 (working 4–6), p5 ~30 µV
+(working 7–9), no light/dark change. Stage 3 rejects it for wake 0.2–1.6%. 🔴 NOT proven dead:
+the RAW broadband rms rises 33→75 µV at night and raw p95/p5 does not separate from working EMGs;
+`D/34` has an EEG-like slope, so that rise is low-frequency of unknown origin. Rung 2 judges EMG
+on hum+rms only and cannot see any of this.
 
 
 **Wednesday 2026-09-02 13:00 KST → Thursday 2026-09-03 09:00 KST, 20.0 h**, eight S-SD positions.

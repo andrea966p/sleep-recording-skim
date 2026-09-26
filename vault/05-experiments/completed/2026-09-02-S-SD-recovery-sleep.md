@@ -232,19 +232,27 @@ on every card).
 🔴🔴 **The endpoint has no scoreable animal, by either engine. S-SD recovery sleep is n = 0,
 and this recording cannot be repeated.**
 
-🔑 **D2/HLBSSD18 — the only S-SD animal to pass rung 2 at every timepoint — has no working EMG.**
-Stage 3 rejects it on all three days for implausibly low wake (1.6%, 0.9%, 0.2%) and r@1min
-0.029, 0.025, −0.023. Its EMG never drops toward atonia and never rises at night:
+🔑 **D2/HLBSSD18, the only S-SD animal to pass rung 2 at every timepoint, has an EMG that
+cannot stage sleep.** Stage 3 rejects it on all three days for implausibly low wake (1.6%, 0.9%,
+0.2%) and r@1min 0.029, 0.025, −0.023. In the muscle band stage 3 uses (10–300 Hz band-pass,
+`FILT_EMG`), its EMG never drops toward atonia and never rises at night:
 
 | | EMG rms p5 | p95 / p5 | EMG light → dark |
 |---|---|---|---|
-| S-SD D2, all three days | 27–33 µV | **1.4–1.7** | 30.9 → 32.3 µV, flat |
+| S-SD D2, all three days | 27–33 µV | **1.41–1.75** | 30.9 → 32.3 µV, flat |
 | working EMGs (W-SD D2 twice, S-SD A1) | 7–9 µV | 4.1–6.0 | roughly doubles |
 
-The raw EMG site `D/34` also reads a steep, EEG-like slope (−1.27, −1.38). The pre-flight screen
-above recorded it as "EMG locked at 50 µV" and read that as healthy; **a locked EMG is the
-signature of one that is not in muscle.** Rung 2 passes it because EMG is judged on hum and
-amplitude only, which a quiet input satisfies. Rung 3 is where it is caught, and it was.
+⚠️ **CORRECTED 2026-09-26 after independent verification: this is NOT proof the EMG is dead.**
+The raw, broadband EMG does change: its 10 s rms rises from about 33 to 75 µV at night, and on
+raw 10 s rms its p95/p5 (14.4, 11.6) does not separate from working EMGs (13.2, 9.0). The raw
+site `D/34` also has a steep, EEG-like spectral slope (−1.27, −1.38), so that nightly rise is
+low-frequency content. Whether it is volume-conducted brain signal, movement artefact or
+something else is **not established**. What IS established is narrower: **there is no
+state-dependent activity in the muscle band**, which is the band stage 3 stages on. The
+pre-flight screen above recorded "EMG locked at 50 µV" and read it as healthy.
+
+Rung 2 passes it because EMG is judged on hum and amplitude only. Rung 3 is where it is caught.
+Logged as an open defect: [[03-troubleshooting/symptoms/emg-without-muscle-band-activity-passes-rung-2]].
 
 ⚠️ **The two baseline SCOREABLEs do not rescue the batch.** A1 fails or is unjudgeable at rung 2
 on both baselines and is OPEN at the endpoint. B1/HLBSSD17's EMG is as flat as D2's (p95/p5 1.7),
