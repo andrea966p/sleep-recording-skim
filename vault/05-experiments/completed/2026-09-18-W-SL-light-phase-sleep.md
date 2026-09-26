@@ -20,6 +20,22 @@ recordings: [allego_0__uid0910-09-00-00, allego_0__uid0917-09-00-09]
 > 🔴 **Grounding got worse, not better.** 7 of 8 chips grounded on 09-10, 5 of 8
 > on 09-17. A2, C1 and D1 lost their ground; A1 gained one and lost its EEG.
 
+> [!warning] 2026-09-26: one rung 2 verdict on this page is an artifact
+> **D2 / HLBWSL29 on `allego_0__uid0917-09-00-09` was reported FAIL at rung 2 and
+> that verdict is not trustworthy.** Its chip's wire-free reference inputs were
+> carrying signal, pushing the slope threshold to **−2.103** where the channel's
+> own EEG reads slope **−1.494** at rms **66.4 µV** — a healthy channel rejected by
+> an unmeetable bar.
+>
+> 🔑 **This may change the n.** This page's central limit is "only B2 is judgeable
+> and accepted on both days". If D2 is in fact connected on 09-17, that limit has
+> to be re-derived. **Do not re-quote the n from this page** until
+> `uid0917-09-00-09` is re-carded.
+>
+> The rest of the page is unaffected: the Process S finding rests on stage 3
+> output, which does not use the floor.
+> See [[03-troubleshooting/symptoms/contaminated-floor-rejects-good-eeg]].
+
 ## What was compared
 
 | | baseline | current |

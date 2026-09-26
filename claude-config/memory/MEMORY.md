@@ -23,6 +23,7 @@
 - 🔴⭐⭐⭐ **[A PARTLY LOADED RIG WAS GRADED ON ALL 8 SLOTS](partial-rig-qc-and-unjudgeable-presets.md).** Pre-2026-09-13 bundles for <8 mice contain `UNKNOWN@slot` cards from FLOATING inputs, 3 read PASS at rung 2. `unipolar_lfp` has NO QC criterion by design.
 
 ## EEG rig — analysis stack
+- ✅🔴🔴⭐⭐⭐ **[A CONTAMINATED FLOOR REPORTS HEALTHY EEG AS 0.0% — 2026-09-26](contaminated-floor-rejects-good-eeg.md). NEWEST.** `floor_stats()` validates the floor ONLY on hum; nothing checks its slope is FLAT. Threshold tightens to −2.4…−3.5 where real EEG is −1.35 to −1.64. 🔑 Discriminator is AMPLITUDE: artifact = healthy rms 66–95 µV, real open = **rails 2000+ µV**. **11 of 79 cards** (S-SL, W-SL, S-SD); ✅ W-SD 39.7 h baseline CLEAN, ✅ no false PASSes. 🛑 Known since 2026-08-27, left on one page, cost a RETRACTED S-SL conclusion. NOT FIXED.
 - ⭐⭐⭐ **[ANIMAL CARD + VERDICT LADDER](animal-card-verdict-ladder.md). READ BEFORE ANY ANALYSIS OR FIGURE.** Six rungs. `core/qc_thresholds.py` + `core/criteria.py` are the only engines. Rung 2 gates on longest unbroken block ≥15 min.
 - ✅⭐⭐⭐ **[FLOOR THRESHOLD FIXED, PER-CHIP — 2026-08-26](floor-threshold-fixed-per-chip.md).** Ungrounded chip ⇒ rung 2 UNJUDGEABLE, not FAIL. Falsification suite passes.
 - 🔴⭐⭐⭐ **[EMG GATE + THE POOLED-FLOOR BUG](emg-gate-passes-and-floor-bug.md).** Pooled floor FIXED 2026-08-26. Always ABSOLUTE delta, never the ratio.
@@ -36,6 +37,7 @@
 - ⭐⭐ **Artefact policy:** `02-procedures/eeg-artefact-and-railing-rejection-policy.md`. Reject at EPOCH level, never repair or interpolate.
 
 ## EEG rig — runs
+- ✅⭐⭐⭐ **[S-SL HAS SLEEP DATA, PAIRED n=3 — 2026-09-26](s-sl-has-sleep-data-n3.md). NEWEST.** Stage 2+3 run for the first time. SCOREABLE at both timepoints: **HLBSSL31, HLBSSL33, HLBSSL35** (r@1min .53→.63, .55→.72, .68→.73). Supersedes every earlier n for this batch. 🛑 **NO sleep conclusion**: endpoint is dark-heavy 16.0/20.71 h vs baseline 12.0/12.06, so whole-file 'more wake' is WINDOW COMPOSITION. 🔴 uid0920 is the SAME RUN as uid0921, split on restart.
 - ✅🔴⭐⭐⭐ **[HLBW_SL 28 h DONE — 2026-09-17→18](recording-2026-09-17-HLBW_SL-28h.md). NEWEST.** **Unattended workflow ran CLEAN: stop 5 s late, strip bit-exact on every sample, NAS-verified in 13 min, QC bundle with it.** 7/8 rung 2 CLEAN, A1 EEG dead. **3 scoreable (B1 B2 D2), all grounded**; A2/C1/D1 UNJUDGEABLE (floors 582/7/2). Sleep + figures → `05-experiments/completed/2026-09-18-W-SL-light-phase-sleep.md`. 🔑 Only B2 pairs with the 09-10 baseline ⇒ n=1.
 - 🎉⭐⭐⭐ **[8-CORE TETHER, 8 MICE — 2026-09-09](recording-2026-09-09-8core-tether-screen.md).** Best screen this rig ever made: 7/8 grounded, 7/8 EEG 96.6-100%. 🔴 `RMS_HI_UV=150` CLIPS REAL EMG.
 - ⏳🔴⭐⭐⭐ **[S-SD RECOVERY SLEEP — 2026-09-02](s-sd-recovery-sleep-run-2026-09-02.md).** 20.0 h, animals SAMPLED ⇒ UNREPEATABLE. Pre-flight screen GATED for the first time.

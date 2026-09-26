@@ -1,38 +1,36 @@
 ---
-tags: [experiment, eeg, emg, S-SL, connection, audit]
+tags: [experiment, eeg, emg, S-SL, connection, sleep, audit, retracted-claim]
 created: 2026-09-23
-status: complete
+status: revised-2026-09-26
 recordings: [allego_0__uid0912-08-55-18, allego_0__uid0920-09-00-07, allego_0__uid0921-00-17-34]
 cohort: S-SL
 ---
 
-# S-SL: five of eight connected at baseline, two of eight eight days later
+# S-SL: the batch has sleep data, and the attrition it seemed to show was not real
 
 > [!abstract] TL;DR
-> The S-SL batch had **no page in this vault at all** until now, although both of
-> its recordings have existed for weeks. This is the connection audit, and it
-> stops at connection deliberately.
+> 🛑 **RETRACTION, 2026-09-26.** The first version of this page, written
+> 2026-09-23, said five of eight positions were connected at baseline and only
+> two survived to the endpoint, and that three electrodes went "from excellent to
+> nothing". **That attrition did not happen.** It is an artifact of a
+> contaminated QC floor. See
+> [[03-troubleshooting/symptoms/contaminated-floor-rejects-good-eeg]].
 >
-> 🛑 **There is no sleep result here, and none exists.** Rung 3 is INSUFFICIENT on
-> all sixteen cards with the same reason — `no stage 3 output for this
-> animal-recording`. `pipeline/stage3_features.py` has never been run on either
-> day folder. Nothing on this page says anything about sleep.
+> ⭐ **What is true: S-SL has sleep architecture, and a paired n = 3.** Stage 2
+> and stage 3 were run on all three day folders for the first time on 2026-09-26.
+> **A1/HLBSSL31, B1/HLBSSL33 and C1/HLBSSL35 are SCOREABLE at both timepoints.**
+> This is the batch's real result and it is better than anything previously
+> claimed for it.
 >
-> ⭐ **What it does say: attrition, and WHEN it happened.** Five of eight
-> positions were connected at baseline; **two** were still connected at the
-> recovery endpoint eight days later. The two that survived, **B1/HLBSSL33 and
-> C2/HLBSSL39**, are the paired set — n = 2, at rung 2 only.
+> 🔑 **The EEG never degraded.** Every channel reads slope ≈ −1.55 and rms ≈ 70 µV
+> at the endpoint, the same as baseline. D2 was genuinely dead at baseline
+> (slope −0.076, rms 29.6 µV) and is **healthy** at the endpoint (−1.644, 78.0 µV).
+> It recovered.
 >
-> 🔴 Three positions went from excellent to nothing: A1 **90.6% → 0.0%**, C1
-> **87.0% → 0.0%**, B2 **88.0% → 23.5%**.
->
-> 🔑 **The collapse was already complete before the recovery run started.**
-> A third recording, `allego_0__uid0920-09-00-07`, was added to this cohort on
-> 2026-09-26 and carded for the first time. It is the run's own first segment —
-> Sunday 09-20 09:00, 15.145 h — and on it A1, C1 and D1 already read 0.0% and
-> B2 already reads 26.7%. Across the recovery run itself every position is
-> stable within a few points. **Nothing failed during recovery; everything that
-> failed had already failed in the eight-day gap between 09-12 and 09-20.**
+> ⚠️ **No sleep conclusion is drawn here.** The baseline is a clean 24 h ZT0→ZT0;
+> the endpoint is 36.707 h starting 00:17 and is **dark-heavy** (16.0 h light /
+> 20.71 h dark against 12/12). Mice are far more awake in the dark, so the
+> whole-file "more wake at recovery" is mostly window composition, not biology.
 
 ## The two recordings
 
@@ -60,6 +58,14 @@ cohort: S-SL
 >
 > Why the file is longer than the protocol: sampling slipped from 09-21 to 09-22
 > because of the mouse problem, and the recording was extended to meet it.
+
+> [!warning] The three rung 2 tables below are KEPT FOR THE RECORD, not as evidence
+> They are what the cards said on 2026-09-23. Every `0.0%` on ports A, C and D
+> for the 09-20 and 09-21 recordings is a **floor artifact**, not a disconnected
+> electrode — the chips' wire-free reference inputs were carrying signal, which
+> pushed the slope threshold to −2.4…−3.5 where real EEG is −1.5. The baseline
+> table (09-12) is unaffected: its floors are clean.
+> See [[03-troubleshooting/symptoms/contaminated-floor-rejects-good-eeg]].
 
 ## Baseline — 2026-09-12, 24.065 h
 
@@ -127,40 +133,137 @@ as answering no. See [[03-troubleshooting/symptoms/weak-chip-ground-vs-open-elec
 | D2 | HLBSSL38 | 0.0% | 0.0% | 0.0% | ❌ never recovered |
 | A2 | HLBSSL32 | 0.0% | UNJUDGEABLE | 0.0% | ❌ never recovered |
 
-⭐ **Read the middle column first.** Every change happened between 09-12 and
-09-20, in the eight days when nothing was being recorded. Between the Sunday
-segment and the Monday-to-Tuesday endpoint, the largest move on any position is
-B1's 83.0% → 78.2%. The recovery run did not damage anything; it recorded a rig
-that had already lost six of eight positions.
+🛑 **This table measures the floor, not the electrodes. RETRACTED as attrition.**
+The 2026-09-23 reading of it — that everything failed in the eight-day gap — was
+wrong. The positions that "fail" here are exactly the positions whose reference
+floor became contaminated, and their EEG is unchanged:
 
-🔑 **The two that survived are the two that were mid-table at baseline, not the
-best.** A1 and C1 were the strongest positions on 09-12 at 90.6% and 87.0%, and
-both read exactly 0.0% eight days later. B1 and C2 sat at 73.8% and 79.8% and
-both came back slightly *higher*. Baseline connection quality did not predict
-which positions would last — five positions were connected and the two that
-survived were not the two that looked best.
+| pos | EEG slope 09-12 → 09-21 | EEG rms 09-12 → 09-21 | floor threshold 09-12 → 09-21 |
+|---|---|---|---|
+| A1 | −1.354 → −1.506 | 82.2 → 72.0 | −0.570 → **−2.384** |
+| C1 | −1.614 → −1.544 | 94.8 → 68.0 | −0.456 → **−3.044** |
+| D1 | −1.553 → −1.617 | 76.0 → 74.8 | −1.397 → **−2.881** |
+| D2 | −0.076 → −1.644 | 29.6 → **78.0** | −0.725 → **−3.513** |
+| B1 | −1.570 → −1.546 | 91.9 → 70.1 | −0.593 → −0.653 |
+| C2 | −1.564 → −1.565 | 81.4 → 73.2 | −0.573 → −0.686 |
+
+The only two chips whose floors stayed clean, B1 and C2, are the only two
+positions that "passed". That is the whole pattern.
+
+🛑 **RETRACTED.** This page previously read the table above as "baseline
+connection quality did not predict which positions would last". There was nothing
+to predict: no position was lost. A1 and C1 were the strongest at baseline and
+they are still working at the endpoint — both are SCOREABLE in stage 3.
+
+## Sleep architecture — stage 2 and stage 3, run 2026-09-26
+
+Stage 2 and stage 3 had **never been run** on any S-SL recording until this date.
+Day folders are `~/eeg-processed/2026-09-12`, `2026-09-20`, `2026-09-21`, each
+with a hypnogram CSV, a features JSON and a summary per mouse.
+
+### Baseline, 2026-09-12, 24.065 h, ZT0 → ZT0
+
+| pos | animal | verdict | r@1min | WAKE | NREM | REM from NREM |
+|---|---|---|---|---|---|---|
+| C1 | HLBSSL35 | ✅ SCOREABLE | 0.678 | 41.4% | 53.7% | 85.1% |
+| B1 | HLBSSL33 | ✅ SCOREABLE | 0.554 | 41.5% | 52.4% | 75.7% |
+| A1 | HLBSSL31 | ✅ SCOREABLE | 0.532 | 34.0% | 61.3% | 68.9% |
+| B2 | HLBSSL34 | ❌ REJECT | 0.225 | — | — | bar is 0.30 |
+| D1 | HLBSSL40 | ❌ REJECT | 0.146 | — | — | implausible wake 9.6% |
+| C2 | HLBSSL39 | ❌ REJECT | 0.09 | — | — | implausible wake 7.2% |
+
+A2 and D2 were dropped at stage 2 (OPEN and DEAD) and have no files.
+
+### Endpoint, 2026-09-21 → 09-22, 36.707 h as computed
+
+| pos | animal | verdict | r@1min | WAKE | NREM | REM from NREM |
+|---|---|---|---|---|---|---|
+| C1 | HLBSSL35 | ✅ SCOREABLE | 0.734 | 49.4% | 45.8% | 82.9% |
+| B1 | HLBSSL33 | ✅ SCOREABLE | 0.722 | 45.6% | 47.7% | 87.5% |
+| A1 | HLBSSL31 | ✅ SCOREABLE | 0.632 | 42.4% | 51.8% | 79.1% |
+| D1 | HLBSSL40 | ✅ SCOREABLE | 0.610 | 39.3% | 54.8% | 78.9% |
+| C2 | HLBSSL39 | ✅ SCOREABLE | 0.502 | 42.3% | 51.8% | 80.3% |
+| A2 | HLBSSL32 | ✅ SCOREABLE | 0.400 | 32.4% | 61.2% | 72.2% |
+| B2 | HLBSSL34 | ❌ REJECT | 0.343 | — | — | physiology: nrem_has_most_delta |
+| D2 | HLBSSL38 | ❌ REJECT | — | — | — | 100% wake, states missing |
+
+🔴 **Six of eight are scoreable here.** Rung 2 called six of eight *disconnected*
+on this same recording. That contradiction is what exposed the floor defect.
+
+### Segment 1, 2026-09-20, 15.145 h — outside the protocol window
+
+Five scoreable: A1 0.624, C1 0.680, B1 0.678, D1 0.484, C2 0.478. A2 rejects on
+94.5% wake, B2 on physiology, D2 on 1.3% wake.
+
+### ⭐ The paired set: n = 3 at rung 3
+
+Scoreable at **both** protocol timepoints:
+
+| animal | pos | baseline r@1min | endpoint r@1min |
+|---|---|---|---|
+| HLBSSL31 | A1 | 0.532 | 0.632 |
+| HLBSSL33 | B1 | 0.554 | 0.722 |
+| HLBSSL35 | C1 | 0.678 | 0.734 |
+
+This supersedes every earlier claim about S-SL's n. It is **not** the "n = 2 at
+rung 2" this page first reported, and it is not the n = 1 the batch was assumed
+to have.
+
+### 🛑 Why no sleep conclusion is drawn from it
+
+The two windows are not comparable:
+
+| | baseline | endpoint |
+|---|---|---|
+| light | 12.00 h | **16.00 h** |
+| dark | 12.06 h | **20.71 h** |
+
+The endpoint is dark-heavy, 56% against 50%, because it starts at 00:17 in the
+middle of the dark phase. Mice are far more awake in the dark, so the whole-file
+"more wake at the endpoint" is largely **window composition**. Split by phase:
+
+| animal | light WAKE base → end | dark WAKE base → end |
+|---|---|---|
+| HLBSSL31 | 23.8 → 25.2 (+1.4) | 44.0 → 55.6 (+11.6) |
+| HLBSSL33 | 21.1 → 25.2 (+4.1) | 61.9 → 61.3 (−0.6) |
+| HLBSSL35 | 22.9 → 26.4 (+3.5) | 59.7 → 67.2 (+7.5) |
+
+In the light phase all three move the same way by a small amount (+1.4 to +4.1).
+In the dark the direction is inconsistent (−0.6 to +11.6). With n = 3 and no
+statistics that light-phase shift is **suggestive at most**.
+
+🔑 **This is the first concrete answer to the trimmed-window question.** Trimming
+the endpoint to its protocol window, 09-21 09:00 → 09-22 13:00, drops exactly the
+8.71 h of dark that skews it, giving 16 h light / 12 h dark. Still not the
+baseline's 12/12, but far closer. See
+[[02-procedures/CANONICAL-recording-windows-and-protocol]].
 
 ## What this does not support
 
-- 🛑 **No sleep architecture, for either recording.** Rung 3 is INSUFFICIENT on
-  all sixteen cards. No hypnogram, no NREM percentage, no `r@1min` exists for any
-  S-SL animal. Running `pipeline/stage3_features.py` on both day folders is the
-  prerequisite, and it has not been done.
-- ⚠️ **n = 2 here is not comparable with n = 1 elsewhere.** W-SL's n = 1 is at
-  rung 3, scoreability. This n = 2 is at rung 2, connection — a lower bar. The
-  numbers are not interchangeable and a larger n at a lower rung is not a better
-  result.
-- ⚠️ **The two recordings were judged under different thresholds**
-  (`c54b0f83af37` against `01e11630dcbf`) and different code revisions. The
-  baseline-to-recovery deltas above are therefore not strictly like-for-like.
-  Re-carding the baseline under the current thresholds would settle it.
-- ⚠️ **Recovery percentages include 8.71 h outside the protocol window**, as above.
+- 🛑 **No sleep CONCLUSION, despite now having sleep data.** The baseline and
+  endpoint windows differ in light/dark composition (12.0/12.06 h against
+  16.0/20.71 h), which is enough on its own to produce the observed wake
+  difference. Nothing here is a statement about the effect of sleep libido.
+- 🛑 **No group statistics.** n = 3, no test was run, and none is warranted.
+- ⚠️ **Rung 3 SCOREABLE is not rung 4.** Stage 3 emits architecture, but the
+  ladder's rung 4 has not been evaluated for these animals. The `rem_pct` figure
+  is `rem_pct_CONSTRUCTED` and is **fixed by the rule**, not measured — never
+  quote it. What is evidence is REM's ORDER, the REM-from-NREM column.
+- 🔴 **Stage 3 does not check that the EEG is connected.** It gates on stage 1's
+  `epoch_ok`, not on the ladder's rung 2. On this batch that worked in our
+  favour — the rung 2 verdicts were the wrong ones — but the general point
+  stands: a SCOREABLE verdict from stage 3 is not independent confirmation that
+  the electrode was good, and a real open electrode with a live EMG could still
+  produce a wake/sleep split.
+- ⚠️ **The recordings were judged under different thresholds**
+  (`c54b0f83af37` against `01e11630dcbf`) and different code revisions.
+- ⚠️ **Endpoint numbers cover the whole 36.707 h**, including 8.71 h outside the
+  protocol window.
 - ⚠️ **No husbandry.** `cohorts/S-SL.yaml` deliberately carries no sex, date of
   birth, surgery date, weights or tether date, so no age, weight or
   days-post-surgery can be reported for any animal here.
-- ❌ **Nothing here explains WHY three positions went to zero.** The failure
-  signature work that distinguishes a bent tether from a severed one was not run
-  on these recordings.
+- ❌ **The rung 2 verdicts on 09-20 and 09-21 are not usable at all** until the
+  floor validity fix lands and those recordings are re-carded.
 
 ## Provenance
 
@@ -186,11 +289,24 @@ set reaches rung 4 and names `HLBWSL27`. Deleting it removed that ghost from dis
 🛑 `allego_0__uid0913-11-20-07` is deliberately NOT in this manifest: 8.4 minutes,
 an aborted start, no result.
 
-Not checked: figures (none drawn), stage 3, and the failure-signature
+Stage 2 and stage 3 outputs live in `~/eeg-processed/2026-09-12`, `2026-09-20`
+and `2026-09-21` — hypnogram CSV, features JSON and summary per mouse. They are
+NOT in the repo (too large); regenerate with:
+
+```bash
+cd eeg-emg-analysis && PYTHONPATH=. /usr/bin/python3 pipeline/stage2_split.py \
+  allego_0__uid0912-08-55-18 allego_0__uid0920-09-00-07 allego_0__uid0921-00-17-34
+```
+
+then `pipeline/stage3_features.py` on each day folder. Stage 2 runs stage 1 QC
+inline, so it also writes the `qc/` subfolder.
+
+Not checked: figures (none drawn), rung 4 architecture, and the failure-signature
 classification.
 
 ## Related
 
+[[03-troubleshooting/symptoms/contaminated-floor-rejects-good-eeg]] ·
 [[02-procedures/CANONICAL-recording-windows-and-protocol]] ·
 [[02-procedures/CANONICAL-recording-naming-and-inventory]] ·
 [[02-procedures/eeg-data-analysis/animal-card-and-verdict-ladder]] ·

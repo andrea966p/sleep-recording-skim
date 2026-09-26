@@ -114,6 +114,9 @@ recordings:
     notes: >
       24.065 h, ZT0 to ZT0, 262 channels at 1 kHz, 90.8 GB. file_integrity INTACT,
       86,634,624 data samples = 86,634,624 timestamp samples, remainder 0 and 0.
+      ✅ Stage 2 and stage 3 run 2026-09-26: ~/eeg-processed/2026-09-12, 6 mouse
+      files, 3 SCOREABLE (A1 r@1min 0.532, B1 0.554, C1 0.678). This recording's
+      floors are CLEAN, so its rung 2 verdicts stand.
 
   - base: allego_0__uid0920-09-00-07
     date: 2026-09-20
@@ -129,6 +132,9 @@ recordings:
       uid0921. Nothing here belongs in the recovery numbers.
       ⚠️ Added to this manifest on 2026-09-26, having been absent since the run.
       Its cards lived under the throwaway console cohort auto-df0f5562873b.
+      🛑 Its rung 2 verdicts carry the same contaminated-floor defect as uid0921
+      on A1/C1/D1/D2. Stage 3 scores five of eight SCOREABLE here.
+      ✅ Stage 2 and stage 3 have been run: ~/eeg-processed/2026-09-20.
 
   - base: allego_0__uid0921-00-17-34
     date: 2026-09-21
@@ -141,6 +147,12 @@ recordings:
       it. The first 8.71 h are outside the window.
       ⚠️ The cards were computed over the WHOLE 36.707 h file, not the 28 h
       window, so every percentage describes the longer span.
+      🛑 2026-09-26: THE RUNG 2 VERDICTS ON THIS RECORDING ARE NOT USABLE. Five of
+      eight chips have a spectrally contaminated floor, so A1/A2/C1/D1/D2 read
+      0.0% on healthy EEG (slope -1.5, rms 68-78 uV against a threshold of -2.4
+      to -3.5). Stage 3 scores six of eight SCOREABLE on this same file. Do not
+      quote a connection percentage from here until it is re-carded. See
+      vault/03-troubleshooting/symptoms/contaminated-floor-rejects-good-eeg.md.
       ⚠️ Added to this manifest on 2026-09-23. Until then this recording was
       absent from S-SL entirely and its cards lived under the throwaway console
       cohort auto-a91ef30eab66. allego_0__uid0920-09-00-07 was added on

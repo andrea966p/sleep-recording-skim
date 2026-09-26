@@ -267,6 +267,14 @@ Compare every other chip, whose floor slope p1 moved by less than 0.25 between t
 > chip the slope criterion cannot discriminate in either direction.
 > **A1's EEG should read UNJUDGEABLE for this recording, not 0.0%.** It is quoted as 0.0% in the
 > table above only because that is what the current code returns.
+>
+> 🔴 **UPDATE 2026-09-26, one month on: still not fixed, and it has now cost us.** This diagnosis
+> was correct and complete, and it stayed on this page. The same defect silently produced a WRONG
+> PUBLISHED CONCLUSION for the S-SL batch — an "attrition" of five electrodes that never happened,
+> retracted on 2026-09-26. A scan of every card found **11 affected across S-SL, W-SL and S-SD**;
+> this page's A1 is one of them, and the reading above is confirmed.
+> Tracking moved to [[03-troubleshooting/symptoms/contaminated-floor-rejects-good-eeg]] so it is
+> no longer an open item buried in one experiment write-up.
 
 A1's **EMG is excellent and unaffected**: 48 µV, 93.9% usable, and the strongest circadian
 amplitude ratio on the rig.
