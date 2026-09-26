@@ -51,8 +51,7 @@ cards moved, nothing else. Test: `tests/test_contaminated_floor.py`.
 ⇒ hum-judged EEG on a contaminated floor still FAILs by refusal (no affected card
 is hum-judged). UNJUDGEABLE ≠ PASS: S-SL paired n=3 is a STAGE 3 claim; ladder
 can't confirm A1/C1 at endpoint. W-SL n stays 1 (D2 baseline fails rung 3).
-`uid0912` S-SL cards predate stage 3 ⇒ rung 3 INSUFFICIENT, re-card before a
-ladder-level n.
+S-SL ladder-level paired n = 1 (B1) after re-carding uid0912; stage 3 paired n = 3.
 
 ⚠️ **Do not count affected cards without filtering on the criterion the EEG role
 actually used.** A first pass said 35; 16 of those were judged on `hum`, where the

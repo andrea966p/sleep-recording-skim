@@ -248,8 +248,12 @@ endpoint (C2 does too, but its baseline is rejected).
 Their EEG at the endpoint (slope −1.51 and −1.54, rms 72 and 68 µV) is what
 working EEG looks like on this rig, and stage 3 scores both. But stage 3 does not
 test connection, so the claim rests on the waveform, not on a negative control.
-⚠️ The baseline cards (`uid0912`) were carded before stage 3 ran and still read
-rung 3 INSUFFICIENT. Re-card them before quoting a ladder-level n.
+✅ **Ladder-level paired n = 1 (B1/HLBSSL33)**, derived 2026-09-26 after the
+baseline `uid0912` was re-carded (`74a3082`) now that stage 3 exists for it. At
+baseline the ladder gives rung 3 PASS to A1, B1 and C1 (r@1min 0.532, 0.554,
+0.678), and B2 and C2 FAIL, exactly as stage 3. At the endpoint only B1 and C2
+pass rung 3. **Quote n = 3 as stage 3 scoreable at both timepoints, and n = 1 as
+the ladder.** They answer different questions.
 
 ### 🛑 Why no sleep conclusion is drawn from it
 
