@@ -40,3 +40,8 @@ continuous = **~31 GB/day, ~930 GB/month**. Structure decided
 (`video/<researcher>/<mouse>/<date>/`, source `/opt/neurosurveillance/exports/`,
 never `/srv/frigate/storage/`), **uploader deliberately NOT built** until cameras
 return. [[radix-s3-offsite-archive]]
+
+✅ **2026-09-26: bilab NAS skips unchanged nights** (fingerprint `~/.cache/nas-backup.fingerprint`,
+ignores `deploy/logs/` + `.git/FETCH_HEAD` churn). Still runs during recordings, by
+user decision. S3 got a fast path + 30 min settle guard [[radix-s3-offsite-archive]].
+SKIM NAS already event-driven, unchanged.

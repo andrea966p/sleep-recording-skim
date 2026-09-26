@@ -16,6 +16,9 @@
 # WHAT IT GUARANTEES
 #   - Never competes with the rig. Defers entirely if a recording is live, and
 #     stops before the morning recording window.
+#   - Never uploads a file still being written: anything modified in the last
+#     SETTLE_MIN minutes waits for the next night, even if the rig query fails.
+#   - A night with no new data costs one stat per file: no AWS call, no rig query.
 #   - Incremental. A file already in S3 at the same byte size is skipped without
 #     being read off disk at all.
 #   - Integrity is checked by S3 itself: every upload carries a SHA256 that S3
@@ -49,6 +52,7 @@ LOGS="$DIR/logs"; mkdir -p "$LOGS"
 LOG="$LOGS/radix-s3-archive-$JOB.log"
 LOCK="$LOGS/radix-s3-archive-$JOB.lock"
 STATE="$LOGS/radix-s3-archive-$JOB.state"
+FPFILE="$LOGS/radix-s3-archive-$JOB.fingerprint"
 NOTIFY="$DIR/nvr-notify.sh"
 REPO="/home/skimlab/sleep-recording-skim/eeg-emg-analysis"
 PY="/opt/neurosurveillance/venv/bin/python3"
@@ -57,6 +61,12 @@ PY="/opt/neurosurveillance/venv/bin/python3"
 # while the amplifiers are writing to it.
 HARD_STOP="08:30"
 MAX_RETRIES=3
+# A file modified within this many minutes is left for the next night. This is
+# the guard that does NOT depend on Allego answering: recording_active() fails
+# open (Allego down, gRPC timeout, python error all read as "not recording"), and
+# Allego reports a stale size for ~30 s after stop. A growing .xdat is always
+# fresh, so it is never uploaded half-written whatever the rig query says.
+SETTLE_MIN="${RADIX_S3_SETTLE_MIN:-30}"
 
 DRY_RUN=0
 [[ "${1:-}" == "--dry-run" ]] && DRY_RUN=1
@@ -118,14 +128,6 @@ if [[ ! -x "$AWS_BIN" ]]; then
   exit 1
 fi
 
-if ! "$AWS_BIN" s3api head-bucket --bucket "$BUCKET" >/dev/null 2>>"$LOG"; then
-  log "FATAL: cannot reach bucket $BUCKET (credentials or network)"
-  "$NOTIFY" fail "S3 archive ($JOB) cannot start" "Could not reach \`s3://$BUCKET\`.
-Nothing was transferred. Check the \`$AWS_PROFILE_NAME\` credentials on e10.
-See \`$LOG\`."
-  exit 1
-fi
-
 # Count exactly what the loop will upload, or the run can never report COMPLETE.
 # `ls -1` also lists SUBDIRECTORIES. Those inflate TOTAL_FILES, the loop then
 # skips them as non-files, done_files stops one short forever, and every run ends
@@ -153,6 +155,33 @@ done
 log "=== radix-s3-archive [$JOB] start: $TOTAL_FILES files, $(human "$TOTAL_BYTES") -> s3://$BUCKET/$PREFIX ==="
 (( DRY_RUN )) && log "DRY RUN — nothing will be uploaded"
 
+# ---- no-op fast path --------------------------------------------------------
+# Fingerprint = name, size and mtime of exactly the list the loop would walk. If
+# it matches the last run that reached COMPLETE, nothing new exists locally and
+# every file is already in S3, so skip the per-file HEAD sweep, the bucket check
+# and the Allego query entirely. Skipping the re-check is safe because the bucket
+# is versioned and this IAM user is explicitly denied delete: nothing that was in
+# S3 last night can have gone.
+FINGERPRINT=$(cd "$SRC" && for _n in "${FILES[@]}"; do
+                stat -c '%n %s %Y' -- "$_n" 2>/dev/null; done | sha256sum | cut -d' ' -f1)
+if (( ! DRY_RUN )) && [[ -f "$FPFILE" && "$(cat "$FPFILE")" == "$FINGERPRINT" ]] \
+   && grep -q '^COMPLETE' "$STATE" 2>/dev/null; then
+  log "no new data since $(cut -d' ' -f2- "$STATE"); nothing to do"
+  "$NOTIFY" ok "S3 archive ($JOB): nothing new" "No file in \`$SRC\` changed since the last complete run ($(cut -d' ' -f2- "$STATE")).
+All $TOTAL_FILES files ($(human "$TOTAL_BYTES")) are already in \`s3://$BUCKET/$PREFIX\`.
+No upload, no disk read, no AWS call."
+  exit 0
+fi
+
+if ! "$AWS_BIN" s3api head-bucket --bucket "$BUCKET" >/dev/null 2>>"$LOG"; then
+  log "FATAL: cannot reach bucket $BUCKET (credentials or network)"
+  "$NOTIFY" fail "S3 archive ($JOB) cannot start" "Could not reach \`s3://$BUCKET\`.
+Nothing was transferred. Check the \`$AWS_PROFILE_NAME\` credentials on e10.
+See \`$LOG\`."
+  exit 1
+fi
+
+
 if recording_active; then
   log "a recording is live — deferring entirely (no files touched)"
   echo "DEFERRED $(date '+%F %T')" > "$STATE"
@@ -161,8 +190,8 @@ if recording_active; then
 fi
 
 START_TS=$(date +%s)
-done_files=0; done_bytes=0; failed_files=0; skipped=0; uploaded=0
-FAILED_LIST=""
+done_files=0; done_bytes=0; failed_files=0; skipped=0; uploaded=0; unsettled=0
+FAILED_LIST=""; UNSETTLED_LIST=""
 
 for name in "${FILES[@]}"; do
   src="$SRC/$name"
@@ -175,6 +204,13 @@ Progress: $done_files/$TOTAL_FILES files, $(human $done_bytes) accounted for ($u
 It resumes automatically tonight; nothing is lost."
     echo "PAUSED $(date '+%F %T')" > "$STATE"
     exit 0
+  fi
+
+  if [[ -n "$(find "$src" -mmin -"$SETTLE_MIN" 2>/dev/null)" ]]; then
+    log "$name: NOT SETTLED (modified < $SETTLE_MIN min ago) — left for the next run"
+    unsettled=$((unsettled+1)); UNSETTLED_LIST+="
+  - $name"
+    continue
   fi
 
   # Cheap checks FIRST. recording_active() spawns a python client (~3.3 s), so
@@ -235,6 +271,7 @@ done
 ELAPSED=$(( $(date +%s) - START_TS ))
 SUMMARY="Files in S3: $done_files of $TOTAL_FILES  (already present: $skipped, newly uploaded: $uploaded)
 Data: $(human $done_bytes) of $(human $TOTAL_BYTES)
+Too fresh to archive (modified < $SETTLE_MIN min ago): $unsettled
 Elapsed: $((ELAPSED/60)) min
 Destination: \`s3://$BUCKET/$PREFIX\` ($STORAGE_CLASS, $REGION)
 Every upload was SHA256-verified by S3 before being counted."
@@ -251,11 +288,20 @@ if (( failed_files == 0 && done_files == TOTAL_FILES )); then
 
 Nothing was deleted from e10 or from the NAS. This is a third copy."
   echo "COMPLETE $(date '+%F %T')" > "$STATE"
+  echo "$FINGERPRINT" > "$FPFILE"
+elif (( failed_files == 0 && done_files + unsettled == TOTAL_FILES )); then
+  log "=== PENDING: $unsettled file(s) still too fresh, left for the next run ==="
+  "$NOTIFY" ok "S3 archive ($JOB): $unsettled file(s) left for tomorrow" "$SUMMARY
+
+Left for the next run (still being written, or just finished):$UNSETTLED_LIST
+Nothing failed. Nothing was deleted."
+  echo "PENDING $(date '+%F %T')" > "$STATE"
 else
   log "=== INCOMPLETE: $failed_files failed ==="
   "$NOTIFY" warn "S3 archive ($JOB) incomplete — $failed_files file(s) failed" "$SUMMARY
 
-Failed:$FAILED_LIST
+Failed:$FAILED_LIST${UNSETTLED_LIST:+
+Too fresh, left for the next run:$UNSETTLED_LIST}
 The next nightly run retries automatically. Nothing was deleted."
   echo "INCOMPLETE $(date '+%F %T')" > "$STATE"
 fi

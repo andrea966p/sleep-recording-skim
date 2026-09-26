@@ -79,6 +79,32 @@ client and costs ~3.3 s, so querying the rig about files that are already archiv
 wasted ~7 min per resumed run on the NAS archiver's backlog. A file we are going
 to skip needs no rig query.
 
+## Nights with no new data (2026-09-26)
+
+After listing the files, the script fingerprints name + size + mtime of exactly
+that list. If it matches the last run that reached `COMPLETE`
+(`logs/radix-s3-archive-$JOB.fingerprint`), it logs `no new data`, sends the
+nightly ntfy "nothing new" push and exits: **no AWS call, no rig query, ~1 s**
+instead of ~90 s of HEAD requests. Skipping the re-check is safe because the
+bucket is versioned and the IAM user is denied delete. The fingerprint is written
+only on a real `COMPLETE`, never on a dry run, PAUSED, PENDING or INCOMPLETE.
+
+## A file still being written is never uploaded
+
+Two independent guards:
+
+1. `recording_active()` (Allego `R_ON`) defers the whole run, and is re-asked
+   before every upload.
+2. **Settle guard:** any file modified in the last `SETTLE_MIN` minutes (default
+   30, env `RADIX_S3_SETTLE_MIN`) is logged `NOT SETTLED` and left for the next
+   night. This one does not depend on Allego. `recording_active()` **fails open**:
+   Allego down, gRPC timeout or a python error all read as "not recording". Allego
+   also reports a stale size for ~30 s after stop, and a strip that just finished
+   is fresh. A growing `.xdat` is always fresh, so it cannot be caught half-written.
+
+A run whose only leftovers are unsettled files ends `PENDING` (ntfy ok, "N file(s)
+left for tomorrow"), not the INCOMPLETE warning.
+
 ## Integrity
 
 Every upload carries `--checksum-algorithm SHA256`. S3 verifies it server-side and

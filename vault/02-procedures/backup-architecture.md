@@ -23,6 +23,11 @@
 | **SKIM NAS** | *What the lab works on today.* The active working copy. |
 | **AWS S3** | *What must survive the building burning down.* Archive, rarely read. |
 
+**No-op nights cost almost nothing, and a growing recording is never touched**
+(2026-09-26): the bilab NAS job skips when nothing changed; the S3 jobs exit in ~1 s
+when no file changed and never upload a file modified in the last 30 min; the SKIM
+NAS only runs after a recording stops. Details on each procedure page.
+
 If you only remember one thing: **the SKIM NAS is not a backup.** It is where work
 happens. A file that exists only there is a file with one copy.
 

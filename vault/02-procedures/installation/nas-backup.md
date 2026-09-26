@@ -30,6 +30,8 @@ status: active
 - **What:** one compressed dated tarball `e10_backup_YYYY-MM-DD.tar.gz` (~50 MB).
 - **Where:** NAS `Andrea@bilab-syn.tail8808c0.ts.net:53` → `~/e10_setup_backups/`.
 - **Retention:** newest **3** kept; the 4th-oldest is deleted each run.
+- **Skips unchanged nights (2026-09-26):** before building, it fingerprints path + size + mtime of every file the tarball would hold (~6,300 files, 0.1 s). Same as the last verified upload (`~/.cache/nas-backup.fingerprint`) ⇒ no tarball, no upload, ntfy "nothing changed". Two pure-churn paths do **not** count as change: `neurosurveillance/deploy/logs/` (watchdog writes every 20 min) and `.git/FETCH_HEAD` (`skim status`). They still ride along whenever anything real changed. So rotation keeps the last 3 **distinct** states, and the newest tarball's date is the last day anything changed. Delete the fingerprint file to force a run.
+- **During a recording:** runs anyway, by decision. It never reads `radix/data` or any `.xdat`, and costs ~45 s at `Nice=10`, idle IO.
 - **Runs as:** user `skimlab` (every backed-up path is `skimlab`-owned, so no root is needed), key-based SSH with `~/.ssh/id_ed25519`.
 
 > [!note] Transfer uses an ssh pipe, not rsync/scp

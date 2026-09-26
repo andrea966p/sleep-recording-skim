@@ -43,3 +43,11 @@ retrieved. Fine for an archive never deleted; it would bite on a prefix reorg.
 
 🔴 Built the week it mattered: at setup **83% of the raw archive had no raw copy**
 anywhere — see [[raw-data-had-no-offsite-copy-since-aug19]]. The first run closes it.
+
+✅ **2026-09-26: no-op fast path + settle guard.** Unchanged file list (name+size+mtime
+fingerprint in `logs/radix-s3-archive-$JOB.fingerprint`, written only on real
+COMPLETE) ⇒ exit in ~1 s, no AWS/rig call, still sends the nightly push (user wants
+it). Files modified < 30 min ago (`RADIX_S3_SETTLE_MIN`) are `NOT SETTLED`, left for
+next night ⇒ state `PENDING`. Reason: 🔴 `recording_active()` FAILS OPEN (Allego
+down/timeout reads "not recording"). 🔴 A daytime `--dry-run` without
+`ARCHIVE_IGNORE_WINDOW=1` hits HARD STOP and SENDS a real ntfy "paused" push.

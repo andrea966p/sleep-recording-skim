@@ -71,6 +71,28 @@ trap 'rm -rf "$STAGE"' EXIT
 
 log() { echo "[nas-backup $(date '+%F %T')] $*"; }
 
+# ---- skip unchanged nights --------------------------------------------------
+# Fingerprint = path, size and mtime of everything the tarball would hold. Two
+# paths are left out of the fingerprint (not the tarball) because they change
+# every day on their own: deploy/logs (the archive watchdog writes every 20 min)
+# and .git/FETCH_HEAD (`skim status` fetches at every session start). Logs still
+# ride along whenever anything real changed. Written only after a verified upload,
+# so a failed night is retried the next night.
+FPFILE="/home/skimlab/.cache/nas-backup.fingerprint"
+FINGERPRINT="$(cd / && { find "${INCLUDES[@]}" opt/neurosurveillance/session_wal.db opt/neurosurveillance/session_wal.db-wal \
+    \( -name node_modules -o -path '*/src-tauri/target' -o -name venv -o -name __pycache__ \
+       -o -path '*/radix/data' -o -name storage -o -path '*/deploy/logs' \) -prune \
+    -o -type f ! -name '*.mp4' ! -name '*.xdat' ! -name '*.pyc' ! -name radiens.log \
+       ! -name '*.db-shm' ! -path '*/.git/FETCH_HEAD' \
+       ! -path '*/mosquitto/passwd' -printf '%p %s %T@\n' 2>/dev/null || true; } | sort | sha256sum | cut -d' ' -f1)"
+if [[ -f "$FPFILE" && "$(cut -d' ' -f1 "$FPFILE")" == "$FINGERPRINT" ]]; then
+  SINCE="$(cut -d' ' -f2 "$FPFILE")"
+  log "nothing changed since the ${SINCE} snapshot; skipping"
+  "$NOTIFY" ok "Nightly backup: nothing changed" "Repo, vault, e10 settings, daemon state and Frigate config are identical to the ${SINCE} snapshot.
+No tarball built, nothing uploaded. The NAS still holds that snapshot."
+  exit 0
+fi
+
 # ---- consistent SQLite snapshot --------------------------------------------
 # Copying a live WAL-mode DB by file can miss committed rows. Use the online
 # backup API to get a coherent copy, then include that instead of the live file.
@@ -140,6 +162,7 @@ Treat the newest snapshot on the NAS as untrustworthy."
   exit 1
 fi
 log "uploaded ${ARCHIVE} (${remote_bytes} bytes verified)"
+mkdir -p "$(dirname "$FPFILE")" && echo "$FINGERPRINT $STAMP" > "$FPFILE"
 
 # ---- rotate (keep newest RETAIN) -------------------------------------------
 log "rotating: keeping newest ${RETAIN}"
