@@ -275,6 +275,11 @@ Compare every other chip, whose floor slope p1 moved by less than 0.25 between t
 > this page's A1 is one of them, and the reading above is confirmed.
 > Tracking moved to [[03-troubleshooting/symptoms/contaminated-floor-rejects-good-eeg]] so it is
 > no longer an open item buried in one experiment write-up.
+>
+> ✅ **FIXED 2026-09-26 (`2cc5892`). A1's card on this recording now reads UNJUDGEABLE**
+> (chip threshold −2.44). ⚠️ The detector proposed above, the share of floor sites steeper
+> than the animal's EEG, was NOT used: it is circular, and it scored the three genuinely open
+> electrodes as contaminated. The fix tests the floor's own threshold instead.
 
 A1's **EMG is excellent and unaffected**: 48 µV, 93.9% usable, and the strongest circadian
 amplitude ratio on the rig.

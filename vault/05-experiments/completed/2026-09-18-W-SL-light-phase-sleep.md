@@ -15,26 +15,12 @@ recordings: [allego_0__uid0910-09-00-00, allego_0__uid0917-09-00-09]
 >
 > 🛑 **Only B2 is judgeable and accepted on both days.** Everything else changed
 > status between recordings, so there is one within-animal comparison and no
-> group statistics are warranted.
+> group statistics are warranted. ✅ **Re-derived 2026-09-26 after the floor fix:
+> still n = 1.** D2 cannot pair, because its BASELINE fails scoreability, whatever
+> its 09-17 connection verdict. See the re-card section at the end.
 >
 > 🔴 **Grounding got worse, not better.** 7 of 8 chips grounded on 09-10, 5 of 8
 > on 09-17. A2, C1 and D1 lost their ground; A1 gained one and lost its EEG.
-
-> [!warning] 2026-09-26: one rung 2 verdict on this page is an artifact
-> **D2 / HLBWSL29 on `allego_0__uid0917-09-00-09` was reported FAIL at rung 2 and
-> that verdict is not trustworthy.** Its chip's wire-free reference inputs were
-> carrying signal, pushing the slope threshold to **−2.103** where the channel's
-> own EEG reads slope **−1.494** at rms **66.4 µV** — a healthy channel rejected by
-> an unmeetable bar.
->
-> 🔑 **This may change the n.** This page's central limit is "only B2 is judgeable
-> and accepted on both days". If D2 is in fact connected on 09-17, that limit has
-> to be re-derived. **Do not re-quote the n from this page** until
-> `uid0917-09-00-09` is re-carded.
->
-> The rest of the page is unaffected: the Process S finding rests on stage 3
-> output, which does not use the floor.
-> See [[03-troubleshooting/symptoms/contaminated-floor-rejects-good-eeg]].
 
 ## What was compared
 
@@ -71,7 +57,7 @@ verdict SCOREABLE.
 | D1 09-10 | 3346 | 80.8 | 19.2 | 69.5 | 1.3 min | 34.2 | 82 s | 40 s | 0.443 | −18% | accepted |
 | D1 09-17 | 2 | 87.6 | 12.4 | 75.0 | 0.0 min | 36.4 | 72 s | 36 s | 0.302 | −28% | **UNJUDGEABLE** |
 | D2 09-10 | 2870 | 92.0 | 8.0 | 79.7 | 0.0 min | 40.9 | 88 s | 20 s | 0.231 | −29% | rejected, r and wake |
-| D2 09-17 | 2584 | 76.9 | 23.1 | 65.5 | 4.1 min | 35.9 | 76 s | 42 s | 0.476 | −43% | accepted |
+| D2 09-17 | 2584 | 76.9 | 23.1 | 65.5 | 4.1 min | 35.9 | 76 s | 42 s | 0.476 | −43% | accepted; rung 2 **UNJUDGEABLE** (floor carrying signal, 2026-09-26) |
 
 A1 and C1 are absent: A1's EEG is dead on 09-17 (5.0 µV median) and both port C
 slots were OPEN on 09-10 with broken EMG conductors. C1 on 09-17 reads SCOREABLE
@@ -186,6 +172,49 @@ The baseline is now stripped (**22 channels, not 16** — gate B refused to drop
 recording has it flat) and verified on the SKIM NAS at
 `20260910_HLBWSL_BSR/`, with its QC bundle alongside. Naming
 and inventory: [[02-procedures/CANONICAL-recording-naming-and-inventory]].
+
+## Added 2026-09-26 — re-carded after the floor-validity fix; the n is still 1
+
+`allego_0__uid0917-09-00-09` was re-carded with the fix to `floor_stats()` that
+adds a second validity test on the floor: a grounded chip whose own slope
+threshold is steeper than `FLOOR_STEEPEST_VALID_SLOPE_P1` (−1.90) is not a valid
+negative control for the slope criterion, and the verdict is UNJUDGEABLE, not
+FAIL. See [[03-troubleshooting/symptoms/contaminated-floor-rejects-good-eeg]].
+
+**One verdict changed: D2 / HLBWSL29, rung 2 FAIL → UNJUDGEABLE.** Its chip's
+threshold is −2.103 where D2's own EEG reads −1.494 at 66.4 µV. The other seven
+cards are unchanged at every rung.
+
+⚠️ **D2 is the closest call in the whole scan.** −2.10 is the flattest
+contaminated threshold on the rig, 0.20 past the bar; the steepest valid one is
+−1.73. It is on the right side of a measured empty gap, but it is the case to
+re-examine first if the bar is ever revisited.
+
+| pos | animal | 09-10 rung 2 | 09-10 rung 3 | 09-17 rung 2 | 09-17 rung 3 | pairs? |
+|---|---|---|---|---|---|---|
+| A1 | HLBWSL21 | UNJUDGEABLE | BLOCKED | FAIL | BLOCKED | ❌ |
+| A2 | HLBWSL22 | PASS | PASS | UNJUDGEABLE | BLOCKED | ❌ |
+| B1 | HLBWSL23 | PASS | FAIL (r 0.255) | PASS | PASS | ❌ |
+| **B2** | **HLBWSL24** | PASS | PASS (r 0.454) | PASS | PASS (r 0.697) | ✅ |
+| C1 | HLBWSL25 | FAIL | BLOCKED | UNJUDGEABLE | BLOCKED | ❌ |
+| C2 | HLBWSL26 | FAIL | BLOCKED | PASS | FAIL | ❌ |
+| D1 | HLBWSL27 | PASS | PASS | UNJUDGEABLE | BLOCKED | ❌ |
+| D2 | HLBWSL29 | PASS | **FAIL (r 0.174)** | **UNJUDGEABLE** | BLOCKED | ❌ |
+
+🔑 **D2 was never going to change the n.** The worry recorded here on 2026-09-26
+was that a connected D2 on 09-17 would make a second pair. But D2 fails
+scoreability at **baseline**: the ladder gives `r@1min` 0.174 over the full file,
+and this page's own ZT0-12 analysis rejected it on r and on wake at 8.0%. No
+09-17 verdict could pair it. B2 remains the only within-animal comparison.
+
+⚠️ **The fix also cannot say D2 is connected on 09-17.** UNJUDGEABLE means the
+chip has no valid control, not that the electrode passed. Stage 3 accepts it at
+`r@1min` 0.476 and the raw EEG looks healthy (slope −1.494, 66.4 µV), which is
+suggestive, but stage 3 does not test connection.
+
+✅ **B2's floor is valid with room to spare**: threshold −1.38, 0.52 inside the
+bar. Its PASS is also on one of the stricter floors on the rig, so if anything
+it is conservative.
 
 ## Related
 

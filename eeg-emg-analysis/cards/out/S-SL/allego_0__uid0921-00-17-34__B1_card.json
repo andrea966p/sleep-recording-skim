@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "generated": "2026-09-23T18:05:02+09:00",
+  "generated": "2026-09-26T13:31:47+09:00",
   "cohort_id": "S-SL",
   "project_id": "neurosurveillance-eeg",
   "batch_id": "S-SL",
@@ -12,9 +12,9 @@
   "recording": "allego_0__uid0921-00-17-34",
   "recording_base": "/home/skimlab/radix/data/allego_0__uid0921-00-17-34",
   "recording_date": "2026-09-21",
-  "duration_h": null,
-  "zt_start": null,
-  "zt_end": null,
+  "duration_h": 36.70730666666667,
+  "zt_start": 15.28,
+  "zt_end": 3.99,
   "age_weeks": null,
   "age_is_derived": false,
   "days_post_surgery": null,
@@ -24,13 +24,13 @@
   "criterion": "slope",
   "epoch_s_qc": 10,
   "epoch_s_staging": 4,
-  "thresholds_hash": "01e11630dcbf",
+  "thresholds_hash": "cd459298551a",
   "floor": {
     "n_sites": 14,
     "n_epochs": 13214,
     "n_samples": 184996,
     "hum_p1": 4190.089,
-    "hum_p5": 4464.604,
+    "hum_p5": 4464.603,
     "hum_median": 5295.227,
     "slope_p1": -0.653,
     "slope_p5": -0.466,
@@ -41,6 +41,9 @@
     "estimator": "site_p1_median",
     "grounded": true,
     "validity_reason": "",
+    "site_median_slope": -0.056,
+    "slope_valid": true,
+    "slope_validity_reason": "",
     "available": true,
     "unavailable_reason": ""
   },
@@ -156,7 +159,7 @@
           "n_epochs": 13214,
           "n_samples": 184996,
           "hum_p1": 4190.089,
-          "hum_p5": 4464.604,
+          "hum_p5": 4464.603,
           "hum_median": 5295.227,
           "slope_p1": -0.653,
           "slope_p5": -0.466,
@@ -167,15 +170,18 @@
           "estimator": "site_p1_median",
           "grounded": true,
           "validity_reason": "",
+          "site_median_slope": -0.056,
+          "slope_valid": true,
+          "slope_validity_reason": "",
           "available": true,
           "unavailable_reason": ""
         },
         "floor_threshold_ci": {
           "criterion": "slope",
           "n_floor_sites": 14,
-          "point": -0.6532018184661865,
-          "lo": -0.8549988269805908,
-          "hi": -0.3525553345680237,
+          "point": -0.6532017967104912,
+          "lo": -0.8549988660216332,
+          "hi": -0.35255532935261724,
           "ci": 95.0,
           "n_boot": 2000,
           "note": "resampled over SITES; epochs within a site are not independent"
@@ -188,9 +194,9 @@
             "threshold_ci": {
               "criterion": "slope",
               "n_floor_sites": 14,
-              "point": -0.6532018184661865,
-              "lo": -0.8549988269805908,
-              "hi": -0.3525553345680237,
+              "point": -0.6532017967104912,
+              "lo": -0.8549988660216332,
+              "hi": -0.35255532935261724,
               "ci": 95.0,
               "n_boot": 2000,
               "note": "resampled over SITES; epochs within a site are not independent"
@@ -203,9 +209,9 @@
             "threshold_ci": {
               "criterion": "hum",
               "n_floor_sites": 14,
-              "point": 4190.08935546875,
-              "lo": 2650.042236328125,
-              "hi": 5071.434008789051,
+              "point": 4190.0891467285155,
+              "lo": 2650.042205810547,
+              "hi": 5071.433798889148,
               "ci": 95.0,
               "n_boot": 2000,
               "note": "resampled over SITES; epochs within a site are not independent"
@@ -227,31 +233,162 @@
       "number": 3,
       "name": "SCOREABILITY",
       "question": "Can the sleep question even be asked?",
-      "verdict": "INSUFFICIENT",
-      "headline": "",
-      "threshold": "",
-      "reason": "no stage 3 output for this animal-recording; run pipeline/stage3_features.py on its day folder",
-      "detail": {}
+      "verdict": "PASS",
+      "headline": "36.69 h in 9 block(s), r@1min 0.722",
+      "threshold": ">= 15 min inside blocks of >= 124 s, within-block r@1min > 0.30, wake 15-90%",
+      "reason": "longest block 663.7 min; persistence 0.722 against a shuffled 0.002",
+      "detail": {
+        "qc_verdict": "CLEAN",
+        "verdict": "SCOREABLE",
+        "hours_in_blocks": 36.694,
+        "n_blocks": 9,
+        "longest_block_min": 663.7,
+        "r_1min": 0.722,
+        "r_1min_shuffled": 0.002,
+        "wake_pct": 45.6,
+        "physiology_informative_pass": true,
+        "reasons": []
+      }
     },
     {
       "number": 4,
       "name": "ARCHITECTURE",
       "question": "What did the animal do?",
-      "verdict": "BLOCKED",
-      "headline": "",
-      "threshold": "",
-      "reason": "rung 3 SCOREABILITY did not pass",
-      "detail": {}
+      "verdict": "PROVISIONAL",
+      "headline": "wake 45.6%, NREM 47.7%, asleep in light 74.8%",
+      "threshold": "no pass mark: this rung reports, it does not judge",
+      "reason": "the light-phase figure swings 4.6 points across a +/-25% threshold sweep; no human has scored any epoch, so accuracy is unmeasured; no REM percentage is reportable",
+      "detail": {
+        "wake_pct": 45.6,
+        "nrem_pct": 47.7,
+        "rem_pct_CONSTRUCTED": 6.8,
+        "asleep_in_light_pct": 74.8,
+        "asleep_in_light_swing_pts": 4.6,
+        "otsu_sensitivity": [
+          {
+            "multiplier": 0.75,
+            "threshold_uv": 14.43,
+            "wake_pct": 48.1,
+            "nrem_pct": 45.4,
+            "asleep_in_light_pct": 73.0,
+            "r_1min_raw": 0.698
+          },
+          {
+            "multiplier": 0.9,
+            "threshold_uv": 17.31,
+            "wake_pct": 46.5,
+            "nrem_pct": 46.9,
+            "asleep_in_light_pct": 74.0,
+            "r_1min_raw": 0.722
+          },
+          {
+            "multiplier": 1.0,
+            "threshold_uv": 19.23,
+            "wake_pct": 45.6,
+            "nrem_pct": 47.7,
+            "asleep_in_light_pct": 74.8,
+            "r_1min_raw": 0.722
+          },
+          {
+            "multiplier": 1.1,
+            "threshold_uv": 21.16,
+            "wake_pct": 44.6,
+            "nrem_pct": 48.5,
+            "asleep_in_light_pct": 75.7,
+            "r_1min_raw": 0.706
+          },
+          {
+            "multiplier": 1.25,
+            "threshold_uv": 24.04,
+            "wake_pct": 43.0,
+            "nrem_pct": 50.1,
+            "asleep_in_light_pct": 77.6,
+            "r_1min_raw": 0.652
+          }
+        ],
+        "rem_from_nrem_pct": 87.5,
+        "rem_from_nrem_null": {
+          "null_mean_pct": 67.1,
+          "null_sd_pct": 1.2,
+          "observed_percentile_of_null": 100.0,
+          "method": "run-order shuffle within blocks; run lengths and state composition preserved, sequence destroyed",
+          "note": "If the observed value sits inside the null, 'REM is entered from NREM' is forced by label composition and is NOT evidence."
+        },
+        "bouts": {
+          "WAKE": {
+            "n": 200,
+            "median_s": 24,
+            "mean_s": 300.9,
+            "max_s": 5824
+          },
+          "NREM": {
+            "n": 345,
+            "median_s": 136,
+            "mean_s": 182.6,
+            "max_s": 932
+          },
+          "REM": {
+            "n": 215,
+            "median_s": 32,
+            "mean_s": 41.5,
+            "max_s": 160
+          }
+        },
+        "min_bout_s": {
+          "min_bout_epochs": 3,
+          "min_bout_s": 12,
+          "epochs_relabelled": 2431,
+          "pct_of_scored_epochs": 7.36,
+          "rule": "runs shorter than the minimum are merged into the longer neighbouring state, within blocks only",
+          "provenance": "LAB CONVENTION, not from the IIIS reference (see qc_thresholds.MIN_BOUT_EPOCHS)"
+        },
+        "by_light_phase": {
+          "light": {
+            "hours": 16.0,
+            "wake_pct": 25.2,
+            "nrem_pct": 64.3,
+            "rem_pct_CONSTRUCTED": 10.5
+          },
+          "dark": {
+            "hours": 20.7,
+            "wake_pct": 61.3,
+            "nrem_pct": 34.8,
+            "rem_pct_CONSTRUCTED": 3.8
+          }
+        },
+        "physiology_informative_checks": {
+          "nrem_largest_amplitude": true
+        },
+        "caveats": [
+          "PROVISIONAL until a blind-scoring Cohen kappa exists. No human has scored any epoch from this project, so these labels have no known accuracy.",
+          "The light-phase sleep figure moves 4.6 points across a +/-25% sweep of the wake threshold, so it is NOT threshold-independent and agreement with the literature is not independent confirmation.",
+          "NO REM PERCENTAGE IS REPORTED: the percentile rule and an independent Otsu cut disagree by roughly a factor of five on this montage.",
+          "Four of the five physiology checks restate the staging rule and cannot fail. Only 'NREM carries the largest amplitude' is informative."
+        ]
+      }
     },
     {
       "number": 5,
       "name": "EXPORT",
       "question": "Can a human check us?",
-      "verdict": "BLOCKED",
-      "headline": "",
-      "threshold": "",
-      "reason": "rung 3 SCOREABILITY did not pass",
-      "detail": {}
+      "verdict": "INSUFFICIENT",
+      "headline": "2/4 pipeline artifacts, NO plain text",
+      "threshold": "EDF for a scorer, plain text for the professor, both present",
+      "reason": "missing: EDF (run pipeline/stage4_export_edf.py); plain text (run cards/export_text.py)",
+      "detail": {
+        "artifacts": {
+          "edf": null,
+          "scorer_readme": null,
+          "tsv": null,
+          "tsv_gz": null,
+          "epochs_tsv": null,
+          "hypnogram": "/home/skimlab/eeg-processed/2026-09-21/portB-slot1_2026-09-21_001734_36h42m_hypnogram.csv",
+          "summary": "/home/skimlab/eeg-processed/2026-09-21/portB-slot1_2026-09-21_001734_36h42m_summary.txt"
+        },
+        "scoring_packs": [],
+        "packs_scored": [],
+        "kappa_available": false
+      }
     }
   ],
   "notes": "",
@@ -264,6 +401,11 @@
       "label": "allego_0__uid0912-08-55-18"
     },
     {
+      "date": "2026-09-20",
+      "kind": "recording",
+      "label": "allego_0__uid0920-09-00-07"
+    },
+    {
       "date": "2026-09-21",
       "kind": "recording",
       "label": "allego_0__uid0921-00-17-34"
@@ -272,14 +414,20 @@
   "weighings": [],
   "provenance": {
     "thresholds_file": "/home/skimlab/sleep-recording-skim/eeg-emg-analysis/core/qc_thresholds.py",
-    "thresholds_hash": "01e11630dcbf",
-    "git_rev": "8e7dac5",
+    "thresholds_hash": "cd459298551a",
+    "git_rev": "2cc5892",
     "cohort_manifest": "/home/skimlab/sleep-recording-skim/eeg-emg-analysis/cohorts/S-SL.yaml",
-    "processed_files": {},
+    "processed_files": {
+      "npz": "/home/skimlab/eeg-processed/2026-09-21/portB-slot1_2026-09-21_001734_36h42m.npz",
+      "features": "/home/skimlab/eeg-processed/2026-09-21/portB-slot1_2026-09-21_001734_36h42m_features.json",
+      "hypnogram": "/home/skimlab/eeg-processed/2026-09-21/portB-slot1_2026-09-21_001734_36h42m_hypnogram.csv",
+      "summary": "/home/skimlab/eeg-processed/2026-09-21/portB-slot1_2026-09-21_001734_36h42m_summary.txt",
+      "day_dir": "/home/skimlab/eeg-processed/2026-09-21"
+    },
     "epoch_s_qc": 10,
     "n_qc_epochs": 13214,
     "criterion": "slope",
     "criterion_note": "SLOPE and HUM usable fractions are NOT comparable, and neither is comparable to a fraction computed at the 4 s staging epoch."
   },
-  "top_rung": 2
+  "top_rung": 4
 }

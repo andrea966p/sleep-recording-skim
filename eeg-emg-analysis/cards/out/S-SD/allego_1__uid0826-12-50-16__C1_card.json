@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "generated": "2026-09-23T17:55:02+09:00",
+  "generated": "2026-09-26T13:33:12+09:00",
   "cohort_id": "S-SD",
   "project_id": "neurosurveillance-eeg",
   "batch_id": "S-SD",
@@ -24,13 +24,13 @@
   "criterion": "slope",
   "epoch_s_qc": 10,
   "epoch_s_staging": 4,
-  "thresholds_hash": "01e11630dcbf",
+  "thresholds_hash": "cd459298551a",
   "floor": {
     "n_sites": 14,
     "n_epochs": 7317,
     "n_samples": 102438,
     "hum_p1": 4784.243,
-    "hum_p5": 4934.512,
+    "hum_p5": 4934.511,
     "hum_median": 5215.04,
     "slope_p1": -0.963,
     "slope_p5": -0.662,
@@ -41,6 +41,9 @@
     "estimator": "site_p1_median",
     "grounded": true,
     "validity_reason": "",
+    "site_median_slope": 0.086,
+    "slope_valid": true,
+    "slope_validity_reason": "",
     "available": true,
     "unavailable_reason": ""
   },
@@ -156,7 +159,7 @@
           "n_epochs": 7317,
           "n_samples": 102438,
           "hum_p1": 4784.243,
-          "hum_p5": 4934.512,
+          "hum_p5": 4934.511,
           "hum_median": 5215.04,
           "slope_p1": -0.963,
           "slope_p5": -0.662,
@@ -167,15 +170,18 @@
           "estimator": "site_p1_median",
           "grounded": true,
           "validity_reason": "",
+          "site_median_slope": 0.086,
+          "slope_valid": true,
+          "slope_validity_reason": "",
           "available": true,
           "unavailable_reason": ""
         },
         "floor_threshold_ci": {
           "criterion": "slope",
           "n_floor_sites": 14,
-          "point": -0.9626924991607666,
-          "lo": -1.2495319843292236,
-          "hi": -0.47843778133392334,
+          "point": -0.9626925361156464,
+          "lo": -1.2495320272445678,
+          "hi": -0.47843777894973755,
           "ci": 95.0,
           "n_boot": 2000,
           "note": "resampled over SITES; epochs within a site are not independent"
@@ -188,9 +194,9 @@
             "threshold_ci": {
               "criterion": "slope",
               "n_floor_sites": 14,
-              "point": -0.9626924991607666,
-              "lo": -1.2495319843292236,
-              "hi": -0.47843778133392334,
+              "point": -0.9626925361156464,
+              "lo": -1.2495320272445678,
+              "hi": -0.47843777894973755,
               "ci": 95.0,
               "n_boot": 2000,
               "note": "resampled over SITES; epochs within a site are not independent"
@@ -203,9 +209,9 @@
             "threshold_ci": {
               "criterion": "hum",
               "n_floor_sites": 14,
-              "point": 4784.24267578125,
-              "lo": 2470.443359375,
-              "hi": 5384.8779296875,
+              "point": 4784.242548828125,
+              "lo": 2470.4432690429685,
+              "hi": 5384.8777734375,
               "ci": 95.0,
               "n_boot": 2000,
               "note": "resampled over SITES; epochs within a site are not independent"
@@ -299,6 +305,11 @@
       "label": "allego_1__uid0901-12-38-53"
     },
     {
+      "date": "2026-09-02",
+      "kind": "recording",
+      "label": "allego_2__uid0902-13-00-28"
+    },
+    {
       "date": "2026-09-03",
       "kind": "sampling",
       "label": "sampling"
@@ -320,8 +331,8 @@
   ],
   "provenance": {
     "thresholds_file": "/home/skimlab/sleep-recording-skim/eeg-emg-analysis/core/qc_thresholds.py",
-    "thresholds_hash": "01e11630dcbf",
-    "git_rev": "90bbad2",
+    "thresholds_hash": "cd459298551a",
+    "git_rev": "2cc5892",
     "cohort_manifest": "/home/skimlab/sleep-recording-skim/eeg-emg-analysis/cohorts/S-SD.yaml",
     "processed_files": {},
     "epoch_s_qc": 10,

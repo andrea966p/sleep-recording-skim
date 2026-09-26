@@ -31,6 +31,12 @@ cohort: S-SL
 > the endpoint is 36.707 h starting 00:17 and is **dark-heavy** (16.0 h light /
 > 20.71 h dark against 12/12). Mice are far more awake in the dark, so the
 > whole-file "more wake at recovery" is mostly window composition, not biology.
+>
+> ✅ **Rung 2 re-carded 2026-09-26 with the floor-validity fix** (`2cc5892`).
+> Every recovery-run `0.0%` on a contaminated chip is now **UNJUDGEABLE**, not
+> FAIL: 4 cards on `uid0920`, 5 on `uid0921`. ⚠️ UNJUDGEABLE is not PASS, so the
+> ladder can no longer *reject* A1 and C1 at the endpoint, but it cannot
+> *confirm* them either. The paired n = 3 below is a stage 3 result.
 
 ## The two recordings
 
@@ -59,12 +65,13 @@ cohort: S-SL
 > Why the file is longer than the protocol: sampling slipped from 09-21 to 09-22
 > because of the mouse problem, and the recording was extended to meet it.
 
-> [!warning] The three rung 2 tables below are KEPT FOR THE RECORD, not as evidence
-> They are what the cards said on 2026-09-23. Every `0.0%` on ports A, C and D
-> for the 09-20 and 09-21 recordings is a **floor artifact**, not a disconnected
-> electrode — the chips' wire-free reference inputs were carrying signal, which
-> pushed the slope threshold to −2.4…−3.5 where real EEG is −1.5. The baseline
-> table (09-12) is unaffected: its floors are clean.
+> [!note] The recovery rung 2 tables were CORRECTED on 2026-09-26
+> Both recovery recordings were re-carded after `floor_stats()` gained a second
+> validity test: a grounded chip whose own slope threshold is steeper than
+> `FLOOR_STEEPEST_VALID_SLOPE_P1` (−1.90) is not a valid negative control, and
+> the verdict is UNJUDGEABLE, not FAIL. The `was` column keeps what the cards said
+> on 2026-09-23. The baseline table (09-12) is unaffected: its floors are clean
+> (thresholds −0.46 to −1.40). Cards: git `2cc5892`, thresholds `cd459298551a`.
 > See [[03-troubleshooting/symptoms/contaminated-floor-rejects-good-eeg]].
 
 ## Baseline — 2026-09-12, 24.065 h
@@ -87,53 +94,78 @@ D1 is where they disagree. A2 and D2 are not marginal; they are flat zero.
 
 ## Recovery segment 1 — 2026-09-20, 15.145 h, outside the window
 
-| pos | animal | rung 2 CONNECTION | usable | longest block |
-|---|---|---|---|---|
-| C2 | HLBSSL39 | ✅ PASS | 87.3% | 64.3 min |
-| B1 | HLBSSL33 | ✅ PASS | 83.0% | 42.7 min |
-| B2 | HLBSSL34 | ❌ FAIL | 26.7% | 5.8 min |
-| A2 | HLBSSL32 | ⬜ UNJUDGEABLE | — | — |
-| A1 | HLBSSL31 | ❌ FAIL | 0.0% | 0.0 min |
-| C1 | HLBSSL35 | ❌ FAIL | 0.0% | 0.0 min |
-| D1 | HLBSSL40 | ❌ FAIL | 0.0% | 0.0 min |
-| D2 | HLBSSL38 | ❌ FAIL | 0.0% | 0.0 min |
+| pos | animal | rung 2 CONNECTION | usable | longest block | chip threshold | was (09-23) |
+|---|---|---|---|---|---|---|
+| C2 | HLBSSL39 | ✅ PASS | 87.3% | 64.3 min | −1.03 | PASS |
+| B1 | HLBSSL33 | ✅ PASS | 83.0% | 42.7 min | −0.36 | PASS |
+| B2 | HLBSSL34 | ❌ FAIL | 26.7% | 5.8 min | −1.50 | FAIL |
+| A2 | HLBSSL32 | ⬜ UNJUDGEABLE, ungrounded | — | — | 787 µV hum | UNJUDGEABLE |
+| A1 | HLBSSL31 | ⬜ UNJUDGEABLE, floor carrying signal | — | — | **−2.95** | FAIL 0.0% |
+| C1 | HLBSSL35 | ⬜ UNJUDGEABLE, floor carrying signal | — | — | **−3.00** | FAIL 0.0% |
+| D1 | HLBSSL40 | ⬜ UNJUDGEABLE, floor carrying signal | — | — | **−2.77** | FAIL 0.0% |
+| D2 | HLBSSL38 | ⬜ UNJUDGEABLE, floor carrying signal | — | — | **−3.39** | FAIL 0.0% |
 
-🔑 **This is the table that dates the attrition.** It was taken on the Sunday
-morning, before the recovery run proper, and A1, C1 and D1 already read 0.0%
-while B2 already reads 26.7%. Every loss visible at the endpoint is already
-here.
+🛑 **RETRACTED: "this is the table that dates the attrition".** The 2026-09-23
+version read the A1, C1 and D1 zeros here as losses that had already happened
+before the recovery run. They were four contaminated floors. Every one of those
+EEGs reads slope −1.48 to −1.71 at 70–80 µV, the signature of working EEG.
 
-⚠️ **A2 is UNJUDGEABLE here and FAIL on the other two recordings.** Its chip read
-ungrounded for this segment, so rung 2 could not be asked — which is not the same
-as answering no. See [[03-troubleshooting/symptoms/weak-chip-ground-vs-open-electrode]].
+🔑 **C1 is the case that forced the final form of the fix.** Its floor is
+contaminated only intermittently: the typical wire-free site reads −0.77, which
+looks nearly clean, but most sites are steep in their 1% tail and the tail sets
+the threshold (−3.00). A first version of the fix, which tested the typical
+site, passed this chip and left C1 at FAIL.
+
+⚠️ **B2 still FAILs, and that FAIL stands.** Its floor is valid (−1.50) but
+6 of 14 sites are partly contaminated, which makes the bar strict. Its longest
+unbroken block is 5.8 min against 15. It is the closest thing on this batch to
+a grey case and is reported as computed.
+
+⚠️ **A2 is UNJUDGEABLE on both recovery segments, for two different reasons.**
+Here its chip reads ungrounded (787 µV hum, bar 800). On `uid0921` it is
+grounded but its floor carries signal. Neither is an answer about the animal. See
+[[03-troubleshooting/symptoms/weak-chip-ground-vs-open-electrode]].
 
 ## Recovery — 2026-09-21 to 09-22, 36.707 h as computed
 
-| pos | animal | rung 2 CONNECTION | usable | longest block |
-|---|---|---|---|---|
-| C2 | HLBSSL39 | ✅ PASS | 82.7% | 52.8 min |
-| B1 | HLBSSL33 | ✅ PASS | 78.2% | 44.7 min |
-| B2 | HLBSSL34 | ❌ FAIL | 23.5% | 8.0 min |
-| A1 | HLBSSL31 | ❌ FAIL | 0.0% | 0.0 min |
-| A2 | HLBSSL32 | ❌ FAIL | 0.0% | 0.2 min |
-| C1 | HLBSSL35 | ❌ FAIL | 0.0% | 0.0 min |
-| D1 | HLBSSL40 | ❌ FAIL | 0.0% | 0.0 min |
-| D2 | HLBSSL38 | ❌ FAIL | 0.0% | 0.0 min |
+| pos | animal | rung 2 CONNECTION | usable | longest block | chip threshold | was (09-23) |
+|---|---|---|---|---|---|---|
+| C2 | HLBSSL39 | ✅ PASS | 82.7% | 52.8 min | −0.69 | PASS |
+| B1 | HLBSSL33 | ✅ PASS | 78.2% | 44.7 min | −0.65 | PASS |
+| B2 | HLBSSL34 | ❌ FAIL | 23.5% | 8.0 min | −1.56 | FAIL |
+| A1 | HLBSSL31 | ⬜ UNJUDGEABLE, floor carrying signal | — | — | **−2.38** | FAIL 0.0% |
+| A2 | HLBSSL32 | ⬜ UNJUDGEABLE, floor carrying signal | — | — | **−2.59** | FAIL 0.0% |
+| C1 | HLBSSL35 | ⬜ UNJUDGEABLE, floor carrying signal | — | — | **−3.04** | FAIL 0.0% |
+| D1 | HLBSSL40 | ⬜ UNJUDGEABLE, floor carrying signal | — | — | **−2.88** | FAIL 0.0% |
+| D2 | HLBSSL38 | ⬜ UNJUDGEABLE, floor carrying signal | — | — | **−3.51** | FAIL 0.0% |
+
+B1 and C2 now also climb the ladder to rung 4: rung 3 PASS at `r@1min` 0.722 and
+0.502, rung 4 PROVISIONAL. That is not an effect of the fix. The 2026-09-23 cards
+predate stage 3 on this batch and read rung 3 INSUFFICIENT.
 
 ## The attrition
 
+Corrected verdicts, 2026-09-26:
+
 | pos | animal | 09-12 baseline | 09-20 segment 1 | 09-21 segment 2 | |
 |---|---|---|---|---|---|
-| B1 | HLBSSL33 | 73.8% | 83.0% | **78.2%** | ✅ held throughout |
-| C2 | HLBSSL39 | 79.8% | 87.3% | **82.7%** | ✅ held throughout |
-| B2 | HLBSSL34 | 88.0% | **26.7%** | 23.5% | 🔴 degraded BEFORE recovery |
-| A1 | HLBSSL31 | 90.6% | **0.0%** | 0.0% | 🔴 lost BEFORE recovery |
-| C1 | HLBSSL35 | 87.0% | **0.0%** | 0.0% | 🔴 lost BEFORE recovery |
-| D1 | HLBSSL40 | 66.9% (FAIL) | 0.0% | 0.0% | ❌ never recovered |
-| D2 | HLBSSL38 | 0.0% | 0.0% | 0.0% | ❌ never recovered |
-| A2 | HLBSSL32 | 0.0% | UNJUDGEABLE | 0.0% | ❌ never recovered |
+| B1 | HLBSSL33 | PASS 73.8% | PASS 83.0% | PASS **78.2%** | ✅ held throughout |
+| C2 | HLBSSL39 | PASS 79.8% | PASS 87.3% | PASS **82.7%** | ✅ held throughout |
+| B2 | HLBSSL34 | PASS 88.0% | FAIL 26.7% | FAIL 23.5% | 🔴 the only real rung 2 decline |
+| A1 | HLBSSL31 | PASS 90.6% | UNJUDGEABLE | UNJUDGEABLE | ⬜ not judgeable after baseline |
+| C1 | HLBSSL35 | PASS 87.0% | UNJUDGEABLE | UNJUDGEABLE | ⬜ not judgeable after baseline |
+| D1 | HLBSSL40 | FAIL 66.9% | UNJUDGEABLE | UNJUDGEABLE | ⬜ |
+| D2 | HLBSSL38 | FAIL 0.0% | UNJUDGEABLE | UNJUDGEABLE | ⬜ dead at baseline, healthy-looking after |
+| A2 | HLBSSL32 | FAIL 0.0% | UNJUDGEABLE | UNJUDGEABLE | ⬜ |
 
-🛑 **This table measures the floor, not the electrodes. RETRACTED as attrition.**
+🔑 **B2 is the one position whose rung 2 verdict fell and whose floor is valid.**
+88.0% → 26.7% → 23.5% on valid thresholds. Stage 3 rejects it at every
+timepoint, so it never contributed to the sleep data.
+
+The table as first published, on 2026-09-23, read the six UNJUDGEABLE cells above
+as `0.0%` and called it attrition.
+
+🛑 **That reading measured the floor, not the electrodes. RETRACTED as attrition.**
 The 2026-09-23 reading of it — that everything failed in the eight-day gap — was
 wrong. The positions that "fail" here are exactly the positions whose reference
 floor became contaminated, and their EEG is unchanged:
@@ -209,6 +241,16 @@ This supersedes every earlier claim about S-SL's n. It is **not** the "n = 2 at
 rung 2" this page first reported, and it is not the n = 1 the batch was assumed
 to have.
 
+⚠️ **This n is stage 3's, not the ladder's.** After the fix the ladder calls A1
+and C1 UNJUDGEABLE at the endpoint, so it neither rejects nor confirms them, and
+their rung 3 is BLOCKED. Of the three, only B1 reaches rung 3 on the ladder at the
+endpoint (C2 does too, but its baseline is rejected).
+Their EEG at the endpoint (slope −1.51 and −1.54, rms 72 and 68 µV) is what
+working EEG looks like on this rig, and stage 3 scores both. But stage 3 does not
+test connection, so the claim rests on the waveform, not on a negative control.
+⚠️ The baseline cards (`uid0912`) were carded before stage 3 ran and still read
+rung 3 INSUFFICIENT. Re-card them before quoting a ladder-level n.
+
 ### 🛑 Why no sleep conclusion is drawn from it
 
 The two windows are not comparable:
@@ -262,8 +304,9 @@ baseline's 12/12, but far closer. See
 - ⚠️ **No husbandry.** `cohorts/S-SL.yaml` deliberately carries no sex, date of
   birth, surgery date, weights or tether date, so no age, weight or
   days-post-surgery can be reported for any animal here.
-- ❌ **The rung 2 verdicts on 09-20 and 09-21 are not usable at all** until the
-  floor validity fix lands and those recordings are re-carded.
+- ⚠️ **The rung 2 verdicts on 09-20 and 09-21 are corrected but mostly empty.**
+  Since the 2026-09-26 re-card, six of eight positions on each recovery segment
+  read UNJUDGEABLE. That is honest, but it is not evidence of connection.
 
 ## Provenance
 

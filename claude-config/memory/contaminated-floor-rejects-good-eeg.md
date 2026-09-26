@@ -1,6 +1,6 @@
 ---
 name: contaminated-floor-rejects-good-eeg
-description: "Rung 2 reports 0.0% usable on HEALTHY EEG when the chip's wire-free floor is spectrally contaminated. 11 cards affected. Known since 2026-08-27, still unfixed."
+description: "Rung 2 reported 0.0% usable on HEALTHY EEG when a chip's wire-free floor carried signal. FIXED 2026-09-26 (2cc5892): floor slope threshold steeper than -1.90 => UNJUDGEABLE. Never compare floor with the animal (circular)."
 metadata:
   node_type: memory
   type: project
@@ -32,10 +32,27 @@ for S-SL — an "attrition" of five electrodes that never happened. The lesson i
 less the bug than the fact that a finding on one experiment page never reached the
 engine or the other cohorts.
 
-**Fix, not yet applied:** add a floor-validity test on the floor's own slope
-distribution → **UNJUDGEABLE, not FAIL**, same as an ungrounded chip. Best
-detector (from the 08-27 page): what fraction of the floor's sites are steeper
-than the animal's EEG — 7 of 14 on that chip. Then re-card four recordings only.
+✅ **FIXED 2026-09-26, commits `a52133c` + `2cc5892`.** `FloorStats.slope_valid` =
+floor's own `slope_p1 >= FLOOR_STEEPEST_VALID_SLOPE_P1` (−1.90); rung 2 →
+UNJUDGEABLE when EEG is slope-judged and floor invalid. Measured gap over 13
+recordings: victims −2.10…−3.51, everything else ≥ −1.73 (edge = the 3 genuine
+open electrodes, −1.72/−1.73). Re-carded uid0920/0921/0917/0826: exactly the 11
+cards moved, nothing else. Test: `tests/test_contaminated_floor.py`.
+
+🛑 **Two detectors REJECTED by measurement — do not resurrect them:**
+1. "fraction of floor sites steeper than the animal's EEG" (the 08-27 idea) is
+   CIRCULAR: a dead electrode is as flat as the floor ⇒ scored 1.00/1.00/0.93 on
+   the 3 genuinely open electrodes. No floor-vs-animal comparison can work.
+2. "typical floor site" (median of per-site medians, −0.85) — falsified by
+   uid0920 C1 (typical −0.77, threshold −3.00). Contamination can be
+   INTERMITTENT; it lives in the tail, and the tail sets the threshold.
+
+⚠️ Still open: `check_hum_validity()` cross-checks hum against the SLOPE threshold
+⇒ hum-judged EEG on a contaminated floor still FAILs by refusal (no affected card
+is hum-judged). UNJUDGEABLE ≠ PASS: S-SL paired n=3 is a STAGE 3 claim; ladder
+can't confirm A1/C1 at endpoint. W-SL n stays 1 (D2 baseline fails rung 3).
+`uid0912` S-SL cards predate stage 3 ⇒ rung 3 INSUFFICIENT, re-card before a
+ladder-level n.
 
 ⚠️ **Do not count affected cards without filtering on the criterion the EEG role
 actually used.** A first pass said 35; 16 of those were judged on `hum`, where the

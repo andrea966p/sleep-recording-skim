@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "generated": "2026-09-26T11:21:59+09:00",
+  "generated": "2026-09-26T13:33:37+09:00",
   "cohort_id": "S-SL",
   "project_id": "neurosurveillance-eeg",
   "batch_id": "S-SL",
@@ -12,9 +12,9 @@
   "recording": "allego_0__uid0920-09-00-07",
   "recording_base": "/home/skimlab/radix/data/allego_0__uid0920-09-00-07",
   "recording_date": "2026-09-20",
-  "duration_h": null,
-  "zt_start": null,
-  "zt_end": null,
+  "duration_h": 15.144924444444445,
+  "zt_start": 0.0,
+  "zt_end": 15.14,
   "age_weeks": null,
   "age_is_derived": false,
   "days_post_surgery": null,
@@ -24,7 +24,7 @@
   "criterion": "slope",
   "epoch_s_qc": 10,
   "epoch_s_staging": 4,
-  "thresholds_hash": "01e11630dcbf",
+  "thresholds_hash": "cd459298551a",
   "floor": {
     "n_sites": 14,
     "n_epochs": 5452,
@@ -41,6 +41,9 @@
     "estimator": "site_p1_median",
     "grounded": true,
     "validity_reason": "",
+    "site_median_slope": -1.487,
+    "slope_valid": false,
+    "slope_validity_reason": "the wire-free inputs on this chip set a slope threshold of -2.95, steeper than the -1.90 that any chip with an empty floor has shown on this rig. A wire-free input has no source, so these inputs are carrying signal and are not a valid negative control for the slope criterion. No slope verdict can be drawn from them. This is a statement about the chip's control, not about the animal.",
     "available": true,
     "unavailable_reason": ""
   },
@@ -108,49 +111,11 @@
       "number": 2,
       "name": "CONNECTION",
       "question": "Is the electrode connected, judged against wire-free inputs in the same file?",
-      "verdict": "FAIL",
-      "headline": "0.0% usable, longest unbroken block 0.0 min",
-      "threshold": "slope < -2.95 (p1 of 14 wire-free inputs in this file), rms 10-150 uV, zero railed samples",
-      "reason": "no epoch passes on every role; weakest is EEG at 0.0%",
+      "verdict": "UNJUDGEABLE",
+      "headline": "chip floor is carrying signal: its slope threshold is -2.95 (valid floors are flatter than -1.90) -- no verdict can be drawn",
+      "threshold": "",
+      "reason": "the wire-free inputs on this chip set a slope threshold of -2.95, steeper than the -1.90 that any chip with an empty floor has shown on this rig. A wire-free input has no source, so these inputs are carrying signal and are not a valid negative control for the slope criterion. No slope verdict can be drawn from them. This is a statement about the chip's control, not about the animal.",
       "detail": {
-        "per_role": {
-          "eeg": {
-            "n_epochs_total": 5452,
-            "n_epochs_usable": 0,
-            "epoch_s": 10,
-            "usable_fraction": 0.0,
-            "usable_hours": 0.0,
-            "longest_block_epochs": 0,
-            "longest_block_minutes": 0.0,
-            "insufficient": false,
-            "criterion": "slope",
-            "site": "A/1"
-          },
-          "emg": {
-            "n_epochs_total": 5452,
-            "n_epochs_usable": 2949,
-            "epoch_s": 10,
-            "usable_fraction": 0.5409024211298606,
-            "usable_hours": 8.192,
-            "longest_block_epochs": 96,
-            "longest_block_minutes": 16.0,
-            "insufficient": false,
-            "criterion": "hum",
-            "site": "A/2"
-          }
-        },
-        "combined": {
-          "n_epochs_total": 5452,
-          "n_epochs_usable": 0,
-          "epoch_s": 10,
-          "usable_fraction": 0.0,
-          "usable_hours": 0.0,
-          "longest_block_epochs": 0,
-          "longest_block_minutes": 0.0,
-          "insufficient": false,
-          "criterion": "slope"
-        },
-        "refusals": {},
         "floor": {
           "n_sites": 14,
           "n_epochs": 5452,
@@ -167,59 +132,11 @@
           "estimator": "site_p1_median",
           "grounded": true,
           "validity_reason": "",
+          "site_median_slope": -1.487,
+          "slope_valid": false,
+          "slope_validity_reason": "the wire-free inputs on this chip set a slope threshold of -2.95, steeper than the -1.90 that any chip with an empty floor has shown on this rig. A wire-free input has no source, so these inputs are carrying signal and are not a valid negative control for the slope criterion. No slope verdict can be drawn from them. This is a statement about the chip's control, not about the animal.",
           "available": true,
           "unavailable_reason": ""
-        },
-        "floor_threshold_ci": {
-          "criterion": "slope",
-          "n_floor_sites": 14,
-          "point": -2.9535850906372074,
-          "lo": -3.3634185934066774,
-          "hi": -2.5500810050964358,
-          "ci": 95.0,
-          "n_boot": 2000,
-          "note": "resampled over SITES; epochs within a site are not independent"
-        },
-        "usable_fraction_intervals": {
-          "eeg": {
-            "fraction": 0.0,
-            "fraction_lo": 0.0,
-            "fraction_hi": 0.0,
-            "threshold_ci": {
-              "criterion": "slope",
-              "n_floor_sites": 14,
-              "point": -2.9535850906372074,
-              "lo": -3.3634185934066774,
-              "hi": -2.5500810050964358,
-              "ci": 95.0,
-              "n_boot": 2000,
-              "note": "resampled over SITES; epochs within a site are not independent"
-            }
-          },
-          "emg": {
-            "fraction": 0.5409024211298606,
-            "fraction_lo": 0.5409024211298606,
-            "fraction_hi": 0.5409024211298606,
-            "threshold_ci": {
-              "criterion": "hum",
-              "n_floor_sites": 14,
-              "point": 416.94093658447264,
-              "lo": 344.78096862792967,
-              "hi": 901.2789544677734,
-              "ci": 95.0,
-              "n_boot": 2000,
-              "note": "resampled over SITES; epochs within a site are not independent"
-            }
-          }
-        },
-        "usable_fraction_definition": "\"Usable fraction\" is this project's own term and is not standard in the sleep literature, so it is defined wherever it is first used. It is the percentage of 10 s epochs in which a channel's spectrum beats the 1st percentile of AMPLIFIER INPUTS WITH NO WIRE ATTACHED, recorded simultaneously through the same chip, cable and room in the same file. It is a CONNECTION measure, not a data-quality score and not an artefact-rejection rate: the discarded epochs are ones in which the electrode was not demonstrably connected, NOT ones judged too noisy to use.",
-        "falsification": {
-          "criterion": "slope",
-          "n_floor_sites": 14,
-          "mean_usable_fraction": 0.0,
-          "max_usable_fraction": 0.0,
-          "expected_by_construction": 0.01,
-          "passes": true
         }
       }
     },
@@ -277,10 +194,16 @@
   "weighings": [],
   "provenance": {
     "thresholds_file": "/home/skimlab/sleep-recording-skim/eeg-emg-analysis/core/qc_thresholds.py",
-    "thresholds_hash": "01e11630dcbf",
-    "git_rev": "9c31871",
+    "thresholds_hash": "cd459298551a",
+    "git_rev": "2cc5892",
     "cohort_manifest": "/home/skimlab/sleep-recording-skim/eeg-emg-analysis/cohorts/S-SL.yaml",
-    "processed_files": {},
+    "processed_files": {
+      "npz": "/home/skimlab/eeg-processed/2026-09-20/portA-slot1_2026-09-20_090006_15h09m.npz",
+      "features": "/home/skimlab/eeg-processed/2026-09-20/portA-slot1_2026-09-20_090006_15h09m_features.json",
+      "hypnogram": "/home/skimlab/eeg-processed/2026-09-20/portA-slot1_2026-09-20_090006_15h09m_hypnogram.csv",
+      "summary": "/home/skimlab/eeg-processed/2026-09-20/portA-slot1_2026-09-20_090006_15h09m_summary.txt",
+      "day_dir": "/home/skimlab/eeg-processed/2026-09-20"
+    },
     "epoch_s_qc": 10,
     "n_qc_epochs": 5452,
     "criterion": "slope",

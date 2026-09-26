@@ -1,8 +1,9 @@
 ---
-tags: [troubleshooting, symptom, eeg, qc, verdict-ladder, floor, open]
+tags: [troubleshooting, symptom, eeg, qc, verdict-ladder, floor, fixed]
 created: 2026-09-26
 first_observed: 2026-08-27
-status: open
+status: fixed
+fixed: 2026-09-26
 affects: [S-SL, W-SL, S-SD]
 ---
 
@@ -26,7 +27,13 @@ affects: [S-SL, W-SL, S-SD]
 > nothing published is too optimistic because of this. It only ever rejects good
 > data.
 >
-> 🛑 **NOT FIXED, AND NOT NEW.** This was diagnosed correctly on **2026-08-27** in
+> ✅ **FIXED 2026-09-26 in `2cc5892`.** A grounded chip whose own slope threshold is
+> steeper than `FLOOR_STEEPEST_VALID_SLOPE_P1` (−1.90) now yields UNJUDGEABLE, not
+> FAIL. The four affected recordings were re-carded: exactly the 11 cards below
+> moved, and nothing else in S-SD, S-SL, W-SD or W-SL did. See "The fix, as
+> applied".
+>
+> 🛑 **NOT NEW.** This was diagnosed correctly on **2026-08-27** in
 > [[05-experiments/completed/2026-08-27-B1-swap-baseline-20h-run]], which named the
 > mechanism, said the verdict should be UNJUDGEABLE, and logged it as an open item.
 > Nothing was done, and a month later it produced a wrong published conclusion for
@@ -132,7 +139,7 @@ Read-only over every card JSON plus the cached features. No re-carding.
 
 | cohort | recording | positions | status |
 |---|---|---|---|
-| S-SL | `allego_0__uid0920-09-00-07` | A1 C1 D1 D2 | suspect — same floor signature, and stage 3 scores them |
+| S-SL | `allego_0__uid0920-09-00-07` | A1 C1 D1 D2 | ✅ confirmed on re-card (thresholds −2.77 to −3.39) |
 | S-SL | `allego_0__uid0921-00-17-34` | A1 A2 C1 D1 D2 | ✅ confirmed |
 | W-SL | `allego_0__uid0917-09-00-09` | D2 / HLBWSL29 | ✅ confirmed (slope −1.494, rms 66.4, threshold −2.103) |
 | S-SD | `allego_1__uid0826-12-50-16` | A1 / HLBSSD11 | ✅ confirmed (slope −1.329, rms 94.5, threshold −2.437) |
@@ -158,7 +165,7 @@ data does not carry this artifact. Its one flagged card is a true failure.
 > is never used, and several flagged FAILs are real open electrodes. Always
 > filter on the criterion the EEG role actually used before counting.
 
-## The fix, not yet applied
+## The fix as first proposed
 
 `floor_stats()` needs a second validity test beside `grounded`: whether the
 floor's own slope distribution is flat enough to be a negative control. When it
@@ -176,6 +183,46 @@ of this rig's EEG, measured in 2026-09, and it belongs in `core/qc_thresholds.py
 as a named, dated constant if it is used at all. The better test is on the floor's
 own distribution — how far its median sits from zero — not on a comparison with
 EEG.
+
+## The fix, as applied — 2026-09-26
+
+`floor_stats()` now returns `slope_valid`, and rung 2 gives UNJUDGEABLE when the
+EEG is judged on slope and the floor is not valid. The test is on the floor's own
+threshold, never on a comparison with the animal:
+
+```python
+slope_valid = slope_p1 >= T.FLOOR_STEEPEST_VALID_SLOPE_P1   # -1.90
+```
+
+Across every grounded chip in 13 recordings, chips carrying a healthy EEG that
+read 0.0% have thresholds of −2.10 to −3.51, and every other chip sits at −1.73
+or flatter. −1.90 is in that empty gap. `tests/test_contaminated_floor.py` pins
+the behaviour, including a dead EEG on a clean floor that must still FAIL.
+
+🔴 **Two detectors were tried and rejected, both measured:**
+
+1. **The 2026-08-27 proposal: the fraction of floor sites steeper than this
+   animal's EEG.** It is circular. A dead electrode is as flat as the floor, so
+   every site is "steeper" than it. It scored 1.00 / 1.00 / 0.93 on the three
+   genuinely open electrodes and would have turned real failures into
+   UNJUDGEABLE. **No test that compares the floor with the animal can tell "the
+   floor looks like EEG" from "the EEG looks like the floor".**
+2. **The floor's typical site, median of per-site medians, bar −0.85.** It shipped
+   in `a52133c` and was falsified within the hour by the first recording it had
+   not been fitted on. `uid0920` C1 has a typical site of −0.77 but a threshold of
+   −3.00: the contamination is intermittent, and it lives in the tail, which is
+   what sets the threshold.
+
+⚠️ **Open:**
+- **It is an empirical gap, 0.37 wide, from one rig.** Its edges are W-SL
+  `uid0917` D2 (−2.10, the flattest victim) and the three genuine failures
+  (−1.72 to −1.73). A new chip landing inside it is a reason to re-measure.
+- **The hum criterion has a second route in.** `check_hum_validity()` cross-checks
+  hum against the slope threshold, so on a contaminated floor a hum-judged EEG
+  still FAILs by refusal. No affected recording is hum-judged; all 32 hum cards
+  are the pooled-floor HLB-fem cohort.
+- **UNJUDGEABLE is not PASS.** The fix withdraws false FAILs. It cannot confirm
+  that the electrodes on those chips are connected.
 
 ## The 2026-08-27 page already said what to do
 
