@@ -52,12 +52,16 @@ def check(name, fn):
 
 
 def _feat(*, eeg_slope: float, eeg_rms: float, n_steep_floor: int,
-          floor_hum: float = 2000.0, seed: int = 20260926) -> C.EpochFeatures:
+          floor_hum: float = 2000.0, n_bursty_floor: int = 0,
+          seed: int = 20260926) -> C.EpochFeatures:
     """One 2-role chip. `n_steep_floor` of its 14 floor sites carry EEG-like signal.
 
     Clean floor sites: slope ~ N(-0.1, 0.15), the flat spectrum of an unwired
     input, matching the +0.10 to -0.61 typical-site range measured on this rig.
     Steep floor sites: slope ~ N(-2.0, 0.3), as on uid0921's contaminated chips.
+    Bursty floor sites: flat like a clean site, except 5% of epochs at -3.0 --
+    INTERMITTENT contamination, as on uid0920 chip C1. Their median stays flat
+    and their 1st percentile does not.
     """
     rng = np.random.default_rng(seed)
     animal = SPEC.animal_sites()["A1"]
@@ -77,6 +81,9 @@ def _feat(*, eeg_slope: float, eeg_rms: float, n_steep_floor: int,
         mu = -2.0 if j < n_steep_floor else -0.1
         sd = 0.3 if j < n_steep_floor else 0.15
         slope[:, 2 + j] = rng.normal(mu, sd, N_EPOCHS)
+        if n_steep_floor <= j < n_steep_floor + n_bursty_floor:
+            burst = rng.random(N_EPOCHS) < 0.05
+            slope[burst, 2 + j] = rng.normal(-3.0, 0.2, int(burst.sum()))
         rms[:, 2 + j] = rng.normal(80.0, 5.0, N_EPOCHS)
         hum[:, 2 + j] = rng.normal(floor_hum, floor_hum * 0.1, N_EPOCHS)
     # a rail value above zero only where the channel is actually railing
@@ -97,15 +104,16 @@ def _rung2(feat, criterion="slope"):
 
 # --------------------------------------------------------------------------- #
 def t_constant_sits_in_the_measured_gap():
-    """-0.61 is the steepest CLEAN typical site measured, -1.12 the flattest bad one."""
-    assert -1.12 < T.FLOOR_MAX_SITE_MEDIAN_SLOPE < -0.61, T.FLOOR_MAX_SITE_MEDIAN_SLOPE
+    """-1.73 is the steepest valid threshold measured (the genuinely open
+    electrodes' chips), -2.10 the flattest contaminated one."""
+    assert -2.10 < T.FLOOR_STEEPEST_VALID_SLOPE_P1 < -1.73, T.FLOOR_STEEPEST_VALID_SLOPE_P1
 
 
 def t_clean_floor_is_flat():
     f = C.floor_stats(_feat(eeg_slope=-1.5, eeg_rms=75, n_steep_floor=0), "A1")
-    assert f.grounded and f.slope_flat, f.as_dict()
+    assert f.grounded and f.slope_valid, f.as_dict()
     assert f.slope_validity_reason == ""
-    assert "slope_flat" in f.as_dict() and "site_median_slope" in f.as_dict()
+    assert "slope_valid" in f.as_dict() and "site_median_slope" in f.as_dict()
 
 
 def t_healthy_eeg_on_clean_floor_passes():
@@ -119,12 +127,12 @@ def t_healthy_eeg_on_contaminated_floor_is_unjudgeable():
     feat = _feat(eeg_slope=-1.5, eeg_rms=75, n_steep_floor=9)
     f = C.floor_stats(feat, "A1")
     assert f.grounded, "the chip IS grounded; hum alone would trust it"
-    assert not f.slope_flat, f.as_dict()
+    assert not f.slope_valid, f.as_dict()
     assert f.slope_p1 < -1.5, "the floor must demand more than the EEG delivers"
     r = _rung2(feat)
     assert r.verdict == "UNJUDGEABLE", (r.verdict, r.reason)
     assert r.verdict != "FAIL"
-    assert "not flat" in r.headline, r.headline
+    assert "carrying signal" in r.headline, r.headline
     assert "%" not in f"{r.headline} {r.reason}", "no fraction may be reported"
     assert "floor" in r.detail, "render_card indexes detail['floor']"
 
@@ -152,7 +160,22 @@ def t_railing_eeg_on_clean_floor_still_fails():
 def t_a_minority_of_steep_sites_does_not_trip_it():
     """One or two coupled sites are the estimator's job, not this guard's."""
     feat = _feat(eeg_slope=-1.5, eeg_rms=75, n_steep_floor=3)
-    assert C.floor_stats(feat, "A1").slope_flat
+    assert C.floor_stats(feat, "A1").slope_valid
+
+
+def t_intermittent_contamination_is_caught():
+    """🔑 uid0920 C1, THE CASE THE FIRST VERSION OF THIS FIX MISSED.
+
+    Every floor site is flat in its median, so a test on the floor's TYPICAL
+    site passes it. But 9 of 14 sites are steep in 5% of epochs, which puts the
+    threshold near -3 and rejects a healthy EEG. The test must look at the tail,
+    because the tail is what sets the threshold.
+    """
+    feat = _feat(eeg_slope=-1.5, eeg_rms=75, n_steep_floor=0, n_bursty_floor=9)
+    f = C.floor_stats(feat, "A1")
+    assert f.site_median_slope > -0.5, "typical site must look clean, or this tests nothing"
+    assert not f.slope_valid, f.as_dict()
+    assert _rung2(feat).verdict == "UNJUDGEABLE"
 
 
 def t_hum_criterion_is_not_gated_by_the_slope_floor():
@@ -165,7 +188,7 @@ def t_hum_criterion_is_not_gated_by_the_slope_floor():
     (all 32 hum cards are the pooled-floor HLB-fem cohort), so it is left open.
     """
     r = _rung2(_feat(eeg_slope=-1.5, eeg_rms=75, n_steep_floor=9), criterion="hum")
-    assert "not flat" not in (r.headline or ""), (r.verdict, r.headline)
+    assert "carrying signal" not in (r.headline or ""), (r.verdict, r.headline)
 
 
 def t_ungrounded_is_still_reported_as_ungrounded():
@@ -184,6 +207,7 @@ def main() -> int:
                t_dead_eeg_on_clean_floor_still_fails,
                t_railing_eeg_on_clean_floor_still_fails,
                t_a_minority_of_steep_sites_does_not_trip_it,
+               t_intermittent_contamination_is_caught,
                t_hum_criterion_is_not_gated_by_the_slope_floor,
                t_ungrounded_is_still_reported_as_ungrounded):
         check(fn.__name__, fn)

@@ -571,11 +571,13 @@ class FloorStats:
     grounded: bool = True          # False => floor is not a valid control
     validity_reason: str = ""
     # `grounded` is not enough. A grounded floor can still carry signal, and then
-    # it is no control for the SLOPE criterion. `slope_flat` is that second test;
+    # it is no control for the SLOPE criterion. `slope_valid` is that second test;
     # the hum criterion does not depend on it. See
-    # qc_thresholds.FLOOR_MAX_SITE_MEDIAN_SLOPE.
+    # qc_thresholds.FLOOR_STEEPEST_VALID_SLOPE_P1. `site_median_slope` is the
+    # floor's TYPICAL site, reported as a diagnostic only -- it was tried as the
+    # test and missed an intermittently contaminated chip.
     site_median_slope: float | None = None
-    slope_flat: bool = True
+    slope_valid: bool = True
     slope_validity_reason: str = ""
     # `available` is a SPEC fact, known before a byte is read: this chip's layout
     # declares no characterised wire-free control. `grounded` is a MEASURED fact:
@@ -601,7 +603,7 @@ class FloorStats:
                    slope_min=None,
                    scope="chip", position=position, estimator="none",
                    grounded=False, validity_reason=reason,
-                   slope_flat=False, slope_validity_reason=reason,
+                   slope_valid=False, slope_validity_reason=reason,
                    available=False, unavailable_reason=reason)
 
     def as_dict(self) -> dict:
@@ -679,31 +681,34 @@ def floor_stats(feat: EpochFeatures,
         "valid negative control and no connection verdict can be drawn from "
         "them. This is a HARDWARE fault at the chip, not a statement about the "
         "animal.")
-    # 🔑 THE FLOOR IS A MEASUREMENT TOO. A wire-free input has no source, so its
-    # typical epoch is spectrally flat. If this chip's typical floor site is
-    # steep, its inputs are carrying signal and the slope threshold derived from
-    # them demands more than real EEG delivers. Anchored at zero on the floor
-    # alone -- never compared with the animal, which would call every DEAD
-    # electrode's floor contaminated. See FLOOR_MAX_SITE_MEDIAN_SLOPE.
+    # 🔑 THE FLOOR IS A MEASUREMENT TOO. A grounded chip whose wire-free inputs
+    # carry signal yields a slope threshold past anything real EEG reaches, and a
+    # healthy electrode reads 0.0%. Judged on the floor's OWN threshold, never by
+    # comparison with the animal -- that would call every DEAD electrode's floor
+    # contaminated, because a dead electrode is as flat as the floor. Tested on
+    # the tail, not the typical site: the tail is what sets the threshold, and
+    # intermittent contamination moves the tail without moving the median.
+    # See FLOOR_STEEPEST_VALID_SLOPE_P1.
+    slope_p1 = _percentile(fs_, p, estimator)
     site_median_slope = float(np.median(np.median(fs_, axis=0)))
-    slope_flat = site_median_slope >= T.FLOOR_MAX_SITE_MEDIAN_SLOPE
-    slope_reason = "" if slope_flat else (
-        f"the typical wire-free input on this chip has a spectral slope of "
-        f"{site_median_slope:.2f}, steeper than the "
-        f"{T.FLOOR_MAX_SITE_MEDIAN_SLOPE:.2f} that any clean floor on this rig "
-        "has shown. A wire-free input has no source and should be flat, so these "
-        "inputs are carrying signal and are not a valid negative control for the "
-        "slope criterion. No slope verdict can be drawn from them. This is a "
-        "statement about the chip's control, not about the animal.")
+    slope_valid = slope_p1 >= T.FLOOR_STEEPEST_VALID_SLOPE_P1
+    slope_reason = "" if slope_valid else (
+        f"the wire-free inputs on this chip set a slope threshold of "
+        f"{slope_p1:.2f}, steeper than the {T.FLOOR_STEEPEST_VALID_SLOPE_P1:.2f} "
+        "that any chip with an empty floor has shown on this rig. A wire-free "
+        "input has no source, so these inputs are carrying signal and are not a "
+        "valid negative control for the slope criterion. No slope verdict can be "
+        "drawn from them. This is a statement about the chip's control, not "
+        "about the animal.")
     return FloorStats(
         n_sites=len(fc), n_epochs=feat.n_epochs, n_samples=int(fh.size),
         hum_p1=_percentile(fh, p, estimator), hum_p5=_percentile(fh, 5, estimator),
         hum_median=hum_median,
-        slope_p1=_percentile(fs_, p, estimator), slope_p5=_percentile(fs_, 5, estimator),
+        slope_p1=slope_p1, slope_p5=_percentile(fs_, 5, estimator),
         slope_median=float(np.median(fs_)), slope_min=float(fs_.min()),
         scope=scope, position=position or "", estimator=estimator,
         grounded=grounded, validity_reason=reason,
-        site_median_slope=site_median_slope, slope_flat=slope_flat,
+        site_median_slope=site_median_slope, slope_valid=slope_valid,
         slope_validity_reason=slope_reason)
 
 
