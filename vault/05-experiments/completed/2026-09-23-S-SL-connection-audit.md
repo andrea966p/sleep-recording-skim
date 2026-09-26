@@ -2,7 +2,7 @@
 tags: [experiment, eeg, emg, S-SL, connection, audit]
 created: 2026-09-23
 status: complete
-recordings: [allego_0__uid0912-08-55-18, allego_0__uid0921-00-17-34]
+recordings: [allego_0__uid0912-08-55-18, allego_0__uid0920-09-00-07, allego_0__uid0921-00-17-34]
 cohort: S-SL
 ---
 
@@ -18,23 +18,38 @@ cohort: S-SL
 > animal-recording`. `pipeline/stage3_features.py` has never been run on either
 > day folder. Nothing on this page says anything about sleep.
 >
-> ⭐ **What it does say: attrition.** Five of eight positions were connected at
-> baseline; **two** were still connected at the recovery endpoint eight days
-> later. The two that survived, **B1/HLBSSL33 and C2/HLBSSL39**, are the paired
-> set — n = 2, at rung 2 only.
+> ⭐ **What it does say: attrition, and WHEN it happened.** Five of eight
+> positions were connected at baseline; **two** were still connected at the
+> recovery endpoint eight days later. The two that survived, **B1/HLBSSL33 and
+> C2/HLBSSL39**, are the paired set — n = 2, at rung 2 only.
 >
 > 🔴 Three positions went from excellent to nothing: A1 **90.6% → 0.0%**, C1
 > **87.0% → 0.0%**, B2 **88.0% → 23.5%**.
+>
+> 🔑 **The collapse was already complete before the recovery run started.**
+> A third recording, `allego_0__uid0920-09-00-07`, was added to this cohort on
+> 2026-09-26 and carded for the first time. It is the run's own first segment —
+> Sunday 09-20 09:00, 15.145 h — and on it A1, C1 and D1 already read 0.0% and
+> B2 already reads 26.7%. Across the recovery run itself every position is
+> stable within a few points. **Nothing failed during recovery; everything that
+> failed had already failed in the eight-day gap between 09-12 and 09-20.**
 
 ## The two recordings
 
-| | baseline | recovery |
-|---|---|---|
-| recording | `allego_0__uid0912-08-55-18` | `allego_0__uid0921-00-17-34` |
-| window as run | 2026-09-12 08:55 → 09-13 08:59 | 2026-09-21 00:17 → 09-22 13:00 |
-| duration | **24.065 h** | **36.707 h** |
-| protocol window | 24 h, ZT0 → ZT0 ✅ | 28 h, 09-21 09:00 → 09-22 13:00 |
-| `thresholds_hash` | `c54b0f83af37` | `01e11630dcbf` |
+| | baseline | recovery, segment 1 | recovery, segment 2 |
+|---|---|---|---|
+| recording | `allego_0__uid0912-08-55-18` | `allego_0__uid0920-09-00-07` | `allego_0__uid0921-00-17-34` |
+| window as run | 2026-09-12 08:55 → 09-13 08:59 | 2026-09-20 09:00 → 09-21 00:08 | 2026-09-21 00:17 → 09-22 13:00 |
+| duration | **24.065 h** | **15.145 h** | **36.707 h** |
+| protocol window | 24 h, ZT0 → ZT0 ✅ | none — wholly outside it | 28 h, 09-21 09:00 → 09-22 13:00 |
+| `thresholds_hash` | `c54b0f83af37` | `01e11630dcbf` | `01e11630dcbf` |
+
+> [!note] The two recovery files are ONE run that Allego split
+> `uid0920` ends 09-21 00:08:48 and `uid0921` begins 00:17:34 — a gap of 8 min
+> 46 s. The mouse problem on the Sunday is why the run was restarted and why
+> sampling slipped from the Monday to the Tuesday. `uid0920` is reported here
+> because it dates the attrition; **none of it belongs in the recovery numbers**,
+> since the protocol window lies wholly inside `uid0921`.
 
 > [!warning] The recovery cards cover the WHOLE file, not the protocol window
 > The canonical window is the **last 28 h** of that 36.707 h recording — 09-21
@@ -64,6 +79,28 @@ B1's 73.8%, and it fails — because its longest unbroken block is 13.7 min agai
 a 15 minute bar. Usable percentage and scoreability are different questions, and
 D1 is where they disagree. A2 and D2 are not marginal; they are flat zero.
 
+## Recovery segment 1 — 2026-09-20, 15.145 h, outside the window
+
+| pos | animal | rung 2 CONNECTION | usable | longest block |
+|---|---|---|---|---|
+| C2 | HLBSSL39 | ✅ PASS | 87.3% | 64.3 min |
+| B1 | HLBSSL33 | ✅ PASS | 83.0% | 42.7 min |
+| B2 | HLBSSL34 | ❌ FAIL | 26.7% | 5.8 min |
+| A2 | HLBSSL32 | ⬜ UNJUDGEABLE | — | — |
+| A1 | HLBSSL31 | ❌ FAIL | 0.0% | 0.0 min |
+| C1 | HLBSSL35 | ❌ FAIL | 0.0% | 0.0 min |
+| D1 | HLBSSL40 | ❌ FAIL | 0.0% | 0.0 min |
+| D2 | HLBSSL38 | ❌ FAIL | 0.0% | 0.0 min |
+
+🔑 **This is the table that dates the attrition.** It was taken on the Sunday
+morning, before the recovery run proper, and A1, C1 and D1 already read 0.0%
+while B2 already reads 26.7%. Every loss visible at the endpoint is already
+here.
+
+⚠️ **A2 is UNJUDGEABLE here and FAIL on the other two recordings.** Its chip read
+ungrounded for this segment, so rung 2 could not be asked — which is not the same
+as answering no. See [[03-troubleshooting/symptoms/weak-chip-ground-vs-open-electrode]].
+
 ## Recovery — 2026-09-21 to 09-22, 36.707 h as computed
 
 | pos | animal | rung 2 CONNECTION | usable | longest block |
@@ -79,14 +116,22 @@ D1 is where they disagree. A2 and D2 are not marginal; they are flat zero.
 
 ## The attrition
 
-| pos | animal | baseline | recovery | |
-|---|---|---|---|---|
-| B1 | HLBSSL33 | 73.8% | **78.2%** | ✅ held, and improved |
-| C2 | HLBSSL39 | 79.8% | **82.7%** | ✅ held, and improved |
-| B2 | HLBSSL34 | 88.0% | 23.5% | 🔴 degraded past the bar |
-| A1 | HLBSSL31 | 90.6% | 0.0% | 🔴 total loss |
-| C1 | HLBSSL35 | 87.0% | 0.0% | 🔴 total loss |
-| A2, D1, D2 | SSL32, 40, 38 | already failing | 0.0% | ❌ never recovered |
+| pos | animal | 09-12 baseline | 09-20 segment 1 | 09-21 segment 2 | |
+|---|---|---|---|---|---|
+| B1 | HLBSSL33 | 73.8% | 83.0% | **78.2%** | ✅ held throughout |
+| C2 | HLBSSL39 | 79.8% | 87.3% | **82.7%** | ✅ held throughout |
+| B2 | HLBSSL34 | 88.0% | **26.7%** | 23.5% | 🔴 degraded BEFORE recovery |
+| A1 | HLBSSL31 | 90.6% | **0.0%** | 0.0% | 🔴 lost BEFORE recovery |
+| C1 | HLBSSL35 | 87.0% | **0.0%** | 0.0% | 🔴 lost BEFORE recovery |
+| D1 | HLBSSL40 | 66.9% (FAIL) | 0.0% | 0.0% | ❌ never recovered |
+| D2 | HLBSSL38 | 0.0% | 0.0% | 0.0% | ❌ never recovered |
+| A2 | HLBSSL32 | 0.0% | UNJUDGEABLE | 0.0% | ❌ never recovered |
+
+⭐ **Read the middle column first.** Every change happened between 09-12 and
+09-20, in the eight days when nothing was being recorded. Between the Sunday
+segment and the Monday-to-Tuesday endpoint, the largest move on any position is
+B1's 83.0% → 78.2%. The recovery run did not damage anything; it recorded a rig
+that had already lost six of eight positions.
 
 🔑 **The two that survived are the two that were mid-table at baseline, not the
 best.** A1 and C1 were the strongest positions on 09-12 at 90.6% and 87.0%, and
@@ -123,12 +168,23 @@ Cards at `eeg-emg-analysis/cards/out/S-SL/`, generated by `cards/ladder.py` agai
 `cohorts/S-SL.yaml`. Both recordings are stripped to 16 channels, bit-exact, and
 on the SKIM NAS as `20260912_HLBSSL_BSR/` and `20260921_HLBSSL_RSR/`; raw is in S3.
 
-⚠️ **Both card sets were regenerated on 2026-09-23 and the recovery's are new to
-this cohort.** Until then `allego_0__uid0921-00-17-34` was absent from
-`cohorts/S-SL.yaml` entirely, and its cards lived under the throwaway console
-cohort `auto-a91ef30eab66`. The verdicts are identical either way — only the
-cohort they are filed under changed. `allego_0__uid0913-11-20-07` and
-`allego_0__uid0920-09-00-07` are still in that state.
+⚠️ **The card sets were regenerated in two passes.** On 2026-09-23
+`allego_0__uid0921-00-17-34` was added to `cohorts/S-SL.yaml`, having been absent
+from it entirely; its cards had lived under the throwaway console cohort
+`auto-a91ef30eab66`, and the verdicts were identical either way. On 2026-09-26
+`allego_0__uid0920-09-00-07` was added and **carded under this cohort for the
+first time** — that is the segment-1 table above, and it is new evidence, not a
+refile.
+
+✅ **Every `auto-*` console cohort has now been retired from `cards/out/`.** Seven
+existed. Two duplicated a named cohort, four were 0.6-to-8-minute aborted starts,
+and one — `auto-df0f5562873b` — held this recording. 🔴 The `uid0917` set under
+`auto-6255ffcf2575` was NOT a duplicate but a **stale** set that reached only
+rung 3 and carried a nonexistent animal id, `HLBWSL7`; the current `cards/out/W-SL/`
+set reaches rung 4 and names `HLBWSL27`. Deleting it removed that ghost from disk.
+
+🛑 `allego_0__uid0913-11-20-07` is deliberately NOT in this manifest: 8.4 minutes,
+an aborted start, no result.
 
 Not checked: figures (none drawn), stage 3, and the failure-signature
 classification.
