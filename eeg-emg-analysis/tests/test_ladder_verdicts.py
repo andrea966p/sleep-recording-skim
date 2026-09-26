@@ -39,7 +39,11 @@ ROOT = Path(__file__).resolve().parent.parent
 from core import criteria as C          # noqa: E402
 from core import qc_thresholds as T     # noqa: E402
 
-CACHE = Path("/tmp/eeg_pipeline_cache")
+from core.paths import CACHE_ROOT           # noqa: E402
+
+# NOT /tmp. `tmpfiles.d` empties /tmp on every boot, so a hardcoded
+# /tmp/eeg_pipeline_cache guarantees this suite finds nothing and skips.
+CACHE = CACHE_ROOT
 
 # recording -> {position: should rung 2 PASS}
 EXPECTED_CONNECTION = {
@@ -54,6 +58,7 @@ EXPECTED_CONNECTION = {
 }
 
 FAILURES: list[str] = []
+SKIPPED: list[str] = []
 
 
 def load(cache_name: str) -> C.EpochFeatures:
@@ -112,6 +117,7 @@ print("\n=== the ladder's rung 2 verdict against the vault's scoreable set ===")
 for cache_name, expected in EXPECTED_CONNECTION.items():
     if not (CACHE / cache_name).exists():
         print(f"  SKIP {cache_name}: not cached")
+        SKIPPED.append(cache_name)
         continue
     feat = load(cache_name)
     floor = C.floor_stats(feat)
@@ -136,5 +142,15 @@ if FAILURES:
     for f in FAILURES:
         print("  " + f)
     sys.exit(1)
+if SKIPPED:
+    # A suite that verified nothing must not print that it passed. Both source
+    # recordings live only in S3 now, so their feature caches cannot be rebuilt
+    # on this machine without pulling the raw files back.
+    print(f"VERIFIED NOTHING: {len(SKIPPED)} of {len(EXPECTED_CONNECTION)} "
+          f"recordings have no feature cache under {CACHE}")
+    for c in SKIPPED:
+        print("  uncached: " + c)
+    print("The rung 2 comparison above did NOT run. This is not a pass.")
+    sys.exit(2)
 print("all ladder verdict tests pass: the ladder agrees with the vault's "
       "scoreable set on both recordings")

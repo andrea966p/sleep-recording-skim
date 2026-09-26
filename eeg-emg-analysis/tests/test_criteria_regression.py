@@ -94,7 +94,9 @@ def main() -> int:
         print("  set EEG_RAW_ROOT to the directory holding the recording, e.g.")
         print("      EEG_RAW_ROOT=/path/to/data python tests/test_criteria_regression.py")
         print("=" * 70)
-        return 0
+        # 2, not 0. Exiting 0 here made a suite that verified nothing
+        # indistinguishable from one that passed.
+        return 2
 
     spec = C.CohortSpec(roles=("eeg", "emg"))
 
@@ -205,7 +207,8 @@ def main() -> int:
     except C.CriterionRefused:
         print("  ok    slope on an EMG channel raised CriterionRefused")
 
-    out = Path("/tmp/eeg_pipeline_cache/regression_result.json")
+    out = PATHS.CACHE_ROOT / "regression_result.json"
+    out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(
         {"base": BASE, "criterion": "hum", "floor": floor.as_dict(),
          "results": results, "failures": FAILURES}, indent=2))
