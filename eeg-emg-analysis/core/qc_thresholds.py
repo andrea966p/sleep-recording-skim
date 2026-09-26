@@ -401,6 +401,41 @@ FLOOR_MIN_HUM_UV = 800.0
 # is deliberately NOT tuned to any animal's verdict; moving it anywhere inside
 # 500-1100 changes nothing about which chips are called floating.
 
+FLOOR_MAX_SITE_MEDIAN_SLOPE = -0.85
+# A GROUNDED chip whose wire-free inputs are typically STEEPER than this is
+# carrying signal, so its floor is not a valid negative control for the SLOPE
+# criterion and no slope verdict can be drawn from it. UNJUDGEABLE, not FAIL.
+# The statistic is the median across the chip's floor sites of each site's own
+# median slope -- the floor's TYPICAL site, not its tail.
+#
+# WHY THIS EXISTS. FLOOR_MIN_HUM_UV asks whether the chip has a ground. Nothing
+# asked whether the floor is FLAT. A wire-free input has no source, so its
+# spectrum is flat, slope ~0. When several of a chip's floor sites pick up real
+# signal, `site_p1_median` lands at -2.4 to -3.5 where real EEG on this rig sits
+# at -1.35 to -1.64, and healthy electrodes read 0.0% usable. That cost a
+# RETRACTED S-SL conclusion on 2026-09-26, a month after it was first diagnosed
+# on 2026-08-27. See 03-troubleshooting/symptoms/contaminated-floor-rejects-good-eeg.
+#
+# WHY -0.85. MEASURED 2026-09-26 over every grounded chip in every cached
+# recording (12 recordings, S-SD S-SL W-SD W-SL): a clean floor's typical site
+# sits at +0.10 to -0.61, a contaminated one at -1.12 to -1.56, with nothing in
+# between. -0.85 sits in that empty gap; any value inside -0.62 to -1.11 flags
+# the same chips.
+#
+# 🛑 WHY NOT A COMPARISON WITH THE ANIMAL'S EEG. The 2026-08-27 page proposed
+# "the fraction of floor sites steeper than this animal's EEG". It is circular: a
+# DEAD electrode is flat, so every floor site is steeper than it. MEASURED, it
+# scores 1.00 / 1.00 / 0.93 on the three genuinely open electrodes (uid0825 D1,
+# uid0826 D1, uid0819-17-25-20 B1) and 1.00 on uid0912 D2, dead on a clean floor.
+# It would turn real failures into UNJUDGEABLE. A floor-and-EEG comparison cannot
+# tell "the floor looks like EEG" from "the EEG looks like the floor"; only an
+# anchor on the floor alone can. This one is anchored at zero, the physics of an
+# unwired input, and it is NOT the -1.7 EEG bar used in the 2026-09-26 scan.
+#
+# ⚠️ WHAT IT DOES NOT CATCH. A floor with flat typical sites but heavy steep
+# TAILS: allego_0__uid0921-00-17-34 B2 has typical site -0.24 but threshold -1.56.
+# That is intermittent coupling, not a contaminated control, and it stays judged.
+
 SLOPE_BAND_HZ = (1.0, 40.0)
 # Band for the log-log spectral slope. Starts at 1.0 because the acquisition
 # high-pass sits at 1.10 Hz, ends at 40 to stay clear of the 60 Hz mains and its

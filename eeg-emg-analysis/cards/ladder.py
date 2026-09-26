@@ -295,6 +295,22 @@ def rung2_connection(feat: C.EpochFeatures, position: str, spec: C.CohortSpec,
         r.detail = {"floor": floor.as_dict()}
         return r
 
+    # 🛑 A GROUNDED CHIP CAN STILL HAVE AN INVALID CONTROL. When its wire-free
+    # inputs carry signal, the slope threshold lands past what real EEG reaches
+    # and a healthy electrode reads 0.0%. Same treatment as ungrounded, for the
+    # same reason. Only the SLOPE criterion reads this floor's slope; a card
+    # judged on hum is unaffected. Diagnosed 2026-08-27, unfixed until 2026-09-26,
+    # by which time it had produced a retracted S-SL conclusion.
+    if criterion == "slope" and not floor.slope_flat:
+        r.verdict = "UNJUDGEABLE"
+        r.reason = floor.slope_validity_reason
+        r.headline = (f"chip floor is not flat: typical wire-free slope "
+                      f"{floor.site_median_slope:.2f} (clean floors are flatter "
+                      f"than {T.FLOOR_MAX_SITE_MEDIAN_SLOPE:.2f}) -- "
+                      "no verdict can be drawn")
+        r.detail = {"floor": floor.as_dict()}
+        return r
+
     sites = spec.animal_sites()[position]
     masks: dict[str, np.ndarray] = {}
     refusals: dict[str, str] = {}

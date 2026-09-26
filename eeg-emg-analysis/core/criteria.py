@@ -570,6 +570,13 @@ class FloorStats:
     estimator: str = "pooled_p1"   # see qc_thresholds.FLOOR_ESTIMATOR
     grounded: bool = True          # False => floor is not a valid control
     validity_reason: str = ""
+    # `grounded` is not enough. A grounded floor can still carry signal, and then
+    # it is no control for the SLOPE criterion. `slope_flat` is that second test;
+    # the hum criterion does not depend on it. See
+    # qc_thresholds.FLOOR_MAX_SITE_MEDIAN_SLOPE.
+    site_median_slope: float | None = None
+    slope_flat: bool = True
+    slope_validity_reason: str = ""
     # `available` is a SPEC fact, known before a byte is read: this chip's layout
     # declares no characterised wire-free control. `grounded` is a MEASURED fact:
     # a floor exists and says the chip is floating. Keeping them apart matters --
@@ -594,6 +601,7 @@ class FloorStats:
                    slope_min=None,
                    scope="chip", position=position, estimator="none",
                    grounded=False, validity_reason=reason,
+                   slope_flat=False, slope_validity_reason=reason,
                    available=False, unavailable_reason=reason)
 
     def as_dict(self) -> dict:
@@ -671,6 +679,22 @@ def floor_stats(feat: EpochFeatures,
         "valid negative control and no connection verdict can be drawn from "
         "them. This is a HARDWARE fault at the chip, not a statement about the "
         "animal.")
+    # 🔑 THE FLOOR IS A MEASUREMENT TOO. A wire-free input has no source, so its
+    # typical epoch is spectrally flat. If this chip's typical floor site is
+    # steep, its inputs are carrying signal and the slope threshold derived from
+    # them demands more than real EEG delivers. Anchored at zero on the floor
+    # alone -- never compared with the animal, which would call every DEAD
+    # electrode's floor contaminated. See FLOOR_MAX_SITE_MEDIAN_SLOPE.
+    site_median_slope = float(np.median(np.median(fs_, axis=0)))
+    slope_flat = site_median_slope >= T.FLOOR_MAX_SITE_MEDIAN_SLOPE
+    slope_reason = "" if slope_flat else (
+        f"the typical wire-free input on this chip has a spectral slope of "
+        f"{site_median_slope:.2f}, steeper than the "
+        f"{T.FLOOR_MAX_SITE_MEDIAN_SLOPE:.2f} that any clean floor on this rig "
+        "has shown. A wire-free input has no source and should be flat, so these "
+        "inputs are carrying signal and are not a valid negative control for the "
+        "slope criterion. No slope verdict can be drawn from them. This is a "
+        "statement about the chip's control, not about the animal.")
     return FloorStats(
         n_sites=len(fc), n_epochs=feat.n_epochs, n_samples=int(fh.size),
         hum_p1=_percentile(fh, p, estimator), hum_p5=_percentile(fh, 5, estimator),
@@ -678,7 +702,9 @@ def floor_stats(feat: EpochFeatures,
         slope_p1=_percentile(fs_, p, estimator), slope_p5=_percentile(fs_, 5, estimator),
         slope_median=float(np.median(fs_)), slope_min=float(fs_.min()),
         scope=scope, position=position or "", estimator=estimator,
-        grounded=grounded, validity_reason=reason)
+        grounded=grounded, validity_reason=reason,
+        site_median_slope=site_median_slope, slope_flat=slope_flat,
+        slope_validity_reason=slope_reason)
 
 
 def floor_threshold_ci(feat: EpochFeatures, criterion: str = "slope",
