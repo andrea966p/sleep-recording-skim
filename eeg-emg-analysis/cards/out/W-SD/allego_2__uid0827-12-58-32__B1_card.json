@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "generated": "2026-09-23T12:33:19+09:00",
+  "generated": "2026-09-26T11:23:19+09:00",
   "cohort_id": "W-SD",
   "project_id": "neurosurveillance-eeg",
   "batch_id": "W-SD",
@@ -185,6 +185,26 @@
       "label": "tethered"
     },
     {
+      "date": "2026-08-19",
+      "kind": "recording",
+      "label": "allego_1__uid0819-17-25-20"
+    },
+    {
+      "date": "2026-08-27",
+      "kind": "recording",
+      "label": "allego_2__uid0827-12-58-32"
+    },
+    {
+      "date": "2026-08-28",
+      "kind": "recording",
+      "label": "allego_3__uid0828-09-26-12"
+    },
+    {
+      "date": "2026-08-28",
+      "kind": "recording",
+      "label": "allego_4__uid0828-10-08-34"
+    },
+    {
       "date": "2026-08-28",
       "kind": "sampling",
       "label": "sampling"
@@ -207,7 +227,7 @@
   "provenance": {
     "thresholds_file": "/home/skimlab/sleep-recording-skim/eeg-emg-analysis/core/qc_thresholds.py",
     "thresholds_hash": "01e11630dcbf",
-    "git_rev": "2ac1ca0",
+    "git_rev": "9c31871",
     "cohort_manifest": "/home/skimlab/sleep-recording-skim/eeg-emg-analysis/cohorts/W-SD.yaml",
     "processed_files": {},
     "epoch_s_qc": 10,

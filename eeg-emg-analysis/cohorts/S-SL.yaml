@@ -49,6 +49,7 @@ animals:
     placements: [{from: 2026-09-12, position: A1, source: recording-console}]
     recordings:
       - {base: allego_0__uid0912-08-55-18, date: 2026-09-12, position: A1, role: animal}
+      - {base: allego_0__uid0920-09-00-07, date: 2026-09-20, position: A1, role: animal}
       - {base: allego_0__uid0921-00-17-34, date: 2026-09-21, position: A1, role: animal}
 
   - animal_id: HLBSSL32
@@ -56,6 +57,7 @@ animals:
     placements: [{from: 2026-09-12, position: A2, source: recording-console}]
     recordings:
       - {base: allego_0__uid0912-08-55-18, date: 2026-09-12, position: A2, role: animal}
+      - {base: allego_0__uid0920-09-00-07, date: 2026-09-20, position: A2, role: animal}
       - {base: allego_0__uid0921-00-17-34, date: 2026-09-21, position: A2, role: animal}
 
   - animal_id: HLBSSL33
@@ -63,6 +65,7 @@ animals:
     placements: [{from: 2026-09-12, position: B1, source: recording-console}]
     recordings:
       - {base: allego_0__uid0912-08-55-18, date: 2026-09-12, position: B1, role: animal}
+      - {base: allego_0__uid0920-09-00-07, date: 2026-09-20, position: B1, role: animal}
       - {base: allego_0__uid0921-00-17-34, date: 2026-09-21, position: B1, role: animal}
 
   - animal_id: HLBSSL34
@@ -70,6 +73,7 @@ animals:
     placements: [{from: 2026-09-12, position: B2, source: recording-console}]
     recordings:
       - {base: allego_0__uid0912-08-55-18, date: 2026-09-12, position: B2, role: animal}
+      - {base: allego_0__uid0920-09-00-07, date: 2026-09-20, position: B2, role: animal}
       - {base: allego_0__uid0921-00-17-34, date: 2026-09-21, position: B2, role: animal}
 
   - animal_id: HLBSSL35
@@ -77,6 +81,7 @@ animals:
     placements: [{from: 2026-09-12, position: C1, source: recording-console}]
     recordings:
       - {base: allego_0__uid0912-08-55-18, date: 2026-09-12, position: C1, role: animal}
+      - {base: allego_0__uid0920-09-00-07, date: 2026-09-20, position: C1, role: animal}
       - {base: allego_0__uid0921-00-17-34, date: 2026-09-21, position: C1, role: animal}
 
   - animal_id: HLBSSL39
@@ -84,6 +89,7 @@ animals:
     placements: [{from: 2026-09-12, position: C2, source: recording-console}]
     recordings:
       - {base: allego_0__uid0912-08-55-18, date: 2026-09-12, position: C2, role: animal}
+      - {base: allego_0__uid0920-09-00-07, date: 2026-09-20, position: C2, role: animal}
       - {base: allego_0__uid0921-00-17-34, date: 2026-09-21, position: C2, role: animal}
 
   - animal_id: HLBSSL40
@@ -91,6 +97,7 @@ animals:
     placements: [{from: 2026-09-12, position: D1, source: recording-console}]
     recordings:
       - {base: allego_0__uid0912-08-55-18, date: 2026-09-12, position: D1, role: animal}
+      - {base: allego_0__uid0920-09-00-07, date: 2026-09-20, position: D1, role: animal}
       - {base: allego_0__uid0921-00-17-34, date: 2026-09-21, position: D1, role: animal}
 
   - animal_id: HLBSSL38
@@ -98,6 +105,7 @@ animals:
     placements: [{from: 2026-09-12, position: D2, source: recording-console}]
     recordings:
       - {base: allego_0__uid0912-08-55-18, date: 2026-09-12, position: D2, role: animal}
+      - {base: allego_0__uid0920-09-00-07, date: 2026-09-20, position: D2, role: animal}
       - {base: allego_0__uid0921-00-17-34, date: 2026-09-21, position: D2, role: animal}
 
 recordings:
@@ -106,6 +114,21 @@ recordings:
     notes: >
       24.065 h, ZT0 to ZT0, 262 channels at 1 kHz, 90.8 GB. file_integrity INTACT,
       86,634,624 data samples = 86,634,624 timestamp samples, remainder 0 and 0.
+
+  - base: allego_0__uid0920-09-00-07
+    date: 2026-09-20
+    notes: >
+      THE FIRST SEGMENT OF THE RECOVERY RUN, and not a separate recording.
+      15.145 h, 54,521,728 samples, 1 kHz, 262 ch. Sunday 2026-09-20 09:00:06 KST
+      to Monday 09-21 00:08:48 (start_time 2026-09-20T00:00:06.042Z + 9 h).
+      🔑 allego_0__uid0921-00-17-34 starts 8 min 46 s later. The two files are one
+      run that Allego split when it was restarted; the mouse problem on the Sunday
+      is why it was restarted and why sampling slipped to the Tuesday.
+      ⚠️ THIS SEGMENT IS ENTIRELY OUTSIDE THE PROTOCOL WINDOW. The canonical
+      recovery window is 09-21 09:00 to 09-22 13:00, which lies wholly inside
+      uid0921. Nothing here belongs in the recovery numbers.
+      ⚠️ Added to this manifest on 2026-09-26, having been absent since the run.
+      Its cards lived under the throwaway console cohort auto-df0f5562873b.
 
   - base: allego_0__uid0921-00-17-34
     date: 2026-09-21
@@ -120,5 +143,6 @@ recordings:
       window, so every percentage describes the longer span.
       ⚠️ Added to this manifest on 2026-09-23. Until then this recording was
       absent from S-SL entirely and its cards lived under the throwaway console
-      cohort auto-a91ef30eab66. allego_0__uid0913-11-20-07 and
-      allego_0__uid0920-09-00-07 are still in that state.
+      cohort auto-a91ef30eab66. allego_0__uid0920-09-00-07 was added on
+      2026-09-26 and is above. allego_0__uid0913-11-20-07 is NOT here on purpose:
+      it is 8.4 min long, an aborted start, and carries no result.

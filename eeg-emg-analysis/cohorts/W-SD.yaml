@@ -198,6 +198,14 @@ animals:
       - {date: 2026-08-10, grams: 30.6, occasion: tethering, source: husbandry-sheet}
     placements:
       - {from: 2026-08-10, position: A1, source: husbandry-sheet}
+    recordings:
+      - {base: allego_0__uid0818-18-56-33, date: 2026-08-18, position: A1, role: animal}
+      - {base: allego_1__uid0818-20-50-26, date: 2026-08-18, position: A1, role: animal}
+      - {base: allego_0__uid0819-09-00-00, date: 2026-08-19, position: A1, role: animal}
+      - {base: allego_1__uid0819-17-25-20, date: 2026-08-19, position: A1, role: animal}
+      - {base: allego_2__uid0827-12-58-32, date: 2026-08-27, position: A1, role: animal}
+      - {base: allego_3__uid0828-09-26-12, date: 2026-08-28, position: A1, role: animal}
+      - {base: allego_4__uid0828-10-08-34, date: 2026-08-28, position: A1, role: animal}
     notes: >
       Registry note: struggling to drink water from the glass tube after tethering.
       Mean water intake 2.98 mL/day over 10 days, the lowest in the batch, consistent with that note.
@@ -227,6 +235,14 @@ animals:
       - {date: 2026-08-10, grams: 28.0, occasion: tethering, source: husbandry-sheet}
     placements:
       - {from: 2026-08-10, position: A2, source: husbandry-sheet}
+    recordings:
+      - {base: allego_0__uid0818-18-56-33, date: 2026-08-18, position: A2, role: animal}
+      - {base: allego_1__uid0818-20-50-26, date: 2026-08-18, position: A2, role: animal}
+      - {base: allego_0__uid0819-09-00-00, date: 2026-08-19, position: A2, role: animal}
+      - {base: allego_1__uid0819-17-25-20, date: 2026-08-19, position: A2, role: animal}
+      - {base: allego_2__uid0827-12-58-32, date: 2026-08-27, position: A2, role: animal}
+      - {base: allego_3__uid0828-09-26-12, date: 2026-08-28, position: A2, role: animal}
+      - {base: allego_4__uid0828-10-08-34, date: 2026-08-28, position: A2, role: animal}
     notes: >
       verdict_2026_08_19: SCOREABLE on the 39.7 h run. Hypnogram WAKE 52.3% / NREM 43.3%, r@1min 0.592, the best on the rig.
       Mean water intake 4.43 mL/day. 🔴 Despite the worst surgical note in the batch this animal gave the best staging result.
@@ -253,6 +269,14 @@ animals:
     placements:
       - {from: 2026-08-10, position: C1, source: husbandry-sheet,
          tether_notes: "registry: ATE THE TETHER 08/19. Found missing with its tether after the 39.7 h run was stopped on 08-21."}
+    recordings:
+      - {base: allego_0__uid0818-18-56-33, date: 2026-08-18, position: C1, role: animal}
+      - {base: allego_1__uid0818-20-50-26, date: 2026-08-18, position: C1, role: animal}
+      - {base: allego_0__uid0819-09-00-00, date: 2026-08-19, position: C1, role: animal}
+      - {base: allego_1__uid0819-17-25-20, date: 2026-08-19, position: C1, role: animal}
+      - {base: allego_2__uid0827-12-58-32, date: 2026-08-27, position: C1, role: animal}
+      - {base: allego_3__uid0828-09-26-12, date: 2026-08-28, position: C1, role: animal}
+      - {base: allego_4__uid0828-10-08-34, date: 2026-08-28, position: C1, role: animal}
     notes: >
       Mean water intake 4.48 mL/day.
       verdict_2026_08_19: initially counted as SCOREABLE and then WITHDRAWN. Its EMG state-dependence collapsed under falsification (-0.733 -> -0.009 on absolute delta power) and its circadian EMG was inverted. The tether damage is the parsimonious explanation.
@@ -280,6 +304,14 @@ animals:
       - {date: 2026-08-10, grams: 31.8, occasion: tethering, source: husbandry-sheet}
     placements:
       - {from: 2026-08-10, position: B2, source: husbandry-sheet}
+    recordings:
+      - {base: allego_0__uid0818-18-56-33, date: 2026-08-18, position: B2, role: animal}
+      - {base: allego_1__uid0818-20-50-26, date: 2026-08-18, position: B2, role: animal}
+      - {base: allego_0__uid0819-09-00-00, date: 2026-08-19, position: B2, role: animal}
+      - {base: allego_1__uid0819-17-25-20, date: 2026-08-19, position: B2, role: animal}
+      - {base: allego_2__uid0827-12-58-32, date: 2026-08-27, position: B2, role: animal}
+      - {base: allego_3__uid0828-09-26-12, date: 2026-08-28, position: B2, role: animal}
+      - {base: allego_4__uid0828-10-08-34, date: 2026-08-28, position: B2, role: animal}
     notes: >
       Highest water intake in the batch, 5.68 mL/day.
       verdict_2026_08_19: EEG GENUINELY GOOD (92.4% usable, 261 min block) but EMG OPEN at 535.8 uV, so the stager correctly returns NO STATES. EEG columns stay valid for spectral work.
@@ -328,6 +360,14 @@ animals:
       - {date: 2026-08-10, grams: 30.5, occasion: tethering, source: husbandry-sheet}
     placements:
       - {from: 2026-08-10, position: C2, source: husbandry-sheet}
+    recordings:
+      - {base: allego_0__uid0818-18-56-33, date: 2026-08-18, position: C2, role: animal}
+      - {base: allego_1__uid0818-20-50-26, date: 2026-08-18, position: C2, role: animal}
+      - {base: allego_0__uid0819-09-00-00, date: 2026-08-19, position: C2, role: animal}
+      - {base: allego_1__uid0819-17-25-20, date: 2026-08-19, position: C2, role: animal}
+      - {base: allego_2__uid0827-12-58-32, date: 2026-08-27, position: C2, role: animal}
+      - {base: allego_3__uid0828-09-26-12, date: 2026-08-28, position: C2, role: animal}
+      - {base: allego_4__uid0828-10-08-34, date: 2026-08-28, position: C2, role: animal}
     notes: >
       Mean water intake exactly 3.00 mL/day, the batch's tightest (SD 0.56).
       verdict_2026_08_19: hypnogram REJECTED. r@1min 0.11 against a bar of 0.30, and 17.8% WAKE is not plausible for a mouse. Barely distinguishable from randomly relabelled data.
@@ -354,6 +394,14 @@ animals:
       - {date: 2026-08-10, grams: 33.4, occasion: tethering, source: husbandry-sheet}
     placements:
       - {from: 2026-08-10, position: D1, source: husbandry-sheet}
+    recordings:
+      - {base: allego_0__uid0818-18-56-33, date: 2026-08-18, position: D1, role: animal}
+      - {base: allego_1__uid0818-20-50-26, date: 2026-08-18, position: D1, role: animal}
+      - {base: allego_0__uid0819-09-00-00, date: 2026-08-19, position: D1, role: animal}
+      - {base: allego_1__uid0819-17-25-20, date: 2026-08-19, position: D1, role: animal}
+      - {base: allego_2__uid0827-12-58-32, date: 2026-08-27, position: D1, role: animal}
+      - {base: allego_3__uid0828-09-26-12, date: 2026-08-28, position: D1, role: animal}
+      - {base: allego_4__uid0828-10-08-34, date: 2026-08-28, position: D1, role: animal}
     notes: >
       Mean water intake 4.91 mL/day.
       verdict_2026_08_19: hypnogram REJECTED. r@1min 0.001 -- indistinguishable from randomly relabelled data.
@@ -379,6 +427,14 @@ animals:
       - {date: 2026-08-10, grams: 33.0, occasion: tethering, source: husbandry-sheet}
     placements:
       - {from: 2026-08-10, position: D2, source: husbandry-sheet}
+    recordings:
+      - {base: allego_0__uid0818-18-56-33, date: 2026-08-18, position: D2, role: animal}
+      - {base: allego_1__uid0818-20-50-26, date: 2026-08-18, position: D2, role: animal}
+      - {base: allego_0__uid0819-09-00-00, date: 2026-08-19, position: D2, role: animal}
+      - {base: allego_1__uid0819-17-25-20, date: 2026-08-19, position: D2, role: animal}
+      - {base: allego_2__uid0827-12-58-32, date: 2026-08-27, position: D2, role: animal}
+      - {base: allego_3__uid0828-09-26-12, date: 2026-08-28, position: D2, role: animal}
+      - {base: allego_4__uid0828-10-08-34, date: 2026-08-28, position: D2, role: animal}
     notes: >
       Mean water intake 3.03 mL/day.
       verdict_2026_08_19: SCOREABLE. Hypnogram WAKE 54.2% / NREM 42.8%, r@1min 0.446.
@@ -412,6 +468,11 @@ animals:
       # 17:25 restart (allego_1__uid0819-17-25-20) is the one this animal is in.
       - {from: 2026-08-19 17:20, position: B1, source: journal-2026-08-19,
          tether_notes: "moved into B1 the evening the previous B1 animal chewed and cut its tether; registry then records 08/21 ate the tether"}
+    recordings:
+      - {base: allego_1__uid0819-17-25-20, date: 2026-08-19, position: B1, role: animal}
+      - {base: allego_2__uid0827-12-58-32, date: 2026-08-27, position: B1, role: animal}
+      - {base: allego_3__uid0828-09-26-12, date: 2026-08-28, position: B1, role: animal}
+      - {base: allego_4__uid0828-10-08-34, date: 2026-08-28, position: B1, role: animal}
     notes: >
       Mean water intake 3.40 mL/day.
       ⚠️ NOT the animal that produced the 08-18 B1 screen verdict. Rig position is not animal identity; nothing from before 2026-08-19 17:20 carries to this animal.

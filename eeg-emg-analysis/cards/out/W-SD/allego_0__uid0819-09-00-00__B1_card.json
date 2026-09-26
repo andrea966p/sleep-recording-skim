@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "generated": "2026-09-23T12:04:59+09:00",
+  "generated": "2026-09-26T11:05:57+09:00",
   "cohort_id": "W-SD",
   "project_id": "",
   "batch_id": "",
@@ -173,9 +173,9 @@
         "floor_threshold_ci": {
           "criterion": "slope",
           "n_floor_sites": 14,
-          "point": -1.2698824405670166,
-          "lo": -1.6407278776168823,
-          "hi": -1.1410598754882812,
+          "point": -1.2698824161291122,
+          "lo": -1.6407278716564178,
+          "hi": -1.1410598707199098,
           "ci": 95.0,
           "n_boot": 2000,
           "note": "resampled over SITES; epochs within a site are not independent"
@@ -188,9 +188,9 @@
             "threshold_ci": {
               "criterion": "slope",
               "n_floor_sites": 14,
-              "point": -1.2698824405670166,
-              "lo": -1.6407278776168823,
-              "hi": -1.1410598754882812,
+              "point": -1.2698824161291122,
+              "lo": -1.6407278716564178,
+              "hi": -1.1410598707199098,
               "ci": 95.0,
               "n_boot": 2000,
               "note": "resampled over SITES; epochs within a site are not independent"
@@ -203,9 +203,9 @@
             "threshold_ci": {
               "criterion": "hum",
               "n_floor_sites": 14,
-              "point": 502.8010559082031,
-              "lo": 149.24365234375,
-              "hi": 1077.1846923828125,
+              "point": 502.8010417175293,
+              "lo": 149.24364608764648,
+              "hi": 1077.1846398925782,
               "ci": 95.0,
               "n_boot": 2000,
               "note": "resampled over SITES; epochs within a site are not independent"
@@ -262,7 +262,7 @@
   "provenance": {
     "thresholds_file": "/home/skimlab/sleep-recording-skim/eeg-emg-analysis/core/qc_thresholds.py",
     "thresholds_hash": "01e11630dcbf",
-    "git_rev": "44806ef",
+    "git_rev": "9c31871",
     "cohort_manifest": "/home/skimlab/sleep-recording-skim/eeg-emg-analysis/cohorts/W-SD.yaml",
     "processed_files": {},
     "epoch_s_qc": 10,
