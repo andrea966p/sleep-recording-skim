@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "generated": "2026-09-23T12:44:12+09:00",
+  "generated": "2026-09-26T14:03:06+09:00",
   "cohort_id": "S-SD",
   "project_id": "neurosurveillance-eeg",
   "batch_id": "S-SD",
@@ -12,9 +12,9 @@
   "recording": "allego_0__uid0825-09-00-00",
   "recording_base": "/home/skimlab/radix/data/allego_0__uid0825-09-00-00",
   "recording_date": "2026-08-25",
-  "duration_h": null,
-  "zt_start": null,
-  "zt_end": null,
+  "duration_h": 24.275946666666666,
+  "zt_start": 23.98,
+  "zt_end": 0.26,
   "age_weeks": 16,
   "age_is_derived": false,
   "days_post_surgery": 15,
@@ -24,7 +24,7 @@
   "criterion": "slope",
   "epoch_s_qc": 10,
   "epoch_s_staging": 4,
-  "thresholds_hash": "01e11630dcbf",
+  "thresholds_hash": "cd459298551a",
   "floor": {
     "n_sites": 14,
     "n_epochs": 8739,
@@ -41,6 +41,9 @@
     "estimator": "site_p1_median",
     "grounded": true,
     "validity_reason": "",
+    "site_median_slope": -0.371,
+    "slope_valid": true,
+    "slope_validity_reason": "",
     "available": true,
     "unavailable_reason": ""
   },
@@ -167,15 +170,18 @@
           "estimator": "site_p1_median",
           "grounded": true,
           "validity_reason": "",
+          "site_median_slope": -0.371,
+          "slope_valid": true,
+          "slope_validity_reason": "",
           "available": true,
           "unavailable_reason": ""
         },
         "floor_threshold_ci": {
           "criterion": "slope",
           "n_floor_sites": 14,
-          "point": -1.522667407989502,
-          "lo": -1.6661708354949951,
-          "hi": -1.4384195804595947,
+          "point": -1.5226674330234529,
+          "lo": -1.6661709249019623,
+          "hi": -1.438419646024704,
           "ci": 95.0,
           "n_boot": 2000,
           "note": "resampled over SITES; epochs within a site are not independent"
@@ -188,9 +194,9 @@
             "threshold_ci": {
               "criterion": "slope",
               "n_floor_sites": 14,
-              "point": -1.522667407989502,
-              "lo": -1.6661708354949951,
-              "hi": -1.4384195804595947,
+              "point": -1.5226674330234529,
+              "lo": -1.6661709249019623,
+              "hi": -1.438419646024704,
               "ci": 95.0,
               "n_boot": 2000,
               "note": "resampled over SITES; epochs within a site are not independent"
@@ -203,9 +209,9 @@
             "threshold_ci": {
               "criterion": "hum",
               "n_floor_sites": 14,
-              "point": 1182.8642578125,
-              "lo": 368.1686706542969,
-              "hi": 3217.8505859375,
+              "point": 1182.8642779541015,
+              "lo": 368.1686669921875,
+              "hi": 3217.8505029296875,
               "ci": 95.0,
               "n_boot": 2000,
               "note": "resampled over SITES; epochs within a site are not independent"
@@ -299,6 +305,11 @@
       "label": "allego_1__uid0901-12-38-53"
     },
     {
+      "date": "2026-09-02",
+      "kind": "recording",
+      "label": "allego_2__uid0902-13-00-28"
+    },
+    {
       "date": "2026-09-03",
       "kind": "sampling",
       "label": "sampling"
@@ -320,10 +331,16 @@
   ],
   "provenance": {
     "thresholds_file": "/home/skimlab/sleep-recording-skim/eeg-emg-analysis/core/qc_thresholds.py",
-    "thresholds_hash": "01e11630dcbf",
-    "git_rev": "2ac1ca0",
+    "thresholds_hash": "cd459298551a",
+    "git_rev": "082a7ba",
     "cohort_manifest": "/home/skimlab/sleep-recording-skim/eeg-emg-analysis/cohorts/S-SD.yaml",
-    "processed_files": {},
+    "processed_files": {
+      "npz": "/home/skimlab/eeg-processed/2026-08-25/portA-slot1_2026-08-25_085959_24h17m.npz",
+      "features": "/home/skimlab/eeg-processed/2026-08-25/portA-slot1_2026-08-25_085959_24h17m_features.json",
+      "hypnogram": "/home/skimlab/eeg-processed/2026-08-25/portA-slot1_2026-08-25_085959_24h17m_hypnogram.csv",
+      "summary": "/home/skimlab/eeg-processed/2026-08-25/portA-slot1_2026-08-25_085959_24h17m_summary.txt",
+      "day_dir": "/home/skimlab/eeg-processed/2026-08-25"
+    },
     "epoch_s_qc": 10,
     "n_qc_epochs": 8739,
     "criterion": "slope",

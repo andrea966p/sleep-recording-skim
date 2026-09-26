@@ -263,6 +263,24 @@ never tethered, carry the treatment.
   this. [[sleep-recording-operator-manual]].
 - The blind-scoring **kappa**, still the gate on everything at rung 4.
 
+## Added 2026-09-26 — the recovery now has stage 3, and D2 is scoreable on both sides
+
+Stage 2 and stage 3 had never been run on `allego_2__uid0827-12-58-32`. Run on 2026-09-26 and
+re-carded (rung 2 unchanged on all eight cards).
+
+| animal | baseline `uid0819-17-25-20` | recovery `uid0827-12-58-32` |
+|---|---|---|
+| **D2 / HLBWSD08** | rung 3 PASS, r@1min 0.446, wake 54.2% | **rung 3 PASS, r@1min 0.400, wake 41.0%** — rung 4 PROVISIONAL |
+| C2 / HLBWSD06 | rung 3 FAIL (0.110) | stage 3 REJECT (0.155); rung 2 FAIL |
+
+⭐ **The paired before/after comparison is n = 1 at RUNG 3, not only at rung 2.** D2 is the first
+animal in either deprivation arm with scoreable sleep on both sides of CSD. Its EMG is working on
+both days (p95/p5 5.5 and 4.1; dark roughly twice light).
+
+🛑 **No sleep conclusion.** n = 1, and the windows differ: the baseline is 39.7 h from 17:25, the
+recovery 20.1 h from 12:58 after the PENULTIMATE bout. The wake difference is not interpretable
+until both are cut to matched ZT windows.
+
 ## Provenance
 
 - Raw: `~/radix/data/allego_{0,1,2,3}__uid08{18,19,27,28}-*` — seven files, all rung 0 INTACT

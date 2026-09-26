@@ -1,12 +1,20 @@
 ---
 name: s-sd-recovery-sleep-run-2026-09-02
-description: "The S-SD terminal recovery-sleep endpoint, Wed 2026-09-02 13:00 to Thu 09-03 09:00, its pre-flight screen and its AMBER go/no-go."
+description: "The S-SD terminal endpoint 2026-09-02 (unrepeatable). OUTCOME 2026-09-26: n = 0 scoreable at every S-SD timepoint; D2/HLBSSD18 passes rung 2 but has a NON-FUNCTIONAL EMG."
 metadata: 
   node_type: memory
   type: project
   originSessionId: 96a1ed89-9db0-4f3f-bf96-57a4fbc53432
   modified: 2026-09-14T07:49:25.467Z
 ---
+
+🔴🔴 **OUTCOME, 2026-09-26 (stage 3 run for the first time): S-SD recovery sleep is n = 0.**
+No animal reaches ladder rung 3 at ANY S-SD timepoint (08-25, 08-26, 09-02); the endpoint has
+none even in stage 3. 🔑 **D2/HLBSSD18 passes rung 2 everywhere but its EMG is dead**: p95/p5
+1.4–1.7 (working EMG 4–6), p5 ~30 µV (working 7–9), no light/dark change, EEG-like slope on
+`D/34`. Stage 3 rejects it for wake 0.2–1.6%. The "EMG locked at 50 µV" below was read as healthy
+— **a LOCKED EMG is a non-functional EMG.** Rung 2 judges EMG on hum+rms only and cannot see it.
+
 
 **Wednesday 2026-09-02 13:00 KST → Thursday 2026-09-03 09:00 KST, 20.0 h**, eight S-SD positions.
 Animals **SAMPLED Thursday 13:00**, four hours after it stops ⇒ **UNREPEATABLE**. Scored Thursday.

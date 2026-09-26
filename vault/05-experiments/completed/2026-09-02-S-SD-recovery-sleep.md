@@ -212,9 +212,46 @@ rung 2 figure is EEG and EMG usable in the SAME epoch — say which one is being
 - ⚠️ A2's EMG reads rms 352-354 µV, dead constant, with 479 µV of 60 Hz. That is a fixed artefact
   level, not muscle. A2 is EEG-only unless it changes.
 - ⚠️ D1's own wire-free floor is CONTAMINATED — its lf/hf 99th percentile ran 18 to 29 while other
-  chips sat at 2 to 7. Judge D1 on rms and slope, never on its ratio. The contaminated-floor
-  validity guard for rung 2 is still not written.
+  chips sat at 2 to 7. Judge D1 on rms and slope, never on its ratio. ✅ The contaminated-floor
+  validity guard for rung 2 was written on 2026-09-26 (`2cc5892`); it does not fire on this
+  recording.
 - ⚠️ An unattributed 223 GB file sits in the raw directory, see [[2026-09-01]]. Not adopted here.
+
+## Added 2026-09-26 — stage 3 run for the first time: S-SD has no scoreable sleep at any timepoint
+
+Stage 2 and stage 3 had never been run on any S-SD recording. Run on 2026-09-26 on the 24 h
+baseline, the B1-swap baseline and this endpoint; all three were then re-carded (rung 2 unchanged
+on every card).
+
+| recording | mice split by stage 2 | stage 3 SCOREABLE | ladder rung 3 PASS |
+|---|---|---|---|
+| `allego_0__uid0825-09-00-00` 24 h baseline | A1, B1, D2 | A1 (r 0.409) | **none** — A1 fails rung 2 |
+| `allego_1__uid0826-12-50-16` B1-swap baseline | A1, B1, D2 | A1 (0.360), B1 (0.386) | **none** — A1 UNJUDGEABLE, B1 fails rung 2 |
+| `allego_2__uid0902-13-00-28` **this endpoint** | B2, D2 | **none** | **none** |
+
+🔴🔴 **The endpoint has no scoreable animal, by either engine. S-SD recovery sleep is n = 0,
+and this recording cannot be repeated.**
+
+🔑 **D2/HLBSSD18 — the only S-SD animal to pass rung 2 at every timepoint — has no working EMG.**
+Stage 3 rejects it on all three days for implausibly low wake (1.6%, 0.9%, 0.2%) and r@1min
+0.029, 0.025, −0.023. Its EMG never drops toward atonia and never rises at night:
+
+| | EMG rms p5 | p95 / p5 | EMG light → dark |
+|---|---|---|---|
+| S-SD D2, all three days | 27–33 µV | **1.4–1.7** | 30.9 → 32.3 µV, flat |
+| working EMGs (W-SD D2 twice, S-SD A1) | 7–9 µV | 4.1–6.0 | roughly doubles |
+
+The raw EMG site `D/34` also reads a steep, EEG-like slope (−1.27, −1.38). The pre-flight screen
+above recorded it as "EMG locked at 50 µV" and read that as healthy; **a locked EMG is the
+signature of one that is not in muscle.** Rung 2 passes it because EMG is judged on hum and
+amplitude only, which a quiet input satisfies. Rung 3 is where it is caught, and it was.
+
+⚠️ **The two baseline SCOREABLEs do not rescue the batch.** A1 fails or is unjudgeable at rung 2
+on both baselines and is OPEN at the endpoint. B1/HLBSSD17's EMG is as flat as D2's (p95/p5 1.7),
+and its Otsu split is unstable (94% wake at a 0.75× threshold), so its 0.386 is fragile as well as
+blocked.
+
+Outputs: `~/eeg-processed/2026-08-25`, `2026-08-26`, `2026-09-02` (not in the repo).
 
 ## Related
 

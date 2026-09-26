@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "generated": "2026-09-26T13:32:53+09:00",
+  "generated": "2026-09-26T14:03:54+09:00",
   "cohort_id": "S-SD",
   "project_id": "neurosurveillance-eeg",
   "batch_id": "S-SD",
@@ -332,7 +332,7 @@
   "provenance": {
     "thresholds_file": "/home/skimlab/sleep-recording-skim/eeg-emg-analysis/core/qc_thresholds.py",
     "thresholds_hash": "cd459298551a",
-    "git_rev": "2cc5892",
+    "git_rev": "082a7ba",
     "cohort_manifest": "/home/skimlab/sleep-recording-skim/eeg-emg-analysis/cohorts/S-SD.yaml",
     "processed_files": {},
     "epoch_s_qc": 10,

@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "generated": "2026-09-23T17:57:18+09:00",
+  "generated": "2026-09-26T14:05:01+09:00",
   "cohort_id": "S-SD",
   "project_id": "neurosurveillance-eeg",
   "batch_id": "S-SD",
@@ -12,9 +12,9 @@
   "recording": "allego_2__uid0902-13-00-28",
   "recording_base": "/home/skimlab/radix/data/allego_2__uid0902-13-00-28",
   "recording_date": "2026-09-02",
-  "duration_h": null,
-  "zt_start": null,
-  "zt_end": null,
+  "duration_h": 20.07776,
+  "zt_start": 4.0,
+  "zt_end": 0.08,
   "age_weeks": 17,
   "age_is_derived": false,
   "days_post_surgery": 22,
@@ -24,7 +24,7 @@
   "criterion": "slope",
   "epoch_s_qc": 10,
   "epoch_s_staging": 4,
-  "thresholds_hash": "01e11630dcbf",
+  "thresholds_hash": "cd459298551a",
   "floor": {
     "n_sites": 14,
     "n_epochs": 7227,
@@ -41,6 +41,9 @@
     "estimator": "site_p1_median",
     "grounded": true,
     "validity_reason": "",
+    "site_median_slope": -0.177,
+    "slope_valid": true,
+    "slope_validity_reason": "",
     "available": true,
     "unavailable_reason": ""
   },
@@ -167,15 +170,18 @@
           "estimator": "site_p1_median",
           "grounded": true,
           "validity_reason": "",
+          "site_median_slope": -0.177,
+          "slope_valid": true,
+          "slope_validity_reason": "",
           "available": true,
           "unavailable_reason": ""
         },
         "floor_threshold_ci": {
           "criterion": "slope",
           "n_floor_sites": 14,
-          "point": -1.0972161293029785,
-          "lo": -1.2832869291305542,
-          "hi": -0.7412591576576233,
+          "point": -1.0972160625457763,
+          "lo": -1.2832869434356688,
+          "hi": -0.7412591767311095,
           "ci": 95.0,
           "n_boot": 2000,
           "note": "resampled over SITES; epochs within a site are not independent"
@@ -188,9 +194,9 @@
             "threshold_ci": {
               "criterion": "slope",
               "n_floor_sites": 14,
-              "point": -1.0972161293029785,
-              "lo": -1.2832869291305542,
-              "hi": -0.7412591576576233,
+              "point": -1.0972160625457763,
+              "lo": -1.2832869434356688,
+              "hi": -0.7412591767311095,
               "ci": 95.0,
               "n_boot": 2000,
               "note": "resampled over SITES; epochs within a site are not independent"
@@ -203,9 +209,9 @@
             "threshold_ci": {
               "criterion": "hum",
               "n_floor_sites": 14,
-              "point": 1611.273681640625,
-              "lo": 1067.76318359375,
-              "hi": 3181.8342285155627,
+              "point": 1611.2737329101562,
+              "lo": 1067.7632421875,
+              "hi": 3181.834142639098,
               "ci": 95.0,
               "n_boot": 2000,
               "note": "resampled over SITES; epochs within a site are not independent"
@@ -227,11 +233,22 @@
       "number": 3,
       "name": "SCOREABILITY",
       "question": "Can the sleep question even be asked?",
-      "verdict": "INSUFFICIENT",
-      "headline": "",
-      "threshold": "",
-      "reason": "no stage 3 output for this animal-recording; run pipeline/stage3_features.py on its day folder",
-      "detail": {}
+      "verdict": "FAIL",
+      "headline": "10.68 h in 77 block(s), r@1min -0.023",
+      "threshold": ">= 15 min inside blocks of >= 124 s, within-block r@1min > 0.30, wake 15-90%",
+      "reason": "REJECT: within-block r@1min=-0.023 <= 0.3; implausible wake 0.2%",
+      "detail": {
+        "qc_verdict": "DIRTY",
+        "verdict": "REJECT: within-block r@1min=-0.023 <= 0.3; implausible wake 0.2%",
+        "hours_in_blocks": 10.683,
+        "n_blocks": 77,
+        "longest_block_min": 83.1,
+        "r_1min": -0.023,
+        "r_1min_shuffled": -0.012,
+        "wake_pct": 0.2,
+        "physiology_informative_pass": true,
+        "reasons": []
+      }
     },
     {
       "number": 4,
@@ -325,10 +342,16 @@
   ],
   "provenance": {
     "thresholds_file": "/home/skimlab/sleep-recording-skim/eeg-emg-analysis/core/qc_thresholds.py",
-    "thresholds_hash": "01e11630dcbf",
-    "git_rev": "c44e2c2",
+    "thresholds_hash": "cd459298551a",
+    "git_rev": "082a7ba",
     "cohort_manifest": "/home/skimlab/sleep-recording-skim/eeg-emg-analysis/cohorts/S-SD.yaml",
-    "processed_files": {},
+    "processed_files": {
+      "npz": "/home/skimlab/eeg-processed/2026-09-02/portD-slot2_2026-09-02_130026_20h05m.npz",
+      "features": "/home/skimlab/eeg-processed/2026-09-02/portD-slot2_2026-09-02_130026_20h05m_features.json",
+      "hypnogram": "/home/skimlab/eeg-processed/2026-09-02/portD-slot2_2026-09-02_130026_20h05m_hypnogram.csv",
+      "summary": "/home/skimlab/eeg-processed/2026-09-02/portD-slot2_2026-09-02_130026_20h05m_summary.txt",
+      "day_dir": "/home/skimlab/eeg-processed/2026-09-02"
+    },
     "epoch_s_qc": 10,
     "n_qc_epochs": 7227,
     "criterion": "slope",
