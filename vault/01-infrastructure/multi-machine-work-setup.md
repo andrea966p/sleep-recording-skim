@@ -76,11 +76,17 @@ so no lab member is locked out, which is what makes that first copy possible.
 > - ⚠️ Tailscale SSH is in **check** mode: the first connection from e10 in each check period needs a
 >   browser approval by `skimlab.kaist@gmail.com`.
 > - ✅ tmux 3.6 installed 2026-09-28 (session create/detach tested).
-> - ❌ **Obsidian NOT INSTALLED.** Needs sudo at the workstation; the `skim` account has no
->   passwordless sudo. Recommended: the official `.deb` from obsidian.md. Ubuntu already ships an
->   AppArmor profile for exactly its install path (`/opt/Obsidian/obsidian`), which matters because
->   `kernel.apparmor_restrict_unprivileged_userns = 1` here. ⚠️ e10 runs the Flatpak
->   (`md.obsidian.Obsidian`); the workstation has no Flatpak installed.
+> - ✅ Obsidian 1.13.7 installed 2026-09-28 from the official `.deb` (`/opt/Obsidian/obsidian`,
+>   covered by Ubuntu's shipped AppArmor profile; `kernel.apparmor_restrict_unprivileged_userns = 1`
+>   here, so an AppImage would need `--no-sandbox`). Vault opened with the author trusted: all 12
+>   community plugins loaded, REST API on `127.0.0.1:27124` only, and **the working tree stayed
+>   clean**. obsidian-git has every auto interval at 0 and pull-on-boot off, so it never syncs by
+>   itself. ⚠️ e10 runs the Flatpak (`md.obsidian.Obsidian`), not the `.deb`.
+> - ℹ️ The Local REST API key and certificate are tracked in `vault/.obsidian/plugins/
+>   obsidian-local-rest-api/data.json` (private repo, localhost only). Reviewed 2026-09-28 and
+>   accepted as is by Andrea.
+>
+> **The workstation is ready for the manual `./skim pull` / `./skim push` workflow.**
 
 ### Reaching a machine FROM e10, which is the harder direction
 
