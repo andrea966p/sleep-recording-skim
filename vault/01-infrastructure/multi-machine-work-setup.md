@@ -75,8 +75,12 @@ so no lab member is locked out, which is what makes that first copy possible.
 >   on e10.
 > - ⚠️ Tailscale SSH is in **check** mode: the first connection from e10 in each check period needs a
 >   browser approval by `skimlab.kaist@gmail.com`.
-> - ❌ **tmux MISSING** and **Obsidian NOT INSTALLED**. Both need sudo at the workstation, and the
->   `skim` account has no passwordless sudo. `sudo apt install tmux`; Obsidian from obsidian.md.
+> - ✅ tmux 3.6 installed 2026-09-28 (session create/detach tested).
+> - ❌ **Obsidian NOT INSTALLED.** Needs sudo at the workstation; the `skim` account has no
+>   passwordless sudo. Recommended: the official `.deb` from obsidian.md. Ubuntu already ships an
+>   AppArmor profile for exactly its install path (`/opt/Obsidian/obsidian`), which matters because
+>   `kernel.apparmor_restrict_unprivileged_userns = 1` here. ⚠️ e10 runs the Flatpak
+>   (`md.obsidian.Obsidian`); the workstation has no Flatpak installed.
 
 ### Reaching a machine FROM e10, which is the harder direction
 
