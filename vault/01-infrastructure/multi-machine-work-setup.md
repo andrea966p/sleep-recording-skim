@@ -29,7 +29,7 @@ This part is current, unlike the Syncthing material below.
 | Machine | Host / user | Workspace | Claude memory slug | Role |
 |---|---|---|---|---|
 | `e10ubuntu` | `100.82.250.62`, user `skimlab` | `~/sleep-recording-skim` | `-home-skimlab-sleep-recording-skim` | **the rig.** Allego, Docker, Frigate, the EEG data. Only this machine runs them |
-| SKIM office workstation | user `skim` | `/home/skim/sleep-recording-skim` | `-home-skim-sleep-recording-skim` | day to day work, added 2026-09-16 |
+| SKIM office workstation | `skimworkstation`, `100.111.139.53`, user `skim` | `/home/skim/sleep-recording-skim` | `-home-skim-sleep-recording-skim` | day to day work, added 2026-09-16. Tailscale SSH ON, in **check** mode, so e10 can SSH in |
 | ThinkPad | `thinkpadubuntu`, `100.66.98.20`, user `andrea` | `/home/andrea/sleep-recording-skim` | `-home-andrea-sleep-recording-skim` | day to day work. Tagged `tag:thinkpad` so e10 can SSH in |
 | Office PC | `Andrea-KAIST-PC-ubuntu`, user `andrea` | old tree only, at `~/Monitoring_project` | — | **not yet on the one repo.** Holds uncommitted work, see the 2026-09-16 journal |
 
@@ -61,6 +61,22 @@ Host e10
 
 Then `ssh-copy-id e10`. Password authentication on `e10ubuntu` is left enabled on purpose
 so no lab member is locked out, which is what makes that first copy possible.
+
+> [!note] SKIM office workstation, verified 2026-09-28
+> Checked from e10 over Tailscale SSH (`tailscale ssh skim@skimworkstation`). Ubuntu 26.04.1,
+> kernel 7.0.0-31, login shell **zsh** (nvm loads from `.zshrc`, so Claude Code's node hooks work
+> when it is started from a terminal).
+> - ✅ Repo clean, `./skim pull` fast-forwarded 44 commits, `./skim status` in sync, `./skim check`
+>   all links healthy, Syncthing not running.
+> - ✅ Git identity set; GitHub accepts `~/.ssh/id_ed25519_github`; `git push --dry-run` authenticates.
+> - ✅ `ssh e10` works on a DEDICATED key, `~/.ssh/id_ed25519_e10` (no passphrase), named in the
+>   workstation's `Host e10` block; its public half is the third line of e10's `authorized_keys`.
+>   Backups: `~/.ssh/config.bak-2026-09-28` on the workstation, `~/.ssh/authorized_keys.bak-2026-09-28`
+>   on e10.
+> - ⚠️ Tailscale SSH is in **check** mode: the first connection from e10 in each check period needs a
+>   browser approval by `skimlab.kaist@gmail.com`.
+> - ❌ **tmux MISSING** and **Obsidian NOT INSTALLED**. Both need sudo at the workstation, and the
+>   `skim` account has no passwordless sudo. `sudo apt install tmux`; Obsidian from obsidian.md.
 
 ### Reaching a machine FROM e10, which is the harder direction
 
