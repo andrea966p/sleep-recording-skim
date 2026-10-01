@@ -124,47 +124,41 @@ of the cache drop.
 > stripped run verifies by read-back in about a minute, which is cheap enough that the extra
 > dependency earns nothing. It remains the fallback if read-back ever becomes too slow.
 
-## 3b. What a run is called once it arrives
+## 3b. Where each mouse lands
 
-Since 2026-09-13 the operator types a **recording batch name** in the console and the folder is
-named after the science rather than after the acquisition box:
+> [!important] Changed 2026-09-29: per mouse, in `02_Data_Sleep`, as CSV
+> The share root is now `02_Data_Sleep` (`nas.root` in `config/users.yaml`, which `nas_upload.py`
+> now actually reads). What travels is **one CSV + info.json per mouse**, not the stripped xdat.
+> The post-stop chain is `QC → STRIP → EXPORT → UPLOAD`.
 
-    03_Data_Mouse/<user>/YYYYMMDD_<batch>_<CODE>/
-        YYYYMMDD_<batch>_<CODE>_<N>mice_data.xdat
-        YYYYMMDD_<batch>_<CODE>_<N>mice_timestamp.xdat
-        YYYYMMDD_<batch>_<CODE>_<N>mice.xdat.json
-        YYYYMMDD_<batch>_<CODE>_<N>mice.strip-report.json
-        run.json      who, which mice in which position, which channels
-        UPLOAD.json   what was verified and how
-        qc/           the feature cache, still under its ALLEGO name
-
-    03_Data_Mouse/andrea/20260925_HLBSSL_RSR/20260925_HLBSSL_RSR_8mice_data.xdat
+    02_Data_Sleep/<user>/<batch>/<Baseline|Recovery>/<YYYYMMDD>_<MOUSEID>_<B|R>/
+        <YYYYMMDD>_<MOUSEID>_<B|R>.csv
+        <YYYYMMDD>_<MOUSEID>_<B|R>.info.json     written LAST, only after the CSV verified
 
 | part | where it comes from |
 |---|---|
-| `YYYYMMDD` | the date the recording **starts**, read from the uid Allego puts in the filename, which is already local. Never from `actual_start`, which is UTC |
-| `<batch>` | what the operator typed. Letters, digits, `-`, `_`, up to 32 characters — it is a directory name on a shared share |
-| `<CODE>` | `BSR` basal · `RSR` recovery · `SDR` sleep deprivation. From `recording_type_codes` in `config/users.yaml`, never hardcoded |
-| `<N>mice` | how many slots hold a mouse id |
+| `<batch>` | what the operator typed. **Required** since 2026-09-29. Letters, digits, `-`, `_`, up to 32 characters |
+| `<Baseline\|Recovery>` | `recording_type_folders` in `config/users.yaml`, from the type chosen per mouse |
+| `YYYYMMDD` | the date the recording **starts**, read from the Allego uid, which is already local. Never from `actual_start`, which is UTC |
+| `<MOUSEID>` | the slot's mouse ID |
+| `<B\|R>` | `recording_type_codes` in `config/users.yaml`. There is no SD type: the batch id carries it |
 
-Four properties worth knowing before you rely on it:
+- **Every path component is re-checked** in `nas_upload.mouse_dir` before anything is written.
+- **Collisions:** if the mouse folder already exists, the run takes `..._R-2`, and that choice is
+  **frozen on the run** (`results.nas_mouse_dirs`), so a resumed upload lands where it started.
+- **The local CSVs are deleted** once every one of a run's CSVs has verified on the share. They
+  are regenerable from the stripped copy, which stays, and they would otherwise fill the NVMe at
+  about 58 GB per run. They are the only files the pipeline ever deletes.
+- CSV format: [[02-procedures/per-mouse-csv-format]].
 
-- **A blank batch name is fine.** The folder then keeps the old
-  `YYYY-MM-DD_<allego base>` form. Nothing in the pipeline requires a name.
-- **Mixed conditions in one run name all of them**, in config order:
-  `20260925_HLBSSL_BSR-SDR`. The rig records all four ports at once, so one run can hold a basal
-  animal and an sd animal, and picking a single code would file half the animals under a condition
-  they were not in.
-- **The rename happens on the NAS only.** The local stripped copy keeps its Allego name, because
-  the strip is resumable and idempotent on exactly that name. The trail back is intact without the
-  filename: `status.dataset_provenance` in the stripped sidecar carries the source base, its uid and
-  both source hashes, and `run.json` sits beside it.
-- **The QC bundle keeps its Allego name** inside `qc/`. Those features describe the full
-  262-channel **original**, not the stripped copy, and renaming them would invite the opposite reading.
-
-Same batch, same day, same condition twice ⇒ the second becomes `...-2`, and the file base carries
-the same suffix. The chosen name is then **frozen on the run**, so a retried or resumed upload lands
-in the folder it started in instead of stepping to `-3`.
+> [!history] Before 2026-09-29
+> One folder per run in `03_Data_Mouse/<user>/YYYYMMDD_<batch>_<BSR|RSR|SDR>[-2]/`, holding the
+> stripped xdat, `run.json`, `UPLOAD.json` and `qc/`. The eight canonical recordings are rebuilt
+> into the new tree by `eeg-recorder/deploy/rebuild_02_data_sleep.py` (dry run by default; `--go`
+> to write), each cut to its analysis window. ✅ **Done 2026-09-29/30**: 64 mouse folders, 291 GB.
+> An independent audit of all 64 `info.json` found sha256 equal at both ends, sizes and row counts
+> matching, and read-back at 105-107 MB/s. ✅ The old `03_Data_Mouse/andrea` contents were deleted by
+> Andrea on 2026-09-30, after every file was hash-matched to a local copy.
 
 ## 4. Status vocabulary — a size check is not a verification
 

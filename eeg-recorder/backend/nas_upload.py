@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
-"""nas_upload.py -- copy stripped recordings to the SKIM Lab NAS, verifiably.
+"""nas_upload.py -- copy per-mouse CSVs to the SKIM Lab NAS, verifiably.
 
 DESTINATION
     //skim-nas.tailec38b9.ts.net/SKIM_DATA  mounted at /mnt/skimnas
-    files land in 03_Data_Mouse/<user>/<YYYY-MM-DD>_<base>/
+    files land in 02_Data_Sleep/<user>/<batch>/<Baseline|Recovery>/<YYYYMMDD>_<MOUSEID>_<B|R>/
+    (naming.py owns that rule). Until 2026-09-29 it was one folder per RUN in
+    03_Data_Mouse/<user>/, holding the stripped xdat.
 
 WHY THIS IS PYTHON AND NOT A GENERALISATION OF radix-archive.sh
     That script moves raw .xdat to a DIFFERENT NAS (bilab-syn) over an ssh pipe,
@@ -31,8 +33,9 @@ THE MOUNT GUARD, WHICH IS NOT OPTIONAL
     directory IS a valid mountpoint. So every write is gated on reading a sentinel
     file that exists only on the share.
 
-IT NEVER DELETES ANYTHING LOCALLY. Ever. That is a human decision, taken after
-reading the manifest.
+THIS MODULE NEVER DELETES ANYTHING LOCALLY. The per-mouse CSVs it uploads are
+removed by postprocess.py, and only after every one of a run's CSVs verified --
+they are regenerable from the stripped file, which stays.
 """
 from __future__ import annotations
 
@@ -50,13 +53,26 @@ from pathlib import Path
 from typing import Callable, Iterable, Sequence
 
 MOUNT = Path(os.environ.get("SKIMNAS_MOUNT", "/mnt/skimnas"))
-ROOT = os.environ.get("SKIMNAS_ROOT", "03_Data_Mouse")
+ROOT = os.environ.get("SKIMNAS_ROOT", "02_Data_Sleep")
 SENTINEL = MOUNT / ROOT / ".skim-nas-share"
+
+
+def set_root(root: str) -> None:
+    """Take the root from config/users.yaml (`nas.root`), unless SKIMNAS_ROOT is set.
+
+    The config value was loaded but ignored until 2026-09-29, so the destination
+    was really decided by this module's default -- two places that could disagree.
+    """
+    global ROOT, SENTINEL
+    if os.environ.get("SKIMNAS_ROOT"):
+        return
+    ROOT = str(root)
+    SENTINEL = MOUNT / ROOT / ".skim-nas-share"
 USERS = ("andrea", "diane", "ahyeon", "hyunmin", "staci")
 
 CHUNK = 8 << 20
 TOOL = "eeg-recorder.nas_upload"
-TOOL_VERSION = "2026.09.11"
+TOOL_VERSION = "2026.09.29"
 
 
 class UploadRefused(RuntimeError):
@@ -349,185 +365,122 @@ def upload_file(src: Path, dst: Path, *, resume: bool = True,
 
 
 # --------------------------------------------------------------------------- #
-# uploading a whole stripped recording
+# per-mouse destinations
 # --------------------------------------------------------------------------- #
 
-def free_dir_name(user: str, stem: str, *, limit: int = 99) -> tuple[str, int]:
-    """`stem`, or `stem-2`, `stem-3`... whichever does not exist yet. (name, n).
+import re as _re
+_SAFE = _re.compile(r"^[A-Za-z0-9_-]{1,40}$")
 
-    Only ever called ONCE per run; the answer is frozen on the run record, because
-    a resumed upload must land in the folder it started in rather than stepping
-    to the next free name every time the NAS blinks.
+
+def mouse_dir(user: str, entry: dict) -> Path:
+    """`<root>/<user>/<batch>/<condition>/<folder>`, every component checked.
+
+    The components come from a form field (batch), config (condition) and a mouse
+    id, each validated where it was entered; checking them again here costs
+    nothing and means no future caller can walk this out of the user's tree.
+    """
+    parts = [entry.get("batch"), entry.get("condition_dir"), entry.get("folder")]
+    for x in parts:
+        if not x or not _SAFE.match(str(x)):
+            raise UploadRefused(f"unsafe path component {x!r} in {entry}")
+    return user_dir(user).joinpath(*parts)
+
+
+def free_mouse_folder(user: str, entry: dict, *, limit: int = 9) -> dict:
+    """`entry`, or its `-2`, `-3`... variant, whichever folder does not exist yet.
+
+    Called ONCE per run; the answer is frozen on the run (results.nas_mouse_dirs)
+    so a resumed upload lands in the folder it started in. A second folder for the
+    same mouse on the same day is a real event -- a restarted recording -- and its
+    info.json says which Allego file each one holds.
     """
     require_nas()
-    base = user_dir(user)
+    stem = entry["folder"]
     for n in range(1, limit + 1):
-        cand = stem if n == 1 else f"{stem}-{n}"
-        if not (base / cand).exists():
-            return cand, n
-    raise UploadRefused(
-        f"{limit} folders already start with {stem!r} in {base}; refusing to add "
-        "another. Something is wrong with the batch name, not with the NAS.")
+        cand = dict(entry)
+        if n > 1:
+            cand["folder"] = cand["file_base"] = f"{stem}-{n}"
+            cand["rel"] = f"{entry['batch']}/{entry['condition_dir']}/{cand['folder']}"
+            cand["suffix_reason"] = (f"{stem} already existed on the NAS when this "
+                                     "run was uploaded, holding a different recording")
+        if not mouse_dir(user, cand).exists():
+            return cand
+    raise UploadRefused(f"{limit} folders already exist for {stem!r}; refusing to add "
+                        "another. Something is wrong with the mouse id or the date.")
 
 
-def upload_recording(stripped_base: str | Path, user: str, *,
-                     run_json: dict | None = None,
-                     qc_bundle: Iterable[str | Path] = (),
-                     dest_name: str | None = None,
-                     file_base: str | None = None,
-                     resume: bool = True, verify: bool = True,
-                     progress: Callable[[str], None] | None = print) -> dict:
-    """Upload one stripped recording into its owner's folder.
+def _upload_checked(src: Path, dst: Path, rel: str, user: str, *,
+                    resume: bool, verify: bool, say) -> dict:
+    """upload_file, but a manifest row is only believed if the share agrees."""
+    size = src.stat().st_size
+    prior = manifest_load().get((rel, size))
+    if prior and prior.get("status") == "VERIFIED":
+        # 🔴 THE MANIFEST IS A CLAIM ABOUT THE NAS, SO CHECK THE NAS. On
+        # 2026-09-15 four folders were tidied off the share and the manifest still
+        # swore all of it was verified; trusting it would ship nothing and report
+        # success. One stat per file.
+        try:
+            there = dst.exists() and dst.stat().st_size == size
+        except OSError:
+            there = False
+        if there:
+            say(f"  skip (already VERIFIED in the manifest): {dst.name}")
+            return prior
+        say(f"  manifest says {dst.name} is VERIFIED but it is NOT on the share "
+            "-- uploading it again")
+    rec = upload_file(src, dst, resume=resume, verify=verify, progress=say)
+    rec.update(rel=rel, user=user, local_name=src.name,
+               utc=datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+               host=socket.gethostname(), tool=TOOL, version=TOOL_VERSION)
+    manifest_put(rec)
+    return rec
 
-    Layout:  03_Data_Mouse/<user>/<dest_name>/
-                 <file_base>_data.xdat  <file_base>_timestamp.xdat
-                 <file_base>.xdat.json  <file_base>.strip-report.json
-                 run.json            who, which mice, which channels
-                 qc/...              the feature cache, if one was supplied
-                 UPLOAD.json         what was verified, and how
 
-    `dest_name` and `file_base` come from `naming.run_names` -- the operator's
-    batch name, the date and the condition code. Both default to the Allego
-    names, which is what every folder uploaded before 2026-09-13 uses.
+def upload_mouse(csv_path: str | Path, user: str, entry: dict, info: dict, *,
+                 expect_sha256: str | None = None, resume: bool = True,
+                 verify: bool = True, progress=print) -> dict:
+    """Upload one mouse's CSV, then its info.json. Returns the info as written.
 
-    THE RENAME IS REMOTE ONLY. The local stripped copy keeps its Allego name so
-    that the strip stays resumable and idempotent on it. The trail back is intact
-    without the filename: the sidecar's `dataset_provenance` carries the source
-    base, its uid and both source hashes, and `run.json` sits in the same folder.
-
-    The QC bundle deliberately keeps ITS name. Those features were computed on
-    the full 262-channel original, not on the stripped copy, and naming them
-    after the stripped copy would invite someone to read them as its own.
-
-    The QC bundle matters: stripping removes the in-file wire-free floor, so the
-    cached features are the only surviving record of it. A stripped recording that
-    travels without its bundle can never be QC'd again by this project's criterion.
+    info.json is written LAST and only once the CSV has verified, so its presence
+    in a folder means the folder is complete. It is written to a temporary name
+    and renamed, so a reader never sees half of one.
     """
     say = progress or (lambda _m: None)
     require_nas()
-    base = Path(stripped_base)
-    name = base.name
-    trio = [base.parent / f"{name}_data.xdat",
-            base.parent / f"{name}_timestamp.xdat",
-            base.parent / f"{name}.xdat.json"]
-    missing = [str(p) for p in trio if not p.exists()]
-    if missing:
-        raise UploadRefused(f"not a complete stripped recording, missing: {missing}")
-
-    # date from the recording's own metadata, not from today
-    try:
-        start_iso = json.loads(trio[2].read_text())["status"]["start_time"]
-    except Exception:
-        start_iso = None
-    start = local_date_from_base(name, start_iso)   # LOCAL date, not UTC
-    dest = user_dir(user) / (dest_name or f"{start}_{name}")
-    stem = file_base or name
-
-    def remote_name(p: Path) -> str:
-        """Local file name -> the name it takes on the NAS."""
-        return p.name.replace(name, stem, 1) if stem != name else p.name
-
-    say(f"destination: {dest}")
-    if stem != name:
-        say(f"  files renamed {name}* -> {stem}*")
-
-    results = []
-    man = manifest_load()
-    for p in trio + [base.parent / f"{name}.strip-report.json"]:
-        if not p.exists():
-            continue
-        rname = remote_name(p)
-        key = (f"{dest.name}/{rname}", p.stat().st_size)
-        prior = man.get(key)
-        if prior and prior.get("status") == "VERIFIED" and not p.name.endswith(".json"):
-            # 🔴 THE MANIFEST IS A CLAIM ABOUT THE NAS, SO CHECK THE NAS.
-            # A VERIFIED row means "do not upload this again". If the file is not
-            # actually there, that row makes the uploader ship nothing and report
-            # success -- and the file is gone for good.
-            #
-            # Deleting things from a share is a completely ordinary act. On
-            # 2026-09-15 four folders of test data were tidied up and the
-            # manifest still swore all of it was verified. Trusting the record
-            # over the filesystem is what turns someone's housekeeping into
-            # silent data loss, so the record is now checked against the world
-            # before it is believed. One stat per file.
-            dst = dest / rname
-            try:
-                there = dst.exists() and dst.stat().st_size == prior.get("size")
-            except OSError:
-                there = False
-            if there:
-                say(f"  skip (already VERIFIED in the manifest): {rname}")
-                results.append(prior)
-                continue
-            say(f"  manifest says {rname} is VERIFIED but it is NOT on the share "
-                "-- uploading it again")
-        rec = upload_file(p, dest / rname, resume=resume, verify=verify,
-                          progress=say)
-        rec.update(rel=f"{dest.name}/{rname}", user=user, local_name=p.name,
-                   utc=datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-                   host=socket.gethostname(), tool=TOOL, version=TOOL_VERSION)
-        manifest_put(rec)
-        results.append(rec)
-
-    for q in qc_bundle:
-        q = Path(q)
-        if q.exists():
-            rec = upload_file(q, dest / "qc" / q.name, resume=resume,
-                              verify=verify, progress=say)
-            rec.update(rel=f"{dest.name}/qc/{q.name}", user=user)
-            manifest_put(rec)
-            results.append(rec)
-
-    if run_json:
-        (dest / "run.json").write_text(json.dumps(run_json, indent=2))
-
-    verified = [r for r in results if r["status"] == "VERIFIED"]
-    weak = [r for r in results if r["status"] == "SIZE_ONLY"]
-    summary = {
-        "status": "VERIFIED" if not weak and verified else "PARTIAL",
-        "dest": str(dest), "user": user, "base": name, "file_base": stem,
-        "allego_base": name,
-        "files_verified": len(verified), "files_size_only": len(weak),
-        "bytes": sum(r.get("size", 0) for r in results),
-        "qc_bundle_uploaded": bool(list(qc_bundle)),
-        "files": results,
+    src = Path(csv_path)
+    dest = mouse_dir(user, entry)
+    fb = entry["file_base"]
+    csv_dst = dest / f"{fb}.csv"
+    say(f"{entry['rel']}")
+    rec = _upload_checked(src, csv_dst, f"{entry['rel']}/{fb}.csv", user,
+                          resume=resume, verify=verify, say=say)
+    if expect_sha256 and rec.get("sha256") != expect_sha256:
+        raise UploadFailed(
+            f"{csv_dst.name}: the exporter hashed {expect_sha256} while writing it, "
+            f"but the file now hashes {rec.get('sha256')}. It changed on disk "
+            "between export and upload.")
+    out = dict(info)
+    out["upload"] = {
+        "status": rec.get("status"), "dest": str(dest), "user": user,
+        "csv": csv_dst.name, "bytes": rec.get("size"), "sha256_local": rec.get("sha256"),
+        "sha256_remote": rec.get("sha256") if rec.get("status") == "VERIFIED" else None,
+        "read_back_mb_s": rec.get("read_back_mb_s"),
         "utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-    }
-    (dest / "UPLOAD.json").write_text(json.dumps(summary, indent=2))
-    say(f"{summary['status']}: {len(verified)} file(s) verified"
-        + (f", {len(weak)} SIZE_ONLY (NOT verified)" if weak else "")
-        + f", {summary['bytes'] / 1e9:.2f} GB")
-    return summary
+        "tool": TOOL, "version": TOOL_VERSION}
+    if rec.get("status") == "VERIFIED":
+        tmp = dest / f".{fb}.info.json.tmp"
+        tmp.write_text(json.dumps(out, indent=2))
+        os.replace(tmp, dest / f"{fb}.info.json")
+    return out
 
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="nas_upload",
-                                 description="Upload a stripped recording to the SKIM Lab NAS.")
-    ap.add_argument("stripped_base", nargs="?",
-                    help="base path of the stripped recording (no _data.xdat suffix)")
-    ap.add_argument("--user", help=f"owner; one of {', '.join(USERS)}")
-    ap.add_argument("--qc", nargs="*", default=[], help="QC bundle files to ship alongside")
-    ap.add_argument("--no-verify", action="store_true",
-                    help="skip read-back verification (results are SIZE_ONLY, never VERIFIED)")
-    ap.add_argument("--no-resume", action="store_true")
+                                 description="SKIM Lab NAS status. Uploads are driven "
+                                             "by the recorder's post-processing worker.")
     ap.add_argument("--status", action="store_true", help="print NAS status and exit")
-    a = ap.parse_args(argv)
-
-    if a.status:
-        print(json.dumps(nas_status(), indent=2))
-        return 0
-    if not a.stripped_base or not a.user:
-        ap.error("stripped_base and --user are required unless --status")
-    try:
-        upload_recording(a.stripped_base, a.user, qc_bundle=a.qc,
-                         resume=not a.no_resume, verify=not a.no_verify)
-    except UploadRefused as exc:
-        print(f"REFUSED: {exc}", file=sys.stderr)
-        return 1
-    except UploadFailed as exc:
-        print(f"FAILED: {exc}", file=sys.stderr)
-        return 1
+    ap.parse_args(argv)
+    print(json.dumps(nas_status(), indent=2))
     return 0
 
 

@@ -1,6 +1,7 @@
 # Project Memory
 
 ## EEG rig — Allego / hardware behaviour
+- 🔴⭐⭐⭐ **[STREAM RAN 30× REAL TIME WHILE ALLEGO SAID 1000 Hz — 2026-09-30](allego-stream-30x-rate-label-lies.md). NEWEST.** Monitor freezes. Box kept fresh-launch 30 kHz. Console checks only the label ⇒ measure `stream.time_range` vs wall clock (~1.0×) before recording.
 - ✅🔴⭐⭐⭐ **[BLANK MONITOR = CANVAS BIGGER THAN THE SOFTWARE RENDERER — 2026-09-16](allego-blank-monitor-canvas-texture-limit.md). NEWEST.** Canvas = ALL signals × Chan height (262×50=13175 px); `--disable-gpu` ⇒ SwiftShader 8192 ⇒ never draws. Launch WITHOUT the flag ⇒ Intel GL 16384 ⇒ works. 96→262 signals crossed a threshold.
 - 🔴⭐⭐ **[ORPHANED allegoserver MAKES A HEALTHY RIG LOOK DEAD](allego-orphaned-server-blocks-the-rig.md).** Reparented to `systemd --user`, holds ports 50051-4, maybe no USB ⇒ stream toggles, zero samples. Check PPID first.
 - 🔴⭐⭐ **[Allego GPU crashes in Mesa + 6.5 GB log storm — 2026-08-24](allego-mesa-gpu-crash-and-log-storm.md).** `--disable-gpu` was the fix. Frozen GUI ≠ lost data; app death DOES end recording. Fresh launch = 30 kHz/SMARTBOX_PRO, re-check fs+mode.
@@ -58,6 +59,8 @@
 - 📤 KONTEX BATCH 2026-08-04: Q12 impedance polarity + Q13 spike-sorter filter errors; text in `01-infrastructure/vendor-correspondence/2026-07-29-kontex-kc-call-prep-rig-finalization.md`.
 - **Hardware-video-sync (Phase 0a):** gate = `DO 03` (DB25 pin22) Gated mode + Allego BNC Breakout toggle ON. [[project_hardware_sync_neuronexus_reply]]
 
+- ✅🔴⭐⭐ **[GEN-1 XDAQ HAS A CHASSIS GND, WIRED TO BUILDING EARTH — 2026-09-30](xdaq-gen1-has-chassis-gnd.md). NEWEST.** 07-16 "no chassis GND" claim WRONG. Noise series started (no mice); port A has a strong 120 Hz field. Tests → `~/radix/noise-tests/`.
+
 ## Rig expansion (8 → 32 mice)
 - ⭐⭐ **START AT `07-decisions/RIG-EXPANSION-HUB.md`.**
 - 🔴⭐ [DAQ research corrections](daq-research-corrections-2026-07-28.md) — 8 primary-source corrections. Core has NO isolation; PortExp MANDATORY; don't buy Allego; Intan via White Mountain.
@@ -68,6 +71,8 @@
 - ✅🔴⭐⭐⭐ **[ONE REPO: `sleep-recording-skim`](workspace-single-repo-sleep-recording-skim.md).** Vault + code + Claude config. Sync = MANUAL `./skim status|pull|push|check`. **4 machines**; e10 cutover DONE 09-11. 🔴 `bootstrap.sh` KEEPS an existing `settings.json` ⇒ can leave a machine with NO hooks. DIFF IT.
 - ✅🔴⭐⭐ **[THE THINKPAD IS ON THE WORKFLOW, set up remotely from e10 — 2026-09-19](workspace-single-repo-sleep-recording-skim.md).** 🔴 Its only gap was a **MISSING GIT IDENTITY — `check.sh` AND `skim status` both pass without one**. 🔑 e10→laptop = **Tailscale SSH + a TAG** (`dst` can only be `autogroup:self` or a tag). 🔴🔴 **Enabling Tailscale SSH HIJACKS port 22 and bypasses the real sshd** — it broke `ssh e10`; `--ssh=false` fixed it.
 - ❌🔴 **[Syncthing UNINSTALLED from e10 + the OFFICE PC, 2026-09-16](multi-machine-setup-and-vault-safety.md).** ✅ Gone from the ThinkPad too ⇒ **retired everywhere**. Identities parked, not deleted. 🔴 `apt purge` does NOT stop the daemon; **`apt autoremove` blast radius VARIES** (52 pkgs / NVIDIA stack on the office PC). Why the vault died in 2026-04.
+
+- ✅🔴⭐⭐⭐ **[SKIM NAS = ONE CSV PER MOUSE in 02_Data_Sleep, 24 h WINDOWS — 2026-09-30](skim-nas-per-mouse-csv-layout.md). NEWEST.** Rebuild DONE, 64 folders verified. Scoreable at both timepoints: **HLBWSD08, HLBWSL24, HLBSSL33** (+31, 35 stage 3 only); S-SD none. info.json carries the `qc` verdict (the CSV has no wire-free floor). ⏳ A real UI test run and the commit are pending.
 
 ## Cloud / AWS
 - ✅⭐⭐⭐ **[BACKUP ARCHITECTURE: 3 DESTINATIONS, ONE JOB EACH — 2026-09-20](backup-architecture-three-destinations.md). NEWEST.** bilab NAS = rebuild the rig · SKIM NAS = **working copy, NOT a backup** · S3 = survive the fire. 🔴 "e10 lost the bilab NAS" was FALSE — verify before planning a reconnect. ✅ `nvr-notify.sh` → **ntfy** for all 7 scripts. ⚠️ Video ≈ **930 GB/month** once cameras return.

@@ -64,35 +64,36 @@ network.
 While recording, the page shows elapsed time, the file name, bytes on disk and when it will stop.
 Pressing **Stop recording** ends it and immediately queues the post-processing.
 
-### What your folder on the NAS will be called
+### Where your mice land on the NAS
 
-    03_Data_Mouse/andrea/20260925_HLBSSL_RSR/
-        20260925_HLBSSL_RSR_8mice_data.xdat
-        20260925_HLBSSL_RSR_8mice_timestamp.xdat
-        20260925_HLBSSL_RSR_8mice.xdat.json
-        20260925_HLBSSL_RSR_8mice.strip-report.json
-        run.json  UPLOAD.json  qc/
+Since 2026-09-29 each mouse gets **its own folder with one CSV**, filed by batch and by the
+condition you picked for that mouse:
+
+    02_Data_Sleep/andrea/HLBSSL/
+        Baseline/20260912_HLBSSL31_B/20260912_HLBSSL31_B.csv  + .info.json
+        Recovery/20260921_HLBSSL31_R/20260921_HLBSSL31_R.csv  + .info.json
 
 | part | meaning |
 |---|---|
-| `20260925` | the date the recording **starts** — not the day you filled the form |
-| `HLBSSL` | your batch name |
-| `RSR` | the condition: `BSR` basal · `RSR` recovery · `SDR` sleep deprivation |
-| `8mice` | how many slots you filled in |
+| `andrea` | who is recording |
+| `HLBSSL` | your batch name. **Required.** For a test, type `SCREEN` or `TEST` |
+| `Baseline` / `Recovery` | the type chosen **per mouse** in its slot |
+| `20260921` | the date the recording **starts**, not the day you filled in the form |
+| `HLBSSL31` | the mouse ID typed in the slot |
+| `B` / `R` | baseline / recovery |
 
-> [!tip] Mixed conditions in one run get all their codes
-> `20260925_HLBSSL_BSR-SDR` if some mice are basal and some are sd. One run covers all four ports,
-> so this is normal, and naming only one condition would file the other animals under something
-> they were not in.
+The CSV format is on its own page: [[02-procedures/per-mouse-csv-format]].
+
+> [!tip] Mixed conditions in one run are fine
+> Each mouse is filed under its own type, so a run with some baseline and some recovery animals
+> just sends each one to its own folder.
 
 > [!warning] The date follows the START, so the two buttons can disagree
 > **Start at** is pre-filled with the next 09:00. After 09:00 that is *tomorrow*, while **Start now**
-> would be dated *today*. When they differ the console shows both names, so you can see which button
-> gives which folder before you press one.
+> would be dated *today*. When they differ, the console says so under the per-mouse paths.
 
-Two runs of the same batch, same day, same condition ⇒ the second gets `-2`. Files keep their Allego
-names on this machine; only the NAS copy is renamed, and the stripped sidecar still records exactly
-which Allego file it came from.
+A second folder for the same mouse on the same day (a restarted recording) gets `-2`. Its
+`info.json` says why and which Allego file each folder holds. Local files keep their Allego names.
 
 ### What happens after it stops, without anyone present
 

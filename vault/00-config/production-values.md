@@ -103,7 +103,7 @@ The destination for channel-stripped Allego recordings. A **different NAS** from
 |----------|------------------|-------|
 | `{SKIMNAS_HOST}` | `skim-nas.tailec38b9.ts.net` | Synology `SKIM_NAS`, currently `100.85.231.100`, shared in from `sleepigene@`. **Use the name, never the IP.** |
 | `{SKIMNAS_SHARE}` | `SKIM_DATA` | SMB share |
-| `{SKIMNAS_ROOT}` | `03_Data_Mouse` | per-user folders: `andrea`, `diane`, `ahyeon`, `hyunmin`, `staci` |
+| `{SKIMNAS_ROOT}` | `02_Data_Sleep` | per-user folders: `andrea`, `diane`, `ahyeon`, `hyunmin`, `staci`. Was `03_Data_Mouse` until 2026-09-29; set by `nas.root` in `eeg-recorder/config/users.yaml`. Takes effect when `eeg-recorder.service` restarts |
 | `{SKIMNAS_USER}` | `skim.data` | read/write confirmed |
 | `{SKIMNAS_MOUNT}` | `/mnt/skimnas` | `mnt-skimnas.automount`, mounts on access, unmounts after 600 s idle |
 | `{SKIMNAS_DSM}` | `https://skim-nas.tailec38b9.ts.net:50011` | DSM web UI (`:80`/`:443` redirect to `:50000`/`:50011`) |
@@ -116,7 +116,7 @@ The destination for channel-stripped Allego recordings. A **different NAS** from
 > machine's own NVMe — the same filesystem the amplifiers write to**. An uploader that cannot
 > tell the difference will quietly fill it. `mountpoint` alone does NOT catch this, because an
 > empty local directory is a valid mountpoint. Hence the sentinel
-> `/mnt/skimnas/03_Data_Mouse/.skim-nas-share`, which exists only on the share: the uploader
+> `/mnt/skimnas/{SKIMNAS_ROOT}/.skim-nas-share` (so `02_Data_Sleep/.skim-nas-share` since 2026-09-29), which exists only on the share: the uploader
 > refuses to write unless it can read that file. Observed to refuse while unmounted, 2026-09-11.
 
 > [!danger] Read-back verification is VACUOUS unless the page cache is dropped

@@ -9,6 +9,9 @@ sourced-from: 04-journal/2026-07/2026-07-15.md
 
 # LLM Council — Earth/Grounding Root Cause + Sleep-Recording Usability (2026-07-15)
 
+> [!warning] 🔴 CORRECTION 2026-09-30 — our Gen-1 XDAQ Core DOES have a chassis GND terminal
+> Andrea confirmed on the rig on 2026-09-30 that the Gen-1 Core has a chassis GND, and that it is wired to the building earth through the wall socket (continuity tested with a DMM; see [[2026-09-30-xdaq-noise-series]]). Every line on this page saying the Gen-1 has "no Chassis GND" or "no chassis ground terminal" is **wrong**. What the 07-15/16 work MEASURED still stands (foil cut the mains floor; the residual hum tracked electrode impedance). What rested on "there is nothing to wire" does not. Still unverified: whether a separate Sys GND exists on the Gen-1 and how it relates to chassis.
+
 > [!abstract] TL;DR — for non-technical readers
 > **What this is.** A zero-bias, high-rigor review of two questions by 5 independent LLM advisors (electrical-first-principles, contrarian/null-hypothesis, signal-metrologist, bench-experimentalist, sleep-EEG-scoring), each reasoning alone on the same raw evidence, three of them re-analysing the raw `.xdat` files themselves. A chairman synthesised. See [[01-infrastructure/system-overview]] for the big picture.
 >

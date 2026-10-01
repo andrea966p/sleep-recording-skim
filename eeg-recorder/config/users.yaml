@@ -16,18 +16,23 @@
 
 nas:
   share: SKIM_DATA
-  root: 03_Data_Mouse          # per-user folders live under this
+  root: 02_Data_Sleep          # <root>/<user>/<batch>/<Baseline|Recovery>/<mouse folder>/
 
-recording_types: [basal, recovery, sd]
+recording_types: [basal, recovery]
 
-# The three-letter code each recording type contributes to a NAS folder name.
-# `20260925_HLBSSL_RSR` = 25 Sep 2026, batch HLBSSL, recovery sleep recording.
-# Every type listed above must have a code here or the config is refused: a type
-# with no code would silently produce a folder named after nothing.
+# The code each recording type contributes to a per-mouse folder name, and the
+# condition folder that mouse is filed under.
+#   02_Data_Sleep/andrea/HLBSSL/Recovery/20260921_HLBSSL31_R/
+# Every type listed above must have both, or the config is refused: a type with
+# no code or folder would silently produce a path named after nothing.
+# There is no `sd` type: the batch id (HLBWSD, HLBSSD...) already carries it.
 recording_type_codes:
-  basal:    BSR          # basal sleep recording
-  recovery: RSR          # recovery sleep recording
-  sd:       SDR          # sleep deprivation recording
+  basal:    B            # baseline sleep recording
+  recovery: R            # recovery sleep recording
+
+recording_type_folders:
+  basal:    Baseline
+  recovery: Recovery
 
 users:                        # default_layout names an entry in layout_templates
   andrea:  {default_layout: 8mice_eeg_emg}

@@ -1,0 +1,253 @@
+{
+  "schema_version": 2,
+  "generated": "2026-09-30T00:18:57+09:00",
+  "cohort_id": "S-SD",
+  "project_id": "neurosurveillance-eeg",
+  "batch_id": "S-SD",
+  "animal_id": "HLBSSD13",
+  "sex": "M",
+  "position": "B1",
+  "tether_arm": "",
+  "role": "animal",
+  "recording": "allego_0__uid0825-09-00-00",
+  "recording_base": "/home/skimlab/radix/data/allego_0__uid0825-09-00-00",
+  "recording_date": "2026-08-25",
+  "duration_h": 23.9972,
+  "zt_start": 0.0,
+  "zt_end": 24.0,
+  "age_weeks": 16,
+  "age_is_derived": false,
+  "days_post_surgery": 15,
+  "days_post_tether": 7,
+  "body_weight_g": 30.4,
+  "body_weight_occasion": "tethering",
+  "criterion": "slope",
+  "epoch_s_qc": 10,
+  "epoch_s_staging": 4,
+  "thresholds_hash": "cd459298551a",
+  "floor": {
+    "n_sites": 14,
+    "n_epochs": 8639,
+    "n_samples": 120946,
+    "hum_p1": 38.894,
+    "hum_p5": 41.989,
+    "hum_median": 246.378,
+    "slope_p1": -2.055,
+    "slope_p5": -1.748,
+    "slope_median": -0.854,
+    "slope_min": -3.739,
+    "scope": "chip",
+    "position": "B1",
+    "estimator": "site_p1_median",
+    "grounded": false,
+    "validity_reason": "wire-free inputs on this chip sit at 246 uV of 60 Hz, below the 800 uV that a GROUNDED chip shows. The headstage has no ground reference, so its wire-free inputs are not a valid negative control and no connection verdict can be drawn from them. This is a HARDWARE fault at the chip, not a statement about the animal.",
+    "site_median_slope": -0.775,
+    "slope_valid": false,
+    "slope_validity_reason": "the wire-free inputs on this chip set a slope threshold of -2.05, steeper than the -1.90 that any chip with an empty floor has shown on this rig. A wire-free input has no source, so these inputs are carrying signal and are not a valid negative control for the slope criterion. No slope verdict can be drawn from them. This is a statement about the chip's control, not about the animal.",
+    "available": true,
+    "unavailable_reason": ""
+  },
+  "rungs": [
+    {
+      "number": 0,
+      "name": "FILE",
+      "question": "Is the recording file physically sound?",
+      "verdict": "PASS",
+      "headline": "87,393,408 samples, 24.28 h",
+      "threshold": "data samples == timestamp samples, remainder 0",
+      "reason": "87,393,408 data samples = 87,393,408 timestamp samples, remainder 0 and 0",
+      "detail": {
+        "base": "allego_0__uid0825-09-00-00",
+        "meta_exists": true,
+        "data_exists": true,
+        "timestamp_exists": true,
+        "fs": 1000,
+        "n_channels": 262,
+        "data_bytes": 91588291584,
+        "n_data_samples": 87393408,
+        "data_remainder": 0,
+        "duration_h": 24.276,
+        "start_time_utc": "2026-08-24T23:59:59.672Z",
+        "n_timestamp_samples": 87393408,
+        "timestamp_remainder": 0,
+        "problems": [],
+        "verdict": "INTACT",
+        "reason": "87,393,408 data samples = 87,393,408 timestamp samples, remainder 0 and 0"
+      }
+    },
+    {
+      "number": 1,
+      "name": "IDENTITY",
+      "question": "Which native channels belong to this animal?",
+      "verdict": "PASS",
+      "headline": "EEG B/1  EMG B/2",
+      "threshold": "layout derived from the file, never assumed",
+      "reason": "2 channels resolved from sensors_by_port; 14 wire-free inputs available as an in-file floor",
+      "detail": {
+        "sites": {
+          "eeg": {
+            "site": "B/1",
+            "native_col": 64,
+            "median_rms_uv": 486.4,
+            "median_hum_uv": 586.2,
+            "median_slope": -1.59,
+            "signature": "floating"
+          },
+          "emg": {
+            "site": "B/2",
+            "native_col": 65,
+            "median_rms_uv": 2771.3,
+            "median_hum_uv": 2379.9,
+            "median_slope": -0.28,
+            "signature": "floating"
+          }
+        },
+        "layout_source": "biointerface_map in the recording's own .xdat.json",
+        "bipolar": true,
+        "n_floor_sites": 14
+      }
+    },
+    {
+      "number": 2,
+      "name": "CONNECTION",
+      "question": "Is the electrode connected, judged against wire-free inputs in the same file?",
+      "verdict": "UNJUDGEABLE",
+      "headline": "chip floor is 246 uV of 60 Hz (grounded chips show >800) -- no verdict can be drawn",
+      "threshold": "",
+      "reason": "wire-free inputs on this chip sit at 246 uV of 60 Hz, below the 800 uV that a GROUNDED chip shows. The headstage has no ground reference, so its wire-free inputs are not a valid negative control and no connection verdict can be drawn from them. This is a HARDWARE fault at the chip, not a statement about the animal.",
+      "detail": {
+        "floor": {
+          "n_sites": 14,
+          "n_epochs": 8639,
+          "n_samples": 120946,
+          "hum_p1": 38.894,
+          "hum_p5": 41.989,
+          "hum_median": 246.378,
+          "slope_p1": -2.055,
+          "slope_p5": -1.748,
+          "slope_median": -0.854,
+          "slope_min": -3.739,
+          "scope": "chip",
+          "position": "B1",
+          "estimator": "site_p1_median",
+          "grounded": false,
+          "validity_reason": "wire-free inputs on this chip sit at 246 uV of 60 Hz, below the 800 uV that a GROUNDED chip shows. The headstage has no ground reference, so its wire-free inputs are not a valid negative control and no connection verdict can be drawn from them. This is a HARDWARE fault at the chip, not a statement about the animal.",
+          "site_median_slope": -0.775,
+          "slope_valid": false,
+          "slope_validity_reason": "the wire-free inputs on this chip set a slope threshold of -2.05, steeper than the -1.90 that any chip with an empty floor has shown on this rig. A wire-free input has no source, so these inputs are carrying signal and are not a valid negative control for the slope criterion. No slope verdict can be drawn from them. This is a statement about the chip's control, not about the animal.",
+          "available": true,
+          "unavailable_reason": ""
+        }
+      }
+    },
+    {
+      "number": 3,
+      "name": "SCOREABILITY",
+      "question": "Can the sleep question even be asked?",
+      "verdict": "BLOCKED",
+      "headline": "",
+      "threshold": "",
+      "reason": "rung 2 CONNECTION did not pass",
+      "detail": {}
+    },
+    {
+      "number": 4,
+      "name": "ARCHITECTURE",
+      "question": "What did the animal do?",
+      "verdict": "BLOCKED",
+      "headline": "",
+      "threshold": "",
+      "reason": "rung 3 SCOREABILITY did not pass",
+      "detail": {}
+    },
+    {
+      "number": 5,
+      "name": "EXPORT",
+      "question": "Can a human check us?",
+      "verdict": "BLOCKED",
+      "headline": "",
+      "threshold": "",
+      "reason": "rung 3 SCOREABILITY did not pass",
+      "detail": {}
+    }
+  ],
+  "notes": "verdict_2026_08_24: NOTHING. EEG open (slope +0.00, 3137 uV), EMG open (2932 uV). Chip floor 60 Hz 1491 uV, weakest on the rig. verdict_2026_08_25: NOTHING, and its CHIP read floating for all 24 h (floor 60 Hz 246 uV, flat across every hourly bin). EEG 1.0%, EMG 0.0%. \ud83d\udd11 ROOT CAUSE, established by swap on 2026-08-26: THE TETHER WAS CHEWED THROUGH. Replacing the animal in the same slot restored the chip ground (246 -> 2186 uV). No fault was ever found at the port.\n",
+  "surgery_notes": "",
+  "sampling_notes": "",
+  "timeline": [
+    {
+      "date": "2026-07-28",
+      "kind": "arrival",
+      "label": "arrival"
+    },
+    {
+      "date": "2026-08-10",
+      "kind": "surgery",
+      "label": "surgery"
+    },
+    {
+      "date": "2026-08-18",
+      "kind": "tether",
+      "label": "tethered"
+    },
+    {
+      "date": "2026-08-24",
+      "kind": "recording",
+      "label": "allego_0__uid0824-17-56-51"
+    },
+    {
+      "date": "2026-08-25",
+      "kind": "recording",
+      "label": "allego_0__uid0825-09-00-00"
+    },
+    {
+      "date": "2026-09-03",
+      "kind": "sampling",
+      "label": "sampling"
+    }
+  ],
+  "weighings": [
+    {
+      "date": "2026-08-10",
+      "grams": 29.7,
+      "occasion": "surgery",
+      "source": "husbandry-sheet"
+    },
+    {
+      "date": "2026-08-18",
+      "grams": 30.4,
+      "occasion": "tethering",
+      "source": "husbandry-sheet"
+    }
+  ],
+  "provenance": {
+    "thresholds_file": "/home/skimlab/sleep-recording-skim/eeg-emg-analysis/core/qc_thresholds.py",
+    "thresholds_hash": "cd459298551a",
+    "git_rev": "fe9ca4a",
+    "cohort_manifest": "/home/skimlab/sleep-recording-skim/eeg-emg-analysis/cohorts/S-SD.yaml",
+    "processed_files": {
+      "npz": "/home/skimlab/eeg-processed-windows/2026-08-25/portB-slot1_2026-08-25_090003_24h00m.npz",
+      "features": "/home/skimlab/eeg-processed-windows/2026-08-25/portB-slot1_2026-08-25_090003_24h00m_features.json",
+      "hypnogram": "/home/skimlab/eeg-processed-windows/2026-08-25/portB-slot1_2026-08-25_090003_24h00m_hypnogram.csv",
+      "summary": "/home/skimlab/eeg-processed-windows/2026-08-25/portB-slot1_2026-08-25_090003_24h00m_summary.txt",
+      "day_dir": "/home/skimlab/eeg-processed-windows/2026-08-25"
+    },
+    "epoch_s_qc": 10,
+    "n_qc_epochs": 8639,
+    "criterion": "slope",
+    "criterion_note": "SLOPE and HUM usable fractions are NOT comparable, and neither is comparable to a fraction computed at the 4 s staging epoch."
+  },
+  "top_rung": 1,
+  "window": {
+    "start_kst": "2026-08-25T09:00:00+09:00",
+    "end_kst": "2026-08-26T09:00:00+09:00",
+    "cache_source": "/home/skimlab/eeg-qc-cache/allego_0__uid0825-09-00-00.npz",
+    "qc_epochs": [
+      1,
+      8640
+    ],
+    "qc_epoch_s": 10,
+    "hours": 23.9972,
+    "note": "rung 2 judged on the window's own epochs and floor; rung 3+ on stage 2 files sliced to the window. File-level rung 0 is the whole file."
+  }
+}

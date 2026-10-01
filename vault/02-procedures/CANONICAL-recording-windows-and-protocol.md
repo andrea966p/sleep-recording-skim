@@ -89,6 +89,30 @@ and **09-21 09:00 → 09-22 13:00 is 28.00 h unbroken inside
 `allego_0__uid0921-00-17-34` alone**, ending exactly at real sampling. Better than
 the dated window on both counts.
 
+## ⭐ The analysis windows in use, set 2026-09-29
+
+> [!important] These are the hours the per-mouse CSVs on the NAS contain
+> Andrea fixed them on 2026-09-29, for pairing baseline against recovery within each animal:
+>
+> | | analysis window | length |
+> |---|---|---|
+> | baseline, every batch | **09:00 → 09:00** | 24 h |
+> | recovery, ad libitum (W-SL, S-SL) | **09:00 → 09:00** | 24 h, not the 28 h recording window |
+> | recovery, deprivation (W-SD, S-SD) | **13:00 → 09:00** | **20 h**: both SD recoveries stopped at 09:05, so no longer window exists |
+>
+> The recording windows above still say how long to RECORD. These say which hours to ANALYSE.
+> Per batch:
+>
+> | batch | baseline | recovery |
+> |---|---|---|
+> | W-SD | 08-20 09:00 → 08-21 09:00 | 08-27 13:00 → 08-28 09:00 |
+> | S-SD | 08-25 09:00 → 08-26 09:00 | 09-02 13:00 → 09-03 09:00 (first 27 s missing) |
+> | W-SL | 09-10 09:00 → 09-11 09:00 | 09-17 09:00 → 09-18 09:00 (first 9 s missing) |
+> | S-SL | 09-12 09:00 → 09-13 09:00 (last 47 s missing) | 09-21 09:00 → 09-22 09:00 |
+>
+> Format: [[02-procedures/per-mouse-csv-format]]. Scoreable mice on these windows:
+> [[05-experiments/completed/2026-09-30-scoreable-mice-on-the-24h-windows]].
+
 ## The canonical analysis set
 
 Eight windows. Everything else is screening, testing, or superseded.

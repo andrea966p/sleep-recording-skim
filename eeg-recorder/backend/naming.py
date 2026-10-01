@@ -1,41 +1,42 @@
 #!/usr/bin/env python3
-"""naming.py -- what a run is called once it leaves this machine.
+"""naming.py -- where each mouse's data lands on the NAS, and what it is called.
 
-Allego names its own files after the box and a timestamp:
-`allego_0__uid0913-11-20-07`. That is unambiguous and completely unreadable, and
-it is what the NAS folders were named after until 2026-09-13. People asked for
-their own name on the folder, which is reasonable: the person looking for last
-week's recovery cohort is not looking for `allego_0__uid0925`.
+Since 2026-09-29 the SKIM NAS is organised BY ANIMAL, not by run:
 
-    folder    YYYYMMDD_<batch>_<CODE>
-    files     YYYYMMDD_<batch>_<CODE>_<N>mice{_data.xdat,_timestamp.xdat,.xdat.json}
+    02_Data_Sleep/<user>/<batch>/<Baseline|Recovery>/<YYYYMMDD>_<MOUSEID>_<B|R>/
+        <YYYYMMDD>_<MOUSEID>_<B|R>.csv
+        <YYYYMMDD>_<MOUSEID>_<B|R>.info.json
 
-    20260925_HLBSSL_RSR/
-        20260925_HLBSSL_RSR_8mice_data.xdat
-        20260925_HLBSSL_RSR_8mice_timestamp.xdat
-        20260925_HLBSSL_RSR_8mice.xdat.json
-        20260925_HLBSSL_RSR_8mice.strip-report.json
-        run.json  UPLOAD.json  qc/
+    02_Data_Sleep/andrea/HLBSSL/Recovery/20260921_HLBSSL31_R/
 
-THE RENAME HAPPENS ON THE NAS, NOT ON THIS MACHINE. The local stripped copy keeps
-its Allego name, because the strip is resumable and idempotent on exactly that
-name -- the report, the manifest keys and the "already stripped and verified"
-check are all keyed to it. Renaming locally would make a re-run look like a new
-file. The chain from human name back to machine file is not lost: every stripped
-sidecar carries the source base, its uid and both source hashes in
-`status.dataset_provenance`, and `run.json` travels in the same folder.
+The condition folder and the B/R code come from the recording type chosen FOR
+EACH MOUSE in the console, so a run mixing baseline and recovery animals files
+each one correctly without any joined `BSR-RSR` code. There is no SD folder:
+the batch id (HLBWSD, HLBSSD...) already says which arm an animal is in.
 
-THE DATE IS THE RECORDING'S, IN LOCAL TIME, AND IT COMES FROM THE UID. Not from
+Before this, a run was one folder `03_Data_Mouse/<user>/YYYYMMDD_<batch>_<BSR|RSR>`
+holding the stripped xdat, and a second run of the same day became `...-2`, a
+suffix that said nothing about what was different. See the 2026-09-29 entry in
+`vault/02-procedures/CANONICAL-recording-naming-and-inventory.md`.
+
+A BATCH NAME IS REQUIRED. The batch is a level of the tree, so a run without one
+has nowhere to go. Screens and tests type one too (`SCREEN`, `TEST`).
+
+THE DATE IS THE RECORDING'S, IN LOCAL TIME, AND IT COMES FROM THE UID -- or, for a
+run trimmed to an analysis window (results.window), the window's start date. Not from
 today, and not from `actual_start`, which is UTC -- a 08:55 KST start is 23:55
-UTC on the PREVIOUS day, and dating from it labelled the first real 24 h run a
-day early. See `nas_upload.local_date_from_base`.
+UTC on the PREVIOUS day. See `nas_upload.local_date_from_base`.
+
+THE LOCAL FILES KEEP THEIR ALLEGO NAMES. Only the per-mouse CSVs carry these
+names, and every `info.json` records the Allego base it came from, so the chain
+back to the raw file is never lost.
 """
 from __future__ import annotations
 
 import re
 
-# Same character class as a mouse id (app.py SAFE). This becomes a directory name
-# on a shared network share, so `../` and spaces are not negotiable.
+# Same character class as a mouse id (layout.MOUSE_ID_RE). This becomes a
+# directory name on a shared network share, so `../` and spaces are not negotiable.
 BATCH_RE = re.compile(r"^[A-Za-z0-9_-]{1,32}$")
 
 
@@ -55,65 +56,66 @@ def clean_batch(name: str | None) -> str | None:
     return n
 
 
-def type_codes(slots: dict, cfg) -> str:
-    """The code section of the folder name, from the occupied slots' types.
-
-    ONE RUN CAN HOLD MICE OF DIFFERENT TYPES. The rig records all four ports at
-    once, so a basal animal and a recovery animal can share a run, and the
-    request ("recording types in the mice silos as recovery") assumed they agree.
-    When they do not, every code present is joined in config order --
-    `20260925_HLBSSL_BSR-RSR` -- rather than picking one and quietly filing half
-    the animals under the wrong condition. Refusing instead would block a run for
-    a naming detail, which is the mistake the mouse-id blocker already taught.
-    """
-    present = []
-    for slot, v in sorted((slots or {}).items()):
-        if not (v or {}).get("mouse_id"):
-            continue
-        code = cfg.type_code((v or {}).get("recording_type") or "basal")
-        if code not in present:
-            present.append(code)
-    if not present:
-        raise NamingError("no occupied slot, so there is no recording type to name")
-    order = {cfg.type_code(t): i for i, t in enumerate(cfg.recording_types)}
-    return "-".join(sorted(present, key=lambda c: order.get(c, 99)))
+def require_batch(name: str | None) -> str:
+    """A batch name, which every run now needs. Refuses a blank one."""
+    b = clean_batch(name)
+    if not b:
+        raise NamingError(
+            "a recording batch name is required: it is the folder the mice are "
+            "filed under on the NAS (02_Data_Sleep/<user>/<batch>/...). Use the "
+            "registry batch id, e.g. HLBSSL, or SCREEN for a test.")
+    return b
 
 
 def n_mice(slots: dict) -> int:
     return sum(1 for v in (slots or {}).values() if (v or {}).get("mouse_id"))
 
 
-def run_names(run, cfg, *, suffix: int = 1) -> dict:
-    """{folder, file_base} for a run, or the Allego-named fallback.
+def mouse_entry(*, date_yyyymmdd: str, batch: str, mouse_id: str, rtype: str,
+                cfg, suffix: int = 1) -> dict:
+    """The destination of one mouse. `suffix` > 1 appends `-2`, `-3`..."""
+    stem = f"{date_yyyymmdd}_{mouse_id}_{cfg.type_code(rtype)}"
+    if suffix > 1:
+        stem = f"{stem}-{suffix}"
+    cond = cfg.type_folder(rtype)
+    return {"batch": batch, "condition_dir": cond, "folder": stem,
+            "file_base": stem, "rel": f"{batch}/{cond}/{stem}"}
 
-    `suffix` > 1 appends `-2`, `-3`... to BOTH the folder and the file base, so
-    two same-day runs of the same batch and condition stay distinguishable even
-    after someone downloads them into one directory. It is resolved against the
-    NAS once and then frozen on the run (`run.nas_dir`), because a resumed upload
-    must land in the folder it started in, not create a new one.
-    """
+
+def mouse_folders(run, cfg) -> dict:
+    """{slot: destination} for every occupied slot of a run."""
     from nas_upload import local_date_from_base
     date = local_date_from_base(run.base_name or "", run.actual_start).replace("-", "")
-
-    batch = clean_batch(getattr(run, "batch_name", None))
-    if not batch:
-        # No name given: the old layout, unchanged. Nothing in the pipeline
-        # depends on a batch name existing, so a blank field is not a failure.
-        return {"folder": f"{date[:4]}-{date[4:6]}-{date[6:]}_{run.base_name}",
-                "file_base": run.base_name, "renamed": False}
-
-    tail = "" if suffix <= 1 else f"-{suffix}"
-    stem = f"{date}_{batch}_{type_codes(run.slots, cfg)}{tail}"
-    return {"folder": stem,
-            "file_base": f"{stem}_{n_mice(run.slots)}mice",
-            "renamed": True}
+    # A run trimmed to an analysis window is dated by the WINDOW: the W-SD
+    # baseline file starts 08-19 17:25, but the 24 h it contributes starts 08-20.
+    win = ((getattr(run, "results", None) or {}).get("window") or {}).get("start_kst")
+    if win:
+        date = str(win)[:10].replace("-", "")
+    batch = require_batch(getattr(run, "batch_name", None))
+    out = {}
+    for slot, v in sorted((run.slots or {}).items()):
+        if not (v or {}).get("mouse_id"):
+            continue
+        out[slot] = {"slot": slot, "mouse_id": v["mouse_id"],
+                     "recording_type": v.get("recording_type") or "basal",
+                     **mouse_entry(date_yyyymmdd=date, batch=batch,
+                                   mouse_id=v["mouse_id"],
+                                   rtype=v.get("recording_type") or "basal", cfg=cfg)}
+    if not out:
+        raise NamingError("no occupied slot, so there is no mouse to name")
+    return out
 
 
 def preview(*, batch_name, slots, cfg, date_yyyymmdd) -> dict:
     """The same rule, for the UI, before any recording exists."""
     batch = clean_batch(batch_name)
     if not batch:
-        return {"folder": None, "file_base": None, "renamed": False}
-    stem = f"{date_yyyymmdd}_{batch}_{type_codes(slots, cfg)}"
-    return {"folder": stem, "file_base": f"{stem}_{n_mice(slots)}mice",
-            "renamed": True}
+        return {"batch": None, "mice": [], "folder": None}
+    mice = []
+    for slot, v in sorted((slots or {}).items()):
+        if not (v or {}).get("mouse_id"):
+            continue
+        e = mouse_entry(date_yyyymmdd=date_yyyymmdd, batch=batch, mouse_id=v["mouse_id"],
+                        rtype=v.get("recording_type") or "basal", cfg=cfg)
+        mice.append({"slot": slot, "mouse_id": v["mouse_id"], **e})
+    return {"batch": batch, "mice": mice, "folder": mice[0]["rel"] if mice else None}

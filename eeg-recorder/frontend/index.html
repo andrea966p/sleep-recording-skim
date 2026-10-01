@@ -54,7 +54,7 @@
         <select id="layout"></select></div>
       <div><label for="setting">Recording setting</label>
         <select id="setting"></select></div>
-      <div><label for="batch">Recording batch name</label>
+      <div><label for="batch">Recording batch name <span style="color:var(--bad)">*</span></label>
         <input type="text" id="batch" placeholder="HLBSSL" maxlength="32"
                autocomplete="off" spellcheck="false"></div>
       <div><label for="start">Start at <span id="start-hint" style="color:var(--faint)"></span></label>
@@ -104,8 +104,9 @@
     <div class="note" id="name-note"></div>
     <div class="warnbox" style="margin-top:12px">
       <b>Allego records every channel, always.</b> The selection below does not change
-      what is recorded — it decides which channels survive into the stripped copy that
-      goes to the NAS. The original 262-channel file stays on this machine untouched.
+      what is recorded — it decides which channels go into each mouse's CSV on the NAS
+      (<span class="mono">02_Data_Sleep/&lt;user&gt;/&lt;batch&gt;/Baseline|Recovery/</span>).
+      The original 262-channel file and the stripped copy stay on this machine.
     </div>
   </section>
 

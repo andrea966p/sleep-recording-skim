@@ -471,7 +471,7 @@
     "04-journal": "#eab30880"
   },
   "folderSortOverrides": {
-    "04-journal": "created-desc",
+    "04-journal": "title-desc",
     "04-journal/2026-02": "created-desc",
     "04-journal/2026-05": "created-desc",
     "04-journal/2026-08": "filename-desc",

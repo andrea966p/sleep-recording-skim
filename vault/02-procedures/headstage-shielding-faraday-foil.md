@@ -8,6 +8,9 @@ priority: high
 
 # ⭐ Headstage shielding (Faraday foil) — the intervention that killed the mains floor
 
+> [!warning] 🔴 CORRECTION 2026-09-30 — our Gen-1 XDAQ Core DOES have a chassis GND terminal
+> Andrea confirmed on the rig on 2026-09-30 that the Gen-1 Core has a chassis GND, and that it is wired to the building earth through the wall socket (continuity tested with a DMM; see [[2026-09-30-xdaq-noise-series]]). Every line on this page saying the Gen-1 has "no Chassis GND" or "no chassis ground terminal" is **wrong**. What the 07-15/16 work MEASURED still stands (foil cut the mains floor; the residual hum tracked electrode impedance). What rested on "there is nothing to wire" does not. Still unverified: whether a separate Sys GND exists on the Gen-1 and how it relates to chassis.
+
 > [!danger] 🛑 CORRECTION 2026-07-16 — the sleep claim on this page is RETRACTED
 > This page originally read *"the intervention that produced the first real sleep signal"*. **It did not.** The channel in question (A1 of `allego_0__uid0715-18-58-54`, td_sep −0.65) was **hard-saturated against the ±6390 µV rail** — only **1 of its 493 epochs** was free of clipped samples. Excluding railed epochs flips the effect to **+0.63**, i.e. the "sleep" was an artifact of clipping severity tracking EMG. **The project still has zero scoreable sleep data.** Full post-mortem in [[2026-07-16]].
 >

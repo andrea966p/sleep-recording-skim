@@ -13,6 +13,7 @@ produces (a run that claims to be RECORDING when nothing is) is silent.
 """
 from __future__ import annotations
 
+import json
 import sys
 import tempfile
 import traceback
@@ -119,11 +120,12 @@ def t_legal_transition_path(tmp):
     s = mkstore(tmp)
     r = mkrun(s)
     for st in (R.SCHEDULED, R.STARTING, R.RECORDING, R.STOPPING, R.STOPPED,
-               R.QC, R.STRIPPING, R.STRIPPED, R.UPLOAD_PENDING, R.UPLOADING, R.DONE):
+               R.QC, R.STRIPPING, R.STRIPPED, R.EXPORTING, R.EXPORTED,
+               R.UPLOAD_PENDING, R.UPLOADING, R.DONE):
         r = s.transition(r.run_id, st, detail="walk")
     assert r.state == R.DONE
     ev = s.events(r.run_id)
-    assert len(ev) == 12, len(ev)      # create + 11 moves
+    assert len(ev) == 14, len(ev)      # create + 13 moves
 
 
 def t_results_accumulate(tmp):
@@ -156,6 +158,14 @@ def t_rewind_in_flight(tmp):
         s.transition(r.run_id, st)
     s.rewind_in_flight()
     assert s.get(r.run_id).state == R.UPLOAD_PENDING
+    # and an export cut off by a restart goes back to STRIPPED, whose handler
+    # re-runs it -- not left looking active forever
+    r2 = mkrun(s)
+    for st in (R.SCHEDULED, R.STARTING, R.RECORDING, R.STOPPING, R.STOPPED, R.QC,
+               R.STRIPPING, R.STRIPPED, R.EXPORTING):
+        s.transition(r2.run_id, st)
+    s.rewind_in_flight()
+    assert s.get(r2.run_id).state == R.STRIPPED, s.get(r2.run_id).state
 
 
 def t_retry_targets_are_legal(tmp):
@@ -294,51 +304,172 @@ def t_qc_none_preset_needs_no_override(tmp):
         f"a judgeable preset walked through the qc:none door ({held.state})"
 
 
-def t_frozen_nas_dir_is_reused_on_retry(tmp):
-    """A retried upload goes back into the SAME folder, and never asks for a new one.
-
-    The collision rule picks the next free name (`...-2`, `...-3`). If that ran on
-    every attempt, a run whose upload was interrupted -- NAS asleep, service
-    restarted, half the bytes there -- would walk into a fresh folder each time
-    and scatter partial copies behind it, each looking like a separate recording.
-    So the name is resolved once and frozen on the run.
-    """
-    import postprocess as PP
-    s = mkstore(tmp)
+def _stripped_run(s, tmp, *, slots=None, state=R.STRIPPED, **fields):
     r = s.create(owner="andrea", preset="8mice_eeg_emg",
-                 slots={"A1": {"mouse_id": "M1", "recording_type": "recovery"}},
-                 keep_labels=["A/1", "A/2"], batch_name="HLBSSL", dest_dir=str(tmp))
+                 slots=slots or {"A1": {"mouse_id": "HLBSSL31", "recording_type": "recovery"},
+                                 "A2": {"mouse_id": "HLBSSL32", "recording_type": "basal"}},
+                 keep_labels=["A/1", "A/2", "A/33", "A/34"], batch_name="HLBSSL",
+                 dest_dir=str(tmp))
     for st in (R.SCHEDULED, R.STARTING, R.RECORDING, R.STOPPING, R.STOPPED, R.QC,
                R.STRIPPING, R.STRIPPED):
         s.transition(r.run_id, st)
-    r = s.transition(r.run_id, R.UPLOAD_PENDING,
-                     base_name="allego_0__uid0925-09-00-01",
-                     nas_dir="20260925_HLBSSL_RSR-2",          # already frozen
-                     results={"strip": {"dst_base": str(Path(tmp) / "x")}})
+    r = s.transition(r.run_id, R.STRIPPED, base_name="allego_0__uid0921-00-17-34",
+                     actual_start="2026-09-20T15:17:37Z",
+                     layout={"setting": "eeg_emg", "roles": {"eeg": 1, "emg": 2},
+                             "headstage": "rhd2216_bipolar"},
+                     results={"strip": {"dst_base": str(Path(tmp) / "x")},
+                              **fields.pop("results", {})}, **fields)
+    if state != R.STRIPPED:
+        for st in (R.EXPORTING, R.EXPORTED, R.UPLOAD_PENDING):
+            r = s.transition(r.run_id, st)
+            if st == state:
+                break
+    return r
 
-    seen = {}
-    real = (PP.nas_upload.nas_status, PP.nas_upload.upload_recording,
-            PP.nas_upload.free_dir_name)
+
+def t_export_spec_maps_each_slot_to_its_own_sites(tmp):
+    """The wrong-channel guard on the recorder side: slot 2 is /33, not /3.
+
+    Also: each mouse is filed by ITS OWN recording type, so a mixed run sends one
+    animal to Baseline and the other to Recovery -- no joined `BSR-RSR` code.
+    """
+    import postprocess as PP
+    s = mkstore(tmp)
+    r = _stripped_run(s, tmp, slots={
+        "A1": {"mouse_id": "HLBSSL31", "recording_type": "recovery"},
+        "A2": {"mouse_id": "HLBSSL32", "recording_type": "basal"},
+        "B": {"mouse_id": "HLBSSL33", "recording_type": "recovery"}})
+    spec = PP.export_spec(r)
+    got = {m["slot"]: (m["columns"], m["file_base"], m["condition"], m["position"])
+           for m in spec["mice"]}
+    want = {
+        "A1": ({"eeg": "A/1", "emg": "A/2"}, "20260921_HLBSSL31_R", "Recovery", "A1"),
+        "A2": ({"eeg": "A/33", "emg": "A/34"}, "20260921_HLBSSL32_B", "Baseline", "A2"),
+        "B": ({"eeg": "B/1", "emg": "B/2"}, "20260921_HLBSSL33_R", "Recovery", "B1"),
+    }
+    assert got == want, f"\n got {got}\nwant {want}"
+
+
+def t_frozen_mouse_dirs_are_reused_on_retry(tmp):
+    """A retried upload goes back into the SAME per-mouse folders.
+
+    The collision rule picks the next free name (`..._R-2`). If it ran on every
+    attempt, an interrupted upload would walk into a fresh folder each time and
+    scatter partial copies behind it. So the names are resolved once and frozen.
+    Also checks: info.json content, and that local CSVs go only once ALL verified.
+    """
+    import postprocess as PP
+    import naming as N
+    import presets as P
+    s = mkstore(tmp)
+    out = Path(tmp) / "pm"; out.mkdir()
+    cfg = P.load()
+    entries = {}
+    rows = []
+    spec_mice = []
+    for slot, mid, code, cond in (("A1", "HLBSSL31", "recovery", "Recovery"),
+                                  ("A2", "HLBSSL32", "basal", "Baseline")):
+        e = N.mouse_entry(date_yyyymmdd="20260921", batch="HLBSSL", mouse_id=mid,
+                          rtype=code, cfg=cfg, suffix=2 if slot == "A1" else 1)
+        entries[slot] = {"slot": slot, "mouse_id": mid, "recording_type": code, **e}
+        fb = f"20260921_{mid}_{cfg.type_code(code)}"
+        (out / f"{fb}.csv").write_text("timestamp_raw,timestamp_sec,datetime_kst,EEG,EMG\n")
+        rows.append({"file_base": fb, "csv": f"{fb}.csv", "roles": ["EEG", "EMG"],
+                     "sha256": "abc", "bytes": 49, "verify": {"rows": 0}})
+        spec_mice.append({"slot": slot, "position": slot, "mouse_id": mid,
+                          "recording_type": code, "condition": cond, "batch": "HLBSSL",
+                          "file_base": fb, "columns": {"eeg": "A/1", "emg": "A/2"}})
+    (out / "unrelated.csv").write_text("keep me")
+    rep = {"samplingRate": 1000.0, "startTime_utc": "2026-09-20T15:17:34.272Z",
+           "startTime_kst": "2026-09-21 00:17:34.272", "n_samples": 0, "duration_h": 0,
+           "timestamp_raw_first": 1, "timestamp_raw_last": 1, "allego_base": "allego_0__uid0921-00-17-34",
+           "stripped_dataset_checksum": "d", "source": {}, "meta": {"run_id": "x"},
+           "tool": "t", "version": "v", "git_commit": None, "utc": "u", "mice": rows}
+    (out / "r.json").write_text(__import__("json").dumps(rep))
+    (out / "spec.json").write_text(__import__("json").dumps({"mice": spec_mice}))
+    r = _stripped_run(s, tmp, state=R.UPLOAD_PENDING,
+                      results={"export": {"report": str(out / "r.json"), "out_dir": str(out)},
+                               "nas_mouse_dirs": entries})
+
+    seen = []
+    real = (PP.nas_upload.nas_status, PP.nas_upload.upload_mouse,
+            PP.nas_upload.free_mouse_folder, PP.nas_upload.user_dir)
 
     def boom(*a, **k):
-        raise AssertionError("free_dir_name called for a run that already has a folder")
+        raise AssertionError("free_mouse_folder called for a run whose folders are frozen")
 
     try:
         PP.nas_upload.nas_status = lambda: {"ok": True}
-        PP.nas_upload.free_dir_name = boom
-        PP.nas_upload.upload_recording = lambda *a, **k: (
-            seen.update(k), {"status": "VERIFIED", "dest": k["dest_name"],
-                             "files_size_only": 0})[-1]
+        PP.nas_upload.free_mouse_folder = boom
+        PP.nas_upload.user_dir = lambda u: Path(tmp) / "nas" / u
+        PP.nas_upload.upload_mouse = lambda csv, user, entry, info, **k: (
+            seen.append((Path(csv).name, entry["rel"], info)),
+            {**info, "upload": {"status": "VERIFIED", "bytes": 49}})[-1]
         w = PP.Worker(s, on_event=lambda m: None)
-        out = w._upload(s.get(r.run_id))
+        done = w._upload(s.get(r.run_id))
     finally:
-        (PP.nas_upload.nas_status, PP.nas_upload.upload_recording,
-         PP.nas_upload.free_dir_name) = real
+        (PP.nas_upload.nas_status, PP.nas_upload.upload_mouse,
+         PP.nas_upload.free_mouse_folder, PP.nas_upload.user_dir) = real
 
-    assert seen["dest_name"] == "20260925_HLBSSL_RSR-2", seen
-    # the file base must carry the SAME suffix, or two runs share file names
-    assert seen["file_base"] == "20260925_HLBSSL_RSR-2_1mice", seen
-    assert out.state == R.DONE, out.state
+    rels = sorted(x[1] for x in seen)
+    assert rels == ["HLBSSL/Baseline/20260921_HLBSSL32_B",
+                    "HLBSSL/Recovery/20260921_HLBSSL31_R-2"], rels
+    info = [x[2] for x in seen if x[0] == "20260921_HLBSSL31_R.csv"][0]
+    assert info["mouseID"] == "HLBSSL31" and info["condition"] == "Recovery", info
+    assert info["csv_columns"] == ["timestamp_raw", "timestamp_sec", "datetime_kst", "EEG", "EMG"]
+    assert info["allego_base"] == "allego_0__uid0921-00-17-34"
+    assert done.state == R.DONE, (done.state, done.error)
+    assert sorted(p.name for p in out.glob("*.csv")) == ["unrelated.csv"], \
+        "the local CSVs were not removed, or something else was"
+
+
+def t_info_json_carries_the_ladder_verdict(tmp):
+    """The CSV has no wire-free inputs, so the verdict must travel in info.json.
+
+    Real cards, one of each kind: a PASS, a FAIL, and a chip whose floor carries
+    signal (NO VERDICT, which must never read as NOT SCOREABLE).
+    """
+    import qc_info
+    import postprocess as PP
+    cards = Path(__file__).resolve().parents[2] / "eeg-emg-analysis" / "cards" / "out-windows"
+    good = qc_info.qc_block(json.loads((cards / "W-SD" / "allego_1__uid0819-17-25-20__D2_card.json").read_text()))
+    assert good["verdict"] == "SCOREABLE", good["verdict"]
+    assert good["connection"]["eeg_and_emg_usable_pct"] > 90 and good["floor"]["n_wire_free_inputs"] == 14
+    assert good["sleep_structure"]["r_1min"] > 0.30
+    bad = qc_info.qc_block(json.loads((cards / "W-SD" / "allego_1__uid0819-17-25-20__B2_card.json").read_text()))
+    assert bad["verdict"] == "NOT SCOREABLE" and "CONNECTION" in bad["why"], bad["why"]
+    nov = qc_info.qc_block(json.loads((cards / "S-SL" / "allego_0__uid0921-00-17-34__A1_card.json").read_text()),
+                           stage3={"verdict": "SCOREABLE", "persistence": {"1min": {"r": 0.647}}})
+    assert nov["verdict"] == "NO VERDICT", nov["verdict"]
+    assert nov["floor"]["slope_valid"] is False and nov["stage3"]["r_1min"] == 0.647
+    # a live run with no card says so, rather than inventing a verdict
+    s = mkstore(tmp)
+    r = _stripped_run(s, tmp)
+    q = PP.mouse_qc(r, "A1")
+    assert q["verdict"] == "NOT ASSESSED" and "no card" in q["why"], q
+
+
+def t_a_run_left_upload_pending_by_the_old_service_is_exported(tmp):
+    """A run sitting in UPLOAD_PENDING with no export must be exported, not
+    uploaded -- there is nothing per-mouse to upload yet."""
+    import postprocess as PP
+    s = mkstore(tmp)
+    r = _stripped_run(s, tmp)
+    r = s.transition(r.run_id, R.UPLOAD_PENDING)
+    called = []
+    real = PP.export_csv
+    try:
+        def fake(run, **k):
+            called.append(run.run_id)
+            raise PP.PostprocessError("fake export failure")
+        PP.export_csv = fake
+        w = PP.Worker(s, on_event=lambda m: None)
+        out = w.process(r.run_id)
+    finally:
+        PP.export_csv = real
+    assert called == [r.run_id], called
+    assert out.state == "FAILED_EXPORT", out.state
+    assert R.RETRY_TARGET["FAILED_EXPORT"] == R.STRIPPED
 
 
 def t_two_slots_cannot_hold_the_same_animal(tmp):
@@ -564,6 +695,14 @@ def refusals(tmp):
     import importlib.util
     spec = importlib.util.spec_from_file_location(
         "_allego_pristine", Path(__file__).resolve().parent / "allego.py")
+    import naming as _N
+    import presets as _P0
+    _s = mkstore(tmp)
+    _r = _stripped_run(_s, tmp)
+    _r = _s.transition(_r.run_id, _r.state, batch_name=None)
+    expect("refuse: a run with no batch name has no NAS folder",
+           lambda: _N.mouse_folders(_s.get(_r.run_id), _P0.load()), _N.NamingError, "required")
+
     # A setting whose sites cannot be described by the floor rule, with no
     # `qc: none`, would reach the chain and stall there on an override nobody
     # can satisfy. Refuse it at load instead.
@@ -571,7 +710,8 @@ def refusals(tmp):
     head = """
 nas: {share: S, root: R}
 recording_types: [basal]
-recording_type_codes: {basal: BSR}
+recording_type_codes: {basal: B}
+recording_type_folders: {basal: Baseline}
 users: {}
 headstages:
   hs: {label: H, slots_per_chip: 32, real_channels: 32}
@@ -605,7 +745,10 @@ def main() -> int:
                t_upload_pending_is_a_resting_state,
                t_retry_targets_are_legal, t_qc_override_is_per_run_not_global,
                t_qc_scores_only_occupied_slots, t_qc_none_preset_needs_no_override,
-               t_frozen_nas_dir_is_reused_on_retry,
+               t_export_spec_maps_each_slot_to_its_own_sites,
+               t_frozen_mouse_dirs_are_reused_on_retry,
+               t_a_run_left_upload_pending_by_the_old_service_is_exported,
+               t_info_json_carries_the_ladder_verdict,
                t_two_slots_cannot_hold_the_same_animal,
                t_start_on_time, t_missed_start_fails_loudly, t_second_run_blocked,
                t_stop_fires_even_when_late, t_start_failure_is_recorded,

@@ -50,6 +50,9 @@ RAW_ROOT = _env("EEG_RAW_ROOT", HOME / "radix" / "data")
 # another recording with the same base name and a different channel count.
 # Putting it one level across keeps it out of every existing glob for free.
 STRIPPED_ROOT = _env("EEG_STRIPPED_ROOT", HOME / "radix" / "stripped")
+# Per-mouse CSVs made by export/per_mouse_csv.py, staged here until the recorder
+# has uploaded and verified them. Also a sibling of RAW_ROOT, for the same reason.
+PER_MOUSE_ROOT = _env("EEG_PER_MOUSE_ROOT", HOME / "radix" / "per-mouse")
 PROCESSED_ROOT = _env("EEG_PROCESSED_ROOT", HOME / "eeg-processed")
 IMPEDANCE_ROOT = _env("EEG_IMPEDANCE_ROOT", HOME / "Downloads" / "impedance measurments")
 VAULT_ROOT = _env("EEG_VAULT_ROOT",

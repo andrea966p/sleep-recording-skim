@@ -212,6 +212,7 @@ class Config:
     nas_share: str
     nas_root: str
     recording_type_codes: dict = field(default_factory=dict)
+    recording_type_folders: dict = field(default_factory=dict)
     headstages: dict = field(default_factory=dict)
     settings: dict = field(default_factory=dict)
     templates: dict = field(default_factory=dict)
@@ -222,6 +223,13 @@ class Config:
                 f"recording type {rtype!r} has no code in `recording_type_codes`; "
                 f"known types are {', '.join(self.recording_type_codes)}")
         return self.recording_type_codes[rtype]
+
+    def type_folder(self, rtype: str) -> str:
+        if rtype not in self.recording_type_folders:
+            raise PresetError(
+                f"recording type {rtype!r} has no folder in `recording_type_folders`; "
+                f"known types are {', '.join(self.recording_type_folders)}")
+        return self.recording_type_folders[rtype]
 
     def setting(self, name: str) -> RecordingSetting:
         if name not in self.settings:
@@ -362,19 +370,34 @@ def load(path: Path | str | None = None,
         raise PresetError(
             f"`recording_type_codes` names {unknown}, which are not in "
             f"`recording_types` ({', '.join(types)})")
+    folders = {k: str(v).strip() for k, v in (raw.get("recording_type_folders") or {}).items()}
+    missing = [t for t in types if not folders.get(t)]
+    if missing:
+        raise PresetError(
+            f"recording type(s) {missing} have no entry in `recording_type_folders`; "
+            "every type must have one, because it is the condition folder on the NAS")
+    bad = [f for f in folders.values() if not re.match(r"^[A-Za-z0-9_-]{1,32}$", f)]
+    if bad:
+        raise PresetError(f"`recording_type_folders` values {bad} are not safe folder names")
+    unknown = [t for t in folders if t not in types]
+    if unknown:
+        raise PresetError(
+            f"`recording_type_folders` names {unknown}, which are not in "
+            f"`recording_types` ({', '.join(types)})")
 
     nas = raw.get("nas") or {}
     return Config(users=users, recording_types=types,
                   nas_share=nas.get("share", "SKIM_DATA"),
-                  nas_root=nas.get("root", "03_Data_Mouse"),
-                  recording_type_codes=codes, headstages=headstages,
+                  nas_root=nas.get("root", "02_Data_Sleep"),
+                  recording_type_codes=codes, recording_type_folders=folders,
+                  headstages=headstages,
                   settings=settings, templates=templates)
 
 
 if __name__ == "__main__":
     cfg = load()
     print(f"users:   {', '.join(cfg.users)}")
-    print("types:   " + ", ".join(f"{t} -> {cfg.type_code(t)}"
+    print("types:   " + ", ".join(f"{t} -> {cfg.type_code(t)} in {cfg.type_folder(t)}/"
                                   for t in cfg.recording_types))
     print(f"nas:     {cfg.nas_share}/{cfg.nas_root}")
     print("\nheadstages")

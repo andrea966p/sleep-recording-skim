@@ -42,7 +42,8 @@ This is the base name Allego writes. Three files share it:
 | **On disk, e10** | `~/radix/data/<base>_data.xdat` | `allego_0__uid0910-09-00-00_data.xdat` |
 | **Stripped, e10** | `~/radix/stripped/<base>_data.xdat` | same base, fewer channels |
 | **S3** | `s3://…/radix/data/<base>_data.xdat` | base preserved exactly |
-| **SKIM NAS, experiment** | `03_Data_Mouse/<user>/<YYYYMMDD>_<batch><type>/` | `20260910_HLBWSL_BSR/` |
+| **SKIM NAS, per mouse** (since 2026-09-29) | `02_Data_Sleep/<user>/<batch>/<Baseline\|Recovery>/<YYYYMMDD>_<MOUSEID>_<B\|R>/` | `HLBWSL/Baseline/20260910_HLBWSL21_B/` |
+| **SKIM NAS, experiment** (until 2026-09-29) | `03_Data_Mouse/<user>/<YYYYMMDD>_<batch>_<type>/` | `20260910_HLBWSL_BSR/` |
 | **SKIM NAS, screens and tests** | `03_Data_Mouse/<user>/<YYYY-MM-DD>_<base>/` | `2026-09-13_allego_0__uid0913-11-20-07/` |
 | **QC bundle** | `<CACHE_ROOT>/<base>.npz` | `~/eeg-qc-cache/allego_0__uid0910-09-00-00.npz` |
 | **Note title** | `recording-<YYYY-MM-DD>-<short label>.md` | a label, never an identifier |
@@ -56,6 +57,19 @@ This is the base name Allego writes. Three files share it:
 > ⚠️ The four screen and test folders predate that key and do not carry it. For
 > those, the directory name itself is the base. Anything walking the NAS has to
 > handle both.
+
+> [!important] 2026-09-29: the NAS is organised by MOUSE, in `02_Data_Sleep`, as CSV
+> Each mouse of each recording is one folder holding one CSV + `info.json`. Its `allego_base` key
+> is the join back to the rows below. **Match a mouse folder to a recording by that key**, never
+> by the folder's date. Format: [[02-procedures/per-mouse-csv-format]].
+>
+> Why there were two folders for W-SD (`BSR` and `BSR-2`) and two for S-SD: W-SD's baseline was
+> stopped at 17:16 on 08-19 when B1 chewed its tether and restarted 9 min later. S-SD's second
+> folder is the 08-26 B1-swap re-record, a different recording. Only the canonical eight in
+> "Which of these are the experiment" are rebuilt into the per-mouse tree
+> (`eeg-recorder/deploy/rebuild_02_data_sleep.py`). ✅ Done 2026-09-30: 64 mouse folders, each
+> cut to its analysis window ([[02-procedures/CANONICAL-recording-windows-and-protocol]]). S-SD B1
+> is UNPAIRED by design: HLBSSD13 has a baseline only, HLBSSD17 a recovery only.
 
 > [!history] All eleven experiment folders were renamed to registry naming on 2026-09-23
 > Three shapes had accumulated: `HLBW_SL` from a run record where the batch was

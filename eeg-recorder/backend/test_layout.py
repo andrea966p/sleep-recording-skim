@@ -329,7 +329,8 @@ def refusals():
     base = """
 nas: {share: S, root: R}
 recording_types: [basal]
-recording_type_codes: {basal: BSR}
+recording_type_codes: {basal: B}
+recording_type_folders: {basal: Baseline}
 users: {}
 headstages:
   hs: {label: H, slots_per_chip: 32, real_channels: 16}
@@ -354,7 +355,8 @@ recording_settings:
            lambda: P.load(bad_cfg("""
 nas: {share: S, root: R}
 recording_types: [basal]
-recording_type_codes: {basal: BSR}
+recording_type_codes: {basal: B}
+recording_type_folders: {basal: Baseline}
 users: {}
 headstages:
   hs: {label: H, slots_per_chip: 16, real_channels: 32}

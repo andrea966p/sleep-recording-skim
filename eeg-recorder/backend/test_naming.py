@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Contract for naming.py -- what a run is called on the NAS.
+"""Contract for naming.py and the per-mouse uploader -- where each mouse lands.
 
 These names are what people will look for in a year, and a folder name is the
 hardest thing in this pipeline to change after the fact: once a run is on the
@@ -47,7 +47,7 @@ def expect(name, fn, exc=Exception, want=""):
 
 
 class FakeRun:
-    """Just the fields naming.run_names reads."""
+    """Just the fields naming.mouse_folders reads."""
     def __init__(self, *, slots, batch_name=None,
                  base_name="allego_0__uid0925-09-00-01",
                  actual_start="2026-09-25T00:00:01Z"):
@@ -65,88 +65,196 @@ def mice(n, rtype="recovery"):
 
 # --------------------------------------------------------------------------- #
 def t_the_example_from_the_request():
-    """andrea, batch HLBSSL, 8 recovery mice, 25 Sep 2026 -> 20260925_HLBSSL_RSR."""
-    n = naming.run_names(FakeRun(slots=mice(8), batch_name="HLBSSL"), CFG)
-    assert n["folder"] == "20260925_HLBSSL_RSR", n
-    assert n["file_base"] == "20260925_HLBSSL_RSR_8mice", n
-    assert n["renamed"] is True
+    """andrea, batch HLBSSL, 8 recovery mice, 25 Sep 2026."""
+    n = naming.mouse_folders(FakeRun(slots=mice(8), batch_name="HLBSSL"), CFG)
+    assert n["A1"]["rel"] == "HLBSSL/Recovery/20260925_HLBSSL31_R", n["A1"]
+    assert n["A1"]["file_base"] == n["A1"]["folder"] == "20260925_HLBSSL31_R"
+    assert [n[s]["mouse_id"] for s in sorted(n)] == [f"HLBSSL{i}" for i in range(31, 39)]
 
 
-def t_each_code():
-    for rtype, code in (("basal", "BSR"), ("recovery", "RSR"), ("sd", "SDR")):
-        n = naming.run_names(FakeRun(slots=mice(4, rtype), batch_name="B1"), CFG)
-        assert n["folder"] == f"20260925_B1_{code}", (rtype, n)
-        assert n["file_base"].endswith("_4mice"), n
+def t_each_code_and_folder():
+    want = {"basal": ("B", "Baseline"), "recovery": ("R", "Recovery")}
+    assert set(CFG.recording_types) == set(want), CFG.recording_types
+    for rtype, (code, folder) in want.items():
+        n = naming.mouse_folders(FakeRun(slots=mice(1, rtype), batch_name="X"), CFG)
+        assert n["A1"]["folder"].endswith(f"_{code}") and n["A1"]["condition_dir"] == folder, n
 
 
-def t_count_follows_the_occupied_slots():
-    for k in (1, 3, 5, 8):
-        n = naming.run_names(FakeRun(slots=mice(k), batch_name="X"), CFG)
-        assert n["file_base"] == f"20260925_X_RSR_{k}mice", (k, n)
+def t_there_is_no_sd_type():
+    """SD is carried by the batch id (HLBWSD...), so it is not a condition folder."""
+    assert "sd" not in CFG.recording_types
+    expect_fn = lambda: CFG.type_folder("sd")
+    try:
+        expect_fn()
+    except P.PresetError:
+        return
+    raise AssertionError("an `sd` folder still resolves")
 
 
-def t_mixed_conditions_name_all_of_them():
-    """A run may hold mice of different types. Both codes appear, in config order.
-
-    The rig records all four ports at once, so nothing stops a basal animal and a
-    recovery animal sharing a run. Picking one code would file half the animals
-    under a condition they were not in -- silently, in the folder name, which is
-    the thing people trust most.
-    """
-    slots = mice(4, "basal")
-    slots["D1"] = {"mouse_id": "HLBSSL99", "recording_type": "sd"}
-    n = naming.run_names(FakeRun(slots=slots, batch_name="MIX"), CFG)
-    assert n["folder"] == "20260925_MIX_BSR-SDR", n
-    assert n["file_base"] == "20260925_MIX_BSR-SDR_5mice", n
+def t_mixed_conditions_file_each_mouse_by_its_own_type():
+    slots = {"A1": {"mouse_id": "M1", "recording_type": "basal"},
+             "A2": {"mouse_id": "M2", "recording_type": "recovery"}}
+    n = naming.mouse_folders(FakeRun(slots=slots, batch_name="MIX"), CFG)
+    assert n["A1"]["rel"] == "MIX/Baseline/20260925_M1_B", n
+    assert n["A2"]["rel"] == "MIX/Recovery/20260925_M2_R", n
 
 
-def t_empty_slots_are_not_counted():
-    slots = mice(3)
-    slots["D2"] = {"mouse_id": "", "recording_type": "basal"}   # left blank
-    n = naming.run_names(FakeRun(slots=slots, batch_name="P"), CFG)
-    assert n["file_base"] == "20260925_P_RSR_3mice", n
-    assert "BSR" not in n["folder"], "an empty slot's type reached the folder name"
-
-
-def t_no_batch_name_keeps_the_old_layout():
-    """A blank field is not a failure. Nothing in the pipeline requires a name."""
-    n = naming.run_names(FakeRun(slots=mice(8)), CFG)
-    assert n["folder"] == "2026-09-25_allego_0__uid0925-09-00-01", n
-    assert n["file_base"] == "allego_0__uid0925-09-00-01", n
-    assert n["renamed"] is False
+def t_empty_slots_are_skipped():
+    slots = {"A1": {"mouse_id": "M1", "recording_type": "basal"},
+             "A2": {"mouse_id": "", "recording_type": "basal"}}
+    assert list(naming.mouse_folders(FakeRun(slots=slots, batch_name="P"), CFG)) == ["A1"]
 
 
 def t_date_is_local_and_from_the_uid():
-    """A 08:55 KST start is 23:55 UTC the PREVIOUS day. The uid is already local.
-
-    This exact case filed the first real 24 h run a day early before it was fixed.
-    """
-    r = FakeRun(slots=mice(8), batch_name="HLBSSL",
-                base_name="allego_0__uid0912-08-55-18",
-                actual_start="2026-09-11T23:55:18Z")     # UTC, previous day
-    assert naming.run_names(r, CFG)["folder"] == "20260912_HLBSSL_RSR"
+    """08:55 KST is 23:55 UTC the day before; the folder takes the LOCAL date."""
+    r = FakeRun(slots=mice(1), batch_name="HLBSSL",
+                base_name="allego_0__uid0912-08-55-18", actual_start="2026-09-11T23:55:18Z")
+    assert naming.mouse_folders(r, CFG)["A1"]["folder"] == "20260912_HLBSSL31_R"
 
 
-def t_collision_suffix_reaches_both_names():
-    """Folder and file base must pick up the same suffix.
-
-    Two runs of one batch on one day are distinguishable in their folders anyway;
-    it is the moment someone downloads both into a single directory that a shared
-    file name loses one of them.
-    """
-    n = naming.run_names(FakeRun(slots=mice(8), batch_name="HLBSSL"), CFG, suffix=3)
-    assert n["folder"] == "20260925_HLBSSL_RSR-3", n
-    assert n["file_base"] == "20260925_HLBSSL_RSR-3_8mice", n
+def t_suffix_reaches_folder_file_and_path():
+    e = naming.mouse_entry(date_yyyymmdd="20260925", batch="HLBSSL", mouse_id="HLBSSL31",
+                           rtype="recovery", cfg=CFG, suffix=2)
+    assert e == {"batch": "HLBSSL", "condition_dir": "Recovery",
+                 "folder": "20260925_HLBSSL31_R-2", "file_base": "20260925_HLBSSL31_R-2",
+                 "rel": "HLBSSL/Recovery/20260925_HLBSSL31_R-2"}, e
 
 
 def t_preview_matches_the_real_thing():
-    """The UI must not be able to promise a name the uploader would not produce."""
-    slots = mice(6, "sd")
-    live = naming.run_names(FakeRun(slots=slots, batch_name="ABC"), CFG)
-    shown = naming.preview(batch_name="ABC", slots=slots, cfg=CFG,
-                           date_yyyymmdd="20260925")
-    assert shown["folder"] == live["folder"], (shown, live)
-    assert shown["file_base"] == live["file_base"], (shown, live)
+    slots = mice(3)
+    live = naming.mouse_folders(FakeRun(slots=slots, batch_name="ABC"), CFG)
+    pv = naming.preview(batch_name="ABC", slots=slots, cfg=CFG, date_yyyymmdd="20260925")
+    assert [m["rel"] for m in pv["mice"]] == [live[s]["rel"] for s in sorted(live)], pv
+    assert naming.preview(batch_name="", slots=slots, cfg=CFG,
+                          date_yyyymmdd="20260925")["mice"] == []
+
+
+def t_config_refuses_a_type_without_a_folder(tmp: Path):
+    head = """
+nas: {share: S, root: R}
+recording_types: [basal]
+recording_type_codes: {basal: B}
+users: {}
+headstages:
+  hs: {label: H, slots_per_chip: 32, real_channels: 16}
+recording_settings:
+  s: {label: S, headstage: hs, roles: {eeg: 1, emg: 2}}
+"""
+    bad = tmp / "bad.yaml"
+    bad.write_text(head)
+    try:
+        P.load(bad)
+    except P.PresetError as e:
+        assert "recording_type_folders" in str(e), e
+    else:
+        raise AssertionError("a type with no condition folder was accepted")
+    bad.write_text(head + "recording_type_folders: {basal: '../x'}\n")
+    try:
+        P.load(bad)
+    except P.PresetError as e:
+        assert "safe" in str(e), e
+    else:
+        raise AssertionError("an unsafe condition folder was accepted")
+
+
+# --------------------------------------------------------------------------- #
+# the uploader, against a temporary directory standing in for the share
+# --------------------------------------------------------------------------- #
+
+class _FakeShare:
+    def __init__(self, tmp: Path):
+        import nas_upload as NU
+        self.NU, self.tmp = NU, tmp
+        self.root = tmp / "nas" / "02_Data_Sleep"
+
+    def __enter__(self):
+        NU = self.NU
+        self.real = (NU.require_nas, NU.user_dir, NU.MANIFEST)
+        NU.require_nas = lambda: {"ok": True}
+        NU.user_dir = lambda u: self.root / u
+        NU.MANIFEST = self.tmp / "uploads.jsonl"    # NEVER the real one: a fake
+                                                    # VERIFIED row makes the uploader
+                                                    # skip a real file later
+        return NU
+
+    def __exit__(self, *a):
+        self.NU.require_nas, self.NU.user_dir, self.NU.MANIFEST = self.real
+
+
+def _csv(tmp: Path, name="20260921_HLBSSL31_R.csv") -> Path:
+    p = tmp / "local" / name
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_text("timestamp_raw,timestamp_sec,datetime_kst,EEG,EMG\n1,0.000,x,1.000,2.000\n")
+    return p
+
+
+def t_upload_lands_in_the_per_mouse_tree(tmp: Path):
+    import hashlib, json
+    src = _csv(tmp)
+    e = naming.mouse_entry(date_yyyymmdd="20260921", batch="HLBSSL", mouse_id="HLBSSL31",
+                           rtype="recovery", cfg=CFG)
+    with _FakeShare(tmp) as NU:
+        out = NU.upload_mouse(src, "andrea", e, {"mouseID": "HLBSSL31"},
+                              expect_sha256=hashlib.sha256(src.read_bytes()).hexdigest(),
+                              progress=None)
+        root = tmp / "nas" / "02_Data_Sleep"
+    got = sorted(p.relative_to(root).as_posix() for p in root.rglob("*") if p.is_file())
+    assert got == ["andrea/HLBSSL/Recovery/20260921_HLBSSL31_R/20260921_HLBSSL31_R.csv",
+                   "andrea/HLBSSL/Recovery/20260921_HLBSSL31_R/20260921_HLBSSL31_R.info.json"], got
+    info = json.loads((root / "andrea/HLBSSL/Recovery/20260921_HLBSSL31_R/"
+                       "20260921_HLBSSL31_R.info.json").read_text())
+    assert info["mouseID"] == "HLBSSL31" and info["upload"]["status"] == "VERIFIED", info
+    assert info["upload"]["sha256_remote"] == info["upload"]["sha256_local"]
+    assert out["upload"]["status"] == "VERIFIED"
+
+
+def t_a_changed_csv_is_refused_by_hash(tmp: Path):
+    src = _csv(tmp)
+    e = naming.mouse_entry(date_yyyymmdd="20260921", batch="HLBSSL", mouse_id="HLBSSL31",
+                           rtype="recovery", cfg=CFG)
+    with _FakeShare(tmp) as NU:
+        try:
+            NU.upload_mouse(src, "andrea", e, {}, expect_sha256="0" * 64, progress=None)
+        except NU.UploadFailed:
+            pass
+        else:
+            raise AssertionError("a CSV whose hash differs from the exporter's was accepted")
+        dest = tmp / "nas/02_Data_Sleep/andrea/HLBSSL/Recovery/20260921_HLBSSL31_R"
+        assert not (dest / "20260921_HLBSSL31_R.info.json").exists(), \
+            "info.json was written for an unverified CSV"
+
+
+def t_second_folder_for_a_mouse_gets_a_suffix(tmp: Path):
+    e = naming.mouse_entry(date_yyyymmdd="20260921", batch="HLBSSL", mouse_id="HLBSSL31",
+                           rtype="recovery", cfg=CFG)
+    with _FakeShare(tmp) as NU:
+        assert NU.free_mouse_folder("andrea", e)["folder"] == "20260921_HLBSSL31_R"
+        NU.mouse_dir("andrea", e).mkdir(parents=True)
+        f2 = NU.free_mouse_folder("andrea", e)
+    assert f2["folder"] == f2["file_base"] == "20260921_HLBSSL31_R-2", f2
+    assert f2["rel"] == "HLBSSL/Recovery/20260921_HLBSSL31_R-2" and f2.get("suffix_reason")
+
+
+def t_a_verified_row_is_not_believed_over_the_share(tmp: Path):
+    """A manifest row must never stop an upload of a file that is not there.
+
+    Found 2026-09-15: four folders of test data were tidied off the NAS and the
+    manifest still swore every file was verified. The manifest is a CLAIM about
+    the share, so it is checked against the share before it is believed.
+    """
+    src = _csv(tmp)
+    e = naming.mouse_entry(date_yyyymmdd="20260921", batch="HLBSSL", mouse_id="HLBSSL31",
+                           rtype="recovery", cfg=CFG)
+    with _FakeShare(tmp) as NU:
+        NU.upload_mouse(src, "andrea", e, {}, progress=None)
+        landed = NU.mouse_dir("andrea", e) / "20260921_HLBSSL31_R.csv"
+        assert landed.exists()
+        landed.unlink()                       # someone tidies the share
+        NU.upload_mouse(src, "andrea", e, {}, progress=None)
+        assert landed.exists(), "the deleted file was NOT re-uploaded"
+        before = landed.stat().st_mtime_ns
+        NU.upload_mouse(src, "andrea", e, {}, progress=None)
+        assert landed.stat().st_mtime_ns == before, "an intact file was re-sent"
 
 
 def refusals():
@@ -162,150 +270,48 @@ def refusals():
         expect(f"refuse batch name: {why}",
                lambda n=name: naming.clean_batch(n), naming.NamingError, "letters")
 
-    expect("refuse: a run with no occupied slot has no condition to name",
-           lambda: naming.run_names(
+    expect("refuse: a blank batch name, now that the batch is a folder level",
+           lambda: naming.mouse_folders(FakeRun(slots=mice(1)), CFG),
+           naming.NamingError, "required")
+    expect("refuse: require_batch on whitespace",
+           lambda: naming.require_batch("   "), naming.NamingError, "required")
+    expect("refuse: a run with no occupied slot has no mouse to name",
+           lambda: naming.mouse_folders(
                FakeRun(slots={"A1": {"mouse_id": "", "recording_type": "basal"}},
                        batch_name="X"), CFG),
            naming.NamingError, "no occupied slot")
-
     expect("refuse: a recording type with no code",
-           lambda: naming.run_names(
+           lambda: naming.mouse_folders(
                FakeRun(slots={"A1": {"mouse_id": "M", "recording_type": "nonsense"}},
                        batch_name="X"), CFG),
            P.PresetError, "no code")
 
-    # blank is allowed and means "keep Allego's name" -- the opposite of a refusal
-    check("blank batch name is accepted, not refused",
-          lambda: (naming.clean_batch("") is None) or (_ for _ in ()).throw(
-              AssertionError("blank should be None")))
-
-
-def t_upload_lands_renamed(tmp: Path):
-    """The uploader must actually write the new names, not merely compute them.
-
-    Runs the real `upload_recording` against a temporary directory standing in
-    for the mount, because the interesting part is the local-name -> remote-name
-    mapping and the folder layout, neither of which needs a network.
-    """
     import nas_upload as NU
-
-    src = tmp / "stripped"
-    src.mkdir(parents=True)
-    base = "allego_0__uid0925-09-00-01"
-    for suf in ("_data.xdat", "_timestamp.xdat", ".xdat.json", ".strip-report.json"):
-        (src / f"{base}{suf}").write_bytes(b"x" * 4096)
-    (src / f"{base}.xdat.json").write_text('{"status": {"start_time": "2026-09-25T00:00:01Z"}}')
-    qc = tmp / f"{base}.npz"
-    qc.write_bytes(b"q" * 512)
-
-    fake_nas = tmp / "nas" / "andrea"
-    fake_nas.mkdir(parents=True)
-    real = (NU.require_nas, NU.user_dir, NU.MANIFEST)
-    try:
-        NU.require_nas = lambda: {"ok": True}
-        NU.user_dir = lambda u: fake_nas
-        NU.MANIFEST = tmp / "uploads.jsonl"     # NEVER the real one: a fake
-                                                # VERIFIED row makes the uploader
-                                                # skip a real file later
-        summary = NU.upload_recording(
-            src / base, "andrea", qc_bundle=[qc],
-            run_json={"run_id": "test", "owner": "andrea"},
-            dest_name="20260925_HLBSSL_RSR",
-            file_base="20260925_HLBSSL_RSR_8mice",
-            progress=lambda _m: None)
-    finally:
-        NU.require_nas, NU.user_dir, NU.MANIFEST = real
-
-    dest = fake_nas / "20260925_HLBSSL_RSR"
-    got = sorted(p.relative_to(dest).as_posix() for p in dest.rglob("*") if p.is_file())
-    want = sorted([
-        "20260925_HLBSSL_RSR_8mice_data.xdat",
-        "20260925_HLBSSL_RSR_8mice_timestamp.xdat",
-        "20260925_HLBSSL_RSR_8mice.xdat.json",
-        "20260925_HLBSSL_RSR_8mice.strip-report.json",
-        "run.json", "UPLOAD.json",
-        f"qc/{base}.npz",          # QC keeps ITS name: it describes the ORIGINAL
-    ])
-    assert got == want, f"\n got: {got}\nwant: {want}"
-    assert summary["status"] == "VERIFIED", summary
-    assert summary["allego_base"] == base and summary["file_base"].endswith("_8mice")
-    assert not any(base in n for n in got if not n.startswith("qc/")), \
-        "an Allego-named file reached the NAS alongside the renamed ones"
-
-
-def t_a_verified_row_is_not_believed_over_the_share(tmp: Path):
-    """A manifest row must never stop an upload of a file that is not there.
-
-    THE HAZARD. A VERIFIED row means "do not upload this again". If someone has
-    since deleted the file from the share -- ordinary housekeeping -- that row
-    makes the uploader ship nothing and report success, and the data is gone.
-
-    Found 2026-09-15: four folders of test data were tidied off the NAS and the
-    manifest still swore every file was verified. The manifest is a CLAIM about
-    the share, so it is checked against the share before it is believed.
-    """
-    import nas_upload as NU
-
-    src = tmp / "stripped"
-    src.mkdir(parents=True)
-    base = "allego_0__uid0925-09-00-01"
-    for suf in ("_data.xdat", "_timestamp.xdat", ".xdat.json", ".strip-report.json"):
-        (src / f"{base}{suf}").write_bytes(b"x" * 4096)
-    (src / f"{base}.xdat.json").write_text('{"status": {"start_time": "2026-09-25T00:00:01Z"}}')
-
-    fake_nas = tmp / "nas" / "andrea"
-    fake_nas.mkdir(parents=True)
-    real = (NU.require_nas, NU.user_dir, NU.MANIFEST)
-    try:
-        NU.require_nas = lambda: {"ok": True}
-        NU.user_dir = lambda u: fake_nas
-        NU.MANIFEST = tmp / "uploads.jsonl"
-
-        first = NU.upload_recording(src / base, "andrea", dest_name="D",
-                                    file_base="F", progress=lambda _m: None)
-        assert first["status"] == "VERIFIED"
-        landed = fake_nas / "D" / "F_data.xdat"
-        assert landed.exists()
-
-        # someone tidies the share, exactly as happened
-        landed.unlink()
-
-        second = NU.upload_recording(src / base, "andrea", dest_name="D",
-                                     file_base="F", progress=lambda _m: None)
-        assert second["status"] == "VERIFIED", second
-        assert landed.exists(), "the deleted file was NOT re-uploaded"
-        assert landed.stat().st_size == 4096
-
-        # and an untouched file is still skipped, so this costs nothing normally
-        ts = fake_nas / "D" / "F_timestamp.xdat"
-        before = ts.stat().st_mtime_ns
-        NU.upload_recording(src / base, "andrea", dest_name="D", file_base="F",
-                            progress=lambda _m: None)
-        assert ts.stat().st_mtime_ns == before, "an intact file was re-sent"
-    finally:
-        NU.require_nas, NU.user_dir, NU.MANIFEST = real
+    for comp in ("..", "a/b", "", "x y"):
+        expect(f"refuse: unsafe path component {comp!r}",
+               lambda c=comp: NU.mouse_dir("andrea", {"batch": "B", "condition_dir": "Recovery",
+                                                      "folder": c}),
+               NU.UploadRefused, "unsafe")
 
 
 def main() -> int:
+    import tempfile
     print("NAMING")
-    for fn in (t_the_example_from_the_request, t_each_code,
-               t_count_follows_the_occupied_slots, t_mixed_conditions_name_all_of_them,
-               t_empty_slots_are_not_counted, t_no_batch_name_keeps_the_old_layout,
-               t_date_is_local_and_from_the_uid, t_collision_suffix_reaches_both_names,
+    for fn in (t_the_example_from_the_request, t_each_code_and_folder, t_there_is_no_sd_type,
+               t_mixed_conditions_file_each_mouse_by_its_own_type, t_empty_slots_are_skipped,
+               t_date_is_local_and_from_the_uid, t_suffix_reaches_folder_file_and_path,
                t_preview_matches_the_real_thing):
         check(fn.__name__, fn)
-    import tempfile
-    check("a VERIFIED row is not believed over the share",
-          lambda: t_a_verified_row_is_not_believed_over_the_share(
-              Path(tempfile.mkdtemp(prefix="naming-"))))
-    check("t_upload_lands_renamed",
-          lambda: t_upload_lands_renamed(Path(tempfile.mkdtemp(prefix="naming-"))))
+    for fn in (t_config_refuses_a_type_without_a_folder, t_upload_lands_in_the_per_mouse_tree,
+               t_a_changed_csv_is_refused_by_hash, t_second_folder_for_a_mouse_gets_a_suffix,
+               t_a_verified_row_is_not_believed_over_the_share):
+        check(fn.__name__, lambda fn=fn: fn(Path(tempfile.mkdtemp(prefix="naming-"))))
     print("\nMUST REFUSE")
     refusals()
     print(f"\n{len(PASS)} passed, {len(FAIL)} failed")
     for n, tb in FAIL:
         print(f"\n--- {n} ---\n{tb}")
-    return 1 if FAIL else 0
+    return 1 if FAIL or not PASS else 0
 
 
 if __name__ == "__main__":

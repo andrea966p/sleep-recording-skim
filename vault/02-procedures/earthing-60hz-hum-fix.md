@@ -16,6 +16,9 @@ status: RETRACTED-2026-07-16 — wrong device, unvalidated, superseded
 
 # Earthing Fix for the 60 Hz Hum (Float-to-Earth)
 
+> [!warning] 🔴 CORRECTION 2026-09-30 — our Gen-1 XDAQ Core DOES have a chassis GND terminal
+> Andrea confirmed on the rig on 2026-09-30 that the Gen-1 Core has a chassis GND, and that it is wired to the building earth through the wall socket (continuity tested with a DMM; see [[2026-09-30-xdaq-noise-series]]). Every line on this page saying the Gen-1 has "no Chassis GND" or "no chassis ground terminal" is **wrong**. What the 07-15/16 work MEASURED still stands (foil cut the mains floor; the residual hum tracked electrode impedance). What rested on "there is nothing to wire" does not. Still unverified: whether a separate Sys GND exists on the Gen-1 and how it relates to chassis.
+
 > [!danger] 🛑 RETRACTED 2026-07-16 — READ THIS BEFORE ANY OTHER LINE ON THIS PAGE
 > **This page describes a device we do not own.** Our rig is a **Gen-1 XDAQ Core**, which has **NO rear-panel Chassis GND port and NO Sys GND port**. Every instruction below that says "wire Chassis GND → earth" or "bond Chassis GND to Sys GND" refers to the **KonteX CORE2**, a different product. Those steps are **not executable on our hardware** and must not be attempted or cited.
 >

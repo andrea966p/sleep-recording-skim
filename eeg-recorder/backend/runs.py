@@ -66,6 +66,8 @@ STOPPED = "STOPPED"
 QC = "QC"
 STRIPPING = "STRIPPING"
 STRIPPED = "STRIPPED"
+EXPORTING = "EXPORTING"
+EXPORTED = "EXPORTED"
 UPLOAD_PENDING = "UPLOAD_PENDING"
 UPLOADING = "UPLOADING"
 DONE = "DONE"
@@ -76,7 +78,8 @@ ABORTED = "ABORTED"
 # after a restart, so they are rewound to the last stable state rather than left
 # looking active forever.
 REWIND_ON_BOOT = {STARTING: SCHEDULED, STOPPING: RECORDING,
-                  STRIPPING: QC, UPLOADING: UPLOAD_PENDING}
+                  STRIPPING: QC, EXPORTING: STRIPPED,
+                  UPLOADING: UPLOAD_PENDING}
 
 LEGAL = {
     DRAFT: {SCHEDULED, STARTING, ABORTED},
@@ -87,8 +90,13 @@ LEGAL = {
     STOPPED: {QC, STRIPPING, "FAILED_QC"},
     QC: {STRIPPING, "FAILED_QC"},
     STRIPPING: {STRIPPED, "FAILED_STRIP", QC},
-    STRIPPED: {UPLOAD_PENDING},
-    UPLOAD_PENDING: {UPLOADING, "FAILED_UPLOAD"},
+    # The per-mouse CSV export sits between the strip and the upload. STRIPPED
+    # may still go straight to UPLOAD_PENDING only so that a run left there by
+    # the pre-2026-09-29 service is not stranded; the worker exports it first.
+    STRIPPED: {EXPORTING, UPLOAD_PENDING},
+    EXPORTING: {EXPORTED, "FAILED_EXPORT", STRIPPED},
+    EXPORTED: {UPLOAD_PENDING},
+    UPLOAD_PENDING: {UPLOADING, EXPORTING, "FAILED_UPLOAD"},
     UPLOADING: {DONE, UPLOAD_PENDING, "FAILED_UPLOAD"},
     DONE: set(),
     ABORTED: set(),
@@ -101,7 +109,7 @@ def _failed(stage: str) -> str:
 
 
 # every FAILED_* may be retried back into its own stage
-for _s in (STARTING, RECORDING, STOPPING, QC, STRIPPING, UPLOADING):
+for _s in (STARTING, RECORDING, STOPPING, QC, STRIPPING, EXPORTING, UPLOADING):
     LEGAL.setdefault(_failed(_s.replace("ING", "")), set())
 # Where a retry rewinds a failed run to. THIS IS THE SINGLE SOURCE OF TRUTH and
 # the API must use it rather than keeping its own copy -- the first version had
@@ -111,10 +119,12 @@ for _s in (STARTING, RECORDING, STOPPING, QC, STRIPPING, UPLOADING):
 # together so they cannot drift again.
 #
 # Each target is the state whose handler re-runs the failed stage: STOPPED re-runs
-# the QC check, QC re-runs the strip, UPLOAD_PENDING re-runs the upload.
+# the QC check, QC re-runs the strip, STRIPPED re-runs the per-mouse export,
+# UPLOAD_PENDING re-runs the upload.
 RETRY_TARGET = {
     "FAILED_QC": STOPPED,
     "FAILED_STRIP": QC,
+    "FAILED_EXPORT": STRIPPED,
     "FAILED_UPLOAD": UPLOAD_PENDING,
 }
 
@@ -123,6 +133,7 @@ LEGAL["FAILED_RECORDING"] = {STOPPING, STOPPED, ABORTED}
 LEGAL["FAILED_STOP"] = {STOPPING, STOPPED, ABORTED}
 LEGAL["FAILED_QC"] = {STOPPED, QC, STRIPPING, ABORTED}
 LEGAL["FAILED_STRIP"] = {QC, STRIPPING, ABORTED}
+LEGAL["FAILED_EXPORT"] = {STRIPPED, EXPORTING, ABORTED}
 LEGAL["FAILED_UPLOAD"] = {UPLOAD_PENDING, UPLOADING, ABORTED}
 
 
@@ -200,7 +211,8 @@ class Run:
     data_path: str | None = None
     dest_dir: str | None = None
     batch_name: str | None = None       # what the operator typed; may be None
-    nas_dir: str | None = None          # the folder name, FROZEN at first upload
+    nas_dir: str | None = None          # pre-2026-09-29 run folder; per-mouse dirs
+                                        # now live in results["nas_mouse_dirs"]
     layout: dict = field(default_factory=dict)      # the declared rig
     enumerated: dict = field(default_factory=dict)  # what Allego actually saw
     note: str | None = None

@@ -7,13 +7,15 @@
 >
 > Read a day here, then follow its links down. **Detail belongs in the linked notes, not in the journal.**
 
-**67 entries.** Dates with no entry had no vault activity, mostly weekends.
+**68 entries.** Dates with no entry had no vault activity, mostly weekends.
 
 
 ## September 2026
 
 | Date | Day | What happened |
 |---|---|---|
+| [[2026-10-01]] | Wed–Thu | ⭐⭐ **XDAQ noise series, no mice.** Gen-1 Core HAS a chassis GND (vault corrected). Light switch spikes every chip at once, but only ~2.3 real all-chip events/day in 52 h of mice. **USB isolator: no help, broadband 2x up (A/B/A) ⇒ direct cable.** Board + slip ring = antenna on open inputs, not solder. Splitter at chance. [[2026-09-30-xdaq-noise-series]] |
+| [[2026-09-29]] | Tue–Wed | ⭐⭐⭐ **The SKIM NAS is organised BY MOUSE, as CSV, in `02_Data_Sleep/<user>/<batch>/<Baseline|Recovery>/`.** Console pipeline is now QC → STRIP → EXPORT → UPLOAD; batch required; B/R codes. **All 8 canonical recordings rebuilt, cut to 24 h windows (SD recovery 13:00→09:00, 20 h): 64 folders, 291 GB, audit clean.** S-SD B1 unpaired (13 baseline / 17 recovery). Scoreable at both timepoints on the windows: **HLBWSD08, HLBWSL24, HLBSSL33** (+ HLBSSL31, HLBSSL35 on stage 3); **S-SD none.** |
 | [[2026-09-19]] | Sat | ⭐⭐ **The ThinkPad joined the push/pull workflow, set up remotely from e10.** Its only real gap was a **missing git identity** — `check.sh` and `skim status` both pass without one, and `./skim push` would have failed. 51 commits pulled. ✅ Syncthing already gone there ⇒ **retired on every machine**. 🔑 **A Tailscale SSH rule's `dst` can only be `autogroup:self` or a TAG, never another user's login** (`400 users in dst are only allowed from the same user`) ⇒ crossing owners REQUIRES tagging the destination, which moves its ownership to the tag. 🔴 **Enabling Tailscale SSH makes tailscaled INTERCEPT port 22 for tailnet peers and bypass the real sshd** — that is what broke `ssh e10` from the laptop; `--ssh=false` restored it. ⚠️ The CLI cannot edit tailnet policy; only the console or an API token. |
 | [[2026-09-16]] | Wed | ✅ **Syncthing uninstalled from `e10ubuntu` AND the office PC** (`Andrea-KAIST-PC-ubuntu`), packages and all — ⚠️ (the ThinkPad claim here was superseded on 09-19: it is gone there too). Both device identities parked, not deleted. ⚠️ The office PC's live config was `~/.local/state/syncthing`, and `apt purge` does NOT stop a running daemon: `which` went quiet while `pgrep` still returned two PIDs. 🔴 **`sudo apt autoremove` took 52 packages / 984 MB there** including the NVIDIA 570 stack, then left the WORKING 580 driver marked auto-removable — pinned with `apt-mark manual`. ⭐ **A fourth machine**, the SKIM office workstation (`/home/skim`): `bootstrap.sh` KEEPS an existing `settings.json`, so it reported success while the machine had **no SessionStart hooks and no `skim status`**. 🔴 Uncommitted work still stranded in the office PC's `neurosurveillance`. |
 | [[2026-09-14]] | Mon | per-port rig layouts; a false line of mine corrected (a unipolar headstage HAS run here); the enumeration check that refuses a wrong declaration; the settings panel |

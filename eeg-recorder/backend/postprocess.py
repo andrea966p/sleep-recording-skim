@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""postprocess.py -- what happens after a recording stops: QC, strip, upload.
+"""postprocess.py -- what happens after a recording stops: QC, strip, per-mouse
+CSV export, upload.
 
 ONE WORKER, ONE RUN AT A TIME. Stripping reads the whole recording and hashes it
 twice; two of those at once would compete for the same NVMe the amplifiers write
@@ -7,7 +8,7 @@ to. The queue is the point, not a limitation.
 
 THE ORDER IS NOT NEGOTIABLE, AND THE REASON IS SCIENTIFIC, NOT TECHNICAL
 
-    QC BUNDLE  ->  STRIP  ->  UPLOAD
+    QC BUNDLE  ->  STRIP  ->  PER-MOUSE CSV  ->  UPLOAD
 
     `core/criteria.py` derives every verdict in this project against WIRE-FREE
     AMPLIFIER INPUTS RECORDED IN THE SAME FILE -- sites /3../16 and /35../48 in a
@@ -21,10 +22,17 @@ THE ORDER IS NOT NEGOTIABLE, AND THE REASON IS SCIENTIFIC, NOT TECHNICAL
     project's own criterion. That is why a missing bundle is a refusal by default
     rather than a warning.
 
-EVERY STAGE IS RESUMABLE AND NOTHING IS EVER DELETED LOCALLY. A service restart
-mid-upload continues; it does not start over. The original 262-channel recording
-stays where Allego wrote it, and removing it is a human decision taken after
-reading the manifest.
+WHAT REACHES THE NAS (since 2026-09-29) is one CSV + info.json per mouse, in
+02_Data_Sleep/<user>/<batch>/<Baseline|Recovery>/<YYYYMMDD>_<MOUSEID>_<B|R>/.
+The analysis reads the CSV; the stripped xdat stays on this machine and the raw
+goes off-site to S3 and the bilab NAS (see 02-procedures/backup-architecture).
+
+EVERY STAGE IS RESUMABLE. A service restart mid-upload continues; it does not
+start over. The ONE thing deleted locally is the per-mouse CSVs this worker made,
+and only after every one of a run's CSVs verified on the NAS: about 58 GB per
+36 h run, regenerable from the stripped file. The original 262-channel recording
+and the stripped copy stay where they are, and removing either is a human
+decision.
 """
 from __future__ import annotations
 
@@ -55,6 +63,8 @@ ANALYSIS = Path(os.environ.get(
 # environment drifting out of step.
 PYTHON = os.environ.get("EEG_RECORDER_PYTHON",
                         "/opt/neurosurveillance/venv/bin/python3")
+PER_MOUSE_ROOT = Path(os.environ.get(
+    "EEG_PER_MOUSE_ROOT", Path.home() / "radix" / "per-mouse"))
 
 
 class PostprocessError(RuntimeError):
@@ -284,6 +294,121 @@ def strip(run: R.Run, *, out_dir: str | Path | None = None,
     return json.loads(report.read_text())
 
 
+def export_spec(run: R.Run, cfg=None) -> dict:
+    """What the CSV exporter needs: for each occupied slot, its file name and the
+    site label carrying each role.
+
+    Built from the run's OWN layout record (`run.layout["roles"]`), not from the
+    current config, so a run stays exportable after its setting is renamed or
+    deleted -- the reason the layout is stored self-describing in the first place.
+    """
+    import layout as LY
+    cfg = cfg or _cfg()
+    roles = (run.layout or {}).get("roles") or {}
+    if not roles:
+        raise PostprocessError(f"run {run.run_id} has no role map in its layout record")
+    names = naming.mouse_folders(run, cfg)
+    pairing = (run.results or {}).get("pairing") or {}
+    mice = []
+    for slot, e in names.items():
+        base = LY.RigLayout.base_of(slot)
+        port = slot[0]
+        cols = {role: f"{port}/{base - 1 + int(off)}"
+                for role, off in sorted(roles.items(), key=lambda kv: int(kv[1]))}
+        mice.append({"slot": slot, "position": LY.RigLayout.to_position(slot),
+                     "mouse_id": e["mouse_id"], "recording_type": e["recording_type"],
+                     "condition": e["condition_dir"], "batch": e["batch"],
+                     "file_base": e["file_base"], "columns": cols,
+                     **({"pairing": pairing[slot]} if slot in pairing else {})})
+    window = (run.results or {}).get("window")
+    return {"mice": mice, **({"window": window} if window else {}),
+            "meta": {"run_id": run.run_id, "owner": run.owner, "batch": run.batch_name,
+                     "layout_setting": (run.layout or {}).get("setting"),
+                     "headstage": (run.layout or {}).get("headstage"),
+                     "raw_base_path": run.base_path}}
+
+
+def export_csv(run: R.Run, *, out_root: Path | None = None,
+               progress: Callable[[str], None] | None = None) -> dict:
+    """Run export/per_mouse_csv.py as a subprocess and return its report."""
+    say = progress or (lambda m: None)
+    dst = (run.results.get("strip") or {}).get("dst_base")
+    if not dst:
+        raise PostprocessError(f"run {run.run_id} has no stripped output recorded")
+    spec = export_spec(run)
+    out = Path(out_root or PER_MOUSE_ROOT) / run.base_name
+    out.mkdir(parents=True, exist_ok=True)
+    spec_path = out / "spec.json"
+    spec_path.write_text(json.dumps(spec, indent=2))
+    cmd = [PYTHON, "-m", "export.per_mouse_csv", dst, "--spec", str(spec_path),
+           "--out", str(out), "--require-idle"]
+    if run.base_path:
+        cmd += ["--source-base", run.base_path]
+    say(f"  export.per_mouse_csv {run.base_name} ({len(spec['mice'])} mice)")
+    env = dict(os.environ, PYTHONPATH=str(ANALYSIS))
+    p = subprocess.run(cmd, cwd=ANALYSIS, env=env, capture_output=True, text=True)
+    if p.returncode != 0:
+        raise PostprocessError(
+            f"per_mouse_csv exited {p.returncode}:\n{(p.stderr or p.stdout)[-2000:]}")
+    report = out / f"{run.base_name}.per-mouse-report.json"
+    if not report.exists():
+        raise PostprocessError(f"export reported success but {report} is missing")
+    rep = json.loads(report.read_text())
+    want = {m["file_base"] for m in spec["mice"]}
+    got = {m["file_base"] for m in rep.get("mice", [])}
+    if want != got:
+        raise PostprocessError(f"export report covers {sorted(got)}, spec asked for {sorted(want)}")
+    return {"report": str(report), "out_dir": str(out), "spec": spec, "rep": rep}
+
+
+def card_path(run: R.Run, position: str) -> Path:
+    """Where compute_qc_bundle's ladder run left this animal's card."""
+    return ANALYSIS / "cards" / "out" / f"auto-{run.run_id}" / f"{run.base_name}__{position}_card.json"
+
+
+def mouse_qc(run: R.Run, position: str) -> dict:
+    """The ladder's verdict for one mouse, for its info.json. Never raises: a
+    missing card is recorded as NOT ASSESSED, with the reason."""
+    import qc_info
+    p = card_path(run, position)
+    card = qc_info.load_card(p)
+    if card is None:
+        why = ("this layout declares `qc: none`" if (run.results or {}).get("qc_not_applicable")
+               else "the QC bundle was waived for this run" if (run.results or {}).get("qc_bundle_skipped")
+               else f"no card at {p}")
+        return {"verdict": "NOT ASSESSED", "why": why, "how_to_read": qc_info.HOW_TO_READ}
+    return qc_info.qc_block(card, card_path=str(p), judged_on="whole recording")
+
+
+def mouse_info(rep: dict, row: dict, spec_mouse: dict, entry: dict,
+               qc: dict | None = None) -> dict:
+    """The info.json for one mouse, before its upload section is added."""
+    return {
+        "mouseID": spec_mouse["mouse_id"], "batch": entry["batch"],
+        "condition": entry["condition_dir"], "recording_type": spec_mouse["recording_type"],
+        "folder": entry["folder"], "position": spec_mouse["position"],
+        "slot": spec_mouse["slot"], "port": spec_mouse["slot"][0],
+        "channels": spec_mouse["columns"], "csv_columns":
+            ["timestamp_raw", "timestamp_sec", "datetime_kst", *row["roles"]],
+        "units": "uV", "samplingRate": rep["samplingRate"],
+        "startTime_utc": rep["startTime_utc"], "startTime_kst": rep["startTime_kst"],
+        "n_samples": rep["n_samples"], "duration_h": rep["duration_h"],
+        "timestamp_raw_first": rep["timestamp_raw_first"],
+        "timestamp_raw_last": rep["timestamp_raw_last"],
+        "csv_sha256": row["sha256"], "csv_bytes": row["bytes"], "csv_verify": row["verify"],
+        "allego_base": rep["allego_base"],
+        "stripped_dataset_checksum": rep["stripped_dataset_checksum"],
+        "source": rep["source"], "run": rep.get("meta") or {},
+        "exporter": {"tool": rep["tool"], "version": rep["version"],
+                     "git_commit": rep["git_commit"], "utc": rep["utc"]},
+        "window": rep.get("window"),
+        "recording_file": rep.get("file"),
+        **({"pairing": spec_mouse["pairing"]} if spec_mouse.get("pairing") else {}),
+        **({"qc": qc} if qc else {}),
+        **({"suffix_reason": entry["suffix_reason"]} if entry.get("suffix_reason") else {}),
+    }
+
+
 class Worker:
     """The post-stop chain, on one background thread."""
 
@@ -306,7 +431,7 @@ class Worker:
         self._thread.start()
         # Anything left waiting from a previous life goes back in the queue. A
         # NAS outage across a restart must not strand a finished run.
-        for state in (R.STOPPED, R.QC, R.STRIPPED, R.UPLOAD_PENDING):
+        for state in (R.STOPPED, R.QC, R.STRIPPED, R.EXPORTED, R.UPLOAD_PENDING):
             for run in self.store.list(states=(state,), limit=50):
                 self.submit(run.run_id)
         self.log("worker armed")
@@ -342,6 +467,11 @@ class Worker:
         if run.state == R.QC:
             run = self._strip(run)
         if run.state == R.STRIPPED:
+            run = self._export(run)
+        if run.state == R.UPLOAD_PENDING and not (run.results or {}).get("export"):
+            # left here by the pre-2026-09-29 service, which uploaded the xdat
+            run = self._export(run)
+        if run.state == R.EXPORTED:
             run = self.store.transition(run.run_id, R.UPLOAD_PENDING,
                                         detail="ready to upload")
         if run.state == R.UPLOAD_PENDING:
@@ -455,51 +585,70 @@ class Worker:
                                "bytes_out": plan.get("bytes_out"),
                                "dataset_checksum": rep.get("dataset_checksum")}})
 
+    def _export(self, run: R.Run) -> R.Run:
+        self.log(f"{run.run_id}: exporting per-mouse CSVs from {run.base_name}")
+        self.store.transition(run.run_id, R.EXPORTING, detail="per_mouse_csv")
+        try:
+            ex = export_csv(run, progress=self.log)
+        except (PostprocessError, naming.NamingError) as exc:
+            self.log(f"{run.run_id}: EXPORT FAILED -- {exc}")
+            return self.store.fail(run.run_id, "EXPORT", str(exc))
+        rep = ex["rep"]
+        total = sum(m["bytes"] for m in rep["mice"])
+        self.log(f"{run.run_id}: exported {len(rep['mice'])} mice, {total / 1e9:.1f} GB")
+        return self.store.transition(
+            run.run_id, R.EXPORTED, detail=f"{len(rep['mice'])} CSVs verified",
+            results={"export": {"report": ex["report"], "out_dir": ex["out_dir"],
+                                "n_mice": len(rep["mice"]), "bytes": total}})
+
     def _upload(self, run: R.Run) -> R.Run:
         st = nas_upload.nas_status()
         if not st["ok"]:
-            # NOT a failure. The run rests here and the next sweep retries.
+            # NOT a failure. The run rests here until a retry or a restart.
             self.log(f"{run.run_id}: NAS unavailable ({st.get('hint')}); "
                      "staying in UPLOAD_PENDING")
             return run
-        dst = (run.results.get("strip") or {}).get("dst_base")
-        if not dst:
+        ex = (run.results or {}).get("export") or {}
+        try:
+            rep = json.loads(Path(ex["report"]).read_text())
+            spec = json.loads((Path(ex["out_dir"]) / "spec.json").read_text())
+        except Exception as exc:
             return self.store.fail(run.run_id, "UPLOAD",
-                                   "no stripped output recorded for this run")
-        # THE FOLDER NAME IS CHOSEN ONCE AND THEN FROZEN ON THE RUN. A resumed
-        # upload must land in the folder it started in; recomputing the free name
-        # every attempt would walk a half-uploaded run into `-2`, `-3`, ... and
-        # leave partial copies scattered behind it.
-        try:
-            names = naming.run_names(run, _cfg())
-            if run.nas_dir:
-                folder = run.nas_dir
-                stem = names["file_base"]
-                if names["renamed"]:
-                    # keep the file base consistent with the frozen folder,
-                    # including any collision suffix it picked up
-                    stem = f"{folder}_{naming.n_mice(run.slots)}mice"
-            elif names["renamed"]:
-                folder, n = nas_upload.free_dir_name(run.owner, names["folder"])
-                stem = f"{folder}_{naming.n_mice(run.slots)}mice"
-                if n > 1:
-                    self.log(f"{run.run_id}: {names['folder']!r} already exists on "
-                             f"the NAS; using {folder!r}")
-                run = self.store.transition(run.run_id, run.state, nas_dir=folder,
-                                            detail=f"NAS folder reserved: {folder}")
-            else:
-                folder, stem = names["folder"], names["file_base"]
-        except (naming.NamingError, nas_upload.UploadRefused) as exc:
-            self.log(f"{run.run_id}: cannot name the destination -- {exc}")
-            return self.store.fail(run.run_id, "UPLOAD", str(exc))
+                                   f"the per-mouse export record is unreadable: {exc}")
+        by_fb = {m["file_base"]: m for m in rep["mice"]}
 
-        self.store.transition(run.run_id, R.UPLOADING, detail=f"uploading to {folder}")
-        qc = run.results.get("qc_bundle")
+        # THE FOLDER NAMES ARE CHOSEN ONCE AND THEN FROZEN ON THE RUN. A resumed
+        # upload must land in the folders it started in; recomputing the free name
+        # every attempt would walk a half-uploaded mouse into `-2`, `-3`...
+        dirs = (run.results or {}).get("nas_mouse_dirs")
+        if not dirs:
+            try:
+                names = naming.mouse_folders(run, _cfg())
+                dirs = {slot: nas_upload.free_mouse_folder(run.owner, e)
+                        for slot, e in names.items()}
+            except (naming.NamingError, nas_upload.UploadRefused) as exc:
+                self.log(f"{run.run_id}: cannot name the destination -- {exc}")
+                return self.store.fail(run.run_id, "UPLOAD", str(exc))
+            for e in dirs.values():
+                if e.get("suffix_reason"):
+                    self.log(f"{run.run_id}: {e['suffix_reason']}; using {e['folder']}")
+            run = self.store.transition(
+                run.run_id, run.state, results={"nas_mouse_dirs": dirs},
+                detail="NAS folders reserved: " + ", ".join(e["rel"] for e in dirs.values()))
+
+        self.store.transition(run.run_id, R.UPLOADING,
+                              detail=f"uploading {len(dirs)} mice")
+        uploaded = []
         try:
-            summary = nas_upload.upload_recording(
-                dst, run.owner, run_json=run.to_dict(),
-                qc_bundle=[qc] if qc else (),
-                dest_name=folder, file_base=stem, progress=self.log)
+            for sm in spec["mice"]:
+                entry = dirs[sm["slot"]]
+                row = by_fb[sm["file_base"]]
+                info = mouse_info(rep, row, sm, entry, qc=mouse_qc(run, sm["position"]))
+                out = nas_upload.upload_mouse(
+                    Path(ex["out_dir"]) / row["csv"], run.owner, entry, info,
+                    expect_sha256=row["sha256"], progress=self.log)
+                uploaded.append({"slot": sm["slot"], "mouse_id": sm["mouse_id"],
+                                 "rel": entry["rel"], **out["upload"]})
         except nas_upload.UploadRefused as exc:
             self.log(f"{run.run_id}: upload refused ({exc}); back to UPLOAD_PENDING")
             return self.store.transition(run.run_id, R.UPLOAD_PENDING,
@@ -507,10 +656,32 @@ class Worker:
         except Exception as exc:
             self.log(f"{run.run_id}: UPLOAD FAILED -- {exc}")
             return self.store.fail(run.run_id, "UPLOAD", str(exc))
-        if summary["status"] != "VERIFIED":
+
+        weak = [u for u in uploaded if u["status"] != "VERIFIED"]
+        if weak:
             return self.store.fail(
                 run.run_id, "UPLOAD",
-                f"{summary['files_size_only']} file(s) were SIZE_ONLY, not verified")
-        self.log(f"{run.run_id}: DONE -> {summary['dest']}")
+                f"{len(weak)} CSV(s) were not verified: {[u['rel'] for u in weak]}")
+        removed = self._remove_local_csvs(ex["out_dir"], rep)
+        summary = {"status": "VERIFIED", "root": str(nas_upload.user_dir(run.owner)),
+                   "mice": uploaded, "bytes": sum(u["bytes"] or 0 for u in uploaded),
+                   "local_csvs_removed": removed}
+        self.log(f"{run.run_id}: DONE -> {len(uploaded)} mice under {summary['root']}")
         return self.store.transition(run.run_id, R.DONE, detail="uploaded and verified",
                                      results={"upload": summary})
+
+    def _remove_local_csvs(self, out_dir: str, rep: dict) -> list[str]:
+        """Delete ONLY the CSVs this run's export wrote, now that all verified.
+
+        Names come from the export report, never from a glob, so nothing else in
+        the directory can be caught. The report and spec stay: they are small and
+        they say what was made and where it went.
+        """
+        gone = []
+        for m in rep.get("mice", []):
+            p = Path(out_dir) / m["csv"]
+            if p.is_file() and p.suffix == ".csv":
+                p.unlink()
+                gone.append(p.name)
+        self.log(f"removed {len(gone)} local CSV(s) from {out_dir}")
+        return gone

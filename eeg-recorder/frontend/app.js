@@ -286,14 +286,14 @@ async function loadLayout() {
         <span class="ch">${chans}</span></div>
       <input placeholder="mouse ID" data-k="mouse" maxlength="32">
       <select data-k="type">${CFG.recording_types.map(
-        t => `<option value="${t}">${t}</option>`).join('')}</select>`;
+        t => `<option value="${t}">${(CFG.recording_type_labels || {})[t] || t}</option>`).join('')}</select>`;
     const inp = div.querySelector('input');
     inp.addEventListener('input', () => {
       div.classList.toggle('on', !!inp.value.trim());
       renderKeepNote();
     });
-    // The recording type is part of the NAS folder name (BSR/RSR/SDR), so a
-    // change to it changes where the data lands. Without this the preview would
+    // The recording type picks the mouse's NAS folder (Baseline/Recovery) and
+    // its code (B/R), so a change to it changes where the data lands. Without this the preview would
     // keep showing the previous condition, which is worse than showing none.
     div.querySelector('select').addEventListener('change', renderKeepNote);
     slots.appendChild(div);
@@ -338,6 +338,9 @@ function renderKeepNote() {
   const dupes = Object.entries(seen).filter(([, ss]) => ss.length > 1);
 
   const why = !owner ? 'Choose who is recording first.'
+            : !$('#batch').value.trim()
+              ? 'Enter a recording batch name (e.g. HLBSSL, or SCREEN for a test): '
+                + 'it is the NAS folder the mice are filed under.'
             : (PRESET && PRESET.check && !PRESET.check.ok)
               ? 'The declared rig does not match what Allego sees.'
             : !slots.length ? 'Enter at least one mouse ID.'
@@ -357,8 +360,7 @@ function renderKeepNote() {
   const labels = slots.flatMap(s => PRESET.slot_channels[s]).sort();
   $('#keep-note').innerHTML =
     `<b>${labels.length} channels will be kept</b> for ${slots.length} `
-    + `${slots.length === 1 ? 'mouse' : 'mice'} — going to `
-    + `<span class="mono">03_Data_Mouse/${owner}/</span>: `
+    + `${slots.length === 1 ? 'mouse' : 'mice'}, exported as one CSV per mouse: `
     + `<span class="mono">${labels.join(', ')}</span>`;
   renderNameNote();
 }
@@ -374,8 +376,9 @@ async function renderNameNote() {
   const owner = $('#owner').value;
   if (!batch || !owner || !PRESET) {
     el.innerHTML = batch ? '' :
-      '<span style="color:var(--faint)">No batch name: the folder keeps '
-      + 'Allego\u2019s own name, as before.</span>';
+      '<span style="color:var(--bad)">A batch name is required: each mouse is filed '
+      + `under <span class="mono">${(CFG && CFG.nas_root) || '02_Data_Sleep'}/&lt;user&gt;/`
+      + '&lt;batch&gt;/Baseline|Recovery/</span>.</span>';
     return;
   }
   const seq = ++nameSeq;
@@ -387,16 +390,18 @@ async function renderNameNote() {
       slots: gatherSlots(),
       batch_name: batch, start_at: $('#start').value || null});
     if (seq !== nameSeq) return;          // a later keystroke already answered
-    el.innerHTML = `Will arrive as <span class="mono">03_Data_Mouse/${owner}/`
-      + `<b>${r.folder}</b>/</span> holding <span class="mono">${r.file_base}`
-      + `_data.xdat</span>, <span class="mono">${r.file_base}_timestamp.xdat</span> `
-      + `and <span class="mono">${r.file_base}.xdat.json</span>`
-      // The folder is dated by the day the recording STARTS. After 09:00 the
+    if (!r.mice.length) { el.innerHTML = ''; return; }
+    el.innerHTML = `Each mouse arrives as one CSV + info.json in `
+      + `<span class="mono">${r.root}/</span>:<br>`
+      + r.mice.map(m => `<span class="mono">&nbsp;&nbsp;${m.slot}&nbsp;&nbsp;`
+          + `${m.batch}/${m.condition_dir}/<b>${m.folder}</b>/${m.file_base}.csv</span>`)
+          .join('<br>')
+      // The folders are dated by the day the recording STARTS. After 09:00 the
       // pre-filled Start at is tomorrow, so the two buttons produce two
       // different dates and the preview must not silently show one of them.
       + (r.if_started_now
-          ? ` — dated by the scheduled start. <b>Start now</b> instead and it `
-            + `would be <span class="mono">${r.if_started_now}</span>.`
+          ? `<br>Dated by the scheduled start. <b>Start now</b> instead and they `
+            + `would be dated <span class="mono">${r.today}</span>.`
           : '');
   } catch (e) {
     if (seq !== nameSeq) return;
@@ -440,7 +445,7 @@ setInterval(() => {
 const STATE_CLASS = s =>
   s === 'DONE' ? 'ok' : s === 'RECORDING' ? 'live'
   : s.startsWith('FAILED') ? 'bad'
-  : s === 'UPLOAD_PENDING' ? 'warn' : '';
+  : (s === 'UPLOAD_PENDING' || s === 'EXPORTED') ? 'warn' : '';
 
 async function renderRuns() {
   const {runs} = await api('/api/runs?limit=40');
@@ -456,6 +461,8 @@ async function renderRuns() {
     if (r.actual_start && r.actual_stop)
       d = dur((new Date(r.actual_stop) - new Date(r.actual_start)) / 1000);
     const strip = (r.results && r.results.strip) || null;
+    const exp = (r.results && r.results.export) || null;
+    const up = (r.results && r.results.upload && r.results.upload.mice) ? r.results.upload : null;
     const retry = r.state.startsWith('FAILED') || r.state === 'UPLOAD_PENDING'
       ? `<button class="ghost" style="padding:4px 10px;font-size:12px"
            onclick="retryRun('${r.run_id}','${r.state}')"
@@ -467,7 +474,9 @@ async function renderRuns() {
       <td><span class="tag ${STATE_CLASS(r.state)}">${r.state}</span></td>
       <td class="mono">${local(r.actual_start || r.scheduled_start)}</td>
       <td class="mono">${d}</td>
-      <td class="mono">${strip ? strip.saving_pct + '% smaller'
+      <td class="mono">${up ? `${up.mice.length} mice on NAS`
+        : exp ? `${exp.n_mice} CSVs, ${(exp.bytes / 1e9).toFixed(1)} GB`
+        : strip ? strip.saving_pct + '% smaller'
         : (r.results && r.results.qc_bundle_skipped) ? 'no QC bundle' : '–'}</td>
       <td>${retry}</td></tr>`;
   }).join('');
@@ -536,7 +545,8 @@ $('#btn-now').onclick = async () => {
   const n = Object.keys(slots).length;
   if (!confirm(`Start recording now with ${n} ${n === 1 ? 'mouse' : 'mice'}?\n\n`
       + Object.entries(slots).map(([k, v]) => `  ${k}  ${v.mouse_id}  ${v.recording_type}`).join('\n')
-      + `\n\nThis records ALL channels; the selection only affects the stripped copy.`))
+      + `\n\nThis records ALL channels; the selection only affects the stripped copy `
+      + `and the per-mouse CSVs.`))
     return;
   try {
     const r = await createRun(false);
@@ -551,8 +561,8 @@ $('#btn-stop').onclick = async () => {
   const r = STATE && STATE.active_run;
   if (!r) return;
   if (!confirm(`Stop recording ${r.base_name || r.run_id}?\n\n`
-    + `It will then be stripped to ${r.keep_labels.length} channels and uploaded `
-    + `to ${r.owner}'s folder on the NAS.`)) return;
+    + `It will then be stripped to ${r.keep_labels.length} channels, exported as `
+    + `one CSV per mouse and uploaded to ${r.owner}'s folder on the NAS.`)) return;
   try {
     await post(`/api/runs/${r.run_id}/stop`);
     toast('Stopped. Post-processing queued.', 'ok');
@@ -564,7 +574,8 @@ $('#btn-stop').onclick = async () => {
 let batchTimer = null;
 $('#batch').addEventListener('input', () => {
   clearTimeout(batchTimer);
-  batchTimer = setTimeout(renderNameNote, 250);
+  // renderKeepNote gates the buttons on a batch name, then calls renderNameNote
+  batchTimer = setTimeout(renderKeepNote, 250);
 });
 // The date in the folder name is the date the recording will CARRY, so changing
 // the scheduled start changes it.

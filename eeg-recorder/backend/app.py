@@ -61,6 +61,7 @@ SAFE = re.compile(r"^[A-Za-z0-9_-]{1,32}$")
 
 app = Flask(__name__, static_folder=None)
 cfg = P.load()
+nas_upload.set_root(cfg.nas_root)       # config decides the NAS tree, not a default
 store = R.RunStore()
 worker = postprocess.Worker(store)
 # The scheduler hands a stopped run straight to the post-processing worker. Both
@@ -101,6 +102,9 @@ def api_users():
         "users": {u: {"default_layout": d["default_layout"]}
                   for u, d in cfg.users.items()},
         "recording_types": list(cfg.recording_types),
+        "recording_type_labels": {t: cfg.type_folder(t) for t in cfg.recording_types},
+        "recording_type_codes": dict(cfg.recording_type_codes),
+        "nas_root": cfg.nas_root,
         "ports": list(P.PORTS),
         "headstages": {n: {"label": h.label, "slots_per_chip": h.slots_per_chip,
                            "real_channels": h.real_channels,
@@ -152,7 +156,7 @@ def api_layout_resolve():
 
 @app.post("/api/naming/preview")
 def api_naming_preview():
-    """What the NAS folder and files will be called, BEFORE anything is recorded.
+    """Where each mouse will land on the NAS, BEFORE anything is recorded.
 
     The console shows this under the slot grid. A name people only discover after
     a 24 h run is a name they cannot fix.
@@ -190,8 +194,9 @@ def api_naming_preview():
     out["date"] = when
     out["date_source"] = source
     out["today"] = today
-    if out.get("folder") and when != today and source == "scheduled start":
-        out["if_started_now"] = out["folder"].replace(when, today, 1)
+    out["root"] = f"{cfg.nas_root}/{body.get('owner') or '<user>'}"
+    if out.get("mice") and when != today and source == "scheduled start":
+        out["if_started_now"] = [m["rel"].replace(when, today, 1) for m in out["mice"]]
     return jsonify(out)
 
 
@@ -311,7 +316,7 @@ def api_create_run():
                     + "\n  - ".join(chk["problems"]))
 
     try:
-        batch = naming.clean_batch(body.get("batch_name"))
+        batch = naming.require_batch(body.get("batch_name"))
     except naming.NamingError as exc:
         return _err(exc)
 
@@ -436,7 +441,7 @@ def api_postprocess(run_id):
                                detail="retry requested"
                                       + (" (QC bundle waived for this run)" if force else ""),
                                **extra)
-    elif run.state not in (R.STOPPED, R.QC, R.STRIPPED, R.UPLOAD_PENDING):
+    elif run.state not in (R.STOPPED, R.QC, R.STRIPPED, R.EXPORTED, R.UPLOAD_PENDING):
         return _err(f"run is {run.state}; nothing to post-process", 409)
     worker.submit(run_id)
     return jsonify({"queued": run_id, "state": run.state})
