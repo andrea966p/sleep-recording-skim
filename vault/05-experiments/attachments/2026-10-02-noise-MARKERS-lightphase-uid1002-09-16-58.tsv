@@ -1,0 +1,29 @@
+run	base	clock_kst	clock_end_kst	file_s	file_s_end	sample	sample_end	timestamp_raw	timestamp_raw_end	kind	clock_basis	event
+lightphase	allego_0__uid1002-09-16-58	2026-10-02 09:16:58.1		0.0		0		103040		console	console	light-phase run 8f84e3e62af6 starts
+lightphase	allego_0__uid1002-09-16-58	2026-10-02 15:19:33.6	2026-10-02 15:19:40.9	21755.5	21762.8	21755500	21762800	21858540	21865840	disturbance	data	first disturbance of Andrea's visit (4 all-chip events in 8 s); Andrea's message said ~15:35
+lightphase	allego_0__uid1002-09-16-58	2026-10-02 15:50:37.3	2026-10-02 15:51:35.8	23619.2	23677.7	23619200	23677700	23722240	23780740	test	data	multimeter V~200 probe: black on XDAQ chassis GND lug, red on A2's foil; hands at the headstages
+lightphase	allego_0__uid1002-09-16-58	2026-10-02 16:00:00.0	2026-10-02 16:03:00.0	24181.847	24361.847	24181847	24361847	24284887	24464887	test	andrea	presence test: absent (control)
+lightphase	allego_0__uid1002-09-16-58	2026-10-02 16:03:00.0	2026-10-02 16:04:00.0	24361.847	24421.847	24361847	24421847	24464887	24524887	test	andrea	presence test: standing 50 cm in front, hand brought close to each headstage (no touch)
+lightphase	allego_0__uid1002-09-16-58	2026-10-02 16:04:00.0	2026-10-02 16:05:00.0	24421.847	24481.847	24421847	24481847	24524887	24584887	test	andrea	presence test: absent (control)
+lightphase	allego_0__uid1002-09-16-58	2026-10-02 16:05:00.0	2026-10-02 16:06:00.0	24481.847	24541.847	24481847	24541847	24584887	24644887	test	andrea	presence test: in front, waving hands
+lightphase	allego_0__uid1002-09-16-58	2026-10-02 16:06:00.0	2026-10-02 16:07:00.0	24541.847	24601.847	24541847	24601847	24644887	24704887	test	andrea	presence test: waving the powered custom wireless EEG/EMG receiver near the headstages
+lightphase	allego_0__uid1002-09-16-58	2026-10-02 16:22:04.5	2026-10-02 16:23:13.1	25506.4	25575.0	25506400	25575000	25609440	25678040	test	data	meter ON: red tip hover/touch on A2's foil, black on chassis lug (4 touches below)
+lightphase	allego_0__uid1002-09-16-58	2026-10-02 16:22:15.1	2026-10-02 16:22:23.1	25517.0	25525.0	25517000	25525000	25620040	25628040	test	data	  touch 1 (meter ON)
+lightphase	allego_0__uid1002-09-16-58	2026-10-02 16:22:34.1	2026-10-02 16:22:40.1	25536.0	25542.0	25536000	25542000	25639040	25645040	test	data	  touch 2 (meter ON)
+lightphase	allego_0__uid1002-09-16-58	2026-10-02 16:22:49.1	2026-10-02 16:22:56.1	25551.0	25558.0	25551000	25558000	25654040	25661040	test	data	  touch 3 (meter ON)
+lightphase	allego_0__uid1002-09-16-58	2026-10-02 16:23:05.1	2026-10-02 16:23:12.1	25567.0	25574.0	25567000	25574000	25670040	25677040	test	data	  touch 4 (meter ON)
+lightphase	allego_0__uid1002-09-16-58	2026-10-02 16:27:01.1	2026-10-02 16:27:11.1	25803.0	25813.0	25803000	25813000	25906040	25916040	test	data	meter OFF: floating red lead touching A2's foil
+lightphase	allego_0__uid1002-09-16-58	2026-10-02 16:33:30.3		26192.2		26192200		26295240		disturbance	data	last all-chip event of the visit (end of the visit not logged)
+lightphase	allego_0__uid1002-09-16-58	2026-10-02 17:10:08.1		28390.0		28390000		28493040		system	data	all-chip event, all 4 chips x61-133 (strongest of the day), cause unknown
+lightphase	allego_0__uid1002-09-16-58	2026-10-02 17:22:14.0		29115.847		29115847		29218887		disturbance	andrea	facility air shower ON (Andrea's clock; true time <= 17:22:06)
+lightphase	allego_0__uid1002-09-16-58	2026-10-02 17:23:00.0	2026-10-02 17:24:00.0	29161.847	29221.847	29161847	29221847	29264887	29324887	disturbance	andrea	air shower ON again '1 or 2 minutes later' (second not logged)
+lightphase	allego_0__uid1002-09-16-58	2026-10-02 17:34:12.5		29834.36		29834360		29937400		disturbance	allego	air shower ON read off Allego as 29937.4 s, IF Allego shows stream time (file starts at stream 103.04 s)
+lightphase	allego_0__uid1002-09-16-58	2026-10-02 17:35:50.0		29931.847		29931847		30034887		disturbance	andrea	air shower ON (Andrea's clock; message reached e10 at <= 17:35:42)
+lightphase	allego_0__uid1002-09-16-58	2026-10-02 17:35:55.5		29937.4		29937400		30040440		disturbance	allego	the same Allego 29937.4 s reading IF Allego shows time since the file started
+lightphase	allego_0__uid1002-09-16-58	2026-10-02 18:12:10.4	2026-10-02 18:12:11.3	32112.3	32113.2	32112300	32113200	32215340	32216240	system	data	all-chip event (B2 x113, A2 x34), cause unknown
+lightphase	allego_0__uid1002-09-16-58	2026-10-02 20:56:36.5		41978.4		41978400		42081440		system	data	3-chip floor event (A1 A2 B1 x6-14), cause unknown
+lightphase	allego_0__uid1002-09-16-58	2026-10-02 21:01:11.5		42253.35		42253350		42356390		lights	data	lights OFF (timer); floors A1 x3.8 A2 x4.4 B2 x5.1, B1 x1.2: below the all-chip bar
+lightphase	allego_0__uid1002-09-16-58	2026-10-02 21:02:02.4		42304.255		42304255		42407295		console	console	last sample; the console logged the stop (R_ON -> R_OFF) at 21:02:04
+lightphase	allego_0__uid1002-09-16-58			21721.847	26581.847					disturbed_window		Andrea's visit (end not logged; last event 16:33:30)
+lightphase	allego_0__uid1002-09-16-58			29071.847	29401.847					disturbed_window		air showers, first pair
+lightphase	allego_0__uid1002-09-16-58			29821.847	30001.847					disturbed_window		air showers, second pair

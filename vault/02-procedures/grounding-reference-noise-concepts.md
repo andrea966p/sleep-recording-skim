@@ -165,6 +165,11 @@ The slip ring is **resin-potted with its pins** → the wiring is permanent → 
 
 ## 4. The copper tinned coil (environmental reference) — what to do with it
 
+> [!warning] 🔴 CORRECTION 2026-10-02 (Andrea): the copper coil was NEVER inserted into pad 6 or any other pad
+> The plan in this section and the pad 6 / orange rows of the plug map (shield → orange → pad 6 as a recorded environmental
+> reference) were never built. On the rig the tether's copper shield is connected to nothing. Do not infer anything about
+> pad 6, site /4 or the shield from this page.
+
 - It is the tether cable's **shield**, and it was **cut at the electrode/mouse end** → it picks up **no tissue signal**, only **environmental EM** along the cable run.
 - **Professor's instruction:** still connect it to a pin on the tether 8-socket (→ pad 6) — as an **environmental-noise / reference** line.
 - So **copper coil → pad 6 = a recorded environmental-noise channel.** Later you can **subtract** it from the EEG/EMG channels in software (referencing, manual p70) to cancel shared ambient noise.

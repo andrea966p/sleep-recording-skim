@@ -165,6 +165,47 @@ Duty cycle, percent of sweeps below 0.5 MΩ, before against after:
 > ⇒ **Screen on the stream, not on the sweep.** Keep taking sweeps as the record and as the
 > before/after of hardware changes, but do not use them to choose which animals to score.
 
+## 2026-10-01, first block in 7 weeks: 4 mice, 2 ports, 8-core tethers. One row per BLOCK
+
+Taken before the overnight `cfdf8ebde0c6` (XDAQ noise series, Entry 6 of
+[[2026-09-30-xdaq-noise-series]]). Only ports A and B are attached, so the 4-port script
+`qc/sweep_block_all_ports.py` cannot be used as is: it hard-codes 256 sites and raises a KeyError on
+port C. A port-agnostic copy, `qc/sweep_block_ports.py`, reads the sites from the live channel table
+(the `remap_channels.py` logic) and takes `--slots A1,A2,B1,B2`. Same for the scorer:
+`block_duty_cycle.py` loops over `ABCD`, the copy `qc/block_duty_cycle_slots.py` takes `--slots`.
+The 4-port originals are unchanged.
+
+```
+/opt/neurosurveillance/venv/bin/python3 qc/sweep_block_ports.py "<dir>" 20 30 "<config>" --roles eeg,emg --slots A1,A2,B1,B2
+/usr/bin/python3 qc/block_duty_cycle_slots.py "<dir>" --roles eeg,emg --slots A1,A2,B1,B2
+```
+🔑 **Impedance needs the stream OFF**: with streaming on, the RPC fails with
+`Z_measure attempted during data acq`. Turn streaming back on afterwards and re-check the rate.
+
+| block | window | config | n | floor % < 0.5 MΩ | folder |
+|---|---|---|---:|---:|---|
+| 4 mice A1 A2 B1 B2, eeg,emg roles, floor `/3`-`/16` + `/35`-`/48` | 2026-10-01 20:18:41-20:29:13, 10.5 min | `4mice-A1A2B1B2-2ports-64ch-8core` | 20 (log rows) | 1.6 | `2026-10-01/01-4mice-A1A2B1B2-20sweeps/` |
+
+| mouse | EEG duty / median | EMG duty / median | stream says |
+|---|---|---|---|
+| A1 | 60% / 0.47 MΩ | **5% / 4.90 MΩ, p 0.28 vs floor** | EEG fine; EMG open (3.5 mV 60 Hz) |
+| A2 | 40% / 0.58 MΩ | 100% / 0.08 MΩ | both fine |
+| B1 | 10% / 1.40 MΩ | 100% / 0.12 MΩ | both fine |
+| B2 | 50% / 0.45 MΩ | **5% / 4.79 MΩ, p 0.28 vs floor** | EEG fine; EMG open |
+
+> [!note] Re-scored 2026-10-02 with the hardened scorer (per-chip floor, n from the log)
+> Same n = 20, the same duty cycles and medians, the same pooled floor 1.6 %. The per-chip floors are A1 0.4 %, A2 1.4 %, **B1 3.9 %**, B2 0.7 %.
+> One star changes: **B1 EEG goes from p 0.041 (pooled) to p 0.18 against its own chip**, so impedance cannot tell it from an unwired input
+> on that chip, while the stream shows a working EEG. A1 EMG p 0.069 and B2 EMG p 0.13 (own chip): still no star, still open.
+> The scorer now refuses a block without a log, ignores CSVs that match no log row, and drops non-finite values. Sweeps are labelled
+> from the channel table's native index and `site_num`, not its row order. Tests: `tests/test_impedance_block_tools.py` (15).
+
+This time the sweep and the stream **agree** on the two open EMGs: the floor median is 5.8 MΩ, and
+those two read the same as an unwired input. The EEG duty cycles sitting around the 0.5 MΩ line
+while all four EEGs carry clean 1/f signal is the usual "screen on the stream" lesson again. B1's
+EEG reads 10% duty (median 1.4 MΩ) yet carries a normal 1/f EEG with theta (slope -1.76 at 19:50). A single test sweep taken just before, with
+streaming still off, sits on its own in `2026-10-01/00-single-test-sweep/` and is not part of the block.
+
 ## Folder layout, reorganised 2026-08-04
 
 ```

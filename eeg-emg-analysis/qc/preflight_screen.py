@@ -85,7 +85,7 @@ CHIP_REAL_SLOTS = 16
 
 
 def chip_floor(X, fs, ntv_to_row, eeg_ntv):
-    """Ground floor for the chip carrying `eeg_ntv`: 55-65 Hz on its wire-free inputs.
+    """Ground floor for the chip carrying `eeg_ntv`: 60 Hz line amplitude on its wire-free inputs.
 
     Returns (floor_uv, n_sites); NaN when too few of those inputs were captured.
 
@@ -99,8 +99,19 @@ def chip_floor(X, fs, ntv_to_row, eeg_ntv):
             if n in ntv_to_row]
     if len(rows) < T.FLOOR_MIN_SITES:
         return float("nan"), len(rows)
-    sos = sg.butter(4, list(T.FILT_MAINS), btype="band", fs=fs, output="sos")
-    return float(np.median(sg.sosfiltfilt(sos, X[rows], axis=1).std(1))), len(rows)
+    # ON THE GATE'S SCALE (fixed 2026-10-02). FLOOR_MIN_HUM_UV is applied by core/criteria.py to
+    # the PEAK amplitude of the 59-61 Hz line in 10 s Hann epochs, median over epochs x sites.
+    # This used to take the std of a 55-65 Hz band-pass, an rms that is sqrt(2) smaller for a
+    # line, so the screen called chips "ungrounded" that the real gate would call grounded
+    # (B1 on 2026-10-01: 591 here vs ~835 on the gate's scale).
+    ep = int(T.EPOCH_S_QC * fs); nep = X.shape[1] // ep
+    if nep < 1:
+        return float("nan"), len(rows)
+    blk = X[rows, :nep * ep].astype(np.float64).reshape(len(rows), nep, ep)
+    blk -= blk.mean(2, keepdims=True)
+    win = np.hanning(ep); f = np.fft.rfftfreq(ep, 1 / fs); m60 = (f >= 59) & (f <= 61)
+    P = np.abs(np.fft.rfft(blk * win, axis=2)) / (win.sum() / 2)
+    return float(np.median(P[:, :, m60].max(2))), len(rows)
 
 
 def measure(X, fs):
@@ -152,8 +163,17 @@ def verdict(eeg_mains, emg_mains, eeg_rms, clip, floor):
         return ok, "DEAD", "median EEG rms %.1f < %.0f uV: never carried EEG" % (
             med_rms, T.DEAD_CHANNEL_UV)
     if not_open.mean() < 0.5:
-        return ok, "OPEN", "60 Hz %.0f uV vs %.0f uV limit: not connected" % (
-            float(np.median(eeg_mains)), T.OPEN_UV)
+        # Name the channel that is open. Until 2026-10-02 this printed the EEG's 60 Hz
+        # whatever tripped, so an open EMG beside a good EEG read "60 Hz 16 uV vs 150 uV
+        # limit: not connected" -- a reason that contradicts itself.
+        parts = ["%s 60 Hz %.0f uV" % (name, float(np.median(mn)))
+                 for name, mn in (("EEG", eeg_mains), ("EMG", emg_mains))
+                 if np.mean(mn >= T.OPEN_UV) >= 0.5]
+        if not parts:       # each open in under half the epochs, but rarely both fine
+            parts = ["EEG %.0f / EMG %.0f uV 60 Hz, open in alternating epochs"
+                     % (float(np.median(eeg_mains)), float(np.median(emg_mains)))]
+        return ok, "OPEN", "%s vs %.0f uV limit: not connected" % (
+            ", ".join(parts), T.OPEN_UV)
     if not_clip.mean() < 0.5:
         return ok, "CLIPPED", "amplifier at the rail (%.0f uV)" % T.RAIL_UV_EFF
     if ok.mean() < 0.5:
@@ -243,10 +263,11 @@ def main():
                  100 * ok.mean(), tag, why))
 
     if disputed:
-        print("\n⚠️  floor between %.0f and 2000 uV on %s. FLOOR_MIN_HUM_UV is still "
-              "%.0f;\n   2000 has been proposed and NOT applied, so these pass here and "
-              "might not\n   survive the decision. See weak-chip-ground-hides-as-electrode-"
-              "failure."
+        print("\n⚠️  floor between %.0f and 2000 uV on %s. FLOOR_MIN_HUM_UV is %.0f.\n"
+              "   A 2000 uV line was proposed (weak-chip-ground-hides-as-electrode-failure)\n"
+              "   but the 2026-10-01 overnight contradicts it: after the rig geometry changed,\n"
+              "   chips under 2000 uV (gate scale) carried EEG. The floor scale depends on the wiring;\n"
+              "   see 05-experiments/completed/2026-10-02-noise-series-method-audit.md (C1)."
               % (T.FLOOR_MIN_HUM_UV,
                  ", ".join("%s %.0f uV" % d for d in disputed), T.FLOOR_MIN_HUM_UV))
 

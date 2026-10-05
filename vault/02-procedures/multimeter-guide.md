@@ -30,6 +30,7 @@ status: complete
 | Continuity / "beep" | dial at the **`•)))▶|`** position (just **right of `200`**, **left of `hFE`**) |
 | Resistance (Ω) | the **Ω side** of the dial — use **`20k`** or **`2k`** ranges for our checks |
 | DC volts | the **`V⎓` side** — use the **`20`** range for our ~3.5 V rail |
+| AC volts | the **`V~`** section, only **`200`** and **`600`** ranges (product listing, checked 2026-10-02). On `200` the last digit is 0.1 V, so it cannot see anything under ~0.1 V AC: too coarse for a floating foil's pickup. Use the recording itself for that (µV resolution) |
 
 > [!note] This meter is manual-ranging
 > You pick the range. For a ~3.5 V reading use the **`20`** DC-volt range (not `2`, which over-ranges, and not `200`, which loses resolution). For a near-zero continuity resistance use `200` Ω or `2k`.

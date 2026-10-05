@@ -1,0 +1,7 @@
+run	base	clock_kst	clock_end_kst	file_s	file_s_end	sample	sample_end	timestamp_raw	timestamp_raw_end	kind	clock_basis	event
+overnight	allego_0__uid1001-21-00-07	2026-10-01 21:00:06.8		0.0		0		1827584		console	console	overnight run cfdf8ebde0c6 starts (lights went OFF just before)
+overnight	allego_0__uid1001-21-00-07	2026-10-02 01:59:56.5		17989.7		17989700		19817284		system	data	small 3-chip floor event (A1 A2 B1 x3-13; below the all-chip bar), cause unknown
+overnight	allego_0__uid1001-21-00-07	2026-10-02 07:27:42.5		37655.7		37655700		39483284		system	data	small 3-chip floor event (A1 A2 B1 x5-10), cause unknown
+overnight	allego_0__uid1001-21-00-07	2026-10-02 08:41:13.8		42067.0		42067000		43894584		system	data	3-chip floor event (A1 A2 B1 x9-29), cause unknown
+overnight	allego_0__uid1001-21-00-07	2026-10-02 08:59:51.0		43184.2		43184200		45011784		lights	data	lights ON (timer); all-chip event, floors x83-86 on port A
+overnight	allego_0__uid1001-21-00-07	2026-10-02 09:02:01.5		43314.687		43314687		45142271		console	console	last sample; the console logged the stop (R_ON -> R_OFF) at 09:02:04

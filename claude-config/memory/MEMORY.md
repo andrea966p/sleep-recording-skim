@@ -1,6 +1,7 @@
 # Project Memory
 
 ## EEG rig — Allego / hardware behaviour
+- 🔑⭐⭐ **[ALLEGO 60 Hz NOTCH = DISPLAY-ONLY; IMPEDANCE NEEDS STREAM OFF](eeg-60hz-saga.md).** Notch verified 07-31 + 10-01 from saved data — Andrea's usual Monitor setting, never re-check. Sweep with stream on ⇒ `Z_measure attempted during data acq`.
 - 🔴⭐⭐⭐ **[STREAM RAN 30× REAL TIME WHILE ALLEGO SAID 1000 Hz — 2026-09-30](allego-stream-30x-rate-label-lies.md). NEWEST.** Monitor freezes. Box kept fresh-launch 30 kHz. Console checks only the label ⇒ measure `stream.time_range` vs wall clock (~1.0×) before recording.
 - ✅🔴⭐⭐⭐ **[BLANK MONITOR = CANVAS BIGGER THAN THE SOFTWARE RENDERER — 2026-09-16](allego-blank-monitor-canvas-texture-limit.md). NEWEST.** Canvas = ALL signals × Chan height (262×50=13175 px); `--disable-gpu` ⇒ SwiftShader 8192 ⇒ never draws. Launch WITHOUT the flag ⇒ Intel GL 16384 ⇒ works. 96→262 signals crossed a threshold.
 - 🔴⭐⭐ **[ORPHANED allegoserver MAKES A HEALTHY RIG LOOK DEAD](allego-orphaned-server-blocks-the-rig.md).** Reparented to `systemd --user`, holds ports 50051-4, maybe no USB ⇒ stream toggles, zero samples. Check PPID first.
@@ -11,7 +12,7 @@
 - 🛑 **NEVER suggest reseating an electrode/EMG wire** (impossible post-implant; tether change = isoflurane). **Do NOT schedule surgeries.** Signals are ALREADY bipolar — never subtract EEG from EMG.
 
 ## EEG rig — signal interpretation
-- 🔴⭐⭐⭐ **["NO EEG" IS 5 FAULTS — A WEAK GROUND HIDES](weak-chip-ground-hides-as-electrode-failure.md).** Discriminator = EEG 60 Hz ÷ its OWN chip floor: ≈0.03 normal, ≥1.0 open. Floor <2000 µV ⇒ nothing on that chip means anything. `FLOOR_MIN_HUM_UV=800` TOO LOW; 2000 proposed, NOT APPLIED.
+- 🔴⭐⭐⭐ **["NO EEG" IS 5 FAULTS — A WEAK GROUND HIDES](weak-chip-ground-hides-as-electrode-failure.md).** Discriminator = EEG 60 Hz ÷ its OWN chip floor: ≈0.03 normal, ≥1.0 open. Floor <2000 µV ⇒ nothing on that chip means anything. `FLOOR_MIN_HUM_UV=800` TOO LOW; 2000 proposed, NOT APPLIED. 🔴 **10-01: 2000 FALSIFIED in the new config (gate PEAK scale: B2 1820, B1 742 carry EEG); floor scale is geometry-dependent. Gate = 59-61 Hz line PEAK, not band rms (√2).**
 - 🔑⭐⭐⭐ **[FLICKER TELLS A BENT TETHER FROM A SEVERED ONE](flicker-discriminates-bend-from-break.md).** 80-150% variability + max/min 7-55× = bending (recoverable); 4-14% + 1.1-1.8× = continuous break.
 - ⭐⭐⭐ **[ELECTRODES PROVEN GOOD; CONTACT IS INTERMITTENT](movement-dependent-contact-root-cause.md).** Contact flips within minutes ⇒ a single sweep cannot rank or classify.
 - ⭐⭐⭐ **[THE 0.5 MΩ CRITERION](fleet-duty-cycle-census-and-new-mouse.md).** Empty tether read "connected" 22% at 2 MΩ ⇒ use |Z| < 0.5 MΩ.
@@ -24,6 +25,7 @@
 - 🔴⭐⭐⭐ **[A PARTLY LOADED RIG WAS GRADED ON ALL 8 SLOTS](partial-rig-qc-and-unjudgeable-presets.md).** Pre-2026-09-13 bundles for <8 mice contain `UNKNOWN@slot` cards from FLOATING inputs, 3 read PASS at rung 2. `unipolar_lfp` has NO QC criterion by design.
 
 ## EEG rig — analysis stack
+- 🔴⭐⭐⭐ **[MAINS IN THE EMG CORRUPTS SLEEP STAGING — 2026-10-02](emg-mains-corrupts-sleep-staging.md). NEWEST.** Stage 3 EMG rms includes 60 Hz. Notching it: W-SL light phase 8/13 → **13/13 scoreable**, wake 22-36 %; shuffle control → r≈0. 🛑 NOT adopted (re-scores published numbers). ✅ **Validated 10-02: shuffle 0/100, dose-response on mains share (68 %), dark>light 41→47/49.**
 - ✅🔴🔴⭐⭐⭐ **[A CONTAMINATED FLOOR REPORTED HEALTHY EEG AS 0.0% — FIXED 2026-09-26](contaminated-floor-rejects-good-eeg.md). NEWEST.** `2cc5892`: floor slope threshold steeper than **−1.90** ⇒ rung 2 UNJUDGEABLE. 11 cards re-carded, nothing else moved. 🛑 NEVER test the floor against the animal (circular: dead EEG looks like floor). Typical-site test FALSIFIED by uid0920 C1 (tail contamination). ⚠️ hum-guard route still open; UNJUDGEABLE ≠ PASS.
 - ⭐⭐⭐ **[ANIMAL CARD + VERDICT LADDER](animal-card-verdict-ladder.md). READ BEFORE ANY ANALYSIS OR FIGURE.** Six rungs. `core/qc_thresholds.py` + `core/criteria.py` are the only engines. Rung 2 gates on longest unbroken block ≥15 min.
 - ✅⭐⭐⭐ **[FLOOR THRESHOLD FIXED, PER-CHIP — 2026-08-26](floor-threshold-fixed-per-chip.md).** Ungrounded chip ⇒ rung 2 UNJUDGEABLE, not FAIL. Falsification suite passes.
@@ -38,6 +40,7 @@
 - ⭐⭐ **Artefact policy:** `02-procedures/eeg-artefact-and-railing-rejection-policy.md`. Reject at EPOCH level, never repair or interpolate.
 
 ## EEG rig — runs
+- 🌙⭐⭐ **[NOISE-SERIES OVERNIGHT, 4 MICE — 2026-10-01 21:00→10-02 09:00](recording-2026-10-01-noise-4mice-overnight.md). NEWEST.** Console run `cfdf8ebde0c6`, batch `noise-tests`, ⚠️ placeholder IDs `POS-<slot>` (ask Andrea). A1/B2 EMG OPEN (implant) ⇒ A2, B1 only candidates; B1 floor 742 (peak) < 800 by ~7 % ⇒ likely UNJUDGEABLE. Stop moved to 09:02. 🔴 Console runs do NOT arm the hourly watchdog. ⭐ Next trials: vault `2026-10-02-noise-troubleshooting-plan` + `qc/record_block.py`; figures go in `05-experiments/attachments/` and get embedded. ✅ **Light-phase run DONE 10-02 21:11: official QC flipped B1 to PASS (floor 702→971, untouched) = C1 confirmed.** Andrea's clock ≥8 s ahead of e10. ⭐ **Full 24 h analysis + NAS folder `noise-tests/ANALYSIS_2026-10-01_to_10-02_4mice_24h/` (vault completed `2026-10-02-noise-series-4mice-24h-analysis`). 🔴 Pre-23:00 all-chip counts WRONG; system-wide = both ports. 🔴 stage1 full-path cache bug fixed.**
 - ✅⭐⭐⭐ **[S-SL HAS SLEEP DATA, PAIRED n=3 — 2026-09-26](s-sl-has-sleep-data-n3.md). NEWEST.** Stage 2+3 run for the first time. SCOREABLE at both timepoints: **HLBSSL31, HLBSSL33, HLBSSL35** (r@1min .53→.63, .55→.72, .68→.73). Supersedes every earlier n for this batch. 🛑 **NO sleep conclusion**: endpoint is dark-heavy 16.0/20.71 h vs baseline 12.0/12.06, so whole-file 'more wake' is WINDOW COMPOSITION. 🔴 uid0920 is the SAME RUN as uid0921, split on restart.
 - ✅🔴⭐⭐⭐ **[HLBW_SL 28 h DONE — 2026-09-17→18](recording-2026-09-17-HLBW_SL-28h.md). NEWEST.** **Unattended workflow ran CLEAN: stop 5 s late, strip bit-exact on every sample, NAS-verified in 13 min, QC bundle with it.** 7/8 rung 2 CLEAN, A1 EEG dead. **3 scoreable (B1 B2 D2), all grounded**; A2/C1/D1 UNJUDGEABLE (floors 582/7/2). Sleep + figures → `05-experiments/completed/2026-09-18-W-SL-light-phase-sleep.md`. 🔑 Only B2 pairs with the 09-10 baseline ⇒ n=1.
 - 🎉⭐⭐⭐ **[8-CORE TETHER, 8 MICE — 2026-09-09](recording-2026-09-09-8core-tether-screen.md).** Best screen this rig ever made: 7/8 grounded, 7/8 EEG 96.6-100%. 🔴 `RMS_HI_UV=150` CLIPS REAL EMG.
@@ -115,6 +118,8 @@
 - Environment: NVR hostname `e10ubuntu` (not `frigate-server`); user `skimlab`. We are ON the NVR — no SSH for local commands.
 
 ## Working preferences
+- 🛑 **[BACKGROUND WAITS MUST TERMINATE](feedback-background-waits-must-terminate.md)** (Andrea 10-02: they hang often). Deadline on every loop, no `pgrep -f` that matches itself (use `[r]ec5.py` or a PID), explicit target file, TaskStop when done.
+- 🛑 **[neurosurveillance-expert skill RETIRED 2026-10-01](feedback-neurosurveillance-skill-retired.md)** — outdated (Postgres, fake Allego MCP, no XDAQ). Never use it; vault + repo are the source.
 - 🛑 **[NEVER strip or run heavy disk jobs while the rig is recording](feedback-never-strip-during-a-live-recording.md).** A console-started run strips itself on stop; `RIG BUSY` in a dry run = stop.
 - [No dashes in emails](feedback_no_dashes_in_emails.md) · [Implementation guides preferred](feedback_leave_guides.md) · [Verify operational details](feedback_verify_operational_details.md) · [Don't suggest `record.enabled: false`](feedback_record_enabled_false_off_limits.md) · [Sudo command style](feedback_sudo_command_style.md) · [Report writing style](feedback_report_writing_style.md)
 

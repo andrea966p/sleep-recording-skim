@@ -7,12 +7,37 @@ status: active
 # XDAQ noise series: power, cabling, grounding (started 2026-09-30)
 
 > [!abstract] TL;DR
-> A new series of rig-only tests (no mice) to find where our noise comes from, changing ONE thing at
+> A series of tests (rig-only from 09-30, with 4 mice from 10-01 evening) to find where our noise comes from, changing ONE thing at
 > a time: rack layout, USB data cable, USB isolator, PC location, power brick. Background and the
 > choices already made are in the handover `xdaq-power-grounding-handover.md` (Downloads, 2026-09-30).
 > **Entry 1 (today) is NOT a usable baseline.** No mice were on the rig and every input ended in the
 > free animal-side wires of a slip ring, so it measured antenna pickup, not the noise a mouse would see. It did show that
 > **port A picks up a strong 120 Hz field that port B does not**, which gives a first source to hunt.
+>
+> **State of knowledge, 2026-10-03: 24 h with 4 mice, fully analysed** ([[2026-10-02-noise-series-4mice-24h-analysis]]; NAS
+> `noise-tests/ANALYSIS_2026-10-01_to_10-02_4mice_24h/`):
+> - **Nothing electrical reaches the connected EEG/EMG.** Hands, people, a wireless receiver and the facility air showers move
+>   only the open inputs; the mice's own spikes are their own. All 4 EEGs are connected.
+> - **Building-level events reach both ports a few times a day:** 4 overnight (the lights-ON + 01:59:56, 07:27:42, 08:41:14) and
+>   3 in the light phase outside Andrea's visit (17:10:08, 18:12:11, 20:56:36). Causes unknown.
+> - **The damage is mains in the EMG.** It is a median 68 % of the stager's EMG measure. Notching it is validated: shuffle 0/100,
+>   dark > light wake 47/49 recordings vs 41/49 as published. NOT adopted: it would re-score published numbers (a decision).
+> - **The ground gate cannot judge this rig** (audit C1). B1 flipped UNJUDGEABLE → PASS (floor 702 → 971 µV) with nothing touched.
+>   B1's light phase is the only official SCOREABLE.
+> - **A wire on a headstage foil feeds mains into that mouse's EMG** (A2: floor x2.1, EMG 60 Hz x1.15). Foils and shields need a
+>   solid bond (plan T2a-c, grounding first): [[2026-10-02-noise-troubleshooting-plan]].
+>
+> **State of knowledge, 2026-10-02 02:00** (first overnight with 4 mice, run `cfdf8ebde0c6`, 21:00 → 09:02; kept as written,
+> superseded where the 10-03 block above differs, e.g. the night was not free of floor coincidences):
+> - **No electrical injection reaches the mice.** The clean positions A2 and B1 carry no narrow spectral line but 60 Hz itself, and their
+>   floors never fire together (0 against a chance level of ≈0). Building switching reaches every chip only ~2 times a day (5 real all-chip events in 52 h of the S-SL run).
+>   Coordinated EEG+EMG spikes are rare (A2 3 in 4 h) and never coincide with a floor event, so they are within-mouse.
+> - **Hum is small and steady**: the EEG line itself is 2-8 µV peak on A2/B1/B2 (A1 ~20). Port A's 120 Hz from 09-30 is gone.
+> - **USB isolator: no**. It raised broadband 2x (A/B/A). Splitter: no coupling. Board + slip ring = antenna on open inputs.
+> - **QC problem**: B1 (good EEG and EMG) sits at ~740 µV on the 800 µV ground gate, because **six of its input pairs collapsed after
+>   its board was re-seated and the mice were connected** (both on the same afternoon, so the data cannot separate them; Fig C), not because its ground is weak. The gate is mis-calibrated for the current wiring:
+>   [[2026-10-02-noise-series-method-audit]].
+> - **Rig side, to check**: the B1 adapter board seating / foil (pads ~10-11, 18-31). A1 and B2 EMG are open (implant side): EEG only.
 
 ## Rig state at entry 1 (2026-09-30)
 
@@ -34,7 +59,11 @@ status: active
 File: `~/radix/noise-tests/2026-09-30/noise_baseline_0__uid0930-15-50-52` (kept out of `radix/data` on
 purpose, so the NAS and S3 jobs skip it). Analysis: `eeg-emg-analysis/qc/noise_scan.py`.
 Comparison: `allego_0__uid0921-00-17-34` at 55900 s (2026-09-21 ~15:50, old layout, mice on).
-Figure: `~/radix/noise-tests/2026-09-30/figures/psd_compare.png`.
+Figure 1 (source `~/radix/noise-tests/2026-09-30/figures/psd_compare.png`):
+
+![[2026-09-30-noise-fig1-psd-open-inputs-vs-mice.png]]
+
+**Figure 1.** Spectra of the 8 animal inputs, 09-30 with no mice (orange, open inputs) vs 09-21 with mice on in the old layout (blue); dotted = that chip's wire-free floor. With nothing connected every input is an antenna: the mains lines sit 10^4-10^6 higher. B1 is low in orange because the slip-ring wires were being touched by hand (inputs bridged through skin).
 
 During the recording Andrea was **touching the free wires of the B1 slip ring**. That bridges the inputs
 through skin, so B1 is a hand-shorted input, not an open one.
@@ -119,7 +148,11 @@ other chips' floor inputs spike in the same 100 ms, it is electrical and system-
 
 Plotted with a 3-cycle comb (x[t] - x[t-50 ms]); it removes 60 Hz and every harmonic and cannot ring. The
 60-120 Hz "ringing" in a first notch-filtered plot was the notch filters' own ringing, not the signal.
-Figure: `~/radix/noise-tests/2026-09-30/figures/event_waveforms_comb.png`.
+Figure 2 (source `~/radix/noise-tests/2026-09-30/figures/event_waveforms_comb.png`):
+
+![[2026-09-30-noise-fig2-allchip-event-waveforms.png]]
+
+**Figure 2.** Six all-chip events: floor median (black) and the A/1, A/2 inputs, 50 ms comb (so each transient also shows an inverted copy 50 ms later). Top: the 8-mice run (09-21 18:31:49, the lights-ON 09-22 08:59:53, the lights-OFF 09-21 21:01:08). Bottom: the wall switch on 09-30 with no mice, mV-size bursts on every chip at once.
 
 - **No characteristic frequency.** With mice on (09-21 18:31:49, 09-22 08:59:53 lights ON) each event is ONE sharp
   STEP: edge under 2 ms, broadband up to the 500 Hz Nyquist limit. On the mouse channels the step then decays over
@@ -191,7 +224,11 @@ Mains is identical in all three. Light-switch spikes are the same size in all th
 
 **Verdict for now:** the isolator buys nothing measurable (no change in mains or in switch spikes) and costs about 2x
 broadband noise on open inputs. **Record with the direct cable.** The isolator is parked until the dummy-load test
-shows whether the rise survives on mouse-like inputs. Figure: `~/radix/noise-tests/2026-10-01/aba_psd.png`.
+shows whether the rise survives on mouse-like inputs. Figure 3 below (source `~/radix/noise-tests/2026-10-01/aba_psd.png`).
+
+![[2026-10-01-noise-fig3-usb-isolator-ABA.png]]
+
+**Figure 3.** Median spectrum of the 64 open inputs: direct cable 15:40 (blue), USB isolator 16:09 (orange), direct cable again 16:29 (green). The mains lines are identical; the floor between them rises with the isolator in and falls when it comes out. No mice.
 
 ## Entry 4: adapter boards OFF on B1/B2, unipolar headstages on C1/C2 (2026-10-01 16:48)
 
@@ -243,6 +280,537 @@ windows removed. Observed coincidences vs chance (product of the two animals' ra
 the two mice. Swapping it out is not worth an experiment. It also means each mouse's spikes are its own (within-mouse),
 which fits the whole-run scan.
 
+## Entry 5: FIRST RUN WITH MICE, 4 mice on A1 A2 B1 B2, 8-core tether (2026-10-01 19:50)
+
+File `~/radix/noise-tests/2026-10-01/mice4_A1A2B1B2_first_0__uid1001-19-50-31` (3.3 min, light phase, mice just
+connected). Rig as at the end of entry 4: direct USB cable with ferrite, boards back on B1/B2, unipolar headstages off,
+only ports A and B attached. Stream checked before recording: 1000 Hz, 1.01x real time. Figure `mice4_first_look.png` in the same folder.
+Script: `qc/mice_first_look.py` + `qc/noise_scan.py` (t 3-193 s).
+
+![[2026-10-01-noise-fig4-mice4-first-look.png]]
+
+**Figure 4.** First look with mice, 10 s per mouse (EEG 1-30 Hz blue, EMG 30-200 Hz red, offset -400 uV) and spectra (right). A2 and B1: EEG with a 1/f spectrum, EMG muscle-like (B1 shows a burst). A1 and B2: the EMG is an open input railing at about +-6 mV; bottom, 2 s of the two raw open EMGs, nearly identical, as two open inputs in the same field would be.
+
+| mouse | EEG 1-30 Hz rms | EEG 60 Hz | EEG 60 / floor | EEG slope 2-40 | EMG 60 Hz | EMG 60 / floor | EMG clip | chip floor 60 Hz |
+|---|---|---|---|---|---|---|---|---|
+| A1 | 56 uV | 16 uV | 0.008 | -1.76 | **3468 uV** | **1.7** | **13.7 %** | 1999 |
+| A2 | 78 uV | 6 uV | 0.004 | -2.07 | 24 uV | 0.016 | 0 | 1517 |
+| B1 | 65 uV | 9 uV | 0.018 | -1.76 | 7 uV | 0.014 | 0 | 509 |
+| B2 | 56 uV | 8 uV | 0.006 | -1.70 | **3577 uV** | **2.6** | **14.0 %** | 1351 |
+
+- (Floors and 60 Hz in this table are `noise_scan` band rms: floors ×√2 for the gate's scale, and the EEG/EMG "60 Hz" is largely broadband
+  signal. See the scale correction in Entry 6.)
+- **All 4 EEGs are connected and look like EEG**: 60 Hz under 20 uV, 1/f spectra, delta 33-39 %. A1, B1, B2 carry
+  22-24 % theta (awake, just connected); A2 has less theta and a steeper slope (probably resting).
+- **A1 EMG (A/2) and B2 EMG (B/34) read like OPEN inputs**: 3.5 mV of 60 Hz, ratio over 1 to their own floor, and they
+  hit the negative rail on 14 % of samples (offset plus hum). The two waveforms are almost identical, as two open inputs
+  in the same field would be. Not yet known where the break is: rig side (slip-ring wire into the adapter-board socket),
+  the tether/headcap connector, or the electrode. Impedance on A/2 and B/34 plus a socket check is the first step.
+- **Those two railing EMGs also disturb their own chip**: on A1 and B2 the wire-free inputs carry 280-540 uV of 1-45 Hz
+  (8-19 uV on A2/B1) and every A1/B2 EMG event coincides with a floor event. Hypothesis, untested: an input driven into
+  the rail injects into the chip's shared reference. Until fixed, **A1 and B2 floors cannot be used as noise meters**.
+- Good EMGs (A2, B1) are muscle-like: power rising above 80 Hz, B1 envelope p95/p5 6.5 with a visible burst.
+- The 3 "system-wide" detections (t 21.8, 43.0, 46.9 s) are A1-floor-driven and tiny on B1 (34 uV), not light-switch-type events.
+- B1 floor 509 uV is under the proposed 2000 uV line, but its EEG is plainly working; the 2000 line came from the old
+  set-up and is not applied. Note only.
+- EEG 60 Hz is already 6-16 uV, below the 50-100 uV target, so the remaining tests can only win on transients, EMG and broadband, not on EEG hum.
+- **Andrea, 2026-10-01 20:05: tethers were checked and are fine; the A1 and B2 EMG faults are most likely from the
+  surgical implantation and cannot be fixed.** These mice carry EEG only. Under the strict rung 2 (EEG AND EMG in the
+  same epoch) they cannot be scored. For the noise tests, use the A2 and B1 chips as meters.
+- **Monitor as Andrea set it (display only):** `Fields`, `Anti-Alias`, `Chan height` 40 px, `AMP Range` 500 uV,
+  `AIN range` 1.5 V, `Window` 10 s, Viz band 1-40 Hz, plus the usual 60 Hz notch.
+  ✅ **Checked that the notch does NOT reach the file** (`mice4_notchcheck_0__uid1001-20-09-32`, 1 min, recorded
+  right after): wire-free floors still 558-2012 uV of 60 Hz and the open EMGs still 3.5 mV, the same as at 19:50. So the
+  notch sits in the Visualization stage. The .xdat.json in radiens 4.0.0 files carries no filter spec, so this
+  data check is the only way to confirm it. On screen, the 1-40 Hz band and the notch both hide the 60 Hz and most EMG.
+
+## Entry 6: pre-overnight checks + repeatability baselines, then the first overnight with mice (2026-10-01 20:15-21:00)
+
+Same 4 mice and rig as Entry 5, nothing touched by anyone between the checks. Andrea at dinner; run by Claude.
+
+**1. Impedance block** (full detail in [[impedance-sweep-register]]): 20 sweeps, 20:18-20:29, streaming OFF
+(impedance refuses with the stream on: `Z_measure attempted during data acq`). Floor 1.6 % < 0.5 MΩ, median 5.8 MΩ.
+A/2 and B/34 read 5 % duty at ~4.8 MΩ, the same as an unwired input (p 0.28), which matches the stream. A2 and
+B1 EMG 100 % connected. EEG duty 10-60 % around the 0.5 MΩ line while all four EEGs carry normal 1/f signal:
+screen on the stream, not on the sweep. After restreaming, rate 0.998x real time.
+
+**2. Allego's own Signal Metrics** (read through the API, nothing changed; packets 0.2 s, 30 samples over 60 s,
+broadband so 60 Hz included). It only computes the SELECTED channels: wire-free inputs read 0, so it cannot
+show the floor. Median RMS: EEG 58-69 uV on all four; EMG A2 39, B1 55 uV; A/2 and B/34 3.7-3.8 mV RMS with
+~9.9 mV peak-to-peak, which is the rail.
+
+**3. `qc.preflight_screen` + `qc.biology_probe`** on one 5-min live grab (20:30-20:35, ZT11.6, light):
+A2 and B1 pass 100 %; A1 and B2 0 %, both on the open EMG only (EEG rms 59-72 uV, EEG 60 Hz 7-17 uV). Pre-flight
+reports NO FLOOR (only the montage is selected). That does not matter here because the floor is measured from the
+recorded files, which hold every channel (509-2035 uV per chip). Biology: A2 -1.64 and B2 -1.80, read as neural.
+A1 -1.50 and B1 -1.43, "between the populations". Awake animals at ZT11.6 read flatter than the sleep-dominated
+reference, as the probe warns, and Entry 5's spectra show theta. Not a fault. r(E,M) about 0 on all four, so no
+shared-path fault.
+
+**4. Repeatability: 3 untouched runs** (19:50 first look 3 min, `mice4_baseline1_untouched_0__uid1001-20-36-33`
+5 min, `mice4_baseline2_untouched_0__uid1001-20-42-41` 5 min). Script `qc/baseline_compare.py` on the `noise_scan` JSONs (metrics read by `qc/allego_signal_metrics.py`).
+Max/min across the 3 runs:
+
+| metric (median of the chip's wire-free inputs unless EEG/EMG) | A2 chip | B1 chip | A1 / B2 chips |
+|---|---|---|---|
+| floor 60 Hz | **1.00** (1513-1517 uV) | 1.18 (509-599) | 1.02 / 1.01 |
+| floor 120 Hz | 1.03 | 1.27 | 1.19 / 1.18 |
+| floor broadband 1-45 Hz | **1.07** (18-19 uV) | 1.09 (8-9) | **2.56 / 3.07** |
+| floor 100-450 Hz | **1.02** (6.2-6.3 uV) | 1.10 (12-13) | **3.81 / 2.98** |
+| EEG 60 Hz | 1.15 (6-7 uV) | 1.28 (9-12) | 1.01 / 1.23 |
+| EMG 100-450 Hz (biology) | 1.54 | 1.47 | - |
+
+(Band-rms numbers; ratios unaffected by the scale. **On the gate's peak scale** (`noise_scan` v2, 02:20): A2 2130/2128/2068, A1 2798/2826/2770,
+B2 1892/1878/1812, **B1 740/839/808**, so B1 sits right on the 800 µV line across the three evening runs.) ⇒ **The A2 chip is the noise meter**: its floor holds within 2-7 % run to run, so a hardware change that moves
+it by more than ~1.15x is real. B1 needs about 1.3x. **A1 and B2 floors swing 2.5-3.8x on their own**, driven
+by the railing EMG, so they cannot judge any test. EMG high-band power moves 1.5x with the animal's state and is not a noise metric.
+Baseline 1 has 3 "system-wide" detections (t 60, 61, 74 s), all driven by the A1/B2 floors and only 43-46 uV
+on B1, so they are not light-switch-type events. Baseline 2 has none.
+
+**5. Overnight scheduled through the recording console**: run `cfdf8ebde0c6`, owner andrea, batch `noise-tests`,
+setting `eeg_emg`, ports A+B with splitters, 4 slots, keep_labels `A/1 A/2 A/33 A/34 B/1 B/2 B/33 B/34`.
+**Start 2026-10-01 21:00:00 (ZT12, lights off), stop 2026-10-02 09:00:00 (ZT0)** = the whole 12 h dark phase. ⚠️ Stop later moved to **09:02** (see below).
+🔴 **Mouse IDs were not given**: slots carry placeholders `POS-A1 POS-A2 POS-B1 POS-B2`, stated in the run note.
+The NAS copy lands at `02_Data_Sleep/andrea/noise-tests/Baseline/20261001_POS-<slot>_B/` after the 09:00 stop
+(QC bundle → strip → upload → verify, automatic). Rename once the IDs are known. The raw file on the rig keeps all channels.
+Expect: A2 and B1 scoreable candidates; A1 and B2 EEG only (open EMG), so not scoreable under the strict rung 2.
+
+**Start, verified (2026-10-01 21:00):** console started at 21:00:03 (4 s late, inside the 3 min grace), file
+**`~/radix/data/allego_0__uid1001-21-00-07`**, R_ON at 1000 Hz. Console "growth confirmed" at 21:00:50.
+Checked independently: 0 → 48.6 MB in 70 s (this includes the 30 s flush lag), then +16.2 MB in the next 45 s,
+and the stream at 1.000x real time. 🔴 **A console run does not arm the hourly `recording-watchdog-cron.sh`**, so it
+was armed by hand (`current-recording.txt` = the basename, `watchdog-lastsize.txt` removed). First armed check
+21:05:04: `mode=R_ON size=145723392 ... OK growing`. The watchdog sends a "Recording has STOPPED" ntfy at 09:05
+after the scheduled stop and then disarms itself. That message is expected.
+The light timer is due to switch off at 21:00, in the first seconds of the file, so an all-chip event may sit
+there. The timer spiked on only 2 of its 4 switchings in the 09-20/22 run.
+
+### Mid-run check, 2026-10-01 23:42 (first 2.7-2.8 h, 21:00-23:46, dark phase)
+
+Read from the LIVE file at the lowest CPU and disk priority (`nice 19`, `ionice -c3`), in 300 s chunks with the page cache
+dropped and at most 0.9 GB of RAM, and the growth was checked before and after each pass. Scripts: `qc/allchip_scan_file.py`,
+`qc/night_trend.py` (60 s every 15 min), `qc/night_spikes.py` (per 100 ms), `qc/night_events_plot.py`.
+Figure 5 below (`qc/night_events_plot.py`; regenerated 10-02 with readable titles as `overnight_events_2134_2223_v3.png`).
+
+![[2026-10-01-noise-fig5-overnight-port-A-events.png]]
+
+**Figure 5.** The two 3-of-4-chip detections of the first hours (21:34:11 = 2044.5 s, 22:23:04 = 4977.5 s), 50 ms comb + 1-450 Hz. Left: the port A floors (A1, A2) wobble 100-200 uV, B1's floor is flat, B2's floor is busy on its own (open EMG). Right: A2's EMG shows the mouse moving. Local to port A and movement-linked, not injection.
+
+- **Zero dropped samples**: 9,720,192 timestamps, every step exactly 1. That includes the period after about 23:30, when the
+  Allego GUI froze (see below).
+- **Mains steady all night**: EEG 60 Hz A1 15-17, A2 6-9, B1 8-13, B2 7-10 uV (band rms, mostly broadband EEG; the line itself, gate
+  estimator: A1 ~20, A2 3-5, B1 6-8, B2 4-5 uV peak) in all 11 windows. A2 chip floor
+  1516-1531 uV (±1 %), B1 455-589 uV. Ground contact is not drifting. The open EMGs stay at 3.44-3.53 mV.
+- **No system-wide electrical event.** The all-chip scan found 2 detections (21:34:11, 22:23:04) at the 3-of-4-chip
+  bar, but the waveforms show a small wobble of 100-200 uV, a few hundred ms long (the plot's 150 ms comb adds an echo, so part of that length is the filter), on the port A floors only (A1 + A2).
+  **B1's floor is flat in both**, nothing appears on any EEG, and at 22:23 the A2 mouse was moving hard. So the events are
+  local to port A and movement-linked, not injection. Over the night the clean floors hit A2 77x and B1 6x and **never in the same 100 ms**. ⚠️ Those were window counts with a 150 ms comb, which double-counts
+  (code review); **re-counted as events (`qc/night_spikes.py` v2, 4.04 h): A2 41 events (10.1/h), B1 4 (1.0/h), overlap 0 (chance ≈ 0.00)**.
+  A2 and A1 floor hits coincide at chance (7 vs 5.0 expected). No event at the file start, so the 21:00 light timer either switched
+  before 21:00:07 or made no spike.
+- **Within-mouse spikes are rare and not electrical**: EEG spikes (> 8 robust SD) A2 2.9/h, B1 0.7/h, A1 and B2 0.
+  EEG+EMG in the same 100 ms: **A2 7 in 2.8 h, none on the other three**. ⚠️ Re-counted as events with the documented 50 ms comb (v2, 4.04 h):
+  EEG spike events A1 2.2/h, A2 1.7/h, B1 0.2/h, B2 0.2/h; **EEG+EMG events A2 3 in 4 h, none elsewhere, none on any floor hit**. Same conclusion, fewer events; and **none of the 7 lines up with a floor hit**
+  on its own chip or the other port, so they are the mouse's own (movement), not the rig. EMG "spikes" in the thousands
+  per hour are ordinary muscle bursts on A2/B1 (and junk on the open A1/B2 EMGs), not noise.
+- **Allego GUI froze around 23:30** (Andrea could not interact, though the traces kept moving). Two warnings flood
+  `allegoserver.log` from 20:17 on, when the stream was restarted after the impedance block: about 54,500
+  `resample_antialias ... using raw decimation` (the Monitor's Anti-Alias view mode) and about 5 per minute of `[HAL] unable to
+  send to listener '0','1','2'`. The GUI renderer sat at 108 % CPU and 11-14 GB RSS, while allegoserver stayed at 0.23 GB / 4 %.
+  Data unaffected (above). Left alone: app death may end the recording. `allego_mem_watch.sh` logs renderer RAM every 5 min
+  and sends ntfy if available RAM < 3 GB; it falls back to 7.3 GB on its own by 23:43.
+
+### Stop moved to 09:02, and the B1 floor caveat (2026-10-01 23:59)
+
+> [!danger] 🔴 SCALE CORRECTION, 2026-10-02 01:45 (code review): the QC gate reads the line PEAK, these notes mostly gave the band RMS
+> `FLOOR_MIN_HUM_UV` is applied in `core/criteria.py` to the **peak** amplitude of the 59-61 Hz line (10 s Hann epochs, median over
+> epochs × floor sites). `noise_scan.py`, `floor_flicker.py`, `night_trend.py` and the pre-flight reported the **std of a 55-65 Hz band-pass**,
+> an rms that is √2 smaller for a pure line. On quiet channels (EEG, good EMG) it is mostly broadband signal, not the line.
+> **On the gate's scale** (`qc/gate_floor.py`, one 10 s epoch every 3 min, 21:00-01:00): floors **A1 2594, A2 2057, B1 742, B2 1820 µV**.
+> B1's half-hour medians are 632-745, and it read **808 at 20:42** (baseline, just above 800) and 804 at 21:10. EEG line amplitude: A1 20,
+> A2 3-5, B1 6-8, B2 4-5 µV peak. Consequences: B1 is still below 800 all night, so UNJUDGEABLE is still the likely verdict, but **by ~7 %, not ~38 %**.
+> Its verdict flips with a 10 % drift. Against 2000 µV, B2 (1820) and B1 (742) carry EEG while A2 (2057) is above it. Ratios, CVs and correlations
+> in these notes are unaffected by the scale. Every rms floor below should be read × √2. The pre-flight is fixed (`chip_floor` now uses the gate's estimator).
+
+
+- **Andrea: the recording started right after the lights went off** (so the 21:00 switch-off is not in the file). At
+  her request the scheduled stop was moved **09:00 → 09:02** so the 09:00 lights-ON switching is inside the file
+  (the timer has fired up to 7 s early, `08:59:53` on 09-22). The console has no API to edit a RECORDING run's
+  stop (`/schedule` only takes DRAFT/SCHEDULED), so it was done with the store's own `RunStore.transition()` as a
+  same-state RECORDING → RECORDING update with `scheduled_stop`, which leaves an audit event on the run. DB backed up
+  first with SQLite's backup API (`~/.local/state/eeg-recorder/runs.db.bak-20261002-stop0902`). The console API then
+  reported `2026-10-02T09:02:00+09:00`, and the scheduler re-reads RECORDING runs from the DB every 5 s.
+- 🔴 **B1's chip floor reads 455-599 uV (band rms; 632-808 on the gate's peak scale, see the correction above) all night, under `FLOOR_MIN_HUM_UV` = 800.** The threshold comment gives a grounded chip's
+  floor as 1138-5609 uV and a floating one as 82-466 uV. B1 sits in the gap, just above the floating population, while
+  A1 2000, A2 1520 and B2 1350 sit in the grounded one. ⇒ **expect the automatic QC to grade B1 UNJUDGEABLE at rung 2**, and
+  B1's low hum cannot be read as proof of good contact, because a chip with a weak ground also reads quiet. B1's EEG
+  does carry biology (1/f, theta). Rig-side suspect after the run: the B1 GND path (slip-ring GND wire into the B1
+  adapter-board socket). That board was taken off and put back at 16:48 today for Entry 4; B2's was too, and B2 reads
+  grounded. Position B1 also had a ground decay on 2026-08-27/28 (825 → 469 uV), with a different mouse and tether.
+- Hum on the clean mice: present at the rig's normal residual and steady. The only notable one is **A2's EMG at
+  14-20 uV of 60 Hz**, about the size of its quiet muscle tone. Stage 3's `emg_rms` (10-300 Hz band-pass, no mains
+  removal) includes it, which compresses A2's EMG range a little. B1 EMG 60 Hz 4-10 uV.
+
+- **Andrea, 2026-10-02 00:10: A2 and B1 are the good mice.** That matches the channels: the working EMGs are `A/34`
+  (A2) and `B/2` (B1), and the open ones are `A/2` (A1) and `B/34` (B2). Port B's orientation was already proven by the 09-30 hand test
+  on B1. If Andrea's call comes from her own knowledge of the mice, it also confirms port A's splitter orientation
+  (physical A2 = `A/33…`), so no touch test is needed. B1's caveat is the CHIP floor (QC), not the mouse.
+
+### QC gate re-think: why B1 would be UNJUDGEABLE, and what to do (proposal 2026-10-02, NOT applied)
+
+**What the gate is for.** `FLOOR_MIN_HUM_UV = 800` (2026-08-26) asks whether the chip's wire-free inputs are a valid
+negative control. It was built to stop a hardware fault being published as a dead mouse (B1/HLBSSD13, floor 246 uV, read as
+FAIL for days), so it answers UNJUDGEABLE, not FAIL. That fail-safe direction is right and should stay.
+
+**Why it misfires now.** It treats 60 Hz pickup on open inputs as a stand-in for "has a ground". That pickup also
+depends on antenna geometry, and this series changed the geometry. Measured in the current configuration:
+- **No animal, no ground**: empty headstages read **1200-3000 uV band rms, ~1750-4300 on the gate's scale** (Entry 4: socket pads 2574-3039, bare pads 1235-1759 rms) ⇒
+  the gate would call them GROUNDED.
+- **Working animal**: B1 reads **632-745 uV on the gate's scale** all night (455-599 band rms), while its EEG is 1/f (slope -1.43 to -1.76), at normal scale
+  (53-90 uV, not the 3-4x shrink of the old weak-ground cases), and its EMG tracks behaviour (p95/p5 6.5) ⇒ the gate calls it UNGROUNDED.
+- The 800 line sat in an "empty gap" (grounded 1138-5609, floating 82-466, all pre-09-30). B1 is the first chip
+  inside the gap. By the code's own rule for the sister slope guard, that is a reason to re-measure, not to move the number until B1 passes.
+- The pending **2000 uV proposal is falsified** here: on the gate's scale B2 (1820) and B1 (742) carry EEG. A2 is 2057, above the line.
+- Bias risk: a geometry-dependent gate excludes mice by cage position or wiring rather than by signal. That is a
+  selection bias in the scored sample.
+
+**Proposal (decision for Andrea; nothing changed in code):**
+1. **Tonight: no change.** The 09:02 QC runs on the current rules, so B1 goes UNJUDGEABLE. The raw file keeps every channel,
+   and re-carding later has precedent (11 cards on 2026-09-26).
+2. **Re-derive the gate in today's geometry with dummy loads** (Next steps #2): on each headstage, the same resistor load with
+   GND connected vs GND lifted, and measure both floor populations. If they separate, set the line in the new gap and tie it
+   to a recorded rig-configuration id. Any geometry change (tape, boards, tethers, cage moves) means re-measuring. If they do
+   not separate, the floor cannot test ground in this rig, and the gate must be replaced rather than retuned.
+3. **Pre-register an independent ground-evidence route**: a low-floor chip becomes judgeable when its EMG proves itself by
+   behaviour-tracking amplitude (envelope range plus sleep/wake or light/dark dependence). The rule is fixed on PAST data before
+   B1's result is looked at, and it must reject open EMGs (tonight A/2 and B/34: p95/p5 1.01-1.02), wire-free inputs and empty
+   headstages in the falsification suite.
+4. **Tomorrow: a shadow verdict for B1** (gate bypassed, labelled diagnostic-only, never published as the verdict) beside
+   the official UNJUDGEABLE, so the decision is informed but not tuned.
+5. Rig side, independent of all this: B1 reads 3x below its neighbours in the same geometry, so check the B1 GND path anyway.
+
+### Overnight investigation, 2026-10-02 00:10-01:00 (light reads of the live file, nice/ionice idle)
+
+**B1's low floor: steady, not intermittent** (`qc/floor_flicker.py`, 10 s windows, 21:00-00:35, 1261 windows;
+CSV `~/radix/noise-tests/2026-10-01/floor_flicker_uid1001-21-00-07_to0010.csv`):
+
+| chip | floor median | CV | p95/p5 | max/min | r(floor, own EMG activity) |
+|---|---|---|---|---|---|
+| A1 | 2057 uV | 1.5 % | 1.03 | 1.25 | -0.34 |
+| A2 | 1524 uV | **0.4 %** | 1.01 | 1.04 | -0.02 |
+| B1 | **495 uV** | 6.8 % | 1.25 | 1.35 | **-0.08** |
+| B2 | 1366 uV | 1.7 % | 1.06 | 1.11 | -0.27 |
+
+- No intermittent-contact signature: B1 does not flicker and does not follow its own movement (r -0.08). Half-hour medians
+  went 555 → 540 → 493 → 468 → 463 → 494 → 499 → 490 uV, a 17 % fall over the first 2 h and then flat. That is not the slow
+  slide of 2026-08-27 (825 → 469 over 20 h).
+- Oddity, unexplained: A1, A2 and B2 floors rise and fall together (r +0.27 to +0.32), and **B1's moves against them (r -0.21 to -0.34)**.
+- 60 Hz lock-in phase vs A2 (`qc/floor_phase.py`, 3 windows). ~~chip medians A1 -35 deg, A2 +11, B1 +47 to +58, B2 ~0; "B1 is NOT
+  ~180 deg"~~ **RETRACTED 01:45**: those were linear medians of wrapped angles (code review). With circular statistics the resultant
+  length is **R 0.11-0.24 on every chip**, so the sites' phases are spread almost evenly around the circle, no chip has a defined floor
+  phase, and the test cannot support or reject "reference-dominated". Uninformative.
+
+**No non-mains injection anywhere on the clean mice** (`qc/line_scan.py`, `qc/line_track.py`, 0.1 Hz resolution):
+- A2 and B1 EEG/EMG carry **no narrow line except 60 Hz itself**, in both windows checked (21:30, 23:30).
+- Every line on the floors is mains: harmonics 1-8, plus **high harmonics up to at least the 39th (2340 Hz) folded back
+  below 500 Hz**. They are identified by their wander: the k-th harmonic carries k times the mains drift. The 39th folds to ~340 Hz
+  and wanders 339.7-340.3 Hz all night (100-2000x on the floors), the 37th to ~220, the 20th to 200, the 19th to 140. So the pickup on the open
+  inputs has very sharp edges (switching-type current pulses), and the chip's 475 Hz anti-alias filter does not remove it on those
+  high-impedance inputs. It does not reach the connected mice (A2/B1 ≤ 2-4x at those bins, i.e. no line).
+- The only non-mains lines (46, 74, 106, 134, 286, 434 Hz) are on **B2's open EMG**, which is on the rail ~14 % of the
+  time. Most likely clipping intermodulation of the folded harmonics; not seen on any other channel.
+- First line-scan pass misclassified the folded harmonics as "OTHER" (it assumed exactly 60.000 Hz); fixed with a
+  drift tolerance that grows with harmonic order (0.15 + 0.012 k Hz).
+
+### ⭐ B1's low floor is a few input PAIRS collapsing, not a weak ground (2026-10-02 01:30)
+
+`qc/site_floor_compare.py` (gate scale, per site, 120 s each). B1's 14 wire-free sites across today's conditions:
+
+| B1 site | /3 | /4 | /5 | **/6** | /7 | /8 | /9 | **/10** | **/11** | /12 | /13 | **/14** | **/15** | **/16** |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 16:29 no mice, board on (before the boards-off test) | 286 | 4996 | 4788 | **2853** | 4274 | 1093 | 1422 | **2269** | **2884** | 5285 | 5795 | **717** | **899** | **671** |
+| 16:48 board OFF | 245 | 794 | 248 | 289 | 109 | 115 | 101 | 312 | 578 | 269 | 965 | 295 | 332 | 114 |
+| 19:50 mice on, board back on | 382 | 6132 | 2814 | **105** | 3245 | 440 | 759 | **757** | **744** | 5678 | 1386 | **26** | **192** | **203** |
+| 23:30 overnight | 388 | 6218 | 5640 | **103** | 3211 | 2275 | 936 | **432** | **468** | 6179 | 983 | **14** | **146** | **146** |
+
+![[2026-10-02-noise-figC-B1-site-floors.png]]
+
+**Figure C.** Per-input floors at 16:29 (no mice, boards on) vs after the B boards were refitted AND the mice connected (19:50, overnight median). Inputs dropping 5x or more: B1 6 of 14 (/6 /10 /11 /13 /14 /15), B2 0 (same handling), A2 1 (/37; port A, board not touched), A1 0. Median input ratio B1 0.45, A2 and B2 0.72. Connecting a mouse moves an input or two on any chip, but B1 loses many inputs and keeps others, which is site-specific, not a weak ground. Refit and mice changed together, so the data cannot separate them. Made by `eeg-emg-analysis/qc/noise_figures_2026_10_02.py`, data in `~/radix/noise-tests/2026-10-02/figdata/`.
+
+- After the board went back on and the mice were connected, **sites /6, /14, /15, /16 dropped 5-50x** (to 14-146 µV) and /10, /11 dropped
+  5x, while /4, /5, /7, /12 are unchanged or higher. It is stable between 19:50 and 23:30. **A weak or absent ground scales the WHOLE chip**
+  ([[weak-chip-ground-vs-open-electrode]]: "scales the whole chip down 3-4x"). This is site-specific.
+- B2's board went through the same off/on handling and keeps its 16:29 pattern within about 0.5-2x per site. Per-site ratio 23:30 / 16:29,
+  sites below x0.2: **A1 0, A2 1 (/37, x0.11), B1 6, B2 0**; chip medians x0.98, x0.72, **x0.44**, x0.75. Connecting a mouse moves a site
+  or two on any chip (A2's board was never re-seated), but B1's six collapsed pairs are unique to B1.
+- A site is the DIFFERENCE of two adjacent pads, so ~14 µV at /14 means pads 26/27 now see the same 60 Hz potential: a bridge between
+  them, or both pressed against or coupled to the same conductor. Candidates, **rig side only**: the B1 adapter board not seated as before,
+  a bent socket pin or solder/flux bridge, a slip-ring wire or the (floating) **foil touching the pad area** (the vault rule: the shield must
+  not touch anything inside it). Not separable from the data: no recording exists with the board back on and no mice.
+- **Why it matters for QC:** the gate's floor is the median of these 14 values. B1's sorted values have a gap in the middle (…468 | 936…), so
+  the median sits in the gap and swings ~2x with tiny changes, which is why B1 hovers at 632-839 around the 800 line. The verdict is being
+  set by the pickup of a few pads, not by the animal's ground.
+- **Morning check (Andrea, rig side, after 09:02):** look at the B1 adapter board seating and the pad area under the foil (pads ~10-11 and
+  ~18-31) for contact with foil, wires or bridges. Then, if possible, a 3 min recording before and after reseating or clearing.
+
+## Entry 7: the overnight's outcome, sleep staging, and the light-phase run (2026-10-02 morning)
+
+> [!info] Mouse identities for the 10-01/10-02 runs (Andrea, 2026-10-02; not used for experiments)
+> A1: B6/J BomTac female, DOB 2026-04-12, surgery ~July (23 g), tethered 2026-10-01 (25.2 g). A2: **HLBWSL30** (W-SL; registry sheet
+> `HLB_SOD1_Intake_Monitoring_SDSLNANO`). B1: **HLBSSD20** (S-SD; same sheet). B2: same strain, sex and DOB as A1. NAS folders keep the
+> `POS-<slot>` placeholders (not re-filed: these recordings are noise-series tests, not experimental data).
+
+**Overnight run `cfdf8ebde0c6` (`allego_0__uid1001-21-00-07`)**: stopped 09:02:04 (2 s late), **12.032 h, every one of 43,314,688
+timestamp steps == 1 (zero dropped samples)**. The **lights-ON is in the file**: one all-chip event at **08:59:51** (the timer fires ~9 s early,
+as on 09-22; floors ×84/86/20/9 on A1/A2/B1/B2, EEG peaks 83-183 µV). Post-processing: QC 09:03, strip bit-exact 09:05, per-mouse export, **upload
+verified 09:14:47** → `02_Data_Sleep/andrea/noise-tests/Baseline/20261001_POS-<slot>_B/`.
+
+![[2026-10-02-noise-figB-lights-on-event.png]]
+
+**Figure B.** The lights-ON at 08:59:51.0 on the file clock, the night's only event above 5x on every chip's floor at once (⚠️ corrected 2026-10-02 23:30: an earlier caption said the transient came 0.25 s after the timer contact. That was the fraction of a second lost to the file-name clock, not a measured delay; three smaller events reached both clean floors, see Entry 9): 3.3 and 4.1 mV on the A1 and A2 floors, 0.5 and 0.8 mV on B1 and B2. On the animals it is a step on B1's EMG (~0.6 mV) at the same instant; on the EEGs it does not stand out from the ongoing EEG. About 0.3 s later the A2, B1 and A1 EEGs all swing together while the floors are flat again, possibly the mice's response to the light (not tested). The EMG bursts 5-10 s later are the mice waking up. B2's floor bursts before the event are its own chip (open EMG, Entry 5). Made by `eeg-emg-analysis/qc/noise_figures_2026_10_02.py`, data in `~/radix/noise-tests/2026-10-02/figdata/`.
+
+**Official QC (rung 2): all four UNJUDGEABLE, so rung 3 is blocked for every mouse.**
+- B1: hum gate, floor 702 µV < 800 (as predicted, by ~12 %).
+- A1, A2, B2: the contaminated-floor guard: floor slope thresholds -3.24, **-2.54 (A2)**, -3.44, steeper than -1.90. Even the "clean" A2
+  chip's wire-free inputs carry enough low-frequency signal in this geometry to fail the "empty floor" test. Both floor guards misfire with the
+  current wiring (audit C1).
+
+![[2026-10-02-noise-figD-gate-floor-vs-config.png]]
+
+**Figure D.** The chip floor (gate scale) of every recording in the series against the 800 uV gate. Empty headstages (squares: no mouse, no ground) read "grounded"; B1 with a working mouse (red filled) sits on the line: 692, 834, 807 and 707 uV in the four recordings with mice, and the official whole-night value was 702, so UNJUDGEABLE. Connecting the mice lowered every chip's floor (green band). The floor follows the wiring geometry, so in this rig it cannot certify a ground (audit C1). Made by `eeg-emg-analysis/qc/noise_figures_2026_10_02.py`, data in `~/radix/noise-tests/2026-10-02/figdata/`.
+
+**Diagnostic sleep staging (labelled diagnostic, NOT a result)**: stages 1-3 of the pipeline run unchanged, outputs under
+`~/radix/noise-tests/2026-10-02/diag-*`, stage 2 with `--all-verdicts`. Stage 1: **A2 CLEAN 99.97 %, B1 CLEAN 100 %** (12.03 h usable, longest
+blocks 336 and 722 min); A1/B2 OPEN (EMG). (Stage 1's OPEN reason prints the EEG's 60 Hz, the same misleading-reason bug as the pre-flight had;
+not fixed, it is in `pipeline/`.) Stage 3, dark phase 21:00-09:02: **B1 SCOREABLE, r@1min 0.304, wake 29.5 %**; **A2 REJECT, r@1min 0.19,
+wake 18.6 %**. Both wake shares look low for a dark phase.
+
+### ⭐⭐ Mains in the EMG corrupts sleep staging (2026-10-02 09:20)
+Stage 3 stages WAKE by an Otsu split of log EMG rms over 10-124 Hz (stage 2 stores 250 Hz). That band **includes the 60 Hz line**, and A2's EMG
+carries 13-28 µV of it, about its quiet muscle tone. Test: stage 3 UNCHANGED, the EMG notched at 60 and 120 Hz (Q 30) in memory only
+(`qc/emg_mains_staging_test.py`; official stage-2 files symlinked, outputs in the scratch folder; the unchanged run reproduces every official verdict):
+
+| set | before (official) | EMG mains notched |
+|---|---|---|
+| 10-01 overnight A2 | REJECT, r@1min 0.19, wake 18.6 % | **SCOREABLE, 0.323, 29.7 %** |
+| 10-01 overnight B1 | SCOREABLE, 0.304, 29.5 % | SCOREABLE, 0.308, 30.4 % (its line is only 4-5 µV) |
+| W-SL 09-17 light phase, 7 mice | 5 scoreable; r 0.10-0.70; wake 1.9-62.3 % | **7/7 scoreable; r 0.60-0.68; wake 22.5-30.0 %** |
+| W-SL 09-10 light phase, 6 mice | 3 scoreable; r 0.23-0.44; wake 7.7-19.2 % | **6/6 scoreable; r 0.59-0.69; wake 23.1-35.8 %** |
+
+![[2026-10-02-noise-figE-emg-mains-staging-effect.png]]
+
+**Figure E.** Stage 3 with nothing changed except 60/120 Hz notched out of the EMG, 15 animal-recordings (10-01 night red, 09-17 light blue, 09-10 light green). Left: r@1min (state persistence), dashed = the scoreable bar 0.30. Right: WAKE %. Diagnostic only, not adopted. `qc/emg_mains_staging_test.py`, outputs `~/radix/noise-tests/2026-10-02/emg-mains-test/`.
+
+- Light-phase wake converges on the 22-30 % this lab has seen before; the implausible 1.9 %, 7.7 %, 52 % and 62 % disappear.
+- **Negative control passes**: with the notched EMG's 4 s epochs SHUFFLED in time (muscle-tone persistence destroyed, EEG kept), r@1min collapses
+  to -0.004..0.009 and all three animals tested are REJECTED. The notch does not manufacture persistence.
+- Not yet tested: dark-phase and full-day sets, and the other ~10 GB of stage-2 files (scheduled after 21:02, when nothing records), plus the
+  falsification suite. **Adopting it is a pre-registered pipeline change that re-scores published numbers (wake %, r@1min): Andrea's decision.**
+
+**Coverage of the overnight review, stated plainly (asked 2026-10-02):** integrity (every timestamp), the console's QC and the diagnostic
+staging covered the WHOLE night. The noise scans at full resolution (all-chip events, floor/animal spikes, narrow lines, flicker) covered only
+**21:00-01:05**, plus **08:50-09:02** for the lights-ON. **01:05-08:50 had no full-resolution injection scan.** It is scheduled after 21:02, when
+nothing records. Done at 09:40 instead, sampled and light (`qc/gate_floor.py` every 3 min, `qc/night_trend.py` every 15 min, whole night): EEG
+60 Hz line A2 2.2-5.0, B1 5.5-9.4, B2 3.1-4.9, A1 17-22 µV peak, flat 21:00-09:00. Floors A2 1979-2159, **B1 577-804** (half-hour medians
+623-787, whole-night median 707), A1 2559-2954, B2 1810-2017. Clean-floor broadband steady (A2 13-24, B1 7-9 µV). No slow ground decay, no hum drift.
+
+![[2026-10-02-noise-figA-overnight-trend.png]]
+
+**Figure A.** The whole night, sampled (one 10 s epoch every 3 min, the gate's estimator). Top: chip floors; B1 under the 800 uV gate in 95 % of epochs (half-hour medians 639-798), A1, A2, B2 flat at 1.8-2.9 mV. Middle: EEG 60 Hz line, A2 2.0-4.9, B2 2.7-5.5, B1 4.9-8.9, A1 18.5-21.8 uV peak (5th-95th percentile). Bottom: EMG 60 Hz line; A2's 13-26 uV (26 in the first hour, 17 later) is about the size of its quiet muscle tone, which is why it corrupts staging (C3); B1 3.6-5.7 uV; A1 and B2 are open inputs at 4.5-5 mV. Made by `eeg-emg-analysis/qc/noise_figures_2026_10_02.py`, data in `~/radix/noise-tests/2026-10-02/figdata/`.
+
+**Light-phase run `8f84e3e62af6` (`allego_0__uid1002-09-16-58`)**, started 09:16:58 (ZT0 + 17 min), stop 21:02 (keeps the 21:00 lights-OFF).
+Same 4 mice, same placeholders. **Allego GUI restarted cleanly first** (overnight renderer 238 % CPU / 9.7 GB → 0.3 GB fresh); Monitor in
+`Spikes` mode, so 0 Anti-Alias warnings. ⚠️ `allegoserver` was NOT restarted: it is the same process (up 16 h 50 min, parent `systemd --user`), so
+the `[HAL] unable to send to listener` warnings (~5/min) continue; the stream runs at 0.998x and the file grows. Watchdog armed by hand,
+RAM watcher on the new renderer (`~/radix/noise-tests/2026-10-02/allego_mem_watch.log`).
+
+## Entry 8: at the rig during the light-phase run (2026-10-02 15:35-16:35)
+
+> [!info] All interventions with times, figures F-H and the marker file: [[2026-10-02-light-phase-run-rig-session]]
+
+Andrea at the rig, the light-phase run `8f84e3e62af6` recording (so no separate files, no Allego restarts; T1 isolator waits).
+No wire was at hand, so the foil bonding (T2) did not happen. What was measured, from the live file (gate estimator, idle priority):
+- **Baseline 15:30-15:35** (`noise_scan`, `~/radix/noise-tests/2026-10-02/trials/A0_live_1535.json`): floor 60 Hz A1 2889, A2 2087,
+  B2 1904 µV; A2 EMG 60 Hz 19.0, A2 EEG 3.1 µV peak; open EMGs 4.7-4.8 mV.
+- ⭐ **B1's floor creeps up through the light phase with nothing touched**: half-hour medians 732 (09:16), 840, 815, 826, 867, 857,
+  838, 991, 893, 911, **1028 (14:16)**, 955, 947 µV, while A1, A2, B2 hold within ±3 %. B1 sat at 702 (official) / 707 overnight, so
+  **the same mouse on the same hardware may read UNJUDGEABLE at night and "grounded" (>800) in the light phase.** Check the official
+  light-phase QC at 21:09. If it flips, that is direct evidence for audit C1 (the gate is not a property of the ground).
+- **AC volts, foil ↔ chassis lug (Harden 661002, `V~` 200): 0.0 every time.** Inconclusive: 0.1 V resolution, and the meter loads the foil.
+- ⭐ **A person at the rig moves the floors more than any untouched run does.** During the probe contact (~15:50:50-15:51:25):
+  A1 -8 %, B1 and B2 -5 to -10 %, A2 +20 % for one 10 s epoch, A2 EMG 60 Hz 21 → 15-16 µV. Afterwards A2 settled about 6 % higher
+  relative to its neighbours (A2/A1 0.731 → 0.772, A2/B2 1.09 → 1.17), as if its foil had moved. The ratio A2/A1 is a good
+  common-mode-free meter: 0.729-0.735 for the 10 min before. **Protocol change: step away to the same spot before every block** (plan updated).
+- For the light-phase staging: treat **15:35 to Andrea's departure** as disturbed.
+
+### ⭐ Presence / hand / wireless-receiver test (2026-10-02 16:00-16:08, Andrea's log)
+16:00-16:03 absent · **16:03 standing 50 cm in front of the headstages, hand brought close to each (no touching)** · 16:04 absent ·
+**16:05 in front, waving hands** · **16:06 waving a powered custom wireless EEG/EMG receiver (4 antennas, on the Dell PC, no transmitter
+active)** near the headstages · 16:07 after. Script `qc/presence_test_2026_10_02.py` (1 s steps; non-mains bands drop every bin within
+2 Hz of a multiple of 20 Hz). Most extreme 1 s value in each window, relative to the absent-before median.
+
+> [!note] Re-run 2026-10-02 23:00 after the first code review
+> Three fixes: the time origin now comes from the file's `status.start_time` (+0.153 s), the non-mains bands drop ±2 bins instead
+> of ±1 (±1 leaked mains), and the read stops at 16:09.
+> - Conclusions unchanged.
+> - Single-second extremes move with the 1 s grid, e.g. B1 x0.61 → x0.51.
+> - The receiver-vs-waving comparison now also flags B1's EEG at 3.25 Hz (x5) and 9 Hz (x4). Those are delta/theta, so B1's brain state changed between the two minutes; it is not radio pickup.
+
+| channel | hand near each headstage | waving hands | wireless receiver |
+|---|---|---|---|
+| A1 / A2 / B1 / B2 floor, 60 Hz | **x0.58 / x0.69 / x0.51 / x0.97** (first run: x0.58 / x0.72 / x0.61 / x0.95) | x0.69 / x0.88 / x0.79 / x0.95 | x0.98 / x0.99 / x0.97 / x1.01 (nothing) |
+| floor non-mains 100-450 Hz, max | A1 x39, A2 x16, B2 x61 (B1 x1.1) | A1 x18, A2 x16, B2 x94 | x1.0-2.7 (as when absent) |
+| open EMGs A/2, B/34 (implant-side open) | 60 Hz x1.02 / x1.05 | **60 Hz x1.28** / x1.06, HF x31 / x19 | nothing (one 88.75 Hz bin x3 on A/2, see below) |
+| **the mice's EEG and EMG (A2, B1)** | within the spread of the empty-room minutes | same | same |
+
+![[2026-10-02-noise-figF-presence-test.png]]
+
+**Figure F.** The presence test at 1 s resolution. Shaded: hand near each headstage (orange), waving hands (green), waving the wireless
+receiver (red). Floors dip for the seconds a hand is near (top), the open EMGs rise while waving (bottom), and the mice's own 60 Hz line
+(second panel) does not move. EMG bursts in the third panel also happen in the empty-room minutes: they are the mice.
+
+- **A person or a hand near the headstages is detectable on the wire-free floors and the open inputs, NOT on the connected EEG/EMG.**
+  A connected leg ties the input to the animal through kΩ-MΩ, and the chip measures the DIFFERENCE between two such legs, so a nearby
+  field puts almost the same voltage on both and it cancels. The floors are GΩ open pads: any nearby charge or conductor changes their pickup.
+- Standing still at 50 cm between the hand moments: no change. The dips last only the seconds the hand is near.
+- **The wireless receiver showed nothing** on any floor, any mouse channel, or B2's open EMG. The only trace is one Welch bin at
+  **88.75 Hz on A1's open EMG, x2.9 its neighbours** (the other windows x0.5-1.9). Weak, and that input rails 13 % of the time (spurious
+  products), so not convincing. Andrea had seen it on inputs WITHOUT mice: open long wires act as antennas, terminated legs do not.
+- **The 15:51 changes were the meter at the headstages** (hands right at them), the same effect as the hand test, not presence as such.
+### ⭐ Meter-probe repeat: hover vs touch on A2's foil (2026-10-02 16:22-16:23)
+Black probe fixed on the XDAQ chassis GND lug, meter ON (`V~` 200), red tip alternating ~10 s hover (1 cm) / ~10 s light touch on
+A2's foil, hand in the same place. Per 1 s, gate-style 60 Hz line on the floors:
+- **Every touch raised A2's floor only**: hover 2066-2105 µV → touch 2600-2920 µV (**+25 to +40 %**; median over the four contacts x1.22 on the re-run), four clean on/off cycles
+  (touches ~16:22:16-23, :35-40, :49-56, 16:23:05-12). A1 (same port), B1 and B2 did not move at all on the touches.
+- The mouse's channels did not follow: A2 EMG 60 Hz touch/hover x1.05, A1 EEG x1.03, open A/2 x1.00, B1 EMG x1.03 (A2 EEG x1.26 on
+  3 µV, inside its normal 1 s scatter).
+- Just having the hand and body there lowered every floor ~3-7 % (A1 2880 → 2825, B1 955 → 870, B2 1900 → 1815). They stepped back
+  up at 16:23:13, when the hand left. After the series, A2 sat ~5 % higher than before (A2/A1 0.751 → 0.760), the same small
+  lasting shift as at 15:51: touching the foil nudges it.
+- **Reading:** the red lead (~1 m of wire in the room's field) connected to the foil acts as an ANTENNA feeding mains into it. The
+  meter's 10 MΩ to the chassis is far too weak to pin the foil to earth. So this is NOT a preview of T2 (a real low-ohm bond): it
+  shows the foil couples straight into its own chip's open pads, and that **a wire on the foil that is not solidly grounded makes it worse.**
+- ✅ **Meter OFF repeat (16:27:01-16:27:11, red tip on A2's foil, black still on the chassis):** A2 floor 2266 → **4550-4800 µV
+  (x2.1; median x2.09 on the re-run)**, and **A2's EMG 60 Hz 29.5 → 33.5-35.4 µV (x1.17; x1.15 re-run)** for exactly those seconds (the first time a mouse channel followed).
+  Other chips unchanged. Ordering: floating lead (x2.1) > lead with 10 MΩ to chassis (x1.25-1.4) > foil alone. **The lead is an
+  antenna onto the foil, the foil's potential reaches the connected EMG of its own mouse, and a firmer path to earth lowers it**,
+  which is what T2 (a solid low-ohm bond) should test. Rule: never leave a loose wire or probe touching a headstage foil.
+- **Was the EMG rise the mouse moving? No** (Andrea's question; 1 s spectra of A/34). During the meter-OFF touch the EMG's 60 Hz line
+  went x1.16 while its muscle band (100-450 Hz non-mains) did NOT rise: x0.83 (5.4 → 4.5 µV) on the corrected re-run. (⚠️ The first
+  version said x0.42 and "the bins beside 60 Hz x0.48": its ±1-bin exclusion let mains leak into the band, review 2026-10-02.) The mouse
+  did not get busier while the line got bigger. The ADDED 60 Hz component kept the same phase every second (consistency R = 0.97 over 9 s) and a fixed angle to the
+  floor pad's added pickup (-104°, IQR -105..-99), which random muscle activity cannot do. Caveat: one 9 s event in one mouse; the meter-ON
+  touches were too weak to say (x1.05, R = 0.37). The floor jumps are not biology anyway (no animal on those pads). T2 will repeat it.
+
+- **For the trials:** the floors are the noise meters, so during a block keep hands away from the headstages and do not move near the
+  rig (plan updated). For the mice's data and the staging, an experimenter in the room is a behavioural disturbance (they may wake), not an electrical one.
+
+## Entry 9: light-phase stop, official QC, full-resolution scans of both runs (2026-10-02 21:02-21:45)
+
+**Stop, verified.** Console run `8f84e3e62af6` stopped 21:02:04 (scheduled, 3 s late, `R_ON → R_OFF`), QC 21:02:52, strip
+verified bit-exact 21:04, 4 per-mouse CSVs 21:07, **uploaded and verified (sha256 both ends) → DONE 21:11:30**. File
+`allego_0__uid1002-09-16-58`: **11.751 h** (42,304,256 samples), **timestamp steps all == 1** (zero dropped samples). Watchdog
+saw `R_OFF` at 21:05 and disarmed itself.
+
+**Lights-OFF is in the file, at 21:01:11.5, but below the all-chip bar**: floors A1 x3.8, A2 x4.4, B2 x5.1, B1 x1.2 (bar
+x5 on 3 of 4). Timing matches 09-21's lights-OFF (21:01:08); the timer runs ~70 s late at OFF and ~9 s early at ON.
+
+**Official QC flipped B1.** Same mouse, same hardware, nothing touched between the runs:
+
+| chip | gate floor overnight → light (µV) | rung 2 overnight | rung 2 light phase |
+|---|---|---|---|
+| A1 | 2590 → 2591 | UNJUDGEABLE (slope −3.24) | UNJUDGEABLE (−3.19) |
+| A2 | 2061 → 2117 | UNJUDGEABLE (slope −2.54) | UNJUDGEABLE (−2.39) |
+| **B1** | **702 → 971** | **UNJUDGEABLE (< 800)** | **PASS, 93.7 % usable, longest block 47.3 min** |
+| B2 | 1767 → 1748 | UNJUDGEABLE (slope −3.44) | UNJUDGEABLE (−3.38) |
+
+The gate's verdict on B1 followed a slow drift of its pickup through the day (Fig H), not a change in its ground. Audit C1 is now
+confirmed by the official pipeline itself.
+
+**Diagnostic stages 1-3 on the light-phase file** (as for the overnight, outputs `~/radix/noise-tests/2026-10-02/diag-processed/2026-10-02`,
+notch test `diag-emgtest-lightphase/`):
+
+| mouse | as published | EMG notched 60/120 Hz |
+|---|---|---|
+| A2 | REJECT, r@1min 0.290, wake 11.7 % | **SCOREABLE, 0.440, wake 21.7 %** |
+| B1 | SCOREABLE, 0.407, wake 17.7 % | SCOREABLE, 0.426, wake 18.9 % |
+| A1, B2 | REJECT (EMG open) | REJECT |
+
+A2 repeats the overnight (0.19 → 0.323): its EMG mains, not the mouse, sinks it.
+
+**Notch test over every `~/eeg-processed` day folder** (100 animal-recordings, 21 folders, idle priority, 9 min). The unnotched run
+reproduces **99/99 official verdicts** (one has no official summary). **SCOREABLE 44 → 69: 27 up, 2 down.** Among the 42 scoreable both
+ways r@1min changes by a median +0.027 (−0.070 to +0.279). The 2 that drop fail a physiology check after the notch, not r:
+**07-31 C2** (0.708 → 0.553, `nrem_largest_amplitude`; one of the only two old real-sleep recordings) and 08-19 C1 (`nrem_has_most_delta`,
+`nrem_largest_amplitude`). Some notched WAKE % are high (up to 72-88 % in dark sets). The epoch-shuffle negative control was NOT re-run at
+this scale. Still diagnostic, still not adopted: it would re-score published numbers.
+
+![[2026-10-02-noise-figK-emg-notch-all-days.png]]
+
+**Figure K.** Every animal-recording in `~/eeg-processed`, stage 3 as published vs with the EMG's 60/120 Hz notched. Left r@1min (bar 0.30),
+right WAKE %. Orange = REJECT → SCOREABLE (27), red = SCOREABLE → REJECT (2, both on a physiology check). `qc/fullscan_figures_2026_10_02.py`.
+
+**Full-resolution scans of both whole files.**
+
+> [!warning] Corrected 2026-10-02 23:30 after the second code review
+> The first version of this block came from `allchip_scan_file.py` v3, and its "all-chip" counts were wrong in both
+> directions. The vote let a port-local disturbance plus one noisy chip pass. The 8-notch IIR chain rang ahead of sharp
+> transients, and the chance levels used whole-file rates. The tool was rewritten:
+> - 50 ms comb;
+> - contamination decided once per file;
+> - **both ports required**;
+> - each event reported at its peak;
+> - per-chunk circular-shift chance.
+>
+> Positive control: NOISE02 gives all 4 switch flips. Logs and CSVs are in `~/radix/noise-tests/2026-10-02/fullscans-v2/`.
+> The superseded numbers are kept at the end of this callout.
+
+- **Overnight, all 12.03 h: 4 system-wide events, chance 0.01** (local null: the ports shifted 2-30 s against each other).
+  - The lights-ON at 08:59:51.0.
+  - Three smaller events that reached **both clean floors (A2 and B1, different ports)**: 01:59:56.5, 07:27:42.5, 08:41:13.8.
+  - Their cause is unknown: no video, and building loads at night are possible. So 01:05-08:50 was NOT silent.
+  - A2-B1 floor coincidences: 4, chance 0.06 (per 30 s stratum).
+- **Light phase, all 11.75 h: 13 system-wide events.**
+  - 10 fall inside Andrea's visit, which **began at 15:19:33 by the data** (we had 15:35), at the probe and meter tests. Their chance is 2.58 there because both ports were busy, so most are co-activity, not one building transient.
+  - Outside the visit: **17:10:08** (all 4 chips x61-115, the strongest of the day), **18:12:11** (B2 x108, A2 x38, B1 x12) and **20:56:36** (A2 x6, B1 x12), against a chance of 0.03. All three are real and unexplained.
+  - The lights-OFF at 21:01:11.5 stays under the bar, and the air showers left nothing.
+  - A2-B1 coincidences: 10, chance 8.7 per 30 s stratum (not 0.08): the floors were busy together during the visit.
+- **Within-mouse EEG+EMG events** (same 100 ms, > 8 robust SD): A2 0.7/h in both runs, B1 0.0 → 0.3/h, A1/B2 ≤ 0.1/h. Of A2's events, 1 of 9 (overnight) and 4 of 8 (light) touch its own floor; the light ones are the rig session. So the mice's own spikes stay their own.
+- EMG events/h are 300-675 on every mouse: muscle, as expected.
+
+Superseded (v3 tool):
+- overnight "one all-chip event, nothing system-wide 01:05-08:50";
+- light phase "32 all-chip rows, chance 1.33, A2-B1 chance 0.08".
+
+![[2026-10-02-noise-figL-system-events-both-runs.png]]
+
+**Figure L.** System-wide events (both ports in the same 100 ms; height = voting chips hit). Red marks the A2 and B1 floors hit in the same event; orange is Andrea at the rig (start from the data); dotted lines are the lights and air showers.
+
+**Splitter check re-run on `uid0921`**, with chance computed per 30 s stratum over the windows kept (whole-block rates were too low when two animals' rates co-vary):
+
+| pair | night 01:57-02:57 (10-01 value) | day 15:47-16:47 (10-01 value) |
+|---|---|---|
+| A1-A2 | 1.1x (0.8x) | 0.9x (2.0x) |
+| B1-B2 | 0.7x (0.8x) | 0.4x (0.4x) |
+| C1-C2 | 1.1x (1.2x) | 0.9x (1.4x) |
+| D1-D2 | 0.9x (0.7x) | 0.8x (0.4x) |
+| different ports, median (range) | 1.0x (0.6-1.4) | 1.0x (0.4-2.0) |
+
+**Unchanged conclusion: splitter partners coincide at chance, inside the range of unrelated pairs.**
+
+> [!success] The full 24 h analysis of these four mice is now one page: [[2026-10-02-noise-series-4mice-24h-analysis]]
+> It covers:
+> - the official verdicts (B1 light phase **SCOREABLE**);
+> - signal quality, sleep-wake and EEG slow-wave power over 24 h (Figs M, N, O);
+> - the disturbance windows;
+> - the archive-wide validation of the EMG notch (Fig P): shuffle 0/100; dose-response; dark > light WAKE in 47/49 vs 41/49 recordings;
+> - every number the two code reviews corrected.
+>
+> NAS: `02_Data_Sleep/andrea/noise-tests/ANALYSIS_2026-10-01_to_10-02_4mice_24h/`.
+
+Still open: `MARKERS.tsv` into the run's NAS folders (not done: it writes to the shared NAS, waiting for Andrea's OK); what happened
+at 17:10:08 and 18:12:10; the epoch-shuffle control for the all-days notch test.
+
 ## 🗂️ Recordings in this series and where they are
 
 Packaged as `XDAQ_noise_series_2026-09-30_to_10-01/` (built in `~/radix/noise-tests/_nas_package/`, hard links to the
@@ -264,7 +832,44 @@ dropped. Andrea first asked for `/home/Andrea_E10`; that folder exists on neithe
 
 Local originals are still in `~/radix/noise-tests/2026-09-30/` and `2026-10-01/` (plus the hard-linked package). Deleting them is Andrea's call.
 
-## Next steps (as of 2026-10-01)
+**2026-10-02: full RAW overnight on the SKIM NAS** for workstation analysis (Andrea's request):
+`02_Data_Sleep/andrea/noise-tests/RAW_20261001_2100_overnight_4mice_cfdf8ebde0c6/`. It holds the complete 134-channel Allego set
+(23.2 GB data, timestamps, json), every file SHA-256 verified by read-back with the cache dropped (copied at idle I/O priority during the
+light-phase recording, whose file kept growing normally throughout). Also: README.txt (what, why, mice, rig state, findings, the exact
+workstation commands), `scripts/` (the 2026-10-02 qc copies) and `analysis/` (figures, diagnostic staging). The per-mouse CSVs are in
+`../Baseline/20261001_POS-<slot>_B/`. Purpose: the full-resolution scans of 01:05-08:50 on the workstation instead of the rig.
+
+## Next steps and open decisions (as of 2026-10-02 11:10)
+
+**Running / scheduled (no action needed):**
+- Light-phase run `8f84e3e62af6` until 21:02 (keeps the 21:00 lights-OFF); health checks at :17 until 19:17.
+- 21:09 job: stop + lights-OFF check; once the console is DONE, full-resolution scans of the overnight and light-phase files; light-phase
+  stages 1-3 with and without the EMG notch; notch test over every `~/eeg-processed` day folder; splitter re-run on `uid0921`.
+
+**Waiting on Andrea:**
+1. **Full scans of 01:05-08:50 on the workstation** (raw + README commands on the NAS, `RAW_20261001_2100_overnight_4mice_cfdf8ebde0c6/`), run
+   by hand or driven from here over Tailscale SSH (one browser approval). If they finish first, the 21:09 job's overnight scans are dropped.
+   **AWS was considered and deferred (2026-10-02):** the raw is not in S3 until the 10-03 01:30 archive run (it defers while recording), an
+   upload now is a heavy read on the recording disk, and EC2 needs set-up with no budget alerts. AWS is the venue for **archive-wide**
+   reprocessing later (C1/C3 re-derivations over ~1 TB already in S3).
+2. **B1 board check after 21:02**: the collapsed wire-free pairs (/6, /14-/16), board seating, wires or foil on the pads.
+3. **Floor guards** (audit C1) and the **EMG mains notch** (audit C3): both are pre-registered pipeline decisions.
+4. **Deploy the console/watchdog fixes** in the worktree, only after the run is DONE.
+5. Still open from 10-01 (below): foil bonded to the chassis GND, twisted slip-ring wires. Dummy loads declined for now (Andrea, 10-01).
+
+### ⭐ Troubleshooting plan for the next trials (written 2026-10-02): [[2026-10-02-noise-troubleshooting-plan]]
+Andrea's list turned into an ordered, A/B/A plan with the same measurement block as the no-mice series, each trial judged against the
+spread of three untouched runs (A2 floor x1.03, EMG 60 Hz x1.07, so a change must beat that):
+- **Prerequisites:** B1 board check; DMM checks (foil floating? amplifier ground tied to chassis?); **where the slip-ring wires land**
+  (only to confirm /3-/16 are wire-free; the tether's copper shield was never on any pad, Andrea 10-02).
+- **Phase 1, now, nothing to build:** T1 USB isolator with mice, T2 foil bonded to the chassis GND, T3 tether shield to ground at the board end.
+- **Phase 2, build:** T4 aluminium box, T5 box grounded, T6 tether copper shield coiled onto the box, T7 Faraday cage around the home cage.
+- **Phase 3, tether change + 12-24 h runs, concurrent control + crossover:** T8 counterbalance arm (tether), T9 arm for slip ring + tether,
+  T10 new slip ring, T11 slip ring as the tether.
+- Main target: **the 60 Hz in the EMG** (it corrupts staging, C3, and we do not notch). New recorder `qc/record_block.py` (refuses during
+  console runs, checks the stream rate, logs every block); Session 1 is written out as commands.
+
+## Next steps (as of 2026-10-01; superseded by the list above)
 
 1. **Foil bonded to the XDAQ chassis GND** (one wire, foil never touching animal, implant or headstage GND). Possible
    now that the chassis GND is known to exist. Should cut capacitive pickup on open inputs and shows whether the
@@ -280,7 +885,7 @@ Declined by Andrea 2026-10-01: battery-powered XDAQ test, moving the XDAQ multit
 ## Hypotheses (written 2026-09-30; status as of 2026-10-01)
 
 > [!check] Status
-> 1. Port A 120 Hz source: OPEN. Not the room lights (entry 2).
+> 1. Port A 120 Hz source: OPEN. Not the room lights (entry 2). **2026-10-02: absent with 4 mice on and the free wires taped**: floor 120/60 Hz = 0.03 on A1 and A2 overnight (41-66 uV of 120 Hz) vs 0.31-0.59 on 09-30. Port B reads the same, so it rode on the open slip-ring wires / antenna of the no-mice set-up. Which change removed it (tape, multitap move, mice) is not separated.
 > 2. Coordinated spikes are within-mouse: SUPPORTED (whole-run scan: ~2.3 real all-chip events/day; splitter partners coincide at chance).
 > 3. USB-shield ground loop: TESTED, no measurable effect on mains or switch spikes (entry 3); the isolator raised broadband instead.
 > 4. 9.77 Hz comb on B/2: seen before the isolator, absent after it; not followed up.

@@ -49,3 +49,14 @@ path) → 5. only THEN talk about the electrode.
 Related: [[w-sd-recovery-sleep-run-2026-08-27]] · [[w-sd-batch-closeout-2026-08-28]] ·
 [[floor-threshold-fixed-per-chip]] · [[ecg-cohort-ground-miswired]] ·
 [[movement-dependent-contact-root-cause]]
+
+## 🔴 2026-10-01/02 UPDATE: the floor scale is CONFIGURATION-DEPENDENT. The 2000 proposal is FALSIFIED here
+After the noise-series changes (slip-ring free wires taped 09-30, adapter boards off/on 10-01, 8-core tethers), two
+chips under 2000 µV ON THE GATE'S PEAK SCALE carried working EEG in the first overnight: **B2 1820 and B1 742 (632-808)**. A2 was 2057.
+B1 also has an EMG that tracks behaviour (p95/p5 6.5). (First written as 'three chips: A2 1520, B2 1350, B1 455-599', which were band-RMS
+numbers, √2 small; corrected 01:45.) The old "lowest floor that ever produced EEG = 2186" no longer holds. **Do NOT
+apply 2000.** The 800 gate is suspect in this configuration too, in BOTH directions: empty headstages with NO animal
+read ~1750-4300 µV peak (the gate would call them grounded), while B1 with a working animal reads ~740 (gate calls it
+ungrounded). Open-input 60 Hz pickup measures antenna geometry as much as ground. Proposed fix (NOT applied): re-derive
+the populations with dummy loads (GND on vs lifted, same geometry), plus a pre-registered EMG-behaviour route.
+See [[recording-2026-10-01-noise-4mice-overnight]].

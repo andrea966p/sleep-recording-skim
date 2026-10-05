@@ -5,6 +5,13 @@ created: 2026-08-29
 
 # "No EEG" is at least four different faults, and the chip's own floor tells them apart
 
+> [!danger] 🔴 2026-10-02: the "below 2000 µV means no EEG" rule does NOT hold in the current rig configuration. Do not apply the 2000 µV proposal
+> After the noise-series changes (free slip-ring wires taped 09-30, adapter boards off and back on 10-01, 8-core
+> tethers), the first overnight (`allego_0__uid1001-21-00-07`) had **two chips under 2000 µV, on the gate's own (peak) scale, carrying
+> working EEG**: B2 1820 and **B1 742 µV** (632-808 over the night). A2 was 2057. B1 also has an EMG that tracks behaviour. Empty headstages
+> with no animal read ~1750-4300 µV on the same scale (1200-3000 band rms) the same day. **The floor's absolute level depends on antenna geometry, so the populations on this page
+> were valid for the pre-09-30 configuration only.** Re-derivation plan: [[2026-09-30-xdaq-noise-series]], "QC gate re-think".
+
 > [!abstract] TL;DR
 > A position that produces no usable EEG can be an **open electrode**, a **damaged tether
 > conductor**, a **fully floating chip**, or a **chip whose ground is merely WEAK**. The last one

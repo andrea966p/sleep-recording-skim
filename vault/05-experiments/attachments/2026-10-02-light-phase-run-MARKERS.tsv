@@ -1,0 +1,19 @@
+start_clock	end_clock	start_s_from_file_start	end_s	event	source
+09:16:58		0		light-phase run 8f84e3e62af6 starts (console)	console
+15:35:00		22682		Andrea at the rig (approximate, from the chat)	Andrea
+15:50:50	15:51:25	23632	23667	multimeter V~200: black on XDAQ chassis GND lug, red on A2's foil (reads 0.0); hands at the headstages	data
+16:00:00	16:03:00	24182	24362	absent (control)	Andrea
+16:03:00	16:04:00	24362	24422	standing 50 cm in front of the headstages, hand brought close to each (no touch)	Andrea
+16:04:00	16:05:00	24422	24482	absent (control)	Andrea
+16:05:00	16:06:00	24482	24542	in front, waving hands	Andrea
+16:06:00	16:07:00	24542	24602	waving the powered custom wireless EEG/EMG receiver (4 antennas, Dell PC) near the headstages	Andrea
+16:22:04	16:23:13	25506	25575	meter ON (V~200), black fixed on chassis lug, red tip hover/touch on A2's foil, ~8-10 s alternation	Andrea+data
+16:22:15	16:22:23	25517	25525	  touch 1 (meter ON)	data
+16:22:34	16:22:40	25536	25542	  touch 2 (meter ON)	data
+16:22:49	16:22:56	25551	25558	  touch 3 (meter ON)	data
+16:23:05	16:23:12	25567	25574	  touch 4 (meter ON)	data
+16:27:01	16:27:11	25803	25813	meter OFF: red tip (floating lead) touching A2's foil	data
+17:22:14		29116		facility air shower (next to the recording room) switched ON	Andrea
+~17:23-17:24		~29176		air shower ON again, 1-2 min later (exact second not logged)	Andrea
+17:35:50 (Andrea's clock, >=8 s ahead of e10)		29932		air shower ON	Andrea
+Allego 29937.4 s		29834 or 29937		another air shower ON (17:34:12.5 if Allego shows stream time, 17:35:55.5 if file time)	Andrea

@@ -44,13 +44,23 @@ os.makedirs(CACHE, exist_ok=True)
 
 
 # ---------------------------------------------------------------------------
+def cache_path(base):
+    """The feature-cache file for a recording, always inside CACHE.
+
+    Keyed on the recording NAME. os.path.join restarts at an absolute component,
+    so joining a full base path used to put the cache beside the raw file, in
+    the raw directory nothing may write to (found 2026-10-02).
+    """
+    return os.path.join(CACHE, os.path.basename(os.path.normpath(base)) + "_feat.npz")
+
+
 def extract_features(base, force=False):
     """Pass 1: per-epoch features for every animal in the file. Cached.
 
     One sequential read of the raw file. Everything downstream works off these
     features, so the 400 GB of raw data is never touched twice.
     """
-    out = os.path.join(CACHE, base + "_feat.npz")
+    out = cache_path(base)
     if os.path.exists(out) and not force:
         d = dict(np.load(out, allow_pickle=True))
         d["labels"] = json.loads(str(d["labels_json"]))

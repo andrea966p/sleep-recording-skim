@@ -67,6 +67,10 @@ sessions/
 # claude-config/settings.local.template.json instead.
 /.claude/settings.local.json
 
+# Claude Code's preview-server config for a session: it points into that session's /tmp scratchpad, so it is
+# machine- and session-specific (found 2026-10-05: `./skim push` would have swept it in with `git add -A`).
+/.claude/launch.json
+
 # Claude Code's agent worktrees. These are REAL git worktrees, registered in
 # .git/worktrees and listed by `git worktree list`, so git already tracks their
 # existence. Committing their working trees would copy the whole repo into
