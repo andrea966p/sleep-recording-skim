@@ -88,6 +88,38 @@ so no lab member is locked out, which is what makes that first copy possible.
 >
 > **The workstation is ready for the manual `./skim pull` / `./skim push` workflow.**
 
+> [!note] SKIM office workstation, re-checked and extended 2026-10-05 (from e10 over Tailscale SSH)
+> **Ready for Claude Code sessions AND for running the analysis code.**
+>
+> Already aligned (read-only checks):
+> - **Repo:** `./skim pull` reached `e402e87`; the tree is clean and in sync, with no stashes and one worktree.
+> - **Wiring:** `./skim check` passes all 9 links, `settings.json` is a real file, the git identity is set and Syncthing is off.
+> - **Memory:** the slug `-home-skim-sleep-recording-skim` resolves to `claude-config/memory` (99 files, including the 10-02 work).
+> - **Instructions:** `~/CLAUDE.md` links to `claude-config/CLAUDE.md`.
+> - **Hooks:** SessionStart runs `skim status` plus the caveman hook, and UserPromptSubmit runs the caveman tracker.
+> - **Claude Code:** 2.1.270 (e10 has 2.1.278).
+> - **Settings vs the template:** they differ only in personal choices: extra plugins (`agent-skills`, `ponytail`,
+>   `superpowers@superpowers` instead of the template's `superpowers@claude-plugins-official`, no `rust-analyzer-lsp`),
+>   `model opus[1m]` and a dark theme.
+>
+> Two gaps found and closed by Andrea with `sudo`; I staged the unit files in `~/skim-nas-units/`:
+> 1. **No numpy, scipy or matplotlib** in the system Python, so no analysis script could run (the planned workstation
+>    scans of 10-02 would have failed). Fixed with `sudo apt install python3-numpy python3-scipy python3-matplotlib python3-pytest`:
+>    Python 3.14.4, **numpy 2.3.5, scipy 1.16.3**, matplotlib 3.10.7. ⚠️ e10 runs numpy 1.26 and scipy 1.11; the pipeline
+>    binds `np.trapezoid` for numpy 2.
+> 2. **The SKIM NAS was not mounted.** `cifs-utils`, `/etc/skim-nas.cred` (0600 root, written by Andrea) and e10's
+>    `mnt-skimnas.mount` + `.automount` (same uid/gid 1000, so the options are unchanged) are now installed, and the
+>    automount is enabled. `/mnt/skimnas` shows `02_Data_Sleep/andrea/noise-tests/`. ⚠️ The mount is **read-write**, as on e10.
+>
+> Verified afterwards with the workstation's Python:
+> - the pipeline imports;
+> - **59/59 pytest tests pass**;
+> - the cohort-schema and falsification suites pass.
+>
+> The regression and ladder suites run nowhere (their recordings are in S3 only).
+>
+> ⚠️ Tailscale SSH check mode asked for a browser approval (`skimlab.kaist@gmail.com`) on the first connection of the day.
+
 ### Reaching a machine FROM e10, which is the harder direction
 
 The laptops have no sshd; they were only ever clients. To drive one from `e10ubuntu`, as

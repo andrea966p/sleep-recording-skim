@@ -67,6 +67,13 @@ it** — that is not a fault, it is the point. Edit it with `sudo nano /etc/skim
 > Idle-unmount after 600 s also means nothing is holding a network share open across a 24-hour
 > recording.
 
+> [!note] Machines with this mount (2026-10-05)
+> - **e10ubuntu**, where the uploader runs.
+> - **SKIM office workstation**, for analysis. Installed 2026-10-05 with the same two units (uid/gid 1000 on both) and
+>   e10's options. Read-write there too, so delete nothing from it by hand.
+>
+> See [[multi-machine-work-setup]].
+
 **1.4 Place the sentinel** (see section 2) at `{SKIMNAS_MOUNT}/{SKIMNAS_ROOT}/.skim-nas-share`.
 
 **1.5 Per-user folders** live at `{SKIMNAS_ROOT}/<name>` — currently `andrea`, `diane`, `ahyeon`,

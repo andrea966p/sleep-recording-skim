@@ -213,3 +213,5 @@ revoke it.
 
 **SSH now: e10 → ThinkPad = Tailscale SSH via `tag:thinkpad`. ThinkPad → e10 = ordinary sshd
 + ed25519 key, `Host e10` in `~/.ssh/config`.** Different machinery each way.
+
+**2026-10-05 workstation:** analysis-capable now (apt numpy 2.3.5 / scipy 1.16.3 on Python 3.14; e10 is numpy 1.26 / scipy 1.11, so check numbers before mixing machines) and SKIM NAS mounted via e10's automount units. Before 10-05 it had NO numpy and NO NAS mount. Tailscale SSH there is check mode: capture the approval URL with `script -qfc "tailscale ssh skim@skimworkstation ..."` and give it to Andrea.
