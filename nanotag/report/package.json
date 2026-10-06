@@ -1,0 +1,9 @@
+{
+  "name": "nanotag-report-build",
+  "private": true,
+  "description": "Builds the HLBNSL report/methods .docx and the figures .pptx from the analysis HTML pages (see build.sh)",
+  "dependencies": {
+    "docx": "^9.7.1",
+    "pptxgenjs": "^4.0.1"
+  }
+}

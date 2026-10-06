@@ -121,6 +121,7 @@ Production IPs, usernames, paths, and settings.
 - [[03-troubleshooting/emergency-runbook|Emergency Runbook — first 10 min]]
 
 ### Procedures
+- ⭐⭐ [[02-procedures/nanotag-recording-and-analysis|Nanotag studies: recording, read-out, NAS upload, analysis]] — program → implant → NFC read before the 8-day limit → log every handling window → `cohort.py` → `export_nas.py` + `nas_copy_verified.py`. 🔴 Mouse identity comes from the header tag ID, not the file name; `.nta` file times are save times, not read times.
 - 🔴⭐ [[02-procedures/electrode-connection-state-test|Electrode connection state test — OPEN vs SHORTED vs WORKING]] — **the no-wire control method (2026-07-31).** Read before judging any electrode by impedance again.
 - [[02-procedures/installation/new-pi-setup|New Pi Setup]]
 - [[02-procedures/session-recording-workflow|Session Recording Workflow]]
@@ -152,6 +153,13 @@ Production IPs, usernames, paths, and settings.
 - ⭐ [[04-journal/_JOURNAL-INDEX|Journal Index — chronological master navigator]] — **every day in date order.** The journal records what happened and links down into the detail notes. Start here to navigate by time rather than by topic.
 
 ### Experiments
+- ⭐⭐⭐ [[05-experiments/_HLB-SOD1-project-hub|HLB SOD1 PROJECT HUB — START HERE for the science]] — HLB-sponsored: does oral microbial SOD protect sleep and cognition under chronic sleep restriction? Proposal vs what runs, every batch (intake trials → 4 EEG batches → nanotag), what the EEG → nanotag pivot gives up (no NREM/REM), and 🔴 **four decisions before NS-SD/NW-SD** (activity-only tags so one 20-day run needs no mid-study read; SD hours analysed, not dropped; SD length 4 vs 6 h and 5 vs 7 d; read and stop tags at sampling).
+
+**Nanotag SOD1 study (HLBNSL): implanted activity loggers, no EEG. Start with the study page.**
+- ⭐⭐⭐ [[05-experiments/active/2026-09-14-HLBNSL-nanotag-SOD1-sleep|2026-09 — HLBNSL: ORAL SOD1 vs WATER, HOME-CAGE SLEEP BY NANOTAG]] — **NEW EXPERIMENT TYPE.** NS-SL (SOD1, 41-44, 49; 43 died 09-28) vs NW-SL (water, 45-48, 50), baseline 09-14 → 09-17, treatment 09-20 → 10-02, Y-maze / NOR, sampled 10-02. Mice, tags, timeline, where every file is. Next batch NS-SD / NW-SD, surgery 10-12.
+- ⭐⭐⭐ [[05-experiments/completed/2026-10-05-HLBNSL-nanotag-merged-analysis|2026-10-05 — HLBNSL: RUN 1 + RUN 2 MERGED, FULL RE-ANALYSIS]] — **no detectable SOD1 effect on sleep** (793 vs 768 min/day, p = 0.61; change p = 0.77). 🔴 Handling and test days raise dark-phase sleep ~10 points in both groups, so quote the undisturbed days for absolute values. RA change p = 0.029 (3 vs 4, baseline imbalance): a hypothesis for NS-SD. Merge reproduces the Run-1 report exactly when Run 2 is withheld. NAS `andrea/HLBNSL_nanotag_ANALYSIS_2026-10-05/`.
+- 📋 [[05-experiments/active/2026-10-05-HLBNSL-sheet-handover-run2|2026-10-05 — sheet edits for Run 2 (OPEN)]] — the NANOTAG tabs still say "Run 2 discarded"; cell-by-cell edits, not applied. Earlier, applied: [[05-experiments/completed/2026-09-28-HLBNSL-sheet-handover|2026-09-28 sheet handover]].
+
 **EEG runs and results — read these for the current scientific picture:**
 - 🔴⭐⭐ [[05-experiments/completed/2026-09-11-allego-control-bench-test|2026-09-11 — BENCH TEST: STOPPING ALLEGO WORKS, AND THE FILE SIZE LAGS 30 SECONDS]] — twenty minutes on the live rig with no animals, to settle whether software may be trusted to start and stop the amplifiers. ✅ **`set_recording('off')` works on the first call** — the "never used here" flag was an absence of use, not a problem. 🔴🔴 **The real finding: `os.path.getsize()` reports 0 for a FULL 30 s after a perfectly healthy start**, then jumps to 31 MB (30,208 samples = 30.2 s). **Any growth check shorter than ~35 s reports a working recording as dead** — an 11 s check did exactly that, and because it asserted before its stop call it **left the rig recording**. ⭐ `qc/start_recording_at.py`'s 40 s window is safe; do NOT optimise it down. 🔑 Anything asserting on growth must stop the recorder in a `finally`. ⚠️ `ConfigRecording` is persistent — a test that redirects the path must restore it.
 - ⭐⭐ [[02-procedures/blind-scoring-and-kappa|blind scoring and Cohen's kappa — READY TO RUN]] — the last unmeasured thing about the pipeline. Packs of 300 items are built for D2 and B1. ⭐ **§2 pre-registers what each kappa value will mean, written before a single epoch was scored**, including the REM rule that decides whether we ever report a REM share. 🛑 Never tune the threshold to maximise `r@1min` — that makes our own validity statistic circular.
@@ -199,6 +207,7 @@ Production IPs, usernames, paths, and settings.
 - [[05-experiments/active/|Active Experiments]]
 
 ### References
+- ⭐⭐ [[06-references/nanotag-kissei-device-and-literature|Nanotag (Kissei VSMN 210): device and literature]] — what a cross count is, the 8-day / 60-day limits, NFC 1 cm, sleep = immobility ≥ 40 s (Pack 2007), the one mouse nanotag sleep study (Nagai 2020), six more PubMed nanotag studies. 🔴 No EEG validation in mice exists. Manuals in `06-references/datasheets/`.
 - 📖 [[06-references/eeg-analysis-glossary|⭐ EEG analysis glossary]] — every term and parameter in plain words (`nperseg`, `r@1min`, `Wn`, `DIRTY`, `ZT`, Otsu, block, rms, EDF)
 - ⭐⭐🔴 [[06-references/electrode-failure-and-impedance-literature|Electrode failure + impedance literature — 82% of epidural electrodes fail in 3 weeks]] — six primary papers vs our data. **Weakens the "EMG works so it must be our solder" argument**; our best channel is poor by published standards; drops the frontal-sinus hypothesis.
 - 🔴⭐ [[06-references/daq-research-findings-primary-sources|DAQ research findings — primary sources]] — 8 corrections; read before trusting older DAQ notes

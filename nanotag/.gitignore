@@ -1,0 +1,8 @@
+# Data and outputs live on the SKIM NAS (02_Data_Sleep/andrea/HLBN*), never in git:
+# ./skim push runs `git add -A`.
+analysis/out/
+analysis/figs/
+__pycache__/
+*.nta
+*.csv
+report/node_modules/

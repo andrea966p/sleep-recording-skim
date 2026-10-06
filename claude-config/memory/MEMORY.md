@@ -70,6 +70,9 @@
 - ⭐ [XDAQ channel law](xdaq-channel-law-and-32-mouse-wiring.md) — animals = channels ÷ 64. Order ONE-R1024. 32 mice = 2 boxes.
 - [DAQ comparison](daq-ecosystem-comparison.md) (confidential) · [16→32 device](acquisition-device-16-32-mice.md) · [Open Ephys](openephys-scale-up-option.md). Kontex quote 262024 = $10,002.89.
 
+## Nanotag studies (SOD1, no EEG)
+- 🧪⭐⭐⭐ **[NANOTAG SOD1 STUDY HLBNSL: SECOND EXPERIMENT TYPE — 2026-10-05](nanotag-sod1-hlbnsl.md). NEWEST.** Kissei implant, 12 s activity, workstation only. Run 1 + Run 2 MERGED (09-28 "discarded" reversed), logged windows cut. No SOD1 sleep effect; handling days +10 pts dark sleep in both groups. 🔴 Mouse = header tag ID (Run 2 files all `HLBNSSL_<n>`). 🔴 `.nta` mtime = SAVE time. Code `nanotag/`, NAS `andrea/HLBN*`. ⚠️ No off-site copy. Sheet edits OPEN.
+
 ## Working across machines
 - ✅🔴⭐⭐⭐ **[ONE REPO: `sleep-recording-skim`](workspace-single-repo-sleep-recording-skim.md).** Vault + code + Claude config. Sync = MANUAL `./skim status|pull|push|check`. **4 machines**; e10 cutover DONE 09-11. 🔴 `bootstrap.sh` KEEPS an existing `settings.json` ⇒ can leave a machine with NO hooks. DIFF IT.
 - ✅🔴⭐⭐ **[THE THINKPAD IS ON THE WORKFLOW, set up remotely from e10 — 2026-09-19](workspace-single-repo-sleep-recording-skim.md).** 🔴 Its only gap was a **MISSING GIT IDENTITY — `check.sh` AND `skim status` both pass without one**. 🔑 e10→laptop = **Tailscale SSH + a TAG** (`dst` can only be `autogroup:self` or a tag). 🔴🔴 **Enabling Tailscale SSH HIJACKS port 22 and bypasses the real sshd** — it broke `ssh e10`; `--ssh=false` fixed it.
