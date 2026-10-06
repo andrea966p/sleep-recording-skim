@@ -41,3 +41,8 @@ Vault ⭐ `06-references/xdaq-32-mouse-wiring-and-channel-law.md`. Sourced from 
 **KonteX sells commutators too:** Commutator **STD** (passive, redesigned, integrated animal-side cable management, XR up to 256ch/cable) and **PRO** (motorized, low-noise, onboard µP + gyroscope or Hall torque sensing). PortExp *"compatible with all KonteX cable and commutator solutions"*, recommends same model on every animal. ⏳ prices.
 
 Related: [[daq-ecosystem-comparison]], [[acquisition-device-16-32-mice]], [[eeg-60hz-saga]].
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- ⭐ [XDAQ channel law](xdaq-channel-law-and-32-mouse-wiring.md) — animals = channels ÷ 64. Order ONE-R1024. 32 mice = 2 boxes.

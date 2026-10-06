@@ -90,3 +90,8 @@ no-ground observation rather than a "control".
 Related: [[animal-card-verdict-ladder]] · [[ground-fix-worked-2026-08-08]] ·
 [[council-and-pipeline-fixes]] · [[recording-usable-fraction-analysis]] ·
 [[ecg-cohort-2026-08-07]]
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- 🔴⭐⭐⭐ **[ANALYSIS STACK AUDIT — 2026-08-11](analysis-stack-audit-2026-08-11.md).** "Filtering cannot manufacture slope" is FALSE. Slope fractions carry ±20 pts.

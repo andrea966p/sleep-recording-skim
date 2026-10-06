@@ -37,3 +37,8 @@ a USB bridge.
   earlier chkdsk, so this had happened at least once before.
 - Installing `smartmontools` starts `smartmontools.service` (smartd) immediately AND enables
   it at boot. Unwanted on this box, which runs 72 h live-animal recordings: `sudo systemctl disable --now smartmontools.service`.
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- ✅ **[USB HDD would not mount = NTFS DIRTY BIT](usb-hdd-ntfs-dirty-bit.md)** — `sudo ntfsfix -d /dev/sda1`. 🛑 bare `ntfsfix` SETS the bit.

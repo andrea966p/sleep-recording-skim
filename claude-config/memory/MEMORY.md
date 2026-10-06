@@ -39,6 +39,7 @@
 - **Artefact policy:** `02-procedures/eeg-artefact-and-railing-rejection-policy.md`. Reject at EPOCH level, never repair.
 
 ## EEG rig — runs
+- 🧪⭐⭐⭐ **[Did SOD1 change sleep? 4 EEG batches as a 2x2 (10-06)](sod1-sleep-eeg-2x2-2026-10-06.md). NEWEST.** EEG baselines are ON treatment. No effect without SD. EMG rescue between 60 Hz harmonics (raw 1000 Hz, κ 0.95) ⇒ HLBSSD15 paired: rebound +6.6 vs water +16.1, n=1/arm; max rescue adds nothing.
 - ✅⭐ **[Noise hunt verdict: mostly a ghost (10-06)](noise-hunt-verdict-2026-10-06.md). NEWEST.** EMG mains is the only real noise; the notch removes it. 🛑 No more environmental-noise trials or spending. Isolated socket + foil busbar coming; lab moving to E7. Never claim "all EEG clean".
 - 🌙 **[Noise series, 4 mice, 24 h (10-01/02)](recording-2026-10-01-noise-4mice-overnight.md).** Placeholder IDs `POS-<slot>`; A1/B2 EMG open. 🔴 Console runs do NOT arm the watchdog. B1 flipped UNJUDGEABLE → PASS untouched (audit C1). Andrea's clock ≥ 8 s ahead.
 - ✅ **[S-SL paired n = 3 (09-26)](s-sl-has-sleep-data-n3.md).** HLBSSL31/33/35. 🛑 No sleep conclusion (window composition). uid0920 = uid0921 split.
@@ -115,6 +116,7 @@
 - 🛑 **[Background waits must terminate](feedback-background-waits-must-terminate.md):** deadline on every loop, no self-matching `pgrep -f`, TaskStop when done.
 - 🛑 **[neurosurveillance-expert skill retired](feedback-neurosurveillance-skill-retired.md):** never use it; vault + repo are the source.
 - 🛑 **[Never strip or run heavy disk jobs while recording](feedback-never-strip-during-a-live-recording.md).** `RIG BUSY` in a dry run = stop.
+- 🛑 **[SOD1 effect: EEG and nanotag findings stay SEPARATE](feedback-sod1-eeg-nanotag-separate.md):** never "nanotag agrees"; one section per method.
 - [No dashes in emails](feedback_no_dashes_in_emails.md) · [Implementation guides](feedback_leave_guides.md) · [Verify operational details](feedback_verify_operational_details.md) · [No `record.enabled: false`](feedback_record_enabled_false_off_limits.md) · [Sudo command style](feedback_sudo_command_style.md) · [Report writing style](feedback_report_writing_style.md)
 
 ## Operational patterns

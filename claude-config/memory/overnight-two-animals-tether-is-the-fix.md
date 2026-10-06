@@ -79,3 +79,8 @@ gRPC call fires a NEW measurement. ✅ **Never sweep from the GUI: use
 
 See also [[recording-usable-fraction-analysis]], [[fleet-duty-cycle-census-and-new-mouse]],
 [[tether-soldered-duty-cycle-result]].
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- ⭐⭐⭐ **[TWO ANIMALS WORK; THE TETHER IS THE FIX](overnight-two-animals-tether-is-the-fix.md).** Impedance SCREENS; only a multi-hour recording is an OUTCOME.

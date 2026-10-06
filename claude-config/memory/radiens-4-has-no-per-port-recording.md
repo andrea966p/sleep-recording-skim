@@ -29,3 +29,7 @@ RecordMode.OFF)`) but **no code in this repo has ever called it** — bench-test
 recording before it goes near an animal run.
 
 ⚠️ `AllegoClient.restart()` is also broken (`mode.enum`); call the `Restart` gRPC with `mode.value` instead. (Moved here from the MEMORY.md index, 2026-10-06.)
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- 🔴⭐⭐ **[radiens 4.0.0 HAS NO PER-PORT RECORDING](radiens-4-has-no-per-port-recording.md).** Recording is GLOBAL. 4.0.0 IS latest stable — don't upgrade to fix it. ⚠️ `AllegoClient.restart()` is also broken (`mode.enum`); call the `Restart` gRPC with `mode.value`.

@@ -49,3 +49,8 @@ generated report `05-experiments/completed/2026-08-09-HLB-cohort-report-generate
 
 Related: [[eeg-analysis-pipeline]] · [[recording-usable-fraction-analysis]] ·
 [[ground-fix-worked-2026-08-08]]
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- ⭐⭐⭐ **[ANIMAL CARD + VERDICT LADDER](animal-card-verdict-ladder.md). READ BEFORE ANY ANALYSIS OR FIGURE.** Six rungs. `core/qc_thresholds.py` + `core/criteria.py` are the only engines. Rung 2 gates on longest unbroken block ≥15 min.

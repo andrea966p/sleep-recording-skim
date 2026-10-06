@@ -46,3 +46,8 @@ Diagnostic gotchas found along the way:
 
 If the spin returns on the next Allego launch, it is reproducible and worth reporting to
 Kontex. See [[eeg-rig-current-state]].
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- 🔴⭐ **[allegoserver spins a core after the GUI closes](allegoserver-runaway-thread-thermal.md)** — +10 W/+11 °C. `ps %CPU` = lifetime avg, misleads.

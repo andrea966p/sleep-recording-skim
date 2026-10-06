@@ -66,3 +66,8 @@ is `ls` the destination and watch `_data.xdat` grow.
 
 See also [[overnight-two-animals-tether-is-the-fix]], [[recording-usable-fraction-analysis]],
 [[fleet-duty-cycle-census-and-new-mouse]].
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- **[ECG COHORT — 2026-08-07](ecg-cohort-2026-08-07.md).** 🔴 `set_recording_config()` BROKEN. ⚠️ `get_status().recording.path` LIES; always `ls`.

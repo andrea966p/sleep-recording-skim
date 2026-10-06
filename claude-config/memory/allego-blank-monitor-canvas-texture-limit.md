@@ -84,3 +84,8 @@ the Chan height ≤30 option before the next multi-hour live-animal run.
 ## Related
 
 [[allego-mesa-gpu-crash-and-log-storm]] · [[allego-orphaned-server-blocks-the-rig]]
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- ✅🔴⭐⭐⭐ **[BLANK MONITOR = CANVAS BIGGER THAN THE SOFTWARE RENDERER — 2026-09-16](allego-blank-monitor-canvas-texture-limit.md). NEWEST.** Canvas = ALL signals × Chan height (262×50=13175 px); `--disable-gpu` ⇒ SwiftShader 8192 ⇒ never draws. Launch WITHOUT the flag ⇒ Intel GL 16384 ⇒ works. 96→262 signals crossed a threshold.

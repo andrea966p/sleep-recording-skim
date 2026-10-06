@@ -72,3 +72,8 @@ python client). Re-scanning 130 done files went ~7 min → **4.3 s**.
 ✅ **Both repos are on GitHub now (private): `neurosurveillance` (branch `ops/...`) and
 `eeg-emg-analysis` (205 objects, 18.53 MiB, first push ever).**
 ⚠️ **My `pgrep -f <script>` guards keep matching my OWN command line — use the state file, not pgrep.**
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- ✅⭐⭐⭐ **[ALL 831 GB RAW DATA ON THE NAS + UNATTENDED RECORDING](raw-data-archive-and-recording-automation.md).** 124 files, sha256 both ends. 🔴 `radiens` only in `/opt/neurosurveillance/venv/bin/python3`. 🔴 `ssh` in a `while read` loop eats stdin — always `ssh -n`.

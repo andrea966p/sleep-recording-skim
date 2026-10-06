@@ -37,3 +37,8 @@ Affects [[recording-2026-09-17-HLBW_SL-28h]] and [[skim-nas-smb-and-channel-stri
 ✅ Closed by [[radix-s3-offsite-archive]], whose first run uploads raw for all 28.
 ⚠️ Re-arming the NAS raw archiver (delete `radix-archive.state`) would add a
 second raw copy; **not done**, not requested.
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- 🔴🔴⭐⭐⭐ **[83% OF THE RAW ARCHIVE HAD NO RAW BACKUP — measured 2026-09-20](raw-data-had-no-offsite-copy-since-aug19.md).** 931 GB unprotected. `radix-archive-watchdog.sh` **retires itself on COMPLETE by design** (Aug 21) — 0-byte log looks broken, isn't. 🔴🔴 **"NAS-verified" = the STRIPPED file (16 of 262 ch, 6%)**, never the raw. Resolve NAS dirs via `UPLOAD.json` `allego_base`, not filenames.

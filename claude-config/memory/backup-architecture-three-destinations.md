@@ -45,3 +45,8 @@ return. [[radix-s3-offsite-archive]]
 ignores `deploy/logs/` + `.git/FETCH_HEAD` churn). Still runs during recordings, by
 user decision. S3 got a fast path + 30 min settle guard [[radix-s3-offsite-archive]].
 SKIM NAS already event-driven, unchanged.
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- ✅⭐⭐⭐ **[BACKUP ARCHITECTURE: 3 DESTINATIONS, ONE JOB EACH — 2026-09-20](backup-architecture-three-destinations.md). NEWEST.** bilab NAS = rebuild the rig · SKIM NAS = **working copy, NOT a backup** · S3 = survive the fire. 🔴 "e10 lost the bilab NAS" was FALSE — verify before planning a reconnect. ✅ `nvr-notify.sh` → **ntfy** for all 7 scripts. ⚠️ Video ≈ **930 GB/month** once cameras return.

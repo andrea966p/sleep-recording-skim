@@ -50,3 +50,8 @@ must carry `env.AWS_MCP_PROXY_PROFILES=andrea` or the server fails to start with
 the toolkit's 23 skills (4 MB) and its rules block landed in
 `claude-config/` and were pushed to all 4 machines (commit `5b973ac`). Vendor
 content updated by `aws agent-toolkit`, not by hand — expect it in diffs.
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- ✅🔴⭐⭐ **[AWS ACCESS + AGENT TOOLKIT — 2026-09-19](aws-access-and-agent-toolkit.md). NEWEST.** Account 760396521414, profile `andrea`, `ap-northeast-2`. 🔴 NOT 12 h creds — 15-min token + refresh token; renews silently mid-session but **the session dies overnight** ⇒ SSO CANNOT drive unattended jobs. 🔴 Login cache holds PLAINTEXT keys and its dirs ship **755** — `chmod 700 ~/.aws{,/login,/login/cache,/cli,/cli/cache}` on every new machine. 🔴 Ubuntu apt `awscli` HAS NO `aws login` — use the official installer. 🔴 `aws-mcp` needs `AWS_MCP_PROXY_PROFILES`.

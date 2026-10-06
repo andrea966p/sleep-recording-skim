@@ -21,3 +21,8 @@ The HLB SOD1 project also runs **nanotag** studies (Kissei VSMN 210 implant: 12 
 
 **Why:** the work lived only on one Desktop until 2026-10-05, and the cohort facts that change results (tag IDs, windows, the merge decision) are easy to lose.
 **How to apply:** for any nanotag question, start from the study page. Get windows from the sheet's NANOTAG behavioral tab, never from the data. Re-run the Run-2-withheld regression after any loader change. Related: [[skim-nas-per-mouse-csv-layout]], [[backup-architecture-three-destinations]].
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- 🧪⭐⭐⭐ **[NANOTAG SOD1 STUDY HLBNSL: SECOND EXPERIMENT TYPE — 2026-10-05](nanotag-sod1-hlbnsl.md). NEWEST.** Kissei implant, 12 s activity, workstation only. Run 1 + Run 2 MERGED (09-28 "discarded" reversed), logged windows cut. No SOD1 sleep effect; handling days +10 pts dark sleep in both groups. 🔴 Mouse = header tag ID (Run 2 files all `HLBNSSL_<n>`). 🔴 `.nta` mtime = SAVE time. Code `nanotag/`, NAS `andrea/HLBN*`. ⚠️ No off-site copy. Sheet edits OPEN.

@@ -21,3 +21,8 @@ a 30x stream and record a file with a wrong-rate header.
 `time_range[1]` delta to wall clock (must be ~1.0x). If 30x: stop stream, set another rate, set 1 kHz
 again, restream; else relaunch Allego and set 1 kHz + XDAQ ONE REC before Stream. A rate check in the
 console pre-flight is not built yet.
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- 🔴⭐⭐⭐ **[STREAM RAN 30× REAL TIME WHILE ALLEGO SAID 1000 Hz — 2026-09-30](allego-stream-30x-rate-label-lies.md). NEWEST.** Monitor freezes. Box kept fresh-launch 30 kHz. Console checks only the label ⇒ measure `stream.time_range` vs wall clock (~1.0×) before recording.

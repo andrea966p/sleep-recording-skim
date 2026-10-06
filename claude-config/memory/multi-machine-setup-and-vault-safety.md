@@ -181,3 +181,8 @@ Syncthing config lives at `~/.local/state/syncthing` with its web UI on `127.0.0
 the two CODE folders `neurosurveillance` and `neurosurveillance-system` still replicate a
 live `.git` with NO versioning, shared with the PAUSED office PC only, never with the
 laptop — dormant, and it arms the moment that machine is unpaused.
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- ❌🔴 **[Syncthing UNINSTALLED from e10 + the OFFICE PC, 2026-09-16](multi-machine-setup-and-vault-safety.md).** ✅ Gone from the ThinkPad too ⇒ **retired everywhere**. Identities parked, not deleted. 🔴 `apt purge` does NOT stop the daemon; **`apt autoremove` blast radius VARIES** (52 pkgs / NVIDIA stack on the office PC). Why the vault died in 2026-04.

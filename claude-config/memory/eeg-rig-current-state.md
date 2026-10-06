@@ -81,3 +81,8 @@ Chip = **RHD2216** bipolar, `REF` empty by design; one 16-ch chip, Allego shows 
 **Surgery:** dedicated animal-ground dura/bone pin per mouse; EMG leads in muscle, tips stripped, anchored; clean sockets of dried blood before tethering; pre-closure DMM continuity + GUI impedance. Montage per Iwasaki/Funato/Yanagisawa 2021 (IIIS Tsukuba): bipolar LEFT EEG (frontal+parietal) + neck EMG, no cerebellum ref. EDF+ = scorer handoff.
 
 **Prior validated:** 14.23 h 2-mouse stress test byte-perfect (82°C); 72 h run byte-perfect → endurance PROVEN.
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- 🔴⭐⭐ **[FULL EEG RIG STATE](eeg-rig-current-state.md).** Channel law, signatures, retractions. ⚠️ Electrode-failure framing SUPERSEDED by the ground root cause.

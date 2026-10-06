@@ -41,3 +41,8 @@ Decided 2026-09-29, rebuild only:
   1. a 2-minute real UI run with headstages connected;
   2. nothing committed yet, so `./skim push`.
 - Related: [[backup-architecture-three-destinations]], [[skim-nas-smb-and-channel-stripper]], [[contaminated-floor-rejects-good-eeg]].
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- ✅🔴⭐⭐⭐ **[SKIM NAS = ONE CSV PER MOUSE in 02_Data_Sleep, 24 h WINDOWS — 2026-09-30](skim-nas-per-mouse-csv-layout.md). NEWEST.** Rebuild DONE, 64 folders verified. Scoreable at both timepoints: **HLBWSD08, HLBWSL24, HLBSSL33** (+31, 35 stage 3 only); S-SD none. info.json carries the `qc` verdict (the CSV has no wire-free floor). ⏳ A real UI test run and the commit are pending.

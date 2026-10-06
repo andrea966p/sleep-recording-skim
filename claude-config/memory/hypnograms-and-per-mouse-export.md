@@ -46,3 +46,8 @@ has numpy 2.5 and **numpy 2.0 REMOVED `np.trapz`**; stages 1+3 now bind `np.trap
 analysis → `/usr/bin/python3`.**
 
 Related: [[emg-gate-passes-and-floor-bug]] · [[recording-2026-08-18-eight-new-mice]] · [[animal-card-verdict-ladder]]
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- ⭐⭐⭐ **[FIRST HYPNOGRAMS](hypnograms-and-per-mouse-export.md).** `r@1min` decides, bar 0.30. 🛑 Never report REM %. Analysis → `/usr/bin/python3`, `setsid` not `nohup`.

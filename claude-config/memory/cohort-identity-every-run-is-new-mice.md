@@ -16,3 +16,8 @@ metadata:
 **Why:** every cohort so far has been replaced wholesale after a few days, and treating a position label as an animal has already published two mice as one (the B1a/B1b case in `cohorts/HLB-fem-profsurgery-troubleshooting.yaml`). Carrying a prior animal in as a reference smuggles an expectation into a fresh cohort and makes a bad run look explainable.
 
 **How to apply:** at the start of any analysis, treat the file's animals as unknown and unrelated to anything earlier. Judge every channel against the wire-free floor **in that same file**. Ask the user for animal ids, surgery dates and tether arms rather than inferring them from a previous manifest. Only merge two runs into one animal's history when the user says they are the same animal. See [[animal-card-verdict-ladder]] and [[recording-2026-08-18-eight-new-mice]].
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- 🔴⭐⭐⭐ **[EVERY RUN IS NEW MICE UNLESS I SAY OTHERWISE](cohort-identity-every-run-is-new-mice.md).** Rig position ≠ animal. Hardware facts carry; animal facts do not.

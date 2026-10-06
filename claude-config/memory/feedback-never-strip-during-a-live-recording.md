@@ -29,3 +29,8 @@ any manual strip after it finishes. A dry run is fine; the real thing waits.
 channels — so the stripped copy has **no wire-free floor** and can never be QC'd
 by this project's own criterion. The original on the rig is the record of truth.
 See [[skim-nas-smb-and-channel-stripper]].
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- 🛑 **[NEVER strip or run heavy disk jobs while the rig is recording](feedback-never-strip-during-a-live-recording.md).** A console-started run strips itself on stop; `RIG BUSY` in a dry run = stop.

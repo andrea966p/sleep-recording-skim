@@ -93,3 +93,8 @@ the threshold is ours, and those are always data-derived.
 not a scoring rule** (assigns no epoch to a stage). Label it as ours.
 🔑 **The unusual thing about this project is NOT the method, it is how much data
 must be discarded — a hardware problem no analysis choice fixes.**
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- ⭐⭐🔑 [THE ANALYSIS PIPELINE](eeg-analysis-pipeline.md) · [Scoring bug #2](eeg-analysis-codebase.md) · [QC tooling](eeg-qc-tooling.md) · [60 Hz saga](eeg-60hz-saga.md) · [First bring-up](project_first_headstage_bringup.md)

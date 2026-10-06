@@ -100,3 +100,8 @@ floor refinement.** 🛑 **User does NOT want to write a methods paper** — the
 wasting time and getting wrong answers.
 ⚠️ bioRxiv API has NO keyword search (category+date only) ⇒ sampled via web search, NOT a novelty search.
 Vault: `06-references/is-our-qc-approach-sound.md`.
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- 🔴⭐⭐⭐ **[EMG GATE + THE POOLED-FLOOR BUG](emg-gate-passes-and-floor-bug.md).** Pooled floor FIXED 2026-08-26. Always ABSOLUTE delta, never the ratio.

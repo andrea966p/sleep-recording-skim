@@ -28,3 +28,8 @@ metadata:
 🧹 **Room stripped 2026-08-04:** rack = wifi router + ASUS PC + XDAQ + white-noise generator only. ⚠️ **Pis and ALL CAMERAS REMOVED ⇒ NO VIDEO RECORDING** until restored, so behaviour can't be scored against the sweep loop yet.
 
 ⚠️ **Limits:** still/moving pair is n=1 and failed its one replication · "still"/"moving" judged **by eye**, not video (the labels in those two filenames are the experimenter's note, not an instrument reading) · **no board photographs taken, by choice** · only the positive input of each bipolar pair is ever measured · 8-mouse sweeps use splitters, single-animal ones don't.
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- ⭐⭐⭐ **[ELECTRODES PROVEN GOOD; CONTACT IS INTERMITTENT](movement-dependent-contact-root-cause.md).** Contact flips within minutes ⇒ a single sweep cannot rank or classify.

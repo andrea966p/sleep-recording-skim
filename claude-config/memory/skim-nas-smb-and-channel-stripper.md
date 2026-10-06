@@ -62,3 +62,8 @@ stripped twins fall outside `radix-archive.sh`'s `ls -1 "$SRC"` and every pipeli
 **Standing instruction from the user:** do not write to, move or delete anything in
 `~/radix/data`. They move raw recordings to the NAS themselves. Work from the copies in
 `~/radix/stripped`.
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- ✅🔴⭐⭐⭐ **[SKIM LAB NAS + CHANNEL STRIPPER — 2026-09-11](skim-nas-smb-and-channel-stripper.md).** SMB-only, 94 MB/s. 🔴 A failed mount fills the rig's OWN NVMe. 🔴 CIFS read-back verification VACUOUS without `posix_fadvise(DONTNEED)`. 🔴 `np.memmap` = 9.26 GB RSS. 🛑 Never write to `~/radix/data`.

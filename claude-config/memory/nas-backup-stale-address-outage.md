@@ -36,3 +36,8 @@ rotation kept 08-19/08-13/08-12. NAS `/volume1` = 21 TB, 8.2 TB used, **13 TB fr
 raw `~/radix/data` recordings would fit easily; they are still backed up NOWHERE.
 
 Related: [[nas-backup]] · [[multi-machine-setup-and-vault-safety]]
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- 🔴⭐⭐ **[NAS BACKUP: 6-DAY OUTAGE WAS A WRONG IP](nas-backup-stale-address-outage.md)** — use MagicDNS `bilab-syn.tail8808c0.ts.net`. A `tailscale ping` pong proves nothing. NAS has 13 TB free. [[nas-backup]]

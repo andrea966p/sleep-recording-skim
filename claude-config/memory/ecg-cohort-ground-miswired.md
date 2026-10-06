@@ -59,3 +59,8 @@ character**, because the return path moves from the paired electrode to the grou
 **If they stay identical at 100% duty with zero flips, the ground is STILL not connected.**
 
 See also [[ecg-cohort-2026-08-07]], [[overnight-two-animals-tether-is-the-fix]].
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- 🔴⭐⭐⭐ **[ROOT CAUSE: CEREBELLUM GROUND ON WRONG PIN](ecg-cohort-ground-miswired.md).** Explains hum collapse AND perfect impedance at once.

@@ -24,3 +24,8 @@ Verified by inspecting the installed binary, not by reading docs: `~/.config/ope
 3. **Ask Kontex** — small, concrete, well-specified request against a plugin they maintain, open thread already exists. Cheapest *supported* fix.
 
 Written up in vault `06-references/impedance-sweep-register.md` (last section, with the call-site table and a paper-ready sentence). See [[eeg-rig-current-state]], [[electrode-failure-literature]].
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- 🟡 Only half of each electrode pair has ever been measured (all `inX+`). ❌ **[Open Ephys does NOT fix this](impedance-negative-electrode-unmeasurable.md).**

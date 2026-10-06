@@ -70,3 +70,8 @@ so an impedance sweep can never be a within-recording control.
 
 Related: [[allegoserver-runaway-thread-thermal]] · [[eeg-rig-current-state]] ·
 [[recording-2026-08-18-eight-new-mice]]
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- 🔴⭐⭐ **[Allego GPU crashes in Mesa + 6.5 GB log storm — 2026-08-24](allego-mesa-gpu-crash-and-log-storm.md).** `--disable-gpu` was the fix. Frozen GUI ≠ lost data; app death DOES end recording. Fresh launch = 30 kHz/SMARTBOX_PRO, re-check fs+mode.

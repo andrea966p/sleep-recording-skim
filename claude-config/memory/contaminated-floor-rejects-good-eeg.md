@@ -63,3 +63,11 @@ slope floor is never used.
 Vault: `03-troubleshooting/symptoms/contaminated-floor-rejects-good-eeg.md`.
 Related: [[weak-chip-ground-hides-as-electrode-failure]],
 [[emg-gate-passes-and-floor-bug]], [[animal-card-verdict-ladder]].
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- ✅🔴🔴⭐⭐⭐ **[A CONTAMINATED FLOOR REPORTED HEALTHY EEG AS 0.0% — FIXED 2026-09-26](contaminated-floor-rejects-good-eeg.md). NEWEST.** `2cc5892`: floor slope threshold steeper than **−1.90** ⇒ rung 2 UNJUDGEABLE. 11 cards re-carded, nothing else moved. 🛑 NEVER test the floor against the animal (circular: dead EEG looks like floor). Typical-site test FALSIFIED by uid0920 C1 (tail contamination). ⚠️ hum-guard route still open; UNJUDGEABLE ≠ PASS.
+
+**2026-10-06, a MILDER contaminated floor slips under the −1.90 cut:** S-SD baseline 08-25, chip A1 (HLBSSD11). Floor slope_p1 was −1.52 (other chips that day −0.76 to −0.97), so the card says FAIL "INTERMITTENT, longest 6.2 min". But the EEG is healthy: rms 94 µV, slope −1.35, 60 Hz 51 µV against a 4162 µV floor. 🔑 **Signature: the rung-2 EEG pass rate follows the sleep state**: WAKE 2 %, NREM 81 % (wake defined by EMG-based staging). Healthy chips pass wake 96–98 %. A pass rate that depends on state means a threshold problem, not contact loss. Possible extra validity check, not built. [[sod1-sleep-eeg-2x2-2026-10-06]]
+

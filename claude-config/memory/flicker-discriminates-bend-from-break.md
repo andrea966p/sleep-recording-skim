@@ -33,3 +33,8 @@ static in 84 s. Take 10 min before calling a break final.
 🛑 The definitive test is mechanical, not statistical: record continuously while rotating and
 straightening ONE tether at a time. Closes when straight, opens when twisted ⇒ torsion proven, and
 the fix is a swivel or a shorter tether. Related: [[movement-dependent-contact-root-cause]].
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- 🔑⭐⭐⭐ **[FLICKER TELLS A BENT TETHER FROM A SEVERED ONE](flicker-discriminates-bend-from-break.md).** 80-150% variability + max/min 7-55× = bending (recoverable); 4-14% + 1.1-1.8× = continuous break.

@@ -67,3 +67,8 @@ scientific redesign that needs pre-registration and the falsification suite, not
 
 Related: [[emg-gate-passes-and-floor-bug]] · [[recording-2026-08-25-24h-zt0-S-SD]] ·
 [[animal-card-verdict-ladder]] · [[test-suite-two-of-four-verify-nothing]]
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- ✅⭐⭐⭐ **[FLOOR THRESHOLD FIXED, PER-CHIP — 2026-08-26](floor-threshold-fixed-per-chip.md).** Ungrounded chip ⇒ rung 2 UNJUDGEABLE, not FAIL. Falsification suite passes.

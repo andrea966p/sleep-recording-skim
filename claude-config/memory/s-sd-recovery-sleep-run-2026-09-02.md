@@ -73,3 +73,8 @@ Log: vault `05-experiments/completed/2026-09-02-S-SD-recovery-sleep.md` (moved f
 ## From the memory index, trimmed there 2026-09-11 (kept here verbatim)
 
 - ⏳🔴⭐⭐⭐ **[S-SD RECOVERY SLEEP — Wed 2026-09-02 13:00 → Thu 09-03 09:00, TERMINAL ENDPOINT](s-sd-recovery-sleep-run-2026-09-02.md). NEWEST, READ FIRST.** 20.0 h, **CSD FINISHED across the window**, animals SAMPLED Thu 13:00 ⇒ **UNREPEATABLE**; scored Thursday. ✅ **Pre-flight screen GATED for the first time and a bench re-seat fixed ALL EIGHT chip grounds** (B2 117→2486, D2 1052→4541 µV). 🎉 **D2 back on BOTH roles — a GROUND fault, not an electrode.** 🔑 Faults split: 🔧 torsion A1/C1/C2 · ❌ break B1/B2/D1 · ✅ A2 (EEG only), D2. 🔴 Go/no-go **AMBER, n=2 guaranteed up to n=5**; 10 min re-screen gates the start. ⚠️ `allego_0__uid0829-08-34-39` (59.2 h, 223 GB) is **NOT ours** — Andrea says no such run.
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- 🔴🔴⭐⭐⭐ **[S-SD RECOVERY SLEEP — 2026-09-02](s-sd-recovery-sleep-run-2026-09-02.md).** Animals SAMPLED ⇒ UNREPEATABLE. ❌ **OUTCOME 2026-09-26: n = 0 scoreable at every S-SD timepoint.** D2/HLBSSD18 passes rung 2 but its EMG has NO MUSCLE-BAND modulation (p95/p5 1.41–1.75 after 10–300 Hz band-pass). ⚠️ NOT proven dead: raw broadband rms rises at night. Rung 2 cannot see it; rung 3 can.

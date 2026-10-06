@@ -95,3 +95,8 @@ Related: [[xdaq-gen1-has-chassis-gnd]] · [[animal-card-verdict-ladder]] · [[fe
 - 🔴 **Scan counts made before 23:00 on 10-02 are WRONG** (allchip v3: port-local + noisy chip passed, IIR ringing): use `fullscans-v2/`. System-wide now = BOTH PORTS. Overnight 4 events (01:59:56, 07:27:42, 08:41:14 + lights-ON), light 13 (10 in the visit; 17:10:08, 18:12:11, 20:56:36).
 - 🔴 `pipeline/stage1_qc.py` used to drop `_feat.npz` INTO ~/radix/data when given a full path (fixed + test). If one ever appears there again, move it out before 01:30 (S3 cannot delete).
 - Canonical markers module `qc/noise_mice_markers_2026_10_02.py` (origin = status.start_time; visit 15:19:33 by data). trials/MARKERS.tsv superseded.
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- 🌙⭐⭐ **[NOISE-SERIES OVERNIGHT, 4 MICE — 2026-10-01 21:00→10-02 09:00](recording-2026-10-01-noise-4mice-overnight.md). NEWEST.** Console run `cfdf8ebde0c6`, batch `noise-tests`, ⚠️ placeholder IDs `POS-<slot>` (ask Andrea). A1/B2 EMG OPEN (implant) ⇒ A2, B1 only candidates; B1 floor 742 (peak) < 800 by ~7 % ⇒ likely UNJUDGEABLE. Stop moved to 09:02. 🔴 Console runs do NOT arm the hourly watchdog. ⭐ Next trials: vault `2026-10-02-noise-troubleshooting-plan` + `qc/record_block.py`; figures go in `05-experiments/attachments/` and get embedded. ✅ **Light-phase run DONE 10-02 21:11: official QC flipped B1 to PASS (floor 702→971, untouched) = C1 confirmed.** Andrea's clock ≥8 s ahead of e10. ⭐ **Full 24 h analysis + NAS folder `noise-tests/ANALYSIS_2026-10-01_to_10-02_4mice_24h/` (vault completed `2026-10-02-noise-series-4mice-24h-analysis`). 🔴 Pre-23:00 all-chip counts WRONG; system-wide = both ports. 🔴 stage1 full-path cache bug fixed.**

@@ -52,3 +52,8 @@ Supersedes the diagnosis in [[ecg-cohort-ground-miswired]]; the cohort itself is
 🔴 **EMG validated on the CONTROL ONLY.** Real test = state dependence (tone falls when asleep): correlation of 1-min EMG amplitude vs EEG delta over usable minutes. **A2 r = −0.651 (n=261) STATE-DEPENDENT**; B1 −0.175, B2 −0.163 weak; C2 −0.024, D1 −0.123, **D2 +0.053 nothing**. ⚠️ **The slope criterion is a CATEGORY ERROR for EMG** — EMG is broadband 30-300 Hz, so a real EMG is legitimately flat. ❌ Burstiness FAILED as a discriminator (control 0.09 LOW, floating A1 0.54 HIGH). ❌ 30-300 Hz vs floor is another "quiet = pass" trap (all channels 0.12-0.80× floor).
 
 🔴 **ECG DEAD ON 7 OF 7, now with a proper negative control.** Detector-free tests (envelope autocorrelation + 3-harmonic comb) run on **20 unwired floor inputs**: floor reaches **autocorr z 13.08 and comb score 1046.76**. No mouse channel beats it. ⚠️ **I WITHDREW my own earlier "CARDIAC" verdicts** — they were boundary artefacts (every "600.0 bpm" was the search-window edge) plus scores a bare wire also achieves. D2's `D/35` is the only curiosity (3-harmonic comb at 669 bpm) but comb 228.8 << floor max 1047 and its autocorr z 3.97 is below the floor MEDIAN. **Not a heartbeat.** ⛔ Both scripts deleted 2026-08-11: ECG is retired as a negative result, and keeping a detector for an absent signal invites someone to run it and find noise.
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- ✅⭐⭐⭐ **[THE GROUND RE-PIN WORKED — 2026-08-08](ground-fix-worked-2026-08-08.md).** HUM CRITERION IS DEAD, use SLOPE. Slope is a CATEGORY ERROR for EMG.

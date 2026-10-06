@@ -27,3 +27,8 @@ metadata:
 ⭐ **Script `eeg-emg-analysis/qc/animal_signal_report.py`** does all of the above for one animal and saves per-epoch arrays (`..._A33_report.npz`) so nobody re-reads 182 GB.
 
 ⚠️ **THIS IS THE CONTROL, NOT THE FLEET.** The six re-pinned mice gave 57-72% usable EEG at best, **no EMG state dependence**, **no heartbeat on 7 of 7 ECG**. See [[ground-fix-worked-2026-08-08]]. 🔴 Still no **kappa** and no **positive control**; every "asleep" number is gated behind them. 🔴 Dark phase of `uid0808-16-17-36` still unscored.
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- ⭐⭐⭐ **[A2 CONTROL, 48 h — BEST DATA EVER TAKEN HERE](a2-control-48h-reference-profile.md).** 47.09/48.19 h usable, zero railed epochs. Prefer ZT0 starts.

@@ -43,3 +43,8 @@ animal that was not sleeping. Consistent with first-tethering acclimatisation.
 theta/delta gives 24-48%; literature is <10%. Both land far above, so neither is
 a measurement. Report **WAKE vs NREM** and REM's **ORDER** (entered from NREM,
 expect >70%) only. See [[eeg-analysis-pipeline]], [[eeg-60hz-saga]].
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- ⭐⭐ [Light schedule 09:00 ON / 21:00 OFF KST, ZT0=09:00](light-schedule-and-circadian-validation.md)

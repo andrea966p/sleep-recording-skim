@@ -63,3 +63,8 @@ is a real test: **if the new B1 is ALSO dead, the fault is the RIG POSITION, not
 would be a new finding. ⚠️ The chewed tether is damaged hardware, repair not yet logged.
 Runs: `allego_0__uid0819-09-00-00` (09:00-17:16, 8.27 h, 31.2 GB, 8 mice, old B1) then
 `allego_1__uid0819-17-25-20` (17:25 Wed → 09:00 Fri, ~39.6 h, new B1).
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- ⭐⭐⭐ **[8 W-SD MICE — 2026-08-18](recording-2026-08-18-eight-new-mice.md).** Never call a channel animal-side before a re-seat + re-record. Strict rung 2 = EEG AND EMG in the SAME epoch.

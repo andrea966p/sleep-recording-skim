@@ -30,3 +30,8 @@ Direct API exports (curl to `/api/export/...`) are NOT moved — no session, so 
 ⚠️ **The 2026-04-13 journal entry is wrong about the code**: `daemon.py:665,667` still call `sudo mkdir -p` and `sudo chown -R`, and sudoers still has `mkdir`/`chown` NOPASSWD. Correction callout added there; full writeup in vault `04-journal/2026-08/2026-08-14.md`.
 
 Related: [[frigate-recording-toggle-fragility]]
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- [Exports move out of Frigate dir](frigate-exports-moved-out-of-frigate-dir.md) · [Recording toggle fragility](frigate-recording-toggle-fragility.md) (LEASE fix written, activates on next restart; dirs are UTC not KST) · [Docker upgrades fire recordings](project_docker_upgrade_recordings.md) (`apt-mark hold` 2026-05-20)

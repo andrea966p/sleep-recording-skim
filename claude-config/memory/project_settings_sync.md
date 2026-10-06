@@ -9,3 +9,8 @@ Frontend settings (lab members, cameras, recording types) are stored in localSto
 **Why this matters:** If the app is opened on a different machine or localStorage is cleared, all UI-added settings are lost. Backend validation (`api.py:210`) reads from `config.yaml` which stays stale.
 
 **How to apply:** After storage management is done, implement a `POST /api/settings` endpoint that writes changes back to `config.yaml`, or have the frontend load settings from the backend on startup. This is a separate task from storage management.
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- [Settings sync gap](project_settings_sync.md) (deferred) · [Camera ROI framing](camera-roi-framing.md) · [Multi-user schedules](project_multiuser_recording_schedules.md) (⚠️ per-port claim RETRACTED, see radiens-4 note)

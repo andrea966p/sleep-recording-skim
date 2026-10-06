@@ -85,3 +85,8 @@ would make every channel look like signal.** PSD log-log: B1 falls ~1/f, everyth
 written because the reasoning got hard to follow.
 
 See also [[fleet-duty-cycle-census-and-new-mouse]], [[eeg-analysis-pipeline]].
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- ⭐⭐ **[USABLE FRACTION vs AN IN-FILE CONTROL](recording-usable-fraction-analysis.md).** XDAT = float32, 262 interleaved ch, µV. Hardware bandpass 1.10-475.17 Hz eats the bottom of delta.

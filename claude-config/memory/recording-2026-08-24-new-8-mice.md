@@ -115,3 +115,8 @@ EMG (453-1001 µV), while B2 gives good EMG and no EEG. Only A1 and D2 have both
 
 Related: [[allego-mesa-gpu-crash-and-log-storm]] (same day, killed the first attempt) ·
 [[animal-card-verdict-ladder]] · [[emg-gate-passes-and-floor-bug]]
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- ⭐⭐⭐ **[S-SD BATCH, 8 MICE — 2026-08-24](recording-2026-08-24-new-8-mice.md).** First cohort with REAL ids (HLBSSD11-19); manifest `cohorts/S-SD.yaml`. 🔴 Surgical bleeding notes do NOT predict signal quality. 🔴🔴 The PER-CHIP floor can itself be CONTAMINATED.

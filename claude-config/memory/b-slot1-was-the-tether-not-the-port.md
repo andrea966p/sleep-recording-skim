@@ -56,3 +56,8 @@ A2's EEG rms is now ~2549 µV). A2's decline was already visible in the last 5 h
 
 Related: [[recording-2026-08-25-24h-zt0-S-SD]] · [[recording-2026-08-24-new-8-mice]] ·
 [[floor-threshold-fixed-per-chip]] · [[movement-dependent-contact-root-cause]]
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- 🔴⭐⭐⭐ **[B SLOT 1 WAS THE TETHER, NOT THE PORT](b-slot1-was-the-tether-not-the-port.md).** A recurrence argument is not a swap test.

@@ -68,3 +68,8 @@ quoted from the light phase alone is not comparable.
 Analysis + figures: `05-experiments/completed/2026-09-18-W-SL-light-phase-sleep.md`.
 🔑 Only **B2** is judgeable and accepted on BOTH 09-10 and 09-17, so the
 baseline comparison is n=1.
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- ✅🔴⭐⭐⭐ **[HLBW_SL 28 h DONE — 2026-09-17→18](recording-2026-09-17-HLBW_SL-28h.md). NEWEST.** **Unattended workflow ran CLEAN: stop 5 s late, strip bit-exact on every sample, NAS-verified in 13 min, QC bundle with it.** 7/8 rung 2 CLEAN, A1 EEG dead. **3 scoreable (B1 B2 D2), all grounded**; A2/C1/D1 UNJUDGEABLE (floors 582/7/2). Sleep + figures → `05-experiments/completed/2026-09-18-W-SL-light-phase-sleep.md`. 🔑 Only B2 pairs with the 09-10 baseline ⇒ n=1.

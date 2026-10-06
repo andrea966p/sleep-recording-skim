@@ -63,3 +63,8 @@ read quieter than the floor and still carry nothing.
 
 See also [[overnight-two-animals-tether-is-the-fix]], [[light-schedule-and-circadian-validation]],
 [[eeg-analysis-pipeline]].
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- ⭐⭐ **[3 SCOREABLE RECORDINGS + CIRCADIAN CHECK](staging-circadian-validation-2026-08-07.md).** ⚠️ SUPERSEDED as circadian evidence by [[a2-control-48h-reference-profile]].

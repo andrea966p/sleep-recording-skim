@@ -42,3 +42,8 @@ split it on restart after the mouse problem. Wholly outside the protocol window.
 ⚠️ The rung 2 verdicts on uid0920 and uid0921 are NOT usable — see
 [[contaminated-floor-rejects-good-eeg]]. The 2026-09-23 "attrition" write-up was
 retracted 2026-09-26.
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- ✅⭐⭐⭐ **[S-SL HAS SLEEP DATA, PAIRED n=3 — 2026-09-26](s-sl-has-sleep-data-n3.md). NEWEST.** Stage 2+3 run for the first time. SCOREABLE at both timepoints: **HLBSSL31, HLBSSL33, HLBSSL35** (r@1min .53→.63, .55→.72, .68→.73). Supersedes every earlier n for this batch. 🛑 **NO sleep conclusion**: endpoint is dark-heavy 16.0/20.71 h vs baseline 12.0/12.06, so whole-file 'more wake' is WINDOW COMPOSITION. 🔴 uid0920 is the SAME RUN as uid0921, split on restart.

@@ -50,3 +50,8 @@ Full write-ups: vault `02-procedures/eeg-recording-console.md` §2.4–2.5,
 `01-infrastructure/eeg-recorder/pipeline-architecture.md` §5 (defects 7 and 8).
 Related: [[skim-nas-smb-and-channel-stripper]], [[cohort-identity-every-run-is-new-mice]],
 [[animal-card-verdict-ladder]].
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- 🔴⭐⭐⭐ **[A PARTLY LOADED RIG WAS GRADED ON ALL 8 SLOTS](partial-rig-qc-and-unjudgeable-presets.md).** Pre-2026-09-13 bundles for <8 mice contain `UNKNOWN@slot` cards from FLOATING inputs, 3 read PASS at rung 2. `unipolar_lfp` has NO QC criterion by design.

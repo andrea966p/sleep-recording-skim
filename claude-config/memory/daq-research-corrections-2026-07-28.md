@@ -48,3 +48,8 @@ Vault ⭐⭐ `06-references/daq-research-findings-primary-sources.md`. From 5 pa
 **Also from OE reply 2:** per-animal ground isolation **IMPOSSIBLE**, stated verbatim ("same ground is shared by all the components") → OE hardware closed. Recording start/stop **GLOBAL confirmed on BOTH vendors** → stops being a comparison axis; "record continuously + slice offline" confirmed from both sides. Custom 16-hs board punted to **Jon Newman jpn@open-ephys.org** with a capacity hedge. **Unanswered twice: itemized quote, 32-animal ceiling, file format/Intan export, multi-day reliability refs, video call.** ⚠️ **NEW BENCH ITEM: C3442 orientation — SPI cable in the CENTER connector, headstages LEFT and RIGHT (Intan datasheet + OE diagram). OUR orientation is NOT documented anywhere → VERIFY ON BENCH.** ⚠️ OE's grounding advice says "use a Faraday cage and verify shield connections" = ground the foil — **CONFLICTS with Intan's app note and our 2026-07-16 decision. DON'T re-chase.** Keep only their last bullet: **measure the animal ground screw impedance** (cheap, same Z-imbalance term that dominates).
 
 Related: [[daq-ecosystem-comparison]], [[xdaq-channel-law-and-32-mouse-wiring]], [[eeg-60hz-saga]].
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- 🔴⭐ [DAQ research corrections](daq-research-corrections-2026-07-28.md) — 8 primary-source corrections. Core has NO isolation; PortExp MANDATORY; don't buy Allego; Intan via White Mountain.

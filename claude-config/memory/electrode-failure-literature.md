@@ -100,3 +100,8 @@ frontal-R vs open; pad6 copper vs open) but **genuinely empty on the 8-mouse
 rig** (4 electrodes + ground only). Datasheet: RHD2216 = 16 amps, `in0+/in0−…`;
 "32 amplifiers … only channels 0-15 active" ⇒ why Allego shows 32 slots/port.
 See [[eeg-analysis-pipeline]], [[light-schedule-and-circadian-validation]].
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- ⚠️ [82% of epidural electrodes fail in 3 weeks](electrode-failure-literature.md) — real literature, ❌ NOT our failure mode.

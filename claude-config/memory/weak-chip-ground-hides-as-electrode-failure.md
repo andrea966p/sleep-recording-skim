@@ -60,3 +60,8 @@ read ~1750-4300 µV peak (the gate would call them grounded), while B1 with a wo
 ungrounded). Open-input 60 Hz pickup measures antenna geometry as much as ground. Proposed fix (NOT applied): re-derive
 the populations with dummy loads (GND on vs lifted, same geometry), plus a pre-registered EMG-behaviour route.
 See [[recording-2026-10-01-noise-4mice-overnight]].
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- 🔴⭐⭐⭐ **["NO EEG" IS 5 FAULTS — A WEAK GROUND HIDES](weak-chip-ground-hides-as-electrode-failure.md).** Discriminator = EEG 60 Hz ÷ its OWN chip floor: ≈0.03 normal, ≥1.0 open. Floor <2000 µV ⇒ nothing on that chip means anything. `FLOOR_MIN_HUM_UV=800` TOO LOW; 2000 proposed, NOT APPLIED. 🔴 **10-01: 2000 FALSIFIED in the new config (gate PEAK scale: B2 1820, B1 742 carry EEG); floor scale is geometry-dependent. Gate = 59-61 Hz line PEAK, not band rms (√2).**

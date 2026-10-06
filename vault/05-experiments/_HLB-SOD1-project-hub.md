@@ -48,6 +48,11 @@ Statistics in the proposal: two-way (repeated-measures) ANOVA with Tukey. The na
 
 The EEG data are not wasted: the scoreable EEG mice are the only ones with NREM/REM, and they are SL/SD pairs too. Pooling across methods is not possible, but they can stand as a small EEG sub-study beside the nanotag batches.
 
+**Did SOD1 change sleep? (2026-10-06, the four EEG batches as a 2x2: [[2026-10-06-SOD1-sleep-EEG-2x2-quick-compute]])**
+- **Without deprivation: no detectable effect.** SOD1 vs water after about a week on treatment: 61.1 vs 60.6 % of 24 h asleep, n = 3 vs 6, p = 0.96. With the EMG notch, 56.2 vs 53.7 %, n = 6 vs 8, p = 0.24.
+- **After deprivation: n = 1 per arm, with an EMG rescue.** The official staging has no S-SD recovery. Measuring EMG between the 60 Hz harmonics from the raw 1000 Hz file rescues **HLBSSD15** at both timepoints; this was validated against the notched staging (κ 0.95). It rebounds +6.6 points from 13:00 to 09:00 against water HLBWSD08's +16.1, an interaction of −13.8 points, but HLBSSD15 had the highest baseline of all. A case, not a result: [[2026-10-06-S-SD-EMG-rescue-between-harmonics]].
+- ⇒ From the EEG, the SOD1 × deprivation question stays open. The EEG and nanotag findings are reported separately, never pooled or used to confirm each other.
+
 ## Before NS-SD / NW-SD: four decisions
 
 From the sheet Registry (read 2026-10-06): surgery 10-12, single housing 10-17, **homecage baseline from 10-19**, SOD1 and recording from 10-22, **sleep deprivation from 11-02**, Y-maze 11-04, NOR 11-05, **sampling 11-06**.

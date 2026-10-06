@@ -111,3 +111,8 @@ before naming a cause.**
 ## From the memory index, trimmed there 2026-09-11 (kept here verbatim)
 
 - 🎉⭐⭐⭐ **[8-CORE TETHER, 8 NEW MICE, 83 min SCREEN — 2026-09-09](recording-2026-09-09-8core-tether-screen.md). NEWEST, READ FIRST.** **Best screen this rig ever made: 7 of 8 chips grounded (floors 3441-4658 µV), 7 of 8 EEG at 96.6-100%, longest blocks 20-83 min**, all beating their OWN floor's lf/hf p99. 🔧 A1 floor 69 µV ⇒ UNJUDGEABLE + its EMG moves ⇒ **bench re-mate, no surgery.** ❌ C1 EMG a broken conductor (fixed 693 µV, ratio 0.245); its EEG is the file's best. 🔴 **`RMS_HI_UV=150` now CLIPS REAL EMG** — A2 49%, C2 66% of epochs above it ⇒ their strict rung 2 is an artefact, do not quote. ⚠️ 83 min, ALL dark phase, and the tether is CONFOUNDED with a fresh re-mate. 🔴 **CORRECTED 09-10: A1 is a GROUND-screw contact fault, NOT a re-mate** — its EEG is indistinguishable from the 7 working channels (lf/hf 26.5, slope −1.78, beats the other chips' floor p99 in 99.9% of epochs). ✅ **Run `allego_0__uid0910-09-00-00` started 09:00:00 sharp; at 5.5 h SEVEN EEG at 99.3-100% and FIVE pass strict rung 2** (B1 97.9%/89.8 min). ❌ C2's EMG broke overnight — port C now dead on BOTH EMGs, EEGs perfect, swap test owed.
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- 🎉⭐⭐⭐ **[8-CORE TETHER, 8 MICE — 2026-09-09](recording-2026-09-09-8core-tether-screen.md).** Best screen this rig ever made: 7/8 grounded, 7/8 EEG 96.6-100%. 🔴 `RMS_HI_UV=150` CLIPS REAL EMG.

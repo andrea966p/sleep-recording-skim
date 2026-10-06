@@ -281,3 +281,8 @@ delta, a drug that suppresses REM, any "manipulation reduced X" claim).
 `otsu_sensitivity`, `rem_order_null`, degenerate median fallback. New scripts in `qc/`:
 `make_scoring_set.py`, `score_kappa.py`, `selection_bias_test.py`, `floor_pseudoreplication.py`,
 `per_animal_forensics.py`.
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- ⭐⭐⭐ **[COUNCIL REVIEW + PIPELINE FIXES](council-and-pipeline-fixes.md).** 3 council findings did NOT survive measurement. 4 of 5 physiology checks CANNOT FAIL.

@@ -90,3 +90,8 @@ matches the old 48 h control's raw figures (31 µV light / 73 µV dark,
 
 Related: [[recording-2026-08-24-new-8-mice]] · [[animal-card-verdict-ladder]] ·
 [[emg-gate-passes-and-floor-bug]] · [[test-suite-two-of-four-verify-nothing]]
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- ⭐⭐⭐ **[24 h ZT0-TO-ZT0, S-SD — 2026-08-25](recording-2026-08-25-24h-zt0-S-SD.md).** 🔴 EEG usability drops 15-34 pts in the DARK phase. 🛑 1 h snapshots badly overstate a 24 h run.

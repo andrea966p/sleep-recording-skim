@@ -21,3 +21,8 @@ Andrea, 2026-10-02: two of my background tasks ("Block until recording script ex
 3. **Watch an explicit target** (the exact task output path / file name), never "the newest file".
 4. **Stop helpers when done** (TaskStop) and, before ending a turn that started background helpers, check none is left running
    (`ps -eo pid,etime,args | grep -E "until |sleep"`), leaving only intentional ones (e.g. a RAM watcher with its own end time).
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- 🛑 **[BACKGROUND WAITS MUST TERMINATE](feedback-background-waits-must-terminate.md)** (Andrea 10-02: they hang often). Deadline on every loop, no `pgrep -f` that matches itself (use `[r]ec5.py` or a PID), explicit target file, TaskStop when done.

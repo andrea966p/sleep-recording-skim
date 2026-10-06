@@ -51,3 +51,8 @@ it). Files modified < 30 min ago (`RADIX_S3_SETTLE_MIN`) are `NOT SETTLED`, left
 next night ⇒ state `PENDING`. Reason: 🔴 `recording_active()` FAILS OPEN (Allego
 down/timeout reads "not recording"). 🔴 A daytime `--dry-run` without
 `ARCHIVE_IGNORE_WINDOW=1` hits HARD STOP and SENDS a real ntfy "paused" push.
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- ✅🔴⭐⭐⭐ **[RAW RECORDINGS NOW GO OFF-SITE TO S3 — 2026-09-20](radix-s3-offsite-archive.md). NEWEST.** ✅ 09-26: no-op nights exit in 1 s; files < 30 min old never uploaded (rig check fails open). Bucket `skim-eeg-radix-archive-760396521414`, GLACIER_IR, cron 01:30, ~$5.50/mo at 1.1 TB. ⚠️ NO budget/alerts — deleted at user request 2026-09-20. IAM user `radix-s3-backup` with an **explicit Deny on delete** (verified). 🔴 `ChecksumSHA256` reads null without `--checksum-mode ENABLED`. 🔴 e10 has NO passwordless sudo ⇒ user-local aws CLI + cron, not systemd.

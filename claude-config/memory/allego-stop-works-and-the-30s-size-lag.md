@@ -37,3 +37,8 @@ as dead.** I wrote an 11 s check and it fired a false negative, which then left 
 Context: [[skim-nas-smb-and-channel-stripper]], [[radiens-4-has-no-per-port-recording]].
 The start path and its gRPC `ConfigRecording` workaround are in
 `eeg-emg-analysis/qc/start_recording_at.py`; `set_recording_config()` is still broken.
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- 🔴⭐⭐ **[ALLEGO STOP WORKS; FILE SIZE LAGS ~30 s](allego-stop-works-and-the-30s-size-lag.md).** `getsize()` reads 0 for a full 30 s ⇒ any growth check under ~35 s is a FALSE NEGATIVE. Stop in a `finally`.

@@ -95,3 +95,8 @@ Day log `04-journal/2026-08/2026-08-06.md`. Figures in `05-experiments/attachmen
 
 See also [[movement-dependent-contact-root-cause]], [[eeg-rig-current-state]],
 [[recording-usable-fraction-analysis]].
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- ⭐⭐⭐ **[THE 0.5 MΩ CRITERION](fleet-duty-cycle-census-and-new-mouse.md).** Empty tether read "connected" 22% at 2 MΩ ⇒ use |Z| < 0.5 MΩ.

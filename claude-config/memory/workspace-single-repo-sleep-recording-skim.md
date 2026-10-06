@@ -215,3 +215,9 @@ revoke it.
 + ed25519 key, `Host e10` in `~/.ssh/config`.** Different machinery each way.
 
 **2026-10-05 workstation:** analysis-capable now (apt numpy 2.3.5 / scipy 1.16.3 on Python 3.14; e10 is numpy 1.26 / scipy 1.11, so check numbers before mixing machines) and SKIM NAS mounted via e10's automount units. Before 10-05 it had NO numpy and NO NAS mount. Tailscale SSH there is check mode: capture the approval URL with `script -qfc "tailscale ssh skim@skimworkstation ..."` and give it to Andrea.
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- ✅🔴⭐⭐⭐ **[ONE REPO: `sleep-recording-skim`](workspace-single-repo-sleep-recording-skim.md).** Vault + code + Claude config. Sync = MANUAL `./skim status|pull|push|check`. **4 machines**; e10 cutover DONE 09-11. 🔴 `bootstrap.sh` KEEPS an existing `settings.json` ⇒ can leave a machine with NO hooks. DIFF IT.
+- ✅🔴⭐⭐ **[THE THINKPAD IS ON THE WORKFLOW, set up remotely from e10 — 2026-09-19](workspace-single-repo-sleep-recording-skim.md).** 🔴 Its only gap was a **MISSING GIT IDENTITY — `check.sh` AND `skim status` both pass without one**. 🔑 e10→laptop = **Tailscale SSH + a TAG** (`dst` can only be `autogroup:self` or a tag). 🔴🔴 **Enabling Tailscale SSH HIJACKS port 22 and bypasses the real sshd** — it broke `ssh e10`; `--ssh=false` fixed it.

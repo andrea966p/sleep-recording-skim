@@ -60,3 +60,8 @@ exactly one instance exists before trusting anything you see.**
 ⚠️ Switching the instrument mode (`Restart` / `SystemMode`) **resets the channel
 selection** to all channels on every port. Re-select the montage afterwards
 (8-mouse map = A/1, A/2, A/33, A/34 on each of ports A-D).
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- 🔴⭐⭐ **[ORPHANED allegoserver MAKES A HEALTHY RIG LOOK DEAD](allego-orphaned-server-blocks-the-rig.md).** Reparented to `systemd --user`, holds ports 50051-4, maybe no USB ⇒ stream toggles, zero samples. Check PPID first.

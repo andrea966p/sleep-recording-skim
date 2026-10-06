@@ -63,3 +63,8 @@ functions.
 
 Related: [[animal-card-verdict-ladder]] (makes the "3 suites green" claim) ·
 [[analysis-stack-audit-2026-08-11]] · [[recording-2026-08-24-new-8-mice]]
+
+
+## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
+
+- 🔴⭐⭐ **[TEST SUITE: 2 OF 4 VERIFY NOTHING](test-suite-two-of-four-verify-nothing.md).** Two suites SKIP yet exit 0 and PRINT success. "3 suites green" is not true. venv `~/eeg-test-venv`.
