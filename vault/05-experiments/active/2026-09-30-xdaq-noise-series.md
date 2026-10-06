@@ -14,6 +14,12 @@ status: active
 > free animal-side wires of a slip ring, so it measured antenna pickup, not the noise a mouse would see. It did show that
 > **port A picks up a strong 120 Hz field that port B does not**, which gives a first source to hunt.
 >
+> **⭐ Verdict, 2026-10-06: with the per-mouse faults set aside, the room's noise is mostly a ghost** ([[2026-10-06-noise-hunt-verdict]]).
+> - The EEG mains never reaches the staging, which reads 0.5–30 Hz.
+> - The one real problem is the EMG mains, and a validated 60/120 Hz notch removes it. Not yet adopted: that is Andrea's decision.
+> - Building spikes are rare and are rejected epoch by epoch.
+> - Recommended: the cheap electrician work (Entry 10), then stop the hunt and put the effort into per-mouse reliability.
+>
 > **State of knowledge, 2026-10-03: 24 h with 4 mice, fully analysed** ([[2026-10-02-noise-series-4mice-24h-analysis]]; NAS
 > `noise-tests/ANALYSIS_2026-10-01_to_10-02_4mice_24h/`):
 > - **Nothing electrical reaches the connected EEG/EMG.** Hands, people, a wireless receiver and the facility air showers move
@@ -810,6 +816,55 @@ Superseded (v3 tool):
 
 Still open: `MARKERS.tsv` into the run's NAS folders (not done: it writes to the shared NAS, waiting for Andrea's OK); what happened
 at 17:10:08 and 18:12:10; the epoch-shuffle control for the all-days notch test.
+
+## Entry 10: building electrician's inspection, and what he will change (2026-10-06)
+
+Inspection only, no recording. The 4 mice stayed on the rig. The XDAQ was unplugged for his checks and then plugged back in.
+Andrea: nothing changed with the mice connected. e10 reads `XDAQ_ONE_REC`, 1000 Hz, USB 5000M.
+Source: Andrea's voice recording, AI-transcribed in Korean (`~/Downloads/Electrician 10_06 e10_original.txt`, UTF-16).
+
+**What he said about this room**
+- **One shared earth.** The sandwich-panel walls, the room earth and every socket's earth pin are all bonded together.
+  Noise from heavy motor loads can travel along this shared earth into the rig.
+  - the HVAC/refrigeration plant on the 2nd floor (his guess: its housing is bonded to the panels; he has not checked);
+  - the AHU room in front of the elevator, by the clean room;
+  - equipment on the 3rd floor.
+- **The neutral is shared too.** It carries other loads' current even when we draw nothing, and it cannot be separated here.
+- **The July earth wire to the XDAQ** uses a generic shop ring terminal, not the maker's part, and he thinks its contact is poor.
+- **Same socket for the XDAQ and the PC:** he agrees this is a possible loop. Separate lines are best.
+- **The USB isolator:** "very hard", it covers only the USB line. This agrees with Entry 3 (it doubled the broadband).
+- The rack is steel and conducts.
+
+**What will be done**
+1. ⭐ **The rig socket will be replaced with an isolated-earth socket** (its earth separate from the shared panel earth).
+   - The electricians switch the breaker off and do the work themselves.
+   - Cost: only the socket itself. The quote and the date are arranged by our lab.
+   - ⚠️ The breaker cut takes down e10 and the XDAQ. Nothing may be recording, and e10 must be shut down cleanly first.
+   - Record a 10 min block (`qc/record_block.py`) before the work and another after it. A' (going back) is impossible,
+     so judge the change against the untouched spread in [[2026-10-02-noise-troubleshooting-plan]] and repeat the block on a second day.
+   - Ask on the day: does the isolated earth terminal get its own insulated wire back to the distribution panel? If it lands on
+     the same shared earth, nothing changes.
+2. **The headstage foils will be joined to one earth busbar** (screw terminals: one for the main earth, one per foil) = plan T2b.
+   - Each foil can be added to or removed from the busbar by us, so foil-bonded vs floating can be tested A/B/A whenever we want.
+   - Never connect the animal or headstage GND to it.
+
+**His further steps, only if the socket is not enough** (cheapest first; not decided)
+- A second earth wire in parallel, screwed into the rack and panel at several points. ⚠️ This ties the rig more firmly into the
+  shared earth, which is the opposite of what the isolated socket does, and it adds earth paths (our rule is one ground point).
+- A thicker earth wire to a large busbar.
+- An earth brought from the 3rd floor, if nothing large with motors runs there. (His reason was "gravity pulls noise down",
+  which is not physics. The only valid reason is fewer motor loads sharing that path.)
+- A dedicated circuit, one breaker for this socket only.
+- Last resort, which he advises against: a new dedicated earth rod. It costs 10-20x more, digging is hard (concrete, a main
+  line nearby), and an outside earth can bring lightning in even with a surge protector (SPD).
+- The lab is due to move to E7 (delayed), so he advises spending little here.
+
+**How this fits our data**
+- The July earth work changed nothing measurable (2026-07-31). People, hands, the wireless receiver and the air showers do not reach
+  the connected EEG/EMG (Entries 8-9); only light switching and the rare building events do.
+  The socket is therefore expected to matter, if at all, for the **EMG mains** (A2 13-33 µV) and the chip floors.
+- His motor-leakage idea fits the **unexplained building-wide events** (01:59:56, 07:27:42, 08:41:14, 17:10:08, 18:12:11,
+  20:56:36). Next: ask facilities for the AHU/chiller on/off log for 10-01 and 10-02.
 
 ## 🗂️ Recordings in this series and where they are
 

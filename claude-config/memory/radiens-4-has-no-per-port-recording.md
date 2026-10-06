@@ -27,3 +27,5 @@ per-user *slicing after the fact* is the only route. That is what
 🔑 `set_recording('off')` DOES exist (resolves to `api_allego.set_record_state(...,
 RecordMode.OFF)`) but **no code in this repo has ever called it** — bench-test on a junk
 recording before it goes near an animal run.
+
+⚠️ `AllegoClient.restart()` is also broken (`mode.enum`); call the `Restart` gRPC with `mode.value` instead. (Moved here from the MEMORY.md index, 2026-10-06.)

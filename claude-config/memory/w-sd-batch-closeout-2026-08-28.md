@@ -59,3 +59,5 @@ three runs running; protect it.
 
 Related: [[w-sd-recovery-sleep-run-2026-08-27]] · [[weak-chip-ground-hides-as-electrode-failure]] ·
 [[recording-2026-08-26-b1-swap-20h-baseline]] · [[cohort-identity-every-run-is-new-mice]]
+
+⭐ **2026-09-26:** the recovery stage 3 run makes **D2/HLBWSD08 scoreable on both sides (r@1min .446 → .400), n = 1 at RUNG 3**. (Moved here from the MEMORY.md index, 2026-10-06.)

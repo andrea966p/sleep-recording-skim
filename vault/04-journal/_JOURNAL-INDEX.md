@@ -7,13 +7,14 @@
 >
 > Read a day here, then follow its links down. **Detail belongs in the linked notes, not in the journal.**
 
-**68 entries.** Dates with no entry had no vault activity, mostly weekends.
+**69 entries.** Dates with no entry had no vault activity, mostly weekends.
 
 
 ## September 2026
 
 | Date | Day | What happened |
 |---|---|---|
+| [[2026-10-06]] | Tue | ⚡ **Building electrician inspects the recording room:** the rig socket becomes an isolated-earth socket, the headstage foils go onto one earth busbar. ⭐ **Verdict on the noise hunt: mostly a ghost** once per-mouse faults are set aside; the EMG mains is the only real noise and a validated notch removes it (not adopted, Andrea's decision). [[2026-10-06-noise-hunt-verdict]] |
 | [[2026-10-05]] | Mon | 🧹 Vault checked and tidied (links, markers, index grouping, current-state TL;DR), then the whole noise-series work (09-30 → 10-03) committed and pushed. 🧪 Nanotag SOD1 study (HLBNSL) brought into the repo, vault and NAS; Run 1 + Run 2 merged and re-analysed. |
 | [[2026-10-02]] | Fri | 🌙 **First 4-mouse overnight of the noise series** (21:00→09:02). No non-mains injection on the clean mice; B1's low floor is steady. **QC ground gate mis-calibrated for the new geometry; all-chip rule degenerates** [[2026-10-02-noise-series-method-audit]]. Pre-flight OPEN-reason bug fixed; console fixes prepared in a worktree. Morning: 12.03 h, 0 dropped, lights-ON caught; **official QC all UNJUDGEABLE**; ⭐ **mains in the EMG corrupts staging** (C3); light-phase run started; raw on NAS for the workstation (AWS deferred). Midday: **10 figures embedded**; ⭐ [[2026-10-02-noise-troubleshooting-plan]] (T1-T11); `qc/record_block.py`. Afternoon rig session (probe on the foil → A2 floor x2.1, EMG x1.16; hands don't reach the mice' EEG/EMG): [[2026-10-02-light-phase-run-rig-session]]. · 🌃 **Night: full 24 h analysis on e10** — B1 light phase officially SCOREABLE, the EMG notch validated across the archive (shuffle 0/100, dark>light 47/49), two code reviews fixed the system-wide rule (both ports) and several numbers, NAS analysis folder [[2026-10-02-noise-series-4mice-24h-analysis]] |
 | [[2026-10-01]] | Wed–Thu | ⭐⭐ **XDAQ noise series, no mice.** Gen-1 Core HAS a chassis GND (vault corrected). Light switch spikes every chip at once, but only ~2.3 real all-chip events/day in 52 h of mice. **USB isolator: no help, broadband 2x up (A/B/A) ⇒ direct cable.** Board + slip ring = antenna on open inputs, not solder. Splitter at chance. [[2026-09-30-xdaq-noise-series]] |

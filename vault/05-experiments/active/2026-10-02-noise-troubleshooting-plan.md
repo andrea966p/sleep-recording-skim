@@ -6,6 +6,13 @@ status: planned
 
 # Noise troubleshooting plan: the next trials, with mice (from 2026-10-02)
 
+> [!important] ⭐ 2026-10-06: the plan is scaled down ([[2026-10-06-noise-hunt-verdict]])
+> With the per-mouse faults set aside, the room's noise is mostly a ghost. The EMG mains is the only noise that hurts, and a
+> validated notch removes it in post-processing. Adopting the notch is Andrea's decision.
+> - **Recommended to keep:** the electrician's isolated-earth socket, and the foil busbar (T2a/T2b).
+> - **Recommended to drop:** Phase 2 (boxes, Faraday cage) and T3 (tether shield).
+> - **Phase 3 stays** as per-mouse reliability work: counterbalance and slip ring, judged on long runs.
+
 > [!abstract] TL;DR, where we are right now
 > Drafted by Claude Code on 2026-10-02 from Andrea's list, for Andrea to edit. The measurements behind it are in
 > [[2026-09-30-xdaq-noise-series]], and what they can and cannot say is in [[2026-10-02-noise-series-method-audit]].
@@ -33,6 +40,11 @@ status: planned
 > 3. **T2c: slip-ring housings**, after a DMM check (XDAQ off, mice off) that the housing is NOT continuous with any ring.
 > 4. Then the aluminium boxes (T4/T5), grounded the same way.
 > Solid low-ohm bonds only: a loose or high-ohm wire on a foil ADDS pickup.
+
+> [!info] 2026-10-06: the building electrician's work (noise series, Entry 10)
+> - **The rig socket will become an isolated-earth socket**, installed by the electricians. Record a block before the work and one after.
+> - **The headstage foils will be joined to one earth busbar** (= T2b). Each foil can be added or removed by us, so T2a/T2b stay A/B/A tests.
+> - Details and his escalation steps: [[2026-09-30-xdaq-noise-series#Entry 10: building electrician's inspection, and what he will change (2026-10-06)]].
 
 ## What we are trying to reduce, and the number each trial is judged by
 
