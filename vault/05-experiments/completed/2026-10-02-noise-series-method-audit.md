@@ -64,6 +64,12 @@ swings ~2x. A site-specific geometry change on the board decides a verdict the g
 > of the QC bundles' `hum`). The floor crept up through the day (Fig H on [[2026-10-02-light-phase-run-rig-session]]).
 > The gate's verdict on B1 tracked a slow drift of the pickup, not a change in its ground.
 
+> [!danger] C1 is now blocking, 2026-10-07
+> After the grounding fix (isolated-earth socket + XDAQ bonded to the earthed rack), the chip floors fell from 712-2943 to **36-235 µV**.
+> The same 4 mice with the same working grounds now read **UNJUDGEABLE on every chip** under the 800 µV gate. They read "grounded" on 10-02.
+> Until the gate is replaced, the official QC rejects every mouse at rung 2.
+> See [[2026-09-30-xdaq-noise-series#Entry 11: the electrician's work, and the first block after it (2026-10-07)|noise series Entry 11]].
+
 **C2. The "all-chip event" rule degenerates when chips are contaminated.**
 `qc/allchip_scan_file.py` and the `noise_scan.py` "system-wide" block call an event when ≥ 75 % of chips' floors hit
 in the same 100 ms, which is 3 of 4 tonight. A1 and B2 floors fire ~420 and ~580 events/h on their own (2344/3079 hit windows/h), because each chip

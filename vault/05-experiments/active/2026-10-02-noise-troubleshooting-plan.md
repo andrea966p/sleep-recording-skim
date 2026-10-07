@@ -6,6 +6,14 @@ status: planned
 
 # Noise troubleshooting plan: the next trials, with mice (from 2026-10-02)
 
+> [!success] ⭐⭐ 2026-10-07: the main target is met
+> The electrician's isolated-earth socket and the XDAQ bonded to the earthed rack collapsed the mains: A2's EMG 60 Hz went from 26-33 to
+> 1 µV, and the chip floors dropped 12-60x ([[2026-09-30-xdaq-noise-series#Entry 11: the electrician's work, and the first block after it (2026-10-07)|Entry 11]]).
+> - **Still worth doing:** the foil busbar (T2a/T2b) as an A/B/A test. Judge it against the NEW floors (about 40 µV); the old
+>   thresholds no longer apply.
+> - **Still useful:** Phase 3 (per-mouse reliability).
+> - 🔴 **Any future trial is judged by our scripts, not by the official QC.** The 800 µV ground gate now calls every chip UNJUDGEABLE.
+
 > [!important] ⭐ 2026-10-06: the plan is scaled down ([[2026-10-06-noise-hunt-verdict]])
 > With the per-mouse faults set aside, the room's noise is mostly a ghost. The EMG mains is the only noise that hurts, and a
 > validated notch removes it in post-processing. Adopting the notch is Andrea's decision.

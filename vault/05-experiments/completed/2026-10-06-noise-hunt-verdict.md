@@ -6,6 +6,18 @@ status: completed
 
 # Is the noise hunt chasing a ghost? The verdict (2026-10-06)
 
+> [!success] Update 2026-10-07: the cheap electrician work removed the EMG mains at the source
+> The isolated-earth socket and the XDAQ bonded to the earthed rack cut the mains on every channel:
+> - A2's EMG 60 Hz went from 26-33 to 1 µV, and B1's from 4-5 to 0.5 µV;
+> - the chip floors dropped 12-60x.
+>
+> Details: [[2026-09-30-xdaq-noise-series#Entry 11: the electrician's work, and the first block after it (2026-10-07)|noise series Entry 11]].
+> - **For new recordings the hardware now does what the notch did.** The notch decision below matters only for the archive
+>   (recordings made before 2026-10-07).
+> - **The prediction in Entry 10 ("a small effect at most") was wrong.** The effect was large.
+> - **New first open item: the 800 µV ground gate now calls every chip UNJUDGEABLE.** It must be replaced before the next real recording.
+> - The rest of this page stands as written on 2026-10-06.
+
 > [!abstract] TL;DR
 > **The question (Andrea, after the electrician's visit):** take away the per-mouse faults. Is the electrical noise that is
 > left worth hunting, or can post-processing remove it? The per-mouse faults are:
@@ -72,7 +84,8 @@ status: completed
   The validation above says the trade is a gain.
 
 ## Still open
-- Andrea's decision on the notch.
+- 🔴 **(added 2026-10-07)** Replace the 800 µV ground gate (audit C1). It now calls every chip UNJUDGEABLE after the grounding fix.
+- Andrea's decision on the notch, now only for the recordings made before 2026-10-07.
 - The 6 unexplained building events: ask facilities for the air handler (AHU) and chiller on/off log for 10-01 and 10-02.
 - After the socket is replaced: one 10 min block before and one after, judged against the untouched spread in the plan.
 

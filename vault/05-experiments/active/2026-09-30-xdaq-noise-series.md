@@ -14,6 +14,13 @@ status: active
 > free animal-side wires of a slip ring, so it measured antenna pickup, not the noise a mouse would see. It did show that
 > **port A picks up a strong 120 Hz field that port B does not**, which gives a first source to hunt.
 >
+> **⭐⭐ 2026-10-07: THE GROUNDING FIX COLLAPSED THE MAINS** (Entry 11). The isolated-earth socket and the XDAQ bonded to the earthed rack:
+> - chip floors at 60 Hz are 12-60x lower, and the EEG 60 Hz is about 2 µV on all four mice (A1 was 20);
+> - A2's EMG 60 Hz went from 26-33 to 1 µV, B1's from 4-5 to 0.5 µV, and A2's EMG measure is now 12 % mains instead of 93-97 %;
+> - A1's and B2's EMGs no longer rail, but they are still not EMG (implant side);
+> - 🔴 the 800 µV ground gate now calls every chip UNJUDGEABLE: replace it before the next real recording;
+> - a 29.5 h confirmation run, `ee0263bffeaa`, records until 10-08 21:02.
+>
 > **⭐ Verdict, 2026-10-06: with the per-mouse faults set aside, the room's noise is mostly a ghost** ([[2026-10-06-noise-hunt-verdict]]).
 > - The EEG mains never reaches the staging, which reads 0.5–30 Hz.
 > - The one real problem is the EMG mains, and a validated 60/120 Hz notch removes it. Not yet adopted: that is Andrea's decision.
@@ -865,6 +872,105 @@ Source: Andrea's voice recording, AI-transcribed in Korean (`~/Downloads/Electri
   The socket is therefore expected to matter, if at all, for the **EMG mains** (A2 13-33 µV) and the chip floors.
 - His motor-leakage idea fits the **unexplained building-wide events** (01:59:56, 07:27:42, 08:41:14, 17:10:08, 18:12:11,
   20:56:36). Next: ask facilities for the AHU/chiller on/off log for 10-01 and 10-02.
+
+## Entry 11: the electrician's work, and the first block after it (2026-10-07)
+
+**What was changed** (before 13:43; e10 was shut down cleanly at 13:43 and came back at 14:34 on kernel 7.0.0-28):
+- **The socket.** The rig wall socket was replaced with an isolated-earth socket.
+  - Its earth pin no longer touches the sandwich panel through the mounting screws (in the old socket the screws were shorted to earth).
+  - Its earth terminal is still the same shared building earth wire, so the isolation is only partial (the electrician; Andrea confirmed).
+- **The XDAQ** now sits on the top shelf of the metal rack, screwed to it, with a short wire from its chassis GND lug to the shelf.
+- **The rack** is earthed by the old XDAQ earth wire, now kept short and soldered to a thicker wire on the shelf. That wire is one of three
+  earth wires coming out of a hole in the wall beside the socket, from the building's main line, not from the socket.
+- **Not changed:**
+  - the PC, on another, unearthed rack;
+  - one double wall socket feeding two multitaps (1: the XDAQ brick only, 2-prong; 2: the ASUS PC and everything else);
+  - the 4 mice and their tethers.
+
+  Nothing else was reported as changed.
+- ⚠️ **THE SOCKET AND THE RACK BOND CHANGED TOGETHER**, so the effect cannot be split between them. Don't undo either, and copy both at E7.
+
+**How it was measured:**
+- **The block:** `E1-after-socket-rack_0__uid1007-15-04-18`, 15:04:18-15:14:10, ZT6. Recorded with `qc/record_block.py`, stream 0.998x.
+  Same 4 mice, Andrea away from the headstages.
+- **The comparison:** the same mice before the work, using `qc/noise_scan.py` + `qc/baseline_compare.py`:
+  - the untouched blocks of 10-01 at 19:50, 20:36 and 20:42;
+  - the 10-02 light-phase run at 14:55 and 15:05, the same ZT6.
+- **Stability:** the two halves of the new block (0:30-5:30 and 5:30-9:30) agree within 1-6 %.
+- **Recording-side causes are excluded.** The metadata show only the standard hardware band-pass (1.10-475 Hz), the DSP notch off and no
+  software filters. The open EMGs also still carry millivolts of 60 Hz, which a notch would have removed.
+
+| 60 Hz line peak, QC gate scale | before (5 windows) | after (2 windows) | change |
+|---|---|---|---|
+| chip floor A1 | 2758-2943 µV | 232-235 µV | x12 lower |
+| chip floor A2 | 2057-2133 µV | 36 µV | x58 lower |
+| chip floor B1 | 712-1106 µV | 41-43 µV | x17-27 lower |
+| chip floor B2 | 1809-2008 µV | 41-42 µV | x45 lower |
+| chip floors at 120 Hz (rms) | 43-82 µV | 0.4-3.1 µV | x20-120 lower |
+| EEG A1 / A2 / B1 / B2 | 19-21 / 2.7-5.7 / 5.0-7.5 / 3.3-4.1 µV | 2.0-2.1 / 1.9-2.4 / 2.0-2.6 / 1.9-2.3 µV | A1 x10 lower |
+| **EMG A2** | **26-33 µV** | **1.0-1.4 µV** | **x20-30 lower** |
+| **EMG B1** | **4.0-4.7 µV** | **0.4-0.5 µV** | **x10 lower** |
+| open EMG A1 (A/2): 60 Hz, time on the rail | 4.65-4.85 mV, 13.4-13.7 % | 3.22-3.25 mV, 0.03-0.79 % | rail gone |
+| open EMG B2 (B/34): 60 Hz, time on the rail | 4.71-4.99 mV, 13.9-14.0 % | 0.57 mV, 0.03-0.08 % | rail gone |
+| A2 floor broadband 1-45 / 100-450 Hz (rms) | 15.6-17.8 / 3.9-4.1 µV | 13.7-18.1 / 3.5-3.8 µV | unchanged |
+
+**This is far outside the normal drift.** Over the whole 10-01/02 24 h (hourly values):
+- A2's EMG 60 Hz never went below 14 µV;
+- the A2 floor stayed within 2077-2174 µV;
+- the B1 floor stayed within 664-1154 µV.
+
+**What the stager sees** (`qc/emg_mains_share_windows.py`): 4 s epochs, the EMG band-passed 10-124 Hz (the stage 3 band), raw and with
+60 + 120 Hz notched.
+
+| | before (10-01 20:36/20:42, 10-02 14:55/15:05) | after (10-07, 140 epochs) |
+|---|---|---|
+| A2: mains share of the EMG measure, median | 92.8-97.4 % | **12.1 %** |
+| A2: quiet EMG (p10), raw | 19.0-23.3 µV | **2.6 µV** |
+| A2: quiet EMG (p10), notched | 2.8-5.3 µV | 2.3 µV |
+| B1: mains share, median | 11.3-12.8 % | 7.3 % |
+
+- **A2:** its real quiet muscle tone (2-5 µV) was buried under about 20 µV of mains. Now the raw signal shows it.
+  **For new recordings the hardware does what the validated notch did.**
+- **B1** slept through the whole block (EMG p10-p90 4.6-5.3 µV, high EEG), so its sleep/wake EMG range is not judged yet.
+- **The brain signal itself is unchanged:** the EEG spectra lie on top of each other below 60 Hz (Fig Q).
+
+**A1 and B2, the open EMGs (implant side):** they no longer rail, but they are still not EMG.
+- What Andrea now sees in Allego is a slow wave at 3.0-3.8 Hz (180-230 per min), 430-890 µV rms in 1-8 Hz, plus the remaining mains.
+- It does not follow the mouse's own EEG (|r| ≤ 0.13) or the other open EMG (r ≈ 0).
+- The rate fits a resting mouse's breathing, so it is most likely the broken lead moving with each breath.
+- There is no muscle band. A1 and B2 stay EEG-only mice (surgical, per Andrea).
+- **The A1 position still sees about 6x the field of the others:** floor 232 vs 36-43 µV; open EMG 3.2 vs 0.57 mV.
+
+> [!warning] 🔴 The ground gate now calls EVERY chip UNJUDGEABLE
+> `FLOOR_MIN_HUM_UV` = 800 µV, and the floors are now 36-235 µV. All four chips read "grounded" on 10-02 14:55.
+> Audit C1 predicted this ([[2026-10-02-noise-series-method-audit]]). Until the gate is replaced, the official QC will reject every mouse
+> at rung 2. **DECIDE BEFORE THE NEXT REAL RECORDING** (Andrea).
+
+**My prediction was wrong.** On 10-06 (Entry 10) I expected "a small effect at most", because the July earth work had changed nothing
+measurable. The effect was large. Two likely reasons, which cannot be separated:
+- the July wire may never have made a good contact (the electrician blamed the generic ring terminal);
+- the old socket's screws joined the PC's earth to the panel, which could carry building noise onto the USB shield.
+
+![[2026-10-07-noise-figQ-grounding-fix-before-after.png]]
+
+**Figure Q.** The same 4 mice at the same time of day (ZT6): 10-02 14:55 (blue, before) vs 10-07 15:05 (orange, after).
+- Columns: EEG spectrum, EMG spectrum, 2 s of raw EMG, and the chip floor (median of the 14 wire-free inputs).
+- The 60 Hz spikes and their harmonics are gone from every EEG, the clean EMGs and the floors. Everything else overlaps.
+- The orange A2 EMG is busier because A2 was awake in that window.
+- The open EMGs (A1, B2) no longer clip, and now show the slow breathing-rate wave instead.
+- Made by `eeg-emg-analysis/qc/electrician_before_after_2026_10_07.py`.
+
+**Now recording (confirmation):**
+- Console run `ee0263bffeaa`, `allego_0__uid1007-15-28-38`, 10-07 15:28:38 → 10-08 21:02, about 29.5 h.
+- It covers the rest of this light phase, a full dark phase and a full light phase, with both lights-OFF switchings and the lights-ON.
+- Same settings as the 10-01/02 runs (batch `noise-tests`, `POS-<slot>`, ports A+B, 8 labels). The watchdog was armed by hand.
+- **Questions it answers:**
+  - Does the drop hold over a whole day and night, through the light switching and the building events?
+  - How does staging compare with the 10-01/02 24 h? Same mice, ZT12 to ZT12.
+
+**Files:**
+- Data: `~/radix/noise-tests/2026-10-07/`, the block plus `out/` (JSONs, scan text, figure).
+- Scripts: `qc/electrician_before_after_2026_10_07.py`, `qc/emg_mains_share_windows.py`.
 
 ## 🗂️ Recordings in this series and where they are
 
