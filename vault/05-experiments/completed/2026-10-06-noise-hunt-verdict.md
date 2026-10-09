@@ -17,6 +17,13 @@ status: completed
 > - **The prediction in Entry 10 ("a small effect at most") was wrong.** The effect was large.
 > - **New first open item: the 800 µV ground gate now calls every chip UNJUDGEABLE.** It must be replaced before the next real recording.
 > - The rest of this page stands as written on 2026-10-06.
+>
+> **Confirmed over 24 h (2026-10-09,** [[2026-09-30-xdaq-noise-series#Entry 12: the 29.5 h confirmation run after the grounding fix (2026-10-07 15:28 → 10-08 21:02)|Entry 12]]**):**
+> - A2 is SCOREABLE without the notch (r@1min 0.615), and B1 at 0.587;
+> - wake is 2-3x higher in the dark than in the light;
+> - the hum stays down in every hour.
+>
+> The light-switch spikes were not changed by the fix.
 
 > [!abstract] TL;DR
 > **The question (Andrea, after the electrician's visit):** take away the per-mouse faults. Is the electrical noise that is

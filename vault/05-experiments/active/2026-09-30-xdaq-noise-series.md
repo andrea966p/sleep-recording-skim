@@ -14,6 +14,14 @@ status: active
 > free animal-side wires of a slip ring, so it measured antenna pickup, not the noise a mouse would see. It did show that
 > **port A picks up a strong 120 Hz field that port B does not**, which gives a first source to hunt.
 >
+> **⭐⭐⭐ 2026-10-09: CONFIRMED OVER 24 h** (Entry 12, run `ee0263bffeaa`, 29.5 h):
+> - every hour: chip floors under 240 µV (before 664-2965), A2 EMG 60 Hz 0.5-2.3 µV (before 14-27);
+> - **A2 now scores WITHOUT the notch** (r@1min 0.615, before REJECT 0.19/0.29), and B1 at 0.587;
+> - wake is 2-3x higher in the dark than in the light;
+> - building events: 1 unexplained in 29.5 h, against 6 in 24 h;
+> - the light-switch spikes are unchanged (rare, rejected per epoch);
+> - a lab member's visit on 10-08 (16:41-17:37) is marked and set aside.
+>
 > **⭐⭐ 2026-10-07: THE GROUNDING FIX COLLAPSED THE MAINS** (Entry 11). The isolated-earth socket and the XDAQ bonded to the earthed rack:
 > - chip floors at 60 Hz are 12-60x lower, and the EEG 60 Hz is about 2 µV on all four mice (A1 was 20);
 > - A2's EMG 60 Hz went from 26-33 to 1 µV, B1's from 4-5 to 0.5 µV, and A2's EMG measure is now 12 % mains instead of 93-97 %;
@@ -971,6 +979,98 @@ measurable. The effect was large. Two likely reasons, which cannot be separated:
 **Files:**
 - Data: `~/radix/noise-tests/2026-10-07/`, the block plus `out/` (JSONs, scan text, figure).
 - Scripts: `qc/electrician_before_after_2026_10_07.py`, `qc/emg_mains_share_windows.py`.
+
+## Entry 12: the 29.5 h confirmation run after the grounding fix (2026-10-07 15:28 → 10-08 21:02)
+
+**The run:**
+- Console run `ee0263bffeaa`, `allego_0__uid1007-15-28-38`, 29.56 h, stopped at 21:02:03 (1 s late).
+- Same 4 mice and the same settings as the 10-01/02 runs. Analysed on 10-09 on e10, with the rig idle.
+- It covers the rest of the 10-07 light phase, a full dark phase and a full light phase.
+- **Before** = the 10-01/02 24 h of the same mice ([[2026-10-02-noise-series-4mice-24h-analysis]]), measured with the same estimators.
+
+**A disturbance to set aside:** a lab member was at the racks on the afternoon of 10-08 (Andrea's note):
+- recording rack (cage setting): 16:41-16:43, 16:45, 16:59-17:03, 17:10-17:14 and 17:24-17:32;
+- habituation rack: 17:35-17:37.
+
+The third window was written "17:3" and read as 17:03. Markers, with seconds from the file start:
+[[2026-10-08-noise-MARKERS-visit-uid1007-15-28-38.tsv]]. Anything odd inside these windows is not investigated.
+
+**Pass bar, written on 10-07 before the data came in, and the result:**
+
+| check | bar | after | before |
+|---|---|---|---|
+| chip floors at 60 Hz, every hour | < 300 µV | ✅ A1 224-239, A2 32-36, B1 34-53, B2 40-44 µV | 664-2965 µV |
+| A2 EMG 60 Hz, every hour | < 3 µV | ✅ 0.5-2.3 µV (B1 0.6-2.7) | A2 14-27, B1 4.2-4.7 µV |
+| light-switch spikes | smaller | ❌ **not smaller**: lights-ON floors A1/A2/B1/B2 3137/5190/1694/2031 µV | 4322/5491/1615/1315 µV |
+| building-wide events | fewer or smaller | ✅ 1 unexplained (10-08 01:08:09.5, small) in 29.5 h | 6 unexplained in 24 h |
+| scoring without the notch | A2 and B1 SCOREABLE, wake dark > light | ✅ (table below) | A2 REJECT |
+
+- **Hum:** read from the runs' QC bundles (`qc/hourly_hum_bundle.py`, the 10 s gate estimator, hourly medians).
+  - The EEG 60 Hz is 2.0-3.2 µV on all four mice, in every hour.
+  - B1's EMG "60 Hz" is highest at 23:00-03:00, when B1 is 85-95 % awake. With the mains this low, that bin now partly
+    measures real muscle activity.
+- **Light switching** (`qc/light_switch_peaks.py`: 50 ms comb, 1-450 Hz, µV): the lights-ON spike is as big as before.
+  - Lights-OFF is small in both periods. The 10-07 lights-OFF was detected at 21:01:47.6 (A2 floor x66); the 10-02 and 10-08 ones
+    stayed under the bar.
+  - The grounding fixed the steady pickup but not the switching transient, which probably reaches the rig by another route
+    (most likely the light wiring itself).
+  - Cost: about 2 events a day, rejected per epoch.
+- **System-wide events** (`qc.allchip_scan_file`): the voting chips are A2 + B1 in all three files, with A1 and B2 excluded for
+  their open EMGs, so the counts compare directly. After, 4 events in 29.5 h (chance 0.04):
+  - 21:01:47.6, lights-OFF;
+  - 01:08:09.5, small and unexplained;
+  - 08:59:50.7, lights-ON;
+  - 17:31:24.8, inside the visit.
+
+  Before: 01:59:56, 07:27:42, 08:41:14, 17:10:08, 18:12:11 and 20:56:36, plus the lights.
+
+**Scoring (diagnostic: the official QC calls every chip UNJUDGEABLE because of the 800 µV gate):**
+- Stage 2 `--all-verdicts` into `~/radix/noise-tests/2026-10-09/diag-processed/`. Stage 1: A2 and B1 CLEAN, A1 and B2 OPEN.
+- Stage 3 as published and with the EMG notched (`qc/emg_mains_staging_test.py`).
+
+| mouse | verdict, as published | r@1min (shuffled) | notched r@1min | wake % light / dark | before, as published |
+|---|---|---|---|---|---|
+| A2 | **SCOREABLE** | **0.615** (-0.003) | 0.630 | **26.9 / 55.6** | REJECT, r 0.19 night / 0.29 day; wake 11.3 / 17.8 |
+| B1 | **SCOREABLE** | **0.587** (-0.011) | 0.589 | **20.6 / 61.1** | SCOREABLE, r 0.30 / 0.41; wake 17.6 / 30.1 |
+
+- The notch now changes almost nothing: the mains is gone at the source.
+- Wake is 2-3x higher in the dark than in the light, as expected for nocturnal mice. Before, A2's EMG was 93-97 % mains and
+  flattened that contrast.
+- During the visit windows, B1 was awake 57.6 % of the time and A2 14.2 %.
+- **A1 and B2 (open EMGs):**
+  - they rail in 0-3.6 % of 10 s epochs per hour, against about 14 % before;
+  - their 60 Hz is 1.6-3.4 mV (A1) and 0.45-0.57 mV (B2);
+  - they are still not EMG.
+
+**Post-processing:**
+- **Why it failed:** the console stopped at FAILED_STRIP. The strip's GATE B saw `din_1` move: 6 single 1 ms samples at 10-07 18:40:41,
+  21:57:59, and 10-08 07:57:51, 13:50:40, 13:51:10 and 13:56:14. None of them falls on a light switch or the visit, so it is a
+  floating input picking up noise.
+- **The fix:** Andrea confirmed on 10-09 that nothing is connected to the XDAQ GPIO header. The strip was re-run by hand with
+  `--gpio-never-connected`, which is recorded in the strip report. The run was then moved to STRIPPED, and the console finished the
+  export and the NAS upload: **DONE 2026-10-09 ~21:00**: 4 per-mouse CSVs (24.9 GB), sha256-verified on the SKIM NAS at `02_Data_Sleep/andrea/noise-tests/Baseline/20261007_POS-<slot>_B/`; the trimmed file (8 channels, 4.26 GB, bit-exact over 106.4 M samples) stays in `~/radix/stripped/`. The run record still carries the old strip text in its `error` field (not cleared on retry); its state is DONE.
+- **Left over:** the failed attempt's partial output (`allego_0__uid1007-15-28-38.REJECTED.20261008T120617Z_*.part`, 4.2 GB) is
+  still in `~/radix/stripped/`. Deleting it is Andrea's call.
+- 🔴 **When the XDAQ → Pi hardware sync is wired, GATE B becomes load-bearing.** Never use the override after that.
+
+![[2026-10-09-noise-figR-grounding-24h-before-after.png]]
+
+**Figure R.** The same mice over 24 h, before (blue, 10-01/02) and after (orange, 10-07/08) the grounding fix. The shaded band is
+lights-off (21:00-09:00).
+- Top: chip floors at 60 Hz (log scale).
+- Middle: EMG 60 Hz (log scale).
+- Bottom: wake % per hour, scored as published, with no notch.
+- The floors and the EMG mains sit 10-60x lower all day. Wake now follows the light cycle, especially B1 (95 % in the early dark).
+- Made by `eeg-emg-analysis/qc/grounding_24h_figure_2026_10_09.py`.
+
+**Verdict:**
+- **The grounding fix holds over a full day and night.** The steady mains is gone at the source, and both clean mice score without
+  the notch, with a normal day/night pattern.
+- **What it did not fix:** the light-switch spikes, which are rare and rejected per epoch.
+
+**Still open:**
+- replace the 800 µV ground gate (it blocks the official QC);
+- test the Raspberry Pi cameras A/B/A (off → on, with the IR lights if any → off) with `qc/record_block.py` before adding them for good.
 
 ## 🗂️ Recordings in this series and where they are
 

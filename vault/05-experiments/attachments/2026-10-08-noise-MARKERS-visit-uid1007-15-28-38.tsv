@@ -1,0 +1,11 @@
+# Lab member at the recording rack, 2026-10-08 (Thursday) afternoon, reported by Andrea 2026-10-09. Clock times KST from Andrea's
+# note (minute resolution; her phone has run >= 8 s ahead of e10 before). Run ee0263bffeaa, file allego_0__uid1007-15-28-38
+# (start 2026-10-07 15:28:38). Possible vibration and noise that could wake the mice: spikes or odd features inside these windows
+# need no investigation.
+start	end	where	s_from_file_start_start	s_from_file_start_end	note
+2026-10-08 16:41	2026-10-08 16:43	recording rack (cage setting)	90742	90862	entry-exit
+2026-10-08 16:45	2026-10-08 16:46	recording rack (cage setting)	90982	91042	written "16:45-16:45"; end taken as 16:46
+2026-10-08 16:59	2026-10-08 17:03	recording rack (cage setting)	91822	92062	written "16:59-17:3", read as 17:03 (unconfirmed)
+2026-10-08 17:10	2026-10-08 17:14	recording rack (cage setting)	92482	92722	entry-exit
+2026-10-08 17:24	2026-10-08 17:32	recording rack (cage setting)	93322	93802	entry-exit
+2026-10-08 17:35	2026-10-08 17:37	habituation rack	93982	94102	entry-exit, other rack

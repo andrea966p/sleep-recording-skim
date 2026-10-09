@@ -44,3 +44,20 @@ stop **2026-10-08 21:02** (~29.5 h: rest of light, full dark, full light; both l
 runs (batch `noise-tests`, POS-<slot>, A+B, 8 labels). Watchdog armed by hand at 15:29. Expect official QC UNJUDGEABLE on all chips (gate).
 After DONE: compare hour by hour with the 10-01/02 24 h (`analysis-24h/hourly.csv`), and stage it diagnostically, with and without the notch.
 Vault: noise series Entry 11 + Fig Q, journal 10-07, verdict-page update, audit C1 "now blocking" callout.
+
+**RESULT of the 29.5 h run (analysed 2026-10-09; outputs `~/radix/noise-tests/2026-10-09/`):**
+- Hourly hum, QC bundle (`qc/hourly_hum_bundle.py`):
+  - floors max 239 µV (bar 300; before 664-2965);
+  - A2 EMG 60 Hz 0.5-2.3 µV (bar 3; before 14-27); B1 0.6-2.7 µV (before 4.2-4.7);
+  - EEG 60 Hz 2-3 µV on all four. PASS.
+- Light switching NOT smaller (`qc/light_switch_peaks.py`): lights-ON floors 1.7-5.2 mV vs 1.3-5.5 mV before. Lights-OFF small both times. FAIL.
+- System-wide events, same voting chips A2+B1: 1 unexplained (10-08 01:08:09, small) in 29.5 h vs 6 in 24 h before.
+  10-08 17:31:24 falls inside a lab member's visit (markers `MARKERS_visit_2026-10-08.tsv`).
+- Staging, diagnostic (`--all-verdicts` + `qc/emg_mains_staging_test.py`):
+  - A2 SCOREABLE r@1min 0.615 as published (before REJECT 0.19/0.29); B1 0.587;
+  - the notch changes nothing (0.630/0.589); shuffled r ≈ 0;
+  - wake dark/light: A2 55.6/26.9, B1 61.1/20.6 (before as published 17.8/11.3 and 30.1/17.6).
+- ✅ RESOLVED 2026-10-09 (Andrea: nothing wired to the GPIO; option A): manual strip `--gpio-never-connected`, bit-exact; run DB backed up, FAILED_STRIP→STRIPPING→STRIPPED via RunStore, `POST /postprocess` → DONE, 4 CSVs sha256-verified on the NAS. Was: the console run was `FAILED_STRIP`: GATE B saw din_1 with 6 single-ms glitches at random times (floating input).
+  - The raw data are safe.
+  - To finish: `strip_channels --gpio-never-connected` (needs Andrea's assertion that nothing is wired to the GPIO header) or keep the GPIO channels.
+  - The console's retry can do neither.
