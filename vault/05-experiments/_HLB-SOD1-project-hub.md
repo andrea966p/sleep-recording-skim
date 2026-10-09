@@ -53,6 +53,10 @@ The EEG data are not wasted: the scoreable EEG mice are the only ones with NREM/
 - **After deprivation: n = 1 per arm, with an EMG rescue.** The official staging has no S-SD recovery. Measuring EMG between the 60 Hz harmonics from the raw 1000 Hz file rescues **HLBSSD15** at both timepoints; this was validated against the notched staging (κ 0.95). It rebounds +6.6 points from 13:00 to 09:00 against water HLBWSD08's +16.1, an interaction of −13.8 points, but HLBSSD15 had the highest baseline of all. A case, not a result: [[2026-10-06-S-SD-EMG-rescue-between-harmonics]].
 - ⇒ From the EEG, the SOD1 × deprivation question stays open. The EEG and nanotag findings are reported separately, never pooled or used to confirm each other.
 
+**Manual scoring of the scoreable EEG mice (started 2026-10-07).** The automatic staging above is being checked by hand in
+SleepStager, which now opens the per-mouse CSV. First mouse: HLBSSL33 Recovery, epochs 1–840 scored ([[2026-10-07]]).
+How: [[02-procedures/sleepstager-user-guide]]. What the calls rest on: [[06-references/sleep-scoring-handbook]].
+
 ## Before NS-SD / NW-SD: four decisions
 
 From the sheet Registry (read 2026-10-06): surgery 10-12, single housing 10-17, **homecage baseline from 10-19**, SOD1 and recording from 10-22, **sleep deprivation from 11-02**, Y-maze 11-04, NOR 11-05, **sampling 11-06**.

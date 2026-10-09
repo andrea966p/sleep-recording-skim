@@ -122,3 +122,9 @@
 
 ## Operational patterns
 - [Docker SHA-pinning](project_docker_sha_pin_pattern.md) · [Frigate MQTT retained-topic ordering](pattern_frigate_mqtt_message_ordering.md) · [Frigate orphan noise](pattern_frigate_record_enabled_orphan_noise.md) · [No Netdata MQTT collector](pattern_netdata_no_mqtt_collector.md)
+
+## Sleep scoring / SleepStager (from the SleepStager-folder sessions, merged 2026-10-09)
+- [Andrea is learning sleep scoring](andrea-learning-sleep-scoring.md) — scoring questions go to the professor; log cases with screenshots
+- [Work on local copies](work-on-local-copies.md) — stage in ~/sleep-data, never on the NAS
+- [SleepStager csv-reader branch](sleepstager-csv-reader-branch.md) — PR #1 (CSV) + #2 (resume fix) open, tone row local only, feature 60 Hz notch pending
+- [Sleep-scoring vault pages](sleep-scoring-vault-pages.md) — handbook, user guide, backlog, decision, journal cases

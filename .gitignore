@@ -90,3 +90,6 @@ claude-config/skills/synced/
 # which swept it in once already.
 /neurosurveillance/deploy/rig-jobs.sh
 /neurosurveillance/deploy/rig_jobs.py
+
+# --- nested repos with their own remote (synced by their own git, not ./skim) ---
+SleepStager/

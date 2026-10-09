@@ -155,6 +155,12 @@ Production IPs, usernames, paths, and settings.
 ### Experiments
 - ⭐⭐⭐ [[05-experiments/_HLB-SOD1-project-hub|HLB SOD1 PROJECT HUB — START HERE for the science]] — HLB-sponsored: does oral microbial SOD protect sleep and cognition under chronic sleep restriction? Proposal vs what runs, every batch (intake trials → 4 EEG batches → nanotag), what the EEG → nanotag pivot gives up (no NREM/REM), and 🔴 **four decisions before NS-SD/NW-SD** (activity-only tags so one 20-day run needs no mid-study read; SD hours analysed, not dropped; SD length 4 vs 6 h and 5 vs 7 d; read and stop tags at sampling).
 
+**Manual sleep scoring with SleepStager (added 2026-10-07). Start with the handbook.**
+- ⭐⭐⭐ [[06-references/sleep-scoring-handbook|SLEEP SCORING HANDBOOK — states, measures, units, values, conventions, literature]] — what W / NREM / REM look like in a mouse, what every number on the screen means (θ/δ, RMS, **spike-proof tone**, σ, γ, µV vs µV²), this mouse's typical values, the **draft scoring conventions C1–C10 awaiting the professor**, a case library, and **24 papers verified in PubMed**. 🔑 The rule labels NR any sleep epoch it cannot call REM: check every NR epoch whose δ sits at wake level.
+- ⭐⭐ [[02-procedures/sleepstager-user-guide|SleepStager user guide — open, save, files, keys, the rule's marks]] — at-a-glance tables; where the files are (`~/sleep-data`, local copies only), what one save writes, every key, and how to read each mark. Opens the rig's per-mouse CSV since 2026-10-07.
+- ⭐ [[01-infrastructure/sleepstager/sleepstager-changes-and-backlog|SleepStager changes and backlog]] — every change we made (branch `csv-reader`, uncommitted) and what to improve next. 🔴 **Item 1: the EMG notch is 50 Hz, our mains is 60 Hz** (18 % of NREM EMG power in HLBSSL33 R).
+- 🧪 [[2026-10-07]] — the first scoring session (HLBSSL33 R, epochs 1–840): 9 cases with screenshots, the question asked, the reading, and what to ask the professor.
+
 **Nanotag SOD1 study (HLBNSL): implanted activity loggers, no EEG. Start with the study page.**
 - ⭐⭐⭐ [[05-experiments/active/2026-09-14-HLBNSL-nanotag-SOD1-sleep|2026-09 — HLBNSL: ORAL SOD1 vs WATER, HOME-CAGE SLEEP BY NANOTAG]] — **NEW EXPERIMENT TYPE.** NS-SL (SOD1, 41-44, 49; 43 died 09-28) vs NW-SL (water, 45-48, 50), baseline 09-14 → 09-17, treatment 09-20 → 10-02, Y-maze / NOR, sampled 10-02. Mice, tags, timeline, where every file is. Next batch NS-SD / NW-SD, surgery 10-12.
 - ⭐⭐⭐ [[05-experiments/completed/2026-10-05-HLBNSL-nanotag-merged-analysis|2026-10-05 — HLBNSL: RUN 1 + RUN 2 MERGED, FULL RE-ANALYSIS]] — **no detectable SOD1 effect on sleep** (793 vs 768 min/day, p = 0.61; change p = 0.77). 🔴 Handling and test days raise dark-phase sleep ~10 points in both groups, so quote the undisturbed days for absolute values. RA change p = 0.029 (3 vs 4, baseline imbalance): a hypothesis for NS-SD. Merge reproduces the Run-1 report exactly when Run 2 is withheld. NAS `andrea/HLBNSL_nanotag_ANALYSIS_2026-10-05/`.
@@ -234,6 +240,7 @@ procedures to `02-procedures/`, vendor call prep to
 `01-infrastructure/vendor-correspondence/`.
 
 - ⭐ [[07-decisions/RIG-EXPANSION-HUB|RIG EXPANSION HUB — 8 → 32 mice]] — the entry point for the expansion decision
+- [[07-decisions/2026-10-06-sleepstager-csv-ingestion|2026-10-06 — how SleepStager reads the rig's CSV]] — council verdict (converter) superseded by a native reader; proven identical to the xdat route on HLBSSL33 R (21,600/21,600 stages)
 - [[07-decisions/2026-07-27-video-eeg-sync-recording-architecture|2026-07-27 — video/EEG sync + recording architecture]] — the alignment plan; no clocks, pulse train mandatory
 - [[07-decisions/2026-07-24-daq-32-mouse-final-comparison|2026-07-24 — DAQ 3-way comparison, 32 mice]]
 - [[07-decisions/2026-07-21-acquisition-device-16-32-mice-and-kontex-thread|2026-07-21 — acquisition device for 16-32 mice]]

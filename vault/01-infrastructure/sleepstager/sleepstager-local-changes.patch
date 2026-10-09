@@ -1,0 +1,127 @@
+diff --git a/sleepstager/viewer.py b/sleepstager/viewer.py
+index ae85145..eb40cfa 100644
+--- a/sleepstager/viewer.py
++++ b/sleepstager/viewer.py
+@@ -1040,6 +1040,62 @@ class _HeaderBar(QtWidgets.QWidget):
+         self._relayout()
+ 
+ 
++class _RulesCard(QtWidgets.QWidget):
++    """LOCAL (Andrea): the scoring conventions at a glance, under the feature sliders.
++
++    Mirrors the vault's sleep-scoring-handbook §3 (decision flow) and §4 (draft conventions
++    C1–C12); edit both together. It takes the sidebar's leftover height and hides itself
++    when that is too short, so it never makes the window taller."""
++
++    # (condition, result) — result is a stage key, "keep" or free text; {cut} = the rule's wake cut
++    DECIDE = (("tone ≥ {cut} for > ½ epoch", "W"),
++              ("short burst (< ½ epoch)", "keep"),
++              ("slow δ + σ spindles", "NR"),
++              ("atonic · θ leads · δ low", "R"),
++              ("steady tone · δ low · no σ", "W*"),
++              ("still unsure", "⇧ flag"))
++    EDGES = ("NR starts at first δ, not EMG drop",
++             "R starts: θ > δ + σ down (rule late)",
++             "R ends at δ (→NR) or tone (→W)",
++             "in W: tone dips, EEG awake → W",
++             "lone arousal in NR, 1 side only → NR",
++             "moving: ignore δ, θ/δ; read σ, γ")
++    CHECK = ("NR with δ at W/R level → recheck",
++             "1-epoch R: ask the professor (C7)")
++
++    def __init__(self, cut=None):
++        super().__init__()
++        self.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Ignored)
++        self._lbl = QtWidgets.QLabel(self._html(cut), self)
++        self._lbl.setFont(_ui_font(FS_FEAT_BODY))
++        self._lbl.setTextFormat(QtCore.Qt.RichText); self._lbl.setWordWrap(True)
++        self._lbl.setStyleSheet(f"background:#f7f6f3;padding:6px {_DecisionLadder.PX - 2}px 8px")
++
++    def _html(self, cut):
++        def chip(r):
++            st = r.rstrip("*")
++            if st in _STAGE_COLOR:
++                return f"<b style='color:{_STAGE_COLOR[st]}'>{r}</b>"
++            return f"<span style='color:#666'>{r}</span>"
++        cut = f"{cut:.1f}" if cut else "cut"
++        from html import escape as e
++        sec = lambda t: f"<tr><td colspan='3' style='padding-top:5px;color:#888'>{t}</td></tr>"
++        rows = [sec("decide, in order")]
++        rows += [f"<tr><td style='color:#999'>{i}</td><td>{e(c.format(cut=cut))}</td>"
++                 f"<td align='right'>{chip(r)}</td></tr>" for i, (c, r) in enumerate(self.DECIDE, 1)]
++        rows += [sec("edges")] + [f"<tr><td style='color:#999'>·</td><td colspan='2'>{e(t)}</td></tr>" for t in self.EDGES]
++        rows += [sec("check")] + [f"<tr><td style='color:#c77700'>!</td><td colspan='2'>{e(t)}</td></tr>" for t in self.CHECK]
++        return (f"<div style='font-size:{FS_GLIDE_TITLE}pt;color:#111'><b>scoring rules</b>"
++                f"<span style='color:#999'>&nbsp;&nbsp;draft</span></div>"
++                f"<table width='100%' cellspacing='0' cellpadding='0' style='color:#222'>{''.join(rows)}</table>")
++
++    def resizeEvent(self, e):
++        super().resizeEvent(e)
++        need = self._lbl.heightForWidth(self.width())
++        self._lbl.setGeometry(0, 8, self.width(), need)
++        self._lbl.setVisible(self.height() >= need + 8)
++
++
+ class EpochViewer(QtWidgets.QMainWindow):
+     # Vertical stretch factors for the five plots, in two groups: _S_TOP/_S_CTX splits
+     # the window between the two waveforms and the three context lanes, and _R_* splits
+@@ -1728,7 +1784,8 @@ class EpochViewer(QtWidgets.QMainWindow):
+         sv.addWidget(self._hrule())                   # divides the graphs from the sliders; sits on the scroller's line
+         self.judge = _DecisionLadder()
+         sv.addWidget(self.judge)
+-        sv.addStretch(1)
++        self.rules_card = _RulesCard((self.ses.rule or {}).get("emg_cut"))   # LOCAL: takes the leftover height
++        sv.addWidget(self.rules_card, 1)
+ 
+         # Save and its save-imgs option travel together — they are one control, and the
+         # checkbox on its own in a far corner reads as an orphan. Both sit at the bottom
+@@ -1778,7 +1835,7 @@ class EpochViewer(QtWidgets.QMainWindow):
+     def _pfmt(key, v):
+         if v is None or not (isinstance(v, (int, float)) and np.isfinite(v)):
+             return "–"
+-        if key in ("spec_peak", "theta_peak", "emg_rms"):
++        if key in ("spec_peak", "theta_peak", "emg_rms", "emg_tone_med"):
+             return f"{v:.0f}"
+         if key in ("delta_theta", "theta_delta", "delta_frac", "theta_sharp",
+                    "emg_cv", "gamma_frac"):
+@@ -3000,7 +3057,8 @@ class EpochViewer(QtWidgets.QMainWindow):
+     # feature two rows above it, so on a percentile axis it is that row mirrored — the
+     # same ground on which delta_theta was already removed.
+     _DOSSIER_ROWS = (("decision", None),
+-                     ("EMG", "emg_rms"), ("γ frac", "gamma_frac"),
++                     ("EMG", "emg_rms"), ("tone (spike-proof)", "emg_tone_med"),
++                     ("γ frac", "gamma_frac"),
+                      ("θ/δ", "theta_delta"), ("θ sharp", "theta_sharp"),
+                      ("bands", None),
+                      ("δ 1–4", "delta_power"), ("σ 10–15", "sigma_power"),
+@@ -3124,6 +3182,8 @@ class EpochViewer(QtWidgets.QMainWindow):
+                 f"<td align='right' style='padding-left:10px;color:#666'>{pct}</td>{cells}</tr>")
+         # band shape, total power and θ/δ used to be drawn here; they moved to the
+         # sidebar, where they are read while scoring rather than while arguing.
++        _ec = (self.ses.rule or {}).get("emg_cut")
++        _cut = f" (wake cut {_ec:.1f}, the rule's EMG cut)" if _ec else ""
+         head_html = f"<div style='font-size:{FS_HEADER}pt'>{head}</div>"
+         html = (f"<div style='font-size:{FS_HEADER}pt'>"
+                 f"<table cellspacing='0' cellpadding='5'>"
+@@ -3138,7 +3198,9 @@ class EpochViewer(QtWidgets.QMainWindow):
+                 f"<div style='margin-top:22px;color:#888'>"
+                 f"28 s = this epoch and ±3 either side, geometric mean — shown only<br>"
+                 f"on the rows the rule reads that way, and pct then ranks it.<br>"
+-                f"W / NR / R are this recording's per-stage medians. Any key closes.</div></div>")
++                f"W / NR / R are this recording's per-stage medians. Any key closes.<br>"
++                f"tone (spike-proof) = median of the 0.5-s sliding EMG RMS: above the<br>"
++                f"wake cut only when the muscle is active for most of the epoch{_cut}.</div></div>")
+ 
+         dlg = QtWidgets.QDialog(self)
+         dlg.setWindowTitle(f"epoch {self.cur}")
+@@ -4113,6 +4175,10 @@ class EpochViewer(QtWidgets.QMainWindow):
+         st = j["stage"]
+         self._bounds = np.flatnonzero(np.r_[True, st[1:] != st[:-1]]) + 1
+         self._cand_dirty = True
++        # the save is the record for every epoch it covers: a mark cleared before saving is
++        # absent from it, so the fresh rule's mark on that epoch must go, not survive the merge
++        for e in [e for e in self.annotations if 1 <= e <= len(j["matched"]) and j["matched"][e - 1]]:
++            del self.annotations[e]
+         self.annotations.update(marks)
+         self._save_stem = sv.stem                    # Save may now overwrite this pass or make a new one
+         self._mark_saved()                           # resumed state matches what's on disk
