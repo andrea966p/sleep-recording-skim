@@ -198,6 +198,8 @@ the run.
 | scheduled stop arrives late | **always stops**, overrun recorded | stopping late costs a longer file; not stopping costs 90 GB/day and the next person's slot |
 | service restarts mid-run | in-flight runs rewind to the last actionable state; schedules re-arm from disk | a 24 h run outlives any process |
 | NAS unreachable when the upload comes | run rests in `UPLOAD_PENDING` and drains later | **this is designed behaviour, not a fault** |
+| a reservation was made by mistake | press **cancel** on its row in the runs table (since 2026-10-14); it becomes `ABORTED` and stays listed | only a scheduled or draft run can be cancelled; a started run is stopped with Stop |
+| two reservations overlap | **both are accepted**; the later one fails at its own start (`FAILED_START`, "already using the rig") and the active run is untouched | 🔴 not refused at creation yet (found 2026-10-14). **Check the DATE field**: the form pre-fills the next day |
 
 > [!info] How it works underneath
 > Every program involved, what fires each one, every failsafe and why it exists:
@@ -253,6 +255,10 @@ State: `~/.local/state/eeg-recorder/runs.db`.
 > whether the electrodes are connected.
 
 ## 6. Status
+
+✅ **Unipolar, 3 mice, one per port (2026-10-14):** a scheduled 10-minute rehearsal (run `901e16ee8bf8`, layout
+`4mice_unipolar_lfp`) went start → stop → strip (18 channels) → 3 CSVs → NAS verified → `DONE` in 41 s after the stop.
+See [[04-journal/2026-10/2026-10-14]].
 
 ✅ **The full chain has run end-to-end on a real recording** (2026-09-11, `allego_0__uid0911-22-32-22`,
 91 s, eight slots): started on time, growth confirmed at 2.86 GB/h, stopped `R_ON → R_OFF`, held at

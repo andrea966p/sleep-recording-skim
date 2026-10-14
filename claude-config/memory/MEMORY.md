@@ -39,7 +39,7 @@
 - **Artefact policy:** `02-procedures/eeg-artefact-and-railing-rejection-policy.md`. Reject at EPOCH level, never repair.
 
 ## EEG rig — runs
-- 🧪⭐ **[ahyeon's 3 unipolar mice, 10-15 09:00 → 10-16 15:00 (prep 10-14)](unipolar-run-2026-10-15-ahyeon.md). NEWEST.** 🔴 Old 08-05 unipolar map was a TYPO; correct /18 emg_l /19 lfp_tgt /20 lfp_ref /21 emg_r /22 eeg_p /23 eeg_f. GPIO strip fix, watchdog auto-arm, full 30 h CSVs.
+- 🧪⭐ **[ahyeon's 3 unipolar mice, 10-15 09:00 → 10-16 15:00 (prep 10-14)](unipolar-run-2026-10-15-ahyeon.md). NEWEST.** 🔴 Old 08-05 unipolar map was a TYPO; correct /18 emg_l /19 lfp_tgt /20 lfp_ref /21 emg_r /22 eeg_p /23 eeg_f. GPIO strip fix, watchdog auto-arm, full 30 h CSVs. ✅ 10-min scheduled rehearsal PASSED end to end. 🔴 `get_signals()` live feed carries Allego VISUALIZATION filters.
 - ✅🔴⭐ **[GROUNDING FIX: MAINS GONE, CONFIRMED 24 h (10-07/09)](grounding-fix-2026-10-07-mains-collapsed.md). NEWEST.** Floors x12-60, A2 EMG 60 Hz → 1 µV; A2 scores WITHOUT notch (r 0.615). Light-switch spikes unchanged. 🔴 800 µV gate calls EVERY chip UNJUDGEABLE: fix before next real run. Cameras: A/B/A test first.
 - 🧪⭐⭐⭐ **[Did SOD1 change sleep? 4 EEG batches as a 2x2 (10-06)](sod1-sleep-eeg-2x2-2026-10-06.md). NEWEST.** EEG baselines are ON treatment. No effect without SD. EMG rescue between 60 Hz harmonics (raw 1000 Hz, κ 0.95) ⇒ HLBSSD15 paired: rebound +6.6 vs water +16.1, n=1/arm; max rescue adds nothing.
 - ✅⭐ **[Noise hunt verdict: mostly a ghost (10-06)](noise-hunt-verdict-2026-10-06.md). NEWEST.** EMG mains is the only real noise; the notch removes it. 🛑 No more environmental-noise trials or spending. Isolated socket + foil busbar coming; lab moving to E7. Never claim "all EEG clean".

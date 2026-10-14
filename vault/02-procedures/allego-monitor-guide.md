@@ -84,6 +84,29 @@ The View Modes button (default label shows the active mode, e.g. `Spikes`) sets 
 > [!note] Reading the signal — go to the interpretation guide
 > This page is the *controls* reference. For **what clean vs. railed vs. floating EEG/EMG actually looks like**, the grounding-first decision order, and the bipolar **Paired Reference** setup (RHD2216 → no `ref_elec`, Common Average Reference OFF), use [[signal-quality-and-grounding]]. Reference Types are set in the Signal Processing tab (manual p70), not in Monitor.
 
+## Practical notes from the rig (2026-10-14, first unipolar mice)
+
+- **Visualization (Software Stage 2) filters are set per PORT, so they hit every trace on it.** A 10-300 Hz band-pass
+  added for EMG also strips delta (0.5-4 Hz) and theta (6-9 Hz) from the EEG and LFP traces ON SCREEN. Turn it on only
+  to look at EMG bursts. The saved file is untouched (checked from the data spectrum of `allego_0__uid1014-21-08-06`).
+  🔴 The radiens API's `get_signals()` live feed carries these filters too: analyse the recorded file, not a live grab,
+  whenever a display filter is on.
+- **`fs=1(0.5)` in the bottom bar** = recorded 1 kHz, plotted 0.5 kHz (every 2nd sample). The plotted rate falls as the
+  Window grows. At a 10 s window this is invisible (more points than pixels) and the screen is honest up to half the
+  plotted rate (250 Hz). Shorten the Window until it reads `fs=1(1)` to see every sample.
+- **HD Snapshot, as it behaves here:** the Duration choices follow the Monitor's Window (a 1 s window offers at most
+  1-2 s; set Window 10 s for up to ~10 s). **Start Time is STREAM seconds**, not clock time, and must lie inside the green
+  **Avail. Window** (e.g. `342.63, 351.74`): a value outside it turns the box red and draws stale flat lines. The draw
+  button is **Refresh**. The window moves with the stream, so press Refresh, type the first number + 0.5, Refresh again.
+- **Measure** gives the vertical span of a drag in µV, in effect a peak-to-peak, on the DISPLAYED (filtered,
+  decimated) trace. Clear display filters before measuring EMG; peak-to-peak is ~3-6x the rms numbers in analysis.
+- **Frequency:** Allego has no spectrum tool (the manual has none). Count cycles over a known time: f = cycles ÷ seconds,
+  over several cycles, on a broad display band. A narrow band-pass makes noise look rhythmic at its centre frequency.
+  For a number to report, compute a spectrum offline from the recorded file.
+- **Unipolar mice:** every channel is measured against one reference, so neighbouring electrodes correlate in the slow
+  band (EMG L/R, LFP target/reference). That is expected, not mirroring; mirroring is r ≈ 1.00 in every band with a
+  near-zero difference. The SAME big event on all six channels of one mouse points at the reference path.
+
 ## Related
 - [[signal-quality-and-grounding]] — ⭐ what good/bad signal looks like + grounding + referencing (the interpretation half of this page)
 - [[allego-sampling-rate]] — why the on-screen "plotted sample frequency" is not your recording rate
