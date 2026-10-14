@@ -27,3 +27,17 @@ pairings ("EEG = A/21−A/22") are wrong labels; read as site numbers only. Fixe
   roles at creation, so a run made on the old config gets the typo names on its CSV columns.
 
 Vault: journal `04-journal/2026-10/2026-10-14.md`. Related: [[partial-rig-qc-and-unjudgeable-presets]] · [[grounding-fix-2026-10-07-mains-collapsed]]
+
+**Scheduled 10-14 20:27 by Andrea:** run `dca84de0cc7a`, batch `test` (intentional: a TEST recording for ahyeon), mice
+A B6JF020112, B B6JF020114, C B6JF020113, all basal. Mouse A carries ~3.5-4 mV 60 Hz on all 6 channels (81 % of the
+time at 20:19): a known SURGICAL mistake, ahyeon knows why. Do not troubleshoot it. B and C clean (60 Hz 1-3 µV).
+
+**10-min pipeline test 2026-10-14 21:08-21:18 (run `901e16ee8bf8`, batch `10minutes_test`): PASS end to end.**
+Start +3.5 s, stop +4.9 s, growth 1.11 GB/h, strip 18 ch (80.77 % smaller), 3 CSVs 598,528 rows, NAS sha256 local=remote,
+DONE 41 s after stop, local CSVs removed, info.json qc NOT ASSESSED. Watchdog not exercised (run did not cross :05).
+`sig_proc_spec` is ABSENT from this recording's .xdat.json (present on 10-07): verify filters from the DATA spectrum instead.
+🔴 **`AllegoClient.get_signals()` returns the VISUALIZATION-FILTERED stream.** With Andrea's 10-300 Hz EMG viz filter on, a
+live grab showed delta 1-2 % and flat spectra (I misread it as "mice awake"); the saved file had full < 10 Hz power.
+For any live quality check, first ask whether a Software Stage 2 filter is on, or analyse the recorded file.
+Also: the console accepts OVERLAPPING schedules (refused only at start, FAILED_START, active run untouched).
+Cancel button for SCHEDULED/DRAFT runs added in app.js (uses existing /abort).

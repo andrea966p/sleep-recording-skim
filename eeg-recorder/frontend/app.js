@@ -467,7 +467,12 @@ async function renderRuns() {
     const retry = r.state.startsWith('FAILED') || r.state === 'UPLOAD_PENDING'
       ? `<button class="ghost" style="padding:4px 10px;font-size:12px"
            onclick="retryRun('${r.run_id}','${r.state}')"
-           title="${(r.error || '').replace(/"/g, '&quot;').slice(0, 300)}">retry</button>` : '';
+           title="${(r.error || '').replace(/"/g, '&quot;').slice(0, 300)}">retry</button>`
+      // A reservation made by mistake (a wrong date, 2026-10-14) could only be
+      // removed through the API. /abort already refuses anything that has started.
+      : (r.state === 'SCHEDULED' || r.state === 'DRAFT')
+      ? `<button class="ghost" style="padding:4px 10px;font-size:12px"
+           onclick="cancelRun('${r.run_id}')">cancel</button>` : '';
     return `<tr>
       <td class="mono">${r.run_id}</td>
       <td>${r.owner}</td>
@@ -507,6 +512,19 @@ window.retryRun = async (id, state) => {
   try {
     await post(`/api/runs/${id}/postprocess`, body);
     toast(body ? `${id} queued, stripping WITHOUT a QC bundle` : `queued ${id}`, 'ok');
+  } catch (e) { toast(e.message, 'bad'); }
+  renderRuns();
+};
+
+window.cancelRun = async id => {
+  const {runs} = await api('/api/runs?limit=40');
+  const r = runs.find(x => x.run_id === id);
+  if (!r || !confirm(`Cancel this reservation?\n\n${id} · ${r.owner} · batch ${r.batch_name}\n` +
+                     `start ${local(r.scheduled_start)}  stop ${local(r.scheduled_stop)}\n\n` +
+                     'Nothing has been recorded for it. It stays in the list as ABORTED.')) return;
+  try {
+    await post(`/api/runs/${id}/abort`);
+    toast(`cancelled ${id}`, 'ok');
   } catch (e) { toast(e.message, 'bad'); }
   renderRuns();
 };
