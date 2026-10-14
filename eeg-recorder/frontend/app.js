@@ -305,7 +305,8 @@ async function loadLayout() {
     // the strip cannot be re-judged from the original later. Last in the line
     // because it is the sentence, not a modifier on the channel count.
     + (PRESET.qc === 'none'
-        ? ' \u2014 no QC criterion applies to this layout, so no QC bundle is produced'
+        ? ' \u2014 QC not applicable: no QC bundle is produced. '
+          + (PRESET.qc_reason || '').trim()
         : '');
   renderKeepNote();
 }
@@ -477,7 +478,8 @@ async function renderRuns() {
       <td class="mono">${up ? `${up.mice.length} mice on NAS`
         : exp ? `${exp.n_mice} CSVs, ${(exp.bytes / 1e9).toFixed(1)} GB`
         : strip ? strip.saving_pct + '% smaller'
-        : (r.results && r.results.qc_bundle_skipped) ? 'no QC bundle' : '–'}</td>
+        : (r.results && r.results.qc_bundle_skipped) ? 'no QC bundle'
+        : (r.results && r.results.qc_not_applicable) ? 'QC n/a' : '–'}</td>
       <td>${retry}</td></tr>`;
   }).join('');
 }

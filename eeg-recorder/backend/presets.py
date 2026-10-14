@@ -216,6 +216,10 @@ class Config:
     headstages: dict = field(default_factory=dict)
     settings: dict = field(default_factory=dict)
     templates: dict = field(default_factory=dict)
+    # 🔴 RIG FACT, NOT A PER-RUN CHOICE: is anything wired to the XDAQ GPIO
+    # header? Absent = True, so the strip's Gate B stays enforced unless the
+    # config SAYS the header is empty. See postprocess.strip.
+    gpio_header_connected: bool = True
 
     def type_code(self, rtype: str) -> str:
         if rtype not in self.recording_type_codes:
@@ -385,8 +389,17 @@ def load(path: Path | str | None = None,
             f"`recording_type_folders` names {unknown}, which are not in "
             f"`recording_types` ({', '.join(types)})")
 
+    # `rig.gpio_header_connected` must be a real YAML boolean. A quoted "false"
+    # is a non-empty string, and reading it as truthy -- or worse, guessing --
+    # would decide whether a live sync line may be thrown away.
+    gpio = (raw.get("rig") or {}).get("gpio_header_connected", True)
+    if not isinstance(gpio, bool):
+        raise PresetError(
+            f"rig.gpio_header_connected is {gpio!r}; it must be true or false "
+            "(unquoted). It decides whether the strip may drop a varying din.")
+
     nas = raw.get("nas") or {}
-    return Config(users=users, recording_types=types,
+    return Config(users=users, recording_types=types, gpio_header_connected=gpio,
                   nas_share=nas.get("share", "SKIM_DATA"),
                   nas_root=nas.get("root", "02_Data_Sleep"),
                   recording_type_codes=codes, recording_type_folders=folders,

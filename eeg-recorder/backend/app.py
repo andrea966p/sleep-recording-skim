@@ -61,7 +61,7 @@ SAFE = re.compile(r"^[A-Za-z0-9_-]{1,32}$")
 
 app = Flask(__name__, static_folder=None)
 cfg = P.load()
-nas_upload.set_root(cfg.nas_root)       # config decides the NAS tree, not a default
+nas_upload.set_root(cfg.nas_root, cfg.users)   # config decides the NAS tree and who has one
 store = R.RunStore()
 worker = postprocess.Worker(store)
 # The scheduler hands a stopped run straight to the post-processing worker. Both

@@ -245,6 +245,7 @@ State: `~/.local/state/eeg-recorder/runs.db`.
 | NAS pill red | share not mounted, or the sentinel is missing | see [[02-procedures/installation/skim-nas-smb-and-upload]] §5. Runs wait safely meanwhile |
 | a run sits in `FAILED_QC` | no QC bundle, so stripping would destroy the only record of the wire-free floor | **This is the expected state for any recording that has not been QC'd yet, including every test run.** Press **retry**: it asks whether to strip anyway. Say yes for a test; for real data, compute the bundle first and then retry. The choice is recorded on the run either way, and applies to that run alone |
 | a run sits in `UPLOAD_PENDING` | the NAS is unreachable | nothing to do. It drains when the NAS returns |
+| a run sits in `FAILED_STRIP`, "din_1 ... transitions" | Gate B saw a varying digital input it would drop. With nothing wired to the GPIO header that is noise on a floating input (run `ee0263bffeaa`, 10-08) | since 2026-10-14 `rig.gpio_header_connected: false` in `config/users.yaml` makes the console pass `--gpio-never-connected` itself, and the strip report records it as `gate_b_override`. Set it to `true` the day the XDAQ → Pi sync is wired |
 
 > [!warning] THIS TOOL DOES NOT REPLACE THE PRE-FLIGHT SCREEN
 > For any recording whose timepoint dies with the animals, [[02-procedures/pre-flight-connection-screen]]

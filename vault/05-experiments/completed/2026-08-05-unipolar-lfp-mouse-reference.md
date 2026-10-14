@@ -6,6 +6,13 @@ status: completed
 
 # The unipolar LFP mouse, 2026-08-05: a working reference prep
 
+> [!warning] Channel map corrected 2026-10-14
+> Andrea: the site map on this page was a typo. The only correct map is `/18` EMG left, `/19` LFP
+> target, `/20` LFP reference, `/21` EMG right, `/22` EEG parietal, `/23` EEG frontal. The
+> measurements below are real, but every ROLE NAME and every pairing on this page (`A/21 − A/22`
+> "EEG", `A/18 − A/23` "EMG", `A/20 − A/19` "LFP") was labelled with the typo map. Read them as
+> site numbers only. See [[02-procedures/rig-layout-and-recording-settings]] §4.
+
 > [!abstract] TL;DR
 > A mouse from a **different surgery** was plugged into port A for about 20 minutes as a
 > reference look. Different in every way from our eight: depth LFP electrodes, **unipolar**

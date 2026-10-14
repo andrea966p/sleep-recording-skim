@@ -202,7 +202,7 @@ def t_cohort_extras_only_for_non_contiguous():
     assert e["real_channels"] == 32
     assert e["floor"] == "none"
     assert "never recorded" in e["floor_reason"]
-    assert e["role_sites"]["eeg_f"] == 21
+    assert e["role_sites"]["eeg_f"] == 23        # map corrected 2026-10-14
 
 
 def t_custom_channels_for_one_run():

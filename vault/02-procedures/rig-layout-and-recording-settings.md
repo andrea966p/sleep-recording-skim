@@ -108,12 +108,17 @@ A setting says which site number carries which signal, within one chip.
 | `eeg_emg_ecg` | RHD2216 bipolar | `eeg=/1 emg=/2 ecg=/3` | yes |
 | `eeg_emg_lfp` | Intan unipolar RHD2132 | `/18`–`/23` | **none — §5** |
 
-The unipolar map is the measured one from
-[[05-experiments/completed/2026-08-05-unipolar-lfp-mouse-reference]]: `/18` EMG 1, `/19` LFP
-reference, `/20` LFP target, `/21` EEG frontal, `/22` EEG parietal, `/23` EMG 2.
+The unipolar map: `/18` EMG left (`emg_l`), `/19` LFP target (`lfp_tgt`), `/20` LFP reference
+(`lfp_ref`), `/21` EMG right (`emg_r`), `/22` EEG parietal (`eeg_p`), `/23` EEG frontal (`eeg_f`).
+
+> [!warning] Corrected 2026-10-14
+> The map first written here and in
+> [[05-experiments/completed/2026-08-05-unipolar-lfp-mouse-reference]] (`/18` EMG 1, `/19` LFP ref,
+> `/20` LFP target, `/21` EEG frontal, `/22` EEG parietal, `/23` EMG 2) was a typo (Andrea,
+> 2026-10-14). The map above is the only correct one. No console run used the old one.
 
 > [!note] Those six are SINGLE-ENDED and the pairing is deliberately not encoded
-> The signal is a difference between two of them (`/21 − /22` is the EEG). Our bipolar chips do that
+> The signal is a difference between two of them (EEG = `/22` and `/23`). Our bipolar chips do that
 > subtraction in hardware, which is why the standing rule is never to subtract our normal channels.
 > The console keeps the raw sites and **computes nothing**; the pairing lives in the procedure, not
 > in the config.

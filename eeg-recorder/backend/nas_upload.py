@@ -57,18 +57,24 @@ ROOT = os.environ.get("SKIMNAS_ROOT", "02_Data_Sleep")
 SENTINEL = MOUNT / ROOT / ".skim-nas-share"
 
 
-def set_root(root: str) -> None:
+def set_root(root: str, users=None) -> None:
     """Take the root from config/users.yaml (`nas.root`), unless SKIMNAS_ROOT is set.
 
     The config value was loaded but ignored until 2026-09-29, so the destination
     was really decided by this module's default -- two places that could disagree.
+
+    `users` likewise comes from users.yaml. Until 2026-10-14 USERS below was a
+    second hand-kept list: a person added to users.yaml could create and record a
+    run, then hit FAILED_UPLOAD after the animals were done.
     """
-    global ROOT, SENTINEL
+    global ROOT, SENTINEL, USERS
+    if users is not None:
+        USERS = tuple(str(u).strip().lower() for u in users)
     if os.environ.get("SKIMNAS_ROOT"):
         return
     ROOT = str(root)
     SENTINEL = MOUNT / ROOT / ".skim-nas-share"
-USERS = ("andrea", "diane", "ahyeon", "hyunmin", "staci")
+USERS = ("andrea", "diane", "ahyeon", "hyunmin", "staci")   # replaced by set_root
 
 CHUNK = 8 << 20
 TOOL = "eeg-recorder.nas_upload"

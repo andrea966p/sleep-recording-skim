@@ -261,7 +261,7 @@ def _duration_s(run) -> float | None:
 
 
 def strip(run: R.Run, *, out_dir: str | Path | None = None,
-          progress: Callable[[str], None] | None = None) -> dict:
+          progress: Callable[[str], None] | None = None, cfg=None) -> dict:
     """Run the stripper as a subprocess and return its report.
 
     A subprocess rather than an import: the stripper is a long CPU+IO job, and
@@ -276,6 +276,15 @@ def strip(run: R.Run, *, out_dir: str | Path | None = None,
            "--verify", "full", "--require-idle"]
     if run.with_gpio:
         cmd.append("--with-gpio")
+    elif not (cfg or _cfg()).gpio_header_connected:
+        # 🔴 GATE B ON AN EMPTY GPIO HEADER CAN ONLY FAIL ON NOISE. Run
+        # ee0263bffeaa (2026-10-08) went FAILED_STRIP on din_1: 6 single-ms
+        # glitches on a floating input, nothing wired (Andrea, 10-09). It was
+        # finished by hand with this flag, which the retry could not pass. The
+        # claim comes from the config, not the run, and the strip report records
+        # it as `gate_b_override`. Set `rig.gpio_header_connected: true` the day
+        # the XDAQ -> Pi sync is wired, or a real sync line will be dropped.
+        cmd.append("--gpio-never-connected")
     if out_dir:
         cmd += ["--out", str(out_dir)]
     say(f"  {' '.join(cmd[:4])} ... ({len(run.keep_labels)} labels)")
@@ -583,7 +592,8 @@ class Worker:
             results={"strip": {"dst_base": rep.get("dst_base"),
                                "saving_pct": plan.get("saving_pct"),
                                "bytes_out": plan.get("bytes_out"),
-                               "dataset_checksum": rep.get("dataset_checksum")}})
+                               "dataset_checksum": rep.get("dataset_checksum"),
+                               "gate_b_override": rep.get("gate_b_override")}})
 
     def _export(self, run: R.Run) -> R.Run:
         self.log(f"{run.run_id}: exporting per-mouse CSVs from {run.base_name}")

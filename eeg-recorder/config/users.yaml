@@ -18,6 +18,13 @@ nas:
   share: SKIM_DATA
   root: 02_Data_Sleep          # <root>/<user>/<batch>/<Baseline|Recovery>/<mouse folder>/
 
+# Rig hardware facts. Andrea 2026-10-09: nothing is wired to the XDAQ GPIO
+# header, so a varying din can only be noise on a floating input (run
+# ee0263bffeaa went FAILED_STRIP on it). Set to true the day the XDAQ -> Pi
+# hardware sync is wired, or the strip's Gate B stops protecting that line.
+rig:
+  gpio_header_connected: false
+
 recording_types: [basal, recovery]
 
 # The code each recording type contributes to a per-mouse folder name, and the
@@ -37,7 +44,7 @@ recording_type_folders:
 users:                        # default_layout names an entry in layout_templates
   andrea:  {default_layout: 8mice_eeg_emg}
   diane:   {default_layout: 8mice_eeg_emg}
-  ahyeon:  {default_layout: 8mice_eeg_emg}
+  ahyeon:  {default_layout: 4mice_unipolar_lfp}   # unipolar mice, first run 2026-10-15
   hyunmin: {default_layout: 8mice_eeg_emg}
   staci:   {default_layout: 8mice_eeg_emg}
 
@@ -94,9 +101,15 @@ recording_settings:
     # simultaneous EEG, EMG and LFP this project has recorded.
     #
     # These are SINGLE-ENDED sites. The signal is a difference between two of
-    # them (/21-/22 is the EEG), and that pairing is deliberately NOT encoded:
-    # the strip keeps raw sites and never computes anything.
-    roles: {emg1: 18, lfp_ref: 19, lfp_tgt: 20, eeg_f: 21, eeg_p: 22, emg2: 23}
+    # them, and that pairing is deliberately NOT encoded: the strip keeps raw
+    # sites and never computes anything.
+    #
+    # 🔴 ROLES CORRECTED 2026-10-14 (Andrea): the map first written here
+    # (emg1 18, lfp_ref 19, lfp_tgt 20, eeg_f 21, eeg_p 22, emg2 23) was a typo.
+    # The only correct map is the one below. No stored run used the old one
+    # (runs.db checked: 13 eeg_emg, 1 custom), and a run snapshots its roles.
+    # Confirmed live the same day: Allego has site_num 18-23 selected on A, B, C.
+    roles: {emg_l: 18, lfp_tgt: 19, lfp_ref: 20, emg_r: 21, eeg_p: 22, eeg_f: 23}
     qc: none
     # 🔴 EVIDENCE-ABSENT, NOT SHAPE-MISMATCH. An RHD2132 has 32 REAL inputs, so a
     # floor COULD be derived from the ~26 unused ones. It must not be: the
@@ -105,6 +118,12 @@ recording_settings:
     # nothing at all". A floor from ground-tied inputs flatters the control and
     # condemns every real animal. Recorded as absent evidence on purpose -- a
     # shape mismatch invites someone to fix the shape.
+    # 2026-10-14: "tied to ground" holds for only 16 of the 26. Empty unipolar
+    # headstages (noise-tests uid1001-16-48-09, port C, no animal) read sites
+    # 1-8 and 25-32 at amplifier noise (4-5 uV rms) but sites 9-24 as true open
+    # inputs (~4 mV, 60 Hz 5-6 mV). A floor from /9-/17 + /24 (10 sites) is
+    # PLAUSIBLE but needs the implant's unused pins confirmed unwired and a new
+    # validation for single-ended inputs. Until then: none.
     qc_reason: >
       Unipolar RHD2132. Which of its 26 unused real inputs are unwired was never
       recorded; the only instruction on file is "for now just keep 18 19 20 21
@@ -129,6 +148,9 @@ layout_templates:
     splitters: {A: true, B: true, C: true, D: true}
 
   4mice_unipolar_lfp:
-    label: "4 mice, unipolar LFP"
+    # One RHD2132 per port. A C3442 splitter left in the cable with ONE chip on
+    # it still enumerates 32 channels (measured 2026-10-14, A B C = 32 each), so
+    # it is declared as no splitter. Untick "In use" on any empty port.
+    label: "Up to 4 mice (1 per port), unipolar EEG + EMG + LFP"
     setting: eeg_emg_lfp
     splitters: {A: false, B: false, C: false, D: false}

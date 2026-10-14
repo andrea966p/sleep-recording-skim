@@ -304,6 +304,67 @@ def t_qc_none_preset_needs_no_override(tmp):
         f"a judgeable preset walked through the qc:none door ({held.state})"
 
 
+def t_empty_gpio_header_lets_the_strip_finish(tmp):
+    """Run ee0263bffeaa (2026-10-08) went FAILED_STRIP on 6 single-ms glitches
+    on a floating din_1, and the retry could not pass --gpio-never-connected.
+    The rig config now says whether the header is wired; absent means wired, so
+    Gate B stays enforced unless someone declared otherwise. --with-gpio wins:
+    a run that KEEPS the GPIO channels drops nothing for Gate B to judge."""
+    import types
+    import postprocess as PP
+    import presets as P
+    import nas_upload as NU
+    s = mkstore(tmp)
+    r = s.create(owner="andrea", preset="4mice_unipolar_lfp",
+                 slots={"A": {"mouse_id": "M1", "recording_type": "basal"}},
+                 keep_labels=["A/18", "A/19"], dest_dir=str(tmp))
+    r = s.transition(r.run_id, r.state, base_path=str(Path(tmp) / "allego_0__uidX"))
+
+    seen = []
+
+    class Fail:
+        returncode, stdout, stderr = 1, "", "fake"
+
+    real = PP.subprocess.run
+    try:
+        PP.subprocess.run = lambda cmd, **kw: (seen.append(cmd), Fail())[-1]
+        for connected, gpio in ((False, False), (True, False), (False, True)):
+            r.with_gpio = gpio
+            try:
+                PP.strip(r, cfg=types.SimpleNamespace(gpio_header_connected=connected))
+            except PP.PostprocessError:
+                pass
+    finally:
+        PP.subprocess.run = real
+    flags = ["--gpio-never-connected" in c for c in seen]
+    assert flags == [True, False, False], flags
+
+    # the config key: absent = connected; a quoted "false" is refused, not guessed
+    assert P.load().gpio_header_connected in (True, False)
+    base = Path(__file__).resolve().parent.parent / "config" / "users.yaml"
+    txt = "\n".join(l for l in base.read_text().splitlines()
+                    if not l.startswith(("rig:", "  gpio_header_connected")))
+    for val, want in (("", True), ("rig: {gpio_header_connected: false}\n", False)):
+        p = Path(tmp) / f"u{want}.yaml"
+        p.write_text(txt + "\n" + val)
+        assert P.load(p).gpio_header_connected is want, val
+    p = Path(tmp) / "quoted.yaml"
+    p.write_text(txt + "\nrig: {gpio_header_connected: 'false'}\n")
+    try:
+        P.load(p)
+        raise AssertionError("a quoted 'false' was accepted")
+    except P.PresetError:
+        pass
+
+    # nas_upload's user list follows the config, not a second hand-kept copy
+    keep = NU.USERS
+    try:
+        NU.set_root(NU.ROOT, ["andrea", "Newperson"])
+        assert NU.user_dir("newperson").name == "newperson"
+    finally:
+        NU.USERS = keep
+
+
 def _stripped_run(s, tmp, *, slots=None, state=R.STRIPPED, **fields):
     r = s.create(owner="andrea", preset="8mice_eeg_emg",
                  slots=slots or {"A1": {"mouse_id": "HLBSSL31", "recording_type": "recovery"},
@@ -745,6 +806,7 @@ def main() -> int:
                t_upload_pending_is_a_resting_state,
                t_retry_targets_are_legal, t_qc_override_is_per_run_not_global,
                t_qc_scores_only_occupied_slots, t_qc_none_preset_needs_no_override,
+               t_empty_gpio_header_lets_the_strip_finish,
                t_export_spec_maps_each_slot_to_its_own_sites,
                t_frozen_mouse_dirs_are_reused_on_retry,
                t_a_run_left_upload_pending_by_the_old_service_is_exported,

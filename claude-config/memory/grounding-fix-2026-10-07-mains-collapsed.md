@@ -61,3 +61,9 @@ Vault: noise series Entry 11 + Fig Q, journal 10-07, verdict-page update, audit 
   - The raw data are safe.
   - To finish: `strip_channels --gpio-never-connected` (needs Andrea's assertion that nothing is wired to the GPIO header) or keep the GPIO channels.
   - The console's retry can do neither.
+
+**Gate review 2026-10-14 (read-only, e10 `/tmp/qcgate/`, journal 10-14):** no automatic ground detector is supportable
+post-fix (no post-fix known-ungrounded chip; every absolute feature overlaps floating-Aug 81-246 µV vs grounded-post-fix
+34-222 µV). Fixing the hum gate unblocks ONLY uid1007 B1; the slope-validity gate keeps A1, A2, B2 UNJUDGEABLE (floor
+slopes unchanged by the fix; old "empty floor ≥ −1.73" was mains masking) ⇒ recovering A2 = criterion redesign.
+Recommended (c) era-dated gate: 800 before 2026-10-07 14:34, none after with "ground unverified". 🛑 Andrea's decision, pending.
