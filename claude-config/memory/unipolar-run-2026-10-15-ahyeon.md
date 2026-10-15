@@ -1,6 +1,6 @@
 ---
 name: unipolar-run-2026-10-15-ahyeon
-description: "2026-10-14 prep for ahyeon's 3 unipolar mice (A1 B1 C1, 10-15 09:00 → 10-16 15:00, 30 h): corrected unipolar map, GPIO strip fix, watchdog auto-arm, full 30 h CSVs. The old 08-05 unipolar map was a TYPO."
+description: "ahyeon's 3 unipolar mice (A B C). 10-14 prep: corrected unipolar map, GPIO strip fix, watchdog auto-arm, full 30 h CSVs; old 08-05 map was a TYPO. 10-15 run LOST to hardware: B dropped 23:54 the night before, C lost its reference; console started without re-checking ports."
 metadata:
   node_type: memory
   type: project
@@ -41,3 +41,12 @@ live grab showed delta 1-2 % and flat spectra (I misread it as "mice awake"); th
 For any live quality check, first ask whether a Software Stage 2 filter is on, or analyse the recorded file.
 Also: the console accepts OVERLAPPING schedules (refused only at start, FAILED_START, active run untouched).
 Cancel button for SCHEDULED/DRAFT runs added in app.js (uses existing /abort).
+
+**🔴 10-15 RUN LOST: hardware, not software.** Port B dropped off the SPI scan at **10-14 23:54:01 KST** (allegoserver.log
+`portB=0`), 9 h before the start. The console started anyway at 09:00 on its creation-time enumeration and recorded A + C only.
+Port C's 6 channels went common-mode (r 0.75-0.99, 500-700 µV, 60 Hz ~110 µV vs 2 µV on 10-14), varying with movement:
+a lost head reference/ground contact. Andrea stopped it in the Allego GUI at 09:12:57 (773 s); run `dca84de0cc7a` = `FAILED_STOP`,
+raw left in `~/radix/data/allego_0__uid1015-09-00-04_*`. Cause per Andrea: the mice loosen the unipolar headstage; the SPI cable runs
+to the XDAQ with no counterbalance arm. The 10-14 code changes were audited and are clean (abort = state only, watchdog read-only).
+Gap: no live enumeration check at start ⇒ separate session adds check + ntfy alert, still starting the run.
+For "did the hardware drop?", grep allegoserver.log `Scanned ports` for per-port counts over time. Journal `04-journal/2026-10/2026-10-15.md`.
