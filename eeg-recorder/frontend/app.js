@@ -477,7 +477,10 @@ async function renderRuns() {
       <td class="mono">${r.run_id}</td>
       <td>${r.owner}</td>
       <td class="mono" style="font-size:11px">${mice}</td>
-      <td><span class="tag ${STATE_CLASS(r.state)}">${r.state}</span></td>
+      <td><span class="tag ${STATE_CLASS(r.state)}">${r.state}</span>${
+        (r.results && r.results.start_warning)
+          ? ` <span class="tag bad" title="${r.results.start_warning.replace(/"/g, '&quot;')}">port missing at start</span>`
+          : ''}</td>
       <td class="mono">${local(r.actual_start || r.scheduled_start)}</td>
       <td class="mono">${d}</td>
       <td class="mono">${up ? `${up.mice.length} mice on NAS`

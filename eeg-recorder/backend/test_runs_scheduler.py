@@ -63,6 +63,7 @@ class FakeAllego:
         self.fail_start = False
         self.grew = True
         self.n = 0
+        self.ports = None                       # live enumeration, when set
 
     def start(self, dest, **kw):
         if self.fail_start:
@@ -71,9 +72,12 @@ class FakeAllego:
         self.n += 1
         self.recording = True
         name = f"allego_{self.n}__uidTEST"
-        return {"base_name": name, "base_path": f"{dest}/{name}",
-                "data_path": f"{dest}/{name}_data.xdat", "mode": "R_ON",
-                "started_at": 0.0, "dest": str(dest)}
+        out = {"base_name": name, "base_path": f"{dest}/{name}",
+               "data_path": f"{dest}/{name}_data.xdat", "mode": "R_ON",
+               "started_at": 0.0, "dest": str(dest)}
+        if self.ports is not None:
+            out["ports"] = dict(self.ports)
+        return out
 
     def stop(self, **kw):
         self.stops += 1
@@ -707,6 +711,51 @@ def t_start_failure_is_recorded(tmp):
     assert "preflight" in (r.error or "").lower()
 
 
+def t_missing_port_warns_but_still_records(tmp):
+    """A headstage that dropped off the bus must be REPORTED at the start, never
+    block it. Run dca84de0cc7a, 2026-10-15: declared A/B/C x 32, port B fell to
+    0 at 23:54 the night before, and the 09:00 start recorded A + C with no word
+    to anyone.
+    """
+    s = mkstore(tmp); fake = FakeAllego()
+    allego.start, allego.stop, allego.confirm_growing = fake.start, fake.stop, fake.confirm_growing
+    sent: list[tuple] = []
+    sch = S.Scheduler(s, dest_dir="/tmp/fake-dest", on_event=lambda m: None,
+                      notify=lambda *a: sent.append(a))
+    now = datetime.now().astimezone()
+    lay = {"ports_used": ["A", "B", "C"],
+           "expected_channels": {"A": 32, "B": 32, "C": 32, "D": 0}}
+
+    def mk(start):
+        return s.create(owner="ahyeon", preset="unipolar",
+                        slots={p: {"mouse_id": f"U{p}", "recording_type": "basal"}
+                               for p in "ABC"},
+                        keep_labels=["A/18"], layout=lay,
+                        scheduled_start=iso(start), dest_dir="/tmp/fake-dest")
+
+    # positive control: everything present -> no warning, no alert
+    fake.ports = {"A": 32, "B": 32, "C": 32}
+    ok = mk(now - timedelta(seconds=5))
+    sch.tick(now)
+    ok = s.get(ok.run_id)
+    assert ok.state == R.RECORDING and "start_warning" not in ok.results, ok.results
+    assert ok.results["start_enumeration"] == fake.ports
+    assert sent == [], sent
+    sch.stop_now(ok.run_id)
+
+    # port B gone: still RECORDING, mismatch recorded, one alert naming B
+    fake.ports = {"A": 32, "B": 0, "C": 32}
+    r = mk(now - timedelta(seconds=4))
+    sch.tick(now)
+    r = s.get(r.run_id)
+    assert r.state == R.RECORDING, f"must still record A + C, got {r.state}"
+    assert fake.starts == 2
+    assert r.results["start_enumeration"] == {"A": 32, "B": 0, "C": 32}
+    w = r.results.get("start_warning", "")
+    assert "port B" in w and "UB" in w and "port A" not in w and "port C" not in w, w
+    assert len(sent) == 1 and "port B" in sent[0][2], sent
+
+
 # --------------------------------------------------------------------------- #
 # refusals
 # --------------------------------------------------------------------------- #
@@ -814,7 +863,8 @@ def main() -> int:
                t_two_slots_cannot_hold_the_same_animal,
                t_start_on_time, t_missed_start_fails_loudly, t_second_run_blocked,
                t_stop_fires_even_when_late, t_start_failure_is_recorded,
-               t_scheduled_stop_hands_off_to_postprocessing):
+               t_scheduled_stop_hands_off_to_postprocessing,
+               t_missing_port_warns_but_still_records):
         d = tempfile.mkdtemp(dir=tmp)
         check(fn.__name__, lambda fn=fn, d=d: fn(d))
     print("\nMUST REFUSE")

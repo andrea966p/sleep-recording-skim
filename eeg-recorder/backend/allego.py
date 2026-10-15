@@ -239,7 +239,9 @@ def start(dest_dir: str | Path, *, base_name: str = "allego",
     """
     say = progress or (lambda _m: None)
     dest = Path(dest_dir)
-    preflight(dest, min_free_gb=min_free_gb)
+    # The port enumeration preflight already read is handed back to the caller,
+    # so it can compare it with the run's layout without another gRPC round trip.
+    ports = preflight(dest, min_free_gb=min_free_gb)["status"].get("ports") or {}
     configure(dest, base_name)
     say(f"configured -> {dest}")
 
@@ -274,7 +276,7 @@ def start(dest_dir: str | Path, *, base_name: str = "allego",
         say(f"started: {name} (mode {mode})")
         return {"base_name": name, "base_path": str(dest / name),
                 "data_path": str(path), "mode": mode,
-                "started_at": started_at, "dest": str(dest)}
+                "started_at": started_at, "dest": str(dest), "ports": ports}
     except Exception:
         say("start failed after the recorder was engaged -- stopping it")
         try:

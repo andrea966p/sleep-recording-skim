@@ -199,6 +199,7 @@ the run.
 | service restarts mid-run | in-flight runs rewind to the last actionable state; schedules re-arm from disk | a 24 h run outlives any process |
 | NAS unreachable when the upload comes | run rests in `UPLOAD_PENDING` and drains later | **this is designed behaviour, not a fault** |
 | a reservation was made by mistake | press **cancel** on its row in the runs table (since 2026-10-14); it becomes `ABORTED` and stays listed | only a scheduled or draft run can be cancelled; a started run is stopped with Stop |
+| a headstage dropped off the bus before the start | **starts anyway**, records the ports that are present; the live enumeration and the mismatch go on the run (`results.start_enumeration`, `start_warning`), the runs table shows a red **port missing at start** tag, and ntfy gets a `fail` alert (since 2026-10-15, after run `dca84de0cc7a` silently recorded 2 of 3 mice) | refusing would lose every other animal to save one; takes effect after the next `eeg-recorder` restart |
 | two reservations overlap | **both are accepted**; the later one fails at its own start (`FAILED_START`, "already using the rig") and the active run is untouched | 🔴 not refused at creation yet (found 2026-10-14). **Check the DATE field**: the form pre-fills the next day |
 
 > [!info] How it works underneath

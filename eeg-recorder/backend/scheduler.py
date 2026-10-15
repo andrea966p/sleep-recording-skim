@@ -35,9 +35,19 @@ DESIGN, AND THE FAILURE IT IS BUILT AROUND
     run RECORDING as soon as the file exists and the mode is R_ON, then confirms
     growth in the background once the flush interval has passed. Checking sooner
     reports a working rig as broken.
+
+    A MISSING HEADSTAGE WARNS, IT NEVER BLOCKS. A loosened connector can drop a
+    port off the SPI bus hours after the run was set up (port B, 2026-10-14
+    23:54, found only after the 09:00 start had recorded A and C). At the start
+    the live per-port enumeration is compared with the layout's expected
+    channels for the occupied slots; a mismatch is recorded on the run
+    (results.start_enumeration / start_warning) and pushed to ntfy, and the
+    ports that ARE present keep recording. Refusing would lose every other
+    animal to save one.
 """
 from __future__ import annotations
 
+import subprocess
 import threading
 import time
 import traceback
@@ -47,6 +57,10 @@ from typing import Callable
 
 import allego
 import runs as R
+
+# Same notifier the recording watchdog uses; it reads the ntfy URL itself.
+NOTIFY_SH = (Path(__file__).resolve().parents[2]
+             / "neurosurveillance" / "deploy" / "nvr-notify.sh")
 
 # How late a start may be and still be honoured. Past this, the run FAILS rather
 # than beginning at the wrong time.
@@ -71,12 +85,45 @@ def _now() -> datetime:
     return datetime.now().astimezone()
 
 
+def port_mismatch(run: R.Run, ports: dict) -> list[str]:
+    """Occupied ports whose live enumeration differs from the layout.
+
+    Only ports that hold an animal count: an empty port is nobody's loss. A run
+    without `expected_channels` in its layout (made before layouts existed) is
+    not judged.
+    """
+    expected = (run.layout or {}).get("expected_channels") or {}
+    if not expected:
+        return []
+    out = []
+    for port in sorted({slot[0] for slot in run.occupied}):
+        want = int(expected.get(port, 0) or 0)
+        got = int((ports or {}).get(port, 0) or 0)
+        if got != want:
+            mice = ", ".join(m for sl, m in run.mice.items() if sl[0] == port)
+            out.append(f"port {port} ({mice}): expected {want} channels, "
+                       f"Allego enumerates {got}")
+    return out
+
+
+def _ntfy(level: str, title: str, body: str) -> None:
+    """Fire and forget; a broken notifier must not touch the start path."""
+    def work():
+        try:
+            subprocess.run([str(NOTIFY_SH), level, title, body],
+                           capture_output=True, timeout=90)
+        except Exception as exc:
+            print(f"[scheduler] ntfy failed: {exc}", flush=True)
+    threading.Thread(target=work, name="ntfy", daemon=True).start()
+
+
 class Scheduler:
     """One background thread. Start it once; it re-arms itself from the store."""
 
     def __init__(self, store: R.RunStore, *, dest_dir: str | Path,
                  on_event: Callable[[str], None] | None = None,
                  on_stopped: Callable[[str], None] | None = None,
+                 notify: Callable[[str, str, str], None] | None = None,
                  min_free_gb: float = 150.0):
         self.store = store
         self.dest_dir = Path(dest_dir)
@@ -90,6 +137,7 @@ class Scheduler:
         # first scheduled run on the real rig, 2026-09-13, which is what a bench
         # test is for.
         self.on_stopped = on_stopped or (lambda _run_id: None)
+        self.notify = notify or _ntfy           # (level, title, body)
         self._stop = threading.Event()
         self._thread: threading.Thread | None = None
         self._confirming: set[str] = set()
@@ -202,12 +250,29 @@ class Scheduler:
             self.store.fail(run.run_id, "START", f"{type(exc).__name__}: {exc}")
             self.log(f"{run.run_id}: START FAILED -- {exc}")
             return
+        results = {"start_late_s": round(late, 1)}
+        missing = []
+        if "ports" in info:
+            results["start_enumeration"] = info["ports"]
+            missing = port_mismatch(run, info["ports"])
+            if missing:
+                results["start_warning"] = (
+                    "started with a port mismatch, recording what is present: "
+                    + "; ".join(missing))
         self.store.transition(
-            run.run_id, R.RECORDING, detail=f"file {info['base_name']}",
+            run.run_id, R.RECORDING, detail=f"file {info['base_name']}"
+            + (" -- PORT MISMATCH" if missing else ""),
             actual_start=R.utcnow(), base_name=info["base_name"],
             base_path=info["base_path"], data_path=info["data_path"],
-            dest_dir=info["dest"], results={"start_late_s": round(late, 1)})
+            dest_dir=info["dest"], results=results)
         self.log(f"{run.run_id}: RECORDING -> {info['base_name']}")
+        if missing:
+            self.log(f"{run.run_id}: 🔴 {results['start_warning']}")
+            self.notify(
+                "fail", f"EEG run {run.run_id} started with a headstage missing",
+                f"{run.owner}'s run is recording, but: " + "; ".join(missing)
+                + ". Those animals are NOT being recorded. The other ports "
+                "continue. Check the headstage connector.")
         self._confirm_later(run.run_id, info["data_path"])
 
     # ---- growth confirmation, after the ~30 s flush ---------------------- #
