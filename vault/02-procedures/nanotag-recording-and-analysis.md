@@ -9,7 +9,7 @@ status: active
 > [!abstract] TL;DR
 > **What this is:** the nanotag workflow from implant to report. It was run for HLBNSL (NS-SL SOD1 vs NW-SL water, 2026-09) and will be reused for NS-SD / NW-SD (surgery 2026-10-12). **Why it exists:** nanotag studies are the project's second recording method, without EEG and without the rig. Until 2026-10-05 the code and data lived only on the workstation Desktop. **How to read it:** the five steps below are the whole job; the sections expand each one. Device facts: [[nanotag-kissei-device-and-literature]]. Study page: [[2026-09-14-HLBNSL-nanotag-SOD1-sleep]]. Big picture: [[01-infrastructure/system-overview]].
 >
-> 1. **Plan reads around the memory.** At 12 s activity + 5 min temperature the tag **stops itself after 8 days**. Read before that.
+> 1. **Plan reads around the memory.** At 12 s activity + 5 min temperature the tag **stops itself after 8 days**; with no temperature, after **9 days** (not 20, see below). Read before that.
 > 2. **Log every handling, read and test** with clock times in the sheet's `NANOTAG behavioral` tab. Each logged window is removed from the analysis: whole room, rounded out to the hour.
 > 3. **Export the RAW CSV** from nanotagViewer, named after the **mouse** (`HLBNWSL45`, never `HLBNSSL_45` for a water mouse).
 > 4. **Analysis** (repo `sleep-recording-skim`):
@@ -30,7 +30,7 @@ status: active
 
 ## 1. Before surgery: program the tag
 
-- In nanotagViewer, set activity **12 s**, temperature **5 min** (or no temperature: 20 days of memory; see the report's recommendation), threshold **170/170**, and a **delayed start** at the planned recording time.
+- In nanotagViewer, set activity **12 s**, temperature **5 min** (or no temperature: **9 days** of memory. Kissei's English manual prints 20; the Japanese manual and nanotagViewer say 9. NS-SD uses no temperature), threshold **170/170**, and a **delayed start** at the planned recording time.
 - `Using memory type`: Stop (default) ends the recording when memory is full. Loop overwrites the oldest data. Use Loop only if every read is guaranteed before 8 days.
 - The battery runs from the moment of programming (~60 days with activity + temperature), so do not program weeks ahead.
 - Note the **nanotag ID ↔ mouse** pairing in the registry. The analysis identifies mice by the tag ID in each file header (`TAG` in `cohort.py`), not by the file name.
@@ -100,4 +100,5 @@ Full rationale, with every choice checked against the manual and literature: `me
 ## History
 
 > [!history]
+> - **2026-10-16** — Memory with no temperature corrected to 9 days (English manual misprints 20).
 > - **2026-10-05** — Created when nanotag work moved into the repo and vault (code from `~/Desktop/Andrea/nanotag/analysis/`, now `nanotag/analysis/`, symlinked back). First NAS upload of HLBNSL (98 files, all verified) and the Run 1 + Run 2 merge.

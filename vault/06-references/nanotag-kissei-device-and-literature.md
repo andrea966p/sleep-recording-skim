@@ -10,7 +10,7 @@ status: active
 > - **What it is.** A 2.7 g implantable logger, 15 × 14.2 × 7.1 mm. It has a 3-axis accelerometer and a temperature sensor and is read by NFC. We use it for **home-cage sleep and activity without EEG**, in the HLB SOD1 study ([[2026-09-14-HLBNSL-nanotag-SOD1-sleep]]).
 > - **What it stores.** Activity is a **cross count**: how often the combined 3-axis signal (sampled at 25 Hz) rises through a threshold that is fixed on the tag at recording, summed per bin (12 s for us). Temperature is the **tag-case temperature under the skin**, one value every 5 min. It is **not core temperature**.
 > - **Its limits drive the protocol.**
->   - Memory holds **8 days** at 12 s activity + 5 min temperature, or 20 days with activity alone.
+>   - Memory holds **8 days** at 12 s activity + 5 min temperature, or **9 days** with activity alone. The English manual prints 20 for activity alone; that is a misprint (checked against the Japanese manual and nanotagViewer, 2026-10-12).
 >   - The battery lasts **~60 days** and cannot be replaced.
 >   - NFC reaches **~1 cm**, so the tag must sit under the skin.
 >   - The viewer runs on **Windows only** and needs its USB licence dongle.
@@ -33,7 +33,7 @@ The manuals are in the vault: [[Kissei_nanotag_VSMN210_UsersManual_2025-09-25.pd
 | Threshold | Written to the tag at setup; cannot be changed afterwards. Kissei values: mouse neck 170, mouse abdomen 150, rat neck 170, rat abdomen 140. For any other site, derive one from a 27-min vector-wave recording with video | p18–20, p49 |
 | Temperature | Tag-case temperature. Sensor range 10–45 °C; values outside the range set at recording (ours 30.0–45.8 °C) are stored as the text `Out of range` | p2, p37 |
 | Time stamp | A row's value covers the bin that starts at its stamp | p49 |
-| Memory | 12 s activity + 5 min temperature: 8 days. 12 s activity alone: 20 days. Full table in the sheet's NANOTAG recordings tab. `Using memory type` = Stop (default; recording ends when full) or Loop (overwrites the oldest) | p3, p24–27 |
+| Memory | 12 s activity + 5 min temperature: 8 days. 12 s activity alone: **9 days** (English manual misprints 20; Japanese manual and nanotagViewer say 9). 30 s activity alone: 20 days. Full table in the sheet's NANOTAG recordings tab. `Using memory type` = Stop (default; recording ends when full) or Loop (overwrites the oldest) | p3, p24–27 |
 | Battery | CR1220, not replaceable. Activity + temperature: 60 days; temperature only: 180 days. It also drains while the tag waits to start | p3 |
 | Read-out | NFC, about 1 cm without obstacles, so implant **under the skin, antenna side (blank face) out**. A tag in the abdominal cavity can only be read after removal | p2, p16–17 |
 | Recovery | "About 3 days" after neck or abdominal implant in rat or mouse (the literature waits ≥ 1 week; see below) | p17 |
@@ -41,6 +41,15 @@ The manuals are in the vault: [[Kissei_nanotag_VSMN210_UsersManual_2025-09-25.pd
 | Software | nanotagViewer R1.2.10 (Windows 10/11 Pro), USB licence dongle, Sony PaSoRi RC-S380 NFC reader (not on a PC with its own NFC/FeliCa port) | p4–11 |
 
 Our setup files (installer, PaSoRi driver, VC2008 runtime, Kissei sample data) are on the SKIM workstation in `~/Desktop/Andrea/nanotag/`.
+
+### English manual errors: trust the Japanese manual (checked 2026-10-12)
+
+The English edition missed the Japanese 2024 corrections. Where they disagree, the Japanese viewer manual is right:
+- **Memory days:** 12 s activity with no temperature = **9 days**, not 20 (nanotagViewer also says 9). 30 s activity with no temperature = 20 days.
+- **Temperature timing:** the value on row t is sampled at the **end** of the interval (t + resolution − 0.4 s), not at t.
+- **Battery tab:** the English text swaps which tab to read. For activity runs, read the 60-day activity tab.
+- **Changing a reservation:** the documented route is cancel first ([Stop recording] → confirm → tag on the reader again), then reserve again, then check [Confirm condition]. Overwriting a reservation is not documented.
+- **Reading never erases data. Starting a recording or setting a reservation erases everything**, so always read first.
 
 ## How the literature uses it
 
@@ -76,4 +85,5 @@ The project's rationale (oral microbial SOD against sleep-loss oxidative stress)
 ## History
 
 > [!history]
+> - **2026-10-16** — Memory for 12 s activity alone corrected from 20 to 9 days; English-manual errors section added (from the workstation nanotag session, 2026-10-12).
 > - **2026-10-05** — Created. Device facts re-checked against the English manual (spec table p2, battery p3, read-out and recovery p16–17). Core references verified in PubMed (PMIDs 16985007, 33188274, 39043741); six further nanotag studies added from PubMed.
