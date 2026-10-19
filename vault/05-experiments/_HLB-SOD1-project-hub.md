@@ -17,7 +17,7 @@ status: active
 >   - Four EEG/EMG batches followed (W-SD, S-SD, S-SL, W-SL; August to September). The rig lost most of its time to troubleshooting, and only a handful of mice are scoreable at both timepoints.
 >   - **Since September, sleep is measured with implanted nanotags**: the first batch is NS-SL / NW-SL, the next is NS-SD / NW-SD.
 > - **What the pivot costs.** Immobility-based sleep gives sleep amount, bouts and daily rhythm. It gives **no NREM/REM split and no EEG slow-wave activity**, the classic marker of sleep pressure after deprivation. The "sleep architecture" aim shrinks to sleep/wake amount and consolidation. Say so in the final report.
-> - **NS-SD / NW-SD is running (surgery 2026-10-12, sampling 2026-11-02).** Schedule settled 10-12 ([below](#ns-sd-nw-sd-final-schedule-decided-2026-10-12)): SOD1 11 days from 10-22, 4-day SD 10-30 → 11-02, one tag read on 10-27 (the tag holds 9 days, not 20).
+> - **NS-SD / NW-SD re-planned 2026-10-19** ([below](#ns-sd-nw-sd-current-schedule-re-planned-2026-10-19)): baseline 10-22 → 10-24, SOD from 10-24 (15 d), one tag read 10-30, 4-day SD 11-05 → 11-08, sampling Sun 11-08.
 
 ## Design: proposal vs what is running
 
@@ -44,7 +44,7 @@ Statistics in the proposal: two-way (repeated-measures) ANOVA with Tukey. The na
 | S-SL (HLBSSL) | 08-31 → 09-18 | EEG/EMG | 3 scoreable at both timepoints (31, 33, 35) | memory `s-sl-has-sleep-data-n3` |
 | W-SL (HLBWSL) | 09-03 → 09-21 | EEG/EMG | Scoreable at both timepoints: HLBWSL24 | [[2026-09-18-W-SL-light-phase-sleep]] |
 | **NS-SL / NW-SL (HLBNSSL / HLBNWSL)** | 09-14 → 10-02 | **nanotag** | 4 SOD1 vs 5 water; no detectable sleep effect | [[2026-09-14-HLBNSL-nanotag-SOD1-sleep]] |
-| **NS-SD / NW-SD (HLBNSSD51–55 / HLBNWSD56–60)** | surgery 10-12 → sampling 11-02 | nanotag | running | below |
+| **NS-SD / NW-SD (HLBNSSD51–55 / HLBNWSD56–60)** | surgery 10-12 → sampling 11-08 | nanotag | running | below |
 
 The EEG data are not wasted: the scoreable EEG mice are the only ones with NREM/REM, and they are SL/SD pairs too. Pooling across methods is not possible, but they can stand as a small EEG sub-study beside the nanotag batches.
 
@@ -57,7 +57,49 @@ The EEG data are not wasted: the scoreable EEG mice are the only ones with NREM/
 SleepStager, which now opens the per-mouse CSV. First mouse: HLBSSL33 Recovery, epochs 1–840 scored ([[2026-10-07]]).
 How: [[02-procedures/sleepstager-user-guide]]. What the calls rest on: [[06-references/sleep-scoring-handbook]].
 
-## NS-SD / NW-SD: final schedule (decided 2026-10-12)
+## NS-SD / NW-SD: current schedule (re-planned 2026-10-19)
+
+> [!important] Source of truth = the sheet's `NANOTAG registry` (rows 19–29), as checked on 2026-10-19
+> The 10-12 plan below is **superseded**. Andrea moved the tag recording to start 10-22 and re-planned the batch on
+> 2026-10-19 against the literature (summary below). Sheet changes go through [[sod1-sheet-change-log-workflow]].
+
+| Date | Event |
+|---|---|
+| Mon 10-12 | Surgery, all 10 mice |
+| **Mon 10-19** | **Single housing + move to the recording room** (Andrea, actual date; the 10-16 plan did not happen) |
+| Thu 10-22 09:00 → Sat 10-24 09:00 | **48 h homecage baseline**, plain water. Tag Run 1 starts 10-22 09:00 (all 10 tags re-set 10-19, stop programmed for 10-30 09:00) |
+| Sat 10-24 | **SOD1 / UV water + liquid monitoring start** (15 days to sampling, as NS-SL) |
+| — | **No hand habituation** (sheet: "SD batches: hand habituation not required") |
+| Fri 10-30 ~08:30–09:00 | **The single live read** + Run 2 start (dim red light before lights-on). Run 2 full ≈ 11-08 09:00, so sampling day is not recorded (accepted: mice are awake from 09:00 until sampling) |
+| 10-30 → 11-05 09:00 | Undisturbed on treatment |
+| Thu 11-05 → Sun 11-08 | **SD 09:00–15:00, gentle handling, 4 days** (Day −1 to Day 2) |
+| Fri 11-06 | Y-maze 15:00 |
+| Sat 11-07 | NOR habituation 15:00 |
+| Sun 11-08 | NOR T1 15:00 → **2 h rest, no SD** (Andrea) → T2 17:10 → **sampling straight after each T2**; 17.9 weeks old |
+
+**Why these choices (literature checked 2026-10-19, PMIDs from PubMed):**
+- **48 h baseline** is the norm in mouse SD studies (24–48 h: Huber 2000, 11024081; Baracchi 2008, 18329246). The
+  "7 days of actigraphy" rule is human clinical guidance for rhythm measures (IS needs ≥ 7 d: Van Someren 2007,
+  17716276), so IS/IV/RA are secondary here and cannot be compared before vs after treatment.
+- **10 days after surgery** at baseline start meets the 5–7 d recovery for implanted telemetry (Butz 2001, 11242593).
+  Single housing on 10-19 leaves 72 h of home-cage habituation before baseline, the minimum Fisher 2012 (22306973) uses.
+- **Sample at the end of SD, before recovery sleep.** SD-induced oxidative damage reverses within ~24 h of recovery
+  (Hermann 2025, 41197218; Mathangi 2012, 25205991) and brain MDA is circadian, peaking ~ZT5 (Sani 2007, 17701679), so
+  NS-SL (sampled after NOR T2 at the same clock time) is the same-ZT reference. Run MDA for both batches on one plate.
+- **Risk:** 6–8 h gentle handling has not been shown to raise hippocampal MDA (Ramanathan 2009, 19850085;
+  Gopalakrishnan 2004, 14998234); clear MDA rises come from ≥ 72 h platform SD. A null SOD-vs-water MDA result is
+  therefore ambiguous; sleep (SD efficacy, rebound) and Y-maze/NOR have a better chance.
+- **Oral SOD duration:** 15 days. Oral Bacillus SOD lowered MDA after 10 days in mouse eye tissue (Yoon 2023, 37721740);
+  melon SOD studies used 4–5 weeks. No oral-SOD × SD study exists.
+- **Hand habituation:** the literature usually gives 5–6 days (Vecsey 2013, 23565007), though whether mice habituate is
+  disputed (Longordo 2011, 21532962). Dropping it affects both arms equally; noted as a deviation.
+
+**Analysis windows (to fix before the data arrive):** baseline 10-22 09:00 → 10-24 09:00; SOD effect on undisturbed
+sleep = 10-31 09:00 → 11-05 09:00 against baseline; SD efficacy = sleep 09:00–15:00 on each SD day plus 24 h totals;
+recovery = 11-05 15:00 → 11-06 09:00 (the only SD day without a test) against the same hours undisturbed. Immobility
+sleep shows rebound as extra minutes only, not intensity.
+
+## NS-SD / NW-SD: the 10-12 schedule (SUPERSEDED 2026-10-19)
 
 > [!important] This replaces the 10-06 "four decisions" plan
 > The 10-06 version of this section read the old Registry (SD 11-02, sampling 11-06) and recommended one 20-day activity-only run. **The 20 days was wrong**: it is a misprint in Kissei's English manual. The Japanese manual and nanotagViewer both give **9 days** at 12 s activity with no temperature ([[nanotag-kissei-device-and-literature]]). Andrea settled the plan below with the nanotag session on the SKIM workstation on 2026-10-12. The sheet was edited by an agent and checked clean (no `#REF!`) on 2026-10-13.
@@ -129,5 +171,6 @@ Validating the nanotag in a few EEG/EMG mice on our own rig, scored over the sam
 ## History
 
 > [!history]
+> - **2026-10-19** — Schedule re-planned (tag Run 1 from 10-22, 48 h baseline, SOD 10-24, read 10-30, SD 11-05 → 11-08, sampling 11-08, single housing 10-19) with a literature check; 10-12 section kept, marked superseded.
 > - **2026-10-16** — NS-SD / NW-SD section replaced with the final schedule decided on the workstation 2026-10-12 (sampling 11-02, 4-day SD 10-30 → 11-02, one tag read 10-27). The 10-06 "20-day activity-only run" recommendation was based on a misprint in the English manual.
 > - **2026-10-06** — Hub created from the Drive project folder (proposal, master schedule, mid-term report 2026-07, intake sheet README) after the nanotag work moved into the vault.

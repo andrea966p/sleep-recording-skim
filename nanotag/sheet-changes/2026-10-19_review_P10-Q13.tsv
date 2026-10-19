@@ -1,0 +1,4 @@
+Approved	Verified on export 2026-10-19: W19:W23, W25:W29 = 2026-10-30 09:00; recordings X40:X49 10-30 09:00, Y40:Y49 11-08 09:00, E37 '8.0 d', M38, behavioral block headers and History Run 1 = 8 d / Run 2 = 9 d all follow. Handling of the cut-off E10 was correct.
+Approved	Verified: all 10 cells read '~08:30-09:00 (before lights-on: dim red light)'; no other cell changed.
+Approved	Verified: R19:R23, R25:R29 = =G+4, all show 2026-10-16; Q still 10. Note: N12 shows #ERROR! because the old formula was written starting with '='; write formulas in log cells as text (no leading '=').
+Approved	Verified: note text exact in all 10 cells; no formula depends on AC.

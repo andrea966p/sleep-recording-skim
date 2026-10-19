@@ -53,6 +53,9 @@ status: active
 
 ## 4. Logging windows: the sheet is the source
 
+> [!important] Changing the sheet
+> Claude Code never edits the sheet directly. Changes go through the `Pending changes instructions` tab: [[sod1-sheet-change-log-workflow]].
+
 Every handling session, read, test and sampling goes in `NANOTAG behavioral` with start and end times per mouse. `cohort.py` turns each day's entries into one room-wide window: first start rounded **down** to the hour, last end rounded **up**. The rest of the day is kept. Bottle swaps done without handling are left in.
 
 ## 5. Files on the workstation
