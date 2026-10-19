@@ -24,3 +24,9 @@ Andrea's answers: LFP target = **pons, DV 4.5 mm**; up to **16 mice** at once; *
 **How to apply:** before any Pinnacle order or answer, read `vault/06-references/2026-10-16-pinnacle-wireless-16-mice-evaluation.md`
 and check whether Pinnacle's written answers have been filed there. Script: `eeg-emg-analysis/qc/wireless_range_clip_check.py`.
 Related: [[unipolar-run-2026-10-15-ahyeon]] · [[project_hardware_sync_neuronexus_reply]]
+
+**SETTLED 2026-10-19 with the professor (supersedes K9-SL):** custom 4-ch **8474-HR-SE4-C** (Andrea's recollection of the quote):
+2 EEG + 2 fully independent channels; professor requests EEG high-pass 0.5 Hz, maybe 0.1 Hz. We design our OWN headmount PCB
+(fits within 6 mm, Pinnacle connector, screw/wire vias, EMG pads; we solder electrodes). Target: all 16 mice on one PC.
+Pin map verified (catalog p.10): 4-ch standard = CH1/CH2 vs COMMON, CH3/CH4 differential, 1 COMMON + 1 GND, 8 pins, NO spare
+(my "2nd GND" was wrong). Headmount socket female, openings up. Drawing + script: `vault/06-references/attachments/`. Journal [[2026-10-19]].

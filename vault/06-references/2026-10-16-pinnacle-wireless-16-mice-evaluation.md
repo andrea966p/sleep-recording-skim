@@ -6,6 +6,20 @@ status: open
 
 # Pinnacle wireless EEG + pons LFP + EMG for up to 16 mice: verified setup and purchase
 
+> [!success] SETTLED WITH THE PROFESSOR (2026-10-19), supersedes the 3-channel K9-SL plan below
+> - **Head unit: 4-channel 8474-HR, custom.** Quote model (Andrea's recollection, check the quote): **8474-HR-SE4-C**,
+>   4 channels = 2 EEG + 2 fully independent (differential) channels. Professor asks Pinnacle for:
+>   **EEG high-pass 0.5 Hz, possibly 0.1 Hz** (stock seizure = 1.0 Hz), and the **fully independent configuration**.
+> - **Custom headmount PCB, designed by us.** Pinnacle connector, via holes for screws/wires, EMG wire pads.
+>   We solder the electrodes ourselves. **Must fit within 6 mm** on the mouse skull.
+> - All 16 mice on ONE PC is the target (to be confirmed by Pinnacle and the pilot).
+> - Still open: exact pin map of the custom unit, its connector drawing, and what the 2 EEG channels reference.
+> - **Pin map (corrected 2026-10-19):** "2 EEG + 2 independent" = Pinnacle's **4-channel standard configuration** (catalog p.10):
+>   CH1 = EEG1 − COMMON, CH2 = EEG2 − COMMON, CH3 = LFP+ − LFP− (pons pair), CH4 = EMG A − EMG B, + 1 GROUND. 8 pins, **no spare**
+>   (the "2nd GND" idea was wrong: two ground pins exist only in the 3-ch fully independent layout). No custom pin order needed.
+>   Headmount socket is female, openings up (catalog p.13 photos). Concept drawing: `attachments/2026-10-19-custom-headmount-concept.png`
+>   (script `attachments/headmount_drawing.py`). Pitch 1.27 mm and orientation still to confirm with Pinnacle's drawing.
+
 > [!abstract] TL;DR, where we are (2026-10-16)
 > From Claude Code: I checked the handover brief (`wireless_mouse_sleep_eeg_emg_lfp_handover.md`) against Pinnacle's
 > own store, website, 2026 catalog and 2025 brochure, two papers that ran the system, and 10 min of ahyeon's unipolar data.
