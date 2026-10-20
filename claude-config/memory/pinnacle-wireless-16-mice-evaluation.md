@@ -27,6 +27,6 @@ Related: [[unipolar-run-2026-10-15-ahyeon]] · [[project_hardware_sync_neuronexu
 
 **SETTLED 2026-10-19 with the professor (supersedes K9-SL):** custom 4-ch **8474-HR-SE4-C** (Andrea's recollection of the quote):
 2 EEG + 2 fully independent channels; professor requests EEG high-pass 0.5 Hz, maybe 0.1 Hz. We design our OWN headmount PCB
-(fits within 6 mm, Pinnacle connector, screw/wire vias, EMG pads; we solder electrodes). Target: all 16 mice on one PC.
+(redesigned 10-19 in skull coordinates: pins at Tsukuba EEG sites + separate pons LFP target/reference pins, 6.4 ML x 7.8 AP mm, routed 2-layer, clearance check PASS). Target: all 16 mice on one PC.
 Pin map verified (catalog p.10): 4-ch standard = CH1/CH2 vs COMMON, CH3/CH4 differential, 1 COMMON + 1 GND, 8 pins, NO spare
 (my "2nd GND" was wrong). Headmount socket female, openings up. Drawing + script: `vault/06-references/attachments/`. Journal [[2026-10-19]].
