@@ -315,7 +315,7 @@ explicitly first anyway, because the sweep required streaming to be off.
   free, and **A/35 is a bonus "implanted mouse, unwired site" control**, but write down that
   the dedicated one is gone.
 - Nothing here tests the negative half of each electrode pair. Still unmeasurable, see
-  [[impedance-negative-electrode-unmeasurable]].
+  [[impedance-sweep-register|impedance-negative-electrode-unmeasurable]].
 - **No video.** Cameras were removed on 2026-08-04 and have not been restored, so any EMG that
   looks like movement artefact stays unresolvable.
 

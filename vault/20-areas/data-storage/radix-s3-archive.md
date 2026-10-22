@@ -216,5 +216,5 @@ never take down a backup.
   destination keeps working if the other's access is revoked.
 - `nas-backup.sh` — the nightly project/config snapshot, which **excludes** bulk
   data by design.
-- [[skim-nas-smb-and-channel-stripper]] — the newer stripper workflow that uploads
+- [[skim-nas-smb-and-upload|skim-nas-smb-and-channel-stripper]] — the newer stripper workflow that uploads
   to the NAS on recording stop.

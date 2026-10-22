@@ -22,7 +22,7 @@ call_date: 2026-07-29
 > [!info] Status
 > ✅ **SENT 2026-07-28.** Drafted 2026-07-28 for a call on **2026-07-29 at 11:30 Taipei time (12:30 Korea time)**. Purpose is to confirm the time and give KC a heads up so he arrives prepared, since this is meant to be the call that finalizes the rig before purchase.
 >
-> Written per [[feedback_no_dashes_in_emails]]: **no hyphens or em dashes anywhere in the body**, commas and parentheses instead.
+> Written per [[memory-feedback_no_dashes_in_emails|feedback_no_dashes_in_emails]]: **no hyphens or em dashes anywhere in the body**, commas and parentheses instead.
 >
 > Full question bank (45 questions) lives in [[2026-07-29-kontex-kc-call-prep-rig-finalization]]. This email carries only the five that need advance preparation on his side.
 
@@ -68,4 +68,4 @@ Andrea
 
 ## Related
 - ⭐ [[2026-07-29-kontex-kc-call-prep-rig-finalization]] — full 45 question bank and the live build checklist
-- [[xdaq-32-mouse-wiring-and-channel-law]] · [[2026-07-24-daq-32-mouse-final-comparison]] · [[2026-07-21-acquisition-device-16-32-mice-and-kontex-thread]] · [[openephys-inquiry-email]] · [[feedback_no_dashes_in_emails]]
+- [[xdaq-32-mouse-wiring-and-channel-law]] · [[2026-07-24-daq-32-mouse-final-comparison]] · [[2026-07-21-acquisition-device-16-32-mice-and-kontex-thread]] · [[openephys-inquiry-email]] · [[memory-feedback_no_dashes_in_emails|feedback_no_dashes_in_emails]]

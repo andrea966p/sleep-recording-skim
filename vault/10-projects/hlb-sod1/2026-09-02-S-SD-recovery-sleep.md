@@ -157,7 +157,7 @@ Measured over the 21 four-second epochs of the 12:38 file, with the chip floor s
   event appears in the 12:24 file at t ≈ 68 s. C1's tether is already logged as having failed
   structurally at its centre on 2026-08-27.
 
-⭐ This is the same phenomenon as [[movement-dependent-contact-root-cause]]: contact flips fast and
+⭐ This is the same phenomenon as [[2026-08-04-movement-dependent-contact|movement-dependent-contact-root-cause]]: contact flips fast and
 reversibly, so a single short sweep can neither rank nor classify these channels.
 
 ### The three that do not
@@ -269,5 +269,5 @@ Outputs: `~/eeg-processed/2026-08-25`, `2026-08-26`, `2026-09-02` (not in the re
 
 [[pre-flight-connection-screen]] · [[weak-chip-ground-vs-open-electrode]] ·
 [[2026-08-27-W-SD-recovery-sleep]] · [[2026-08-28-W-SD-cohort-closeout]] ·
-[[2026-08-27-B1-swap-baseline-20h-run]] · [[movement-dependent-contact-root-cause]] ·
+[[2026-08-27-B1-swap-baseline-20h-run]] · [[2026-08-04-movement-dependent-contact|movement-dependent-contact-root-cause]] ·
 [[animal-card-and-verdict-ladder]] · [[2026-09-01]]

@@ -1,0 +1,20 @@
+# memory slug -> vault note that now holds its content (rehaul P7). Applied by tools/vault/retarget.py
+project_multiuser_recording_schedules	multi-user-independent-recording-schedules
+pattern_frigate_record_enabled_orphan_noise	reconciler
+movement-dependent-contact-root-cause	2026-08-04-movement-dependent-contact
+animal-card-verdict-ladder	animal-card-and-verdict-ladder
+weak-chip-ground-hides-as-electrode-failure	weak-chip-ground-vs-open-electrode
+eeg-rig-current-state	memory-eeg-rig-current-state
+impedance-negative-electrode-unmeasurable	impedance-sweep-register
+eeg-qc-tooling	scripts-archive-pre-sleep64-readme
+project_settings_sync	settings-sync-gap
+feedback_no_dashes_in_emails	memory-feedback_no_dashes_in_emails
+feedback_sudo_command_style	memory-feedback_sudo_command_style
+frigate-recording-toggle-fragility	2026-07-27-video-eeg-sync-recording-architecture
+project_hardware_sync_neuronexus_reply	overview
+b-slot1-was-the-tether-not-the-port	2026-08-27-B1-swap-baseline-20h-run
+recording-2026-09-17-HLBW_SL-28h	2026-09-17-W-SL-28h-run
+eeg-analysis-pipeline	eeg-pipeline-manual
+partial-rig-qc-and-unjudgeable-presets	eeg-recording-console
+skim-nas-smb-and-channel-stripper	skim-nas-smb-and-upload
+pattern_netdata_no_mqtt_collector	watchdog-slack-bridge

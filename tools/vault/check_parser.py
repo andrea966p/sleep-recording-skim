@@ -32,6 +32,8 @@ def our_graph(root):
                 res[f][tgt] += 1
             elif lk.kind == "wiki":
                 unres[f][lk.linkpath] += 1
+            elif lk.linkpath.lower().endswith(".md"):
+                unres[f][lk.linkpath[:-3]] += 1   # Obsidian keys md links without .md
     return files, res, unres
 
 

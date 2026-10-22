@@ -171,4 +171,4 @@ picture is right AND the data is untouched.
 - [[allego-monitor-guide]] — what every Monitor control does
 - [[signal-quality-and-grounding]] — where the bandpass and notch are actually set
 - [[electrode-connection-state-test]] — the proof that the notch is display side
-- [[eeg-analysis-pipeline]] — the offline path, where the real filtering happens
+- [[eeg-pipeline-manual|eeg-analysis-pipeline]] — the offline path, where the real filtering happens

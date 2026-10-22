@@ -98,7 +98,7 @@ Port naming in OE: **P1=port A, P2=port B, P3=C, P4=D**; slots 1–4 per port (C
 - **Format:** default **Binary**; **Open Ephys** and **NWB** formats installable via Plugin Installer. (Only one NWB Record Node at a time.) Binary is the simplest for our analysis migration — see the format question in [[daq-ecosystem-comparison-xdaq-vs-openephys]].
 
 > [!tip] Independent per-animal recording (the thing Allego cannot do)
-> Each headstage = its own **data stream**. With multiple headstages you can either (a) use **one Record Node and enable/disable per stream**, or (b) drop **one Record Node per animal**, each to its own directory, started/stopped independently. That is the per-mouse start/stop control our current Allego + daemon setup can't do (one global R_ON, see [[project_multiuser_recording_schedules]]). This is a genuine reason OE could beat Allego for staggered multi-mouse schedules — validate it when we have 2+ headstages.
+> Each headstage = its own **data stream**. With multiple headstages you can either (a) use **one Record Node and enable/disable per stream**, or (b) drop **one Record Node per animal**, each to its own directory, started/stopped independently. That is the per-mouse start/stop control our current Allego + daemon setup can't do (one global R_ON, see [[multi-user-independent-recording-schedules|project_multiuser_recording_schedules]]). This is a genuine reason OE could beat Allego for staggered multi-mouse schedules — validate it when we have 2+ headstages.
 
 ---
 

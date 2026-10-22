@@ -54,7 +54,7 @@ They must not be reported as an animal.
 
 | metric | why |
 | --- | --- |
-| **rms µV**, 0.5-300 Hz | connected 30-90 µV, floating 200-4700 µV per [[eeg-rig-current-state]] |
+| **rms µV**, 0.5-300 Hz | connected 30-90 µV, floating 200-4700 µV per [[memory-eeg-rig-current-state\|eeg-rig-current-state]] |
 | **60 Hz amplitude** | **the direct readout of contact on this rig**: connected 9-90 µV, open 1000-4700 µV, cleanly bimodal, about 100x |
 | **fraction of samples railed** | clipping invalidates an epoch and once produced a retracted result |
 | band powers 0.5-4, 4-9, 9-20, 20-50, 50-300 Hz | spectrum shape; catches a flat or noise-dominated channel that rms alone hides |

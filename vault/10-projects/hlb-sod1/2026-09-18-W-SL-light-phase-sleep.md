@@ -223,5 +223,5 @@ it is conservative.
 
 ## Related
 
-[[recording-2026-09-17-HLBW_SL-28h]] · [[animal-card-verdict-ladder]] ·
-[[weak-chip-ground-hides-as-electrode-failure]] · [[live-signal-quality-terms]]
+[[2026-09-17-W-SL-28h-run|recording-2026-09-17-HLBW_SL-28h]] · [[animal-card-and-verdict-ladder|animal-card-verdict-ladder]] ·
+[[weak-chip-ground-vs-open-electrode|weak-chip-ground-hides-as-electrode-failure]] · [[live-signal-quality-terms]]

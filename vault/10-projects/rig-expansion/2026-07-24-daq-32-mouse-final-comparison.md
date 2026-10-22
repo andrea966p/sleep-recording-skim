@@ -181,7 +181,7 @@ One modern PC on an NVMe drive handles any of these. **Storage, not bandwidth, i
 > - **Batch users onto a common schedule.** Administrative, free, annoying.
 > - **Physically split into independent rigs** (separate boxes on separate PCs running separate GUI instances), which restores independent start/stop at the cost of a second PC and losing cross-rig sync. This is the ONE case where "a PC per box" would actually buy something.
 >
-> **Recommendation: accept it and record continuously at a modest sample rate.** But it should be an explicit decision, not a surprise discovered after the purchase order. Also worth one email: ask Open Ephys whether per-Record-Node start/stop is on their roadmap (§4). This overturns [[project_multiuser_recording_schedules]], which was written on the assumption that we would keep Allego.
+> **Recommendation: accept it and record continuously at a modest sample rate.** But it should be an explicit decision, not a surprise discovered after the purchase order. Also worth one email: ask Open Ephys whether per-Record-Node start/stop is on their roadmap (§4). This overturns [[multi-user-independent-recording-schedules|project_multiuser_recording_schedules]], which was written on the assumption that we would keep Allego.
 
 ### 2.5 Multi-box sync is now EQUALIZED, and better than we thought
 
@@ -432,4 +432,4 @@ None of this is the current bottleneck. **The frontal electrodes are open on eve
 ## Related
 - ⭐ [[xdaq-32-mouse-wiring-and-channel-law]] — **the deep XDAQ wiring note (power supply → mouse), the channel law, and why the splitter cannot reach 32**
 - [[daq-ecosystem-comparison-xdaq-vs-openephys]] (superseded predecessor) · [[2026-07-21-acquisition-device-16-32-mice-and-kontex-thread]] · [[2026-07-21-openephys-acquisition-board-scale-up-option]] · [[openephys-inquiry-email]]
-- [[intan-rhd-spi-wiring-and-headstage-limits]] · [[kontex-xdaq-hardware-reference]] · [[eeg-60hz-saga]] · [[project_multiuser_recording_schedules]] (⚠️ overturned by §2.4)
+- [[intan-rhd-spi-wiring-and-headstage-limits]] · [[kontex-xdaq-hardware-reference]] · [[eeg-60hz-saga]] · [[multi-user-independent-recording-schedules|project_multiuser_recording_schedules]] (⚠️ overturned by §2.4)

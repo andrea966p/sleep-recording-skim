@@ -316,7 +316,7 @@ and D2 went from 0.0 to 87.9 percent usable once a real night was recorded. Toda
 - **A1's ground wiring** still needs fixing at some point. It is a useful control tonight, but it
   is one of seven animals not producing data.
 - Nothing here tests the **negative half** of each electrode pair. Still unmeasurable, see
-  [[impedance-negative-electrode-unmeasurable]].
+  [[impedance-sweep-register|impedance-negative-electrode-unmeasurable]].
 - ⚠️ **THIS COHORT'S HUM THRESHOLDS ARE STILL NOT RE-DERIVED.** On the old cohort 60 Hz amplitude
   was a direct contact proxy. It is not on this one, and it is not one tonight either.
 - The kappa and the positive control from [[2026-08-08]] are untouched by any of this and still

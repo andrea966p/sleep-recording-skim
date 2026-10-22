@@ -181,7 +181,7 @@ About 45 minutes total including the plug changes.
 
 | metric | why |
 | --- | --- |
-| **rms µV** | the connected / floating / inactive signature table in [[eeg-rig-current-state]] |
+| **rms µV** | the connected / floating / inactive signature table in [[memory-eeg-rig-current-state\|eeg-rig-current-state]] |
 | **60 Hz amplitude** | hum is a direct readout of contact quality on this rig |
 | band powers 0.5-4, 4-9, 9-20, 20-50, 50-300 Hz | spectrum shape, catches a change that rms hides |
 | **cross-correlation between the chain's channels and `B/1`, `B/2`** | **this is crosstalk, measured directly rather than inferred** |

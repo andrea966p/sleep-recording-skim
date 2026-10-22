@@ -156,7 +156,7 @@ One mains source drives everything (PLV=1.00 across all slots). Bipolar montage 
 
 **OPEN EXPERIMENT (2026-07-22, NOT YET RUN)**: On C3322 board (RHD2216), B1's tether has an EMPTY slip-ring wire plugged into **pad 7 = a live amplifier input** (not GND). Far end open at slip ring → long floating antenna into amp → OpenEphys-admin's exact crosstalk warning. Fingerprint present: B1 parietal (0.206MΩ, BEST electrode on rig) reads 79-80µV post-foil = HIGHEST of any good leg (A2_P 12, D2_P 46, D1_F 89, B1_P 80). Test on B1: ground pad 7 (jumper empty pin→GND net, keeps 2-pin anchor), re-measure B1 parietal single-ended 60Hz. Drop 80→~10-40µV = crosstalk confirmed, fix every mouse. NOT a rescue (B1 frontal OPEN + EMG dead). Protocol: vault `10-projects/rig-bringup/experiment-pad7-floating-input-B1.md`.
 
-See also [[eeg-qc-tooling]].
+See also [[scripts-archive-pre-sleep64-readme|eeg-qc-tooling]].
 
 
 ## From the memory index, trimmed there 2026-10-06 (kept here verbatim)

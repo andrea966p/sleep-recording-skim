@@ -32,10 +32,10 @@ created: 2026-09-16
   something about it. It answers one question — *is something grossly wrong
   that I can still fix?* — and no others. It is not a verdict, not a
   measurement for a paper, and not a substitute for the QC ladder in
-  [[animal-card-verdict-ladder]].
+  [[animal-card-and-verdict-ladder|animal-card-verdict-ladder]].
 
 **Why it is not a verdict**
-: Contact state flips within minutes ([[movement-dependent-contact-root-cause]]),
+: Contact state flips within minutes ([[2026-08-04-movement-dependent-contact|movement-dependent-contact-root-cause]]),
   so a clean screen does not promise a clean 20 h recording, and a channel that
   screens badly may recover on its own. A few minutes of stream cannot rank
   channels and cannot classify a fault.
@@ -76,7 +76,7 @@ created: 2026-09-16
 : ⚠️ Read **only** the channels that carry an animal — `/1 /2 /33 /34` per port.
   The other 60 per port are wire-free floor. They are the control, not data,
   and grading them is the mistake recorded in
-  [[partial-rig-qc-and-unjudgeable-presets]].
+  [[eeg-recording-console|partial-rig-qc-and-unjudgeable-presets]].
 
 **Refresh (⟳)**
 : Recomputes all values for the current metric. Press it after any filter
@@ -169,7 +169,7 @@ experiment with. Full detail in [[radiens-software-reference]].
   per-chip collapse in 60 Hz is how a floating ground is detected at all. A
   notch erases that evidence permanently and silently. Same for any bandstop
   covering mains. See [[radiens-software-reference]] and
-  [[weak-chip-ground-hides-as-electrode-failure]].
+  [[weak-chip-ground-vs-open-electrode|weak-chip-ground-hides-as-electrode-failure]].
 
 **Restore Workspace, what it does not keep**
 : Selected/deselected sites and site reordering are **not** retained, while
@@ -290,6 +290,6 @@ rig is worth pressing record on, nothing more.
 
 - [[eeg-analysis-glossary]] — the same job for the offline analysis
 - [[radiens-software-reference]] — the Allego interface itself, page by page
-- [[animal-card-verdict-ladder]] — where a real verdict comes from
+- [[animal-card-and-verdict-ladder|animal-card-verdict-ladder]] — where a real verdict comes from
 - `20-areas/allego/CANONICAL-allego-channel-selection.md` — the montage
 - [[allego-blank-monitor-canvas-texture-limit]] — when the Monitor draws nothing

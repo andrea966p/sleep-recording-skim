@@ -60,7 +60,7 @@ Updated 2026-05-28 after reconciler→Slack enable.
 | 1.6 — Push repo to GitHub | ✅ Done 2026-05-21 + 2026-05-22 (commits `43ebdbd`, `791dc18`, `2f7365d`) | `andrea966p/neurosurveillance` |
 | 2.1 — Append-only SQLite session WAL | ✅ Done 2026-05-23 (commit `7db66d2`) | [[session-journal\|session-journal]] / `backend/session_journal.py` |
 | 2.2 — Nightly reconciler | ✅ Done 2026-05-24 (commit `3830dba`) | `backend/reconciler.py` + `/api/reconciler/*` + MQTT `neurosurveillance/reconciler/findings` |
-| 2.2b — Reconciler → Slack enable (Phase 4.6, post-dry-run) | ✅ Done 2026-05-28 — bridge subscribes to `neurosurveillance/reconciler/findings`; suppresses `orphan` ([[../06-references/pattern_frigate_record_enabled_orphan_noise\|orphan-noise pattern]]); alerts when `partial+stuck+degraded > 0`. E2E via `/api/reconciler/run` — 0 spurious Slack | `backend/scripts/nvr-mqtt-slack.py` |
+| 2.2b — Reconciler → Slack enable (Phase 4.6, post-dry-run) | ✅ Done 2026-05-28 — bridge subscribes to `neurosurveillance/reconciler/findings`; suppresses `orphan` ([[reconciler\|orphan-noise pattern]]); alerts when `partial+stuck+degraded > 0`. E2E via `/api/reconciler/run` — 0 spurious Slack | `backend/scripts/nvr-mqtt-slack.py` |
 | 2.3 — Concurrency: lock on `_last_known_state` | ✅ Done 2026-05-24 (commit `3830dba`, folded into Phase 3.1 as planned) | `frigate_controller.py` |
 | 2.3b — **Promoted** Exponential Radiens backoff | ✅ Done 2026-05-23 (commit `7545980`) — 1 s → 60 s cap, verified locally | `radiens_poller.py` |
 | 2.4 — Off-machine backup (originally USB; superseded by NAS over Tailscale) | ✅ Done 2026-05-26 — `nas-backup.{service,timer}` daily 00:00; ssh-pipe to Synology NAS; 3-day rolling retention; first-run verified 53,957,039 B | [[nas-backup\|nas-backup]] |
@@ -159,7 +159,7 @@ Updated 2026-05-28 after reconciler→Slack enable.
 
 | # | Task | Risk | Time |
 |---|---|---|---|
-| 4.1 | Wire 2026-05-18 watchdog → Slack: built standalone `nvr-mqtt-slack.service` bridge (Netdata has no MQTT collector — see [[../06-references/pattern_netdata_no_mqtt_collector\|pattern]]). E2E test: `ssh skimlab@192.168.0.11 'sudo systemctl stop go2rtc'` during a test recording. | LOW | 45 min |
+| 4.1 | Wire 2026-05-18 watchdog → Slack: built standalone `nvr-mqtt-slack.service` bridge (Netdata has no MQTT collector — see [[watchdog-slack-bridge\|pattern]]). E2E test: `ssh skimlab@192.168.0.11 'sudo systemctl stop go2rtc'` during a test recording. | LOW | 45 min |
 | 4.2 | ffprobe duration sanity check in `daemon._execute_export()`: if `duration < 0.95 * session.duration_seconds`, set `export_status` to `"completed (partial: Xh of Yh)"`. | MED | 45 min |
 | 4.3 | Update `requirements.txt` outdated radiens comment (it IS on PyPI v4.0.0). | NONE | 5 min |
 | 4.4 | Flesh out 3 runbooks from Phase 0.4 with discovered procedures (Mosquitto recovery, Frigate restart safety, watchdog interpretation). | NONE | 30 min |
@@ -194,7 +194,7 @@ Per council: "stabilise integrity before changing the sync primitive."
 - Auto-recovery on watchdog stall (only after ≥1 organic stall through watchdog)
 - WAL too-short-stop nit: write `ABORT`/`TOO_SHORT` terminal event from `manual_session_manager.stop_recording()` "too short, ignoring" path so the WAL lifecycle is always closed
 
-**Explicitly skipped per council:** detection / DeepLabCut / JOSS packaging, Frigate replacement, retrofit unit tests onto daemon, [[../06-references/project_settings_sync|localStorage ↔ config.yaml settings sync]].
+**Explicitly skipped per council:** detection / DeepLabCut / JOSS packaging, Frigate replacement, retrofit unit tests onto daemon, [[settings-sync-gap|localStorage ↔ config.yaml settings sync]].
 
 ---
 
@@ -266,7 +266,7 @@ docker restart frigate && sleep 15 && ls -la /srv/frigate/logs/frigate/   # cont
 
 - Does WAL need cross-machine durability (Syncthing-replicated to PC 2)? Decide after a few days of single-machine operation.
 - `recording_watchdog` auto-restart Frigate ffmpeg on stall? Council: wait for ≥1 organic stall through watchdog first.
-- [[../06-references/project_settings_sync|Settings sync]] — council deferred. Re-evaluate after lab > 1 active user.
+- [[settings-sync-gap|Settings sync]] — council deferred. Re-evaluate after lab > 1 active user.
 
 ## Related
 

@@ -18,7 +18,7 @@ subjects: 8
 > 1. "B1 and D1 have no ground connection, that is a plug problem" was right in kind and the
 >    **B1 diagnosis of a PORT fault was wrong** — the swap test of 2026-08-26 on the S-SD batch
 >    proved B slot 1 is a good port and the fault follows the animal and its tether.
->    See [[b-slot1-was-the-tether-not-the-port]] in the analysis memory and
+>    See [[2026-08-27-B1-swap-baseline-20h-run|b-slot1-was-the-tether-not-the-port]] in the analysis memory and
 >    [[2026-08-27-B1-swap-baseline-20h-run]].
 > 2. The per-position numbers here used the POOLED floor and were **too harsh for 7 of 8 chips**.
 >    The 39.7 h baseline recomputed per-chip gives **five positions with real EEG and four passing

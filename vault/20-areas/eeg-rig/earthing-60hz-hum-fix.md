@@ -28,7 +28,7 @@ updated: 2026-07-16
 > [!danger] 🛑 RETRACTED 2026-07-16 — READ THIS BEFORE ANY OTHER LINE ON THIS PAGE
 > **This page describes a device we do not own.** Our rig is a **Gen-1 XDAQ Core**, which has **NO rear-panel Chassis GND port and NO Sys GND port**. Every instruction below that says "wire Chassis GND → earth" or "bond Chassis GND to Sys GND" refers to the **KonteX CORE2**, a different product. Those steps are **not executable on our hardware** and must not be attempted or cited.
 >
-> **The "VALIDATED 2026-07-14" claim that used to sit here is also withdrawn.** It rested on a single ~42 s single-electrode clip with no controlled before/after, and the `phys%`-style metrics it quoted are now known to be denominator-confounded (see [[eeg-qc-tooling]] reasoning in [[2026-07-15]]). It was never a validation.
+> **The "VALIDATED 2026-07-14" claim that used to sit here is also withdrawn.** It rested on a single ~42 s single-electrode clip with no controlled before/after, and the `phys%`-style metrics it quoted are now known to be denominator-confounded (see [[scripts-archive-pre-sleep64-readme|eeg-qc-tooling]] reasoning in [[2026-07-15]]). It was never a validation.
 >
 > **What actually turned out to be true (2026-07-15 → 16):** earthing was NOT the binding variable. The mains floor was killed by **shielding** ([[headstage-shielding-faraday-foil]]), and the remaining hum is set entirely by **per-electrode contact impedance**. A leg at 0.206 MΩ picks up 80 µV of 60 Hz while its neighbour at 7.641 MΩ — *same mouse, same foil, same headstage* — picks up 4262 µV and rails the amplifier. See [[2026-07-16]].
 >

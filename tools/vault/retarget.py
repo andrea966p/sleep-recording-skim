@@ -36,8 +36,8 @@ def main():
             sys.exit(f"target note not found or ambiguous: {v}")
     changed, n = 0, 0
     for f in files:
-        if not f.endswith(".md"):
-            continue
+        if not f.endswith(".md") or f.startswith("90-archive/"):
+            continue  # the archive is frozen, verbatim
         t = V.read(a.vault, f)
         edits = []
         for lk in V.parse_links(t, f):
