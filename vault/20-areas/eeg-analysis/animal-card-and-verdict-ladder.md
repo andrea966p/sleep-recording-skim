@@ -8,6 +8,8 @@ created: 2026-08-09
 
 # The animal card and the verdict ladder
 
+> [!warning] Updated 2026-10-22: Paths mentioning ~/Monitoring_project are stale: the repo is now ~/sleep-recording-skim, and the commands need `PYTHONPATH=.` from `eeg-emg-analysis/` (the venv's editable install points at the deleted path; `render_card.py` also needs `EEG_FIGURE_STYLE_DIR=~/sleep-recording-skim/.claude/skills/scientific-visualization`). The pooled floor described below was fixed on 2026-08-26 [[2026-08-26-per-chip-floor-fix]]; "filtering cannot manufacture slope" was falsified on 2026-08-11 [[2026-08-11-analysis-stack-audit-measurements]]; the regression test now verifies nothing on e10 [[analysis-test-suites]].
+
 > [!important] What this page is for
 > This is the page to read before you check a new mouse, and before you make any
 > figure. It replaces "run a script and squint at the output" with one artefact
@@ -36,7 +38,7 @@ than a new script.
 ~/eeg-analysis-venv/bin/python cards/export_text.py /home/skimlab/eeg-processed/<day>/
 ```
 
-All of it lives in `~/Monitoring_project/eeg-emg-analysis/`. Use
+All of it lives in `~/sleep-recording-skim/eeg-emg-analysis/`. Use
 `~/eeg-analysis-venv/bin/python`, never the `/opt/neurosurveillance` venv.
 
 ## Why this exists

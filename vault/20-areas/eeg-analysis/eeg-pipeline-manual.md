@@ -8,6 +8,8 @@ created: 2026-08-03
 
 # EEG analysis pipeline — raw recording to sleep features
 
+> [!warning] Updated 2026-10-22: The commands below are run from the repo root, not from inside `pipeline/`: from there the stage scripts stop with `ModuleNotFoundError: No module named 'core'` (checked 2026-10-22). The Quick start and cohort commands were updated to `cd ~/sleep-recording-skim/eeg-emg-analysis` and `PYTHONPATH=. python3 pipeline/<stage>.py`, `--help` checked for each. [[eeg-analysis-quickstart]]
+
 > [!important] ⭐ 2026-08-09: THE CODE MOVED. This manual is still correct; the paths changed.
 > The stage scripts now live in `~/sleep-recording-skim/eeg-emg-analysis/pipeline/`, and every
 > constant lives in `eeg-emg-analysis/core/qc_thresholds.py` and nowhere else. Replace
@@ -40,19 +42,19 @@ the science; this page is the operating manual.
 ## Quick start
 
 ```bash
-cd ~/sleep-recording-skim/eeg-emg-analysis/pipeline
+cd ~/sleep-recording-skim/eeg-emg-analysis
 
 # 1. is this mouse scoreable?
-python3 stage1_qc.py allego_1__uid0731-18-06-37 --json qc.json
+PYTHONPATH=. python3 pipeline/stage1_qc.py allego_1__uid0731-18-06-37 --json qc.json
 
 # 2. split into per-mouse files, organised by day, with impedance
-python3 stage2_split.py allego_1__uid0731-18-06-37
+PYTHONPATH=. python3 pipeline/stage2_split.py allego_1__uid0731-18-06-37
 
 # 3. sleep features for every mouse in that day folder
-python3 stage3_features.py /home/skimlab/eeg-processed/2026-07-31
+PYTHONPATH=. python3 pipeline/stage3_features.py /home/skimlab/eeg-processed/2026-07-31
 
 # 4. EDF+ export so a HUMAN can score it
-python3 stage4_export_edf.py /home/skimlab/eeg-processed/2026-07-31
+PYTHONPATH=. python3 pipeline/stage4_export_edf.py /home/skimlab/eeg-processed/2026-07-31
 ```
 
 Stage 1 reads the raw file once (minutes to ~15 min) and caches per-epoch
@@ -218,7 +220,7 @@ producing an asymmetric range and a fractional-LSB bias on every sample.)
 view across a whole cohort.
 
 ```bash
-python3 cohort_summary.py --out /home/skimlab/eeg-processed/COHORT-2026-07 \
+PYTHONPATH=. python3 pipeline/cohort_summary.py --out /home/skimlab/eeg-processed/COHORT-2026-07 \
     2026-07-31 2026-08-02
 ```
 

@@ -8,6 +8,8 @@ created: 2026-08-22
 
 # Splitting a recording into one folder per mouse
 
+> [!warning] Updated 2026-10-22: Paths mentioning ~/Monitoring_project are stale: the repo is now ~/sleep-recording-skim. The `cd` line below was updated (checked: `export/export_per_mouse.py --help` runs from there with `PYTHONPATH=.`). [[eeg-analysis-quickstart]]
+
 > [!abstract] TL;DR
 > `export/export_per_mouse.py` turns one `.xdat` recording into a folder per rig position, each
 > holding the **full-rate raw signals as MATLAB and as text**, that position's **hypnogram**, and a
@@ -17,7 +19,7 @@ created: 2026-08-22
 ## Run it
 
 ```bash
-cd ~/Monitoring_project/eeg-emg-analysis
+cd ~/sleep-recording-skim/eeg-emg-analysis
 ```
 ```bash
 PYTHONPATH=. /usr/bin/python3 pipeline/stage1_qc.py <base> --json /tmp/qc.json

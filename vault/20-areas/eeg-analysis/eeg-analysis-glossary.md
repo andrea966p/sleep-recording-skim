@@ -368,7 +368,7 @@ created: 2026-08-03
 - [[_eeg-analysis-hub]] — the ordered procedure these terms appear in
 - [[analysis-methods-and-justification]] — what is standard and what is ours, with citations
 - [[eeg-analysis-problems]] — what to do when a step misbehaves
-- `02-procedures/eeg-data-analysis/pipeline/qc_thresholds.py` — every constant with its provenance
+- `eeg-emg-analysis/core/qc_thresholds.py` — every constant with its provenance
 - [[CANONICAL-allego-channel-selection]] — which channel is which
 
 

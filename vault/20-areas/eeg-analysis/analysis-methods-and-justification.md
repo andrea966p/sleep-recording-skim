@@ -50,7 +50,7 @@ audience: PI / lab meeting / methods section
 > that most of the data has to be thrown away.** That is a hardware problem, not
 > an analysis problem, and no amount of method design fixes it.
 
-Code: `02-procedures/eeg-data-analysis/pipeline/`. Operating manual:
+Code: `~/sleep-recording-skim/eeg-emg-analysis/pipeline/`. Operating manual:
 [[eeg-pipeline-manual]]. Every numeric constant lives in one file,
 `qc_thresholds.py`, with its justification written next to it, so there are no
 unexplained numbers anywhere else in the codebase.
@@ -360,7 +360,7 @@ from wake, which is a real and checkable feature.
 - Minimally invasive EEG recording in mice using thin needle electrodes, preprint
   (2026).
 - Intan Technologies. RHD2000 series digital electrophysiology interface chip
-  datasheet. Local copy: `06-references/datasheets/`.
+  datasheet. Local copy: `30-resources/datasheets/`.
 - NeuroNexus. Radiens technical documentation, and the `radiens-core` Python
   client version 0.0.8.
 

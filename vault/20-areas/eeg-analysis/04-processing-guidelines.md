@@ -1,13 +1,16 @@
 ---
 type: reference
 area: eeg-analysis
-status: active
+status: superseded
+superseded-by: "[[analysis-methods-and-justification]]"
 status-note: "complete"
 tags: [procedure, eeg, analysis, guidelines, filtering, referencing, onboarding]
 created: 2026-06-30
 ---
 
 # 04 — Processing Guidelines (the science)
+
+> [!warning] Updated 2026-10-22: Historical. The current pipeline decimates to 250 Hz (`OUTPUT_FS = 250` in `core/qc_thresholds.py`), not 256 Hz, and derives the channel map from the file's metadata; `scripts/xdat_io.py` and its `CHANNEL_MAPS` are archived. The old hub listed this page as "historical, do not follow". [[analysis-methods-and-justification]]
 
 > [!success] ⭐ Channel selection is settled — see [[CANONICAL-allego-channel-selection]]
 > **Select `/1`, `/2`, `/33`, `/34` per port. 16 channels for 8 mice.**

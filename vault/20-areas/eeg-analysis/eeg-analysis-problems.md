@@ -8,6 +8,8 @@ created: 2026-08-03
 
 # EEG analysis — what to do when a step misbehaves
 
+> [!warning] Updated 2026-10-22: The commands here assume the old vault `pipeline/` folder. The code is now in `~/sleep-recording-skim/eeg-emg-analysis/`; run a stage as `PYTHONPATH=. python3 pipeline/<stage>.py` from there, or it stops with `ModuleNotFoundError: No module named 'core'`. The operating manual is [[eeg-pipeline-manual]]. [[eeg-analysis-quickstart]]
+
 > [!abstract] TL;DR — for non-technical readers
 > **What this is.** A symptom lookup for the analysis side only, everything
 > that happens *after* a recording exists on disk. Rig, electrode and grounding

@@ -9,6 +9,8 @@ created: 2026-08-09
 
 # HLB-fem-profsurgery-troubleshooting — cohort report
 
+> [!warning] Updated 2026-10-22: Generated on 2026-08-09 under the HUM criterion with the pooled wire-free floor; since 2026-08-26 every animal is judged against its own chip's floor, so these rung 2 verdicts are not what the current code returns. [[2026-08-26-per-chip-floor-fix]]
+
 > [!warning] This file is GENERATED. Do not edit it by hand.
 > Every number here is read from an animal card JSON, which was produced
 > by `cards/ladder.py` from the recording itself. Regenerate with

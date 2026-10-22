@@ -9,6 +9,8 @@ created: 2026-06-30
 
 # 02 — File Formats Reference
 
+> [!warning] Updated 2026-10-22: The channel counts (38 = one 32-channel port), the `scripts/xdat_io.py` reader and the `xdat_to_csv.py` / `xdat_to_edf.py` writers here are the June single-port set, archived in `eeg-emg-analysis/archive/vault-scripts/_archive_pre_sleep64/`; `xdat_to_edf.py` also wrote bipolar derivations, a retracted model. The 8-mouse file has 262 channels and the analysis reads one CSV per mouse. [[per-mouse-csv-format]]
+
 > [!abstract] TL;DR
 > The recording is an **XDAT** 3-file set (the master, raw, microvolts). From it you make **CSV** (spreadsheet/Python) and **EDF** (EEG viewers / sleep tools). This page is the format spec + what-opens-what + size math. Hub: [[_eeg-analysis-hub]].
 

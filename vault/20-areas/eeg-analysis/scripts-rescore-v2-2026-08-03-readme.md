@@ -10,6 +10,8 @@ created: 2026-08-03
 
 # Sleep scoring — v2 (SUPERSEDED same day)
 
+> [!warning] Updated 2026-10-22: `rescore_v2.py` is in `eeg-emg-analysis/archive/vault-scripts/rescore-v2-2026-08-03/`, and the pipeline path below was updated to `~/sleep-recording-skim/eeg-emg-analysis/pipeline/`. [[eeg-analysis-quickstart]]
+
 > [!warning] Superseded 2026-08-03 by [[eeg-pipeline-manual]]
 > `rescore_v2.py` fixed the persistence bug documented below and that fix is
 > correct — it was carried forward unchanged. But its **QC thresholds were
@@ -25,7 +27,7 @@ created: 2026-08-03
 > return are written to the JSON but **omitted from the printed table**, so the
 > console silently under-reports (caught on 2026-06-29/D1).
 >
-> **Use `02-procedures/eeg-data-analysis/pipeline/` for all new work.** Keep this
+> **Use `~/sleep-recording-skim/eeg-emg-analysis/pipeline/` for all new work.** Keep this
 > only to reproduce numbers published between 2026-08-03 morning and the pipeline.
 
 Supersedes `../contact-state-2026-07-31/gate_and_score_all.py`, which contains a

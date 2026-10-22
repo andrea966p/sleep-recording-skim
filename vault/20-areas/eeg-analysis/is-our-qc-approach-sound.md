@@ -8,6 +8,8 @@ created: 2026-08-21
 
 # Is our QC approach sound, or are we doing something very wrong?
 
+> [!warning] Updated 2026-10-22: "Never yet produced a hypnogram" was overtaken the next day: the first hypnograms (A1, A2, D2 of the 39.7 h run) were produced on 2026-08-22. [[2026-08-21-39h-run-score]]
+
 > [!abstract] TL;DR
 > **The method is not wrong.** The in-file wire-free floor is a per-recording version of
 > **shorted-input noise testing**, which is genuinely standard instrumentation practice. Grouping it

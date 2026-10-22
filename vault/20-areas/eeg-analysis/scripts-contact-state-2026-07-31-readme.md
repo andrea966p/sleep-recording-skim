@@ -10,6 +10,8 @@ created: 2026-08-01
 
 # Contact-state analysis scripts (2026-07-31 / 2026-08-01)
 
+> [!warning] Updated 2026-10-22: Paths mentioning ~/Monitoring_project are stale: the repo is now ~/sleep-recording-skim. The scripts are in `eeg-emg-analysis/archive/vault-scripts/contact-state-2026-07-31/`; the `cd` line and the pipeline path below were updated to match. [[eeg-analysis-quickstart]]
+
 Reproduces every number in [[2026-08-01-28h-contact-duty-cycle-and-c1-negative]] from the raw `.xdat`.
 
 > [!danger] DO NOT USE FOR NEW WORK — two separate bugs, both since fixed elsewhere
@@ -23,12 +25,12 @@ Reproduces every number in [[2026-08-01-28h-contact-duty-cycle-and-c1-negative]]
 >    (+0.854 on a stretch that is 39 min of pure wake) and a false negative
 >    (+0.078 on data that could not possibly have passed).
 >
-> **Use `02-procedures/eeg-data-analysis/pipeline/` instead.**
+> **Use `~/sleep-recording-skim/eeg-emg-analysis/pipeline/` instead.**
 
 ## Run order
 
 ```bash
-cd ~/Monitoring_project/Monitoring_project_obsidian_vault/02-procedures/eeg-data-analysis/scripts/contact-state-2026-07-31
+cd ~/sleep-recording-skim/eeg-emg-analysis/archive/vault-scripts/contact-state-2026-07-31
 
 python3 longrun_coarse.py                       # pass 1: 105 GB -> longrun_coarse.npz  (~5 min)
 python3 summarize_states.py  longrun_coarse.npz # duty cycles, segments, sensitivity

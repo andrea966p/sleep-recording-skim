@@ -9,6 +9,8 @@ created: 2026-06-30
 
 # 01 — Environment Setup (the one analysis venv)
 
+> [!warning] Updated 2026-10-22: Paths mentioning ~/Monitoring_project are stale: the repo is now ~/sleep-recording-skim. The `scripts/` folder below is archived in `eeg-emg-analysis/archive/vault-scripts/_archive_pre_sleep64/`, and this venv's editable install (`pip show`, 2026-10-22) still points at the deleted `~/Monitoring_project/eeg-emg-analysis`, so run the code with `PYTHONPATH=.` from the repo root. [[eeg-analysis-quickstart]]
+
 > [!abstract] TL;DR
 > Make ONE Python virtual environment for all EEG analysis. Install numpy, scipy, matplotlib, pandas, pyedflib into it. Use that venv's python for every script in this section. This avoids the version clashes that bit us (system matplotlib built for numpy 1.x crashing under numpy 2.x). Hub: [[_eeg-analysis-hub]].
 
