@@ -59,7 +59,7 @@ log:
 
 - [[golden-systemd-service]] - The systemd service
 - [[golden-boot-config]] - Boot hardening
-- [[../00-config/production-values|Production Values]]
+- [[production-values|Production Values]]
 
 ## Quick Commands
 

@@ -59,6 +59,6 @@ curl http://192.168.0.11:1984/api/streams
 
 ## Prevention
 
-- Enable [[../01-infrastructure/raspberry-pi/watchdog-monitoring|watchdog monitoring]]
+- Enable [[watchdog-monitoring|watchdog monitoring]]
 - Use TCP transport in Frigate config
 - Check logs regularly: `journalctl -u go2rtc.service -f`

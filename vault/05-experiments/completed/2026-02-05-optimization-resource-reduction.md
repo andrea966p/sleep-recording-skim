@@ -157,7 +157,7 @@ The direct stdout architecture is now the production standard documented in [[go
 - [[golden-systemd-service]]
 - [[docker-compose]]
 - [[config-yml]]
-- [[Daily Journal/2026-02/2026-02-05]]
+- [[2026-02-05]]
 - Public repo: https://github.com/andrea966p/neurosurveillance-system
 
 ## Tags

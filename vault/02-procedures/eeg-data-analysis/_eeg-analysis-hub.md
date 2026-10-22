@@ -1,4 +1,9 @@
 ---
+tags: [procedure, eeg, analysis, hub, onboarding, python]
+created: 2026-06-30
+updated: 2026-08-03
+status: active
+---
 
 > [!important] ⭐⭐⭐ 2026-08-09: THE CODE MOVED, AND THERE IS A NEW FIRST STEP
 > **The pipeline no longer lives in this vault.** It is now at
@@ -59,11 +64,6 @@
 > - [[per-animal-failure-signatures]] — telling apart the four failure modes hidden behind `OPEN`.
 >
 > The four commands below are still correct. The **interpretation** rules have changed.
-tags: [procedure, eeg, analysis, hub, onboarding, python]
-created: 2026-06-30
-updated: 2026-08-03
-status: active
----
 
 # EEG data analysis — START HERE
 

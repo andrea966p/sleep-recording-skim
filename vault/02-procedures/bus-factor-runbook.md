@@ -267,7 +267,7 @@ These show up in vault docs, logs, and Slack alerts. None of them are obvious if
 | **Reconciler** | The nightly 00:01 KST job that cross-checks the WAL events against Frigate's actual recorded segments and flags discrepancies (orphan / partial / stuck / degraded). Slack-alerts when finding anything other than orphan. |
 | **Watchdog** | A daemon thread that polls Frigate's segment timestamps every few seconds; if a camera that *should* be recording stops producing new segments for ~90s, it publishes a STALL event to MQTT (and from there to Slack). |
 | **LWT** | "Last Will and Testament" — Frigate's MQTT mechanism for announcing its own crash. The daemon subscribes to `frigate/available` to know when Frigate is *actually* online vs just republishing its retained state on reconnect. |
-| **Stage 1 / Stage 2 / Stage 3** | Phases of the [[../07-decisions/2026-05-stabilization-sprint-week-1-plan|stabilization sprint]]. Stage 1 = "stop the bleeding". Stage 2 = "chain of custody". Stage 3 = "before TTL pulse cutover" (hardware-sync upgrade, not yet deployed). |
+| **Stage 1 / Stage 2 / Stage 3** | Phases of the [[2026-05-stabilization-sprint-week-1-plan\|stabilization sprint]]. Stage 1 = "stop the bleeding". Stage 2 = "chain of custody". Stage 3 = "before TTL pulse cutover" (hardware-sync upgrade, not yet deployed). |
 | **TTL pulse** | The planned hardware-sync upgrade. EEG rig will emit a TTL voltage edge on every recording start/stop, the Pis' GPIO pins will pick it up, eliminating the 1-second polling jitter. Not deployed yet. |
 | **Council** | The 2026-05-01 LLM Council review that produced the sprint plan. Full output: [[2026-05-01-llm-council-review]]. |
 
