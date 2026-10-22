@@ -8,6 +8,8 @@ created: 2026-08-04
 
 # 2026-08-04 — The electrodes are good. The contact is intermittent. The trigger is unknown.
 
+> [!warning] Updated 2026-10-22: "0.052 MOhm proves the electrodes are good" no longer holds: an unwired amplifier input also reached 0.051 MOhm, so one low reading is not evidence of contact [[2026-08-06-unloaded-chain-interference]]. The evidence that the implants work now rests on recordings, where B1 and D2 produced real EEG [[2026-08-07-overnight-recording-two-animals-work]].
+
 > [!abstract] TL;DR
 > **The good news, and it is big.** One EEG channel measured **0.052 MΩ** today,
 > the best value ever recorded on this rig and inside the range published in the

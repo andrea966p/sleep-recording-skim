@@ -10,6 +10,8 @@ priority: critical
 
 # ✅ RUN 2 — PRE-REGISTERED PREDICTIONS (written BEFORE the data existed; scored 2026-08-03)
 
+> [!warning] Updated 2026-10-22: The "connected" criterion used here (Z < 2 MOhm) has a false-positive rate of about 22%: an unwired amplifier input reads below 2 MOhm 21.4% of the time and reached 0.051 MOhm, so connection is judged at 0.5 MOhm against the in-file floor [[2026-08-06-unloaded-chain-interference]]. On the ECG cohort, once the ground was fixed, the sweep stopped screening [[2026-08-08-ground-fix-post-repin-night]].
+
 > [!abstract] TL;DR — for non-technical readers
 > **What this is.** A set of predictions written down *before* a recording was analysed, so that tomorrow's result is a real test rather than a story fitted to whatever we find. See [[nvr-system-overview]] for the big picture.
 >

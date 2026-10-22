@@ -9,6 +9,8 @@ created: 2026-08-05
 
 # Tether comparison, 2026-08-05: does construction or the slip ring change the duty cycle?
 
+> [!warning] Updated 2026-10-22: The arm C verdict that the long tether harmed D2 was retracted (section 14): the swap fixed D2, 0.0% to 87.9% usable EEG [[2026-08-07-overnight-recording-two-animals-work]]. The "electrode proven good" premise (0.052 MOhm) and the 2 MOhm duty cycle were superseded by the unwired-input floor [[2026-08-06-unloaded-chain-interference]].
+
 > [!abstract] TL;DR
 > Yesterday proved the electrodes are good and the contact is **intermittent**, flipping
 > between connected and open within minutes. Today tests whether the **tether** is what

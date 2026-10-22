@@ -9,6 +9,8 @@ created: 2026-10-02
 
 # Noise troubleshooting plan: the next trials, with mice (from 2026-10-02)
 
+> [!warning] Updated 2026-10-22: scaled down on 2026-10-06 ([[2026-10-06-noise-hunt-verdict]]) and the main target (EMG mains) was met on 2026-10-07 by the electrician's socket and rack bond. Still open: the foil busbar A/B/A (T2a/T2b; no entry yet records the busbar fitted) and Phase 3 per-mouse reliability. Phase 2 and T3 are dropped. Hub: [[_noise-hunt-hub]]
+
 > [!success] ⭐⭐ 2026-10-07: the main target is met
 > The electrician's isolated-earth socket and the XDAQ bonded to the earthed rack collapsed the mains: A2's EMG 60 Hz went from 26-33 to
 > 1 µV, and the chip floors dropped 12-60x ([[2026-09-30-xdaq-noise-series#Entry 11: the electrician's work, and the first block after it (2026-10-07)|Entry 11]]).

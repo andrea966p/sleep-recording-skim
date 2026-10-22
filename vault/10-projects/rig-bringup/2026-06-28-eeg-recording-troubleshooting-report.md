@@ -18,6 +18,8 @@ note: final-to-print version (andrea's edits) lives in ~/Downloads/ as "eeg-reco
 
 # EEG recording, everything that went wrong and how we fixed it (so far)
 
+> [!warning] Updated 2026-10-22: This is a 2026-06-28 snapshot. The second headstage that "still won't enumerate" was a dead top SPI socket on the HDMI adapters (the bottom socket works), "railing solved" did not mean a validated recording (there was none), and the channel map here (EEG = pad 0 minus pad 1) was wrong because the chip is already bipolar [[2026-07-02-eeg-recording-checkpoint]] [[2026-08-01-channel-mapping-correction-first-sleep]]
+
 *Draft for the professor. Written informally, in my own words, I'll clean it up before sending. Covers the EEG/EMG recording rig only (the headstage, grounding, slip-ring/colors). The video-sync and the video-NVR side are separate stories, I can write those up too if you want.*
 
 Rig, start to end: mouse dura electrodes → tether cable → slip ring (rotary) → C3410 adapter board → Intan RHD2216 headstage → SAdpt HDMI↔SPI bridge → XDAQ controller → Allego on the Ubuntu PC.

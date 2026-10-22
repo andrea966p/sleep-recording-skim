@@ -10,6 +10,8 @@ recording: allego_0__uid0710-08-53-31
 
 # 72h 4-Mouse Recording — Full Audit (Jul 10-13 2026)
 
+> [!warning] Updated 2026-10-22: The root cause given here (a floating system, nothing earthed) and its fix [[earthing-60hz-hum-fix]] were retracted on 2026-07-16 (wrong device, validation withdrawn) [[2026-07-15-earth-and-sleep-council]]. The 60 Hz mains later collapsed after the 2026-10-07 socket and rack earth change [[2026-09-30-xdaq-noise-series]]. The 0-of-4 scoreable verdict was re-scored with the corrected channel map and still holds [[2026-08-03-data-quality-report-for-professor]].
+
 > [!abstract] TL;DR
 > We ran our first 72-hour, 4-mouse recording (Fri Jul 10 08:53 → Mon Jul 13 09:06 KST). The FILE is a triumph, 72.22 hours, byte-perfect, zero dropped samples, so the rig's endurance at full 256-channel scale is now PROVEN. Everything else has a problem:
 > - **EEG signal UNUSABLE** — all 4 mice swamped by massive 60 Hz mains hum. 0 of 4 scoreable. Cause is a FLOATING system (nothing earthed), not the surgeries. Fix: [[earthing-60hz-hum-fix]].

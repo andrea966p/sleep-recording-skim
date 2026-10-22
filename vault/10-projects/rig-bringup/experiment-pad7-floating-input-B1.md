@@ -18,6 +18,8 @@ priority: critical
 
 # EXPERIMENT TO DO — ground pad 7 floating input on B1, does the clean-leg 60 Hz floor drop?
 
+> [!warning] Updated 2026-10-22: Never run. The "B1 frontal is open" framing came from the wrong channel map and was dropped on 2026-08-03 [[2026-08-03]]; the test animal, the original B1, was euthanised on 2026-08-05 [[2026-08-05-tether-comparison]] and the old cohort was replaced on 2026-08-07 [[2026-08-07-ecg-cohort-baseline]].
+
 > [!warning] STATUS: NOT YET RUN. This is a planned experiment, not a result. Marked as a to do 2026-07-22.
 
 > [!important] PRIORITY RAISED 2026-07-31 — B1 is the mouse that CHATTERED

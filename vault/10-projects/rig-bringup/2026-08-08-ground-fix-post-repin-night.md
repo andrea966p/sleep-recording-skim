@@ -10,6 +10,8 @@ tags: [eeg, emg, ecg, impedance, ground, cohort, overnight]
 
 # Ground re-pin on the ECG cohort, and the night that tests it
 
+> [!warning] Updated 2026-10-22: Only the first 5.5 h (light phase) are scored here, and those usable fractions carry about 20 points of uncertainty from the floor estimate alone. The full 16.39 h file later got an EMG state-dependence test and a gate-constant check [[2026-08-11-analysis-stack-audit-measurements]]. ECG was retired as a measurement on 2026-08-11 [[2026-08-11-analysis-stack-consolidation]].
+
 > [!abstract] TL;DR
 > Yesterday we found that all seven new mice had been recording with **no ground connection to
 > the animal**: the cerebellum dura pin was mated to the **orange** wire, which floats, while the

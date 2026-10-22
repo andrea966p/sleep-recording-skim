@@ -9,6 +9,8 @@ created: 2026-08-06
 
 # Does an unloaded tether + slip ring + headstage interfere with other animals?
 
+> [!warning] Updated 2026-10-22: Part B (does a dangling cable disturb a neighbour) was designed but never run; the old eight mice were replaced on 2026-08-07 [[2026-08-07-ecg-cohort-baseline]]. The "recordable animals" call below (D2 EEG not recordable) was contradicted by the overnight recording, D2 EEG 87.9% usable [[2026-08-07-overnight-recording-two-animals-work]].
+
 > [!abstract] TL;DR
 > When a mouse is removed but its tether, slip ring and headstage stay plugged into the rig,
 > that dangling chain is still electrically live. Two questions follow. First, **what does the

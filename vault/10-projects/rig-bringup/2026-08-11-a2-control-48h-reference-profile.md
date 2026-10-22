@@ -9,6 +9,8 @@ tags: [eeg, emg, control, circadian, recording, reference]
 
 # A2 over 48 hours: the reference profile for what a working animal looks like
 
+> [!warning] Updated 2026-10-22: A2 is one historical animal, not a standing reference mouse. Every run has new mice unless Andrea says otherwise (stated 2026-08-18, when eight newly operated mice went on the rig [[2026-08-18]]): do not carry these numbers, or the label "the A2 control", into a later cohort. What transfers is the method [[rig-bringup-lessons]].
+
 > [!abstract] TL;DR for non-technical readers
 > **What this is.** A2 is our control mouse, the old B1 animal, sitting in port A slot 2 on a
 > short soldered and resin encapsulated tether. It is the one animal that has always worked. We

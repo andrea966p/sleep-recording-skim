@@ -18,6 +18,8 @@ supersedes-status-in:
 
 # EEG Recording — Checkpoint & Council Review (2026-07-02)
 
+> [!warning] Updated 2026-10-22: Its "no validated recording yet" status was overtaken: first scoreable sleep on 2026-08-01 [[2026-08-01-channel-mapping-correction-first-sleep]], then 48.19 h of one control mouse with 47.09 h of usable EEG and a state-dependent EMG [[2026-08-11-a2-control-48h-reference-profile]]. The frontmatter status-note "active" is stale: this is a dated record.
+
 > [!abstract] TL;DR — for non-technical readers
 > **What this is.** An honest snapshot of the mouse sleep-EEG/EMG rig after ~2 weeks of intense troubleshooting, plus a plan for how to continue. It was produced by running the project through a 5-advisor "LLM council" (Contrarian, First-Principles, Expansionist, Outsider, Executor) that critiqued the work and each other.
 > **Why it exists.** The rig is now electronically cleared, and it's tempting to declare victory and scale to 8 mice. The council's blunt finding: **we do not yet have a single validated recording** (one 4.5 h EEG-only session with dead EMG is an existence proof, not validation). This doc resets the goal to the right bar before more animals are cut.

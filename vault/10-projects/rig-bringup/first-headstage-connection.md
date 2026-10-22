@@ -17,6 +17,8 @@ system: XDAQ Core Gen-1 (XDAQ_ONE_REC mode) + 32-ch RHD XR headstage + SAdpt-XDA
 
 # First Headstage Connection — Mouse → Intan/XDAQ → Allego (Bring-up & Troubleshooting)
 
+> [!warning] Updated 2026-10-22: Two layouts below were retracted. Two mice on one headstage (shared ground) gave way to one mouse per headstage [[2026-07-02-eeg-recording-checkpoint]]. The section 8.1 channel map (EEG = EEG+ minus EEG-, four amplifier channels per mouse) is wrong for the bipolar RHD2216: `/1` is already the EEG, `/2` the EMG, `/3` and `/4` empty pads [[2026-08-01-channel-mapping-correction-first-sleep]] [[CANONICAL-allego-channel-selection]].
+
 > [!abstract] TL;DR — for non-technical readers
 > **What this is.** The record of the first-ever attempt to connect a live recording headstage to our XDAQ and see signal in Allego.
 >

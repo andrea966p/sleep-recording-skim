@@ -9,6 +9,8 @@ created: 2026-08-06
 
 # Pre-registration: is the recorded data clean and usable, per mouse?
 
+> [!warning] Updated 2026-10-22: The hum criterion used here ("hum is the direct readout of contact") fails when an animal has no ground: a floating A1 scored 100% usable by it, and the slope criterion replaced it. Hum fractions and slope fractions are not comparable [[2026-08-08-ground-fix-post-repin-night]] [[animal-card-and-verdict-ladder]].
+
 > [!abstract] TL;DR
 > Until now we have judged animals by impedance, which is a proxy. This afternoon we record
 > the real thing and ask one question per mouse: **what fraction of the recording is actually

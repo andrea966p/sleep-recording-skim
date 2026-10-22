@@ -44,7 +44,7 @@ created: 2026-10-07
 > cd ~/sleep-recording-skim && ./skim pull
 > git clone https://github.com/somnocode/SleepStager.git SleepStager      # ignored by ./skim
 > cd SleepStager && git checkout csv-reader
-> git apply ../vault/01-infrastructure/sleepstager/sleepstager-local-changes.patch
+> git apply ../vault/_attachments/sleepstager-local-changes.patch
 > uv venv ~/.venvs/sleepstager --python 3.11 && uv pip install -p ~/.venvs/sleepstager -e .
 > ```
 > **Data and saves are not in the repo.** Copy the recording from the NAS to `~/sleep-data/...` (check its sha256 against
