@@ -26,7 +26,7 @@ status: active
 > standard instrumentation practice; per-chip grouping is physically correct. **Using it as a live
 > per-file criterion is non-standard, but the field handles the same question by eye.** The honest
 > risk is not the method — it is that **the bottleneck here is hardware yield, and no hypnogram has
-> ever been produced.** [[06-references/is-our-qc-approach-sound]]
+> ever been produced.** [[is-our-qc-approach-sound]]
 
 > [!danger] 🔴🔴 2026-08-21: THE WIRE-FREE FLOOR IS POOLED ACROSS CHIPS, AND IT SHOULD NOT BE
 > `core/criteria.py::floor_stats()` pools every unwired input across all **eight** amplifier chips
@@ -53,7 +53,7 @@ status: active
 >
 > 🛑 **`floor_stats()` IS NOT FIXED.** Scoring done on 2026-08-21 computes a per-chip floor alongside
 > it. Fixing the library and re-checking what the pooled value affected is OPEN.
-> Evidence and method: [[05-experiments/completed/2026-08-21-39h-run-score]].
+> Evidence and method: [[2026-08-21-39h-run-score]].
 
 > [!danger] 🔴 2026-08-08: this hub no longer lists everything you need
 > Three pages were added after this hub was written and they change how the pipeline must be read:

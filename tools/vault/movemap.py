@@ -59,8 +59,15 @@ def load(path: str) -> dict[str, Row]:
 
 
 def final_path(rows: dict[str, Row], old: str) -> str | None:
-    """Where `old` ends up in the vault after the whole migration (None if it leaves)."""
+    """Where `old` ends up in the vault after the whole migration (None if it leaves).
+
+    `old` may be an original path or its renamed-in-place (P3) path."""
     r = rows.get(old)
+    if r is None:
+        for o, rr in rows.items():
+            if rr.renamed and renamed_in_place(rows, o) == old:
+                r = rr
+                break
     if r is None:
         return old
     return r.new if r.stays_in_vault else None
