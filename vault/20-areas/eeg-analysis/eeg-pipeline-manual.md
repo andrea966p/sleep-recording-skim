@@ -8,7 +8,7 @@ created: 2026-08-03
 
 # EEG analysis pipeline — raw recording to sleep features
 
-> [!warning] Updated 2026-10-22: The commands below are run from the repo root, not from inside `pipeline/`: from there the stage scripts stop with `ModuleNotFoundError: No module named 'core'` (checked 2026-10-22). The Quick start and cohort commands were updated to `cd ~/sleep-recording-skim/eeg-emg-analysis` and `PYTHONPATH=. python3 pipeline/<stage>.py`, `--help` checked for each. [[eeg-analysis-quickstart]]
+> [!warning] Updated 2026-10-22: Run the commands below from `~/sleep-recording-skim/eeg-emg-analysis` with `PYTHONPATH=.`. From inside `pipeline/`, or without `PYTHONPATH=.`, the stage scripts stop with `ModuleNotFoundError: No module named 'core'` (checked 2026-10-22). The Quick start and cohort commands were updated to that form, `--help` checked for each. The 2026-08-09 callout's "cd .../pipeline" instruction below is superseded by this. [[eeg-analysis-quickstart]]
 
 > [!important] ⭐ 2026-08-09: THE CODE MOVED. This manual is still correct; the paths changed.
 > The stage scripts now live in `~/sleep-recording-skim/eeg-emg-analysis/pipeline/`, and every

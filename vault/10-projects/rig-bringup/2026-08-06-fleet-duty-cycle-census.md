@@ -8,7 +8,7 @@ created: 2026-08-06
 
 # Fleet duty cycle census, 2026-08-06: what all 8 mice actually do, and the mouse that works
 
-> [!warning] Updated 2026-10-22: The question left open here (does construction or recovery time explain the new mouse?) was answered on 2026-08-07: D2, tethered on day 8, went from 0.0% to 87.9% usable EEG on the new tether, and its EEG, called indistinguishable from an empty cable here, worked [[2026-08-07-overnight-recording-two-animals-work]]. The fleet itself was replaced that evening [[2026-08-07-ecg-cohort-baseline]].
+> [!warning] Updated 2026-10-22: The D2 swap this page set up to separate construction from recovery time ran on 2026-08-07: D2, tethered on day 8, went from 0.0% to 87.9% usable EEG on the new tether, which favours construction, though the overnight note calls construction "the leading candidate, still circumstantial" (n = 1). D2's EEG, called indistinguishable from an empty cable here, worked [[2026-08-07-overnight-recording-two-animals-work]]. The fleet itself was replaced that evening [[2026-08-07-ecg-cohort-baseline]].
 
 > [!abstract] TL;DR
 > We measured every animal on the rig 20 times in a row and counted how often each channel

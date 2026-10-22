@@ -206,7 +206,7 @@ arriving when checked on 2026-10-22. The audit that day that found the raw gap: 
 ## Notifications
 
 All scripts push to **ntfy** via the single shared notifier
-`neurosurveillance/deploy/nvr-notify.sh`:
+`neurosurveillance/deploy/nvr-notify.sh`. Seven scripts call it.
 
 ```bash
 nvr-notify.sh <ok|warn|fail|info> "<title>" "<body>"

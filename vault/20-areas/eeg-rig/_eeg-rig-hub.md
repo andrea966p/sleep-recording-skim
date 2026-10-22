@@ -18,7 +18,7 @@ Allego settings live in `allego`, runs and the console in `recording-console`, s
 - 2026-10-15: ahyeon's unipolar run was lost to hardware: port B dropped off the SPI scan at 23:54 the night before and mouse C showed the pattern of a lost reference or ground contact at the head connector; the console now checks enumeration at start (commit 3793258). [[2026-10-15]]
 - 2026-10-14: live read-only check: ports A, B, C enumerate 32 channels each; 60 Hz 1-4 µV on the channels in use (A/21 10.6 µV). [[2026-10-14]]
 - 2026-10-09: the grounding fix held over 29.5 h: chip floors ≤ 239 µV every hour, A2 EMG 60 Hz 0.5-2.3 µV; light-switch spikes unchanged. [[2026-09-30-xdaq-noise-series]]
-- 2026-10-07: isolated-earth socket plus the XDAQ chassis GND bonded to the earthed rack cut chip floors 12-60x. Side effect: the 800 µV ground gate now calls every chip UNJUDGEABLE. [[2026-10-06-noise-hunt-verdict]]
+- 2026-10-07: isolated-earth socket plus the XDAQ chassis GND bonded to the earthed rack cut chip floors 12-60x. Side effect: the 800 µV ground gate now calls every chip UNJUDGEABLE; decision owned by [[_eeg-analysis-hub]]. [[2026-10-06-noise-hunt-verdict]]
 - 2026-10-02: the 2000 µV chip-floor proposal is falsified; the floor scale depends on the rig geometry. [[weak-chip-ground-vs-open-electrode]]
 - 2026-09-30: the Gen-1 XDAQ Core has a chassis GND, wired to building earth. [[2026-09-30-xdaq-noise-series]]
 - 2026-09-01: flicker of an open channel separates a bending tether from a severed one. [[tether-bend-vs-break-flicker]]
@@ -44,7 +44,7 @@ Allego settings live in `allego`, runs and the console in `recording-console`, s
 - Earth the XDAQ, never the animal; the animal is grounded only through its headstage GND lead. [[eeg-60hz-saga]]
 
 ## Open items
-- [ ] Replace the 800 µV ground gate (`FLOOR_MIN_HUM_UV`, still 800 in `core/qc_thresholds.py` on 2026-10-22) before the next real recording. [[2026-10-06-noise-hunt-verdict]]
+- [ ] Replace the 800 µV ground gate (`FLOOR_MIN_HUM_UV`, still 800 in `core/qc_thresholds.py` on 2026-10-22) before the next real recording (decision owned by [[_eeg-analysis-hub]]). [[2026-10-06-noise-hunt-verdict]]
 - [ ] Update the 2000 µV floor bar in [[pre-flight-connection-screen]] once a new gate exists.
 - [ ] Reconcile "launch Allego with `--disable-gpu`" (procedures, `rig-check.sh`) with the 2026-09-16 blank-Monitor finding; Allego has run without it since 2026-10-15. [[2026-10-14]]
 - [ ] Light-switch spikes reach the rig by a route the grounding fix did not close. [[2026-09-30-xdaq-noise-series]]

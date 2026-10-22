@@ -14,9 +14,9 @@ tags: [decision, eeg, cohort, identity]
 > Andrea explicitly says an animal is the same one (stated 2026-08-18, when the 8 W-SD mice went on the rig:
 > [[2026-08-18]], [[2026-08-18-W-SD-cohort-first-screen]]).
 > 🛑 **A rig position is not an animal.** `A1`, `B2`, `D2` name a port and slot on the amplifier. Two recordings both
-> labelled "D2" are two different mice by default. Name animals by batch + position (W-SD A1) or by registry ID.
+> labelled "D2" are two different mice by default.
 > 🛑 **No cross-run carry-over of animal facts.** Never open a new run's analysis with "A2 is the good control" or
-> "D2 was fixed by the arm C tether": those statements belong to the cohort they were measured on.
+> "D2 was fixed by the arm C tether": those statements belong to the cohort they were measured on. The A2 48 h control ([[2026-08-11-a2-control-48h-reference-profile]]) is a historical single animal, not a standing reference; [[2026-08-07-overnight-recording-two-animals-work]] and [[2026-08-08-ground-fix-post-repin-night]] describe animals that are gone. Carrying a prior animal in as a reference smuggles an expectation into a fresh cohort and makes a bad run look explainable (the lessons are kept in [[rig-bringup-lessons]]).
 
 ## What does carry across runs
 The hardware, not the animals: wire-free amplifier inputs, per-chip 60 Hz floor, headstage grounding, tether arms,
@@ -34,8 +34,7 @@ change under a position: W-SD B1 chewed its tether on 2026-08-19 and a different
 ## How to apply
 - At the start of any analysis treat the file's animals as unknown and unrelated to anything earlier.
 - Judge every channel against the wire-free floor in that same file.
-- Ask Andrea for animal IDs, surgery dates and tether arms, or read them from the registry / cohort manifest
-  (`eeg-emg-analysis/cohorts/<batch>.yaml`); never infer them from a previous manifest.
+- Ask Andrea for animal IDs, surgery dates and tether arms; never infer them from a previous manifest.
 - Merge two runs into one animal's history only when Andrea says they are the same animal.
 
 ## Source

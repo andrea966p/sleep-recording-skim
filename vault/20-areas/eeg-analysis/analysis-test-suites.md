@@ -23,15 +23,18 @@ tags: [eeg, analysis, tests, regression]
 cd ~/sleep-recording-skim/eeg-emg-analysis
 PYTHONPATH=. /usr/bin/python3 tests/test_criterion_falsification.py
 PYTHONPATH=. /usr/bin/python3 tests/test_cohort_schema.py
+PYTHONPATH=. /usr/bin/python3 tests/test_ladder_verdicts.py
+PYTHONPATH=. /usr/bin/python3 tests/test_criteria_regression.py
 ```
 
-Without `PYTHONPATH=.` every suite stops on `ModuleNotFoundError: No module named 'core'`.
+The last two exit 2 on e10 (see below). Without `PYTHONPATH=.` every suite stops on `ModuleNotFoundError: No module named 'core'`.
 
 **pytest.** On 2026-10-22, 5 of the 15 files define `test_*` functions (`test_impedance_block_tools`,
 `test_preflight_reason`, `test_record_block`, `test_stage1_cache_path`, `test_strip_channels`);
 `tests/conftest.py` supplies the fixture so `test_strip_channels` works both ways. pytest collects
 nothing from the other ten. A pytest is available in `~/eeg-test-venv` (created 2026-08-24 with
 `--system-site-packages`, so it has the system numpy 1.26.4 / scipy 1.11.4 pair).
+🛑 Do not reuse ~/eeg-analysis-venv for tests: its numpy 2.5 removed np.trapz; the test venv must inherit the system numpy 1.26.4 / scipy 1.11.4 pair (python 3.12.3, pytest 9.1.1 at creation).
 
 ## The two that verify nothing
 

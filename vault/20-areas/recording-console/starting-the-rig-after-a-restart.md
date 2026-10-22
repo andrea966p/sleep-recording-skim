@@ -8,7 +8,7 @@ created: 2026-09-13
 
 # Starting everything after a restart, a crash, or a screen that went black
 
-> [!warning] Updated 2026-10-22: section 4 says to launch Allego with `--disable-gpu`. That flag was removed on 2026-09-16 because it blanks the Monitor (the 262-signal canvas exceeds the software renderer's texture limit); Allego now runs on hardware GL under kernel 7.0.0-28, and the Mesa crash risk is the accepted trade-off. [[allego-blank-monitor-canvas-texture-limit]]
+> [!warning] Updated 2026-10-22: section 4 was corrected: it used to say to launch Allego with `--disable-gpu`. That flag was dropped on 2026-09-16 because it blanks the Monitor (the 262-signal canvas exceeds the software renderer's texture limit), so Allego now runs on hardware GL under kernel 7.0.0-28. The trade-off with the Mesa crash risk is still open ([[allego-mesa-gpu-crash-and-log-storm]], `_meta/contradictions/eeg-rig.md` ER-5). [[allego-blank-monitor-canvas-texture-limit]]
 
 > [!abstract] TL;DR
 > **Almost nothing needs starting.** The console, the NAS mount and the network come back by
@@ -112,13 +112,15 @@ detaches itself after 600 s idle, so **"not mounted" is the normal resting state
 
 Launch it from the desktop as usual, then:
 
-> [!warning] Use `--disable-gpu`
-> Allego crashes in the Intel Mesa driver on this machine. On 2026-08-24 that killed a run and
-> produced a 6.5 GB log storm. Launching with `--disable-gpu` is the fix, and it is the thing most
-> easily forgotten on a hurried relaunch. `rig-check.sh` warns when the running process lacks it.
+> [!warning] Launch WITHOUT `--disable-gpu` (since 2026-09-16)
+> With the flag the Monitor draws nothing: the 262-signal canvas exceeds the software renderer's 8192 px
+> limit ([[allego-blank-monitor-canvas-texture-limit]]). Launch `/opt/allego/allego` plainly on kernel
+> 7.0.0-28. The flag was added after the 2026-08-24 Mesa crash and 6.5 GB log storm
+> ([[allego-mesa-gpu-crash-and-log-storm]]) and that trade-off is still open. `rig-check.sh` still warns
+> when the flag is missing, so ignore that warning until the script is changed.
 >
 > ```bash
-> /opt/allego/allego --disable-gpu
+> /opt/allego/allego
 > ```
 
 > [!danger] CHECK THE MODE AND THE SAMPLING RATE EVERY TIME
@@ -150,6 +152,7 @@ Full rules: [[pipeline-architecture]] §3.5.
 | Symptom | Likely cause | Fix |
 |---|---|---|
 | `rig-check.sh`: console HTTP 000 | service down or crashed | `sudo systemctl restart eeg-recorder`, then `journalctl -u eeg-recorder -n 50` |
+| no data, with Allego open | an orphaned `allegoserver` holding ports 50051-50054 (parent PID = systemd --user); check this before any other theory | see [[allego-orphaned-server-blocks-the-rig]] |
 | `allego NOT REACHABLE` | the GUI is not open | launch it (section 4); the console cannot start it for you |
 | `SMARTBOX_PRO` or `30000.0 Hz` | fresh Allego defaults | fix in the GUI **before** recording — see the danger box above |
 | `nas NOT USABLE` | share unreachable or sentinel missing | `systemctl start mnt-skimnas.mount`; recording still works, uploads queue |

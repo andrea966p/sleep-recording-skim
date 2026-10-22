@@ -54,6 +54,6 @@ Re-checked read-only on 2026-10-22: the kernel is 7.0.0-28-generic, `GRUB_DEFAUL
 
 🔴 Without the flag the 2026-08-24 Mesa crash risk is back for long unattended runs ([[allego-mesa-gpu-crash-and-log-storm]]).
 
-⭐ An untested option that would keep both: keep `--disable-gpu` and set Chan height to 30 or less (262 x 30 = 7860, under 8192). The dropdown has fixed values, so check that 30 or 20 exists. If that renders, it is the configuration to standardise on. Test it before the next multi-hour live-animal run.
+⭐ An untested option that would keep both: keep `--disable-gpu` and set Chan height to 30 or less (262 x 30 = 7860, under 8192). The dropdown has fixed values (25 does not exist), so check that 30 or 20 exists. If that renders, it is the configuration to standardise on. Test it before the next multi-hour live-animal run.
 
 Related: [[allego-orphaned-server-blocks-the-rig]] · [[starting-the-rig-after-a-restart]] · [[live-signal-quality-terms]]

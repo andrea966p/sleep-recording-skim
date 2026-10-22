@@ -230,10 +230,10 @@ it. Run as a script, not under pytest:
 
 🛑 **While a recording is in progress, do not start stripping or any other heavy read or write on that disk.**
 
-- **Why.** A run started through the recording console is stripped and uploaded automatically by `eeg-recorder/backend/postprocess.py` when the scheduler stops it ([[pipeline-architecture]]). Doing it by hand is redundant, and competing for the same NVMe with a live 8-animal recording risks the thing that cannot be repeated.
+- **Why.** A run started through the recording console (127.0.0.1:8600) is stripped and uploaded automatically by `eeg-recorder/backend/postprocess.py` when the scheduler stops it ([[pipeline-architecture]]). Doing it by hand is redundant, and competing for the same NVMe with a live 8-animal recording risks the thing that cannot be repeated.
 - **`RIG BUSY`.** `strip_channels.py --dry-run` prints `RIG BUSY` for exactly this reason; treat that line as a stop, not a warning. `--require-idle` makes it a hard refusal (see section 4, and [[radix-s3-archive]] for the same rule on the archive).
 - **How to apply.** If stripping is asked for while `api/state` shows `active_run: RECORDING`, say the run will strip itself on stop and offer to do any manual strip after it finishes. A dry run is fine; the real thing waits.
-- ⚠️ The automatic strip keeps only the run's frozen `keep_labels` (the wired channels), so the stripped copy has **no wire-free floor** and can never be QC'd by this project's own criterion. The original on the rig is the record of truth. Compare [[skim-nas-smb-and-upload]].
+- ⚠️ The automatic strip keeps only the run's frozen `keep_labels` (the 16 wired channels), so the stripped copy has **no wire-free floor** and can never be QC'd by this project's own criterion. The original on the rig is the record of truth. Compare [[skim-nas-smb-and-upload]].
 
 ## 6. Related
 

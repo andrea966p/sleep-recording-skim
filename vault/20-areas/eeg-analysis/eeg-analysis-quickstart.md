@@ -9,7 +9,7 @@ tags: [procedure, eeg, analysis, pipeline, onboarding, python]
 
 # EEG analysis quickstart: raw recording to a scoreable file
 
-> [!warning] Updated 2026-10-22: the commands below were moved verbatim from the old hub and their paths are stale [[2026-08-26-per-chip-floor-fix]]
+> [!warning] Updated 2026-10-22: the commands below were moved verbatim from the old hub and their paths are stale.
 > Checked read-only on e10 on 2026-10-22. The code is in `~/sleep-recording-skim/eeg-emg-analysis/`
 > (`~/Monitoring_project` no longer exists). The stage scripts import `core`, so run from inside
 > `pipeline/` they stop with `ModuleNotFoundError: No module named 'core'`. This form works
@@ -26,7 +26,7 @@ tags: [procedure, eeg, analysis, pipeline, onboarding, python]
 >
 > Rule 4's file is now `eeg-emg-analysis/core/qc_thresholds.py`; the archived `scripts/` folders are
 > in `eeg-emg-analysis/archive/vault-scripts/`. The loader under `/home/skimlab/Desktop/andrea/` is
-> not on e10. The pooled floor in the 2026-08-21 notice at the bottom was fixed on 2026-08-26.
+> not on e10. The pooled floor in the 2026-08-21 notice at the bottom was fixed on 2026-08-26 [[2026-08-26-per-chip-floor-fix]].
 > Per-animal verdicts come from [[animal-card-and-verdict-ladder]] first.
 
 

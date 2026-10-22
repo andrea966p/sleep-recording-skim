@@ -6,7 +6,7 @@ superseded-by: "[[multi-machine-workflow]]"
 ---
 # Multi machine work setup: laptop and office PC alongside e10ubuntu
 
-> [!warning] Updated 2026-10-22: the Syncthing material on this page (folder inventories, the config-dir pin, device ids, the live-`.git` hazard, the Syncthing-era standing rules) is historical; Syncthing is gone from every machine. Still valid: the machine table, the Tailscale address findings, the e10-to-laptop SSH route, and the sections from 2026-09-10 on. The live workflow is one git repo `sleep-recording-skim` synced by hand with `./skim` (the repo's `machine/README.md`, the root `CLAUDE.md`) [[multi-machine-workflow]]
+> [!warning] Updated 2026-10-22: the Syncthing material on this page (folder inventories, the config-dir pin, device ids, the live-`.git` hazard, the Syncthing-era standing rules), and the two auto-commit mechanisms (the `claude-portable` SessionEnd sync and `vault-git-backup.timer`, both retired: nothing commits by itself now) is historical; Syncthing is gone from every machine. Still valid: the machine table, the Tailscale address findings, the e10-to-laptop SSH route, and the sections from 2026-09-10 on. The live workflow is one git repo `sleep-recording-skim` synced by hand with `./skim` (the repo's `machine/README.md`, the root `CLAUDE.md`) [[multi-machine-workflow]]
 
 Created 2026-08-16.
 

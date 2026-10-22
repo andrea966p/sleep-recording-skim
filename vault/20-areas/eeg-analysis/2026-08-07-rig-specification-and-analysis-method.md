@@ -8,6 +8,8 @@ created: 2026-08-07
 
 # The rig specification and the analysis method, as established by evidence
 
+> [!warning] Updated 2026-10-22: claim 2's evidence no longer holds: an unwired amplifier input also read 0.051 MOhm, so one low impedance is not evidence of contact [[2026-08-06-unloaded-chain-interference]]. The implants are judged good on recorded EEG instead (B1 and D2, [[2026-08-07-overnight-recording-two-animals-work]]). See also the corrected 2026-08-04 bullet in [[_eeg-rig-hub]].
+
 > [!abstract] TL;DR
 > This is the page to argue from. It states **what we now know, how the rig should be built, how
 > the data must be analysed, and what may not be claimed** — each with the evidence behind it and

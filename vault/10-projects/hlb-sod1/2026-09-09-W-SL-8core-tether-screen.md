@@ -13,7 +13,7 @@ tags: [experiment, eeg, emg, w-sl, screen, tether]
 
 > [!info] Promoted 2026-10-22 from the Claude memory note of 2026-09-09/10
 > No journal exists for 2026-09-09 or 2026-09-10; these numbers were recorded only in Claude's memory, written from ad
-> hoc screen scripts against `core/criteria.py` (not committed). The batch's sleep analysis is
+> hoc screen scripts against `core/criteria.py`. The batch's sleep analysis is
 > [[2026-09-18-W-SL-light-phase-sleep]] and its verdict cards (2026-09-26) supersede the per-position calls below where
 > they differ. The 09-10 baseline is judged in [[2026-09-30-scoreable-mice-on-the-24h-windows]].
 
@@ -29,7 +29,7 @@ tags: [experiment, eeg, emg, w-sl, screen, tether]
   64 sites per port. Rung 0 INTACT, remainder 0/0.
 - New batch of 8 mice (W-SL), new thicker tether built from 8-core wire. IDs were not yet in a manifest at the time.
 - Baseline: `allego_0__uid0910-09-00-00`, started 09:00:00 KST (ZT0) by a cron one-shot; numbers below at 5.5 h, all
-  light phase.
+  light phase. Cron one-shot fired 08:50; RECORDING CONFIRMED GROWING at 2.86 GB/h; hourly watchdog OK. Rung 0 read TRUNCATED mid-run because the file was live: re-run rung 0 after the stop.
 
 ## Result: the screen
 
@@ -45,7 +45,7 @@ tags: [experiment, eeg, emg, w-sl, screen, tether]
 | D2 | 3441 | 99.8 % / 75.2 min | real, strict 90.6 % |
 
 - **C1 EMG is a broken conductor:** locked at 693 µV, cv 4.6 %, max/min 1.25, hum ÷ own floor 0.245 (partially
-  conducting). Its EEG is the best channel in the file. Same EMG-only tether break C1 showed on 2026-08-26
+  conducting). Its EEG is the best channel in the file. C1 is one of the two chewing cages. Same EMG-only tether break C1 showed on 2026-08-26
   ([[2026-08-27-B1-swap-baseline-20h-run]]).
 - Cross-checks: flicker cv 4.7-17.6 %, max/min 1.4-2.4 everywhere (no bending or torsion signature); |r| EEG vs EMG
   0.015-0.181 (no shared path); railing 0.0 % except C2 EMG 0.4 %; EEG rms 58-105 µV; flat per-10-min time course.
@@ -76,7 +76,10 @@ tags: [experiment, eeg, emg, w-sl, screen, tether]
 ## What it means / what it does not mean
 - 83 min, entirely dark phase, one file: a 1 h snapshot overstates a 24 h run ([[2026-08-25-S-SD-24h-ZT0-run]]).
 - The 8-core tether is confounded with a fresh re-mate: the 2026-09-01 bench re-seat also fixed all eight grounds with
-  the old tether ([[2026-09-02-S-SD-recovery-sleep]]). Credit for the wire needs the floors to hold after days of wear.
+  the old tether ([[2026-09-02-S-SD-recovery-sleep]]). Credit for the wire needs floors of 3400-4700 µV after days of wear.
+- 🔑 Adds a 9th chip-recording to the FLOOR_MIN_HUM_UV evidence: 69 µV gave nothing, every other chip was ≥ 3441 µV; still nothing observed between 800 and 2186 µV.
+- EEG usability fell 15-34 points in the dark on 2026-08-25, so a dark-phase result near 100 % is encouraging rather than inflated.
+- Previous cohorts had 2-6 chips under the gate and a floor spread of 246-5609 µV. The W-SD baseline's best was 4 animals passing, over 39.5 h, so duration is not yet comparable.
 - Later: by 09-17 grounding had got worse (5 of 8 chips grounded) and only B2 / HLBWSL24 pairs across the batch's two
   timepoints ([[2026-09-18-W-SL-light-phase-sleep]]).
 

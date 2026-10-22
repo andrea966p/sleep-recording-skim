@@ -42,6 +42,7 @@ conservative. Evidence: [[2026-08-21-39h-run-score]], [[animal-card-and-verdict-
    then the median across sites, so one partly coupled site cannot set the bar for a chip of ~14 sites.
    Motivating case (code comment): chip A1 on `allego_0__uid0825-09-00-00`, sites A/11-A/15 dragged
    the pooled p1 to −1.59.
+   Every A1 floor site had a flat median slope (+0.38 to −0.74), but A/11-A/15 were partly coupled (rms 651-2696 µV, lf/hf 3.6-5.2). The across-chip threshold spread fell from 1.16 to 0.96.
    🛑 **Chosen on robustness grounds, NOT by looking at which animals it passes.** It moves A1's
    threshold by 0.07 and does not change A1's verdict.
 3. **Ground-validity guard, `FLOOR_MIN_HUM_UV = 800.0`.** A chip whose wire-free inputs carry less
@@ -54,7 +55,7 @@ conservative. Evidence: [[2026-08-21-39h-run-score]], [[animal-card-and-verdict-
 
 Recomputed numbers for the 2026-08-25 S-SD run (A1 31.0 → 36.8 %, C1 85.2 → 91.3 %, D2 96.2 → 98.8 %,
 B1 1.0 % → UNJUDGEABLE) are in [[2026-08-25-S-SD-24h-ZT0-run]]. The two physically railing channels on
-that run stayed rejected. Per the memory record, `tests/test_criterion_falsification.py` and
+that run stayed rejected. On uid0825 itself the pooled floor made the rig look dead: EEG usable A2 12.4 %, C1 20.2 %, D2 10.6 % pooled against A2 79.7 %, C1 91.3 %, D2 98.8 % per chip. The two physically railing channels stayed rejected (B2 railed 99.3 % of epochs, median 4424 µV, 0.0 % usable; D1 71.4 %, 2760 µV, 2.8 %). The animals' ordering was unchanged and matched an independent trimmed-floor analysis within a few points (D2 96.2 vs 98.8, C1 85.2 vs 91.3, A2 79.5 vs 79.7, C2 48.8 vs 50.3, A1 31.0 vs 36.8). The 800 µV guard sat in an empty gap at the time: grounded chips 1138-5609 µV in every recording since 2026-08-07, floating ones 82-466 µV. Per the memory record, `tests/test_criterion_falsification.py` and
 `test_cohort_schema` passed after the change.
 
 > [!warning] The per-chip threshold range on uid0825 is quoted two ways
@@ -69,8 +70,7 @@ that run stayed rejected. Per the memory record, `tests/test_criterion_falsifica
   the slope test is reached. On real data it tests the amplitude gate, not the floor threshold. Do not
   cite a 0 % falsification rate on real data as evidence the threshold is right. It is meaningful on
   the synthetic suite.
-- 🟡 **lf/hf separated the animals better than slope on uid0825** (A1, A2, C1, C2, D2 above their
-  chip floor's p99; the open B2 and D1 below). ⛔ Not implemented: swapping the discriminator is a
+- 🟡 **lf/hf separated the animals better than slope on uid0825** (animal lf/hf against its own chip floor p99: A1 14.67/8.71, A2 13.91/3.11, C1 16.01/4.53, C2 9.52/3.35, D2 15.08/4.42 separated; B2 1.50/13.42 and D1 1.63/9.30 not). ⛔ Not implemented: swapping the discriminator is a
   redesign that needs pre-registration and the falsification suite. See [[weak-chip-ground-vs-open-electrode]].
 - A per-chip floor has ~14 sites, not 112: it trades bias for variance.
 

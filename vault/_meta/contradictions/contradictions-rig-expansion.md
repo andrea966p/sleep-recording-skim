@@ -20,6 +20,6 @@ Claim A and claim B are quoted from the named notes. No record note was reworded
 | RX-13 | [[xdaq-32-mouse-wiring-and-channel-law]] table: "CORE2 (our Gen-1 class)" | [[xdaq-core-gen1-ubuntu-driver]] (canonical): the lab owns an XDAQ Core Gen-1 (Opal Kelly USB); Core2 is Thunderbolt | Driver note, "supersedes Core2/Thunderbolt assumption" | SETTLED: label is loose; banner added. Numbers (512 channels, 8 mice) are the same | no |
 
 ## Broken links in this folder, for the coordinator
-Both are Claude memory slugs, not vault notes. They sit in record notes that I may not reword.
-- `[[eeg-60hz-saga]]`: no vault note of that name. Candidate targets in `20-areas/eeg-rig`: `60hz-mains-hum-discovery`, `earthing-60hz-hum-fix`. Decide which is the intended one; the old hub link was already retargeted to `60hz-mains-hum-discovery` in [[2026-07-29-rig-expansion-xdaq-route-map]].
+These were Claude memory slugs, not vault notes (the first now resolves). They sit in record notes that I may not reword.
+- `[[eeg-60hz-saga]]` now resolves to a vault note (`20-areas/eeg-rig/eeg-60hz-saga.md`, promoted 2026-10-22). The old hub link was retargeted to `60hz-mains-hum-discovery` in [[2026-07-29-rig-expansion-xdaq-route-map]]; decide whether it should point at the saga instead.
 - `[[project_multiuser_recording_schedules]]`: the vault note is `multi-user-independent-recording-schedules` (exists, recording-console, planned).

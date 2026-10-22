@@ -3,12 +3,12 @@ type: reference
 area: eeg-rig
 status: done
 created: 2026-10-22
-summary: "Dated record of the 60 Hz hum, earth, contact and foil investigation, 2026-07-05 to 2026-08-02, promoted from Claude memory"
+summary: "Dated record of the 60 Hz hum, earth, contact and foil investigation, 2026-07-14 to 2026-08-02, promoted from Claude memory"
 tags: [eeg, 60hz, grounding, contact, history]
 promoted-from: "Claude memory eeg-60hz-saga (last block 2026-08-02; index line trimmed 2026-10-06)"
 ---
 
-# The 60 Hz saga: hum, earth, contact and foil (2026-07-05 to 2026-08-02)
+# The 60 Hz saga: hum, earth, contact and foil (2026-07-14 to 2026-08-02)
 
 > [!note] How to read this page
 > This is the investigation as it was recorded at the time, newest block first. It was kept in Claude's
@@ -17,9 +17,11 @@ promoted-from: "Claude memory eeg-60hz-saga (last block 2026-08-02; index line t
 > 2026-08-02; they are listed in the next box. For what is true now, use [[_eeg-rig-hub]].
 
 > [!warning] What changed after this record
-> - 2026-08-04: the electrodes and implants are proven good (B1 EEG 0.052 MΩ); contact is intermittent
->   within minutes, so a single impedance sweep cannot classify a channel. Movement as the trigger was
->   tested the same day and failed. [[2026-08-04-movement-dependent-contact]]
+> - 2026-08-04: one EEG channel read 0.052 MΩ and contact proved intermittent within minutes; a movement
+>   trigger was tested the same day and failed. [[2026-08-04-movement-dependent-contact]] The claim that
+>   0.052 MΩ proves the implants are good was withdrawn: on 2026-08-06 an unwired input also reached
+>   0.051 MΩ, so one low reading is not evidence of contact; the evidence that the implants work rests on
+>   the 2026-08-07 recordings (B1, D2). [[2026-08-06-unloaded-chain-interference]] [[2026-08-07-overnight-recording-two-animals-work]]
 > - 2026-08-04: the DMM continuity test passed on the whole fleet. "Cold solder joint on pad 0 or 1" and
 >   "the slip ring is statically broken" are dead. [[dmm-eeg-path-continuity-test]]
 > - 2026-08-05 onwards: contact is read as a duty cycle over a block of sweeps at the 0.5 MΩ criterion,

@@ -9,7 +9,7 @@ created: 2026-09-30
 
 # XDAQ noise series: power, cabling, grounding (started 2026-09-30)
 
-> [!warning] Updated 2026-10-22: the confirmation run `ee0263bffeaa` that the TL;DR below says is still recording finished on 2026-10-08 21:02 and was analysed on 2026-10-09 (Entry 12). `FLOOR_MIN_HUM_UV` is still 800 in `core/qc_thresholds.py`, so the ground-gate item stays open. Project map: [[_noise-hunt-hub]]
+> [!warning] Updated 2026-10-22: the 10-07 TL;DR bullet's "records until 10-08 21:02" is resolved: run `ee0263bffeaa` stopped at 2026-10-08 21:02:03 and is reported in Entry 12 and the 10-09 TL;DR bullet. `FLOOR_MIN_HUM_UV` is still 800 in `core/qc_thresholds.py`, so the ground-gate item stays open. Project map: [[_noise-hunt-hub]]
 
 > [!abstract] TL;DR
 > A series of tests (rig-only from 09-30, with 4 mice from 10-01 evening) to find where our noise comes from, changing ONE thing at

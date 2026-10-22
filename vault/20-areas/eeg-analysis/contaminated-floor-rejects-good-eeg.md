@@ -12,7 +12,7 @@ affects: [S-SL, W-SL, S-SD]
 
 # A contaminated floor reports healthy EEG as 0.0% usable
 
-> [!warning] Updated 2026-10-22: The empty gap between contaminated floors and every other chip (−1.73 or flatter) did not survive the 2026-10-07 grounding fix: three of the four chips on uid1007 read floor slope p1 −2.59 to −3.60, so the −1.90 guard keeps A1, A2 and B2 UNJUDGEABLE, and the old gap was mains masking [[2026-10-14]]. A milder contaminated floor (−1.52, HLBSSD11 on 2026-08-25) also slips under the cut [[2026-10-06-S-SD-EMG-rescue-between-harmonics]].
+> [!warning] Updated 2026-10-22: The empty gap between contaminated floors and every other chip (−1.73 or flatter) no longer holds. On uid1007 (after the 2026-10-07 grounding fix) three of the four chips read floor slope p1 −2.59 to −3.60, within 0.22 of their 2026-10-01/02 values, so the −1.90 guard keeps A1, A2 and B2 UNJUDGEABLE; the 2026-10-14 review calls the old gap mains masking [[2026-10-14]]. A milder contaminated floor (−1.52, HLBSSD11 on 2026-08-25) also slips under the cut [[2026-10-06-S-SD-EMG-rescue-between-harmonics]].
 
 > [!abstract] TL;DR
 > 🔴 **Rung 2 can report `0.0% usable` on an electrode that is working perfectly.**

@@ -9,7 +9,7 @@ updated: 2026-04-02
 
 # Production Configuration Values
 
-> [!warning] Updated 2026-10-22: Netdata and Uptime Kuma alerts moved from Slack to ntfy on 2026-09-14, and the deploy scripts (`nvr-notify.sh`) on 2026-09-20 [[monitoring-setup]]. Recording-stall and reconciler alerts still go to Slack through `nvr-mqtt-slack.service` (active 2026-10-22), so `{MQTT_SLACK_ENV}` is still live. All cameras were removed on 2026-08-04, so the camera rows below do not point at running streams [[nvr-alerts-config]]
+> [!warning] Updated 2026-10-22: Netdata and Uptime Kuma alerts moved from Slack to ntfy on 2026-09-14, and the deploy scripts (`nvr-notify.sh`) on 2026-09-20 [[monitoring-setup]] [[backup-architecture]]. Recording-stall and reconciler alerts still go to Slack through `nvr-mqtt-slack.service` (active 2026-10-22), so `{MQTT_SLACK_ENV}` is still live. All cameras were removed on 2026-08-04, so the camera rows below do not point at running streams [[_video-nvr-hub]]
 
 > [!warning] SENSITIVE INFORMATION
 > This file contains actual production values. Do NOT commit to public Git repositories.

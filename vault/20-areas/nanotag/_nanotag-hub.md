@@ -17,7 +17,7 @@ This area holds the device facts and the procedure; the studies (HLBNSL, NS-SD /
 
 ## Current state
 
-- 2026-10-22: The NS-SD / NW-SD batch (10 mice, tags 51-60, 12 s activity, no temperature) is scheduled to start tag Run 1 on 2026-10-22 09:00; sampling is Thu 2026-11-05; no data read yet. [[2026-10-19-NS-SD-NW-SD-nanotag-study]]
+- 2026-10-22: NS-SD / NW-SD study status: see [[_hlb-sod1-hub]]
 - 2026-10-16: 12 s activity without temperature holds 9 days, not 20: the English manual misprints it, the Japanese manual and nanotagViewer say 9. [[nanotag-recording-and-analysis]]
 - 2026-10-05: HLBNSL Run 1 + Run 2 merged: no detectable SOD1 effect on sleep (793 ± 21 vs 768 ± 39 min/day, p = 0.61). [[2026-10-05-HLBNSL-nanotag-merged-analysis]]
 - 2026-10-05: The nanotag code moved into the repo (`nanotag/analysis/`) and HLBNSL's 98 files were uploaded and verified on the SKIM NAS; no off-site copy was recorded. [[nanotag-recording-and-analysis]]

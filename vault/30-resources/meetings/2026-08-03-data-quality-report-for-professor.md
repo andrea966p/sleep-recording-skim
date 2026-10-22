@@ -10,7 +10,7 @@ audience: PI / lab meeting
 
 # EEG/EMG Data Quality — Full Report
 
-> [!warning] Updated 2026-10-22: the electrode-failure explanation in this report is superseded (see the 2026-08-04 addendum above). The 60 Hz floor fell 12-60x after the isolated-earth socket and Gen-1 chassis bonding on 2026-10-07. [[earthing-60hz-hum-fix]]
+> [!warning] Updated 2026-10-22: the electrode-failure explanation in this report was put in doubt by the 2026-08-04 addendum above (electrodes good, contact intermittent, cause not established). The 60 Hz floor fell 12-60x after the isolated-earth socket and Gen-1 chassis bonding on 2026-10-07. [[2026-09-30-xdaq-noise-series]]
 
 **Prepared 2026-08-03.** Covers every recording made to date (33 files, 566 GB, 8 substantive recordings), the two analysis errors we found and corrected, how data quality is defined and measured, what the impedance screen does and does not tell us, where the noise comes from, and what we actually have.
 

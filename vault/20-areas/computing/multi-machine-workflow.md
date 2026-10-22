@@ -33,7 +33,7 @@ tags: [computing, git, tailscale, workflow]
 | Machine | Host / user | Workspace | Reach it from e10 |
 |---|---|---|---|
 | `e10ubuntu` (the rig) | `192.168.0.50`, Tailscale `100.82.250.62`, user `skimlab`, Core Ultra 5 125H | `~/sleep-recording-skim` | local |
-| SKIM office workstation | `skimworkstation`, user `skim` | `/home/skim/sleep-recording-skim` | Tailscale SSH, check mode: capture the approval URL and give it to Andrea |
+| SKIM office workstation | `skimworkstation`, user `skim` | `/home/skim/sleep-recording-skim` | Tailscale SSH, check mode: capture the approval URL with `script -qfc "tailscale ssh skim@skimworkstation …"` and give it to Andrea |
 | ThinkPad | `thinkpadubuntu`, user `andrea` | `/home/andrea/sleep-recording-skim` | `tailscale ssh andrea@thinkpadubuntu '<cmd>'` (tag `tag:thinkpad`) |
 | Office PC | `Andrea-KAIST-PC-ubuntu`, user `andrea` | still the old `~/Monitoring_project` tree | not on the workflow |
 
@@ -77,6 +77,10 @@ Tailscale SSH, and how the tag rule works: [[multi-machine-work-setup]], section
 - All six Docker packages are `apt-mark hold` on e10, so installs elsewhere cannot disturb Frigate.
 - The Claude memory index has a size limit and is silently truncated above it; keep each entry a hook and
   put detail in topic files (workspace memory, 2026-09-11).
+- Tailnet policy cannot be edited with the tailscale CLI (1.102.4): use the console or the API (GET /api/v2/tailnet/-/acl with Accept: application/hujson, then POST with If-Match on the ETag). Keep the API token in a 0600 file, never on a command line; deleting the file does not revoke it.
+- On e10 the git identity is repo-local (.git/config), not ~/.gitconfig.
+- Do not paste a large heredoc into someone's shell; it is mangled into a quote continuation. Use printf or an editor, then verify.
+- An archived GitHub repo is read-only: to change its visibility, unarchive, flip, re-archive (403 otherwise). `neurosurveillance-system` was made private on 2026-09-11.
 
 ## Long-running work over SSH
 

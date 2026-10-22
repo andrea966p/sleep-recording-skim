@@ -18,6 +18,8 @@ resolved: 2026-07-18
 
 # HDMI/SPI Dual-Socket Adapter — TOP Socket Dead — Vendor Inquiry Drafts
 
+> [!warning] Updated 2026-10-22: the "earth has been EXONERATED" reality check below is out of date: an isolated-earth socket and the Gen-1 chassis GND bonded to the earthed rack cut chip floors 12-60x on 2026-10-07 [[2026-09-30-xdaq-noise-series]].
+
 > [!tip] Part of the rig expansion program
 > Front door for all of this: **[[_rig-expansion-hub]]** (decision, vendor correspondence, wiring, open items).
 
