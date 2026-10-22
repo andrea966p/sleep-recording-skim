@@ -17,6 +17,8 @@ supersedes: "[[daq-ecosystem-comparison-xdaq-vs-openephys]]"
 ---
 # DAQ Ecosystem Comparison, FINAL, 3-Way for 32 Mice — XDAQ vs Open Ephys vs Intan
 
+> [!warning] Updated 2026-10-22: open since 2026-07-28; no XDAQ purchase is recorded. A separate 16-mouse Pinnacle wireless plan was settled 2026-10-19 ([[2026-10-16-pinnacle-wireless-16-mice-evaluation]]); its relation to this route is not recorded.
+
 > [!warning] 🔴 CORRECTION 2026-09-30 — our Gen-1 XDAQ Core DOES have a chassis GND terminal
 > Andrea confirmed on the rig on 2026-09-30 that the Gen-1 Core has a chassis GND, and that it is wired to the building earth through the wall socket (continuity tested with a DMM; see [[2026-09-30-xdaq-noise-series]]). Every line on this page saying the Gen-1 has "no Chassis GND" or "no chassis ground terminal" is **wrong**. What the 07-15/16 work MEASURED still stands (foil cut the mains floor; the residual hum tracked electrode impedance). What rested on "there is nothing to wire" does not. Still unverified: whether a separate Sys GND exists on the Gen-1 and how it relates to chassis.
 

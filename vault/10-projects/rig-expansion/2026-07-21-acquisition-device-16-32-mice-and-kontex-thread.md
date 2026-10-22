@@ -9,6 +9,8 @@ created: 2026-07-21
 
 # Acquisition Device for 16 (→32) Mice + Kontex Email Thread (Jul 2026)
 
+> [!warning] Updated 2026-10-22: thread record. The XDAQ route was never committed (last activity: the 2026-07-29 call sheet). A separate Pinnacle wireless 16-mouse plan was settled 2026-10-19; see [[2026-10-16-pinnacle-wireless-16-mice-evaluation]]
+
 > [!tip] Part of the rig expansion program
 > Front door for all of this: **[[_rig-expansion-hub]]** (decision, vendor correspondence, wiring, open items).
 

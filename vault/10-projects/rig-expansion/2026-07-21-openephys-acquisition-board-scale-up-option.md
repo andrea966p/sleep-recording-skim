@@ -14,6 +14,8 @@ created: 2026-07-21
 ---
 # Open Ephys Acquisition Board — a Possible Scale-Up Path (16 mice)
 
+> [!warning] Updated 2026-10-22: the extension-board route to 16 headstages below is dead (Open Ephys disowned it on 2026-07-23) and the board has no per-animal ground isolation; the Open Ephys GUI, not the board, is what the 32-mouse comparison uses. [[2026-07-24-daq-32-mouse-final-comparison]]
+
 > [!tip] Part of the rig expansion program
 > Front door for all of this: **[[_rig-expansion-hub]]** (decision, vendor correspondence, wiring, open items).
 

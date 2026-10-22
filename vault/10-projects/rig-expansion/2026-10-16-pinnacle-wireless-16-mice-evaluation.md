@@ -8,6 +8,8 @@ created: 2026-10-16
 
 # Pinnacle wireless EEG + pons LFP + EMG for up to 16 mice: verified setup and purchase
 
+> [!warning] Updated 2026-10-22: settled 2026-10-19 on a custom 4-channel 8474-HR-SE4-C unit and one PC with USB cards (2026-10-20); the K9-SL purchase plan, the 4-mouse pilot and the 4-PC topology below are superseded. [[pinnacle-wireless-plan-status]]
+
 > [!success] SETTLED WITH THE PROFESSOR (2026-10-19), supersedes the 3-channel K9-SL plan below
 > - **Head unit: 4-channel 8474-HR, custom.** Quote model (Andrea's recollection, check the quote): **8474-HR-SE4-C**,
 >   4 channels = 2 EEG + 2 fully independent (differential) channels. Professor asks Pinnacle for:

@@ -17,6 +17,8 @@ method: 5 parallel research agents, primary sources only, verbatim quotes
 ---
 # DAQ Research Findings, 2026-07-28 — Primary Sources, and What They Overturn
 
+> [!warning] Updated 2026-10-22: the Gen-1 Core does have a chassis GND wired to building earth (checked 2026-09-30), so "zero earth references" and "the Gen-1 lacks" in section 2 are out of date; an electrician's earthing work removed the EMG mains on 2026-10-07. [[2026-09-30-xdaq-noise-series]] [[2026-10-06-noise-hunt-verdict]]
+
 > [!tip] Part of the rig expansion program
 > Front door: **[[_rig-expansion-hub]]**. This note feeds [[2026-07-24-daq-32-mouse-final-comparison]] and the professor-facing `DAQ-comparison-32-mice.docx`.
 
