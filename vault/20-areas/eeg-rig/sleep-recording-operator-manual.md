@@ -1,5 +1,5 @@
 ---
-type: hub
+type: procedure
 area: eeg-rig
 status: active
 status-note: "complete"
