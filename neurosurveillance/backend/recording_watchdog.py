@@ -5,7 +5,7 @@ camera with an active manual or Radiens session, checks how recently a segment
 was written. If lag exceeds STALL_THRESHOLD, emits an alert (log + MQTT) and
 remembers that the camera is in alarm so we don't spam.
 
-See vault: 02-procedures/installation/recording-health-watchdog.md
+See vault: 20-areas/video-nvr/recording-health-watchdog.md
 """
 
 import json

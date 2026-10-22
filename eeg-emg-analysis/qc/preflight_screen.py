@@ -234,7 +234,7 @@ def main():
               "or bandstop would produce exactly this,\n   and OPEN_UV is a 55-65 Hz test, so "
               "the verdicts below would be meaningless.\n   Check Signal Processing for a "
               "notch before believing this screen.\n   The vault rule is NEVER add a 60 Hz "
-              "notch at any stage: see\n   06-references/radiens-software-reference.md"
+              "notch at any stage: see\n   20-areas/allego/radiens-software-reference.md"
               % (hum, T.CONNECTED_HUM_BAND_UV[0]))
 
     if m["nep"] < T.MIN_USABLE_EPOCHS:
@@ -267,7 +267,7 @@ def main():
               "   A 2000 uV line was proposed (weak-chip-ground-hides-as-electrode-failure)\n"
               "   but the 2026-10-01 overnight contradicts it: after the rig geometry changed,\n"
               "   chips under 2000 uV (gate scale) carried EEG. The floor scale depends on the wiring;\n"
-              "   see 05-experiments/completed/2026-10-02-noise-series-method-audit.md (C1)."
+              "   see 10-projects/noise-hunt/2026-10-02-noise-series-method-audit.md (C1)."
               % (T.FLOOR_MIN_HUM_UV,
                  ", ".join("%s %.0f uV" % d for d in disputed), T.FLOOR_MIN_HUM_UV))
 

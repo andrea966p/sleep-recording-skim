@@ -18,7 +18,7 @@ them would have quietly mislabelled the best animals this project has:
          unbroken block: the 8.1 hours that produced the only real sleep data
          this project held. A fraction gate called it FAIL.
 
-Ground truth, from 05-experiments/completed/2026-08-03-data-quality-report-for-professor.md
+Ground truth, from 30-resources/meetings/2026-08-03-data-quality-report-for-professor.md
 and 2026-08-07-overnight-recording-two-animals-work.md:
 
   uid0731-18-06-37   C1 and C2 scoreable, everything else not. D2 correctly rejected.

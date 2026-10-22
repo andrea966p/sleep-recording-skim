@@ -2,7 +2,7 @@
 
 Analysis code for the HLB SOD1 studies recorded with implanted Kissei nanotag loggers
 (activity + temperature, no EEG). Procedure, file layout and decisions:
-`vault/02-procedures/nanotag-recording-and-analysis.md`.
+`vault/20-areas/nanotag/nanotag-recording-and-analysis.md`.
 
 ```
 analysis/nta_qc.py      parse a nanotagViewer CSV export, QC, immobility sleep scoring (stdlib only)

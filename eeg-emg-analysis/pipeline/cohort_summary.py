@@ -201,8 +201,8 @@ def main():
           "  cohort_impedance.csv   every impedance sweep, per electrode",
           f"  to-score/              {copied} files: EDF+, scorer notes, hypnograms, summaries",
           "",
-          "  method: 02-procedures/eeg-data-analysis/analysis-methods-and-justification.md",
-          "  results: 05-experiments/completed/2026-08-03-two-8-mouse-runs.md",
+          "  method: 20-areas/eeg-analysis/analysis-methods-and-justification.md",
+          "  results: 10-projects/rig-bringup/2026-08-03-two-8-mouse-runs.md",
           ]
     open(os.path.join(a.out, "README.txt"), "w").write("\n".join(L) + "\n")
     print("\n".join(L))

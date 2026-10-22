@@ -15,7 +15,7 @@ Three rules hold everywhere:
      provenance manifest.
   3. Every figure declares alt text. A figure with no alt text is not finished.
 
-Audit record: vault 03-troubleshooting/symptoms/figure-and-analysis-audit-2026-08-08.md
+Audit record: vault 20-areas/eeg-analysis/figure-and-analysis-audit-2026-08-08.md
 """
 from __future__ import annotations
 

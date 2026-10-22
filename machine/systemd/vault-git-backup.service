@@ -3,7 +3,7 @@
 # /etc/systemd/system/vault-git-backup.service
 [Unit]
 Description=Obsidian vault git backup to GitHub
-Documentation=file:///home/skimlab/Monitoring_project/Monitoring_project_obsidian_vault/01-infrastructure/multi-machine-work-setup.md
+Documentation=file:///home/skimlab/sleep-recording-skim/vault/20-areas/computing/multi-machine-workflow.md
 Wants=network-online.target
 After=network-online.target
 

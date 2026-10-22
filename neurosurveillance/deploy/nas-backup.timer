@@ -1,6 +1,6 @@
 [Unit]
 Description=Run NeuroSurveillance NAS backup daily at midnight
-Documentation=file:///home/skimlab/sleep-recording-skim/vault/02-procedures/installation/nas-backup.md
+Documentation=file:///home/skimlab/sleep-recording-skim/vault/20-areas/data-storage/nas-backup.md
 
 [Timer]
 OnCalendar=*-*-* 00:00:00

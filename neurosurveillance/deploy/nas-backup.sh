@@ -12,7 +12,7 @@
 # Runs as user `skimlab` via systemd timer (nas-backup.timer) at 00:00 daily.
 # Auth is key-based (skimlab's ~/.ssh/id_ed25519 → NAS user `Andrea`).
 #
-# Vault doc: 02-procedures/installation/nas-backup.md
+# Vault doc: 20-areas/data-storage/nas-backup.md
 set -euo pipefail
 
 # ---- NAS target -------------------------------------------------------------

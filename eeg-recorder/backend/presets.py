@@ -27,7 +27,7 @@ against each file's own biointerface_map and refuses on any miss.
 
 Site numbering: `D/n` is native index n-1. The second animal on a splitter port
 starts at slot 32, so its EEG is /33 and not /29 -- the "+32 trap" in
-02-procedures/eight-mouse-acquisition-setup.md section 6.
+20-areas/allego/eight-mouse-acquisition-setup.md section 6.
 """
 from __future__ import annotations
 

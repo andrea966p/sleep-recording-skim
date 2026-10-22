@@ -18,21 +18,21 @@
 # ⚠️ ALMOST ALL HUSBANDRY DATA IS MISSING and cannot be recovered from the vault:
 #   arrival dates, dates of birth, ages, every body weight, surgical notes and
 #   sampling notes were never written down. The vault says so itself, in
-#   `02-procedures/eeg-data-analysis/analysis-methods-and-justification.md` §7:
+#   `20-areas/eeg-analysis/analysis-methods-and-justification.md` §7:
 #   "THIS IS CURRENTLY LOGGED NOWHERE. IT NEEDS TO START."
 #
 # WHAT IS ACTUALLY KNOWN
 #   - surgeries 21 to 23 July 2026, per-animal dates never recorded
 #   - first tethered 30 July 2026, which is day 8 to 10 after surgery
 #   - recorded through 7 August 2026, then the whole cohort was replaced
-#   Source: 05-experiments/completed/2026-08-08-professor-update-short.md
+#   Source: 30-resources/meetings/2026-08-08-professor-update-short.md
 #
 # TETHER ARMS (the experimental variable this cohort exists to test)
 #   arm A  original tether, through the slip ring
 #   arm B  19.5 cm short tether, joints SOLDERED and encapsulated in resin,
 #          through the slip ring
 #   arm C  long tether, soldered, DIRECT to the headstage, NO slip ring
-#   Source: 05-experiments/active/2026-08-05-tether-comparison.md
+#   Source: 10-projects/rig-bringup/2026-08-05-tether-comparison.md
 # =============================================================================
 
 cohort_id: HLB-fem-profsurgery-troubleshooting

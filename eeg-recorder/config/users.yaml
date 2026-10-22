@@ -9,7 +9,7 @@
 #
 # Site numbering: `D/n` is native index n-1. The second animal on a 64-channel
 # splitter port starts at slot 32, so its EEG is /33 and not /29 -- the "+32 trap"
-# in 02-procedures/eight-mouse-acquisition-setup.md section 6.
+# in 20-areas/allego/eight-mouse-acquisition-setup.md section 6.
 #
 # All three presets below were confirmed against real recordings on disk on
 # 2026-09-11, not taken from description.
@@ -60,7 +60,7 @@ headstages:
     slots_per_chip: 32     # native slots consumed in the RHD2000 data stream
     real_channels: 16      # ...of which only the first 16 are real amplifiers
     bipolar_in_hardware: true
-    source: "02-procedures/CANONICAL-allego-channel-selection.md section 3"
+    source: "20-areas/allego/CANONICAL-allego-channel-selection.md section 3"
 
   intan_unipolar_32:
     label: "Intan unipolar (RHD2132)"
@@ -69,7 +69,7 @@ headstages:
     bipolar_in_hardware: false
     # A splitter carrying two of these has never been recorded here.
     splitter_verified: false
-    source: "05-experiments/completed/2026-08-05-unipolar-lfp-mouse-reference.md"
+    source: "10-projects/unipolar-lfp/2026-08-05-unipolar-lfp-mouse-reference.md"
 
 # --------------------------------------------------------------------------- #
 # LAYER 2 - WHICH SITE CARRIES WHICH SIGNAL. Addable through a guided form.

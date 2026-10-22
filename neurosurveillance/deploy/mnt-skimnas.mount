@@ -35,7 +35,7 @@
 
 [Unit]
 Description=SKIM Lab Synology (SKIM_DATA) over Tailscale
-Documentation=file:///home/skimlab/sleep-recording-skim/vault/02-procedures/installation/skim-nas-smb-and-upload.md
+Documentation=file:///home/skimlab/sleep-recording-skim/vault/20-areas/data-storage/skim-nas-smb-and-upload.md
 After=tailscaled.service network-online.target
 Wants=network-online.target
 

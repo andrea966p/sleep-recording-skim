@@ -25,7 +25,7 @@ THE ORDER IS NOT NEGOTIABLE, AND THE REASON IS SCIENTIFIC, NOT TECHNICAL
 WHAT REACHES THE NAS (since 2026-09-29) is one CSV + info.json per mouse, in
 02_Data_Sleep/<user>/<batch>/<Baseline|Recovery>/<YYYYMMDD>_<MOUSEID>_<B|R>/.
 The analysis reads the CSV; the stripped xdat stays on this machine and the raw
-goes off-site to S3 and the bilab NAS (see 02-procedures/backup-architecture).
+goes off-site to S3 and the bilab NAS (see 20-areas/data-storage/backup-architecture).
 
 EVERY STAGE IS RESUMABLE. A service restart mid-upload continues; it does not
 start over. The ONE thing deleted locally is the per-mouse CSVs this worker made,

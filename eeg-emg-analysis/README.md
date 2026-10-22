@@ -37,7 +37,7 @@ its default, so nothing changes here and everything is overridable elsewhere:
 ```
 
 Full explanation: vault
-`02-procedures/eeg-data-analysis/animal-card-and-verdict-ladder.md`.
+`20-areas/eeg-analysis/animal-card-and-verdict-ladder.md`.
 
 ## Layout
 

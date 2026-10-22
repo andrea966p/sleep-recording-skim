@@ -109,4 +109,4 @@ What B2's CSV *does* contain, validly, for all 35,706 epochs: `eeg_rms_uv`, `del
 - 🛑 Sleep architecture from these hypnograms remains **PROVISIONAL** until a
   blind-scoring kappa exists. No hypnogram here has been checked by a human.
 
-Full analysis: vault `05-experiments/completed/2026-08-21-39h-run-score.md`.
+Full analysis: vault `10-projects/hlb-sod1/2026-08-21-39h-run-score.md`.

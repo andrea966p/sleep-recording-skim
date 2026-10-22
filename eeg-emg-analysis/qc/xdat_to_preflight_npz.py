@@ -12,7 +12,7 @@ screen can grade grounding before a run without touching the channel selection:
     /usr/bin/python3 -m qc.preflight_screen --npz OUT.npz
 
 Added 2026-10-02. Note what the floor can and cannot mean in the current rig geometry:
-vault 05-experiments/completed/2026-10-02-noise-series-method-audit.md (C1).
+vault 10-projects/noise-hunt/2026-10-02-noise-series-method-audit.md (C1).
 """
 import json, os, sys
 import numpy as np

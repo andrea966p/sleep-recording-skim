@@ -21,7 +21,7 @@ import noise_mice_markers_2026_10_02 as MK
 
 ST, README = sys.argv[1], sys.argv[2]
 D = os.path.expanduser("~/radix/noise-tests/2026-10-02"); OFF = os.path.join(D, "official-noise-tests"); A24 = os.path.join(D, "analysis-24h")
-VAULT_ATT = os.path.join(REPO, "vault", "05-experiments", "attachments"); NAS = "/mnt/skimnas/02_Data_Sleep/andrea/noise-tests/Baseline"
+VAULT_ATT = os.path.join(REPO, "vault", "_attachments"); NAS = "/mnt/skimnas/02_Data_Sleep/andrea/noise-tests/Baseline"
 RUNS = {"overnight": ("cfdf8ebde0c6", "2026-10-01", "20261001", "diag-emgtest-overnight"),
         "lightphase": ("8f84e3e62af6", "2026-10-02", "20261002", "diag-emgtest-lightphase")}
 POS = {"A1": "portA-slot1", "A2": "portA-slot2", "B1": "portB-slot1", "B2": "portB-slot2"}

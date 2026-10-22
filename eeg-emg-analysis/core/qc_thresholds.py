@@ -260,7 +260,7 @@ IMP_CONNECTED_MOHM = 0.5
 # read "connected" in 9 of 40 channel-sweeps = 22 percent at 2.0 MOhm, against
 # 3.1 percent at 0.5 MOhm. The false-positive rate at 2.0 MOhm is high enough
 # that a block of sweeps on an empty cable looks like a working animal.
-# SOURCE: 07-decisions/2026-08-07-rig-specification-and-analysis-method.md §3.2,
+# SOURCE: 20-areas/eeg-analysis/2026-08-07-rig-specification-and-analysis-method.md §3.2,
 # and 05-experiments/completed/2026-08-06-fleet-duty-cycle-census.md.
 #
 # This constant is used ONLY in stage2_split.py's impedance SUMMARY, which is a

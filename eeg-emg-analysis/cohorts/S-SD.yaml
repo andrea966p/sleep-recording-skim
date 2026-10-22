@@ -78,7 +78,7 @@ recordings:
       from the 24 h run, so the slope criterion has no discriminating power there.
       ⚠️ B1's usable fraction is NOT robust: 99.1% at a 25% looser threshold,
       37.6% at a 25% tighter one. Report B1 as connected, without a percentage.
-      Full report: vault 05-experiments/completed/2026-08-27-B1-swap-baseline-20h-run.md
+      Full report: vault 10-projects/hlb-sod1/2026-08-27-B1-swap-baseline-20h-run.md
 
   - base: allego_0__uid0901-12-24-03
     date: 2026-09-01

@@ -17,7 +17,7 @@ the batch id (HLBWSD, HLBSSD...) already says which arm an animal is in.
 Before this, a run was one folder `03_Data_Mouse/<user>/YYYYMMDD_<batch>_<BSR|RSR>`
 holding the stripped xdat, and a second run of the same day became `...-2`, a
 suffix that said nothing about what was different. See the 2026-09-29 entry in
-`vault/02-procedures/CANONICAL-recording-naming-and-inventory.md`.
+`vault/20-areas/recording-console/CANONICAL-recording-naming-and-inventory.md`.
 
 A BATCH NAME IS REQUIRED. The batch is a level of the tree, so a run without one
 has nowhere to go. Screens and tests type one too (`SCREEN`, `TEST`).

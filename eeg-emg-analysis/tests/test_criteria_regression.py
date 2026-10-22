@@ -10,7 +10,7 @@ IMPROVEMENT.
 Reference values, with their sources:
 
   allego_1__uid0806-16-57-38, 23.66 h, 8,517 epochs of 10 s, HUM criterion
-  05-experiments/completed/2026-08-07-overnight-recording-two-animals-work.md
+  10-projects/rig-bringup/2026-08-07-overnight-recording-two-animals-work.md
       B1  EEG 100.0%  EMG  99.6%  both 99.6%  longest both-block 215.8 min
       D2  EEG  87.9%  EMG  98.6%  both 86.5%  longest both-block  87.3 min
       C1  EEG   0.0%  EMG  37.8%  both  0.0%
@@ -20,7 +20,7 @@ Reference values, with their sources:
       floor controls 0.00%, A2 no-mouse 0.0%
       floor threshold: 60 Hz below 415.0 uV, from 953,904 floor-control epochs
 
-  The audit at 03-troubleshooting/symptoms/figure-and-analysis-audit-2026-08-08.md
+  The audit at 20-areas/eeg-analysis/figure-and-analysis-audit-2026-08-08.md
   recorded that every published usable fraction reproduces exactly EXCEPT C2 EEG,
   which moved 0.0 -> 0.1 percent. So the tolerance is one tenth of a point.
 

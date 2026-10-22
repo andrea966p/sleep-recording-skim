@@ -102,7 +102,7 @@ def stage(folder, out):
                      sha256=sha256(csv_path), bytes=os.path.getsize(csv_path)),
             exporter=dict(tool="nanotag/analysis/export_nas.py",
                           utc=datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")),
-            docs="vault/02-procedures/nanotag-recording-and-analysis.md")
+            docs="vault/20-areas/nanotag/nanotag-recording-and-analysis.md")
         with open(os.path.join(d, f"{name}.info.json"), "w") as f:
             json.dump(info, f, indent=2, ensure_ascii=False)
         print(f"  {name}: {len(rows)} bins, {info['n_excluded']} excluded, {len(run_info)} run(s), "

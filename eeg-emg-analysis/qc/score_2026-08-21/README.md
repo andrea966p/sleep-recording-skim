@@ -1,6 +1,6 @@
 # Scoring of allego_1__uid0819-17-25-20 (39.674 h, 2026-08-21)
 
-Report: vault `05-experiments/completed/2026-08-21-39h-run-score.md`
+Report: vault `10-projects/hlb-sod1/2026-08-21-39h-run-score.md`
 
 | file | what |
 |---|---|

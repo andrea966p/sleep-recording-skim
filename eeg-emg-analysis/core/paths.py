@@ -55,8 +55,8 @@ STRIPPED_ROOT = _env("EEG_STRIPPED_ROOT", HOME / "radix" / "stripped")
 PER_MOUSE_ROOT = _env("EEG_PER_MOUSE_ROOT", HOME / "radix" / "per-mouse")
 PROCESSED_ROOT = _env("EEG_PROCESSED_ROOT", HOME / "eeg-processed")
 IMPEDANCE_ROOT = _env("EEG_IMPEDANCE_ROOT", HOME / "Downloads" / "impedance measurments")
-VAULT_ROOT = _env("EEG_VAULT_ROOT",
-                  HOME / "Monitoring_project" / "Monitoring_project_obsidian_vault")
+# The vault lives in the same repo as this code: sleep-recording-skim/vault.
+VAULT_ROOT = _env("EEG_VAULT_ROOT", Path(__file__).resolve().parents[2] / "vault")
 # NOT /tmp. A feature cache looks disposable and is not: once a recording has
 # been stripped to 16 channels its wire-free floor is gone from the file forever,
 # and this .npz is the only surviving record of it -- which is why
@@ -71,8 +71,8 @@ FIGURE_STYLE_DIR = _env(
     HOME / "Monitoring_project" / ".claude" / "skills" / "scientific-visualization")
 
 # conventional sub-locations, derived so they cannot drift from their root
-VAULT_ATTACHMENTS = VAULT_ROOT / "05-experiments" / "attachments"
-VAULT_COMPLETED = VAULT_ROOT / "05-experiments" / "completed"
+# every image and figure file the vault embeds lives flat in _attachments/ (since 2026-10-22)
+VAULT_ATTACHMENTS = VAULT_ROOT / "_attachments"
 
 
 # --------------------------------------------------------------------------- #

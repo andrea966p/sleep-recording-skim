@@ -29,7 +29,7 @@
 #
 # 🏁 BATCH CLOSED. All ten animals were SAMPLED ON 2026-08-28. No further recording,
 #   no intervention, nothing on this manifest can be re-measured. Close-out:
-#   vault 05-experiments/completed/2026-08-28-W-SD-cohort-closeout.md
+#   vault 10-projects/hlb-sod1/2026-08-28-W-SD-cohort-closeout.md
 # =============================================================================
 
 cohort_id: W-SD
@@ -83,7 +83,7 @@ recordings:
       C1 66.4%, with EEG-only B2 at 92.4%. A1 alone gives 39.49 h of EEG inside
       blocks of 15 min or more out of a 39.67 h recording. This is the best full-cohort
       data this rig has produced.
-      ⚠️ The original report (05-experiments/completed/2026-08-21-39h-run-score.md) used
+      ⚠️ The original report (10-projects/hlb-sod1/2026-08-21-39h-run-score.md) used
       the POOLED floor and said THREE scoreable. Both are on that page now.
       🔑 C1 PASSES RUNG 2 and is still WITHDRAWN -- the withdrawal was a RUNG 4 call
       about EMG state dependence collapsing under falsification, not a connection
@@ -127,8 +127,8 @@ recordings:
       chip-recordings, six chips sat below 2000 uV and NONE produced EEG; the lowest
       floor that ever produced EEG was 2186 uV. Proposed FLOOR_MIN_HUM_UV = 2000,
       NOT YET APPLIED. See vault
-      03-troubleshooting/symptoms/weak-chip-ground-vs-open-electrode.md
-      Report: vault 05-experiments/completed/2026-08-27-W-SD-recovery-sleep.md
+      20-areas/eeg-rig/weak-chip-ground-vs-open-electrode.md
+      Report: vault 10-projects/hlb-sod1/2026-08-27-W-SD-recovery-sleep.md
 
   - base: allego_3__uid0828-09-26-12
     date: 2026-08-28

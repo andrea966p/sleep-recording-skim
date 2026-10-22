@@ -89,7 +89,7 @@ The rig, the NVR, Allego/Radiens, Docker, Frigate and the EEG data all live on
 Four machines share this workspace: `e10ubuntu` (the rig), the **SKIM office workstation**
 (`/home/skim`, added 2026-09-16), the **ThinkPad** (`thinkpadubuntu`, user `andrea`, live on
 the workflow 2026-09-19), and the office PC (`Andrea-KAIST-PC-ubuntu`, still on the old
-tree). The table in `vault/01-infrastructure/multi-machine-work-setup.md` has the paths and
+tree). The table in `vault/20-areas/computing/multi-machine-work-setup.md` has the paths and
 memory slugs.
 
 To drive the ThinkPad from here: `tailscale ssh andrea@thinkpadubuntu '<command>'`. It has
@@ -144,7 +144,7 @@ start; every writing verb is typed by a human.
 > the template`. Diff it: a machine that used Claude Code before this repo can end up with
 > no hooks and therefore no `skim status` at SessionStart. See `machine/README.md`.
 
-Full setup and the workspace rules: `vault/01-infrastructure/multi-machine-work-setup.md`
+Full setup and the workspace rules: `vault/20-areas/computing/multi-machine-work-setup.md`
 and `machine/README.md`.
 
 <!-- BEGIN AWS Agent Toolkit rules -->

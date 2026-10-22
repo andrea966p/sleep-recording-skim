@@ -1,4 +1,4 @@
-"""Figures for the 2026-10-02 noise-series findings (vault: 05-experiments/attachments). Diagnostic, not QC.
+"""Figures for the 2026-10-02 noise-series findings (vault: _attachments). Diagnostic, not QC.
 
 Every 60 Hz number is the QC gate's own estimator (core/criteria.py, as in qc/gate_floor.py): 10 s epochs, mean
 removed, Hann window, |rfft| / (sum(win)/2), maximum over 59-61 Hz = the PEAK amplitude of the mains line.
