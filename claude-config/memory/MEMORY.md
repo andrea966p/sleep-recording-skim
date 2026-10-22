@@ -72,7 +72,7 @@
 ## Nanotag studies (SOD1, no EEG)
 - 🧪 **[Nanotag SOD1 study HLBNSL (10-05)](nanotag-sod1-hlbnsl.md).** Run 1 + 2 merged; no SOD1 sleep effect. 🔴 Mouse = header tag ID; `.nta` mtime = save time. ⚠️ No off-site copy.
 - 📋 **[SOD1 sheet changes go through the 'Pending changes instructions' tab](sod1-sheet-pending-changes-tab.md).** CC requests (A:G), Claude for Sheets applies, CC reviews (P:Q). 🔴 CC has NO sheet write access: export xlsx to read, TSV for Andrea to paste.
-- 🧪 **NS-SD / NW-SD (51-60) re-planned 10-19** (same file + hub): single-housed 10-19, baseline 10-22→10-24, SOD 10-24 (15 d), one tag read 10-30 09:00, SD 11-05→11-08, sampling Sun 11-08. 🔴 12 s activity-only = **9 days** (English manual says 20). Decisions live on the WORKSTATION too (`~/Desktop/Andrea/nanotag/`).
+- 🧪 **NS-SD / NW-SD (51-60) re-planned 10-19** (same file + hub): single-housed 10-19, baseline 10-22→10-24, SOD 10-24 (15 d), one tag read 10-30 09:00, SD Mon 11-02→Thu 11-05, sampling Thu 11-05 (no weekend SD/tests). 🔴 12 s activity-only = **9 days** (English manual says 20). Decisions live on the WORKSTATION too (`~/Desktop/Andrea/nanotag/`).
 
 ## Working across machines
 - ✅ **[One repo `sleep-recording-skim`](workspace-single-repo-sleep-recording-skim.md).** Manual `./skim status|pull|push|check`, 4 machines. 🔴 `bootstrap.sh` keeps an existing `settings.json` (maybe no hooks): diff it. 🔴 Set the git identity on new machines (checks pass without it). e10→ThinkPad = Tailscale SSH + tag; 🔴 Tailscale SSH on e10 hijacks port 22.
