@@ -18,6 +18,8 @@ created: 2026-06-27
 
 # Sleep-Recording Operator Manual (Intan RHD2216 + NeuroNexus Allego)
 
+> [!warning] Updated 2026-10-22: Runs are now started from the recording console and checked first with [[pre-flight-connection-screen]]; the "Current EEG status" link below is from 2026-08-03 and Phase 9's paired-reference step does not apply (signals are already bipolar). Current state: [[_eeg-rig-hub]]
+
 > [!abstract] TL;DR — for non-technical readers
 > **What this is.** The **start-here hub** for running the mouse sleep EEG/EMG rig end to end — from plugging the hardware together to reading the data. It does not repeat the detail; it puts every guide in the **right order** and tells you what "done" looks like at each step.
 > **Why it exists.** The knowledge is spread across a dozen focused docs. New operators (and future-you at 2 a.m.) need one ordered path, not a folder to guess through.

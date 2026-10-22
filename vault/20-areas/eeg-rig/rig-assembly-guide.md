@@ -15,6 +15,8 @@ created: 2026-06-27
 
 # Rig Assembly Guide — Building the Recording Chain (Mouse → Allego)
 
+> [!warning] Updated 2026-10-22: Written for the June single-headstage rig. Now one mouse per headstage, two headstages per port on C3442 splitters, sleep at 1000 Hz (not 30000); the copper coil was never inserted into pad 6 (2026-10-02); the XDAQ chassis GND is bonded to the earthed rack since 2026-10-07. [[eight-mouse-acquisition-setup]]
+
 > [!abstract] TL;DR — for non-technical readers
 > **What this is.** A start-to-finish procedure for physically assembling the recording chain — from the mouse's electrode all the way to the XDAQ — in the right order, with the right orientations, and with the checks that must pass **before** you apply power.
 >

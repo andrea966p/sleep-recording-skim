@@ -8,6 +8,8 @@ created: 2026-08-29
 
 # The pre-flight connection screen: check before the run, not after it
 
+> [!warning] Updated 2026-10-22: The ≥ 2000 µV chip-floor bar was falsified on 2026-10-02, and since the 2026-10-07 grounding fix chip floors read 36-235 µV, so this bar fails every chip; no replacement gate exists yet. Whether to launch Allego with `--disable-gpu` is disputed (logged in `_meta/contradictions/eeg-rig.md`). [[weak-chip-ground-vs-open-electrode]]
+
 > [!abstract] TL;DR
 > **Before any recording whose timepoint cannot be repeated, take a short recording, score the
 > connection on it, fix what is fixable, and only then start the real run.** Twenty minutes of

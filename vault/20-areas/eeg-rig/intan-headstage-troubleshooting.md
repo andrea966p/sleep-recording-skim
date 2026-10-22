@@ -17,6 +17,8 @@ created: 2026-06-27
 
 # Intan Headstage Troubleshooting — Symptom → Cause → Fix
 
+> [!warning] Updated 2026-10-22: Sleep runs record at 1000 Hz, not 30000; channel selection is `/1`, `/2` (`/33`, `/34`) with no Paired Reference. Later fault signatures (weak chip ground, chewed or bending tether) are in [[per-animal-failure-signatures]] and [[weak-chip-ground-vs-open-electrode]]
+
 > [!abstract] TL;DR — for non-technical readers
 > **What this is.** The master symptom-lookup for the Intan/XDAQ recording rig: the headstage won't appear in Allego, or it appears but every trace is garbage. Find your symptom, read the most likely cause, apply the fix.
 >

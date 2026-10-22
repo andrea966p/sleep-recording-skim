@@ -9,6 +9,8 @@ priority: critical
 
 # ⚠️🔴 CRITICAL DISCOVERY — Korea mains is 60 Hz, NOT 50 Hz. Weeks of "bad electrodes" were mostly 60 Hz hum + a wrong notch.
 
+> [!warning] Updated 2026-10-22: The 60 Hz fact stands. The "pad0−pad1" bipolar difference here was EEG minus EMG under the old channel map (corrected 2026-08-01), and the 2026-07-31 no-wire control showed most railing legs really were not connected. [[2026-08-01-channel-mapping-correction-first-sleep]]
+
 > [!danger] READ THIS BEFORE JUDGING ANY EEG/EMG SIGNAL AGAIN
 > For weeks every rig session was judged with a **50 Hz** notch and a "50 Hz (Korea)" assumption. **South Korea mains is 60 Hz** (220 V / 60 Hz, nationwide). The notch was on the wrong line the entire time, so the real interference — **60 Hz mains hum** — was **never removed**. Channels drowning in 60 Hz common-mode hum looked "railed / open / bad contact," and we concluded the mice were badly implanted. **That conclusion was largely WRONG.** The dominant problem was environmental 60 Hz + the wrong notch, a **single systematic issue**, not 8 independent bad surgeries. Measured and confirmed 2026-07-05 ([[2026-07-05]]).
 

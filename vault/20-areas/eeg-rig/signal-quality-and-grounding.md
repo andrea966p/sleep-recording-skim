@@ -17,6 +17,8 @@ created: 2026-06-19
 
 # Signal Quality & Grounding — Is the Signal Good Enough to Record?
 
+> [!warning] Updated 2026-10-22: Written for the June two-mice-per-headstage `2mice32` rig. Since 2026-07-01 it is one mouse per headstage, and the RHD2216 already reports each pair as one bipolar channel: select `/1`, `/2` (`/33`, `/34`) and do not pair-subtract in Allego. [[CANONICAL-allego-channel-selection]]
+
 > [!danger] 🔴 Korea mains is 60 Hz, NOT 50 Hz — corrected 2026-07-05
 > This doc's hum/notch values were originally written as "50 Hz" — **wrong**. South Korea mains is **60 Hz**, and the 50 Hz assumption caused weeks of 60 Hz hum to be misread as "open / bad electrodes." The values below now say 60 Hz. Always judge the **bipolar difference with a 60 Hz notch**, not a raw single channel. Full story: [[60hz-mains-hum-discovery]].
 

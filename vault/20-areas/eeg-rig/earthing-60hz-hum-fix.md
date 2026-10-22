@@ -20,6 +20,8 @@ updated: 2026-07-16
 
 # Earthing Fix for the 60 Hz Hum (Float-to-Earth)
 
+> [!warning] Updated 2026-10-22: Earthing the XDAQ did work in the end: on 2026-10-07 an isolated-earth socket and the Gen-1 chassis GND bonded to the earthed rack cut chip floors 12-60x and A2's EMG 60 Hz from 26-33 to about 1 µV. [[2026-09-30-xdaq-noise-series]]
+
 > [!warning] 🔴 CORRECTION 2026-09-30 — our Gen-1 XDAQ Core DOES have a chassis GND terminal
 > Andrea confirmed on the rig on 2026-09-30 that the Gen-1 Core has a chassis GND, and that it is wired to the building earth through the wall socket (continuity tested with a DMM; see [[2026-09-30-xdaq-noise-series]]). Every line on this page saying the Gen-1 has "no Chassis GND" or "no chassis ground terminal" is **wrong**. What the 07-15/16 work MEASURED still stands (foil cut the mains floor; the residual hum tracked electrode impedance). What rested on "there is nothing to wire" does not. Still unverified: whether a separate Sys GND exists on the Gen-1 and how it relates to chassis.
 

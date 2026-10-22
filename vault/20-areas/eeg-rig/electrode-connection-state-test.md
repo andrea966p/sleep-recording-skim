@@ -9,6 +9,8 @@ priority: high
 
 # How to tell OPEN from SHORTED from WORKING — the no wire control method
 
+> [!warning] Updated 2026-10-22: Since 2026-08-04 a single sweep cannot classify a channel (contact flips within minutes); contact is read as the duty cycle of a block of sweeps at the 0.5 MΩ criterion, stream OFF, not one sweep at 2 MΩ. [[impedance-sweep-register]]
+
 > [!warning] ⚠️ CHANNEL-MAP CORRECTION 2026-08-01 — this method is sound, but it was applied to the WRONG channels
 > This page originally called sites `/1 /2 /3 /4` (and `/33-/36`) "the four mouse legs". **Wrong.** The RHD2216 is bipolar: **`/1` is the EEG and `/2` is the EMG, both already differential. `/3` and `/4` have no wire on them by design.**
 >

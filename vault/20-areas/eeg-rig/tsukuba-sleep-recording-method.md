@@ -17,6 +17,8 @@ source: Iwasaki et al., STAR Protocols 2021
 
 # Canonical EEG/EMG sleep-recording method — IIIS Tsukuba (our professor's lab)
 
+> [!warning] Updated 2026-10-22: Pad 0 − pad 1 is done in hardware by the bipolar RHD2216 (`in0+`/`in0−` = Allego `/1`); nothing is paired in software. The 8-mouse rig wires only pads 0-3 plus GND, and the copper coil was never inserted into pad 6. [[CANONICAL-allego-channel-selection]]
+
 > [!abstract] TL;DR — for non-technical readers
 > **What this is.** The published method our recording rig is based on. It comes from the **International Institute for Integrative Sleep Medicine (IIIS), University of Tsukuba** — the lab our professor comes from.
 > **Why it exists.** When someone asks "why bipolar EEG? why no reference/cerebellum screw? where do the electrodes go?" the answer is *this paper* — not our own invention. It's the provenance for our montage choices.
