@@ -18,6 +18,7 @@
 #   skim pull            fetch and rebase onto origin/main
 #   skim push "message"  commit everything and push
 #   skim check           verify the Claude Code symlinks and that Syncthing is gone
+#   skim lint [-v]       vault health: broken links, schema, layout (read-only)
 
 set -uo pipefail
 
@@ -85,6 +86,11 @@ cmd_status() {
     fi
     [[ "$behind" -gt 0 ]] && return 1
     return 0
+}
+
+cmd_lint() {
+    # Read-only. The rules it enforces are written in vault/CLAUDE.md.
+    python3 "$REPO/tools/vault/lint.py" "$REPO/vault" "$@"
 }
 
 cmd_pull() {
@@ -189,5 +195,6 @@ case "${1:-status}" in
     pull)   cmd_pull ;;
     push)   shift; cmd_push "${1:-}" ;;
     check)  cmd_check ;;
-    *) echo "usage: skim [status|pull|push \"message\"|check]" >&2; exit 2 ;;
+    lint)   shift; cmd_lint "$@" ;;
+    *) echo "usage: skim [status|pull|push \"message\"|check|lint]" >&2; exit 2 ;;
 esac
