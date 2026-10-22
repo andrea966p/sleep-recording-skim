@@ -11,3 +11,13 @@ Append-only. One entry per vault-wide change. Newest at the bottom.
   compared before and after every step (tools/vault/compare_dumps.py).
 - Front door [[HOME]] replaces `_INDEX.md` (now in `90-archive/`).
 - Map of every move: `_meta/move-map.tsv`.
+
+## [2026-10-22] rehaul | hubs, truth pass, memory, audits
+
+- 14 hubs written by one agent per area; dated banners on outdated notes; per-area
+  contradiction logs in `_meta/contradictions/`.
+- Claude memory archived verbatim (`90-archive/claude-memory-2026-10-22/`), then reduced to
+  rules and pointers; 37 links to memory slugs repointed (`retarget-memory-links-2026-10-22.tsv`).
+- Independent audits: hub claims 174/204 supported, 30 corrected; records 0 changed beyond
+  added callouts; promoted notes' dropped facts restored. Usability test from HOME: 7/7.
+- Open questions: [[decisions-needed-2026-10-22]].

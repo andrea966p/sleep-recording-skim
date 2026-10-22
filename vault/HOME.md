@@ -61,6 +61,11 @@ datasheets. Pre-2026-10-22 navigation: `90-archive/`.
 - **Not sure where it goes:** the table in [[CLAUDE#Where does a new thing go?]].
 - **Health check:** `./skim lint` in a terminal, or [[vault-health.base|vault health]].
 
+## Open decisions
+
+[[decisions-needed-2026-10-22|Decisions needed]]: questions only Andrea or the professor can
+settle (the 800 µV gate, `--disable-gpu`, Pinnacle vs XDAQ, the Slack webhook, …).
+
 ## Daily
 
 - [[journal.base|Journal index]] — every day, newest first, one line each

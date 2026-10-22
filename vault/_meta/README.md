@@ -4,7 +4,8 @@
 |---|---|
 | `log.md` | append-only log of vault-wide changes (restructures, renames, rules) |
 | `move-map.tsv` | the 2026-10-22 rehaul: every pre-rehaul path and where it went (reviewed, approved) |
-| `move-map-P6.tsv` | hub renames made during the rehaul |
+| `move-map-P6.tsv`, `move-map-P8.tsv` | hub renames and contradiction-log renames made during the rehaul |
+| `decisions-needed-2026-10-22.md` | open questions only Andrea or the professor can settle |
 | `move-map-summary.md` | the move map as the readable page approved on 2026-10-22 |
 | `relink-repairs-P3b.tsv` | links that were broken before the rehaul and were repaired |
 | `contradictions/<key>.md` | per area or project: disagreements between notes, how each was settled or why it needs Andrea |
