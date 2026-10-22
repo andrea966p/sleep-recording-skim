@@ -20,3 +20,9 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.temp
+
+# Per-machine secrets and runtime state (untracked 2026-10-22, vault rehaul P0)
+# local-rest-api holds an API key and a self-signed certificate's private key.
+.obsidian/plugins/obsidian-local-rest-api/data.json
+# Claude Code rewrites this as permissions are approved.
+.claude/settings.local.json
