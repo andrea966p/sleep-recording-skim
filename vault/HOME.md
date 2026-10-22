@@ -35,6 +35,20 @@ where to look for what is true now. Rules for agents and for filing: [[CLAUDE]].
 Resources (browse `30-resources/`): literature, vendors, meetings and professor reports,
 datasheets. Pre-2026-10-22 navigation: `90-archive/`.
 
+## Common questions
+
+| Question | Answer lives in |
+|---|---|
+| Did SOD1 change sleep? (EEG and nanotag, reported separately) | [[_hlb-sod1-hub#Current state\|HLB SOD1 hub, Current state]] |
+| Which mice are scoreable at both timepoints? | [[2026-09-30-scoreable-mice-on-the-24h-windows]] |
+| Which hours of a recording are analysed? | [[CANONICAL-recording-windows-and-protocol#⭐ The analysis windows in use, set 2026-09-29\|analysis windows]] |
+| How do I record a run? | [[eeg-recording-console]] |
+| The rig rebooted or Allego looks dead | [[starting-the-rig-after-a-restart]], then [[_allego-hub#Rules that must not be broken\|Allego rules]] |
+| Which Allego channels do I select? | [[CANONICAL-allego-channel-selection]] |
+| Is this animal's signal usable? | [[animal-card-and-verdict-ladder]] |
+| Where is the data, and what is backed up? | [[_data-storage-hub]], [[per-mouse-csv-format]] |
+| Hosts, IPs, ports, paths | [[production-values]] |
+
 ## Status of every hub
 
 ![[hubs.base]]

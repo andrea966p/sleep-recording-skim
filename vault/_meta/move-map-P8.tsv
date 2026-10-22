@@ -1,0 +1,12 @@
+old_path	new_path	type	area	status	canonical	superseded_by	banner	confidence	reason
+_meta/contradictions/allego-console.md	_meta/contradictions/contradictions-allego-console.md	-	-	-	-	-	-	high	unique name
+_meta/contradictions/eeg-analysis.md	_meta/contradictions/contradictions-eeg-analysis.md	-	-	-	-	-	-	high	unique name
+_meta/contradictions/eeg-rig.md	_meta/contradictions/contradictions-eeg-rig.md	-	-	-	-	-	-	high	unique name
+_meta/contradictions/hlb-sod1.md	_meta/contradictions/contradictions-hlb-sod1.md	-	-	-	-	-	-	high	unique name
+_meta/contradictions/noise-unipolar.md	_meta/contradictions/contradictions-noise-unipolar.md	-	-	-	-	-	-	high	unique name
+_meta/contradictions/resources.md	_meta/contradictions/contradictions-resources.md	-	-	-	-	-	-	high	unique name
+_meta/contradictions/rig-bringup.md	_meta/contradictions/contradictions-rig-bringup.md	-	-	-	-	-	-	high	unique name
+_meta/contradictions/rig-expansion.md	_meta/contradictions/contradictions-rig-expansion.md	-	-	-	-	-	-	high	unique name
+_meta/contradictions/scoring-nanotag.md	_meta/contradictions/contradictions-scoring-nanotag.md	-	-	-	-	-	-	high	unique name
+_meta/contradictions/storage-computing.md	_meta/contradictions/contradictions-storage-computing.md	-	-	-	-	-	-	high	unique name
+_meta/contradictions/video-nvr.md	_meta/contradictions/contradictions-video-nvr.md	-	-	-	-	-	-	high	unique name

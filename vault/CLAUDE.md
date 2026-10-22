@@ -85,6 +85,12 @@ Plain markdown first (agents cannot see Bases views), in this order:
 5. Open items.
 6. `![[area.base]]` views.
 
+**One owner per status.** A project hub owns the status of its studies and runs; an area hub
+owns the status of its system and its rules. When both care (the NS-SD nanotag study, a QC
+gate used by the rig and the analysis), the owner holds the dated bullet and the other hub
+gets a pointer bullet: `- 2026-10-22: NS-SD status: see [[_hlb-sod1-hub]]`. A decision goes
+in the area whose code or procedure it changes; the project hub links to it.
+
 ## The journal
 
 Title `# YYYY-MM-DD: headline`, `summary:` in frontmatter, a short TL;DR, then sections.
@@ -111,7 +117,7 @@ note. When a day produces a result, a decision or a procedure, write that note a
 - Scientific numbers change only with Andrea's say-so.
 - When two notes disagree, settle it only from primary evidence (the code, a read-only check
   of the live system, a later dated measurement). Otherwise log it in
-  `_meta/contradictions.md` as `needs-Andrea`.
+  `_meta/contradictions/<key>.md` (one file per area or project) as `needs-Andrea`.
 - Write dates as `YYYY-MM-DD`. Times are KST unless stated.
 
 ## Things code depends on
