@@ -8,6 +8,8 @@ created: 2026-08-06
 
 # Rig status, 6 to 7 August 2026: what the rig can do, what it is doing, and how we know
 
+> [!warning] Updated 2026-10-22: this is a snapshot of 6-7 August 2026. The 60 Hz floor fell 12-60x after the 2026-10-07 earthing change. [[earthing-60hz-hum-fix]]
+
 ---
 
 # PART 0 — The very short version

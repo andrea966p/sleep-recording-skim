@@ -9,6 +9,8 @@ created: 2026-10-19
 
 # Changing the SOD1 intake sheet: the "Pending changes instructions" tab
 
+> [!warning] Updated 2026-10-22: Andrea rejected hand-pasting TSV files on 2026-10-19; until the route is redesigned, requests go to Claude for Sheets as one chat message (CHG-005 to CHG-009 were sent that way on 2026-10-21). [[2026-10-21]]
+
 > [!abstract] TL;DR
 > - **What this is:** the only route for Claude Code to change the Google Sheet `HLB_SOD1_Intake_Monitoring_SDSLNANO`
 >   (Drive id `1jgQpYiUGzEwFpjAhy8SvCamGoeMFZEycLFpzwgfgxhs`). Claude Code **requests** a change, Claude for Sheets (the

@@ -17,6 +17,9 @@ affected:
   - frigate
   - neurosurveillance-session-daemon
 ---
+
+> [!warning] Updated 2026-10-22: Mentions Slack alerts; Netdata and Uptime Kuma now alert via ntfy ([[monitoring-setup]]); stall alerts still use Slack ([[watchdog-slack-bridge]]).
+
 ## Summary
 - **Date/Time:** 2026-05-20 11:46–16:34 KST
 - **Duration:** Issue 1 ~4h 25min (11:46→16:11); Issue 2 ~45s (16:28→16:29)

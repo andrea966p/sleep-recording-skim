@@ -10,6 +10,8 @@ audience: new-lab-member
 
 # New Researcher Onboarding
 
+> [!warning] Updated 2026-10-22: Netdata and Uptime Kuma alerts moved to ntfy 2026-09-14, deploy scripts (nvr-notify.sh) 2026-09-20; recording-stall and reconciler alerts still go to Slack via nvr-mqtt-slack.service. New members need both the ntfy topic and Slack #nvr-alerts. See [[monitoring-setup]].
+
 > [!abstract] TL;DR — for non-technical readers
 > **What this is.** Day-one walkthrough for a new lab member who has never used the NeuroSurveillance system before.
 >

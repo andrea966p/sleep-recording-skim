@@ -10,6 +10,8 @@ updated: 2026-09-14
 
 # S-SD recovery sleep, Wednesday 13:00 to Thursday 09:00, the terminal endpoint
 
+> [!warning] Updated 2026-10-22: the 2026-10-06 EMG rescue (EMG power between the 60 Hz harmonics, raw 1000 Hz file; not adopted into the pipeline) makes HLBSSD15 (C1) scoreable at both S-SD timepoints, so S-SD is n = 1 under that method. [[2026-10-06-S-SD-EMG-rescue-between-harmonics]]
+
 > [!abstract] TL;DR
 > **Wednesday 2026-09-02 13:00 KST to Thursday 2026-09-03 09:00 KST, 20.0 hours**, on the eight
 > S-SD animals, immediately after the LAST chronic sleep deprivation (CSD) bout ends. The animals

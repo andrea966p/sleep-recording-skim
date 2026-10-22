@@ -8,6 +8,8 @@ created: 2026-08-08
 
 # EEG rig update, 8 August 2026
 
+> [!warning] Updated 2026-10-22: this is a snapshot of 8 August 2026. The 60 Hz floor fell 12-60x after the 2026-10-07 earthing change. [[earthing-60hz-hum-fix]]
+
 Scope: the original EEG plus EMG cohort. Surgeries 21 to 23 July, first tethered 30 July, recorded through 7 August. Those eight animals have since been replaced, so the three recordings described here are the complete dataset from them. Full working record with every number, every retraction and every raw file reference: [[2026-08-08-full-update-for-professor]].
 
 ## Bottom line

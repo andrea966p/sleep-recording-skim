@@ -8,6 +8,9 @@ created: 2026-07-27
 
 # Video-EEG Sync — The Recording Toggle Is Not Sync-Capable
 
+> [!warning] Updated 2026-10-22: the lease/drain fix described below as NOT DEPLOYED is now in the live code (`/opt/neurosurveillance/session-daemon/frigate_controller.py` contains `acquire_lease`) and the daemon service was last restarted 2026-10-07, so it is loaded. `sessions.auto_start` is still false. See [[_video-nvr-hub]].
+
+
 > [!abstract] TL;DR — for non-technical readers
 > **What this is.** Today's short export was not a bug in our software. Frigate DELETES the last 10 to 20 seconds of video every single time recording is switched off, on purpose, in its own source code. That led to a bigger realization: switching Frigate recording on and off cannot ever give us frame-accurate alignment between video and EEG, no matter how precise the trigger is. The planned hardware sync upgrade does NOT fix this on its own, because it feeds its sub-millisecond trigger straight back into the same on/off switch.
 >

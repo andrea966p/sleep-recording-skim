@@ -9,6 +9,8 @@ updated: 2026-05-24
 
 # System overview — Q&A and glossary
 
+> [!warning] Updated 2026-10-22: Alerts moved from Slack to ntfy on 2026-09-14..20 ([[monitoring-setup]]); Slack sections are historical except the stall/reconciler bridge [[watchdog-slack-bridge]]. Cameras physically removed 2026-08-04; video work resumes soon.
+
 > [!abstract] TL;DR — for non-technical readers
 > **What this is.** Plain-language reference for the whole NeuroSurveillance system, organized as Q&A so you can scan it.
 >

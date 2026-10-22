@@ -13,6 +13,8 @@ derived-from: 2026-05-01-llm-council-review.md
 
 # Stabilization Sprint — Week 1 Plan (2026-05-22 → 2026-05-28)
 
+> [!warning] Updated 2026-10-22: Reconciler and stall alerts still reach Slack through nvr-mqtt-slack.service ([[watchdog-slack-bridge]]); other alerts moved to ntfy 2026-09-14/20 ([[monitoring-setup]]).
+
 > [!abstract] TL;DR — for non-technical readers
 > **What this is.** The executable plan for the first stabilization sprint, derived from the [[2026-05-01-llm-council-review|2026-05-01 LLM Council review]]. It picks up the council's open Stage 1 + Stage 2 items, injects the new findings from the 2026-05-20 Docker-upgrade incident and the 2026-05-18 watchdog work, and groups them into 6 phases (Pre-Friday → Burn-in).
 >

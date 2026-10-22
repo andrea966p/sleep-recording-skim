@@ -8,6 +8,8 @@ created: 2026-10-05
 
 # Sheet handover, 2026-10-05: Run 2 is now analysed (HLBNSL nanotag tabs)
 
+> [!warning] Updated 2026-10-22: Sheet edits listed here were not confirmed applied; since 2026-10-19 sheet changes go through the `Pending changes instructions` tab. [[sod1-sheet-change-log-workflow]]
+
 > [!abstract] TL;DR
 > The 2026-09-28 sheet text says **"Run 2 discarded"**. Since 2026-10-05 Run 2 is **merged with Run 1 and analysed up to 10-02 14:00** ([[2026-10-05-HLBNSL-nanotag-merged-analysis]]). This page lists the cell edits that bring the NANOTAG tabs in line. **Nothing has been applied.** Andrea, or a sheet session, applies them by hand in the Google Sheet.
 >

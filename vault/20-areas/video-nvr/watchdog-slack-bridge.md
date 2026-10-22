@@ -13,6 +13,8 @@ updated: '2026-05-25'
 
 # Watchdog → Slack Bridge (`nvr-mqtt-slack.service`)
 
+> [!warning] Updated 2026-10-22: Still live: this bridge posts watchdog STALL and reconciler findings to Slack #nvr-alerts. Netdata/Uptime Kuma (2026-09-14) and deploy scripts (2026-09-20) moved to ntfy, see [[monitoring-setup]].
+
 > [!abstract] TL;DR — for non-technical readers
 > **What this is.** A tiny background service on the NVR that watches for "recording stalled" alerts and posts them to the `#nvr-alerts` Slack channel within ~90 seconds.
 >

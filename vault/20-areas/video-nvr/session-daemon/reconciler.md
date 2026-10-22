@@ -10,6 +10,8 @@ related-commit: 3830dba
 
 # Reconciler — golden config
 
+> [!warning] Updated 2026-10-22: Netdata and Uptime Kuma alerts moved to ntfy 2026-09-14, deploy scripts (nvr-notify.sh) 2026-09-20; recording-stall and reconciler alerts still go to Slack via nvr-mqtt-slack.service. See [[monitoring-setup]] and [[watchdog-slack-bridge]].
+
 > [!abstract] TL;DR — for non-technical readers
 > **What this is.** A nightly self-audit. At 00:01 KST every night, the daemon compares what it thinks happened (the WAL journal) against what's actually on disk (Frigate's recordings database) and reports any disagreement.
 >

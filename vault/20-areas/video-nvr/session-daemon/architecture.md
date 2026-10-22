@@ -10,6 +10,8 @@ version: "3.0"
 
 # Session Daemon Architecture
 
+> [!warning] Updated 2026-10-22: Netdata and Uptime Kuma alerts moved to ntfy 2026-09-14, deploy scripts (nvr-notify.sh) 2026-09-20; recording-stall and reconciler alerts still go to Slack via nvr-mqtt-slack.service. See [[monitoring-setup]] and [[watchdog-slack-bridge]].
+
 > [!abstract] TL;DR — for non-technical readers
 > **What this is.** The full architectural reference for the Python session daemon that runs on the NVR.
 >

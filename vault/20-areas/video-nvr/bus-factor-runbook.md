@@ -11,6 +11,8 @@ audience: anyone in the lab who is NOT Andrea
 
 # Bus-Factor Runbook — "Andrea is unreachable"
 
+> [!warning] Updated 2026-10-22: Paths mentioning ~/Monitoring_project are stale: the repo is now ~/sleep-recording-skim. Netdata and Uptime Kuma alerts moved to ntfy 2026-09-14, deploy scripts (nvr-notify.sh) 2026-09-20; recording-stall and reconciler alerts still go to Slack via nvr-mqtt-slack.service. See [[monitoring-setup]].
+
 > [!abstract] TL;DR — for non-technical readers
 > **What this is.** A short guide for keeping the video-monitoring rig running when Andrea is unreachable (sick, sabbatical, on a plane — or unavailable for any reason). It is deliberately written for someone who is *not* a software engineer and has never SSH'd into the system before.
 >

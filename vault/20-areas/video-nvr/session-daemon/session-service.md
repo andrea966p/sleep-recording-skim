@@ -9,6 +9,8 @@ version: "1.1"
 
 # Session Daemon Service
 
+> [!warning] Updated 2026-10-22: Paths mentioning ~/Monitoring_project are stale: the repo is now ~/sleep-recording-skim. See [[bus-factor-runbook]].
+
 > [!abstract] TL;DR — for non-technical readers
 > **What this is.** The systemd unit file that makes the daemon start automatically and keeps it alive across reboots and crashes.
 >

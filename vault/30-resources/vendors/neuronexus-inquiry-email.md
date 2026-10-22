@@ -14,6 +14,8 @@ created: 2026-05-26
 
 # NeuroNexus / KONTEX Inquiry — XDAQ Core2 Digital I/O
 
+> [!warning] Updated 2026-10-22: this thread was written for an XDAQ Core2 (Thunderbolt). Our unit is a Gen-1 XDAQ Core (Opal Kelly USB); KC Kong confirmed the Gen-1 DB25 pinout in round 3b (2026-06-05). [[xdaq-core-gen1-ubuntu-driver]]
+
 > [!tip] Part of the rig expansion program
 > Front door for all of this: **[[_rig-expansion-hub]]** (decision, vendor correspondence, wiring, open items).
 

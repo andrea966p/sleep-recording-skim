@@ -8,6 +8,8 @@ created: 2026-04-13
 
 # Hardware Synchronization — XDAQ GPIO ↔ Raspberry Pi
 
+> [!warning] Updated 2026-10-22: Core2/Linux parts superseded by [[xdaq-core-gen1-ubuntu-driver]]; DB25 details confirmed for Gen-1 (round-3b reply). The Current State table below still names DAQ_ON pin 13 as the trigger: the gate is DO 03 (pin 22), see [[2026-07-27-video-eeg-sync-recording-architecture]]. Cameras removed 2026-08-04.
+
 > [!check] 2026-06-05 — Gen-1 confirmed by KC Kong: **DB25 pinout Gen1 = Gen2** ([[neuronexus-inquiry-email#Reply — round 3b received 2026-06-05 (KC Kong)|round-3b reply]]). All DB25 pinout / 3.3 V output / `DO 03` Gated recording-gate details below apply to our Gen-1 XDAQ Core (Opal Kelly USB, serial 0C006218) — prior "UNVERIFIED for Gen-1" hold cleared. Linux/driver + host-interface content here is **superseded by [[xdaq-core-gen1-ubuntu-driver]]** (verified working). Fan-out: single `DO 03` star-wires to ≥4 Pi GPIO (driver SN74LVC2G17, ~20 mA, no buffer). Grounding: **star ground, Core = hub**. See [[wiring-guide#Multi-Pi fan-out and star grounding|Wiring Guide]].
 
 > [!abstract] TL;DR — for non-technical readers

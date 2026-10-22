@@ -16,6 +16,8 @@ source: https://docs.kontex.io/XDAQ/CORE2/#xdaqtm-db25-io-connector-pinout
 
 # XDAQ™ Core2 — Digital I/O Manual Reference (authoritative)
 
+> [!warning] Updated 2026-10-22: Core2 manual. DB25 pinout confirmed identical on our Gen-1 Core by KC Kong 2026-06-05 ([[overview]]); host/driver parts do not apply: [[xdaq-core-gen1-ubuntu-driver]].
+
 > [!danger] 2026-05-29 — this page documents the **Core2**, but our physical unit is a **Gen-1 XDAQ Core (Opal Kelly USB, serial 0C006218)**. Treat every pinout/voltage/gate detail here as **Core2 reference only — UNVERIFIED for our unit** until KC confirms the Gen-1 Core DB25. Verified host/driver state: [[xdaq-core-gen1-ubuntu-driver]].
 
 > [!abstract] TL;DR — for non-technical readers

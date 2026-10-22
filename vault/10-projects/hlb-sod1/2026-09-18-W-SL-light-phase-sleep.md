@@ -10,6 +10,8 @@ recordings: [allego_0__uid0910-09-00-00, allego_0__uid0917-09-00-09]
 
 # W-SL light-phase sleep: baseline 2026-09-10 vs the run of 2026-09-17
 
+> [!warning] Updated 2026-10-22: the 09-17 run finished 2026-09-18 13:00 (28.00 h); full-file rung 3 for B1 and B2 and the run's workflow record are in [[2026-09-17-W-SL-28h-run]].
+
 > [!abstract] TL;DR
 > The first sleep analysis of the W-SL batch. **Slow-wave activity declines
 > monotonically across the light phase in every mouse on both recordings** —

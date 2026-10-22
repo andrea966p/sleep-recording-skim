@@ -9,6 +9,8 @@ priority: critical
 
 # 2026-08-03 — Literature check: our impedances, our failure mode, and what six papers say about both
 
+> [!warning] Updated 2026-10-22: the 'our failure mode' framing is superseded by the 2026-08-04 addendum to [[2026-08-03-data-quality-report-for-professor]]: electrodes read good (0.052 MΩ) and the contact is intermittent. The published base rates below still stand.
+
 > [!abstract] TL;DR — for non-technical readers
 > **What this is.** Six primary papers on mouse EEG/EMG electrodes read against our
 > own data, to test whether our interpretation of the rig holds up.

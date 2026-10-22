@@ -9,6 +9,9 @@ tags:
 created: '2026-05-21'
 updated: '2026-05-25'
 ---
+
+> [!warning] Updated 2026-10-22: Netdata and Uptime Kuma alerts moved to ntfy 2026-09-14, deploy scripts (nvr-notify.sh) 2026-09-20; recording-stall and reconciler alerts still go to Slack via nvr-mqtt-slack.service. Cameras physically removed 2026-08-04; video work resumes soon. See [[monitoring-setup]].
+
 First 10 minutes when something is wrong on the NVR. Each section: how to confirm the symptom, the safest immediate action, where to look next. **Do not restart Frigate or the daemon while a recording is active unless the recording is already broken.**
 
 > [!warning] Active recording check (do this first, every time)

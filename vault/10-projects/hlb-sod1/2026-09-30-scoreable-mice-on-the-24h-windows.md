@@ -9,6 +9,8 @@ recordings: [allego_1__uid0819-17-25-20, allego_2__uid0827-12-58-32, allego_0__u
 
 # Which mice are scoreable at BOTH timepoints, judged on the 24 h windows
 
+> [!warning] Updated 2026-10-22: "S-SD has no scoreable mouse" holds for the pipeline; the 2026-10-06 EMG rescue (not adopted) makes HLBSSD15 scoreable at both timepoints. [[2026-10-06-S-SD-EMG-rescue-between-harmonics]]
+
 > [!abstract] TL;DR
 > - **Worth manual scoring now:** **HLBWSD08**, **HLBWSL24** and **HLBSSL33**. Each passes every
 >   automatic check at baseline AND recovery.
