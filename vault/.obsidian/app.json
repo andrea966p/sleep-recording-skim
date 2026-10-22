@@ -1,6 +1,6 @@
 {
   "alwaysUpdateLinks": true,
-  "attachmentFolderPath": "attachments",
+  "attachmentFolderPath": "_attachments",
   "livePreview": true,
   "showUnsupportedFiles": true,
   "pdfExportSettings": {

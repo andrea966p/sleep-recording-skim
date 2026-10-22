@@ -18,11 +18,11 @@
         },
         {
           "type": "note",
-          "path": "00-config/production-values.md"
+          "path": "20-areas/computing/production-values.md"
         },
         {
           "type": "note",
-          "path": "00-config/task-dashboard.md"
+          "path": "TASKS.md"
         }
       ],
       "propertyKeys": [],
@@ -530,10 +530,10 @@
   "customVaultName": "",
   "pinnedNotes": {},
   "fileIcons": {
-    "00-config/task-dashboard.md": "list-todo"
+    "TASKS.md": "list-todo"
   },
   "fileColors": {
-    "00-config/task-dashboard.md": "#f43f5e"
+    "TASKS.md": "#f43f5e"
   },
   "fileBackgroundColors": {},
   "folderIcons": {},
