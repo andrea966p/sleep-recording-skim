@@ -5,7 +5,7 @@ metadata:
   type: project
 ---
 
-**Vault: `07-decisions/2026-08-07-council-review-of-the-analysis-pipeline.md`** = findings + the
+**Vault: `20-areas/eeg-analysis/2026-08-07-council-review-of-the-analysis-pipeline.md`** = findings + the
 7-fix plan of record + §4 the Fix 1 write-up.
 
 ## The council's findings (5 advisors + anonymised peer review)
@@ -159,7 +159,7 @@ See also [[recording-usable-fraction-analysis]], [[eeg-analysis-pipeline]],
 ## ⭐⭐⭐ THE JAPANESE SCORING TOOL'S SOURCE CODE, READ 2026-08-08
 
 `~/Downloads/SleepyScoreApp_HM_260312_exported.m` + `sleepy_pipeline_refined.py` (same algorithm).
-**Full read-off: vault `06-references/sleepyscore-japan-scoring-tool-algorithm.md`.**
+**Full read-off: vault `20-areas/sleep-scoring/sleepyscore-japan-scoring-tool-algorithm.md`.**
 
 🔴⭐⭐ **THEY DO NOT USE A PERCENTILE FOR REM. BOTH THRESHOLDS ARE 2-CLUSTER K-MEANS SPLITS**
 (threshold = mean of the two cluster centres): WAKE on the **EMG rectified integral**, REM on
@@ -247,7 +247,7 @@ supersession banner on `analysis-methods-and-justification` · pointer block on 
 
 ## 🏁 CLOSED OUT 2026-08-08 — only TWO items open, both by choice
 
-⭐⭐ **`02-procedures/blind-scoring-and-kappa.md` = THE SOP + PRE-REGISTERED DECISION RULES.**
+⭐⭐ **`20-areas/sleep-scoring/blind-scoring-and-kappa.md` = THE SOP + PRE-REGISTERED DECISION RULES.**
 Written **before any epoch was scored**, so the result cannot be reinterpreted afterwards:
 **κ≥0.80** keep current staging · **0.60-0.80** report with the confusion matrix, treat automatic
 architecture as approximate · **0.40-0.60** screening tool only, hand-score anything published ·
@@ -262,7 +262,7 @@ own validity statistic circular. Human agreement is EXTERNAL and safe.
 stratified) · `portB-slot1_..._SCORING` (300, stratified) · **`portD-slot2_SCORING_random`
 (299, UNSTRATIFIED = prevalence-matched)**. **Score D2 stratified FIRST.**
 
-📋 **`02-procedures/positive-control-known-signal-injection.md` = SPECIFIED, NOT SCHEDULED.**
+📋 **`20-areas/eeg-analysis/positive-control-known-signal-injection.md` = SPECIFIED, NOT SCHEDULED.**
 Every control we have is NEGATIVE ⇒ they prove we don't hallucinate signal, **not that we find it**.
 **A pipeline returning "no signal" for every input would pass every check we currently have.**
 4 tests: amplitude (±10%) · **frequency response ⭐ which finally measures what the 1.10 Hz hardware

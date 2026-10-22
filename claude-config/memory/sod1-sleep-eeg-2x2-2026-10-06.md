@@ -9,7 +9,7 @@ metadata:
 ---
 
 Andrea asked (2026-10-06) whether SOD1 changed sleep, comparing the SD and SL batches. Vault page:
-`05-experiments/completed/2026-10-06-SOD1-sleep-EEG-2x2-quick-compute.md`. Script: `eeg-emg-analysis/qc/sod_sleep_2x2_2026_10_06.py HYP_DIR [NOTCH_DIR]`.
+`10-projects/hlb-sod1/2026-10-06-SOD1-sleep-EEG-2x2-quick-compute.md`. Script: `eeg-emg-analysis/qc/sod_sleep_2x2_2026_10_06.py HYP_DIR [NOTCH_DIR]`.
 
 - 🔑 **SOD1/water starts at TETHERING** (intake grid Day 1; S-SD Day 1 = 08-18), so every EEG "baseline" is ~1 week ON treatment and pre-CSD. Baseline = the SOD1-without-deprivation test; recovery − baseline = CSD (SD batches) or time (SL). Compare on ZT4–24 (13:00→09:00), the only hours the SD recoveries have.
 - **No detectable SOD1 effect without deprivation:** 61.1 vs 60.6 % of 24 h asleep, n 3 vs 6, exact p 0.96 (official); EMG-notched 56.2 vs 53.7 %, n 6 vs 8, p 0.24, CI −1.8 to +6.9 pts.

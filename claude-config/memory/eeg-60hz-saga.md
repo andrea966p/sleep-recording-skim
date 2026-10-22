@@ -16,12 +16,12 @@ metadata:
 - Procedure (~30 min, no animal): DMM continuity C3410 pad 0 & 1 back through the slip ring vs known-good pads 2 & 3 · inspect/reflow pad 0/1 joints under magnification · swap headstage, re-sweep · swap port, re-sweep. Only if all clean is the fault upstream of the slip ring.
 
 
-⏳ **RUN 2 IN PROGRESS — started 2026-08-02 01:46:57 KST, `allego_2__uid0802-01-46-57`.** First run with the CORRECTED selection (`/1,/2,/33,/34` per port = 16 ch; verified in file metadata). **PREDICTIONS PRE-REGISTERED BEFORE ANY DATA: vault `05-experiments/active/2026-08-02-run2-preregistration.md` — fill in HIT/MISS, DO NOT edit the predictions.**
+⏳ **RUN 2 IN PROGRESS — started 2026-08-02 01:46:57 KST, `allego_2__uid0802-01-46-57`.** First run with the CORRECTED selection (`/1,/2,/33,/34` per port = 16 ch; verified in file metadata). **PREDICTIONS PRE-REGISTERED BEFORE ANY DATA: vault `10-projects/rig-bringup/2026-08-02-run2-preregistration.md` — fill in HIT/MISS, DO NOT edit the predictions.**
 - **Pre-flight impedance predicts only 1/8 fully scoreable = C2** (EEG 1.146 / EMG 0.168). D2 marginal (EEG 2.114). B1 = EEG only (0.133, best on rig) but EMG dead 7.099. A1/C1/D1 = EMG only. A2/B2 = nothing.
 - ⚠️⚠️ **CONTACT STATE MOVES IN *BOTH* DIRECTIONS OVER DAYS, with NOTHING done to the animals:** B1 EEG **1.717→0.133 (13× BETTER)** · C2 EEG 4.418→1.146 (open→conn) · **C1 EEG 0.465→5.720 (our best mouse LOST its EEG)** · D2 EEG 0.660→2.114. **Channels RECOVER as readily as they fail** ⇒ a deliberate reseat has a real chance.
 - **RESEAT WAS RECOMMENDED AND NOT DONE** (B1 EMG; A1/C1/D1 EEG — each ONE channel short of scoreable, partner channel excellent). **This is now the highest-value outstanding action** if run 2 confirms ~1 scoreable mouse.
 - ⭐ **KEY PREDICTION P8: if the run exceeds ~29 h, at least one mouse yields LIGHT-PHASE data and its NREM % will EXCEED its dark-phase NREM %.** No light-phase data with a living EEG has EVER been obtained. This is the strongest available independent confirmation that we measure real sleep.
-- 🔴 **BLOCKER: the animal-room LIGHT SCHEDULE is still undocumented** (blank block waiting in vault `00-config/production-values.md`). **P8 CANNOT be evaluated without it — get lights-on/lights-off from the facility.**
+- 🔴 **BLOCKER: the animal-room LIGHT SCHEDULE is still undocumented** (blank block waiting in vault `20-areas/computing/production-values.md`). **P8 CANNOT be evaluated without it — get lights-on/lights-off from the facility.**
 - **ON STOP: take a SECOND impedance sweep IMMEDIATELY.** Two sweeps bracketing the run distinguish progressive degradation from random flipping = connector vs implant.
 
 
@@ -35,7 +35,7 @@ metadata:
 - **Allego channel SELECTION is display/QC only — the file saves ALL primary channels of every enumerated port regardless.** Selecting `/1,/2,/33,/34` loses nothing; controls stay available.
 
 
-🔴 **2026-08-02 FULL 8-MOUSE RESCORE (corrected map + 3-part gate) — D2 WITHDRAWN, REPLICATION IS n=2.** Vault `05-experiments/completed/2026-08-01-channel-mapping-correction-first-sleep.md` §3c, journal `04-journal/2026-08/2026-08-02.md`.
+🔴 **2026-08-02 FULL 8-MOUSE RESCORE (corrected map + 3-part gate) — D2 WITHDRAWN, REPLICATION IS n=2.** Vault `10-projects/rig-bringup/2026-08-01-channel-mapping-correction-first-sleep.md` §3c, journal `04-journal/2026-08/2026-08-02.md`.
 - **SCOREABLE: C1 8.73h (W 64.4/NREM 31.2/REM 4.4, PASS) · C2 4.02h (56.3/35.7/8.1, PASS but WEAK — NREM/WAKE delta only 19.6 vs 17.9 %).** ⚠️ **D2 FAILS physiology** (WAKE EEGrms 75.9 > NREM 72.3; delta 41.6 ≈ 42.1; REM EMG 27.4 > NREM 12.4) — it only passed on 2026-08-01 because it was scored on a hand-picked window with **C1's** hand-picked 25 µV EMG threshold. **NEVER reuse a threshold derived from one animal on another.** **A1, A2, B1, B2, D1 = INSUFFICIENT (0.00-0.07h).**
 - ⭐ **B1 HAS THE BEST EEG IN THE FLEET — 11.8h at median 66.7 µV — AND IS UNSCOREABLE BECAUSE ITS EMG IS DEAD (0.2h).** 11.8h of data blocked by ONE channel.
 - **COMPLEMENTARY FAILURE = the actionable finding: A1 and D1 have PERFECT EMG 27.9h and ZERO EEG; B1 has excellent EEG and no EMG.** Fix either side on those 3 animals ⇒ scoreable time roughly DOUBLES.
@@ -44,7 +44,7 @@ metadata:
 - **METHOD HARDENED:** (1) **3-PART GATE** = not open (mains<300µV both ch) AND **not shorted (EEG rms ≥25 µV)** AND not clipped — hum alone let shorted windows through; (2) **Otsu threshold per animal**, no hand-picked constants; (3) **verify persistence vs shuffle BEFORE reporting any hypnogram** — else report "NO STRUCTURE"; (4) **automatic physiology PASS/FAIL** — this is what caught D2. Scripts `score_all_mice.py` + `gate_and_score_all.py`.
 
 
-⭐⭐🔴 **2026-08-01 BREAKTHROUGH — THE CHANNEL MAP WAS WRONG ALL ALONG. EMG ALWAYS WORKED. FIRST REAL SLEEP ARCHITECTURE.** Vault `05-experiments/completed/2026-08-01-channel-mapping-correction-first-sleep.md`. **READ BEFORE TRUSTING ANY EARLIER EEG/EMG NUMBER IN THIS FILE.**
+⭐⭐🔴 **2026-08-01 BREAKTHROUGH — THE CHANNEL MAP WAS WRONG ALL ALONG. EMG ALWAYS WORKED. FIRST REAL SLEEP ARCHITECTURE.** Vault `10-projects/rig-bringup/2026-08-01-channel-mapping-correction-first-sleep.md`. **READ BEFORE TRUSTING ANY EARLIER EEG/EMG NUMBER IN THIS FILE.**
 - **RHD2216 IS BIPOLAR — each channel already reports its own `+`/`−` difference.** C3410 **pads 0+1 = ONE channel (native 0)**, **pads 2+3 = ONE channel (native 1)**. 4 pads → **2 channels, NOT 4**.
   - `native0` = Allego **`/1`** (mouse B: `/33`) = **EEG**, already bipolar → **use directly**
   - `native1` = **`/2`** (`/34`) = **EMG**, already bipolar → **use directly**
@@ -59,10 +59,10 @@ metadata:
 - **RETRACTED:** "EMG failed 23/24 & 16/16" · "ZERO scoreable mice" · "C1 shows NO sleep structure" · "78.7 % open" · the "frontal vs parietal" framing (it was EEG vs EMG channels).
 - **STANDS:** no-wire control method · grounds 2.8 µV no drift over 27.9 h · environmental causes closed · contact intermittency + one-way degradation (but it is the **EEG** channel dying: C1 at 8.73 h, D2 at 5.30 h).
 - **CAVEATS on the sleep result:** n=1, 8.7 h, dark phase; thresholds data-driven (EMG dip 25 µV, th/de 80th pct) NOT scorer-validated; REM bouts 8.6 s ⇒ REM% provisional. Positive-control on a public scored dataset still owed.
-- **NEXT:** replicate on **C2 (7.0 h) and D2 (5.3 h)** → n=3 · all hardware effort to the **EEG channel `/1`** · still NO new surgeries · script `02-procedures/eeg-data-analysis/scripts/contact-state-2026-07-31/score_sleep_corrected.py`.
+- **NEXT:** replicate on **C2 (7.0 h) and D2 (5.3 h)** → n=3 · all hardware effort to the **EEG channel `/1`** · still NO new surgeries · script `eeg-emg-analysis/archive/vault-scripts/contact-state-2026-07-31/score_sleep_corrected.py`.
 
 
-🔴⭐ **2026-08-01 — 27.9h RUN (⚠️ NUMBERS BELOW USE THE WRONG CHANNEL MAP, see breakthrough block above) (`allego_1__uid0731-18-06-37`, 105GB, 8 mice) ANSWERS THE DUTY-CYCLE QUESTION.** Vault `05-experiments/completed/2026-08-01-28h-contact-duty-cycle-and-c1-negative.md`, journal `04-journal/2026-08/2026-08-01.md`, **CODE IN VAULT** `02-procedures/eeg-data-analysis/scripts/contact-state-2026-07-31/`.
+🔴⭐ **2026-08-01 — 27.9h RUN (⚠️ NUMBERS BELOW USE THE WRONG CHANNEL MAP, see breakthrough block above) (`allego_1__uid0731-18-06-37`, 105GB, 8 mice) ANSWERS THE DUTY-CYCLE QUESTION.** Vault `10-projects/rig-bringup/2026-08-01-28h-contact-duty-cycle-and-c1-negative.md`, journal `04-journal/2026-08/2026-08-01.md`, **CODE IN VAULT** `02-procedures/eeg-data-analysis/scripts/contact-state-2026-07-31/`.
 - ✅ **ENVIRONMENTAL CAUSES NOW CLOSED FOR GOOD.** 16 tied control pins over 27.9h: **median 2.8 µV, max 5.3, zero drift** across a full light/dark cycle. All 8 headstages identical (2.5-3.1). Do NOT revisit earth/room/splitter/grounding.
 - 🔴 **78.7 % OF ALL LEG-TIME WAS OPEN.** Parietal legs 0-4 % open, **frontal legs 62-100 %**, **ALL 16 EMG legs 88-100 %**.
 - 🔴 **TWO DISTINCT FAILURE MODES.** (A) **ONE-WAY IRREVERSIBLE DEGRADATION** — C1/front CONN 0→8.73h then OPEN 1149 min, never returns; D2/front same at 5.30h. Directional ⇒ progressive (drying/creep/fatigue), NOT bouncing contact. (B) **CHATTERING** — B1/front ≥372 flips, C2/front ≥165, B2/EMG+ ≥147.
@@ -72,7 +72,7 @@ metadata:
 - **NEXT:** inspect C1/D2 frontal connections physically while fresh · EMG bench investigation (16/16 open — this ALONE guarantees zero scoreable animals) · **1 MΩ resistor validation of Allego Zcheck STILL NOT DONE** · still NO new surgeries.
 
 
-🔴⭐ **SUPERSEDED IN PART 2026-07-31 — "FRONTAL ELECTRODES ARE OPEN ON EVERY MOUSE → MAKE NEW MICE" IS NO LONGER SUPPORTED. DO NOT SCHEDULE SURGERIES ON IT.** Vault: `05-experiments/completed/2026-07-31-contact-intermittency-no-wire-control.md`, method `02-procedures/electrode-connection-state-test.md`, journal `04-journal/2026-07/2026-07-31.md`.
+🔴⭐ **SUPERSEDED IN PART 2026-07-31 — "FRONTAL ELECTRODES ARE OPEN ON EVERY MOUSE → MAKE NEW MICE" IS NO LONGER SUPPORTED. DO NOT SCHEDULE SURGERIES ON IT.** Vault: `10-projects/rig-bringup/2026-07-31-contact-intermittency-no-wire-control.md`, method `20-areas/eeg-rig/electrode-connection-state-test.md`, journal `04-journal/2026-07/2026-07-31.md`.
 - **NEW CONTROL that changes the interpretation:** every port has amplifier channels with NO WIRE ATTACHED (sites 5-16 / 37-48). They read **Z median 5.233 MΩ, mains 2400 µV**. The 32 mouse legs read **Z median 5.329 MΩ, mains 2667 µV** = STATISTICALLY IDENTICAL. So 5-8 MΩ means **NOT CONNECTED**, not "high-impedance electrode". 22/32 legs OPEN.
 - **CONTACT STATE FLIPS SPONTANEOUSLY**: B2 parietal 5869→11 µV (**522×**) in **0.5 s** mid-recording, untouched; B/34 **102× in 11 min**; B1 frontal 1.717→0.027 MΩ (64×) in ~1 h. ⇒ **IMPEDANCE SNAPSHOTS ARE NOT A GO/NO-GO GATE.** Use variance across 3 back-to-back reads.
 - ⭐ **FIRST CLEAN UNCLIPPED EEG PAIR: C1.** Bipolar mains **11.7 µV**, **0.00 % clipping**, rms 65 µV, delta 37.9 % / theta 27.7 %, 1/f ratio 8.7. NOT a repeat of the 2026-07-15 clipping artifact — clip is exactly zero. **Survived direct provocation** (electrode, tether, slip-ring wires, slip-ring twist): envelope 2.2-30.3 µV, unmoved ⇒ a properly made connection IS robust.
@@ -95,7 +95,7 @@ metadata:
 - Still true: **every pre-foil archive shows NOTHING** — 72h Jul10 0/8 with circadian power 0.0% on every slot, 20h Jul13 0/8, 14h Jul02 0/2, 4.5h Jun29 0/1. But foil-vs-no-foil is now **untested for SLEEP** — foil's proven win is the single-ended 60Hz collapse, nothing more.
 - **THE WALL IS NOW RAIL SATURATION, NOT HUM.** Channels swinging ±6390µV are gain/offset/contact failures, not something notching can fix. Next bar = clean unrailed channels FIRST, then a ≥24h run with a real circadian rhythm.
 
-The EEG rig has produced **zero scoreable sleep data to date** (72h, 20h, and all 2026-07-15 runs). Full detail lives in the vault: `04-journal/2026-07/2026-07-15.md` (the decisive day), `07-decisions/2026-07-15-earth-and-sleep-council.md` (5-advisor council), `02-procedures/floating-cm-vs-contact-reconciliation.md`, `02-procedures/earthing-60hz-hum-fix.md`, `02-procedures/60hz-mains-hum-discovery.md`.
+The EEG rig has produced **zero scoreable sleep data to date** (72h, 20h, and all 2026-07-15 runs). Full detail lives in the vault: `04-journal/2026-07/2026-07-15.md` (the decisive day), `10-projects/rig-bringup/2026-07-15-earth-and-sleep-council.md` (5-advisor council), `20-areas/eeg-rig/floating-cm-vs-contact-reconciliation.md`, `20-areas/eeg-rig/earthing-60hz-hum-fix.md`, `20-areas/eeg-rig/60hz-mains-hum-discovery.md`.
 
 **Root-cause equation (council 2026-07-15, 3 advisors re-ran raw xdat):**
 `differential_60Hz ≈ common_mode_mains(floor) × electrode_Z_imbalance(binding variable)`
@@ -121,7 +121,7 @@ One mains source drives everything (PLV=1.00 across all slots). Bipolar montage 
 
 **Impedance TEST 1 (2026-07-15)**: port A contacts confirmed bad — A1 frontal 0.82MΩ good but parietal 7.14MΩ open (8.7× imbalance); A2 both EEG legs open (8.9/8.4MΩ). Grounded floor sites 0.04-0.2MΩ read fine → amp OK, electrodes bad. Does NOT clear the earth question (untestable while contacts are open).
 
-**OPEN EXPERIMENT (2026-07-22, NOT YET RUN)**: On C3322 board (RHD2216), B1's tether has an EMPTY slip-ring wire plugged into **pad 7 = a live amplifier input** (not GND). Far end open at slip ring → long floating antenna into amp → OpenEphys-admin's exact crosstalk warning. Fingerprint present: B1 parietal (0.206MΩ, BEST electrode on rig) reads 79-80µV post-foil = HIGHEST of any good leg (A2_P 12, D2_P 46, D1_F 89, B1_P 80). Test on B1: ground pad 7 (jumper empty pin→GND net, keeps 2-pin anchor), re-measure B1 parietal single-ended 60Hz. Drop 80→~10-40µV = crosstalk confirmed, fix every mouse. NOT a rescue (B1 frontal OPEN + EMG dead). Protocol: vault `02-procedures/experiment-pad7-floating-input-B1.md`.
+**OPEN EXPERIMENT (2026-07-22, NOT YET RUN)**: On C3322 board (RHD2216), B1's tether has an EMPTY slip-ring wire plugged into **pad 7 = a live amplifier input** (not GND). Far end open at slip ring → long floating antenna into amp → OpenEphys-admin's exact crosstalk warning. Fingerprint present: B1 parietal (0.206MΩ, BEST electrode on rig) reads 79-80µV post-foil = HIGHEST of any good leg (A2_P 12, D2_P 46, D1_F 89, B1_P 80). Test on B1: ground pad 7 (jumper empty pin→GND net, keeps 2-pin anchor), re-measure B1 parietal single-ended 60Hz. Drop 80→~10-40µV = crosstalk confirmed, fix every mouse. NOT a rescue (B1 frontal OPEN + EMG dead). Protocol: vault `10-projects/rig-bringup/experiment-pad7-floating-input-B1.md`.
 
 See also [[eeg-qc-tooling]].
 

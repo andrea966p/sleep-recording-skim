@@ -33,7 +33,7 @@ One folder per position: `.mat` (1.1 GB, full 1000 Hz) + `.txt` (3.1-3.5 GB, `ti
 limit (no h5py for v7.3). `t = (0:numel(S.eeg)-1)'/double(S.fs);`
 ✅ **Verified against source after export**: counts equal, channels byte-identical at spread points,
 text matches .mat, 142,825,729 lines = 1/sample + header. **Do this check — a partial write looks
-identical in `ls`.** Script `export/export_per_mouse.py`; procedure `02-procedures/eeg-data-analysis/per-mouse-export.md`.
+identical in `ls`.** Script `export/export_per_mouse.py`; procedure `20-areas/eeg-analysis/per-mouse-export.md`.
 ⚠️ **`stage2_split.py` needs `--all-verdicts`** or OPEN positions are silently skipped.
 
 ## TWO OPERATIONAL GOTCHAS

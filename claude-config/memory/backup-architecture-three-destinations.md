@@ -5,7 +5,7 @@ metadata:
   type: project
 ---
 
-Settled **2026-09-20**. Full page: `02-procedures/backup-architecture.md` — the
+Settled **2026-09-20**. Full page: `20-areas/data-storage/backup-architecture.md` — the
 "where does X live?" table lives there, not here.
 
 | Destination | Its ONE job |

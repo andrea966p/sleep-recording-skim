@@ -9,7 +9,7 @@ metadata:
 ---
 
 Built 2026-08-09. Replaces "run a script and squint" with one A4 page + JSON per
-animal-recording. **Start at vault `02-procedures/eeg-data-analysis/animal-card-and-verdict-ladder.md`.**
+animal-recording. **Start at vault `20-areas/eeg-analysis/animal-card-and-verdict-ladder.md`.**
 
 **Rungs:** 0 FILE · 1 IDENTITY · 2 CONNECTION · 3 SCOREABILITY · 4 ARCHITECTURE
 (always PROVISIONAL until a kappa) · 5 EXPORT. 🔑 **A rung is not evaluated if the
@@ -44,7 +44,7 @@ says so on every page; join a sheet with `--husbandry x.xlsx`.
 16/16. **Any movement is a bug, not an improvement.**
 
 Outputs: `cards/out/<cohort>/` (32 card JSON + PNG/PDF), cohort sheet, and
-generated report `05-experiments/completed/2026-08-09-HLB-cohort-report-generated.md`
+generated report `20-areas/eeg-analysis/2026-08-09-HLB-cohort-report-generated.md`
 (NO typed-in numbers — regenerate with `cards/report_cohort.py`).
 
 Related: [[eeg-analysis-pipeline]] · [[recording-usable-fraction-analysis]] ·

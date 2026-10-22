@@ -36,7 +36,7 @@ Ask for the real IDs and re-file. "Normal EEG/EMG mice"; cohort unknown ([[cohor
   `echo <basename> > neurosurveillance/deploy/logs/current-recording.txt && rm -f .../watchdog-lastsize.txt`
   ([[raw-data-archive-and-recording-automation]]).
 
-Vault: `05-experiments/active/2026-09-30-xdaq-noise-series.md` Entries 5-6, `06-references/impedance-sweep-register.md`.
+Vault: `10-projects/noise-hunt/2026-09-30-xdaq-noise-series.md` Entries 5-6, `20-areas/eeg-rig/impedance-sweep-register.md`.
 Related: [[xdaq-gen1-has-chassis-gnd]] · [[animal-card-verdict-ladder]] · [[feedback-never-strip-during-a-live-recording]]
 
 ## Mid-run (23:42)
@@ -89,7 +89,7 @@ Related: [[xdaq-gen1-has-chassis-gnd]] · [[animal-card-verdict-ladder]] · [[fe
 - ⚠️ Andrea's phone/watch clock ran ≥ 8 s ahead of e10 (17:35); never trust a reported second without a sync photo of Allego time + phone.
 - Pending: MARKERS.tsv to the NAS run folders (needs OK).
 
-## Full 24 h analysis on e10 (2026-10-02 22:40-23:59): vault `05-experiments/completed/2026-10-02-noise-series-4mice-24h-analysis`
+## Full 24 h analysis on e10 (2026-10-02 22:40-23:59): vault `10-projects/noise-hunt/2026-10-02-noise-series-4mice-24h-analysis`
 - Official stages 2-3 + ladder in `~/radix/noise-tests/2026-10-02/official-noise-tests/` (test mice kept OUT of ~/eeg-processed). **B1 light phase SCOREABLE (r 0.407)**; all else NO VERDICT. NAS info.json `qc` refreshed with the console's qc_info (backups in the NAS analysis folder).
 - NAS analysis folder `02_Data_Sleep/andrea/noise-tests/ANALYSIS_2026-10-01_to_10-02_4mice_24h/` (README, INDEX.csv, markers in each file's time base, cards, staging, scans, figures, scripts). Per-mouse CSVs were already there (console).
 - 🔴 **Scan counts made before 23:00 on 10-02 are WRONG** (allchip v3: port-local + noisy chip passed, IIR ringing): use `fullscans-v2/`. System-wide now = BOTH PORTS. Overnight 4 events (01:59:56, 07:27:42, 08:41:14 + lights-ON), light 13 (10 in the visit; 17:10:08, 18:12:11, 20:56:36).

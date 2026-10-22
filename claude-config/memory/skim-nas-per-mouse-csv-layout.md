@@ -28,7 +28,7 @@ Decided 2026-09-29, rebuild only:
 
 **State 2026-09-30:**
 - ✅ Rebuild DONE: 64 mouse folders, 291 GB. An independent info.json audit was clean.
-- ✅ The window re-check is done. Cards are in `eeg-emg-analysis/cards/out-windows/`; results in vault `05-experiments/completed/2026-09-30-scoreable-mice-on-the-24h-windows.md`.
+- ✅ The window re-check is done. Cards are in `eeg-emg-analysis/cards/out-windows/`; results in vault `10-projects/hlb-sod1/2026-09-30-scoreable-mice-on-the-24h-windows.md`.
 - Scoreable at both timepoints: **HLBWSD08, HLBWSL24, HLBSSL33**. HLBSSL31 and HLBSSL35 are scoreable at stage 3 only, because their recovery rung 2 is UNJUDGEABLE (contaminated floor). HLBWSL23 is borderline (baseline r 0.289). S-SD: none.
 - ⚠️ Stage 3 and the ladder must run under `/usr/bin/python3`: the recorder venv's NumPy 2 breaks the system SciPy.
 

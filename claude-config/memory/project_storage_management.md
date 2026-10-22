@@ -4,7 +4,7 @@ description: Storage monitoring, calculator, and EEG reserve cap — fully imple
 type: project
 ---
 
-Storage management system implemented Apr 2, 2026. Guide at `sleep-recording-skim/vault/02-procedures/installation/storage-management-implementation.md` (status: completed).
+Storage management system implemented Apr 2, 2026. Guide at `sleep-recording-skim/vault/20-areas/video-nvr/storage-management-implementation.md` (status: completed).
 
 **What was built:**
 - `backend/storage_monitor.py` — background thread, 30s disk poll, 5-min category cache TTL

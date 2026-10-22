@@ -9,7 +9,7 @@ metadata:
 ---
 
 **The 2026-08-06 morning session.** Write-up: vault
-`05-experiments/completed/2026-08-06-fleet-duty-cycle-census.md`.
+`10-projects/rig-bringup/2026-08-06-fleet-duty-cycle-census.md`.
 Files `~/Downloads/impedance measurments/2026-08-06/fleet-census/`.
 Scripts: scratchpad `fleet_census.py`, `census_stats.py`, `probe8.py`.
 
@@ -55,7 +55,7 @@ so A1's good EMG cannot be credited to splitter load.
 ⚠️ **C1 is NOT good** despite looking fine in a single sweep: 0/20 below 0.5 MΩ on both channels.
 
 ✅⭐⭐⭐ **TEARDOWN LADDER DONE 2026-08-06 — THE FALSE POSITIVES ARE THE AMPLIFIER, NOT OUR
-CABLING.** Protocol + results: vault `05-experiments/active/2026-08-06-unloaded-chain-interference.md`.
+CABLING.** Protocol + results: vault `10-projects/rig-bringup/2026-08-06-unloaded-chain-interference.md`.
 Rungs on the empty A2 slot: full chain 9/40 = 22.5% · minus tether 8/30 = 26.7% · **headstage
 alone 7/30 = 23.3%, best 0.107 MΩ**. **FLAT ⇒ tether, slip ring and splitter are all
 INNOCENT.** ⚠️ **Rung A0 (unplug headstage) is DEGENERATE — it REMOVES the channels**: port A
@@ -70,7 +70,7 @@ single low impedance reading is NOT evidence of contact, ever.**
 ⭐ **RECORDABLE ANIMALS (vs the 2240-sample floor, 0.5 MΩ): B1new ONLY** (EEG p=3e-05, EMG
 p=5e-15). **A1 and D2 = EMG only** (p=1e-16), EEG n.s. ⇒ **cannot stage sleep**. **B2, C1, C2,
 D1 = NOT recordable**, neither channel beats an unwired input. ⇒ **1 of 8 scoreable, 3 of 8 any
-signal.** Status page for the professor: `05-experiments/completed/2026-08-06-rig-status-for-professor.md`.
+signal.** Status page for the professor: `30-resources/meetings/2026-08-06-rig-status-for-professor.md`.
 
 📌 **NEXT — D2 + long custom tether this afternoon** (see [[tether-soldered-duty-cycle-result]]
 for protocol: stay on port D, first sweep ~4 min after swap, 40 sweeps, re-run `remap.py`).
@@ -87,7 +87,7 @@ numbered chronologically: `01-fleet-census-20sweeps` · `02-teardown-rungA2-ring
 Config string standardised to **`7mice-A2empty-4ports-64ch`** (seven mice — A2 is a cable).
 Every move logged in `../RENAME-MANIFEST.csv`. ⚠️ **Single sweeps must NEVER be pooled into a block
 folder** — that is why the arm C block was scoring 41 instead of 40.
-📄 **Professor handout = `05-experiments/completed/2026-08-06-rig-status-for-professor.md`; its
+📄 **Professor handout = `30-resources/meetings/2026-08-06-rig-status-for-professor.md`; its
 PART 0 is a paste-ready short version (no dashes, per [[feedback_no_dashes_in_emails]]).**
 Day log `04-journal/2026-08/2026-08-06.md`. Figures in `05-experiments/attachments/2026-08-06-*`:
 **figA** threshold histogram · **figB** duty cycle per animal vs floor · **figC** D2 arm C timeline ·

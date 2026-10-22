@@ -7,7 +7,7 @@ metadata:
 
 Set up **2026-09-20**. Third copy of `~/radix/data`: e10 NVMe is the working set,
 the SKIM NAS is local backup, S3 is off-site. Procedure page:
-`02-procedures/installation/radix-s3-archive.md`.
+`20-areas/data-storage/radix-s3-archive.md`.
 
 - Bucket **`skim-eeg-radix-archive-760396521414`**, `ap-northeast-2`, class
   **`GLACIER_IR`** (~$5.50/mo at 1.1 TB). Versioning + AES256 + public access blocked.

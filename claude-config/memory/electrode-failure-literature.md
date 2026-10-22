@@ -9,7 +9,7 @@ metadata:
 ---
 
 Papers in `~/Desktop/andrea/papers/`. Full evaluation: vault
-`06-references/electrode-failure-and-impedance-literature.md`.
+`30-resources/literature/electrode-failure-and-impedance-literature.md`.
 
 🔴⭐ **THE KEY NUMBER — Hsieh et al., *eNeuro* 11(2), 2024, N=11/group:
 "82% of the epidural 0.1 mm preparations lost at least one electrode within

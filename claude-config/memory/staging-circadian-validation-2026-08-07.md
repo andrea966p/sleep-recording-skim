@@ -5,10 +5,10 @@ metadata:
   type: project
 ---
 
-**Pre-registration + results:** vault `05-experiments/active/2026-08-07-staging-preregistration.md`.
-⭐⭐⭐ **THE SYNTHESIS PAGE TO ARGUE FROM: `07-decisions/2026-08-07-rig-specification-and-analysis-method.md`**
+**Pre-registration + results:** vault `10-projects/rig-bringup/2026-08-07-staging-preregistration.md`.
+⭐⭐⭐ **THE SYNTHESIS PAGE TO ARGUE FROM: `20-areas/eeg-analysis/2026-08-07-rig-specification-and-analysis-method.md`**
 — established claims with evidence-strength ratings, the rig spec, the analysis method, what may not
-be claimed. Professor update = **PART 0b** of `05-experiments/completed/2026-08-06-rig-status-for-professor.md`.
+be claimed. Professor update = **PART 0b** of `30-resources/meetings/2026-08-06-rig-status-for-professor.md`.
 
 ⭐⭐⭐ **THREE SCOREABLE ANIMAL-RECORDINGS** (project had two before, both 31 July). Ran
 `stage3_features.py /home/skimlab/eeg-processed/2026-08-06`.
@@ -52,7 +52,7 @@ animals · Part B interference test · restore cameras (blocks C1's ambiguous EM
 ✅ **STAGE 4 DONE — the standard-mouse pipeline is COMPLETE end to end**: 16 `.edf` + per-file
 `_SCORER-README.txt` in `/home/skimlab/eeg-processed/2026-08-06/`, deliberately **without automatic
 labels so scoring is blind**. `by-mouse/<name>/` now carries all 13 artefacts per animal.
-⭐ **PER-ANIMAL FORENSICS on the six failures: `03-troubleshooting/symptoms/per-animal-failure-signatures.md`**,
+⭐ **PER-ANIMAL FORENSICS on the six failures: `20-areas/eeg-rig/per-animal-failure-signatures.md`**,
 script `qc/per_animal_forensics.py`. **C2 = chewed tether CONFIRMED** (both channels intermediate hum,
 *quieter than the floor*, ~0% railing). **C1's EMG is genuinely connected (hum 75.9 µV)** = best
 salvage. **D1 r=0.74 and B2 r=0.50 between their OWN two channels = ONE shared-path fault each**

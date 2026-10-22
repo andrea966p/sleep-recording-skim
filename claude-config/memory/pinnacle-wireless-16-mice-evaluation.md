@@ -21,7 +21,7 @@ Andrea's answers: LFP target = **pons, DV 4.5 mm**; up to **16 mice** at once; *
 - Recommendation given: 4-mouse pilot before 16; 14 questions + email draft (to VIVO Solutions, Korean distributor) in the vault page.
 
 **Why:** a ~$71k purchase rests on these; the handover's numbers would have bought the wrong item.
-**How to apply:** before any Pinnacle order or answer, read `vault/06-references/2026-10-16-pinnacle-wireless-16-mice-evaluation.md`
+**How to apply:** before any Pinnacle order or answer, read `vault/10-projects/rig-expansion/2026-10-16-pinnacle-wireless-16-mice-evaluation.md`
 and check whether Pinnacle's written answers have been filed there. Script: `eeg-emg-analysis/qc/wireless_range_clip_check.py`.
 Related: [[unipolar-run-2026-10-15-ahyeon]] · [[project_hardware_sync_neuronexus_reply]]
 

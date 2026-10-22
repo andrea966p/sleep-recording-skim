@@ -9,7 +9,7 @@ metadata:
 ⭐⭐⭐ **`allego_1__uid0826-12-50-16`, 2026-08-26 12:50:15 → 2026-08-27 09:09 KST. 20.326 h,
 71.4 GiB, RUNG 0 PASS** (73,173,248 data = timestamp, remainders 0/0). 608 watchdog checks,
 **zero stalls**. Cohort `S-SD`. Features `~/eeg-processed/2026-08-26/feat_uid0826-12-50-16.npz`.
-Report: vault `05-experiments/completed/2026-08-27-B1-swap-baseline-20h-run.md`.
+Report: vault `10-projects/hlb-sod1/2026-08-27-B1-swap-baseline-20h-run.md`.
 ✅ Manifest `cohorts/S-SD.yaml` NOW UPDATED with all three runs and the B1 placement change.
 
 ## VERDICTS, per-chip floor, 7317 epochs

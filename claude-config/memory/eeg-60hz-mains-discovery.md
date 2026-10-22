@@ -15,4 +15,4 @@ Measured proof (all 8 mice, 4-port C3442): dominant freq = **59.9 Hz on every ch
 
 **Corrects earlier durable claim** in [[eeg-recording-state]]: "railing wired channel = OPEN input" is REFINED — a railing single channel was usually 60 Hz common-mode hum present even on good electrodes. Judge the **bipolar difference with a 60 Hz notch**, never the raw single channel.
 
-Full: vault `02-procedures/60hz-mains-hum-discovery.md` + journal `04-journal/2026-07/2026-07-05.md`. Also this session: 8-mouse map finalized (passthrough_64, select `/1-4`+`/33-36` per port, 2nd headstage = native +32). See [[eeg-recording-state]].
+Full: vault `20-areas/eeg-rig/60hz-mains-hum-discovery.md` + journal `04-journal/2026-07/2026-07-05.md`. Also this session: 8-mouse map finalized (passthrough_64, select `/1-4`+`/33-36` per port, 2nd headstage = native +32). See [[eeg-recording-state]].

@@ -8,7 +8,7 @@ metadata:
   modified: 2026-08-07T13:02:29.001Z
 ---
 
-**Section:** vault `05-experiments/active/2026-08-07-ecg-cohort-baseline.md`, final part.
+**Section:** vault `10-projects/rig-bringup/2026-08-07-ecg-cohort-baseline.md`, final part.
 Supersedes the short-in-the-tether reading in [[ecg-cohort-2026-08-07]].
 
 🔴⭐⭐⭐ **ROOT CAUSE (andrea's, 2026-08-07 22:00): THE CEREBELLUM GROUND WENT TO THE WRONG PIN.**

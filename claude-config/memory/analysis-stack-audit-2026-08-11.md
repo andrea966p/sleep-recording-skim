@@ -9,8 +9,8 @@ metadata:
 ---
 
 Audit 2026-08-10/11. Council reviewed the stack; I then checked its claims against
-code and data. **Evidence:** `05-experiments/completed/2026-08-11-analysis-stack-audit-measurements.md`.
-**Choices:** `07-decisions/2026-08-11-analysis-stack-consolidation.md`.
+code and data. **Evidence:** `20-areas/eeg-analysis/2026-08-11-analysis-stack-audit-measurements.md`.
+**Choices:** `20-areas/eeg-analysis/2026-08-11-analysis-stack-consolidation.md`.
 
 🔴🔴 **THE EMG GATE FAILS FOR EVERY EXPERIMENTAL ANIMAL**, full 16.39 h of
 `allego_0__uid0808-16-17-36` **including the dark phase** (previously unscored).

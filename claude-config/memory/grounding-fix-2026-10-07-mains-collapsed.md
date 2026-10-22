@@ -36,7 +36,7 @@ metadata:
 🔴 **The ground gate (`FLOOR_MIN_HUM_UV = 800`, `core/criteria.py`) now calls ALL 4 chips UNJUDGEABLE** (they were "grounded" on 10-02).
 Any new official QC will reject every mouse at rung 2 until the gate is replaced (audit C1). This is Andrea's decision. Raise it before the next real run.
 
-Figure: vault `05-experiments/attachments/2026-10-07-noise-figQ-grounding-fix-before-after.png` (`qc/electrician_before_after_2026_10_07.py`).
+Figure: vault `_attachments/2026-10-07-noise-figQ-grounding-fix-before-after.png` (`qc/electrician_before_after_2026_10_07.py`).
 Related: [[noise-hunt-verdict-2026-10-06]] · [[emg-mains-corrupts-sleep-staging]] · [[weak-chip-ground-hides-as-electrode-failure]] · [[recording-2026-10-01-noise-4mice-overnight]]
 
 **Confirmation run (started 2026-10-07 15:28:38 by Claude, Andrea's request):** console `ee0263bffeaa`, `allego_0__uid1007-15-28-38`,

@@ -24,6 +24,6 @@ Open: (1) EMG notch is 50 Hz but Korean mains is 60 Hz (60 Hz = 18 % NREM EMG po
 mice are scored; (2) batch_stage.py does not find CSVs yet; (3) PR #1 waits for the professor's review.
 Andrea's HLBSSL33 R pass: HLBSSL33_R_AN_261007-2034, last epoch 8441 (2026-10-08 evening; save lives only on the workstation, not in any repo).
 2026-10-08: SleepStager/ added to the workspace .gitignore (./skim push does `git add -A`, which would have embedded the nested repo).
-Patch copy for other machines: vault/01-infrastructure/sleepstager/sleepstager-local-changes.patch (against csv-reader 7feb666); refresh both copies after local edits.
+Patch copy for other machines: vault/_attachments/sleepstager-local-changes.patch (against csv-reader 7feb666); refresh both copies after local edits.
 Rules card must fit Andrea's window 2334x1362: 338 px available, card needs 320 (each line ~16 px); measure offscreen before adding lines. Details: vault 01-infrastructure/sleepstager/sleepstager-changes-and-backlog.md.
 Related: [[sleep-scoring-vault-pages]].

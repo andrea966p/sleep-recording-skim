@@ -128,7 +128,7 @@ tailnet left dead IPs hardcoded. Needs hands on the Synology. Last good backup
 **How to apply:** when working from the laptop, run rig and NVR commands with
 `ssh e10 '<cmd>'`, and `ssh e10 -t 'tmux new -As rig'` for anything long running.
 Before changing anything in Syncthing, take the tar snapshot first. Full guide is in
-the vault at `01-infrastructure/multi-machine-work-setup.md`. See also
+the vault at `20-areas/computing/multi-machine-work-setup.md`. See also
 [[nas-backup]] and [[feedback_verify_operational_details]].
 
 ⭐⭐ **2026-08-19: `claude-portable` now ALSO pulls at `SessionStart`** (`sync.sh --pull-only`), not
@@ -154,7 +154,7 @@ but NEVER UNSHARED** from these two. **Precondition for any bring-back: tar snap
 `~/vault-snapshots/`, add `/.git` to both `.stignore`s ON BOTH MACHINES (`.stignore` is per-device
 and never itself synced), consider staggered versioning.** Adding an ignore deletes nothing.
 User decision 2026-08-19: **document only, do not touch e10ubuntu** (a recording was live).
-Written up in the vault at the end of `01-infrastructure/multi-machine-work-setup.md`.
+Written up in the vault at the end of `20-areas/computing/multi-machine-work-setup.md`.
 ⚠️ **The laptop's Syncthing config is `~/.local/state/syncthing/config.xml`, web UI
 `127.0.0.1:8384`** — the `~/.config/syncthing` + port 8080 above is the **e10ubuntu** layout only.
 ✅ Verified same day: vault `state=idle needFiles=0 errors=0`, **498 local = 498 global on BOTH

@@ -24,11 +24,11 @@ Full detail for the EEG rig, extracted out of `MEMORY.md` on 2026-08-03 to keep 
 
 ## Channel law — SETTLED
 
-⭐⭐⭐ Vault `02-procedures/CANONICAL-allego-channel-selection.md` **IS THE ONE PAGE. If any other page disagrees, it's stale.**
+⭐⭐⭐ Vault `20-areas/allego/CANONICAL-allego-channel-selection.md` **IS THE ONE PAGE. If any other page disagrees, it's stale.**
 
 **SELECT `/1`,`/2`,`/33`,`/34` PER PORT = 16 ch for 8 mice.** Mouse wired to C3410 pads 0,1,2,3 + GND only. **PADS PAIR INTO AMPS:** pad0(`in0+`)=EEG frontal-L + pad1(`in0−`)=EEG parietal-L ⇒ amp0 = `/1` = **EEG**; pad2(`in1+`)=EMG-L + pad3(`in1−`)=EMG-R ⇒ amp1 = `/2` = **EMG**. Both ALREADY bipolar — chip subtracts before the ADC. 2nd mouse at `/33`,`/34` because the C3442 splitter puts 2 chips/port × 32 slots. Datasheet: "16 amplifiers … in0+, in0–, in1+, in1–"; "32 amplifiers … **only ch 0-15 active in the RHD2216**". **PROVEN 3 WAYS 2026-08-03** (datasheet · recorded `sensors_by_port` · measured all 64 slots on all 4 ports). ✅ `pipeline/derive_layout()` already correct.
 
-🔴 **Allego map: `usrdef_sleep64` and built-in `Passthrough 64` are BYTE-EQUIVALENT — EITHER is correct** (the old "do NOT pick any other" warning meant the ARCHIVED repacking maps in `~/radix/devices/_archive_old_maps/`). Passthrough = site=native+1 → Mouse A ch 1-4, Mouse B 33-36. **No splitter (32 ch/port) = `Passthrough 32` + `Default 4x8`, select `/1-/4` only** (2nd mouse lands on natives 0-3, NOT /33-/36). Allego does NOT auto-pick a probe for passthrough. SOP: vault `02-procedures/allego-electrode-setup-sleep64.md`.
+🔴 **Allego map: `usrdef_sleep64` and built-in `Passthrough 64` are BYTE-EQUIVALENT — EITHER is correct** (the old "do NOT pick any other" warning meant the ARCHIVED repacking maps in `~/radix/devices/_archive_old_maps/`). Passthrough = site=native+1 → Mouse A ch 1-4, Mouse B 33-36. **No splitter (32 ch/port) = `Passthrough 32` + `Default 4x8`, select `/1-/4` only** (2nd mouse lands on natives 0-3, NOT /33-/36). Allego does NOT auto-pick a probe for passthrough. SOP: vault `20-areas/allego/allego-electrode-setup-sleep64.md`.
 
 ## 🔑 The three channel signatures (measured)
 
@@ -63,7 +63,7 @@ RHD2216 bipolar; chip CAN test either pin (datasheet Reg 5 `Zcheck pol sel`) but
 ## Run results
 
 - ✅ **RUN 1 (07-31, 27.9 h `allego_1__uid0731-18-06-37`):** C1 **8.73 h**, single **8.1-hour unbroken block**, r@1min +0.744 / @5min +0.583 / @10min +0.435, physiology PASS. C2 also qualifies (1.69 h in-blocks, r +0.532, phys PASS) = **genuine n=2**.
-- ✅ **RUN 2 (08-02, 21.74 h `allego_2__uid0802-01-46-57`): 0/8 scoreable, 8/8 OPEN.** Pre-reg **4 HIT / 3 MISS / 1 VOID** — impedance predicts **CLASS not YIELD**. Report `05-experiments/completed/2026-08-03-data-quality-report-for-professor.md`.
+- ✅ **RUN 2 (08-02, 21.74 h `allego_2__uid0802-01-46-57`): 0/8 scoreable, 8/8 OPEN.** Pre-reg **4 HIT / 3 MISS / 1 VOID** — impedance predicts **CLASS not YIELD**. Report `30-resources/meetings/2026-08-03-data-quality-report-for-professor.md`.
 - ⭐ **FULL RESCORE OF EVERY RECORDING (2026-08-03): only ONE recording has real sleep.** 8 recordings / 41 animal-recordings / ~174 animal-hours → **~10.4 scoreable mouse-hours, ALL from 2026-07-31.** D2 correctly REJECTED (r=0.250 + phys FAIL). **72 h run and 20 h run = ZERO.** ⚠️ **6 "recoveries" found with the buggy metric were ALL FALSE** and discarded.
 - ✅ **TIMELINE: surgery 21-23 Jul, tethered 30 Jul → Run 1 = day 8-10 post-op / ~28 h tethered.** BOTH RUNS WERE COMMISSIONING TESTS.
 

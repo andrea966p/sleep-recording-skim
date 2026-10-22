@@ -67,7 +67,7 @@ on `e10ubuntu` at `/home/skimlab/radix/data/allego_2__uid0902-13-00-28_data.xdat
 Companions `_timestamp.xdat` (578 MB) and `.xdat.json` (metadata). **Not yet scored, not moved to
 NAS** — this is unscored raw data, not a completed analysis.
 
-Log: vault `05-experiments/completed/2026-09-02-S-SD-recovery-sleep.md` (moved from `active/`
+Log: vault `10-projects/hlb-sod1/2026-09-02-S-SD-recovery-sleep.md` (moved from `active/`
 2026-09-14) and `04-journal/2026-09/2026-09-01.md`.
 
 ## From the memory index, trimmed there 2026-09-11 (kept here verbatim)

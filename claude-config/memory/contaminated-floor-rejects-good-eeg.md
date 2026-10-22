@@ -60,7 +60,7 @@ slope floor is never used.
 🔴 **Stage 3 does not check the EEG is connected** — it gates on stage 1's
 `epoch_ok`, not rung 2. It can score sleep from a dead EEG if the EMG is alive.
 
-Vault: `03-troubleshooting/symptoms/contaminated-floor-rejects-good-eeg.md`.
+Vault: `20-areas/eeg-analysis/contaminated-floor-rejects-good-eeg.md`.
 Related: [[weak-chip-ground-hides-as-electrode-failure]],
 [[emg-gate-passes-and-floor-bug]], [[animal-card-verdict-ladder]].
 

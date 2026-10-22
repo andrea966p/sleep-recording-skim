@@ -9,7 +9,7 @@ metadata:
 ---
 
 **Pre-registration** (written before the data existed): vault
-`05-experiments/active/2026-08-06-recording-data-quality-preregistration.md`.
+`10-projects/rig-bringup/2026-08-06-recording-data-quality-preregistration.md`.
 ⛔ **THAT SCRIPT IS DELETED (2026-08-11).** It was one of three independent copies
 of this criterion. The ONLY engine is now **`core/criteria.py`**, reached through
 `cards/ladder.py`. See [[analysis-stack-audit-2026-08-11]].

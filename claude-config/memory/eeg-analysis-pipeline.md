@@ -36,7 +36,7 @@ perception — same class as the persistence bug); (3) `_SCORER-README.txt` list
 the exact windows worth scoring.**
 
 📄 **Report §6.5 = the step-by-step raw→scorable procedure** (what/why/code/source
-per step) in `05-experiments/completed/2026-08-03-data-quality-report-for-professor.md`.
+per step) in `30-resources/meetings/2026-08-03-data-quality-report-for-professor.md`.
 Report §7 (old scripts) is banner-flagged SUPERSEDED.
 
 ⭐ **THRESHOLDS RE-DERIVED FROM DATA 2026-08-03** (1,137,955 pooled epochs,
@@ -76,7 +76,7 @@ The `uidMMDD-HH-MM-SS` filename token is ALREADY LOCAL. Mixing them puts a
 recording in the wrong day and shifts every ZT by 9 h. See [[eeg-60hz-saga]],
 [[eeg-analysis-codebase]].
 
-📄 **HAND THIS TO THE PROFESSOR: `02-procedures/eeg-data-analysis/analysis-methods-and-justification.md`**
+📄 **HAND THIS TO THE PROFESSOR: `20-areas/eeg-analysis/analysis-methods-and-justification.md`**
 — standalone, steps 0-6, each with what/why/code/published-source, opening with a
 **standard-vs-ours table**. Report §6.5 is the short version and points at it.
 

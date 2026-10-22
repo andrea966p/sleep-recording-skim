@@ -21,7 +21,7 @@ Post-processed two recordings on 2026-07-14. Both UNUSABLE, NOT scoreable, same 
 
 **New tool:** `02-procedures/eeg-data-analysis/scripts/multimouse_scan.py` — memmap-based (files too big for 30GB RAM: 272GB/75GB), scans ALL mouse-slots across huge multi-headstage files, comb-notches 60Hz+harmonics, classifies DEAD/HUM/MARGINAL/USABLE, emits per-slot overview PNG (PSD + theta/delta over time + EMG). Layouts `four` and `eight`. Use this instead of `qc_report.py` for multi-headstage or oversized files (qc_report loads whole file → OOM, assumes single_mouse map).
 
-Report: vault `04-journal/2026-07/2026-07-14.md`. PNGs: `02-procedures/attachments/qc-2026-07-14/`. **Blocker: apply + live-test earthing fix (`02-procedures/earthing-60hz-hum-fix.md`) before ANY next recording.**
+Report: vault `04-journal/2026-07/2026-07-14.md`. PNGs: `02-procedures/attachments/qc-2026-07-14/`. **Blocker: apply + live-test earthing fix (`20-areas/eeg-rig/earthing-60hz-hum-fix.md`) before ANY next recording.**
 
 **FIX CORRECTED same day (2026-07-14):** earth the XDAQ, NOT the animal. My board-GND→PC-case advice was WRONG. Per Intan + KonteX (XDAQ maker): animal grounded ONLY via headstage leads, never to external earth/grounded metal. Earth enters at XDAQ Sys GND (via its own 3-prong AC/DC adapter → Protective Earth); bond Sys GND↔Chassis GND; star-ground Faraday cage/rack/commutator to that one point; short unused headstage chans to headstage GND. Likely root cause = XDAQ on 2-prong isolated brick or USB-only → Sys GND never earthed. Mini-PC (ASUS NUC14RVH-B, 2-prong) irrelevant to earth path. Live-test = clip XDAQ Sys GND to earth, watch hum collapse.
 

@@ -7,7 +7,7 @@ metadata:
   originSessionId: 0b64ed9b-5689-4074-8603-f37b0836d899
 ---
 
-The daemon's startup guard against Frigate's `record.enabled=true` reassertion has a regression. Per `01-infrastructure/session-daemon/architecture.md`, the daemon should:
+The daemon's startup guard against Frigate's `record.enabled=true` reassertion has a regression. Per `20-areas/video-nvr/session-daemon/architecture.md`, the daemon should:
 1. Wait 10 seconds for Frigate to finish reasserting `ON` from config on startup
 2. Drain stale `_expected_states`
 3. Use `_last_known_state` check to suppress duplicate ON states

@@ -15,4 +15,4 @@ Came up 2026-07-14: user wants to start their 4 mice Monday 9am (48h) while anot
 
 **Open TODO (real fix):** bench-test whether SDK's `start_recording(port)`/`stop_recording(port)` (see [[radiens-api-reference]] in vault) actually isolates one port's recording — untested, daemon has only ever polled state not called these. Ask NeuroNexus/KonteX directly. Or get a second physical XDAQ/acquisition box for true independence (vault already flags this as the fallback: "additional Radiens instances and daemon configuration would be required").
 
-Full writeup + TODO checklist: vault `02-procedures/multi-user-independent-recording-schedules.md`.
+Full writeup + TODO checklist: vault `20-areas/recording-console/multi-user-independent-recording-schedules.md`.

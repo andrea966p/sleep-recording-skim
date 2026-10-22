@@ -23,7 +23,7 @@ Verified by inspecting the installed binary, not by reading docs: `~/.config/ope
 2. **Patch the plugin** (open source): run the measurement pass twice, call `setZcheckPolarity(ZcheckNegativeInput)` before the second, emit a 2nd value per amp. Code is trivial; cost is owning an unofficial plugin on a live production rig across upgrades.
 3. **Ask Kontex** — small, concrete, well-specified request against a plugin they maintain, open thread already exists. Cheapest *supported* fix.
 
-Written up in vault `06-references/impedance-sweep-register.md` (last section, with the call-site table and a paper-ready sentence). See [[eeg-rig-current-state]], [[electrode-failure-literature]].
+Written up in vault `20-areas/eeg-rig/impedance-sweep-register.md` (last section, with the call-site table and a paper-ready sentence). See [[eeg-rig-current-state]], [[electrode-failure-literature]].
 
 
 ## From the memory index, trimmed there 2026-10-06 (kept here verbatim)

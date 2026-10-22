@@ -8,7 +8,7 @@ metadata:
   modified: 2026-08-07T10:17:39.667Z
 ---
 
-**Section:** vault `05-experiments/active/2026-08-07-ecg-cohort-baseline.md`.
+**Section:** vault `10-projects/rig-bringup/2026-08-07-ecg-cohort-baseline.md`.
 Journal `04-journal/2026-08/2026-08-07.md` (evening half). Sweeps
 `~/Downloads/impedance measurments/2026-08-07/01-ecg-cohort-baseline-30sweeps/`,
 config string `8slots-ECG-Actrl-4ports-64ch`.

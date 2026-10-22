@@ -10,7 +10,7 @@ metadata:
 
 🔑 **ANIMAL ROOM LIGHT CYCLE (recorded 2026-08-03): lights ON 09:00, OFF 21:00
 KST. 12:12 LD. ZT0 = 09:00 KST.** Light phase = 09:00-21:00. Was blank in the
-vault from 2026-08-01 to 2026-08-03. In `00-config/production-values.md` and
+vault from 2026-08-01 to 2026-08-03. In `20-areas/computing/production-values.md` and
 `pipeline/qc_thresholds.py`.
 
 ⚠️ **Allego `start_time` in `*.xdat.json` is UTC; the `uidMMDD-HH-MM-SS`

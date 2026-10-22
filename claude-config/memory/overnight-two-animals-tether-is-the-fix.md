@@ -8,9 +8,9 @@ metadata:
   modified: 2026-08-07T07:55:39.252Z
 ---
 
-**Write-up:** vault `05-experiments/completed/2026-08-07-overnight-recording-two-animals-work.md`.
+**Write-up:** vault `10-projects/rig-bringup/2026-08-07-overnight-recording-two-animals-work.md`.
 Journal `04-journal/2026-08/2026-08-07.md`. Retraction logged in
-`05-experiments/active/2026-08-05-tether-comparison.md` §14.
+`10-projects/rig-bringup/2026-08-05-tether-comparison.md` §14.
 Recording **`allego_1__uid0806-16-57-38`**, 2026-08-06 16:57:38 → 2026-08-07 16:37,
 **23.66 h, 89.3 GB, 8517 epochs**, full light/dark cycle.
 
@@ -52,7 +52,7 @@ cycle; light-phase sleep should approach the literature ~70%, a threshold-indepe
 whole pipeline; (2) **fit the new chain to the remaining animals**; (3) export B1 + D2 to EDF+ for
 manual scoring; (4) C1's EMG still needs video.
 
-📊 Figures `05-experiments/attachments/2026-08-07-figD-D2-before-after.png` (D2 spectrum before =
+📊 Figures `_attachments/2026-08-07-figD-D2-before-after.png` (D2 spectrum before =
 flat plateau, after = falls steeply and tracks B1) and `...-figE-usable-timeline.png` (usable epochs
 across 23.66 h with light/dark shading).
 

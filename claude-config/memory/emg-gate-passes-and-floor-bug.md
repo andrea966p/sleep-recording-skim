@@ -44,7 +44,7 @@ LOUDER than its own chip floor).
 about "A1, which has no ground at all" is STALE TEXT about a DIFFERENT cohort.
 
 Artefacts + scripts: `eeg-emg-analysis/qc/score_2026-08-21/`. Report:
-vault `05-experiments/completed/2026-08-21-39h-run-score.md`.
+vault `10-projects/hlb-sod1/2026-08-21-39h-run-score.md`.
 Related: [[animal-card-verdict-ladder]] · [[recording-2026-08-18-eight-new-mice]]
 
 
@@ -99,7 +99,7 @@ reasons (B1 floating chip, B2 open EMG 427 µV, D1 degraded mid-run). Fixing the
 floor refinement.** 🛑 **User does NOT want to write a methods paper** — the goal is only to avoid
 wasting time and getting wrong answers.
 ⚠️ bioRxiv API has NO keyword search (category+date only) ⇒ sampled via web search, NOT a novelty search.
-Vault: `06-references/is-our-qc-approach-sound.md`.
+Vault: `20-areas/eeg-analysis/is-our-qc-approach-sound.md`.
 
 
 ## From the memory index, trimmed there 2026-10-06 (kept here verbatim)

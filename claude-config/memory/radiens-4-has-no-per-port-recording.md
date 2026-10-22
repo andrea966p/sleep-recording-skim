@@ -5,7 +5,7 @@ metadata:
   type: reference
 ---
 
-`vault/02-procedures/multi-user-independent-recording-schedules.md` records
+`vault/20-areas/recording-console/multi-user-independent-recording-schedules.md` records
 `start_recording(*, port=...)` / `stop_recording(*, port=...)` and
 `RecordingConfig.split_files_by_port` as "DOC-VERIFIED against raw API HTML" (2026-07-24).
 

@@ -8,7 +8,7 @@ metadata:
   modified: 2026-08-04T09:58:13.418Z
 ---
 
-**The 2026-08-04 session. Seven sweeps in 23 minutes.** Full write-up: vault `05-experiments/completed/2026-08-04-movement-dependent-contact.md`. Timeline + file names: `06-references/impedance-sweep-register.md`. Files: `~/Downloads/impedance measurments/2026-08-04/`, all named `imp_2026-08-04_HHMM_<config>_<context>.csv`.
+**The 2026-08-04 session. Seven sweeps in 23 minutes.** Full write-up: vault `10-projects/rig-bringup/2026-08-04-movement-dependent-contact.md`. Timeline + file names: `20-areas/eeg-rig/impedance-sweep-register.md`. Files: `~/Downloads/impedance measurments/2026-08-04/`, all named `imp_2026-08-04_HHMM_<config>_<context>.csv`.
 
 ✅✅ **THE ELECTRODES AND IMPLANTS ARE GOOD. This is the solid part.**
 - **B1 EEG = 0.052 MΩ @ 179.7°** (16:47, alone port B, mouse still). Best ever on this rig, EEG or EMG, and inside the published 10-50 kΩ band. A degraded/failed/badly-implanted electrode CANNOT produce that.

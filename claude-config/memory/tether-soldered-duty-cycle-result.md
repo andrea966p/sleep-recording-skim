@@ -32,7 +32,7 @@ sweep, the 40-sweep block, the twist sweep) ⇒ a folder glob scores **41 not 40
 before any future analysis.
 🛑 **Do NOT revert D2 under anaesthesia same-day.**
 
-**The 2026-08-05 session.** Write-up: vault `05-experiments/active/2026-08-05-tether-comparison.md`.
+**The 2026-08-05 session.** Write-up: vault `10-projects/rig-bringup/2026-08-05-tether-comparison.md`.
 Journal `04-journal/2026-08/2026-08-05.md`. Files `~/Downloads/impedance measurments/2026-08-05/`.
 
 ⭐⭐⭐ **THE RESULT.** B1, within-animal, 20 sweeps per arm, duty cycle = fraction below 2 MΩ:

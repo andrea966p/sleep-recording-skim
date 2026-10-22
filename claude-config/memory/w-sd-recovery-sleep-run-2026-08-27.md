@@ -10,7 +10,7 @@ metadata:
 RUNG 0 PASS** (72,435,328 data = timestamp, remainders 0/0), zero watchdog stalls. Cohort `W-SD`.
 **RECOVERY SLEEP after 7 days of CSD, sampled straight afterwards ⇒ THE TIMEPOINT CANNOT BE
 REPEATED.** Features `~/eeg-processed/2026-08-27/feat_uid0827-12-58-32.npz`. Report:
-`05-experiments/completed/2026-08-27-W-SD-recovery-sleep.md`. Manifest `cohorts/W-SD.yaml`.
+`10-projects/hlb-sod1/2026-08-27-W-SD-recovery-sleep.md`. Manifest `cohorts/W-SD.yaml`.
 
 ✅ **POSITION MAP CONFIRMED BY THE USER 2026-08-28 — it IS the registry `XDAQ position` map:**
 **A1 CSD01 · A2 CSD02 · B1 CSD09 · B2 CSD04 · C1 CSD03 · C2 CSD06 · D1 CSD07 · D2 CSD08**;

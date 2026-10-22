@@ -8,7 +8,7 @@ metadata:
   modified: 2026-07-28T01:05:27.763Z
 ---
 
-Vault `07-decisions/2026-07-24-daq-32-mouse-final-comparison.md` (VAULT-ONLY, Kontex quote confidentiality — never publish as Artifact). Supersedes 2-way 16-mouse `daq-ecosystem-comparison-xdaq-vs-openephys.md`.
+Vault `10-projects/rig-expansion/2026-07-24-daq-32-mouse-final-comparison.md` (VAULT-ONLY, Kontex quote confidentiality — never publish as Artifact). Supersedes 2-way 16-mouse `daq-ecosystem-comparison-xdaq-vs-openephys.md`.
 
 **🔴 REVISED 2026-07-28 — Andrea reset 4 ground rules:** (1) **NO Allego license** — drive ALL three ecosystems with the **free Open Ephys GUI** (Kontex OFFICIALLY supports XDAQ Gen1+Gen2 under OE via Plugin Installer, kontex.io/software). (2) Price the **COMPLETE rig** (headstages, cables, commutators, adapters, PC, storage), not just the box. (3) PC-per-XDAQ question answered. (4) **Our code/daemon EXCLUDED from evaluation** — rig only, code can be rewritten.
 

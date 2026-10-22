@@ -8,7 +8,7 @@ metadata:
   modified: 2026-08-04T09:58:35.260Z
 ---
 
-**DMM continuity test executed 2026-08-04. Whole fleet PASSED every section.** Procedure: vault `02-procedures/dmm-eeg-path-continuity-test.md`. Results written into `04-journal/2026-08/2026-08-04.md` §Results.
+**DMM continuity test executed 2026-08-04. Whole fleet PASSED every section.** Procedure: vault `20-areas/eeg-rig/dmm-eeg-path-continuity-test.md`. Results written into `04-journal/2026-08/2026-08-04.md` §Results.
 
 Per animal (A1 and D1 in full detail, then B1 and all remaining boards):
 - §4.2 mapping — every pad beeps clean to its own slip-ring pin, nothing else beeps

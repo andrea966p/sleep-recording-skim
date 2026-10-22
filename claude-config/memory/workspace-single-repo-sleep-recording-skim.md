@@ -49,7 +49,7 @@ without a single visible symptom for nineteen days.
 
 **How to apply:** on any machine, `./skim status` before starting and `./skim push "msg"`
 before stopping. Full write-up in the vault at
-`01-infrastructure/multi-machine-work-setup.md`, final section. See also
+`20-areas/computing/multi-machine-work-setup.md`, final section. See also
 [[multi-machine-setup-and-vault-safety]] (the superseded Syncthing-era setup).
 
 ✅ **THE THINKPAD IS LIVE ON THE NEW REPO, 2026-09-10** — cloned (140.93 MiB, 1737 files),

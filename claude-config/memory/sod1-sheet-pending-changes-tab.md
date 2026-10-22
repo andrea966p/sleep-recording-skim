@@ -21,4 +21,4 @@ Sheet `HLB_SOD1_Intake_Monitoring_SDSLNANO` (Drive id 1jgQpYiUGzEwFpjAhy8SvCamGo
 🔴 **Andrea (2026-10-19): copy-pasting TSV files by hand is NOT an acceptable workflow; fix it (planned 10-20).** Until then give ONE message to paste into the Claude for Sheets chat that carries the full request/verdict text, never files to paste into cells.
 
 **Why:** the sheet's shared/array formulas die on xlsx re-upload, and the old Desktop handover files left no trail of what was changed.
-**How to apply:** for any sheet change follow `vault/02-procedures/sod1-sheet-change-log-workflow.md`: export first, exact tab + range + header name, expected result and downstream cells, rationale with decision date. Related: [[nanotag-sod1-hlbnsl]].
+**How to apply:** for any sheet change follow `vault/10-projects/hlb-sod1/sod1-sheet-change-log-workflow.md`: export first, exact tab + range + header name, expected result and downstream cells, rationale with decision date. Related: [[nanotag-sod1-hlbnsl]].

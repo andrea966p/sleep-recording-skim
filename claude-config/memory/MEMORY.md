@@ -36,7 +36,7 @@
 - **[First hypnograms](hypnograms-and-per-mouse-export.md).** `r@1min` decides, bar 0.30. 🛑 Never report REM %. `/usr/bin/python3`, `setsid` not `nohup`.
 - [Usable fraction vs an in-file control](recording-usable-fraction-analysis.md): XDAT float32, 262 interleaved ch, µV; hardware band-pass 1.10-475 Hz.
 - [Analysis pipeline](eeg-analysis-pipeline.md) · [Scoring bug #2](eeg-analysis-codebase.md) · [QC tooling](eeg-qc-tooling.md) · [First bring-up](project_first_headstage_bringup.md) · [Light schedule 09:00 ON / 21:00 OFF, ZT0 = 09:00](light-schedule-and-circadian-validation.md)
-- **Artefact policy:** `02-procedures/eeg-artefact-and-railing-rejection-policy.md`. Reject at EPOCH level, never repair.
+- **Artefact policy:** `20-areas/eeg-analysis/eeg-artefact-and-railing-rejection-policy.md`. Reject at EPOCH level, never repair.
 
 ## EEG rig — runs
 - 🧪⭐ **[ahyeon's 3 unipolar mice, 10-15 09:00 → 10-16 15:00 (prep 10-14)](unipolar-run-2026-10-15-ahyeon.md). NEWEST.** 🔴 Old 08-05 unipolar map was a TYPO; correct /18 emg_l /19 lfp_tgt /20 lfp_ref /21 emg_r /22 eeg_p /23 eeg_f. GPIO strip fix, watchdog auto-arm, full 30 h CSVs. ✅ 10-min scheduled rehearsal PASSED end to end. 🔴 **10-15 run LOST to hardware** (B off the SPI scan 23:54 the night before, C reference lost); console did not re-check ports at start. 🔴 `get_signals()` live feed carries Allego VISUALIZATION filters.
@@ -59,15 +59,15 @@
 - [ECG cohort (08-07)](ecg-cohort-2026-08-07.md): 🔴 `set_recording_config()` broken; `get_status().recording.path` lies, always `ls`.
 - [3 scoreable + circadian check](staging-circadian-validation-2026-08-07.md) (superseded by the A2 48 h) · [Full EEG rig state](eeg-rig-current-state.md) (electrode-failure framing superseded)
 - Only one old recording has real sleep: 2026-07-31 C1 8.73 h (r@1min 0.744); C2 qualifies ⇒ n = 2.
-- Channel selection: `02-procedures/CANONICAL-allego-channel-selection.md` (OLD 2-ch map). **8-mouse montage = A/1, A/2, A/33, A/34 per port.**
+- Channel selection: `20-areas/allego/CANONICAL-allego-channel-selection.md` (OLD 2-ch map). **8-mouse montage = A/1, A/2, A/33, A/34 per port.**
 - Room stripped 2026-08-04: rack = wifi router + ASUS PC + XDAQ + white-noise gen. ⚠️ ALL CAMERAS REMOVED ⇒ NO VIDEO.
-- 📤 Kontex batch 08-04 (Q12 impedance polarity, Q13 spike-sorter filters): `01-infrastructure/vendor-correspondence/2026-07-29-kontex-kc-call-prep-rig-finalization.md`.
+- 📤 Kontex batch 08-04 (Q12 impedance polarity, Q13 spike-sorter filters): `30-resources/vendors/2026-07-29-kontex-kc-call-prep-rig-finalization.md`.
 - Hardware-video-sync gate = `DO 03` (DB25 pin 22) Gated mode + Allego BNC Breakout toggle ON. [[project_hardware_sync_neuronexus_reply]]
 - ✅ **[Gen-1 XDAQ HAS a chassis GND, wired to building earth (09-30)](xdaq-gen1-has-chassis-gnd.md).** The 07-16 claim was wrong. Noise tests → `~/radix/noise-tests/`.
 
 ## Rig expansion (8 → 32 mice)
 - 🛒 **[Pinnacle wireless, 16 mice, pons LFP (10-16)](pinnacle-wireless-16-mice-evaluation.md).** Handover part numbers WRONG: system = 8200-K9-SL, K10 = accessory kit. ±465 µV fixed, no TTL, Windows only, 512 Hz for 72 h. Pilot 4 first. 🔁 10-19: custom 4-ch 8474-HR-SE4-C + our own headmount PCB (pins at stereotaxic sites, 6.4 x 7.8 mm). 🖥️ 10-20: one custom PC, B550-PLUS + 4 x1 USB cards = 16 dongles; 2nd PC if unstable.
-- **Start at `07-decisions/RIG-EXPANSION-HUB.md`.** [DAQ corrections](daq-research-corrections-2026-07-28.md) (Core has no isolation, PortExp mandatory, don't buy Allego, Intan via White Mountain) · [XDAQ channel law](xdaq-channel-law-and-32-mouse-wiring.md) (animals = ch ÷ 64, order ONE-R1024, 32 mice = 2 boxes) · [DAQ comparison](daq-ecosystem-comparison.md) (confidential) · [16→32 device](acquisition-device-16-32-mice.md) · [Open Ephys](openephys-scale-up-option.md). Kontex quote 262024 = $10,002.89.
+- **Start at `10-projects/rig-expansion/_rig-expansion-hub.md`.** [DAQ corrections](daq-research-corrections-2026-07-28.md) (Core has no isolation, PortExp mandatory, don't buy Allego, Intan via White Mountain) · [XDAQ channel law](xdaq-channel-law-and-32-mouse-wiring.md) (animals = ch ÷ 64, order ONE-R1024, 32 mice = 2 boxes) · [DAQ comparison](daq-ecosystem-comparison.md) (confidential) · [16→32 device](acquisition-device-16-32-mice.md) · [Open Ephys](openephys-scale-up-option.md). Kontex quote 262024 = $10,002.89.
 
 ## Nanotag studies (SOD1, no EEG)
 - 🧪 **[Nanotag SOD1 study HLBNSL (10-05)](nanotag-sod1-hlbnsl.md).** Run 1 + 2 merged; no SOD1 sleep effect. 🔴 Mouse = header tag ID; `.nta` mtime = save time. ⚠️ No off-site copy.
@@ -112,9 +112,9 @@
 - [Settings sync gap](project_settings_sync.md) (deferred) · [Camera ROI framing](camera-roi-framing.md) · [Multi-user schedules](project_multiuser_recording_schedules.md) (per-port claim retracted)
 
 ## Vault navigation
-- **EEG analysis = 4 pages:** `_eeg-analysis-hub.md` (start) · `pipeline/README.md` · `analysis-methods-and-justification.md` · `06-references/eeg-analysis-glossary.md`; symptoms `03-troubleshooting/symptoms/eeg-analysis-problems.md`.
+- **EEG analysis = 4 pages:** `_eeg-analysis-hub.md` (start) · `pipeline/README.md` · `analysis-methods-and-justification.md` · `20-areas/eeg-analysis/eeg-analysis-glossary.md`; symptoms `20-areas/eeg-analysis/eeg-analysis-problems.md`.
 - **`07-decisions/` = choices only**; results → `05-experiments/completed/`. [[reference-vault-07-decisions]]
-- `02-procedures/allego-electrode-setup-sleep64.md` (electrode SOP) · `signal-mapping-guide.md` · `06-references/live-signal-quality-terms.md` (live numbers) · `06-references/radiens-software-reference.md` (primary Allego ref; manual PDF Monitor p27/75-78, Electrodes p60-66) · `00-config/production-values.md`
+- `20-areas/allego/allego-electrode-setup-sleep64.md` (electrode SOP) · `signal-mapping-guide.md` · `20-areas/allego/live-signal-quality-terms.md` (live numbers) · `20-areas/allego/radiens-software-reference.md` (primary Allego ref; manual PDF Monitor p27/75-78, Electrodes p60-66) · `20-areas/computing/production-values.md`
 - Hostname `e10ubuntu` (not `frigate-server`), user `skimlab`. We are ON the NVR: no SSH for local commands.
 
 ## Working preferences

@@ -8,7 +8,7 @@ metadata:
 
 🔴⭐⭐⭐ **"NO EEG" IS AT LEAST FIVE FAULTS. The newest, and the one that HIDES, is a chip ground
 that is WEAK rather than absent.** Vault:
-`03-troubleshooting/symptoms/weak-chip-ground-vs-open-electrode.md`.
+`20-areas/eeg-rig/weak-chip-ground-vs-open-electrode.md`.
 
 ## 🔑 THE DISCRIMINATOR: EEG channel 60 Hz ÷ ITS OWN CHIP FLOOR
 | ratio | meaning |

@@ -8,7 +8,7 @@ metadata:
   originSessionId: a71f4126-a668-426f-b904-b7936fd73591
 ---
 
-Vault ⭐ `06-references/xdaq-32-mouse-wiring-and-channel-law.md`. Sourced from docs.kontex.io pulled 2026-07-28 via curl+browser-UA. **⚠️ The decisive compatibility/model tables on those pages are PNG IMAGES, not HTML — any text-only scrape MISSES them.** (`SAdpt_Port_EXP-10.png` = XR compat, `-12.png` = topology, `ONE_P -27/-28.png` = ONE+ specs + model comparison.)
+Vault ⭐ `10-projects/rig-expansion/xdaq-32-mouse-wiring-and-channel-law.md`. Sourced from docs.kontex.io pulled 2026-07-28 via curl+browser-UA. **⚠️ The decisive compatibility/model tables on those pages are PNG IMAGES, not HTML — any text-only scrape MISSES them.** (`SAdpt_Port_EXP-10.png` = XR compat, `-12.png` = topology, `ONE_P -27/-28.png` = ONE+ specs + model comparison.)
 
 **🔑 THE CHANNEL LAW: max animals = XR recording channels ÷ 64.** System reserves a fixed 64-ch slot per headstage/MISO line (sized for RHD2164) regardless of actual chip. Verified 2 independent Kontex figures agreeing:
 - CORE2 512ch → **8** (= exactly our lived Gen-1 rig, 128ch/port ÷64 = 2/port × 4)

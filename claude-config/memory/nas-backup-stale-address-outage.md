@@ -27,9 +27,9 @@ The pong that anchored both wrong theories was measured while the netmap still s
 refreshed to `.9`, `.10` became `no matching peer`. **Test the actual TCP port, and re-read the
 address from `tailscale status` rather than trusting a literal in a script or a vault doc.**
 
-⚠️ **Stale vault docs actively caused misdiagnosis 2:** `00-config/production-values.md` still lists
+⚠️ **Stale vault docs actively caused misdiagnosis 2:** `20-areas/computing/production-values.md` still lists
 the bilab-era addresses (PC1 office `100.117.204.8`, PC2/NVR `100.85.191.25`) as current, and
-`02-procedures/installation/nas-backup.md` still says the target is `Andrea@100.120.86.10:53`.
+`20-areas/data-storage/nas-backup.md` still says the target is `Andrea@100.120.86.10:53`.
 
 ✅ Verified after the fix: `uploaded e10_backup_2026-08-19.tar.gz (207529856 bytes verified)`,
 rotation kept 08-19/08-13/08-12. NAS `/volume1` = 21 TB, 8.2 TB used, **13 TB free** ⇒ the 775 GB of

@@ -7,7 +7,7 @@ metadata:
 ---
 
 🏁⭐⭐⭐ **BATCH `W-SD` CLOSED — ALL TEN SAMPLED 2026-08-28.** Nothing re-measurable.
-Close-out: vault `05-experiments/completed/2026-08-28-W-SD-cohort-closeout.md`.
+Close-out: vault `10-projects/hlb-sod1/2026-08-28-W-SD-cohort-closeout.md`.
 Manifest `cohorts/W-SD.yaml` has all 6 recordings + per-animal verdicts.
 Design: **UV WATER arm (0 U), the control against S-SD's SOD1**; CSD Fri 08-21 → sampling Fri 08-28,
 daily bouts ending 13:00.
@@ -45,7 +45,7 @@ Case report, never a group result. D2 pre→post: EEG 98.5→74.2%, BOTH 92.8→
 ## LESSONS THAT OUTLIVE THE BATCH
 1. [[weak-chip-ground-hides-as-electrode-failure]] — the fault class + the 800→2000 µV gate proposal.
 2. ⭐ **Working EMG exonerates that implant and tether** (shared cable).
-3. ⭐⭐ **`02-procedures/pre-flight-connection-screen.md`: a screen must GATE an unrepeatable run.**
+3. ⭐⭐ **`20-areas/eeg-rig/pre-flight-connection-screen.md`: a screen must GATE an unrepeatable run.**
    The first hour already said 1 of 8 worked; the connector fix landed AFTER the 20 h run ended.
 4. ⭐ **Tether wear is the dominant failure mode of a long deprivation protocol** — 2 tethers eaten,
    2 animals found missing with theirs, 4 grounds degraded over 7 days, 1 electrode intact at necropsy.

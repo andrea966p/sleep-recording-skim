@@ -45,9 +45,9 @@ not upload". On 2026-09-13 a test wrote 8 such rows for files never uploaded, be
 conditions join codes (`BSR-SDR`). Rename is **NAS-side only** — the local stripped copy keeps
 its Allego name, because the strip is idempotent on that name. Blank batch name = old layout.
 
-Full write-ups: vault `02-procedures/eeg-recording-console.md` §2.4–2.5,
-`02-procedures/installation/xdat-channel-stripping.md` §4b,
-`01-infrastructure/eeg-recorder/pipeline-architecture.md` §5 (defects 7 and 8).
+Full write-ups: vault `20-areas/recording-console/eeg-recording-console.md` §2.4–2.5,
+`20-areas/recording-console/xdat-channel-stripping.md` §4b,
+`20-areas/recording-console/pipeline-architecture.md` §5 (defects 7 and 8).
 Related: [[skim-nas-smb-and-channel-stripper]], [[cohort-identity-every-run-is-new-mice]],
 [[animal-card-verdict-ladder]].
 
