@@ -5,6 +5,8 @@ status: active
 ---
 # Off-site S3 archive of the raw recordings
 
+> [!warning] Updated 2026-10-22: the SKIM NAS is the working copy, not a backup (the opening paragraph calls it the local backup). Both jobs were COMPLETE at the 2026-10-22 check (raw 2026-10-21 01:31, stripped 2026-10-22 01:31) and the bucket held 213 objects, 1.258 TB. The Cost section says a budget alert is configured; the Claude memory record says it was created and deleted on 2026-09-20 at the user's request, and this is unconfirmed [[backup-architecture]]
+
 Nightly, incremental copy of `~/radix/data` (raw Allego `.xdat`) from `e10ubuntu`
 to Amazon S3. This is the **third** copy: e10 NVMe is the working set, the SKIM
 NAS is the local backup, S3 is the off-site one. The animals were sampled, so

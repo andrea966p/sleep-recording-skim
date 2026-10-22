@@ -9,6 +9,8 @@ version: "1.0"
 
 # NVR Netdata Alert Configuration
 
+> [!warning] Updated 2026-10-22: the alert rules below are still current, but routing moved from Slack to ntfy on 2026-09-14 (monitoring-setup section 8.3b), so every Slack notification section here is historical. Live check 2026-10-22: `SEND_NTFY="YES"`, `SEND_SLACK="NO"`. The Slack webhook URL that this page once embedded was redacted [[monitoring-setup]]
+
 > [!abstract] TL;DR — for non-technical readers
 > **What this is.** The Netdata alert configuration for the NVR — 16 custom alerts that fire to Slack when something goes wrong on the recording machine.
 >
@@ -269,7 +271,7 @@ SEND_NTFY="NO"
 
 # Slack configuration
 SEND_SLACK="YES"
-SLACK_WEBHOOK_URL="https://hooks.slack.com/services/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"
+SLACK_WEBHOOK_URL="<redacted 2026-10-22; see /etc/netdata/health_alarm_notify.conf>"
 DEFAULT_RECIPIENT_SLACK="#"
 
 # Route all roles to Slack

@@ -87,12 +87,16 @@ def main():
             if lk.kind == "wiki" and not lk.linkpath.strip():
                 continue
             if lk.table_split:
-                err["broken link"].append(f"{f}: {lk.raw} (unescaped | in a table row)")
+                (warn["broken link in the archive (frozen)"] if f.startswith("90-archive/") else err["broken link"]
+                 ).append(f"{f}: {lk.raw} (unescaped | in a table row)")
                 continue
             tgt = idx.resolve(lk.linkpath, f)
             if tgt is None:
                 if lk.kind == "wiki" and (f, lk.linkpath) not in allow:
-                    err["broken link"].append(f"{f}: {lk.raw}")
+                    if f.startswith("90-archive/"):
+                        warn["broken link in the archive (frozen)"].append(f"{f}: {lk.raw}")
+                    else:
+                        err["broken link"].append(f"{f}: {lk.raw}")
                 continue
             inbound[tgt] += 1
             if lk.kind == "wiki" and "/" in lk.linkpath and not f.startswith("90-archive/"):

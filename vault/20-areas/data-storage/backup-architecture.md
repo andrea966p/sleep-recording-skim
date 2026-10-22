@@ -194,6 +194,15 @@ structure is decided so that turning it on later is wiring, not design:
 > current EEG archive every month. Revisit Deep Archive versus Glacier IR, and
 > revisit spend monitoring, before switching this on.
 
+## Reachability check, 2026-09-20: nothing needed reconnecting
+
+The premise that e10 had lost access to the bilab NAS was false. Checked on 2026-09-20: the NAS was reachable over
+an active direct Tailscale link and the nightly backup had succeeded that same morning. All three tailnets are already
+cross-shared into e10's (`skimlab.kaist@` for e10, `bilab.kaist@` for the bilab NAS, `sleepigene@` for the SKIM NAS;
+addresses in [[production-values]]). Verify reachability before planning any "reconnect" work. Source: the Claude
+memory record of that date, promoted here on 2026-10-22; the nightly tarballs of 2026-10-20 to 2026-10-22 were still
+arriving when checked on 2026-10-22. The audit that day that found the raw gap: [[2026-09-20-raw-data-had-no-offsite-copy]].
+
 ## Notifications
 
 All scripts push to **ntfy** via the single shared notifier

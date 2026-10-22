@@ -2,12 +2,15 @@
 type: procedure
 area: computing
 status: superseded
+superseded-by: "[[multi-machine-workflow]]"
 status-note: "active"
 tags: [infrastructure, handoff, syncthing, claude-portable, laptop]
 created: 2026-08-19
 ---
 
 # Task brief: finalize and align the laptop workflow
+
+> [!warning] Updated 2026-10-22: Syncthing was retired on every machine (2026-09-16 and 2026-09-19). The workspace is now one git repo synced by hand with `./skim`. This brief is historical, do not follow it [[multi-machine-workflow]]
 
 **For:** an AI agent running on the ThinkPad (`thinkpadubuntu`, user `andrea`).
 **Written by:** the agent on the NVR (`e10ubuntu`), 2026-08-19 11:30 KST.

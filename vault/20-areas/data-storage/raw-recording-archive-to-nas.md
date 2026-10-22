@@ -8,6 +8,8 @@ created: 2026-08-19
 
 # Raw recording archive to the NAS
 
+> [!warning] Updated 2026-10-22: the figures below are as of 2026-08-21 (the bilab NAS archive dir held 130 files, 944 GB on disk, on 2026-10-22). An off-site S3 archive was added on 2026-09-20 and covers raw data now, the nvr-notify.sh alerts go to ntfy instead of Slack, and Syncthing is retired [[backup-architecture]]
+
 > [!abstract] TL;DR — for non-technical readers
 > **What this is.** A one-way, verified copy of every raw electrophysiology recording
 > (`~/radix/data`, the `.xdat` files Allego writes) from the recording computer onto the lab NAS.
@@ -100,7 +102,7 @@ sixth, so a genuinely stuck loop becomes visible without spamming.
 content is the question. Run:
 
 ```bash
-/home/skimlab/Monitoring_project/neurosurveillance/deploy/radix-archive-verify.sh
+/home/skimlab/sleep-recording-skim/neurosurveillance/deploy/radix-archive-verify.sh
 ```
 
 It re-reads every archived file **on the NAS** and compares its sha256 to the value recorded at
@@ -117,14 +119,14 @@ during a live recording.
 
 ```bash
 # progress / result
-tail -f /home/skimlab/Monitoring_project/neurosurveillance/deploy/logs/radix-archive.log
-cat     /home/skimlab/Monitoring_project/neurosurveillance/deploy/logs/radix-archive.state
+tail -f /home/skimlab/sleep-recording-skim/neurosurveillance/deploy/logs/radix-archive.log
+cat     /home/skimlab/sleep-recording-skim/neurosurveillance/deploy/logs/radix-archive.state
 
 # how many files are verified
 awk -F'\t' '$4=="DONE"' .../logs/radix-archive.manifest | sort -u | wc -l
 
 # re-arm after adding new recordings (the state file stops the watchdog)
-rm /home/skimlab/Monitoring_project/neurosurveillance/deploy/logs/radix-archive.state
+rm /home/skimlab/sleep-recording-skim/neurosurveillance/deploy/logs/radix-archive.state
 ```
 
 ## Still open

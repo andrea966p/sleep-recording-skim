@@ -8,6 +8,8 @@ created: 2026-05-26
 
 # NAS Backup — Daily Project Snapshot
 
+> [!warning] Updated 2026-10-22: paths mentioning `~/Monitoring_project` are stale, the repo is now `~/sleep-recording-skim` (the commands below were corrected). The nightly tarball is about 568 MB, measured 2026-10-22 (three tarballs, 2026-10-20 to 2026-10-22), not the ~50 MB quoted below [[backup-architecture]]
+
 > [!abstract] TL;DR — for non-technical readers
 > **What this is.** A daily automatic backup of everything this project keeps on the NVR — the Obsidian vault, the code, the daemon's config and session records, and the Frigate config — pushed to the lab NAS over Tailscale at midnight. It deliberately **excludes the recorded videos** (they are far too large and live elsewhere).
 >
@@ -42,10 +44,7 @@ created: 2026-05-26
 ### Included
 | Path | Why |
 |------|-----|
-| `Monitoring_project_obsidian_vault/` | the documentation vault |
-| `neurosurveillance/` (code repo) | backend + frontend source, `.git` history |
-| `neurosurveillance-system/` | legacy/aux session-daemon copy |
-| `eeg-emg-analysis/` | the EEG/EMG analysis stack — **added 2026-08-19**, it was missing and therefore unbacked-up entirely |
+| `sleep-recording-skim/` (the whole workspace) | vault, code repos, `eeg-emg-analysis`, `claude-config/`, `machine/`; one include entry since 2026-09-11 |
 | `~/radix/devices`, `~/radix/workspace` | Allego device + workspace configuration (added 2026-08-19) |
 | `/opt/neurosurveillance/config.yaml` | production daemon config |
 | `/opt/neurosurveillance/sessions/` | per-session metadata JSONs |
@@ -57,7 +56,7 @@ created: 2026-05-26
 `*.mp4` (132 GB of exports) · `/srv/frigate/storage` (137 GB Frigate cache) · `radiens.log` (3.2 GB) · `frontend/node_modules` + `src-tauri/target` + `venv` (build artifacts) · `__pycache__`/`*.pyc` · SQLite `-wal`/`-shm` sidecars (replaced by the consistent snapshot) · `mosquitto/passwd` (`0600 1883:1883`, unreadable as `skimlab`; the MQTT secret is recoverable from `production-values.md` via `mosquitto_passwd`).
 
 > [!note] Why not `/etc` configs?
-> Netdata alert rules and the systemd unit files live under `/etc` (root-owned, not readable as `skimlab`). They are already captured as **golden configs in this vault** (`01-infrastructure/netdata/nvr-alerts-config.md`, the various `deploy/` units), which *are* in the backup. If a future need arises to snapshot raw `/etc`, switch the service to `User=root` and add those paths.
+> Netdata alert rules and the systemd unit files live under `/etc` (root-owned, not readable as `skimlab`). They are already captured as **golden configs in this vault** (`nvr-alerts-config`, the various `deploy/` units), which *are* in the backup. If a future need arises to snapshot raw `/etc`, switch the service to `User=root` and add those paths.
 
 ## Files
 
@@ -92,10 +91,10 @@ Expected: `KEY_OK` then `e10_setup_backups` — no password prompt.
 ### 3. Install + enable the timer (sudo)
 
 ```bash
-sudo cp /home/skimlab/Monitoring_project/neurosurveillance/deploy/nas-backup.service /etc/systemd/system/
+sudo cp /home/skimlab/sleep-recording-skim/neurosurveillance/deploy/nas-backup.service /etc/systemd/system/
 ```
 ```bash
-sudo cp /home/skimlab/Monitoring_project/neurosurveillance/deploy/nas-backup.timer /etc/systemd/system/
+sudo cp /home/skimlab/sleep-recording-skim/neurosurveillance/deploy/nas-backup.timer /etc/systemd/system/
 ```
 ```bash
 sudo systemctl daemon-reload

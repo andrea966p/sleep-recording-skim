@@ -9,6 +9,8 @@ updated: 2026-04-01
 
 # Centralized Monitoring Setup (Netdata + Uptime Kuma)
 
+> [!warning] Updated 2026-10-22: the Slack alerting described in this procedure was replaced by ntfy between 2026-09-14 (Netdata, Uptime Kuma) and 2026-09-20 (deploy scripts), see section 8.3b. Live check 2026-10-22: Netdata is v2.12.1, not the version quoted below [[nvr-alerts-config]]
+
 > [!abstract] TL;DR — for non-technical readers
 > **What this is.** A procedure for installing Netdata on all 3 machines (NVR + 2 Pis) and Uptime Kuma on the NVR for service-level health checks with Slack alerts.
 >

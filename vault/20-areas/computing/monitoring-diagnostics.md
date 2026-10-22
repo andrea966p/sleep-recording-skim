@@ -8,6 +8,8 @@ created: 2026-04-03
 
 # Monitoring Diagnostics Reference
 
+> [!warning] Updated 2026-10-22: the Alerting line says Slack webhook, but Netdata and Uptime Kuma moved to ntfy on 2026-09-14 (monitoring-setup section 8.3b). Live check 2026-10-22: Netdata is v2.12.1, not v2.9.0 [[monitoring-setup]]
+
 Quick-reference for querying the NeuroSurveillance monitoring stack. For setup procedures see [[monitoring-setup|Monitoring Setup]]. For alert config details see [[nvr-alerts-config|NVR Alerts Config]].
 
 ---

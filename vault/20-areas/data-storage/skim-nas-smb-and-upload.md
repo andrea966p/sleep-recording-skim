@@ -8,6 +8,8 @@ created: 2026-09-11
 
 # The SKIM Lab NAS: mounting it, and uploading recordings to it safely
 
+> [!warning] Updated 2026-10-22: the NAS layout changed on 2026-09-29 to one CSV per mouse in `02_Data_Sleep`; the older `03_Data_Mouse/<user>/` folders per run are history [[per-mouse-csv-format]]
+
 > [!abstract] TL;DR — for non-technical readers
 > **What this is.** How the recording computer reaches the SKIM Lab's network storage, and the rules
 > the upload software follows so that a file is never reported as saved unless it really is.
@@ -232,6 +234,14 @@ not finished — **re-ping before concluding a peer is relayed.**
 | one stripped 24 h run (~6 GB) | ~65 s up, ~67 s to verify |
 
 Capacity: 7.0 TB total, **1.3 TB free** (82% used) as of 2026-09-11.
+
+## 6b. Standing instruction on `~/radix/data`
+
+🛑 Do not write to, move or delete anything in `~/radix/data`. Raw recordings are moved to the NAS by the user. Work from
+the copies in `~/radix/stripped`. (Standing instruction from the user, recorded when this NAS was set up on 2026-09-11;
+promoted from the Claude memory file `skim-nas-smb-and-channel-stripper` on 2026-10-22.) The same memory record adds that the
+SKIM NAS is a fourth tailnet, `tailec38b9`, shared in from `sleepigene@`, which is why an older "three tailnets" table
+caused a multi-day misdiagnosis; the current table is in [[production-values]].
 
 ## 7. Related
 

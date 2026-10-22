@@ -9,6 +9,8 @@ severity: critical
 affected: [Andrea-KAIST-PC-ubuntu, e10ubuntu, neurosurveillance-private-repo, syncthing]
 ---
 
+> [!warning] Updated 2026-10-22: Syncthing was retired on every machine (2026-09-16 and 2026-09-19). The workspace is now one git repo synced by hand with `./skim`. This incident is the reason [[multi-machine-workflow]]
+
 ## Summary
 - **Date/Time:** 2026-04-29 ~16:30–17:55 KST (~1h25m)
 - **Severity:** Critical — entire working tree of the private `neurosurveillance` git repo wiped on `e10ubuntu`, including `.git/` and uncommitted WIP (10 modified + 3 untracked files).

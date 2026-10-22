@@ -13,7 +13,7 @@ tags: [journal]
 ## 
 
 ## Filed to
-<!-- every result, decision or procedure written today, as [[links]] -->
+<!-- every result, decision or procedure written today, linked by note name -->
 - 
 
 ## Open items
