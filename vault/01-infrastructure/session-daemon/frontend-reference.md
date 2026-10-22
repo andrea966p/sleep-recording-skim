@@ -181,10 +181,10 @@ Manages user-configurable settings persisted to `localStorage`. No server round-
 All client-wrapped functions use the `fetch` API. Errors throw exceptions caught by calling components and displayed as toast notifications.
 
 > [!history] Historical note — pre-2026-05-23
-> The pre-sprint API table had only 8 endpoints. `/api/journal` shipped with the session WAL on 2026-05-23; `/api/reconciler/last` and `/api/reconciler/run` shipped with the nightly reconciler on 2026-05-24. Pre-change table: [[../../99-archive/2026-05-rehaul/frontend-reference-api-pre-journal-2026-05-23|archived API table]].
+> The pre-sprint API table had only 8 endpoints. `/api/journal` shipped with the session WAL on 2026-05-23; `/api/reconciler/last` and `/api/reconciler/run` shipped with the nightly reconciler on 2026-05-24. Pre-change table: [[frontend-reference-api-pre-journal-2026-05-23|archived API table]].
 
 > [!info] Three endpoints have no frontend client wrapper yet
-> `/api/journal`, `/api/reconciler/last`, and `/api/reconciler/run` are backend-only as of 2026-05-24. They are reachable via `curl` for operators (see [[../../02-procedures/session-recording-workflow#How to ask the journal what happened|the recording workflow's troubleshooting section]]). The next frontend sprint will add `getJournal()`, `getReconcilerLast()`, and `runReconciler()` wrappers plus a small reconciler badge in the header. Until then, the UI does not surface these endpoints. Full references: [[session-journal]] and [[reconciler]].
+> `/api/journal`, `/api/reconciler/last`, and `/api/reconciler/run` are backend-only as of 2026-05-24. They are reachable via `curl` for operators (see [[session-recording-workflow#How to ask the journal what happened|the recording workflow's troubleshooting section]]). The next frontend sprint will add `getJournal()`, `getReconcilerLast()`, and `runReconciler()` wrappers plus a small reconciler badge in the header. Until then, the UI does not surface these endpoints. Full references: [[session-journal]] and [[reconciler]].
 
 ## Layout Behavior
 
@@ -261,5 +261,5 @@ frontend/
 ## Related
 
 - [[architecture|Session Daemon Architecture]] -- backend design and API details
-- [[../../02-procedures/session-recording-workflow|Session Recording Workflow]] -- user-facing procedure
-- [[../../00-config/production-values|Production Values]] -- all IPs, ports, paths
+- [[session-recording-workflow|Session Recording Workflow]] -- user-facing procedure
+- [[production-values|Production Values]] -- all IPs, ports, paths

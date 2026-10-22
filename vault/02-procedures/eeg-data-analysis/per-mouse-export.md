@@ -116,6 +116,6 @@ because a silent partial write looks exactly like a good one in a directory list
 Good animals sit at **0.45-0.59** against a shuffled null near 0.00; the pipeline rejects below
 **0.30**. A hypnogram with `r@1min` near zero is randomly-relabelled data with state names on it.
 
-Related: [[02-procedures/eeg-data-analysis/animal-card-and-verdict-ladder]] ·
-[[03-troubleshooting/symptoms/eeg-analysis-problems]] ·
-[[05-experiments/completed/2026-08-21-39h-run-score]]
+Related: [[animal-card-and-verdict-ladder]] ·
+[[eeg-analysis-problems]] ·
+[[2026-08-21-39h-run-score]]

@@ -13,7 +13,7 @@ version: "3.0"
 >
 > **Why it exists.** Eleven components work together to do one job: when Radiens starts recording, the right video appears on disk under the right name. This page is what someone reading the codebase opens first.
 >
-> **How to read this page.** Scan the numbered component sections (1–11) — each one is one Python module. Skip to "Failure Modes" if you're debugging. Use [[../system-overview|the plain-language overview]] if you want the big picture before diving in.
+> **How to read this page.** Scan the numbered component sections (1–11) — each one is one Python module. Skip to "Failure Modes" if you're debugging. Use [[nvr-system-overview|the plain-language overview]] if you want the big picture before diving in.
 
 > [!quote] Paper-ready
 > The session daemon is a Python orchestrator running as a systemd service, polling NeuroNexus Radiens once per second over gRPC and controlling Frigate NVR over MQTT; eleven independent components — Radiens poller, Frigate controller, session manager, manual session manager, session utilities, HTTP API, export pipeline, storage monitor, main daemon, session journal (WAL), nightly reconciler, and recording watchdog — together provide autonomous video-and-electrophysiology synchronization with durable session metadata.
@@ -145,7 +145,7 @@ The GPIO sync listener on each Pi monitors the XDAQ `DAQ_ON` hardware signal and
 - `gpio_start_timestamp`: ISO 8601 UTC timestamp from GPIO edge event
 - `gpio_stop_timestamp`: ISO 8601 UTC timestamp from GPIO edge event
 
-See [[01-infrastructure/hardware-sync/overview|Hardware Sync Overview]] for full architecture.
+See [[overview|Hardware Sync Overview]] for full architecture.
 
 ### 2. Frigate Controller (`frigate_controller.py`)
 
@@ -178,7 +178,7 @@ Controls Frigate recording via MQTT and handles video export via HTTP API. Also 
 > [!warning] Why the 30 s drain exists — do NOT tune it
 > Frigate's `frigate/record/maintainer.py:250` calls `drop_segment()`, which UNLINKS any `/tmp/cache` segment not yet flushed, the moment it sees recording disabled. ffmpeg closes a segment every 10 s and the maintainer flushes every 5 s, so **15 s** can be in flight at the instant of an `OFF`. 30 s is 2×, costs ~3 MB per session, and is not a tuning parameter.
 >
-> Measured 2026-07-27: a 37 s window produced a 19.0 s file. Measured again 2026-07-28 on a 14.97 h run: ~11 s lost, i.e. **the loss is FIXED-SIZE, not proportional** — invisible on long sessions, devastating on short ones. Full analysis: [[07-decisions/2026-07-27-video-eeg-sync-recording-architecture|decision doc]].
+> Measured 2026-07-27: a 37 s window produced a 19.0 s file. Measured again 2026-07-28 on a 14.97 h run: ~11 s lost, i.e. **the loss is FIXED-SIZE, not proportional** — invisible on long sessions, devastating on short ones. Full analysis: [[2026-07-27-video-eeg-sync-recording-architecture|decision doc]].
 
 > [!bug] The drain CANNOT rescue manual recordings stopped from the Frigate UI
 > The UI publishes `OFF` before the daemon ever observes it, so Frigate has already dropped the unflushed segments by the time `_handle_external_recording_off()` runs. Only the daemon-controlled path (Radiens session end) is drainable. Mitigation for manual recordings is operator habit: stop ~30 s after the interesting part ends.
@@ -597,7 +597,7 @@ Nightly cross-check of the [[session-journal|WAL journal]] against Frigate's `re
 
 ### 11. Recording Watchdog (`recording_watchdog.py`)
 
-Background thread that detects stalled Frigate recordings on active cameras. Shipped 2026-05-18 as part of the recording-health work that preceded the stabilization sprint. **Full reference:** [[../../02-procedures/installation/recording-health-watchdog|recording-health-watchdog]].
+Background thread that detects stalled Frigate recordings on active cameras. Shipped 2026-05-18 as part of the recording-health work that preceded the stabilization sprint. **Full reference:** [[recording-health-watchdog|recording-health-watchdog]].
 
 | Detail | Value |
 |---|---|
@@ -607,7 +607,7 @@ Background thread that detects stalled Frigate recordings on active cameras. Shi
 | **Input** | `/srv/frigate/storage/frigate.db` `recordings.MAX(end_time)` per camera; daemon-side active-sessions map |
 | **MQTT publish** | `neurosurveillance/watchdog/<camera>/stall` — includes `lag_seconds`, `last_segment_ts`, `session_id` |
 | **Journal emission** | `STALL` event (`recording_watchdog._emit_alert` → `session_journal.log_event`) with the same payload — gives the reconciler the data it needs to flag the session `DEGRADED` post-hoc |
-| **Slack alerting (since 2026-05-25)** | The stall topic is forwarded to Slack by `nvr-mqtt-slack.service` — a standalone bridge, **not** a daemon component (Netdata has no MQTT collector). E2E-validated. See [[../../02-procedures/installation/watchdog-slack-bridge\|watchdog-slack-bridge]]. |
+| **Slack alerting (since 2026-05-25)** | The stall topic is forwarded to Slack by `nvr-mqtt-slack.service` — a standalone bridge, **not** a daemon component (Netdata has no MQTT collector). E2E-validated. See [[watchdog-slack-bridge\|watchdog-slack-bridge]]. |
 
 **Why it exists:** Frigate sometimes silently stops writing segments — go2rtc disconnects on the Pi side, an ffmpeg child crashes, the disk goes unreachable. Without the watchdog, the daemon would happily continue thinking the recording is live while no video is actually being captured. The watchdog raises a single MQTT alert per stall (de-duped) and the operator can decide whether to abort or wait.
 
@@ -741,7 +741,7 @@ lab_members:
 ```
 
 > [!warning] Replace Variables
-> Replace all `{VARIABLE}` placeholders with actual values from [[../../00-config/production-values|Production Values]] before deploying.
+> Replace all `{VARIABLE}` placeholders with actual values from [[production-values|Production Values]] before deploying.
 
 ## Source Code Repository
 
@@ -892,7 +892,7 @@ Both Radiens and manual sessions produce JSON sidecars in `{SESSION_DATA_DIR}`.
 ## Related
 
 - [[frontend-reference|Frontend Reference]] -- desktop UI component details
-- [[../../00-config/production-values|Production Values]] -- all IPs, ports, paths
+- [[production-values|Production Values]] -- all IPs, ports, paths
 - [[../frigate/config-yml|Frigate Config]] -- recording settings, MQTT toggle prerequisite
 - [[../frigate/docker-compose|Docker Compose]] -- Frigate + Mosquitto deployment
-- [[../../02-procedures/session-recording-workflow|Session Recording Workflow]] -- user-facing procedure
+- [[session-recording-workflow|Session Recording Workflow]] -- user-facing procedure

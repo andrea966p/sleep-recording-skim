@@ -19,7 +19,7 @@ affected:
 
 ## Symptoms
 What was observed:
-- During post-boot validation (step 11 of [[02-procedures/installation/new-pi-setup|new Pi setup]]), checking camera streams caused the Pi to crash
+- During post-boot validation (step 11 of [[new-pi-setup|new Pi setup]]), checking camera streams caused the Pi to crash
 - SSH connection dropped and could not reconnect (`Connection refused`)
 - Pi was pingable (slowly, 1400ms+ RTT) but sshd never came back up
 - After manual power cycle, same behavior — SSH refused for extended period
@@ -91,6 +91,6 @@ Likely candidates:
 - If crash recurs, check `journalctl -b -1` immediately for previous boot logs
 
 ## Related
-- [[02-procedures/installation/new-pi-setup|New Pi Setup]] — step 11 (post-boot validation)
+- [[new-pi-setup|New Pi Setup]] — step 11 (post-boot validation)
 - [[2026-02-09-go2rtc-setup-troubleshooting|go2rtc Setup Troubleshooting]]
 - [[boot-config-ssh-lockout|Boot Config SSH Lockout]]

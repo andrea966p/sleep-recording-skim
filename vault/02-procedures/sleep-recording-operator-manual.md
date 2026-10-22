@@ -40,7 +40,7 @@ mouse 4-pin dura electrode → tether → slip ring → **C3410** adapter → **
 > wire). Getting this wrong cost this project several weeks and produced 24
 > phantom "failed EMG surgeries". Select only `/1,/2` and `/33,/34` per port.
 >
-> Analysis path: **[[pipeline/README]]**. Current EEG status:
+> Analysis path: **[[eeg-pipeline-manual]]**. Current EEG status:
 > [[2026-08-03-two-8-mouse-runs]].
 - **Pass criterion:** you can say in one sentence each what *ground*, *reference*, *tissue noise*, *environmental noise* are, and why our `REF` pad stays empty.
 

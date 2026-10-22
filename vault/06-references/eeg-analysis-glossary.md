@@ -20,7 +20,7 @@ status: active
 > word blocks you. Entries are grouped by where you meet them: the recording,
 > the maths, the quality gate, the sleep scoring, the files.
 >
-> Big picture: [[01-infrastructure/system-overview]].
+> Big picture: [[nvr-system-overview]].
 > The procedure itself: [[_eeg-analysis-hub]].
 
 ---

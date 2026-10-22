@@ -11,7 +11,7 @@ status: active
 >
 > **Why it exists.** Council item 2.4 and the "human bus factor = 1" warning: today the only copy of the daemon config, the session WAL, and the vault lives on one NVMe in one machine. A disk failure or an accidental wipe (it happened on 2026-04-29) would lose months of provenance and documentation. This makes a recoverable off-machine copy, automatically, with no human in the loop.
 >
-> **How to read this page.** The backup is a dated tarball kept on the NAS, newest 3 retained. The one-time setup is an SSH key + a systemd timer. Big-picture context: [[01-infrastructure/system-overview|System Overview]].
+> **How to read this page.** The backup is a dated tarball kept on the NAS, newest 3 retained. The one-time setup is an SSH key + a systemd timer. Big-picture context: [[nvr-system-overview|System Overview]].
 
 > [!quote] Paper-ready
 > Project state on the NVR (documentation vault, daemon source and configuration, append-only session journal, and Frigate configuration; recorded video excluded) is snapshotted nightly to an off-site network-attached store over an authenticated Tailscale link, with a rolling three-day retention, providing an automated recovery point independent of the acquisition host.
@@ -22,7 +22,7 @@ status: active
 > because someone went looking. Two confident wrong diagnoses (a Tailscale ACL problem, then a
 > Synology firewall rule) were reached and acted on before the real cause was found.
 > **Always use the MagicDNS name `bilab-syn.tail8808c0.ts.net`.**
-> Full write-up: [[03-troubleshooting/incidents/2026-08-19-nas-backup-wrong-address]].
+> Full write-up: [[2026-08-19-nas-backup-wrong-address]].
 
 ## What it does
 
@@ -140,8 +140,8 @@ mkdir -p /tmp/restore && tar xzf /tmp/e10_backup_YYYY-MM-DD.tar.gz -C /tmp/resto
 > `deploy/nas-backup.sh` and the unit files live in the synced repo, so they replicate to PC 2. Harmless — PC 2 won't run them unless its own timer is installed.
 
 ## Related
-- [[01-infrastructure/system-overview|System Overview]]
-- [[00-config/production-values|Production Values]] — NAS host/port/user
-- [[07-decisions/2026-05-01-llm-council-review|2026-05-01 LLM council review]] — origin of backup item 2.4
-- [[07-decisions/2026-05-stabilization-sprint-week-1-plan|stabilization sprint plan]] — sprint that delivered it
-- [[02-procedures/installation/watchdog-slack-bridge|watchdog-slack-bridge]] — sibling systemd-bridge deploy pattern
+- [[nvr-system-overview|System Overview]]
+- [[production-values|Production Values]] — NAS host/port/user
+- [[2026-05-01-llm-council-review|2026-05-01 LLM council review]] — origin of backup item 2.4
+- [[2026-05-stabilization-sprint-week-1-plan|stabilization sprint plan]] — sprint that delivered it
+- [[watchdog-slack-bridge|watchdog-slack-bridge]] — sibling systemd-bridge deploy pattern

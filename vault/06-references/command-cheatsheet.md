@@ -6,7 +6,7 @@ updated: 2026-03-05
 
 # Command Cheatsheet
 
-Quick copy-paste blocks for common operations. All values match [[00-config/production-values|production-values.md]].
+Quick copy-paste blocks for common operations. All values match [[production-values|production-values.md]].
 
 ## Raspberry Pi (`192.168.0.11`)
 

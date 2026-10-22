@@ -14,7 +14,7 @@ cohort: S-SL
 > two survived to the endpoint, and that three electrodes went "from excellent to
 > nothing". **That attrition did not happen.** It is an artifact of a
 > contaminated QC floor. See
-> [[03-troubleshooting/symptoms/contaminated-floor-rejects-good-eeg]].
+> [[contaminated-floor-rejects-good-eeg]].
 >
 > ⭐ **What is true: S-SL has sleep architecture, and a paired n = 3.** Stage 2
 > and stage 3 were run on all three day folders for the first time on 2026-09-26.
@@ -60,7 +60,7 @@ cohort: S-SL
 > 09:00 to 09-22 13:00 — which is unbroken inside it. The cards were computed
 > over all 36.707 h, so **every recovery percentage below includes 8.71 h that
 > are outside the window**. They are reported as computed, not as the protocol
-> window. See [[02-procedures/CANONICAL-recording-windows-and-protocol]].
+> window. See [[CANONICAL-recording-windows-and-protocol]].
 >
 > Why the file is longer than the protocol: sampling slipped from 09-21 to 09-22
 > because of the mouse problem, and the recording was extended to meet it.
@@ -72,7 +72,7 @@ cohort: S-SL
 > the verdict is UNJUDGEABLE, not FAIL. The `was` column keeps what the cards said
 > on 2026-09-23. The baseline table (09-12) is unaffected: its floors are clean
 > (thresholds −0.46 to −1.40). Cards: git `2cc5892`, thresholds `cd459298551a`.
-> See [[03-troubleshooting/symptoms/contaminated-floor-rejects-good-eeg]].
+> See [[contaminated-floor-rejects-good-eeg]].
 
 ## Baseline — 2026-09-12, 24.065 h
 
@@ -124,7 +124,7 @@ a grey case and is reported as computed.
 ⚠️ **A2 is UNJUDGEABLE on both recovery segments, for two different reasons.**
 Here its chip reads ungrounded (787 µV hum, bar 800). On `uid0921` it is
 grounded but its floor carries signal. Neither is an answer about the animal. See
-[[03-troubleshooting/symptoms/weak-chip-ground-vs-open-electrode]].
+[[weak-chip-ground-vs-open-electrode]].
 
 ## Recovery — 2026-09-21 to 09-22, 36.707 h as computed
 
@@ -282,7 +282,7 @@ statistics that light-phase shift is **suggestive at most**.
 the endpoint to its protocol window, 09-21 09:00 → 09-22 13:00, drops exactly the
 8.71 h of dark that skews it, giving 16 h light / 12 h dark. Still not the
 baseline's 12/12, but far closer. See
-[[02-procedures/CANONICAL-recording-windows-and-protocol]].
+[[CANONICAL-recording-windows-and-protocol]].
 
 ## What this does not support
 
@@ -353,8 +353,8 @@ classification.
 
 ## Related
 
-[[03-troubleshooting/symptoms/contaminated-floor-rejects-good-eeg]] ·
-[[02-procedures/CANONICAL-recording-windows-and-protocol]] ·
-[[02-procedures/CANONICAL-recording-naming-and-inventory]] ·
-[[02-procedures/eeg-data-analysis/animal-card-and-verdict-ladder]] ·
-[[05-experiments/completed/2026-09-18-W-SL-light-phase-sleep]]
+[[contaminated-floor-rejects-good-eeg]] ·
+[[CANONICAL-recording-windows-and-protocol]] ·
+[[CANONICAL-recording-naming-and-inventory]] ·
+[[animal-card-and-verdict-ladder]] ·
+[[2026-09-18-W-SL-light-phase-sleep]]

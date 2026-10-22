@@ -80,4 +80,4 @@ Expected healthy state:
 ## Related
 
 - [[architecture|Session Daemon Architecture]]
-- [[../../03-troubleshooting/incidents/2026-02-23-session-daemon-radiens-auth-cors|2026-02-23 Radiens Auth + CORS Incident]]
+- [[2026-02-23-session-daemon-radiens-auth-cors|2026-02-23 Radiens Auth + CORS Incident]]

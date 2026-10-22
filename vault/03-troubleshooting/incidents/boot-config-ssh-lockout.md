@@ -133,8 +133,8 @@ curl http://localhost:1984/api/streams
 
 ## Related
 
-- [[02-procedures/installation/new-pi-setup]]
-- [[01-infrastructure/raspberry-pi/golden-boot-config]]
+- [[new-pi-setup]]
+- [[golden-boot-config]]
 - [[2026-02-09-go2rtc-setup-troubleshooting]] - Related go2rtc configuration issues from same day
 
 ---

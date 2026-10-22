@@ -29,7 +29,7 @@ recordings: [allego_1__uid0819-17-25-20, allego_2__uid0827-12-58-32, allego_0__u
 ## What was judged
 
 The CSVs on the SKIM NAS were cut to the analysis windows Andrea set on 2026-09-29
-([[02-procedures/per-mouse-csv-format]]):
+([[per-mouse-csv-format]]):
 
 | | window |
 |---|---|
@@ -97,7 +97,7 @@ block; r is within-block r@1min, with the bar at 0.30.
 
 At the S-SL recovery, five of the eight chips have a wire-free floor that itself carries signal
 (slope threshold −2.4 to −3.5). Rung 2 therefore refuses to judge them, and returns UNJUDGEABLE,
-not FAIL. See [[03-troubleshooting/symptoms/contaminated-floor-rejects-good-eeg]]. Stage 3 uses
+not FAIL. See [[contaminated-floor-rejects-good-eeg]]. Stage 3 uses
 stage 1's own gate, and it finds 24.0 h inside contact blocks, with within-block persistence well
 above the bar, for both animals. Whether to score them is a human call. A 10-minute look at each
 recovery CSV would settle it.
@@ -118,6 +118,6 @@ recovery CSV would settle it.
 
 ## Related
 
-[[02-procedures/per-mouse-csv-format]] · [[02-procedures/CANONICAL-recording-windows-and-protocol]] ·
+[[per-mouse-csv-format]] · [[CANONICAL-recording-windows-and-protocol]] ·
 [[2026-09-23-S-SL-connection-audit]] · [[2026-09-02-S-SD-recovery-sleep]] ·
 [[2026-08-28-W-SD-cohort-closeout]] · [[2026-09-18-W-SL-light-phase-sleep]]

@@ -49,7 +49,7 @@ status: active
 > [!warning] There are FOUR tailnets. A machine belongs to exactly one at a time.
 > Every address below changes if a machine is moved between tailnets. **Never hardcode a
 > `100.x` literal in a script — use the MagicDNS name.** Stale literals have now caused three
-> separate outages here. See [[03-troubleshooting/incidents/2026-08-19-nas-backup-wrong-address]].
+> separate outages here. See [[2026-08-19-nas-backup-wrong-address]].
 
 | Tailnet | MagicDNS suffix | What lives there |
 |---|---|---|
@@ -141,7 +141,7 @@ The destination for channel-stripped Allego recordings. A **different NAS** from
 | Retention | 3 snapshots | rolling, oldest deleted each run |
 | Excludes | videos / build artifacts / `radiens.log` | see procedure |
 
-Setup + ops: [[02-procedures/installation/nas-backup|NAS Backup procedure]].
+Setup + ops: [[nas-backup|NAS Backup procedure]].
 
 ---
 
@@ -287,7 +287,7 @@ Setup + ops: [[02-procedures/installation/nas-backup|NAS Backup procedure]].
 ## Hardware Sync Variables
 
 > [!check] 2026-06-21 — gate moved `DAQ_ON` (pin 13) → `DO 03` (pin 22)
-> Recording gate = **`DO 03`** (DB25 pin 22, Allego "Gated" mode + "BNC Breakout Board" toggle), **not** `DAQ_ON` (which tracks streaming + emits idle pulses). Pi input pin unchanged (GPIO 17). Variable renamed `{GPIO_DAQ_ON}` → `{GPIO_GATE}`; `{XDAQ_DAQ_ON_PIN}` retained as an optional streaming-flag reference only. See [[01-infrastructure/hardware-sync/wiring-guide|wiring-guide]].
+> Recording gate = **`DO 03`** (DB25 pin 22, Allego "Gated" mode + "BNC Breakout Board" toggle), **not** `DAQ_ON` (which tracks streaming + emits idle pulses). Pi input pin unchanged (GPIO 17). Variable renamed `{GPIO_DAQ_ON}` → `{GPIO_GATE}`; `{XDAQ_DAQ_ON_PIN}` retained as an optional streaming-flag reference only. See [[wiring-guide|wiring-guide]].
 
 | Variable | Value | Notes |
 |----------|-------|-------|
@@ -344,7 +344,7 @@ Hash on disk is mosquitto's `$7$` format generated via `docker exec mosquitto mo
 - Session daemon — `/opt/neurosurveillance/config.yaml` → `mqtt.user` / `mqtt.password`
 - `nvr-mqtt-slack.service` — `/etc/nvr-mqtt-slack.env` → `NVR_MQTT_PASSWORD` (subscribes to alert topics via `docker exec mosquitto mosquitto_sub`)
 
-**Rotating the password:** generate new value, update both consumer configs + `passwd` file, restart Mosquitto + Frigate + daemon in dependency order (see [[../03-troubleshooting/emergency-runbook|emergency-runbook]] Symptom D for the restart order).
+**Rotating the password:** generate new value, update both consumer configs + `passwd` file, restart Mosquitto + Frigate + daemon in dependency order (see [[emergency-runbook|emergency-runbook]] Symptom D for the restart order).
 
 ---
 

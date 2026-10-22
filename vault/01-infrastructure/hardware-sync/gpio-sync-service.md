@@ -10,7 +10,7 @@ status: planned
 > This page originally watched `DAQ_ON` (DB25 pin 13). The vendor thread settled on the **`DO 03` recording gate** (DB25 **pin 22**, Allego "Gated" mode + "BNC Breakout Board" toggle) instead — `DAQ_ON` tracks *streaming* and emits ~0.5 s idle pulses (false edges). The Pi-side input pin is unchanged (**GPIO 17**); only the *source* and *semantics* change (streaming→recording, pin 13→22). See [[wiring-guide]] / [[overview]]. SDK cross-check confirmed 2026-06-21: `AllegoClient.get_digital_out_states()` reports `{'digital_outs_mode':'GATED', ...}` live.
 
 > [!warning] 2026-07-27 — this listener is NOT sufficient for video-EEG synchronization as written
-> Two corrections, both source-confirmed. Full analysis → [[07-decisions/2026-07-27-video-eeg-sync-recording-architecture|Video-EEG Sync — The Recording Toggle Is Not Sync-Capable]].
+> Two corrections, both source-confirmed. Full analysis → [[2026-07-27-video-eeg-sync-recording-architecture|Video-EEG Sync — The Recording Toggle Is Not Sync-Capable]].
 >
 > 1. **Auto-start is WANTED. The STOP path is the bug.** Video must start automatically on EEG start; that is the desired UX and the leading edge is free margin, because enabling retains cache segments predating the enable. The damage is entirely on stop: `daemon.py:447` disables recording immediately, and Frigate `frigate/record/maintainer.py:250` then unlinks any unflushed `/tmp/cache` segment, costing **10 to 20 s off the end of every session**. Required behaviour: **drain 30 s, then RELEASE a lease — never publish OFF.** Recording state is `enabled = (manual_lease OR session_lease)`, and on SIGTERM or crash the daemon publishes NOTHING and leaves recording ON (a stuck-ON camera is recoverable; a dropped tail is not). Continuous 24/7 recording was considered and REJECTED on storage grounds.
 > 2. **The frame-sync pulse block below fires only twice per session** (rising edge, falling edge). That pins the endpoints and leaves the free-running camera clock's drift in between unmeasured and unrecoverable. **Needs a periodic pulse train, ~1 pulse / 10 s.** See "Wire 2 cadence" below.
@@ -297,6 +297,6 @@ Add to Netdata:
 
 ## Related
 
-- [[01-infrastructure/hardware-sync/overview|Hardware Sync Overview]]
-- [[01-infrastructure/hardware-sync/wiring-guide|Wiring Guide]]
-- [[01-infrastructure/raspberry-pi/golden-systemd-service|Golden systemd Service (go2rtc)]]
+- [[overview|Hardware Sync Overview]]
+- [[wiring-guide|Wiring Guide]]
+- [[golden-systemd-service|Golden systemd Service (go2rtc)]]

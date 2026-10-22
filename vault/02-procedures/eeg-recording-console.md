@@ -21,10 +21,10 @@ status: active
 >
 > **How to read this page.** Section 1 is everything you need to run a recording. Section 2 is the
 > three things about this rig that are surprising and worth knowing before you trust what you see.
-> Section 5 is what to do when something looks wrong. Background: [[01-infrastructure/system-overview]].
+> Section 5 is what to do when something looks wrong. Background: [[nvr-system-overview]].
 
 > [!tip] The page will not load, or something looks down?
-> [[02-procedures/starting-the-rig-after-a-restart]] — one command tells you what is up and what is not.
+> [[starting-the-rig-after-a-restart]] — one command tells you what is up and what is not.
 > Short version: the console, the NAS mount and the network start themselves and survive a desktop crash;
 > the Allego GUI is the only thing a human launches.
 
@@ -38,7 +38,7 @@ network.
 2. **Check the rig layout.** It fills in from your name. The four port boxes show what is plugged
    in — a splitter means two animals on that port, none means one — and whether that agrees with
    what Allego actually found. **A disagreement disables Start until you fix it.**
-   Full detail, and how to add your own settings: [[02-procedures/rig-layout-and-recording-settings]].
+   Full detail, and how to add your own settings: [[rig-layout-and-recording-settings]].
 
 3. **Type a recording batch name** — e.g. `HLBSSL`. This is what the folder on the NAS will be
    called, so it is the field that decides whether anyone can find this run in six months. Letters,
@@ -82,7 +82,7 @@ condition you picked for that mouse:
 | `HLBSSL31` | the mouse ID typed in the slot |
 | `B` / `R` | baseline / recovery |
 
-The CSV format is on its own page: [[02-procedures/per-mouse-csv-format]].
+The CSV format is on its own page: [[per-mouse-csv-format]].
 
 > [!tip] Mixed conditions in one run are fine
 > Each mouse is filed under its own type, so a run with some baseline and some recovery animals
@@ -123,14 +123,14 @@ recording under the same name, the strip report, `run.json` (who, which mice, wh
 > The console says so on screen during the first 90 seconds. **Do not conclude a recording has
 > failed because it shows 0 bytes.** Growth is confirmed in the background after 40 s, and only then
 > does the console complain. Full measurement:
-> [[05-experiments/completed/2026-09-11-allego-control-bench-test]].
+> [[2026-09-11-allego-control-bench-test]].
 
 ### 2.3 One run owns the whole rig, and there is no default owner
 
 > [!warning] RECORDING IS GLOBAL — ONE BOX, ONE RECORD BUTTON, ONE FILE
 > The XDAQ has a single `R_ON` state for all four ports. `radiens 4.0.0` has **no per-port recording
 > control** whatever the upstream documentation says — measured, see
-> [[02-procedures/multi-user-independent-recording-schedules]]. Two people cannot record
+> [[multi-user-independent-recording-schedules]]. Two people cannot record
 > independently at the same time, and the console refuses to start a second run while one is active.
 >
 > To share the rig, record the **union** of both windows and separate afterwards by stripping — the
@@ -170,7 +170,7 @@ sites `/3`–`/16` and `/35`–`/48` on a 64-channel chip.
 > reason and a dangerous one. An **RHD2132 has 32 real unipolar inputs**, so those six sites are real
 > amplifiers and about 26 real inputs sit unused — a floor *could* be derived from them.
 >
-> It must not be. [[05-experiments/completed/2026-08-05-unipolar-lfp-mouse-reference]] measured those
+> It must not be. [[2026-08-05-unipolar-lfp-mouse-reference]] measured those
 > unused inputs at a median **0.17 MΩ** and warns that *"on this headstage the unused inputs are tied
 > to ground, so a low magnitude proves nothing at all."* A floor built from ground-tied inputs
 > flatters the control and condemns every real animal.
@@ -204,7 +204,7 @@ the run.
 
 > [!info] How it works underneath
 > Every program involved, what fires each one, every failsafe and why it exists:
-> [[01-infrastructure/eeg-recorder/pipeline-architecture]]. Read that before changing any of it.
+> [[pipeline-architecture]]. Read that before changing any of it.
 
 ## 4. What it is made of
 
@@ -245,13 +245,13 @@ State: `~/.local/state/eeg-recorder/runs.db`.
 | Allego pill amber, "sample rate is 30000" | a freshly launched Allego comes up at 30 kHz in `SMARTBOX_PRO` | fix the mode and rate in Allego; the console refuses to start until they are right |
 | live panel shows 0 bytes | **normal for the first ~30 s** | wait. If it persists past the growth check the console says so explicitly |
 | "R_ON but NOT GROWING" | the recorder claims to be recording and no bytes are landing | needs a person. This is the silent-failure signature that cost a 72 h run before |
-| NAS pill red | share not mounted, or the sentinel is missing | see [[02-procedures/installation/skim-nas-smb-and-upload]] §5. Runs wait safely meanwhile |
+| NAS pill red | share not mounted, or the sentinel is missing | see [[skim-nas-smb-and-upload]] §5. Runs wait safely meanwhile |
 | a run sits in `FAILED_QC` | no QC bundle, so stripping would destroy the only record of the wire-free floor | **This is the expected state for any recording that has not been QC'd yet, including every test run.** Press **retry**: it asks whether to strip anyway. Say yes for a test; for real data, compute the bundle first and then retry. The choice is recorded on the run either way, and applies to that run alone |
 | a run sits in `UPLOAD_PENDING` | the NAS is unreachable | nothing to do. It drains when the NAS returns |
 | a run sits in `FAILED_STRIP`, "din_1 ... transitions" | Gate B saw a varying digital input it would drop. With nothing wired to the GPIO header that is noise on a floating input (run `ee0263bffeaa`, 10-08) | since 2026-10-14 `rig.gpio_header_connected: false` in `config/users.yaml` makes the console pass `--gpio-never-connected` itself, and the strip report records it as `gate_b_override`. Set it to `true` the day the XDAQ → Pi sync is wired |
 
 > [!warning] THIS TOOL DOES NOT REPLACE THE PRE-FLIGHT SCREEN
-> For any recording whose timepoint dies with the animals, [[02-procedures/pre-flight-connection-screen]]
+> For any recording whose timepoint dies with the animals, [[pre-flight-connection-screen]]
 > still gates the run. The console tells you a recording is *writing bytes*; it says nothing about
 > whether the electrodes are connected.
 
@@ -268,7 +268,7 @@ uploaded with **4 files verified, 0 size-only**. The whole sequence is in that r
 
 That first real run also exposed three defects in the retry path, all now fixed and covered by
 regression tests — see §5 and
-[[03-troubleshooting/symptoms/recording-console-retry-was-a-dead-end]].
+[[recording-console-retry-was-a-dead-end]].
 
 ✅ **Scheduling is verified on the real rig** (2026-09-13, a 9-minute bench run): the start
 fired **3 s after the instant**, the stop fired **0.5 s late**, and the full chain ran afterwards
@@ -287,8 +287,8 @@ Still open:
 
 ## 7. Related
 
-- [[05-experiments/completed/2026-09-11-allego-control-bench-test]] — the measurements behind §2.2
-- [[02-procedures/installation/xdat-channel-stripping]] — what the strip does and what it costs
-- [[02-procedures/installation/skim-nas-smb-and-upload]] — the NAS, and how uploads are verified
-- [[02-procedures/scheduled-recording-and-watchdogs]] — the older crontab-based path, still valid
-- [[02-procedures/CANONICAL-allego-channel-selection]] — which sites are the wired ones
+- [[2026-09-11-allego-control-bench-test]] — the measurements behind §2.2
+- [[xdat-channel-stripping]] — what the strip does and what it costs
+- [[skim-nas-smb-and-upload]] — the NAS, and how uploads are verified
+- [[scheduled-recording-and-watchdogs]] — the older crontab-based path, still valid
+- [[CANONICAL-allego-channel-selection]] — which sites are the wired ones

@@ -1,7 +1,7 @@
 ---
 tags: [archive, 2026-05-rehaul]
 archived: 2026-05-24
-superseded-by: "[[01-infrastructure/session-daemon/frontend-reference]]"
+superseded-by: "[[frontend-reference]]"
 reason: "Session WAL journal (2026-05-23) and nightly reconciler (2026-05-24) added /api/journal, /api/reconciler/last, /api/reconciler/run endpoints; pre-change API table is preserved here"
 ---
 

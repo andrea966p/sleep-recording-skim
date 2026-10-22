@@ -22,7 +22,7 @@ First 10 minutes when something is wrong on the NVR. Each section: how to confir
 df -h /srv/frigate/storage /opt/neurosurveillance/exports
 curl -s http://127.0.0.1:8585/api/storage | jq
 ```
-**Safe immediate action:** see [[../06-references/storage-troubleshooting|storage-troubleshooting]] — the storage system has a 200 GB EEG reserve cap that already blocks new recordings when free space < reserve. Most likely you need to either delete old exports or raise the cap.
+**Safe immediate action:** see [[storage-troubleshooting|storage-troubleshooting]] — the storage system has a 200 GB EEG reserve cap that already blocks new recordings when free space < reserve. Most likely you need to either delete old exports or raise the cap.
 
 **Do NOT** `rm -rf` inside `/srv/frigate/storage/recordings/` without stopping Frigate first — Frigate's DB will get confused. If recording is active, leave it and move old exports off-machine instead.
 
@@ -34,7 +34,7 @@ systemctl status neurosurveillance-session
 curl -s http://127.0.0.1:8585/api/status     # connection refused?
 journalctl -u neurosurveillance-session -n 50 --no-pager
 ```
-**Safe immediate action:** if no active recording, `sudo systemctl restart neurosurveillance-session`. If a recording IS active, the recording continues in Frigate but the daemon's *in-memory* session metadata for that camera is lost on restart. Since 2026-05-23 the [[../01-infrastructure/session-daemon/session-journal|append-only WAL]] persists every session's lifecycle events (`START`, `EXPORT_BEGIN`, `EXPORT_COMPLETE`, `ABORT`, `STALL`) to `/opt/neurosurveillance/session_wal.db`, so the session can be reconstructed after the restart and the [[../01-infrastructure/session-daemon/reconciler|nightly reconciler]] will flag anything orphaned. Coordinate with the researcher first.
+**Safe immediate action:** if no active recording, `sudo systemctl restart neurosurveillance-session`. If a recording IS active, the recording continues in Frigate but the daemon's *in-memory* session metadata for that camera is lost on restart. Since 2026-05-23 the [[session-journal|append-only WAL]] persists every session's lifecycle events (`START`, `EXPORT_BEGIN`, `EXPORT_COMPLETE`, `ABORT`, `STALL`) to `/opt/neurosurveillance/session_wal.db`, so the session can be reconstructed after the restart and the [[reconciler|nightly reconciler]] will flag anything orphaned. Coordinate with the researcher first.
 
 **Common causes:**
 - Radiens disconnected → daemon logs `ERROR:radiens_poller: ... 446110 consecutive` but should NOT crash the daemon. If it did, it's a regression.
@@ -53,7 +53,7 @@ curl -s http://127.0.0.1:5000/api/stats | jq .service.uptime
 ```bash
 journalctl -u neurosurveillance-session --since "2 min ago" | grep -c "Manual recording started"   # expect 0
 ```
-If that count is **not** 0, the LWT/defer guard regressed — treat it as the [[../04-journal/2026-05/2026-05-20|2026-05-20]] pattern (Symptom F) and stop the spurious sessions via the Frigate UI.
+If that count is **not** 0, the LWT/defer guard regressed — treat it as the [[2026-05-20|2026-05-20]] pattern (Symptom F) and stop the spurious sessions via the Frigate UI.
 
 **Common causes:**
 - Pi unreachable → Frigate's ffmpeg can't pull RTSP → eventual stall. See Symptom E.
@@ -76,7 +76,7 @@ mosquitto_sub -h 127.0.0.1 -t 'frigate/#' -C 1 -W 5     # post-Phase 1.3: needs 
 docker exec mosquitto ls -l /mosquitto/config/passwd          # exists, owned 1883:1883, mode 0700
 docker exec mosquitto cat /mosquitto/config/mosquitto.conf | grep -E "allow_anonymous|password_file"
 ```
-If `passwd` is missing or empty (e.g. wiped by a bad redeploy), recreate it and restart only Mosquitto — credentials are in [[../00-config/production-values#Mosquitto MQTT Authentication (since 2026-05-22)|production-values]]:
+If `passwd` is missing or empty (e.g. wiped by a bad redeploy), recreate it and restart only Mosquitto — credentials are in [[production-values#Mosquitto MQTT Authentication (since 2026-05-22)|production-values]]:
 ```bash
 mosquitto_passwd -c /srv/frigate/mosquitto/passwd nvr        # prompts for the password
 sudo chown 1883:1883 /srv/frigate/mosquitto/passwd
@@ -95,17 +95,17 @@ curl -s http://192.168.0.11:1984/api/streams | jq    # go2rtc still running?
 ```
 **Effect:** Frigate's ffmpeg loops on `Connection refused`, no segments written for that camera. The recording-health watchdog (2026-05-18) detects this within ~90s and emits MQTT STALL.
 
-**Safe immediate action:** if the Pi is up but go2rtc is down → `ssh skimlab@192.168.0.1{1,2} 'sudo systemctl restart go2rtc'`. If the Pi is down → check power (Waveshare PoE HAT has known PMIC latch-up issue per [[incidents/2026-02-19-pmic-fault-poe-death]]). Power-cycle by unplugging the network cable for 30s.
+**Safe immediate action:** if the Pi is up but go2rtc is down → `ssh skimlab@192.168.0.1{1,2} 'sudo systemctl restart go2rtc'`. If the Pi is down → check power (Waveshare PoE HAT has known PMIC latch-up issue per [[2026-02-19-pmic-fault-poe-death]]). Power-cycle by unplugging the network cable for 30s.
 
 ## Symptom F — Unexpected recording fired (all cameras started without command)
 
-**This is the [[../04-journal/2026-05/2026-05-20|2026-05-20]] pattern.** Confirm:
+**This is the [[2026-05-20|2026-05-20]] pattern.** Confirm:
 ```bash
 journalctl -u neurosurveillance-session --since "10 min ago" | grep "Manual recording started"
 docker ps --filter name=frigate --format "{{.Names}}\t{{.Status}}"   # restarted recently?
 tail -50 /var/log/apt/history.log    # docker upgrade?
 ```
-**Safe immediate action:** stop recordings via Frigate UI (one click per camera). Then investigate the trigger using [[incidents/2026-05-20-docker-upgrade-and-startup-guard-regression|the 2026-05-20 incident note]] as a template — check apt history, docker logs, host uptime to distinguish power-blip vs upgrade vs manual restart.
+**Safe immediate action:** stop recordings via Frigate UI (one click per camera). Then investigate the trigger using [[2026-05-20-docker-upgrade-and-startup-guard-regression|the 2026-05-20 incident note]] as a template — check apt history, docker logs, host uptime to distinguish power-blip vs upgrade vs manual restart.
 
 ## Symptom G — Watchdog STALL alert fired
 
@@ -130,7 +130,7 @@ curl -s 'http://127.0.0.1:8585/api/journal?event_type=STALL&limit=5' | python3 -
 
 ## Symptom H — Disk died / data lost / config wiped → restore from NAS
 
-The nightly NAS backup ([[../02-procedures/installation/nas-backup|NAS Backup procedure]]) holds the last **3 days** of the vault, daemon code, daemon config + session WAL, and Frigate config. **Recorded videos are NOT in it** (too large — they live on the NVMe/Frigate cache only).
+The nightly NAS backup ([[nas-backup|NAS Backup procedure]]) holds the last **3 days** of the vault, daemon code, daemon config + session WAL, and Frigate config. **Recorded videos are NOT in it** (too large — they live on the NVMe/Frigate cache only).
 
 ```bash
 # 1. See what snapshots exist on the NAS
@@ -146,7 +146,7 @@ tar tzf /tmp/restore.tar.gz | less
 mkdir -p /tmp/restore && tar xzf /tmp/restore.tar.gz -C /tmp/restore
 ```
 
-After restore, **regenerate** what was deliberately excluded: `npm install` (frontend), `cargo build` (Tauri), `python -m venv venv && pip install -r requirements.txt` (daemon), and `mosquitto_passwd` to rebuild `/srv/frigate/mosquitto/passwd` from the secret in [[../00-config/production-values#Mosquitto MQTT Authentication (since 2026-05-22)|production-values]]. Full step-by-step + what-is/isn't-included: [[../02-procedures/installation/nas-backup|NAS Backup procedure]].
+After restore, **regenerate** what was deliberately excluded: `npm install` (frontend), `cargo build` (Tauri), `python -m venv venv && pip install -r requirements.txt` (daemon), and `mosquitto_passwd` to rebuild `/srv/frigate/mosquitto/passwd` from the secret in [[production-values#Mosquitto MQTT Authentication (since 2026-05-22)|production-values]]. Full step-by-step + what-is/isn't-included: [[nas-backup|NAS Backup procedure]].
 
 ## Where to look next
 
@@ -159,4 +159,4 @@ After restore, **regenerate** what was deliberately excluded: `npm install` (fro
 
 ## Escalation
 
-If symptom doesn't match the above and you can't reach Andrea, see [[../02-procedures/bus-factor-runbook|bus-factor-runbook]] — written specifically for non-Andrea operators (where data lives, how to start/stop a session, what NOT to touch, escalation contacts, glossary of insider terms).
+If symptom doesn't match the above and you can't reach Andrea, see [[bus-factor-runbook|bus-factor-runbook]] — written specifically for non-Andrea operators (where data lives, how to start/stop a session, what NOT to touch, escalation contacts, glossary of insider terms).

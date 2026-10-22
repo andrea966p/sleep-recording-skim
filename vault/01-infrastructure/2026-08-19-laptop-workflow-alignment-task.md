@@ -237,7 +237,7 @@ ssh e10 -t 'tmux new -As rig'
   branch `ops/nas-archive-and-scheduled-recording` is unpushed on purpose.
 - **Stopping the recording.** The user stops it by hand.
 
-Related: [[01-infrastructure/multi-machine-work-setup]] ·
-[[01-infrastructure/raw-recording-archive-to-nas]] ·
-[[03-troubleshooting/incidents/2026-08-19-nas-backup-wrong-address]] ·
-[[03-troubleshooting/incidents/2026-04-29-syncthing-deletion-and-recovery]]
+Related: [[multi-machine-work-setup]] ·
+[[raw-recording-archive-to-nas]] ·
+[[2026-08-19-nas-backup-wrong-address]] ·
+[[2026-04-29-syncthing-deletion-and-recovery]]

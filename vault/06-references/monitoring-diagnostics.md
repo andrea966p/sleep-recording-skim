@@ -6,7 +6,7 @@ status: production
 
 # Monitoring Diagnostics Reference
 
-Quick-reference for querying the NeuroSurveillance monitoring stack. For setup procedures see [[02-procedures/installation/monitoring-setup|Monitoring Setup]]. For alert config details see [[01-infrastructure/netdata/nvr-alerts-config|NVR Alerts Config]].
+Quick-reference for querying the NeuroSurveillance monitoring stack. For setup procedures see [[monitoring-setup|Monitoring Setup]]. For alert config details see [[nvr-alerts-config|NVR Alerts Config]].
 
 ---
 
@@ -402,8 +402,8 @@ docker stats --no-stream --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}\
 
 ## Related
 
-- [[02-procedures/installation/monitoring-setup|Monitoring Setup Procedure]]
-- [[01-infrastructure/netdata/nvr-alerts-config|NVR Alerts Golden Config]]
-- [[00-config/production-values|Production Values]]
-- [[01-infrastructure/raspberry-pi/watchdog-monitoring|Pi Watchdog & Monitoring]]
-- [[03-troubleshooting/incidents/2026-04-02-allegoserver-thermal-spikes|Thermal Incident 2026-04-02]]
+- [[monitoring-setup|Monitoring Setup Procedure]]
+- [[nvr-alerts-config|NVR Alerts Golden Config]]
+- [[production-values|Production Values]]
+- [[watchdog-monitoring|Pi Watchdog & Monitoring]]
+- [[2026-04-02-allegoserver-thermal-spikes|Thermal Incident 2026-04-02]]

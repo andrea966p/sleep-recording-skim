@@ -54,7 +54,7 @@ Related: [[2026-08-18]] · [[animal-card-and-verdict-ladder]] ·
 > The 8 positions were re-recorded for 39.7 h on 19-21 August and scored per-chip.
 > **Surviving passes are A1, A2, D2 only.** C1 and C2 initially appeared to pass and were withdrawn
 > after falsification (C1's state-dependence was a delta-RATIO artefact).
-> [[05-experiments/completed/2026-08-21-39h-run-score]]
+> [[2026-08-21-39h-run-score]]
 
 > [!warning] 🔴 THE VERDICTS ON THIS PAGE USED THE POOLED WIRE-FREE FLOOR (noted 2026-08-21)
 > `criteria.floor_stats()` pools the floor across all eight amplifier chips; the project's own
@@ -68,7 +68,7 @@ Related: [[2026-08-18]] · [[animal-card-and-verdict-ladder]] ·
 >
 > ⚠️ **The per-position numbers on this page have not been recomputed.** The same eight positions
 > were re-recorded for 39.7 h on 19-21 August and scored per-chip, which supersedes this screen as
-> the cohort's status: [[05-experiments/completed/2026-08-21-39h-run-score]].
+> the cohort's status: [[2026-08-21-39h-run-score]].
 
 ## How I am naming these mice
 
@@ -333,7 +333,7 @@ would likely clear 15 minutes somewhere in a night.
 > 🛑 **Do not score this run against the hour-long screen's verdicts** — per the cohort rule, rig
 > position is not animal identity, but these ARE the same eight animals as 2026-08-18, so the
 > comparison is legitimate here. State block duration, not just total fraction.
-> How it was started: [[02-procedures/scheduled-recording-and-watchdogs]].
+> How it was started: [[scheduled-recording-and-watchdogs]].
 >
 > 🔴 **STOPPED EARLY at 17:16 (8.27 h, 31.2 GB) — W-SD B1 CHEWED AND CUT ITS TETHER.**
 > That animal is off the rig and a **different, already-tethered mouse from the habituation rack is

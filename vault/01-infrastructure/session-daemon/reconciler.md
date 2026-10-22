@@ -63,12 +63,12 @@ Defined as module-level constants near the top of `reconciler.py`. **Read each c
 |---|---|---|
 | `ORPHAN` | Continuous Frigate segment runs not covered by any WAL `START` interval. | **Information only**. Frigate's `record.enabled: true` records 24/7 regardless of sessions, so per-minute gaps would flood the report. The 6h floor surfaces only outsized anomalies. Slack alerts intentionally suppress this category. |
 | `PARTIAL` | Session with `START + EXPORT_COMPLETE/ABORT` where Frigate segment coverage of `[start, end]` is below `PARTIAL_RATIO`. | Actionable. Recording dropped mid-session. Inspect Frigate logs for the camera in the time window. |
-| `STUCK` | `EXPORT_BEGIN` older than `STUCK_EXPORT_HOURS` with no matching `EXPORT_COMPLETE`. Rows with `payload.backfilled == true` are skipped. | Actionable. Likely a Frigate export-API hang. Cross-reference with [[../../03-troubleshooting/incidents/2026-04-08-frigate-export-stuck-and-missing-on-edges\|prior export incidents]]. |
+| `STUCK` | `EXPORT_BEGIN` older than `STUCK_EXPORT_HOURS` with no matching `EXPORT_COMPLETE`. Rows with `payload.backfilled == true` are skipped. | Actionable. Likely a Frigate export-API hang. Cross-reference with [[2026-04-08-frigate-export-stuck-and-missing-on-edges\|prior export incidents]]. |
 | `DEGRADED` | Session has `START + EXPORT_COMPLETE + ≥ 1 STALL event` between them. | QC flag, not data loss. The export completed but recording stalled at least once. May indicate Pi or camera health issues. |
 
 ### Why `MIN_ORPHAN_DURATION_S` is 6h
 
-The first dry-run (no orphan threshold) reported **25 ORPHANs** across 7 days. Tracing one: WAL session `8f2b89a1` (Diane, May 20 16:37:15 KST → May 22 18:35:06 KST per [[../../04-journal/2026-05/2026-05-20|2026-05-20]]) covered her actual recording window correctly. The reported ORPHANs were *other* continuous Frigate segment runs outside Diane's session — Frigate keeps recording whenever it's running, regardless of whether a daemon-tracked session exists.
+The first dry-run (no orphan threshold) reported **25 ORPHANs** across 7 days. Tracing one: WAL session `8f2b89a1` (Diane, May 20 16:37:15 KST → May 22 18:35:06 KST per [[2026-05-20|2026-05-20]]) covered her actual recording window correctly. The reported ORPHANs were *other* continuous Frigate segment runs outside Diane's session — Frigate keeps recording whenever it's running, regardless of whether a daemon-tracked session exists.
 
 A 6h floor drops normal background continuity from the report while keeping it as a canary for unbounded multi-day continuous runs (which would suggest a deeper problem). If the daemon ever owns Frigate's `record.enabled` toggle ([[#Future direction|see below]]), reset this threshold to `MIN_FINDING_DURATION_S` since every recording would then map to a session.
 
@@ -175,7 +175,7 @@ docker exec mosquitto mosquitto_sub \
     -t 'neurosurveillance/reconciler/findings' -v
 ```
 
-(The Mosquitto auth password is in [[../../00-config/production-values#Mosquitto MQTT Authentication (since 2026-05-22)|production-values]].)
+(The Mosquitto auth password is in [[production-values#Mosquitto MQTT Authentication (since 2026-05-22)|production-values]].)
 
 ### When the schedule changes
 
@@ -188,7 +188,7 @@ Sub-second on the current 60 k-segment Frigate DB. Should stay sub-second as the
 
 ## Future direction
 
-- **Couple Frigate `record.enabled` to session lifecycle.** Currently Frigate records 24/7, which makes ORPHAN structurally noisy. If the daemon owned this toggle, `MIN_ORPHAN_DURATION_S` could collapse to `MIN_FINDING_DURATION_S` (30 s) and ORPHAN would become actionable. Council previously flagged the toggle as off-limits ([[../../04-journal/2026-05/2026-05-23#Future considerations & optimizations|see 2026-05-23 future considerations]] — investigated before, breaks Frigate). Not on the table.
+- **Couple Frigate `record.enabled` to session lifecycle.** Currently Frigate records 24/7, which makes ORPHAN structurally noisy. If the daemon owned this toggle, `MIN_ORPHAN_DURATION_S` could collapse to `MIN_FINDING_DURATION_S` (30 s) and ORPHAN would become actionable. Council previously flagged the toggle as off-limits ([[2026-05-23#Future considerations & optimizations|see 2026-05-23 future considerations]] — investigated before, breaks Frigate). Not on the table.
 - **Daemon uptime tracking.** Adding `BOOT` and `SHUTDOWN` event types to the WAL would let the reconciler scope ORPHAN detection to daemon-up windows, sidestepping the Frigate-side coupling problem. Cheaper than the previous bullet. Decide after observing 1 week of reconciler output.
 - **Persist findings to the WAL.** Today findings live only in memory + MQTT. Adding a `findings` table or `RECONCILE` event type would give findings the same crash-safety the lifecycle events have. Worth considering once we see organic non-zero findings.
 - **Frontend integration.** A small badge in the header reading `/api/reconciler/last` every 30 s, color-coded by `partial_count + stuck_count + degraded_count`. Mirrors the existing storage badge pattern.
@@ -197,5 +197,5 @@ Sub-second on the current 60 k-segment Frigate DB. Should stay sub-second as the
 
 - [[session-journal|Session Journal — golden config]] (the input data)
 - [[architecture|Session Daemon — architecture]] (where the reconciler fits)
-- [[../../04-journal/2026-05/2026-05-24|2026-05-24]] — implementation journal
-- [[../../04-journal/2026-05/2026-05-20|2026-05-20]] — sprint plan + Stage 2.2 origin
+- [[2026-05-24|2026-05-24]] — implementation journal
+- [[2026-05-20|2026-05-20]] — sprint plan + Stage 2.2 origin

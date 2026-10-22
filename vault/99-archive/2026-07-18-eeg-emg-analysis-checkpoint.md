@@ -123,4 +123,4 @@ Advances 2026, also 4-second epochs).
 
 ## Related
 - [[eeg-60hz-saga]] · [[allego-electrode-setup-sleep64]] ·
-  [[eeg-data-analysis/04-processing-guidelines]] · [[tsukuba-sleep-recording-method]]
+  [[04-processing-guidelines]] · [[tsukuba-sleep-recording-method]]

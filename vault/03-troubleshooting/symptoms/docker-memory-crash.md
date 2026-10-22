@@ -69,4 +69,4 @@ shm_size: "256mb"  # Increase if needed
 
 ## Related
 
-- [[../../01-infrastructure/frigate/config-yml|Frigate config]]
+- [[config-yml|Frigate config]]

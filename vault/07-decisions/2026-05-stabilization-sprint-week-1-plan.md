@@ -50,19 +50,19 @@ Updated 2026-05-28 after reconciler→Slack enable.
 | 1.2 — Syncthing exclude backend artifacts | 🟡 `__pycache__`/`*.pyc`/`venv` already excluded; `*.py` synced (flag for review) | `neurosurveillance/.stignore` |
 | 1.3 — Pin Frigate image tag | ✅ 0.16.1 pinned | `/srv/frigate/docker-compose.yml:12` |
 | 1.3b — Pin Mosquitto / Netdata | ✅ Done 2026-05-22 (SHA-pinned, no per-patch tag exists upstream) | `/srv/frigate/docker-compose.yml:4` |
-| 1.4 — Mosquitto auth | ✅ Done 2026-05-22 — `allow_anonymous false`, daemon + Frigate auth as `nvr` | [[../00-config/production-values#Mosquitto MQTT Authentication (since 2026-05-22)\|production-values]] |
+| 1.4 — Mosquitto auth | ✅ Done 2026-05-22 — `allow_anonymous false`, daemon + Frigate auth as `nvr` | [[production-values#Mosquitto MQTT Authentication (since 2026-05-22)\|production-values]] |
 | 1.5 — Dedupe `storage_monitor.stop()` | ✅ Done May 18 | `daemon.py` |
 | 1.6 — Push repo to GitHub | ✅ Done 2026-05-21 + 2026-05-22 (commits `43ebdbd`, `791dc18`, `2f7365d`) | `andrea966p/neurosurveillance` |
-| 2.1 — Append-only SQLite session WAL | ✅ Done 2026-05-23 (commit `7db66d2`) | [[../01-infrastructure/session-daemon/session-journal\|session-journal]] / `backend/session_journal.py` |
+| 2.1 — Append-only SQLite session WAL | ✅ Done 2026-05-23 (commit `7db66d2`) | [[session-journal\|session-journal]] / `backend/session_journal.py` |
 | 2.2 — Nightly reconciler | ✅ Done 2026-05-24 (commit `3830dba`) | `backend/reconciler.py` + `/api/reconciler/*` + MQTT `neurosurveillance/reconciler/findings` |
 | 2.2b — Reconciler → Slack enable (Phase 4.6, post-dry-run) | ✅ Done 2026-05-28 — bridge subscribes to `neurosurveillance/reconciler/findings`; suppresses `orphan` ([[../06-references/pattern_frigate_record_enabled_orphan_noise\|orphan-noise pattern]]); alerts when `partial+stuck+degraded > 0`. E2E via `/api/reconciler/run` — 0 spurious Slack | `backend/scripts/nvr-mqtt-slack.py` |
 | 2.3 — Concurrency: lock on `_last_known_state` | ✅ Done 2026-05-24 (commit `3830dba`, folded into Phase 3.1 as planned) | `frigate_controller.py` |
 | 2.3b — **Promoted** Exponential Radiens backoff | ✅ Done 2026-05-23 (commit `7545980`) — 1 s → 60 s cap, verified locally | `radiens_poller.py` |
-| 2.4 — Off-machine backup (originally USB; superseded by NAS over Tailscale) | ✅ Done 2026-05-26 — `nas-backup.{service,timer}` daily 00:00; ssh-pipe to Synology NAS; 3-day rolling retention; first-run verified 53,957,039 B | [[../02-procedures/installation/nas-backup\|nas-backup]] |
+| 2.4 — Off-machine backup (originally USB; superseded by NAS over Tailscale) | ✅ Done 2026-05-26 — `nas-backup.{service,timer}` daily 00:00; ssh-pipe to Synology NAS; 3-day rolling retention; first-run verified 53,957,039 B | [[nas-backup\|nas-backup]] |
 | Stage 3 | ❌ Open / hardware-gated | TTL cutover prep — [[#Phase 6 — Deferred (later sprint, before TTL pulse cutover)\|see Phase 6]] |
 | **NEW 2026-05-20** — Daemon startup guard (Frigate restart case) | ✅ Done 2026-05-24 (commit `3830dba`) — LWT + STATE_DEFER_SECONDS defer + cancel; 3× regression PASSED, 0 phantoms | `frigate_controller.py` + `daemon.py` grace handler |
 | **NEW 2026-05-20** — Netdata alert on `docker.service` restart | ✅ Done 2026-05-21 (`nvr_dockerd_restart`) | `/etc/netdata/health.d/nvr-docker.conf` |
-| **NEW 2026-05-18** — Watchdog → Slack wiring incomplete | ✅ Done 2026-05-25 (commit `b5485ee`) — Netdata has no MQTT collector; built `nvr-mqtt-slack.service` bridge instead. E2E PASSED | `backend/scripts/nvr-mqtt-slack.py` + `deploy/` + [[../02-procedures/installation/watchdog-slack-bridge\|bridge doc]] |
+| **NEW 2026-05-18** — Watchdog → Slack wiring incomplete | ✅ Done 2026-05-25 (commit `b5485ee`) — Netdata has no MQTT collector; built `nvr-mqtt-slack.service` bridge instead. E2E PASSED | `backend/scripts/nvr-mqtt-slack.py` + `deploy/` + [[watchdog-slack-bridge\|bridge doc]] |
 | **NEW 2026-05-18** — Persist Frigate Python logs (tmpfs → disk) | ✅ Done 2026-05-22 — `/srv/frigate/logs/frigate/current` | `/srv/frigate/docker-compose.yml:31` |
 | **NEW 2026-05-18** — ffprobe duration sanity check post-export | ✅ Done 2026-05-25 (commit `b5485ee`) — in `daemon._execute_export` (not frigate_controller); `<0.95×` ⇒ `completed (partial: …)` | `daemon.py` |
 | **NEW 2026-05-20** — Clean ~430 MB May 18 residue | ✅ Done 2026-05-22 | — |
@@ -91,7 +91,7 @@ Updated 2026-05-28 after reconciler→Slack enable.
 
 ## Phase 1 — Friday afternoon stop-the-bleeding (post-lunchtime)
 
-**Executed:** 2026-05-22 (see [[../04-journal/2026-05/2026-05-22|2026-05-22 journal]]).
+**Executed:** 2026-05-22 (see [[2026-05-22|2026-05-22 journal]]).
 **Goal:** finish council Stage 1 + highest-leverage 2026-05-18/20 items in one maintenance window. ~90 min.
 
 **Pre-flight (mandatory):**
@@ -115,10 +115,10 @@ Updated 2026-05-28 after reconciler→Slack enable.
 
 ## Phase 2 — Saturday: append-only session WAL (council Stage 2.1)
 
-**Executed:** 2026-05-23 (see [[../04-journal/2026-05/2026-05-23|2026-05-23 journal]]).
+**Executed:** 2026-05-23 (see [[2026-05-23|2026-05-23 journal]]).
 **Goal:** the highest-leverage data-integrity fix per council. ~3–4 hours.
 
-**Why (council Contrarian, 5/5 reviewer consensus):** every session state transition exists in memory only today. Daemon crash mid-recording → metadata gone, MP4 chunks orphaned. Already seen in [[../04-journal/2026-05/2026-05-18|May 18 incident]] (pi_cam_2 unrecoverable).
+**Why (council Contrarian, 5/5 reviewer consensus):** every session state transition exists in memory only today. Daemon crash mid-recording → metadata gone, MP4 chunks orphaned. Already seen in [[2026-05-18|May 18 incident]] (pi_cam_2 unrecoverable).
 
 | #   | Task | Risk | Time |
 | --- | ---- | ---- | ---- |
@@ -134,7 +134,7 @@ Updated 2026-05-28 after reconciler→Slack enable.
 
 ## Phase 3 — Sunday: startup guard fix + nightly reconciler (council Stage 2.2)
 
-**Executed:** 2026-05-24 (see [[../04-journal/2026-05/2026-05-24|2026-05-24 journal]]).
+**Executed:** 2026-05-24 (see [[2026-05-24|2026-05-24 journal]]).
 **Goal:** close 2026-05-20 regression + finish council Stage 2.2. ~4 hours.
 
 | # | Task | Risk | Time |
@@ -149,7 +149,7 @@ Updated 2026-05-28 after reconciler→Slack enable.
 
 ## Phase 4 — Monday: code quality + remaining ops
 
-**Executed:** 2026-05-25 (see [[../04-journal/2026-05/2026-05-25|2026-05-25 journal]]). Item 4.6 added during execution, enabled 2026-05-28 (see [[../04-journal/2026-05/2026-05-28|2026-05-28 journal]]).
+**Executed:** 2026-05-25 (see [[2026-05-25|2026-05-25 journal]]). Item 4.6 added during execution, enabled 2026-05-28 (see [[2026-05-28|2026-05-28 journal]]).
 **Goal:** small items. ~2 hours.
 
 | # | Task | Risk | Time |
@@ -165,7 +165,7 @@ Updated 2026-05-28 after reconciler→Slack enable.
 
 ## Phase 5 — Tuesday: burn-in / validation
 
-**Executed:** 2026-05-26 (see [[../04-journal/2026-05/2026-05-26|2026-05-26 journal]]).
+**Executed:** 2026-05-26 (see [[2026-05-26|2026-05-26 journal]]).
 
 - [x] Synthetic stall (stop go2rtc) → Slack alert ≤90s + journal STALL event — ✅ by-prior-test (E2E 2026-05-25, `lag=70.5s`); not re-run to avoid Pi1 stream disruption
 - [x] `docker restart frigate` → ZERO spurious sessions — ✅ verified 2026-05-26 (manual_recordings `{}`, 0 new WAL START)
@@ -173,7 +173,7 @@ Updated 2026-05-28 after reconciler→Slack enable.
 - [x] Diane's Monday recordings (if any) export cleanly through new journal + ffprobe path — ✅ no organic Mon session; `teststall` export exercised the path correctly (partial flagged)
 - [x] Netdata alerts dashboard — no false positives — ✅ zero `nvr_*` raised
 
-**Result: CLEAN → stabilization sprint week 1 CLOSED** (see [[../04-journal/2026-05/2026-05-26|2026-05-26]]). Only carry-over was 4.6 reconciler→Slack enable (gated on 3-night dry-run) — now done 2026-05-28.
+**Result: CLEAN → stabilization sprint week 1 CLOSED** (see [[2026-05-26|2026-05-26]]). Only carry-over was 4.6 reconciler→Slack enable (gated on 3-night dry-run) — now done 2026-05-28.
 
 ---
 
@@ -185,7 +185,7 @@ Per council: "stabilise integrity before changing the sync primitive."
 - Parallel-run protocol (poll + TTL ≥1 full cohort)
 - `sync_method` field per session record
 - Numeric rollback criterion ("rollback if pulse-count delta >5% in any session")
-- ✅ Done 2026-05-28 — One-page "If Andrea is unreachable" bus-factor runbook — [[../02-procedures/bus-factor-runbook|bus-factor-runbook]]
+- ✅ Done 2026-05-28 — One-page "If Andrea is unreachable" bus-factor runbook — [[bus-factor-runbook|bus-factor-runbook]]
 - Auto-recovery on watchdog stall (only after ≥1 organic stall through watchdog)
 - WAL too-short-stop nit: write `ABORT`/`TOO_SHORT` terminal event from `manual_session_manager.stop_recording()` "too short, ignoring" path so the WAL lifecycle is always closed
 
@@ -266,8 +266,8 @@ docker restart frigate && sleep 15 && ls -la /srv/frigate/logs/frigate/   # cont
 ## Related
 
 - [[2026-05-01-llm-council-review|2026-05-01 LLM Council review]] — the original assessment + staged plan this sprint derives from
-- [[../04-journal/2026-05/2026-05-20|2026-05-20 journal]] — the Docker-upgrade incident that triggered the sprint
-- [[../04-journal/2026-05/2026-05-18|2026-05-18 journal]] — May 18 watchdog + export-timeout work that fed Phase 4
-- [[../04-journal/2026-04/2026-04-01|2026-04-01]] — first occurrence of Docker-upgrade pattern
-- Daily execution logs: [[../04-journal/2026-05/2026-05-21|2026-05-21]] · [[../04-journal/2026-05/2026-05-22|22]] · [[../04-journal/2026-05/2026-05-23|23]] · [[../04-journal/2026-05/2026-05-24|24]] · [[../04-journal/2026-05/2026-05-25|25]] · [[../04-journal/2026-05/2026-05-26|26]] · [[../04-journal/2026-05/2026-05-28|28]]
+- [[2026-05-20|2026-05-20 journal]] — the Docker-upgrade incident that triggered the sprint
+- [[2026-05-18|2026-05-18 journal]] — May 18 watchdog + export-timeout work that fed Phase 4
+- [[2026-04-01|2026-04-01]] — first occurrence of Docker-upgrade pattern
+- Daily execution logs: [[2026-05-21|2026-05-21]] · [[2026-05-22|22]] · [[2026-05-23|23]] · [[2026-05-24|24]] · [[2026-05-25|25]] · [[2026-05-26|26]] · [[2026-05-28|28]]
 - Plan file (Claude Code mirror): `~/.claude/plans/now-time-to-do-cheerful-wigderson.md`

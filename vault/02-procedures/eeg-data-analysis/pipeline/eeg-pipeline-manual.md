@@ -11,7 +11,7 @@ status: active
 > constant lives in `eeg-emg-analysis/core/qc_thresholds.py` and nowhere else. Replace
 > `cd ~/sleep-recording-skim/eeg-emg-analysis/pipeline` with `cd ~/sleep-recording-skim/eeg-emg-analysis/pipeline`
 > in every command below. The old copies are archived verbatim at
-> [[99-archive/2026-08-09-pipeline-moved-to-repo/README|the pipeline archive]].
+> [[pipeline-moved-to-repo-readme|the pipeline archive]].
 >
 > **There is a new first step before these three commands:** [[animal-card-and-verdict-ladder]],
 > which produces one page per animal-recording saying how far up the chain of questions that

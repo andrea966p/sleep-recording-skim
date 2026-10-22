@@ -210,7 +210,7 @@ Production daemon `neurosurveillance-session.service` and Frigate / mosquitto / 
 - Storage-monitor disassembly reference: `/home/skimlab/storage_monitor.disassembly.txt`
 - Public repo (unaffected): `https://github.com/andrea966p/neurosurveillance-system`
 - Private repo (recovered to HEAD `40b0330` + WIP overlay): `https://github.com/andrea966p/neurosurveillance`
-- See also: [[../../00-config/production-values|production-values.md]] for system identifiers used here.
+- See also: [[production-values|production-values.md]] for system identifiers used here.
 
 ## Closing note, 2026-09-16
 

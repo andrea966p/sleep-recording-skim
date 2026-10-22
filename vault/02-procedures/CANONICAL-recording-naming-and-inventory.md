@@ -61,14 +61,14 @@ This is the base name Allego writes. Three files share it:
 > [!important] 2026-09-29: the NAS is organised by MOUSE, in `02_Data_Sleep`, as CSV
 > Each mouse of each recording is one folder holding one CSV + `info.json`. Its `allego_base` key
 > is the join back to the rows below. **Match a mouse folder to a recording by that key**, never
-> by the folder's date. Format: [[02-procedures/per-mouse-csv-format]].
+> by the folder's date. Format: [[per-mouse-csv-format]].
 >
 > Why there were two folders for W-SD (`BSR` and `BSR-2`) and two for S-SD: W-SD's baseline was
 > stopped at 17:16 on 08-19 when B1 chewed its tether and restarted 9 min later. S-SD's second
 > folder is the 08-26 B1-swap re-record, a different recording. Only the canonical eight in
 > "Which of these are the experiment" are rebuilt into the per-mouse tree
 > (`eeg-recorder/deploy/rebuild_02_data_sleep.py`). ✅ Done 2026-09-30: 64 mouse folders, each
-> cut to its analysis window ([[02-procedures/CANONICAL-recording-windows-and-protocol]]). S-SD B1
+> cut to its analysis window ([[CANONICAL-recording-windows-and-protocol]]). S-SD B1
 > is UNPAIRED by design: HLBSSD13 has a baseline only, HLBSSD17 a recovery only.
 
 > [!history] All eleven experiment folders were renamed to registry naming on 2026-09-23
@@ -153,7 +153,7 @@ in the table is a screen, a test, or an unexplained run.
 
 ⚠️ **The whole file is rarely the analysis window.** Which hours of each of these
 to use, the protocol they are judged against, and the discard list live in
-[[02-procedures/CANONICAL-recording-windows-and-protocol]].
+[[CANONICAL-recording-windows-and-protocol]].
 
 Two of these are **split across two files**, with a real gap in the middle:
 
@@ -195,6 +195,6 @@ beside it had two. **Fixed 2026-09-23** — the archiver recurses and it is in S
 
 ## Related
 
-- [[02-procedures/backup-architecture]] — which copy lives where
-- [[02-procedures/CANONICAL-allego-channel-selection]] — the channel map
-- [[02-procedures/installation/xdat-channel-stripping]] — how stripped files are made
+- [[backup-architecture]] — which copy lives where
+- [[CANONICAL-allego-channel-selection]] — the channel map
+- [[xdat-channel-stripping]] — how stripped files are made

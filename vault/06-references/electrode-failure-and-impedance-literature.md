@@ -22,7 +22,7 @@ priority: critical
 > electrode we use.
 
 Papers in `~/Desktop/andrea/papers/`. Evaluated against
-[[2026-08-03-two-8-mouse-runs]] and [[pipeline/README]].
+[[2026-08-03-two-8-mouse-runs]] and [[eeg-pipeline-manual]].
 
 ## The six papers
 

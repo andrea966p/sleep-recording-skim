@@ -12,7 +12,7 @@ status: superseded
 >
 > **The real cause was a wrong IP address in `nas-backup.sh`** (`100.120.86.10`; the NAS answers on
 > `100.120.86.9`). Fixed 2026-08-19 by switching to the MagicDNS name.
-> Read [[03-troubleshooting/incidents/2026-08-19-nas-backup-wrong-address]] instead.
+> Read [[2026-08-19-nas-backup-wrong-address]] instead.
 >
 > **Kept only as a record of how a plausible wrong theory got built and how it was caught.**
 > The useful part is §2 (the safety rules) and §6 (report back rather than improvise), which are

@@ -15,7 +15,7 @@ status: draft
 > Front door for all of this: **[[RIG-EXPANSION-HUB]]** (decision, vendor correspondence, wiring, open items).
 
 > [!abstract] TL;DR
-> Draft email to send NeuroNexus (or KONTEX) **before any purchase**, to close the open items in [[01-infrastructure/hardware-sync/references-and-justification|Design Justification]]. Goal: confirm how our **XDAQ Core2** exposes digital I/O so we can wire `DAQ_ON` → Raspberry Pi without buying the optional BNC Breakout Board.
+> Draft email to send NeuroNexus (or KONTEX) **before any purchase**, to close the open items in [[references-and-justification|Design Justification]]. Goal: confirm how our **XDAQ Core2** exposes digital I/O so we can wire `DAQ_ON` → Raspberry Pi without buying the optional BNC Breakout Board.
 >
 > Fill the `[bracketed]` fields (model serial, contact name) before sending. From: `andrea96p@kaist.ac.kr`.
 
@@ -73,13 +73,13 @@ andrea96p@kaist.ac.kr
 
 ## After reply — update these
 
-- [[01-infrastructure/hardware-sync/references-and-justification|Design Justification]] — close both Open Items (pin numbers, divider-vs-shifter).
-- [[01-infrastructure/hardware-sync/wiring-guide|Wiring Guide]] — correct DB25 pin numbers if they differ; drop BNC board line if confirmed unneeded; drop divider if output set to 3.3 V.
+- [[references-and-justification|Design Justification]] — close both Open Items (pin numbers, divider-vs-shifter).
+- [[wiring-guide|Wiring Guide]] — correct DB25 pin numbers if they differ; drop BNC board line if confirmed unneeded; drop divider if output set to 3.3 V.
 
 ## Related
-- [[01-infrastructure/hardware-sync/references-and-justification|Design Justification & References]] (source of these open items)
-- [[01-infrastructure/hardware-sync/wiring-guide|Wiring Guide]]
-- [[01-infrastructure/hardware-sync/overview|Hardware Sync Overview]]
+- [[references-and-justification|Design Justification & References]] (source of these open items)
+- [[wiring-guide|Wiring Guide]]
+- [[overview|Hardware Sync Overview]]
 
 ---
 
@@ -100,7 +100,7 @@ andrea96p@kaist.ac.kr
 
 > Pinout + specs now captured authoritatively in [[xdaq-core2-manual-reference|XDAQ Core2 Manual Reference]] (figures archived). Remaining items:
 
-- [x] **Q2 — pins verified against manual.** `DI 03 = Pin 2` (vendor's "Pin 22" was the `DO 03` pin — transposed). `DAQ_ON`=13, `GND`=14, `SAMPLE CLK`=25 all correct. Vault pin values already match — **no pin change needed** in [[wiring-guide|Wiring Guide]] / [[overview|Overview]] / [[radiens-api-reference|API ref]] / [[02-procedures/hardware-sync-setup|Setup Procedure]].
+- [x] **Q2 — pins verified against manual.** `DI 03 = Pin 2` (vendor's "Pin 22" was the `DO 03` pin — transposed). `DAQ_ON`=13, `GND`=14, `SAMPLE CLK`=25 all correct. Vault pin values already match — **no pin change needed** in [[wiring-guide|Wiring Guide]] / [[overview|Overview]] / [[radiens-api-reference|API ref]] / [[hardware-sync-setup|Setup Procedure]].
 - [ ] **Q3 + divider decision** — manual says DB25 output = **3.3 V** (not 3.6 V). Divider likely unnecessary. Before dropping it: measure `DAQ_ON` (pin 13) voltage during acquisition (DAQ_ON's own level isn't tabulated). Then update [[references-and-justification|Design Justification]] §C + BOM. Still awaiting dev team on whether the BNC voltage is CLI-settable (not relevant to DB25).
 - [ ] **Q4 — confirm `DAQ_ON` is level (not a pulse)** on a scope at wiring validation. Manual confirms it's on DB25 pin 13 ("logic high at onset of a recording session"), so the Pin-13 design stands — but verify it stays HIGH for the whole session and drops at stop.
 - [ ] **Q1 correction** — update [[radiens-api-reference|API ref]] "7 channels" DI/DO → DB25 exposes **6 DI + 6 DO** (onboard total = 7 DI incl. BNC); EXP ports = **MicroHDMI**.
@@ -190,7 +190,7 @@ andrea96p@kaist.ac.kr
 
 - [x] **Q1 — `DI 03` = pin 2 confirmed by vendor** (matches manual + vault). Wire 2 lands on pin 2. No change.
 - [ ] **⭐ Wire 1 redesign — recording gate moves to `DO 03` (pin 22), Gated mode.** `DAQ_ON` (pin 13) only indicates *streaming* and emits ~0.5s idle pulses in Allego → unsuitable as a clean recording gate (false edges). Use **`DO 03` pin 22** with "BNC Breakout Board" toggle ON + Digital Out Control = "Gated". Update [[wiring-guide|Wiring Guide]] Wire 1 + diagrams + [[overview|Overview]] DB25 pinout/architecture. **Re-check: does this collide with the multi-Pi return-DI plan? No — returns use DIs (pin 2/15/3/16); DO 03 is an output.**
-- [ ] **Allego config dependency now baked in:** the multi-Pi DI returns **and** the DO 03 recording gate both require the **"BNC Breakout Board"** slider ON in Allego's System tab. Document in [[02-procedures/hardware-sync-setup|Setup Procedure]] + [[gpio-sync-service|GPIO Sync Service]].
+- [ ] **Allego config dependency now baked in:** the multi-Pi DI returns **and** the DO 03 recording gate both require the **"BNC Breakout Board"** slider ON in Allego's System tab. Document in [[hardware-sync-setup|Setup Procedure]] + [[gpio-sync-service|GPIO Sync Service]].
 - [ ] **Optional streaming indicator:** keep `DAQ_ON` (pin 13) or front `DIGITAL OUT 1` (DO-01) as a *streaming* flag if both states wanted (recording is the must-have). Note pin-13 idle-pulse noise if used.
 - [ ] **Q3 voltage — still open.** Await Jeffrey's manufacturer answer for DAQ_ON / DO 03 logic-high. Likely 3.3 V (Allego can't set 5 V) → divider unneeded, but **measure pin 22 (and pin 13) during a recording session** before finalizing. Feeds [[wiring-guide#⭐ Pin 13 (DAQ_ON) Voltage Check — run this BEFORE building/buying the divider|voltage check]] (extend to pin 22).
 - [ ] **Q4b + Q5 — email KC Kong (`KC@kontex.io`)** for: (a) fan-out of one gate to 4 Pi GPIO inputs (buffer/driver?), (b) grounding 4 devices on SYS GND without ground loops, (c) Ubuntu 24.04 Core2 drivers/kernel/udev/Thunderbolt-authorization. New round-3 inquiry, different recipient.

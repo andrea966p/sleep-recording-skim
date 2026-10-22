@@ -62,7 +62,7 @@ Three things about that line:
 
 Prefer **09:00 (ZT0)** as the start time for anything running over a day, so light and dark phases
 come out equal. The light schedule is 09:00 ON / 21:00 OFF KST, so ZT0 = 09:00. See
-[[05-experiments/completed/2026-08-11-a2-control-48h-reference-profile]], where a 48-hour ZT0-to-ZT0
+[[2026-08-11-a2-control-48h-reference-profile]], where a 48-hour ZT0-to-ZT0
 control run replicated on itself across two consecutive days.
 
 ## What preflight refuses to do
@@ -123,6 +123,6 @@ with the final file size, and goes quiet. No action needed.
   `sessions.auto_start: false`. This is a parallel path, deliberately.
 - **No video.** Cameras were removed 2026-08-04, so these are electrophysiology-only runs.
 
-Related: [[01-infrastructure/raw-recording-archive-to-nas]] ·
-[[02-procedures/CANONICAL-allego-channel-selection]] ·
-[[02-procedures/eeg-artefact-and-railing-rejection-policy]]
+Related: [[raw-recording-archive-to-nas]] ·
+[[CANONICAL-allego-channel-selection]] ·
+[[eeg-artefact-and-railing-rejection-policy]]

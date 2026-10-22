@@ -59,7 +59,7 @@ status: completed
 > stopped at 09:05, so the four hours immediately before the terminal endpoint
 > were never recorded. The animals were sampled; it cannot be repeated. The
 > protocol was only written down on 2026-09-23, after this run:
-> [[02-procedures/CANONICAL-recording-windows-and-protocol]].
+> [[CANONICAL-recording-windows-and-protocol]].
 
 ## The protocol state, written out so it cannot be misread
 
@@ -252,7 +252,7 @@ state-dependent activity in the muscle band**, which is the band stage 3 stages 
 pre-flight screen above recorded "EMG locked at 50 µV" and read it as healthy.
 
 Rung 2 passes it because EMG is judged on hum and amplitude only. Rung 3 is where it is caught.
-Logged as an open defect: [[03-troubleshooting/symptoms/emg-without-muscle-band-activity-passes-rung-2]].
+Logged as an open defect: [[emg-without-muscle-band-activity-passes-rung-2]].
 
 ⚠️ **The two baseline SCOREABLEs do not rescue the batch.** A1 fails or is unjudgeable at rung 2
 on both baselines and is OPEN at the endpoint. B1/HLBSSD17's EMG is as flat as D2's (p95/p5 1.7),

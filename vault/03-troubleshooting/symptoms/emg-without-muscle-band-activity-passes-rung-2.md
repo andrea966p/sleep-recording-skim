@@ -57,7 +57,7 @@ must say which band it measures.
 falls toward atonia in NREM and REM and rises at night.
 
 Consequence: **S-SD recovery sleep is n = 0**, and the endpoint cannot be repeated.
-See [[05-experiments/completed/2026-09-02-S-SD-recovery-sleep]].
+See [[2026-09-02-S-SD-recovery-sleep]].
 
 ## A second, weaker case
 
@@ -87,6 +87,6 @@ so decide which rung owns the question before writing anything.
 
 ## Related
 
-[[05-experiments/completed/2026-09-02-S-SD-recovery-sleep]] ·
-[[03-troubleshooting/symptoms/contaminated-floor-rejects-good-eeg]] ·
-[[02-procedures/eeg-data-analysis/animal-card-and-verdict-ladder]]
+[[2026-09-02-S-SD-recovery-sleep]] ·
+[[contaminated-floor-rejects-good-eeg]] ·
+[[animal-card-and-verdict-ladder]]

@@ -20,7 +20,7 @@ status: production
 This procedure sets up a Raspberry Pi 5 as a dual-camera streaming node for the NeuroSurveillance system. It covers system hardening, go2rtc installation, PoE EEPROM configuration, monitoring scripts, and Frigate integration.
 
 > [!tip] Template Procedure
-> This guide is a template for deploying multiple Pi nodes. Replace the placeholder values below with the actual values for your specific Pi. After deployment, add the Pi's details to [[00-config/production-values|Production Values]].
+> This guide is a template for deploying multiple Pi nodes. Replace the placeholder values below with the actual values for your specific Pi. After deployment, add the Pi's details to [[production-values|Production Values]].
 
 ## Per-Node Values
 
@@ -136,7 +136,7 @@ sudo chown -R {PI_USER}:video /opt/go2rtc
 nano /opt/go2rtc/go2rtc.yaml
 ```
 
-Paste the following, with your Pi's unique camera names (see [[01-infrastructure/raspberry-pi/golden-go2rtc-config|Golden go2rtc Config]] for reference):
+Paste the following, with your Pi's unique camera names (see [[golden-go2rtc-config|Golden go2rtc Config]] for reference):
 
 ```yaml
 streams:
@@ -165,7 +165,7 @@ log:
 sudo nano /etc/systemd/system/go2rtc.service
 ```
 
-Paste the following (identical across all Pis — see [[01-infrastructure/raspberry-pi/golden-systemd-service|Golden systemd Service]]):
+Paste the following (identical across all Pis — see [[golden-systemd-service|Golden systemd Service]]):
 
 ```ini
 [Unit]
@@ -244,7 +244,7 @@ sudo cp /boot/firmware/config.txt /boot/firmware/config.txt.backup.$(date +%Y%m%
 sudo nano /boot/firmware/config.txt
 ```
 
-Add these lines to the **end** of the file (see [[01-infrastructure/raspberry-pi/golden-boot-config|Golden Boot Config]]):
+Add these lines to the **end** of the file (see [[golden-boot-config|Golden Boot Config]]):
 
 ```ini
 # ========================================
@@ -268,7 +268,7 @@ dtparam=watchdog=on
 ### 11. Configure EEPROM for PoE HAT
 
 > [!warning] Required for PoE-Powered Pis
-> Skip this step **only** if the Pi is powered by a standard USB-C power supply (not PoE). Without these settings, a PoE power glitch will brick the Pi until manually power-cycled. We lost Pi 1 for **6 days** due to this — see [[03-troubleshooting/incidents/2026-02-19-pmic-fault-poe-death|Feb 19 PMIC incident]].
+> Skip this step **only** if the Pi is powered by a standard USB-C power supply (not PoE). Without these settings, a PoE power glitch will brick the Pi until manually power-cycled. We lost Pi 1 for **6 days** due to this — see [[2026-02-19-pmic-fault-poe-death|Feb 19 PMIC incident]].
 
 ```bash
 sudo rpi-eeprom-config --edit
@@ -287,7 +287,7 @@ POWER_OFF_ON_HALT=1
 | `POWER_OFF_ON_HALT=1` | On halt, fully cuts PMIC power. PoE then auto-restores power, rebooting the Pi automatically. |
 
 > [!info] Double-Crash Limitation
-> The EEPROM fix handles a single power event. If the Pi crashes again *during* the reboot (e.g. PoE still unstable), the PMIC enters latch-up and requires a manual power cycle. See [[03-troubleshooting/incidents/2026-02-24-pi-unreachable-no-route|Feb 24 incident]].
+> The EEPROM fix handles a single power event. If the Pi crashes again *during* the reboot (e.g. PoE still unstable), the PMIC enters latch-up and requires a manual power cycle. See [[2026-02-24-pi-unreachable-no-route|Feb 24 incident]].
 
 ### 12. Configure systemd Hardware Watchdog
 
@@ -668,7 +668,7 @@ sudo systemctl restart neurosurveillance-session
 
 ### 20. Update Production Values
 
-Add the new Pi's details to [[00-config/production-values|Production Values]]:
+Add the new Pi's details to [[production-values|Production Values]]:
 
 - Network: `{PI2_IP}`, `{PI2_HOSTNAME}`
 - Cameras: `{CAMERA_2_ID}`, `{CAMERA_3_ID}`
@@ -720,8 +720,8 @@ Add the new Pi's details to [[00-config/production-values|Production Values]]:
 
 ## Related
 
-- [[01-infrastructure/raspberry-pi/golden-go2rtc-config|go2rtc Config]] — stream config reference
-- [[01-infrastructure/raspberry-pi/golden-systemd-service|systemd Service]] — service file reference
-- [[01-infrastructure/raspberry-pi/golden-boot-config|Boot Hardening]] — boot config reference
-- [[01-infrastructure/raspberry-pi/watchdog-monitoring|Watchdog & Monitoring]] — monitoring details, known issues, VSCode warning
-- [[00-config/production-values|Production Values]] — all IPs, ports, paths
+- [[golden-go2rtc-config|go2rtc Config]] — stream config reference
+- [[golden-systemd-service|systemd Service]] — service file reference
+- [[golden-boot-config|Boot Hardening]] — boot config reference
+- [[watchdog-monitoring|Watchdog & Monitoring]] — monitoring details, known issues, VSCode warning
+- [[production-values|Production Values]] — all IPs, ports, paths

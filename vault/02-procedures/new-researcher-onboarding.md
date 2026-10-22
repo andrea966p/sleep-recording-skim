@@ -19,7 +19,7 @@ audience: new-lab-member
 > A standardized onboarding procedure introduces new lab members to the NeuroSurveillance recording workflow, the desktop session controller, common failure modes, and escalation paths within a single session, enabling researchers to operate the system independently from day one.
 
 > [!info] Before you start
-> Read [[../SYSTEM-OVERVIEW|the one-page system overview]] first (90 seconds). It explains what the system is and what it does. This page covers *how you actually use it*.
+> Read [[SYSTEM-OVERVIEW|the one-page system overview]] first (90 seconds). It explains what the system is and what it does. This page covers *how you actually use it*.
 
 ## Before your first day
 
@@ -37,7 +37,7 @@ Four mouse chambers, four cameras (`pi_cam_0` through `pi_cam_3`), one Radiens e
 
 You interact with one app: the **NeuroSurveillance Session Controller**. It looks like a wall of chamber tiles. You enter the mouse ID, the recording type, and your name into the tile for the chamber you're using, click **Set Metadata**, and you're ready. Start Radiens as normal. Stop Radiens when done. Wait 30 seconds for the export. The MP4 appears in `/opt/neurosurveillance/exports/<your-name>/<mouse-id>/<today's-date>/`.
 
-For the architecture details: [[../01-infrastructure/system-overview|System overview with Q&A and glossary]].
+For the architecture details: [[nvr-system-overview|System overview with Q&A and glossary]].
 
 ## Day-one walkthrough — your first recording
 
@@ -154,11 +154,11 @@ For more recipes: [[session-recording-workflow#How to ask the journal what happe
 
 ## References
 
-- [[../SYSTEM-OVERVIEW|System overview — one page]]
-- [[../01-infrastructure/system-overview|System overview — Q&A and glossary]]
-- [[../00-config/production-values|production-values.md]] — IPs, paths, credentials (do not commit publicly)
+- [[SYSTEM-OVERVIEW|System overview — one page]]
+- [[nvr-system-overview|System overview — Q&A and glossary]]
+- [[production-values|production-values.md]] — IPs, paths, credentials (do not commit publicly)
 - [[session-recording-workflow|Session recording workflow]] — the detailed procedure
-- [[../01-infrastructure/session-daemon/architecture|Session daemon architecture]] — how the daemon works internally
-- [[../01-infrastructure/session-daemon/session-journal|Session journal (WAL)]] — what events get logged when
-- [[../01-infrastructure/session-daemon/reconciler|Reconciler]] — what the nightly self-audit catches
-- [[../_INDEX|Index of every doc]]
+- [[architecture|Session daemon architecture]] — how the daemon works internally
+- [[session-journal|Session journal (WAL)]] — what events get logged when
+- [[reconciler|Reconciler]] — what the nightly self-audit catches
+- [[_INDEX|Index of every doc]]

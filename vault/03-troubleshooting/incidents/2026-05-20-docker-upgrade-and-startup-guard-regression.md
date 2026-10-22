@@ -119,7 +119,7 @@ Manual recording started: camera=pi_cam_2, session=f36c755b
 Four new session JSONs (`2605201628_manual_pi_cam_*_session.json`) and four short MP4 auto-exports (`2605201628_manual_pi_cam_*.mp4`, 45–53 s each, ~8 MB each) were created before the user stopped them at 16:29:10–17.
 
 ### Why this should NOT have happened
-Per [[01-infrastructure/session-daemon/architecture|session-daemon/architecture.md]], on daemon startup the manual-session detection path:
+Per [[architecture|session-daemon/architecture.md]], on daemon startup the manual-session detection path:
 
 1. Calls `stop_all_recording()`.
 2. **Waits 10 seconds** for Frigate to finish reasserting `record.enabled=true` from its config.
@@ -163,4 +163,4 @@ rm /opt/neurosurveillance/sessions/2605201628_manual_pi_cam_*_session.json
 - [[../../04-journal/2026-04/2026-04-01|2026-04-01 journal]] — first occurrence of this pattern, root-cause investigation
 - [[../../04-journal/2026-03/2026-03-09|2026-03-09 journal]] — `record.enabled: false` considered and deferred; `50unattended-upgrades` blacklist added (now known insufficient)
 - [[2026-04-08-frigate-export-stuck-and-missing-on-edges]] — same `_handle_external_recording_change` path, different failure mode
-- [[../../01-infrastructure/session-daemon/architecture|session-daemon/architecture.md]] — describes the startup guard that failed here
+- [[architecture|session-daemon/architecture.md]] — describes the startup guard that failed here

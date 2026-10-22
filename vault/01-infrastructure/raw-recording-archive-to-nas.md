@@ -134,6 +134,6 @@ rm /home/skimlab/Monitoring_project/neurosurveillance/deploy/logs/radix-archive.
   It gets archived on the next pass after it is stopped.
 - The NAS has 13 terabytes free, so capacity is not a constraint for a long time.
 
-Related: [[02-procedures/installation/nas-backup]] ·
-[[03-troubleshooting/incidents/2026-08-19-nas-backup-wrong-address]] ·
-[[02-procedures/scheduled-recording-and-watchdogs]]
+Related: [[nas-backup]] ·
+[[2026-08-19-nas-backup-wrong-address]] ·
+[[scheduled-recording-and-watchdogs]]

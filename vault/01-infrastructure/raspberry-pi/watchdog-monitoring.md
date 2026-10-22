@@ -158,7 +158,7 @@ echo "Memory: $(free -h | grep Mem | awk '{print $3"/"$2}')"
 - Remote editing via MCP filesystem server (from another machine)
 - Edit locally, deploy via `scp`/`rsync`
 
-Full incident: [[03-troubleshooting/incidents/2026-02-11-vscode-remote-cpu-exhaustion|VSCode Remote CPU Exhaustion]]
+Full incident: [[2026-02-11-vscode-remote-cpu-exhaustion|VSCode Remote CPU Exhaustion]]
 
 ---
 
@@ -263,7 +263,7 @@ vcgencmd bootloader_config | grep -E "PSU_MAX|POWER_OFF"
 ```
 
 > [!warning] Double-crash limitation
-> The eeprom fix enables auto-reboot after a single power event. However, if the Pi crashes again during the reboot (e.g., PoE power still unstable), the PMIC enters latch-up and requires manual power cycle. See [[03-troubleshooting/incidents/2026-02-24-pi-unreachable-no-route|Feb 24 incident]].
+> The eeprom fix enables auto-reboot after a single power event. However, if the Pi crashes again during the reboot (e.g., PoE power still unstable), the PMIC enters latch-up and requires manual power cycle. See [[2026-02-24-pi-unreachable-no-route|Feb 24 incident]].
 
 ---
 

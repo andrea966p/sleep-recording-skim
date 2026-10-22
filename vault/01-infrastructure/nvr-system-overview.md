@@ -13,7 +13,7 @@ updated: 2026-05-24
 >
 > **How to read this page.** Skim the section headings — they're questions. Read the answer if the question matches what you need. The **paper-ready callouts** are lift-into-methods-section phrasing; the **glossary** at the bottom defines every acronym used on this page.
 >
-> Short version: [[../SYSTEM-OVERVIEW|the one-page elevator pitch]].
+> Short version: [[SYSTEM-OVERVIEW|the one-page elevator pitch]].
 
 ## What does the system actually do?
 
@@ -88,20 +88,20 @@ In plain language, the system went from "works for the happy path" to "survives 
 
 | If you want to know… | Read this |
 |---|---|
-| Day-one walkthrough for a new researcher | [[../02-procedures/new-researcher-onboarding]] |
-| Step-by-step session recording workflow | [[../02-procedures/session-recording-workflow]] |
+| Day-one walkthrough for a new researcher | [[new-researcher-onboarding]] |
+| Step-by-step session recording workflow | [[session-recording-workflow]] |
 | Full daemon architecture (10 components + frontend) | [[session-daemon/architecture]] |
 | Session journal (WAL) design + schema | [[session-daemon/session-journal]] |
 | Nightly reconciler (findings categories + tuning) | [[session-daemon/reconciler]] |
-| Recording stall detection (watchdog) | [[../02-procedures/installation/recording-health-watchdog]] |
-| Storage cap + EEG reserve | [[../02-procedures/installation/storage-management-implementation]] |
+| Recording stall detection (watchdog) | [[recording-health-watchdog]] |
+| Storage cap + EEG reserve | [[storage-management-implementation]] |
 | Frigate Docker compose (Mosquitto auth, SHA pins) | [[frigate/docker-compose]] |
 | Frigate config.yml (recording, cameras, MQTT) | [[frigate/config-yml]] |
 | Raspberry Pi camera streaming setup | [[raspberry-pi/golden-go2rtc-config]] |
 | Hardware-sync (planned XDAQ GPIO trigger) | [[hardware-sync/overview]] |
-| Netdata alerts | [[netdata/nvr-alerts-config]] |
-| Original sprint plan + status table | [[../04-journal/2026-05/2026-05-20]] |
-| Daily journals during the sprint | [[../04-journal/2026-05/2026-05-22]], [[../04-journal/2026-05/2026-05-23]], [[../04-journal/2026-05/2026-05-24]] |
+| Netdata alerts | [[nvr-alerts-config]] |
+| Original sprint plan + status table | [[2026-05-20]] |
+| Daily journals during the sprint | [[2026-05-22]], [[2026-05-23]], [[2026-05-24]] |
 
 ## Glossary
 
@@ -124,6 +124,6 @@ In plain language, the system went from "works for the happy path" to "survives 
 
 ## See also
 
-- [[../SYSTEM-OVERVIEW|One-page elevator pitch]] — vault-root entry point
-- [[../_INDEX|Index of all docs]] — by folder
-- [[../04-journal/2026-05/2026-05-20|2026-05-20 sprint plan]] — full status table of what shipped during the sprint
+- [[SYSTEM-OVERVIEW|One-page elevator pitch]] — vault-root entry point
+- [[_INDEX|Index of all docs]] — by folder
+- [[2026-05-20|2026-05-20 sprint plan]] — full status table of what shipped during the sprint

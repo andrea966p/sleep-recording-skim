@@ -22,7 +22,7 @@ status: review
 >
 > **Still open / needs bench test:** whether Save Workspace survives a full hardware **re-enumeration** (unplug/replug XDAQ), and whether an SDK script can re-apply channel selection to close the one gap. Marked NEEDS TESTING below.
 
-Related: [[signal-mapping-guide]] (how to build + select the channel map), [[signal-quality-and-grounding]], [[06-references/radiens-software-reference|radiens-software-reference]] (embeds the 177-pg manual; Save Workspace p29, retention table p30, Preset Filters p71).
+Related: [[signal-mapping-guide]] (how to build + select the channel map), [[signal-quality-and-grounding]], [[radiens-software-reference|radiens-software-reference]] (embeds the 177-pg manual; Save Workspace p29, retention table p30, Preset Filters p71).
 
 ---
 
@@ -63,7 +63,7 @@ I read these on the live NVR (`e10ubuntu`, user `skimlab`). Formats and what eac
 
 ## Does Allego have a built-in Save / Load? YES — Save Workspace / Restore Workspace
 
-Straight from the vendor manual (embedded in [[06-references/radiens-software-reference|radiens-software-reference]], **p29–30**):
+Straight from the vendor manual (embedded in [[radiens-software-reference|radiens-software-reference]], **p29–30**):
 
 In the **upper-right of the Allego window** there are three buttons:
 

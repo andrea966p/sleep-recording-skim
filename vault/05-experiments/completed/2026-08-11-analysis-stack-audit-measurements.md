@@ -146,7 +146,7 @@ is silent on genuine data and fires only on the trap.
 > Applied to this recording it moves exactly one animal. That is the evidence that the four passes on
 > the 2026-08-19 run are a real improvement in the DATA, not an artefact of changing the floor.
 >
-> Full detail: [[05-experiments/completed/2026-08-21-39h-run-score]].
+> Full detail: [[2026-08-21-39h-run-score]].
 
 
 `qc/emg_state_dependence.py`, run on the **full 16.39 h** of

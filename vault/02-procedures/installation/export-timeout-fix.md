@@ -13,7 +13,7 @@ related-incident: 2026-05-11 export timeout
 >
 > **Why it exists.** Long sessions (multi-hour Diane recordings) take many minutes to export. The old timeout would kill the export before it finished, corrupting the result. This fix made the export resilient.
 >
-> **How to read this page.** This is a completed-and-shipped record. If you're debugging an export hang now, jump to [[../session-recording-workflow#How to ask the journal what happened|the workflow troubleshooting section]] — the WAL journal will tell you whether `EXPORT_BEGIN` was ever written.
+> **How to read this page.** This is a completed-and-shipped record. If you're debugging an export hang now, jump to [[session-recording-workflow#How to ask the journal what happened|the workflow troubleshooting section]] — the WAL journal will tell you whether `EXPORT_BEGIN` was ever written.
 
 > [!quote] Paper-ready
 > The Frigate export polling loop was redesigned in 2026-05-18 to use progress-driven waiting: the daemon polls the Frigate export status every 5 seconds and only times out after 10 minutes of no progress signal, with a 24-hour hard safety ceiling, accommodating multi-hour exports without false timeouts.
@@ -210,4 +210,4 @@ Revert both edits to `frigate_controller.py` (one constants block + one method b
 
 - [[04-journal/2026-03/2026-03-06|Mar 6 race-condition fix]] — added `in_progress` polling; this guide reuses that signal as the primary wait condition
 - 2026-05-11 incident (this guide) — three Diane / H5S251A sessions, 95.5 h each, marked failed; two files recovered (~8.3 h each — recording itself was truncated; the export wait bug is independent of that), pi_cam_2 export never produced by Frigate and source segments now aged out by `retain.days: 7`
-- [[02-procedures/session-recording-workflow#manual-export|session-recording-workflow]] — the "manual export" fallback section is what users had to fall back to with the bug present; keep it for the rare cases where this fix doesn't help (e.g. Frigate truly stuck)
+- [[session-recording-workflow#manual-export|session-recording-workflow]] — the "manual export" fallback section is what users had to fall back to with the bug present; keep it for the rare cases where this fix doesn't help (e.g. Frigate truly stuck)

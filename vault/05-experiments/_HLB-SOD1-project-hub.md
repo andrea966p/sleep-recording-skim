@@ -55,7 +55,7 @@ The EEG data are not wasted: the scoreable EEG mice are the only ones with NREM/
 
 **Manual scoring of the scoreable EEG mice (started 2026-10-07).** The automatic staging above is being checked by hand in
 SleepStager, which now opens the per-mouse CSV. First mouse: HLBSSL33 Recovery, epochs 1–840 scored ([[2026-10-07]]).
-How: [[02-procedures/sleepstager-user-guide]]. What the calls rest on: [[06-references/sleep-scoring-handbook]].
+How: [[sleepstager-user-guide]]. What the calls rest on: [[sleep-scoring-handbook]].
 
 ## NS-SD / NW-SD: current schedule (re-planned 2026-10-19)
 

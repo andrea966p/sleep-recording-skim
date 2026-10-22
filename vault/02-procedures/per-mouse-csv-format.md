@@ -18,7 +18,7 @@ status: active
 >
 > The analysis reads the CSV. The xdat is not used for analysis. The stripped xdat stays on e10,
 > and the raw 262-channel file goes off-site to S3 and the bilab NAS
-> ([[02-procedures/backup-architecture]]).
+> ([[backup-architecture]]).
 
 ## The CSV
 
@@ -92,7 +92,7 @@ info.json, the folder is complete. It records:
 - **provenance:** `allego_base` (the join key to the raw file), the stripped `dataset_checksum`,
   the raw source hashes, the run id, and the exporter's git commit;
 - **upload:** the CSV's sha256 at both ends and the read-back rate. A read-back of about 90 MB/s
-  means the bytes really crossed the network; see [[02-procedures/installation/skim-nas-smb-and-upload]].
+  means the bytes really crossed the network; see [[skim-nas-smb-and-upload]].
 - **suffix_reason**, only when the folder has a `-2`: a folder for that mouse and date already
   held a different recording.
 
@@ -157,6 +157,6 @@ column. `readtable` keeps it but is slow at this size.
 
 ## Related
 
-- [[02-procedures/CANONICAL-recording-naming-and-inventory]]: every recording, and which is which
-- [[02-procedures/eeg-recording-console]]: starting a run
-- [[02-procedures/installation/skim-nas-smb-and-upload]]: the share, the guard, verification
+- [[CANONICAL-recording-naming-and-inventory]]: every recording, and which is which
+- [[eeg-recording-console]]: starting a run
+- [[skim-nas-smb-and-upload]]: the share, the guard, verification

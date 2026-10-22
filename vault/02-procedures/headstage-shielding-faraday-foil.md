@@ -23,7 +23,7 @@ priority: high
 >
 > **What it did NOT do.** It did not give us sleep data. We briefly thought it had; that was an analysis error, corrected 2026-07-16. Foil fixed the interference arriving through the air. It cannot fix an electrode that isn't touching the brain, and that turned out to be the real problem.
 >
-> **Why it exists.** For months every recording was drowned in 60 Hz hum and we blamed surgery, then grounding, then earth, then the splitter. The actual dominant coupling path was an electric field reaching the amplifier input through the air. A shield blocks it. This is the single highest-value intervention found so far. See [[01-infrastructure/system-overview]] for the big picture.
+> **Why it exists.** For months every recording was drowned in 60 Hz hum and we blamed surgery, then grounding, then earth, then the splitter. The actual dominant coupling path was an electric field reaching the amplifier input through the air. A shield blocks it. This is the single highest-value intervention found so far. See [[nvr-system-overview]] for the big picture.
 >
 > **How to read this page.** [[#The evidence]] is why we believe it. [[#How to do it properly]] is the procedure. [[#The three rules we are still breaking]] is the free improvement still on the table. [[#What foil does NOT fix]] stops you expecting too much.
 

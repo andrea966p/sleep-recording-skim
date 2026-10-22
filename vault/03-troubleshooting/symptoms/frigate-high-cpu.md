@@ -67,5 +67,5 @@ curl -s http://localhost:5000/api/stats | python3 -c \
 
 ## Related
 
-- [[../../01-infrastructure/frigate/docker-compose|Docker Compose config]]
-- [[../../01-infrastructure/frigate/config-yml|Frigate config.yml]]
+- [[docker-compose|Docker Compose config]]
+- [[config-yml|Frigate config.yml]]

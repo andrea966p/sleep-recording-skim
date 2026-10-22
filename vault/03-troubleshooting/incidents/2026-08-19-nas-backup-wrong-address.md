@@ -110,5 +110,5 @@ every failed run died before reaching it.
 - Nothing on this incident. The backup runs nightly and now also includes `eeg-emg-analysis` and
   the Allego config directories, which had never been backed up at all.
 
-Related: [[02-procedures/installation/nas-backup]] · [[00-config/production-values]] ·
-[[01-infrastructure/raw-recording-archive-to-nas]] · [[01-infrastructure/multi-machine-work-setup]]
+Related: [[nas-backup]] · [[production-values]] ·
+[[raw-recording-archive-to-nas]] · [[multi-machine-work-setup]]

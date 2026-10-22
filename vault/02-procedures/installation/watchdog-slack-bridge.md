@@ -16,7 +16,7 @@ status: active
 >
 > **Why it exists.** The recording-health watchdog (added 2026-05-18) detects when a camera stops writing video mid-session, but until now that alert only went to MQTT and the logs — nobody saw it. Netdata, which sends our other Slack alerts, has no way to read MQTT, so this small bridge fills the gap.
 >
-> **How to read this page.** If you just want it working, run the **Install** steps top to bottom. The **End-to-end test** proves the whole chain works. See [[../../01-infrastructure/system-overview|system overview]] for where this fits.
+> **How to read this page.** If you just want it working, run the **Install** steps top to bottom. The **End-to-end test** proves the whole chain works. See [[nvr-system-overview|system overview]] for where this fits.
 
 > [!quote] Paper-ready
 > Recording-stall events published to MQTT by the session daemon's health watchdog are forwarded to a Slack channel by a standalone systemd bridge service, giving operators a ≤90-second notification when a camera stops writing video during an active session.
@@ -103,7 +103,7 @@ Watchdog timing: polls every 30s, fires when a camera's last segment is >60s sta
 
 ## References
 
-- [[../../03-troubleshooting/emergency-runbook#Symptom G — Watchdog STALL alert fired|emergency-runbook — Symptom G]] — how to act on a stall alert
-- [[../../01-infrastructure/session-daemon/architecture|Session daemon architecture]]
-- [[../../07-decisions/2026-05-stabilization-sprint-week-1-plan#Phase 4 — Monday: code quality + remaining ops|sprint plan — Phase 4.1]]
-- [[../../00-config/production-values|production-values.md]] — MQTT credentials, Slack webhook (do not commit publicly)
+- [[emergency-runbook#Symptom G — Watchdog STALL alert fired|emergency-runbook — Symptom G]] — how to act on a stall alert
+- [[architecture|Session daemon architecture]]
+- [[2026-05-stabilization-sprint-week-1-plan#Phase 4 — Monday: code quality + remaining ops|sprint plan — Phase 4.1]]
+- [[production-values|production-values.md]] — MQTT credentials, Slack webhook (do not commit publicly)

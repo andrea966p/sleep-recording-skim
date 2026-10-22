@@ -17,7 +17,7 @@ status: active
 > - **Every request names the exact tab and cell range,** says what the cell should contain afterwards, and says why.
 > - **How to read this page:** the layout, then the loop, then the rules for writing a request. Project context:
 >   [[_HLB-SOD1-project-hub]]; nanotag workflow: [[nanotag-recording-and-analysis]]; big picture:
->   [[01-infrastructure/system-overview]].
+>   [[nvr-system-overview]].
 
 ## Where it is
 

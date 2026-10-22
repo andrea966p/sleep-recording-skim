@@ -18,7 +18,7 @@ status: complete
 >
 > **Why it exists.** The answer is **no — Allego cannot acquire below 1,000 samples/sec.** 128–256 Hz is impossible in hardware/software. The only sub-1 kHz number anywhere in Allego is a *cosmetic display* setting on the Monitor screen that does **not** change the saved file. This page prevents a wasted session built on a wrong assumption.
 >
-> **How to read this page.** Read the "Verified facts" box, then the "128–256 Hz" box, then the resolution (acquire at 1 kHz, decimate offline). Big picture: [[01-infrastructure/system-overview]].
+> **How to read this page.** Read the "Verified facts" box, then the "128–256 Hz" box, then the resolution (acquire at 1 kHz, decimate offline). Big picture: [[nvr-system-overview]].
 
 > [!important] Verified facts (manual p34-36, FAQ p176)
 > - Sample rate is set in the **System tab**, in the section below the **Mode** selector (manual p34-35).
@@ -82,4 +82,4 @@ Counting from `1000` to `30000` gives exactly the **17 rates** the FAQ documents
 - [[allego-presets-workspace]] — sample rate is retained, but a Mode change resets it
 - [[eeg-emg-data-guide]] — offline decimation to 128–256 Hz + analysis conventions
 - [[radiens-software-reference]] — PRIMARY Radiens/Allego reference (Mode, file formats, Videre)
-- [[01-infrastructure/system-overview]]
+- [[nvr-system-overview]]

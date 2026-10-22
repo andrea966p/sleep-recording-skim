@@ -144,8 +144,8 @@ Secondary: a USB webcam board is mechanically less rigid than a CSI module + len
 
 ## Related
 
-- [[../01-infrastructure/raspberry-pi/golden-go2rtc-config]]
-- [[../01-infrastructure/raspberry-pi/golden-boot-config]]
-- [[../01-infrastructure/hardware-sync/gpio-sync-service]]
+- [[golden-go2rtc-config]]
+- [[golden-boot-config]]
+- [[gpio-sync-service]]
 - [[2026-07-13-72h-4mouse-recording-audit]] — the thermal evidence for the NVR blocker
-- [[../06-references/lab-meeting-2026-04-10-speaker-notes]] — the MouseVUER comparison
+- [[lab-meeting-2026-04-10-speaker-notes]] — the MouseVUER comparison

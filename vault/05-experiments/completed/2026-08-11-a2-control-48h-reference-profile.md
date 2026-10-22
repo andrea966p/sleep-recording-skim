@@ -33,7 +33,7 @@ Recording **`allego_0__uid0809-09-00-00`**, started 2026-08-09 09:00:00 KST, sto
 > ⚠️ Two caveats. The **D1** chip is the one exception in this file (own floor -1.666, harsher than
 > pooled), so any D1 number here may be flattered. And the fractions have **not** been recomputed —
 > this is a statement about the direction of the error, not a re-measurement.
-> Detail: [[05-experiments/completed/2026-08-21-39h-run-score]].
+> Detail: [[2026-08-21-39h-run-score]].
 
 ## The recording
 

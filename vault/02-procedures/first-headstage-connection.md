@@ -19,7 +19,7 @@ system: XDAQ Core Gen-1 (XDAQ_ONE_REC mode) + 32-ch RHD XR headstage + SAdpt-XDA
 >
 > **Why it exists.** It's our bring-up log and troubleshooting trail. **RESOLVED 2026-06-19** — the headstage is detected and streaming signal. Root cause was a **wrong Allego system mode** (`SMARTBOX_PRO` instead of "XDAQ One (G1) with XR Headstage"), **not** a hardware fault. The long teardown below (cabling, headstages, DMM, ports) was a false trail — but it proved the hardware healthy.
 >
-> **How to read this page.** Status banner = the answer. §0–§2 = what we built. §3–§7 = the (false-trail) hardware evidence. §8 = the **working Allego config + channel map**. §9–§11 = the DMM plan + unsent escalation emails, kept for the record. Software how-to: [[radiens-software-reference]]. Big picture: [[01-infrastructure/system-overview]].
+> **How to read this page.** Status banner = the answer. §0–§2 = what we built. §3–§7 = the (false-trail) hardware evidence. §8 = the **working Allego config + channel map**. §9–§11 = the DMM plan + unsent escalation emails, kept for the record. Software how-to: [[radiens-software-reference]]. Big picture: [[nvr-system-overview]].
 
 > [!success] STATUS: RESOLVED — headstage detected (2026-06-19) — root cause = wrong Allego system mode
 > **Headstage enumerates: `port_num_channels = {<Port.D: 3>: 32}`, `priSigs=32`, `mode=XDAQ_ONE_REC`, streaming shows signal.** Root cause was NOT hardware — Allego was in the wrong **system mode** (`SMARTBOX_PRO`). Correct mode = **"XDAQ One (G1) with XR Headstage"** (`XDAQ_ONE_REC`). Hardware was healthy the whole time (DMM 3.56 V, both headstages, both SAdpt, all ports). **Escalation emails (§11) NOT sent — no RMA needed.** The "SPI signaling fault" hypothesis was wrong: `priSigs=0` meant wrong instrument profile, not a signaling fault.
@@ -343,4 +343,4 @@ Andrea
 - [[xdaq-core-gen1-ubuntu-driver|XDAQ Core Gen-1 Ubuntu Driver & Device Verification]] — driver + headless probe + daemon-restart gotcha
 - [[radiens-api-reference|Radiens AllegoClient API Reference]]
 - [[overview|Hardware Sync Overview]] · [[wiring-guide|Wiring Guide]] — TTL sync (separate track)
-- [[../03-troubleshooting/incidents/2026-04-02-allegoserver-thermal-spikes|allegoserver thermal spikes]]
+- [[2026-04-02-allegoserver-thermal-spikes|allegoserver thermal spikes]]

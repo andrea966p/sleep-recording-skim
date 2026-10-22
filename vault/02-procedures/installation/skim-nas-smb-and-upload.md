@@ -18,7 +18,7 @@ status: active
 > **How to read this page.** Section 1 is the one-time setup. Sections 2 and 3 are two dangers that
 > are not obvious and that the software is specifically built to avoid — worth reading even if you
 > never touch the setup. Section 5 is what to do when something is wrong. Background:
-> [[01-infrastructure/system-overview]].
+> [[nvr-system-overview]].
 
 > [!warning] THIS IS NOT THE SAME NAS AS THE NIGHTLY BACKUP
 > Two different Synology units, two different tailnets, two different jobs, and confusing them will
@@ -29,11 +29,11 @@ status: active
 > | `Bilab_Syn` | nightly snapshot of vault + code + config, and the raw `.xdat` archive | `{NAS_HOST}` | **SSH on port 53** |
 > | `SKIM_NAS` | **channel-stripped recordings, per lab member** | `{SKIMNAS_HOST}` | **SMB only — SSH is closed** |
 >
-> See [[02-procedures/installation/nas-backup]] for the other one.
+> See [[nas-backup]] for the other one.
 
 ## 1. One-time setup
 
-All values come from [[00-config/production-values]]; nothing below hardcodes an address.
+All values come from [[production-values]]; nothing below hardcodes an address.
 
 **1.1 Install the client.**
 
@@ -156,7 +156,7 @@ of the cache drop.
 - **The local CSVs are deleted** once every one of a run's CSVs has verified on the share. They
   are regenerable from the stripped copy, which stays, and they would otherwise fill the NVMe at
   about 58 GB per run. They are the only files the pipeline ever deletes.
-- CSV format: [[02-procedures/per-mouse-csv-format]].
+- CSV format: [[per-mouse-csv-format]].
 
 > [!history] Before 2026-09-29
 > One folder per run in `03_Data_Mouse/<user>/YYYYMMDD_<batch>_<BSR|RSR|SDR>[-2]/`, holding the
@@ -215,7 +215,7 @@ of the cache drop.
 
 **Never** hardcode `100.85.231.100`. Use `{SKIMNAS_HOST}`. Stale literal addresses have caused three
 outages on this setup already — see
-[[03-troubleshooting/incidents/2026-08-19-nas-backup-wrong-address]].
+[[2026-08-19-nas-backup-wrong-address]].
 
 ## 6. Measured performance
 
@@ -233,6 +233,6 @@ Capacity: 7.0 TB total, **1.3 TB free** (82% used) as of 2026-09-11.
 
 ## 7. Related
 
-- [[02-procedures/installation/xdat-channel-stripping]] — what is uploaded, and why it is smaller
-- [[02-procedures/eeg-recording-console]] — the tool that drives this
-- [[02-procedures/installation/nas-backup]] — the **other** NAS, over SSH
+- [[xdat-channel-stripping]] — what is uploaded, and why it is smaller
+- [[eeg-recording-console]] — the tool that drives this
+- [[nas-backup]] — the **other** NAS, over SSH

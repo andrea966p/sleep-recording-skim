@@ -20,14 +20,14 @@ sourced-from: 04-journal/2026-10/2026-10-06.md, 04-journal/2026-10/2026-10-07.md
 > went into SleepStager itself, and was proven equal to the `.mat` route on real data.
 >
 > **How to read this page.** §1 the question, §2 the council, §3 what changed and the decision,
-> §4 the evidence. Using the program: [[02-procedures/sleepstager-user-guide]]. Big picture:
-> [[01-infrastructure/system-overview]].
+> §4 the evidence. Using the program: [[sleepstager-user-guide]]. Big picture:
+> [[nvr-system-overview]].
 
 ## 1. The question
 
 The rig's canonical output since 2026-09-29 is one CSV per mouse
 (`timestamp_raw,timestamp_sec,datetime_kst,EEG,EMG`, 1 kHz, ~4.8 GB per 24 h, plus `info.json`;
-[[02-procedures/per-mouse-csv-format]]). SleepStager read only `.3eg` and per-mouse `.mat` v7.3.
+[[per-mouse-csv-format]]). SleepStager read only `.3eg` and per-mouse `.mat` v7.3.
 
 | Option | |
 |---|---|
@@ -65,7 +65,7 @@ recording must be complete before anything reads it; labels must point to their 
 **Decision: a native CSV reader in SleepStager (option B without the cache).** Start time from the
 CSV, checked against `info.json` to 2 ms; breaks from the device counter; mouse ID from `info.json`;
 a file in its rig folder is not moved on save. Details:
-[[01-infrastructure/sleepstager/sleepstager-changes-and-backlog]].
+[[sleepstager-changes-and-backlog]].
 
 ## 4. The evidence
 

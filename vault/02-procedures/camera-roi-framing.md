@@ -14,12 +14,12 @@ scope: 'Pi1 (pi_cam_0, pi_cam_1); Pi2 off'
 > [!abstract] TL;DR — for non-technical readers
 > **What this is.** How we crop each Pi camera so it frames **one chamber/partition** instead of catching the neighbors. Done digitally with `rpicam-vid --roi` (a sensor crop/zoom) inside the go2rtc exec string — no camera move, no new mount.
 >
-> **Why it exists.** With one camera per partition, the stock wide lens also captured the adjacent chambers on the left/right edges. The ROI crop boxes the view onto the target chamber. See the [[01-infrastructure/raspberry-pi/golden-go2rtc-config|golden go2rtc config]] for the base settings.
+> **Why it exists.** With one camera per partition, the stock wide lens also captured the adjacent chambers on the left/right edges. The ROI crop boxes the view onto the target chamber. See the [[golden-go2rtc-config|golden go2rtc config]] for the base settings.
 >
-> **How to read this page.** §1 = current live-test state. §2 = how to tune. §3 = pending steps before this becomes golden. Big picture: [[01-infrastructure/system-overview]].
+> **How to read this page.** §1 = current live-test state. §2 = how to tune. §3 = pending steps before this becomes golden. Big picture: [[nvr-system-overview]].
 
 > [!warning] STATUS: live test on Pi1 / pi_cam_0 only — NOT yet golden
-> A non-golden `--roi` was applied directly to the running `/opt/go2rtc/go2rtc.yaml` on Pi1 for evaluation. The vault [[01-infrastructure/raspberry-pi/golden-go2rtc-config|golden config]] is **unchanged**. Promote only after the lens swap + tuning (§3).
+> A non-golden `--roi` was applied directly to the running `/opt/go2rtc/go2rtc.yaml` on Pi1 for evaluation. The vault [[golden-go2rtc-config|golden config]] is **unchanged**. Promote only after the lens swap + tuning (§3).
 
 ## 0. Mechanism
 `rpicam-vid --roi x,y,w,h` crops a normalized (0–1) sub-region of the sensor, then scales it back to the encode size (`--width 1024 --height 768`). It trims the neighbors without moving the camera. If the crop region's aspect ≠ 4:3, the image stretches — match the chamber shape or change output size to avoid it.
@@ -45,9 +45,9 @@ sudo systemctl restart go2rtc.service
 1. **Swap to non-fisheye lens** on Pi1 cameras, refocus (manual lens ring) at the live view.
 2. **Re-tune `--roi`** for the new lens (current values are fisheye-specific) on `pi_cam_0`.
 3. **Apply matching ROI to `pi_cam_1`** for its partition.
-4. **Decide aspect:** keep 1024×768 (slight stretch if crop is square) vs switch output to square — square changes **Frigate detect resolution + bitrate** (update [[01-infrastructure/raspberry-pi/golden-go2rtc-config|golden config]] + Frigate config + StoragePanel notes).
+4. **Decide aspect:** keep 1024×768 (slight stretch if crop is square) vs switch output to square — square changes **Frigate detect resolution + bitrate** (update [[golden-go2rtc-config|golden config]] + Frigate config + StoragePanel notes).
 5. **Promote to golden:** update the golden go2rtc config doc (v5.3), note Syncthing sync to PC2, repeat on **Pi2** when powered on.
 
 ## Related
-- [[01-infrastructure/raspberry-pi/golden-go2rtc-config|Golden go2rtc Config]] · [[01-infrastructure/raspberry-pi/golden-systemd-service|systemd service]]
-- [[00-config/production-values|Production Values]]
+- [[golden-go2rtc-config|Golden go2rtc Config]] · [[golden-systemd-service|systemd service]]
+- [[production-values|Production Values]]

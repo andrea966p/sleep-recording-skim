@@ -17,7 +17,7 @@ status: complete
 >
 > **Why it exists.** Operators need to glance at the Monitor and tell *good signal* from *railed/floating junk* before committing to a recording. This page covers the **knobs**; the *interpretation* cheat-sheet (what clean vs. railed vs. floating looks like) lives in [[signal-quality-and-grounding]] — don't duplicate it, link it.
 >
-> **How to read this page.** Skim the "What Monitor shows" section, then the View Modes warning (the one that surprises people), then keep the controls table handy at the rig. Big picture: [[01-infrastructure/system-overview]].
+> **How to read this page.** Skim the "What Monitor shows" section, then the View Modes warning (the one that surprises people), then keep the controls table handy at the rig. Big picture: [[nvr-system-overview]].
 
 > [!important] The single most important fact on this page
 > **The Monitor plot is downsampled for DISPLAY ONLY. The recorded/saved data is not affected.** The manual is explicit: "While the real-time signals are displayed in the Monitor tab, it is downsampled data that gets used to plot the waveforms at the resolution shown" (manual p85). What you see on screen is a decimated preview; the file on disk keeps every sample at the configured sample rate. See [[allego-sampling-rate]].
@@ -113,4 +113,4 @@ The View Modes button (default label shows the active mode, e.g. `Spikes`) sets 
 - [[allego-presets-workspace]] — channel selection is NOT saved between sessions
 - [[radiens-software-reference]] — PRIMARY Radiens/Allego reference (Signal Map, modes, channel labelling)
 - [[signal-mapping-guide]] — real-world ↔ Allego site/channel mapping
-- [[01-infrastructure/system-overview]]
+- [[nvr-system-overview]]

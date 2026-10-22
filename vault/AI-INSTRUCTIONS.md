@@ -24,13 +24,13 @@ This vault documents a **neuroscience video surveillance system** — a Raspberr
 
 ## Key Files to Read First
 
-- [[00-config/production-values|production-values.md]] — all production IPs, ports, paths, credentials
+- [[production-values|production-values.md]] — all production IPs, ports, paths, credentials
 - [[_INDEX|_INDEX.md]] — vault home page with quick links and system status
-- [[01-infrastructure/raspberry-pi/golden-go2rtc-config|golden-go2rtc-config.md]] — production go2rtc config
-- [[01-infrastructure/raspberry-pi/golden-systemd-service|golden-systemd-service.md]] — systemd unit file
-- [[01-infrastructure/raspberry-pi/golden-boot-config|golden-boot-config.md]] — Pi boot config
-- [[01-infrastructure/frigate/config-yml|config-yml.md]] — Frigate configuration
-- [[01-infrastructure/frigate/docker-compose|docker-compose.md]] — Frigate Docker Compose
+- [[golden-go2rtc-config|golden-go2rtc-config.md]] — production go2rtc config
+- [[golden-systemd-service|golden-systemd-service.md]] — systemd unit file
+- [[golden-boot-config|golden-boot-config.md]] — Pi boot config
+- [[config-yml|config-yml.md]] — Frigate configuration
+- [[docker-compose|docker-compose.md]] — Frigate Docker Compose
 
 ## Frontmatter Patterns
 

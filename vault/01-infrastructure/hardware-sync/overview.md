@@ -97,7 +97,7 @@ Two-wire bidirectional sync per Pi, **one gate fanned out to all Pis**; everythi
 | 25 | Sample_CLK | Output from XDAQ | Pulse train at headstage sampling rate (future use) |
 
 > [!warning] Allego "BNC Breakout Board" toggle is now a hard dependency
-> Both the recording gate (`DO 03`, pin 22) and the multi-Pi return inputs (`DI 03`–`DI 06`) only appear/function in Allego when the **"BNC Breakout Board"** slider (System tab) is toggled ON. The DI/DO channels then show in the System + Monitor tabs and are synced + stored alongside neural data. Document this in the [[02-procedures/hardware-sync-setup|Setup Procedure]].
+> Both the recording gate (`DO 03`, pin 22) and the multi-Pi return inputs (`DI 03`–`DI 06`) only appear/function in Allego when the **"BNC Breakout Board"** slider (System tab) is toggled ON. The DI/DO channels then show in the System + Monitor tabs and are synced + stored alongside neural data. Document this in the [[hardware-sync-setup|Setup Procedure]].
 
 > [!check] Voltage Compatibility — resolved (2026-05-28)
 > Core2 DB25 digital outputs `DO 03`–`DO 08` and `DAQ_ON` (pin 13) are **3.3 V fixed** — confirmed by KC + Jeffrey ([[neuronexus-inquiry-email#Reply — round 3 received 2026-05-28 (Jeffrey)|round-3 reply]]). Only the BNC `DO 01`/`DO 02` outputs are 3.3/5 V switchable, and Radiens can't toggle that. **Wire DB25 outputs directly to Pi 5 GPIO** — no divider, no level shifter. 3.3 V sits at Pi GPIO ceiling exactly (within spec, zero headroom — fine for clean digital signals). DMM sanity check at first wiring only. See [[xdaq-core2-manual-reference|Manual Reference]].
@@ -121,14 +121,14 @@ Two-wire bidirectional sync per Pi, **one gate fanned out to all Pis**; everythi
 > - **Toggling OFF DELETES the tail.** Frigate `frigate/record/maintainer.py:250` calls `drop_segment()` and unlinks any `/tmp/cache` segment not yet flushed when it sees recording disabled. ffmpeg closes a segment every 10 s, the maintainer flushes every 5 s, so **every toggled session permanently loses 10 to 20 seconds off its end.** Measured live: a 37 s window yielded 19.0 s.
 > - **Toggling ON does not start capture at the toggle.** Capture begins at whatever cache segment boundary is in flight, up to 10 s away, and the offset is uniform random per session rather than constant, so it CANNOT be calibrated out.
 >
-> Full analysis, storage budget, and the decision → [[07-decisions/2026-07-27-video-eeg-sync-recording-architecture|Video-EEG Sync — The Recording Toggle Is Not Sync-Capable]].
+> Full analysis, storage budget, and the decision → [[2026-07-27-video-eeg-sync-recording-architecture|Video-EEG Sync — The Recording Toggle Is Not Sync-Capable]].
 
 > [!important] FINAL as of 2026-07-27 (post-council). Auto-start is WANTED; the STOP path is what must change.
 > Video recording **must** start automatically when EEG recording starts. That is the desired behaviour, and the leading edge is free margin because enabling retains cache segments that predate the enable. The bug is entirely on the STOP side: `daemon.py:447` disables recording immediately, so Frigate's `drop_segment()` unlinks 10 to 20 s of unflushed cache.
 >
 > Continuous 24/7 recording was considered and **REJECTED** on storage grounds (~65 GB/day, ~455 GB at `retain.days: 7`). Do not re-propose it.
 >
-> Full reasoning, council round, and the measured pipeline flags → [[07-decisions/2026-07-27-video-eeg-sync-recording-architecture|decision doc]].
+> Full reasoning, council round, and the measured pipeline flags → [[2026-07-27-video-eeg-sync-recording-architecture|decision doc]].
 
 The GPIO sync layer publishes to MQTT topic `{MQTT_SYNC_TOPIC}` on the NVR broker. The session daemon subscribes to this topic as the **primary** session trigger, with the existing `radiens_poller.py` software poll as a **fallback**.
 
@@ -176,12 +176,12 @@ Session Daemon (NVR) subscribes
 
 ## Related
 
-- [[01-infrastructure/hardware-sync/wiring-guide|Wiring Guide]]
-- [[01-infrastructure/hardware-sync/references-and-justification|Design Justification & References]]
-- [[01-infrastructure/hardware-sync/gpio-sync-service|GPIO Sync Service]]
-- [[01-infrastructure/hardware-sync/literature-review|Literature Review]]
-- [[01-infrastructure/hardware-sync/xdaq-core2-manual-reference|XDAQ Core2 Manual Reference]]
-- [[01-infrastructure/hardware-sync/kontex-developer-portal-notes|Kontex Developer Portal Notes]] — libxdaq / pylibxdaq / Linux Thunderbolt
-- [[02-procedures/hardware-sync-setup|Hardware Sync Setup Procedure]]
-- [[01-infrastructure/session-daemon/architecture|Session Daemon Architecture]]
-- [[00-config/production-values|Production Values]]
+- [[wiring-guide|Wiring Guide]]
+- [[references-and-justification|Design Justification & References]]
+- [[gpio-sync-service|GPIO Sync Service]]
+- [[literature-review|Literature Review]]
+- [[xdaq-core2-manual-reference|XDAQ Core2 Manual Reference]]
+- [[kontex-developer-portal-notes|Kontex Developer Portal Notes]] — libxdaq / pylibxdaq / Linux Thunderbolt
+- [[hardware-sync-setup|Hardware Sync Setup Procedure]]
+- [[architecture|Session Daemon Architecture]]
+- [[production-values|Production Values]]

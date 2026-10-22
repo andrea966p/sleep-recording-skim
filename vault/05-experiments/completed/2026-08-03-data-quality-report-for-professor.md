@@ -90,7 +90,7 @@ audience: PI / lab meeting
 >
 > The analysis path is now a documented **four-stage pipeline** ending in an EDF+
 > file a person can score — **see the new §6.5** — replacing the ad-hoc scripts
-> described in §7. [[pipeline/README]].
+> described in §7. [[eeg-pipeline-manual]].
 
 ---
 
@@ -460,7 +460,7 @@ SCORE ONLY INSIDE THESE WINDOWS
 > those numbers can be reproduced. **For any new work use the pipeline in §6.5**
 > (`02-procedures/eeg-data-analysis/pipeline/`), which fixes three wrong
 > thresholds, adds the channel-level dead-electrode test, and adds the EDF+
-> export. See [[pipeline/README]].
+> export. See [[eeg-pipeline-manual]].
 
 All scripts below live in the vault under `02-procedures/eeg-data-analysis/scripts/`.
 

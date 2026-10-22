@@ -230,13 +230,13 @@ With Pi powered on:
 
 ## Related
 
-- [[01-infrastructure/hardware-sync/overview|Hardware Sync Overview]]
-- [[01-infrastructure/hardware-sync/xdaq-core2-manual-reference|XDAQ Core2 Manual Reference]] — authoritative pinout + the 3.3 V finding behind this check
-- [[01-infrastructure/hardware-sync/references-and-justification|Design Justification & References]] — datasheet sources for this BOM and pinout
-- [[01-infrastructure/hardware-sync/gpio-sync-service|GPIO Sync Service]]
-- [[02-procedures/hardware-sync-setup|Hardware Sync Setup Procedure]]
+- [[overview|Hardware Sync Overview]]
+- [[xdaq-core2-manual-reference|XDAQ Core2 Manual Reference]] — authoritative pinout + the 3.3 V finding behind this check
+- [[references-and-justification|Design Justification & References]] — datasheet sources for this BOM and pinout
+- [[gpio-sync-service|GPIO Sync Service]]
+- [[hardware-sync-setup|Hardware Sync Setup Procedure]]
 
-- [[01-infrastructure/hardware-sync/overview|Hardware Sync Overview]]
-- [[01-infrastructure/hardware-sync/references-and-justification|Design Justification & References]] — datasheet sources for this BOM and pinout
-- [[01-infrastructure/hardware-sync/gpio-sync-service|GPIO Sync Service]]
-- [[02-procedures/hardware-sync-setup|Hardware Sync Setup Procedure]]
+- [[overview|Hardware Sync Overview]]
+- [[references-and-justification|Design Justification & References]] — datasheet sources for this BOM and pinout
+- [[gpio-sync-service|GPIO Sync Service]]
+- [[hardware-sync-setup|Hardware Sync Setup Procedure]]

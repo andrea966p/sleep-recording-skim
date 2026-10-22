@@ -66,6 +66,6 @@ affected: [session-daemon, radiens, ui]
   - `sudo systemctl status neurosurveillance-session.service`
 
 ## Related
-- [[../../01-infrastructure/session-daemon/architecture|Session Daemon Architecture]]
-- [[../../02-procedures/session-recording-workflow|Session Recording Workflow]]
+- [[architecture|Session Daemon Architecture]]
+- [[session-recording-workflow|Session Recording Workflow]]
 - [[../../04-journal/2026-02/2026-02-23|Journal: 2026-02-23]]

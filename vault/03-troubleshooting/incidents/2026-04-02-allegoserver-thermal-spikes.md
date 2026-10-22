@@ -114,5 +114,5 @@ After allegoserver was killed on Apr 2, Netdata continued alerting overnight bec
 - Hardware acceleration for video is confirmed working; thermal issue is unrelated to Frigate
 
 ## Related
-- [[02-procedures/installation/frigate-setup|Frigate NVR Setup]]
-- [[01-infrastructure/netdata/nvr-alerts-config|Netdata Monitoring]]
+- [[frigate-setup|Frigate NVR Setup]]
+- [[nvr-alerts-config|Netdata Monitoring]]

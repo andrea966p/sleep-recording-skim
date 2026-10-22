@@ -16,7 +16,7 @@ status: active
 >
 > **How to read this page.** §1 says where the code lives and how changes reach the professor. §2
 > is the change log, newest first. §3 is the backlog. §4 is loose ideas. How to use the program:
-> [[02-procedures/sleepstager-user-guide]]. Big picture: [[01-infrastructure/system-overview]].
+> [[sleepstager-user-guide]]. Big picture: [[nvr-system-overview]].
 
 ## 1. Where the code lives
 
@@ -37,7 +37,7 @@ status: active
 
 > [!tip] On another machine: the same SleepStager, with Andrea's local changes
 > The local changes (tone row, resume fix = PR #2, rules card) travel with the vault as
-> [[01-infrastructure/sleepstager/sleepstager-local-changes.patch|sleepstager-local-changes.patch]], made against `csv-reader` at `7feb666`.
+> [[sleepstager-local-changes.patch|sleepstager-local-changes.patch]], made against `csv-reader` at `7feb666`.
 > ```bash
 > cd ~/sleep-recording-skim && ./skim pull
 > git clone https://github.com/somnocode/SleepStager.git SleepStager      # ignored by ./skim
@@ -78,8 +78,8 @@ status: active
 | 1 | **Mains frequency for the EMG notch: 60 Hz here** (a Setting, or detect it), and look for the line at 60 Hz, not only 50 | the 20–90 Hz EMG band contains our 60 Hz mains, but the features notch 50 Hz (`features.py`, `session.py` uses the default) | HLBSSL33 R: 60 Hz = **18 % of NREM EMG power, 22.5 % of REM, 1.7 % of wake**; NREM EMG PSD at 60 Hz = 13× its neighbours; a 60 Hz notch moves the medians NR 6.5→5.9, R 5.9→5.2 µV and W/NR 4.15→4.55×. Vault 2026-10-02: mains in the EMG corrupts staging. **Mostly a problem of recordings made before the 2026-10-07 grounding fix** (all HLB batches): after it, A2's EMG 60 Hz fell from 26–33 to ~1 µV | small code change, but it **changes features and the rule's cuts** | ⏳ decide **before scoring more mice** (professor) |
 | 2 | `batch_stage.py` / `run_cohort_raw.py` find rig CSVs (and skip `*_stages.csv` etc.) | the AUTO first pass for a whole HLB cohort | — | small | open |
 | 3 | The rule's **"NR by default"**: epochs with δ at W/R level and atonic EMG are labelled NR | all 8 corrections on 2026-10-07 were NR→R/W of this kind (331–332, 765–767, 334, 838–839) | [[2026-10-07]] cases | measure on more mice first; then a mark (e.g. "low-δ NR") or require δ evidence for NR | idea, needs data |
-| 4 | Separate **W→R after a brief awakening inside REM** (normal in wild-type) from **W→R after ≥40 s of wake** (narcolepsy-like) in the marks and in the analysis | they mean different things; only the second is a pathology marker (Scammell 2009; Fujiki 2009, see the [[06-references/sleep-scoring-handbook\|handbook §6]]) | 836–840 on 2026-10-07 | small | open |
-| 5 | Count **microarousals** in `analyze_saves.py` (NR epochs with `emg_rms` ≫ `emg_tone_med` and a σ drop) | fragmentation is a likely SOD1 × deprivation outcome; hand-scoring them is inconsistent | convention C2 in the [[06-references/sleep-scoring-handbook\|handbook]] | medium | needs convention |
+| 4 | Separate **W→R after a brief awakening inside REM** (normal in wild-type) from **W→R after ≥40 s of wake** (narcolepsy-like) in the marks and in the analysis | they mean different things; only the second is a pathology marker (Scammell 2009; Fujiki 2009, see the [[sleep-scoring-handbook\|handbook §6]]) | 836–840 on 2026-10-07 | small | open |
+| 5 | Count **microarousals** in `analyze_saves.py` (NR epochs with `emg_rms` ≫ `emg_tone_med` and a σ drop) | fragmentation is a likely SOD1 × deprivation outcome; hand-scoring them is inconsistent | convention C2 in the [[sleep-scoring-handbook\|handbook]] | medium | needs convention |
 | 6 | Keep a record when a rule mark is accepted with `space` (today the `reason` is deleted) | the accepted marks are the microarousal / short-REM catalogue | — | small | open |
 | 7 | Make the **minimum REM** length a setting (today: REM ≤ 8 s inside NREM is written NR) | depends on the convention the professor chooses | 764–766 | small | needs convention |
 | 8 | Validate the rule on **rig** data: a fully hand-scored stretch (ZT0–2) per mouse, then count unmarked changes | the rule was validated only on legacy `.3eg` at 4 s | — | scorer time | open |

@@ -171,7 +171,7 @@ The baseline is now stripped (**22 channels, not 16** — gate B refused to drop
 `din_1`, which carries 460 transitions in this recording where every other
 recording has it flat) and verified on the SKIM NAS at
 `20260910_HLBWSL_BSR/`, with its QC bundle alongside. Naming
-and inventory: [[02-procedures/CANONICAL-recording-naming-and-inventory]].
+and inventory: [[CANONICAL-recording-naming-and-inventory]].
 
 ## Added 2026-09-26 — re-carded after the floor-validity fix; the n is still 1
 
@@ -179,7 +179,7 @@ and inventory: [[02-procedures/CANONICAL-recording-naming-and-inventory]].
 adds a second validity test on the floor: a grounded chip whose own slope
 threshold is steeper than `FLOOR_STEEPEST_VALID_SLOPE_P1` (−1.90) is not a valid
 negative control for the slope criterion, and the verdict is UNJUDGEABLE, not
-FAIL. See [[03-troubleshooting/symptoms/contaminated-floor-rejects-good-eeg]].
+FAIL. See [[contaminated-floor-rejects-good-eeg]].
 
 **One verdict changed: D2 / HLBWSL29, rung 2 FAIL → UNJUDGEABLE.** Its chip's
 threshold is −2.103 where D2's own EEG reads −1.494 at 66.4 µV. The other seven

@@ -91,4 +91,4 @@ ls -la /var/log/journal/
 
 ## Related
 - [[2026-02-10-post-boot-stream-crash|Post-Boot Stream Crash]]
-- [[01-infrastructure/raspberry-pi/watchdog-monitoring|Watchdog Monitoring]]
+- [[watchdog-monitoring|Watchdog Monitoring]]

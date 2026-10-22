@@ -18,7 +18,7 @@ source: NeuroNexus — Radiens Technical Documentation (©2025, 177 pp)
 >
 > **Why it exists.** During the first-headstage bring-up we lost two sessions to guessed UI behavior. This page is the "read the manual, don't guess" source. **This is THE main Radiens software reference for the vault** — point here first for any Allego/Videre question.
 >
-> **How to read this page.** §"For our setup" first (the load-bearing facts). Then the section map to jump into the embedded PDF by page. Big picture: [[01-infrastructure/system-overview]].
+> **How to read this page.** §"For our setup" first (the load-bearing facts). Then the section map to jump into the embedded PDF by page. Big picture: [[nvr-system-overview]].
 
 > [!quote] Paper-ready
 > Acquisition and online visualization were performed in NeuroNexus Radiens Allego; recordings were saved in the open XDAT format (raw signals plus metadata) for offline analysis in Python/MATLAB.
@@ -157,4 +157,4 @@ Allego can't rename channels, but you **can** load a **custom sensor** so the 8 
 - [[first-headstage-connection]] — bring-up + §8.1 channel map (the rename workaround)
 - [[radiens-api-reference]] — the Python `AllegoClient` SDK (sits on top of this software)
 - [[xdaq-core-gen1-ubuntu-driver]] — device/driver layer beneath Allego
-- [[01-infrastructure/system-overview]]
+- [[nvr-system-overview]]

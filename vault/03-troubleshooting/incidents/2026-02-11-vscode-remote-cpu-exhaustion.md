@@ -118,5 +118,5 @@ top - 04:44:46 up 28 min, 3 users, load average: 4.11, 7.21, 5.15
 ## Related
 - [[2026-02-10-post-boot-stream-crash|Post-Boot Stream Crash]] — first occurrence
 - [[2026-02-11-persistent-journal-fix|Persistent Journal Fix]] — attempted to capture logs
-- [[01-infrastructure/raspberry-pi/golden-go2rtc-config|Golden go2rtc Config]] — v5.1 camera config (not the cause)
-- [[01-infrastructure/raspberry-pi/watchdog-monitoring|Watchdog Monitoring]] — system monitoring setup
+- [[golden-go2rtc-config|Golden go2rtc Config]] — v5.1 camera config (not the cause)
+- [[watchdog-monitoring|Watchdog Monitoring]] — system monitoring setup

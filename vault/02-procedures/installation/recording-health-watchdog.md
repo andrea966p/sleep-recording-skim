@@ -16,7 +16,7 @@ related-incident: 2026-05-11 export timeout
 >
 > **Why it exists.** Frigate can silently stop writing segments (go2rtc disconnects, ffmpeg crashes, disk goes weird). Without the watchdog, the daemon would still think the recording is live and you'd lose hours before noticing. The watchdog catches it in ~60 seconds.
 >
-> **How to read this page.** Read "Purpose" for context. The implementation steps are historical record — the code is shipped and lives at `backend/recording_watchdog.py`. The reference architecture entry is at [[../../01-infrastructure/session-daemon/architecture#11. Recording Watchdog (`recording_watchdog.py`)|architecture §11]].
+> **How to read this page.** Read "Purpose" for context. The implementation steps are historical record — the code is shipped and lives at `backend/recording_watchdog.py`. The reference architecture entry is at [[architecture#11. Recording Watchdog (`recording_watchdog.py`)|architecture §11]].
 
 > [!quote] Paper-ready
 > A background recording-health watchdog polls Frigate's recordings SQLite every 30 seconds for cameras with active sessions, raising an MQTT alert and a journal STALL event when the most recent segment is more than 60 seconds old; recovery is detected automatically when new segments resume.
@@ -374,6 +374,6 @@ Stop the daemon, revert `daemon.py` + `api.py` edits, and delete `recording_watc
 
 ## Related
 
-- [[02-procedures/installation/export-timeout-fix|export-timeout-fix]] — the export side of the May 8 / May 11 incident
-- [[01-infrastructure/netdata/nvr-alerts-config|nvr-alerts-config]] — existing Netdata + Slack pipeline this hooks into
+- [[export-timeout-fix|export-timeout-fix]] — the export side of the May 8 / May 11 incident
+- [[nvr-alerts-config|nvr-alerts-config]] — existing Netdata + Slack pipeline this hooks into
 - 2026-05-08 02:04 KST incident — pi_cam_0/pi_cam_1 silently stopped producing segments; pi_cam_2 either kept recording or stalled too (can't determine — logs aged out). This watchdog would have alerted within ~90 s either way.

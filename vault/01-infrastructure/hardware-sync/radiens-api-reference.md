@@ -120,5 +120,5 @@ The XDAQ IO Expander adds 24 more digital I/O and 6 analog I/O channels. Connect
 
 ## Related
 
-- [[01-infrastructure/hardware-sync/overview|Hardware Sync Overview]]
-- [[01-infrastructure/session-daemon/architecture|Session Daemon Architecture]]
+- [[overview|Hardware Sync Overview]]
+- [[architecture|Session Daemon Architecture]]

@@ -136,6 +136,6 @@ There is no overlap.**
 ## Related
 
 [[per-animal-failure-signatures]] · [[2026-08-27-W-SD-recovery-sleep]] ·
-[[2026-08-25-S-SD-24h-ZT0-run]] · [[02-procedures/signal-quality-and-grounding|signal quality and grounding]] ·
-[[02-procedures/grounding-reference-noise-concepts|grounding and reference concepts]] ·
+[[2026-08-25-S-SD-24h-ZT0-run]] · [[signal-quality-and-grounding|signal quality and grounding]] ·
+[[grounding-reference-noise-concepts|grounding and reference concepts]] ·
 [[eeg-analysis-problems]]

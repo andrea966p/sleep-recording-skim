@@ -17,7 +17,7 @@ status: complete
 >
 > **Why it exists.** There is one nasty gap: **your channel selection (which sites are recorded) is NOT saved.** An operator who trusts "Restore" and skips re-selecting channels can start a session recording the wrong (or zero) channels. This page makes that gap loud.
 >
-> **How to read this page.** Read the retention table once, tattoo the "Selected Sites = No" row on your brain, then use the start-of-session checklist. Big picture: [[01-infrastructure/system-overview]].
+> **How to read this page.** Read the retention table once, tattoo the "Selected Sites = No" row on your brain, then use the start-of-session checklist. Big picture: [[nvr-system-overview]].
 
 > [!warning] The gap that bites operators
 > **Selected / Deselected Sites = NOT retained** (manual p30). Save Workspace remembers your layout, mode, sample rate, filters, gain — but **not which channels you selected**. You must **re-select your recording channels every session** (for us: System tab → Signals → Port D → `D/1,2,3,4,9,10,11,12`). Verify before hitting `Record`. See [[allego-monitor-guide]] and [[radiens-software-reference]] for the selection steps.
@@ -103,4 +103,4 @@ Note: applied **Filters** *are* retained by Restore (table above), so an `EEG` p
 - [[allego-monitor-guide]] — re-selecting channels + reading the signal
 - [[signal-quality-and-grounding]] — grounding + referencing before you record
 - [[radiens-software-reference]] — PRIMARY Radiens/Allego reference (Mode revert gotcha, Record vs Stream)
-- [[01-infrastructure/system-overview]]
+- [[nvr-system-overview]]

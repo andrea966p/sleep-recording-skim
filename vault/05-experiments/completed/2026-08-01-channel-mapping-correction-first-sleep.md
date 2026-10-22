@@ -30,7 +30,7 @@ priority: critical
 > reliably separable with this montage. Report WAKE vs NREM and REM's *order*
 > (entered from NREM) only.
 >
-> Current numbers: [[2026-08-03-two-8-mouse-runs]] · method: [[pipeline/README]].
+> Current numbers: [[2026-08-03-two-8-mouse-runs]] · method: [[eeg-pipeline-manual]].
 
 ## TL;DR
 
@@ -158,12 +158,12 @@ Sleep-rich at hours 0 and 2, near-continuous wake at 4 and 7. Real structure.
 > >
 > > This is the strongest evidence in the project, because **nothing in the QC
 > > gate or the persistence statistic knows about the clock** — it is a genuinely
-> > external check. See [[2026-08-03-two-8-mouse-runs]] and [[pipeline/README]].
+> > external check. See [[2026-08-03-two-8-mouse-runs]] and [[eeg-pipeline-manual]].
 >   ⚠️ **A connection filter based on hum ALONE is not sufficient to select scoreable windows.** C2 appeared "connected" at 18:00-19:00 the next evening and at 05:21-05:57, but those windows are SHORTED: EEG rms 20.9 and 16.1 µV against 68.7 µV when genuinely working, WAKE 99.7-99.8 %, and persistence r = −0.003 / −0.002 (no structure at all). **Gate scoreable windows on EEG amplitude AND temporal structure, not just low mains.** This is the "shorted looks quieter than good" trap from [[electrode-connection-state-test]], and it caught me a second time.
 > - ⚠️ **THE ANIMAL ROOM LIGHT SCHEDULE IS NOT DOCUMENTED ANYWHERE IN THIS VAULT.** Every circadian claim depends on it. Record lights-on/lights-off in `00-config/production-values.md`.
 > - **Thresholds are data-driven** (EMG dip at 25 µV; theta/delta at the 80th percentile), **not validated against a human scorer**. The state percentages carry real uncertainty.
 > - **REM bouts average only 8.6 s**, which suggests the REM threshold is catching transitional epochs a human scorer would merge. Treat REM % as provisional.
-> - The positive-control validation demanded by the [[07-decisions/2026-08-07-council-review-of-the-analysis-pipeline|council]] is still owed: run the pipeline on a public, human-scored mouse dataset and confirm it detects sleep there.
+> - The positive-control validation demanded by the [[2026-08-07-council-review-of-the-analysis-pipeline|council]] is still owed: run the pipeline on a public, human-scored mouse dataset and confirm it detects sleep there.
 > - What is NOT threshold-dependent: the physiology table and the persistence numbers.
 
 ## 3b. ⭐ REPLICATION — n=3, all physiology correct

@@ -204,5 +204,5 @@ No changes to Frigate config needed -- Frigate receives RTSP from go2rtc regardl
 
 ## Related
 
-- [[01-infrastructure/raspberry-pi/golden-go2rtc-config|Golden go2rtc Config]]
-- [[06-references/video-parameters|Video Parameters]]
+- [[golden-go2rtc-config|Golden go2rtc Config]]
+- [[video-parameters|Video Parameters]]

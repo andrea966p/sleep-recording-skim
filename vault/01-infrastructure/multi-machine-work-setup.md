@@ -12,8 +12,8 @@ Created 2026-08-16.
 > on 2026-09-16 — packages, units, configuration directories and all, with each machine's
 > device identity parked at `~/syncthing-config-retired-2026-09-16` on that machine. The
 > ThinkPad was confirmed clean on 2026-09-19: no binary, no `~/.local/state/syncthing`, no
-> `~/.config/syncthing`. See [[../04-journal/2026-09/2026-09-16|2026-09-16]] and
-> [[../04-journal/2026-09/2026-09-19|2026-09-19]].
+> `~/.config/syncthing`. See [[2026-09-16|2026-09-16]] and
+> [[2026-09-19|2026-09-19]].
 >
 > **Read this page for WHY, not for HOW.** The diagnosis of what destroyed the vault
 > on 2026-04-29 (no file versioning, a live `.git` replicated between machines) is
@@ -409,9 +409,9 @@ Ran end to end on 2026-08-16, laptop paired and verified:
   ⚠️ **Do not trust `tailscale ping` as the test** — it answered `pong` while every TCP port was
   dead, and it kept answering on the wrong address until the peer map refreshed. That single
   measurement produced two wrong diagnoses. Full write-up:
-  [[03-troubleshooting/incidents/2026-08-19-nas-backup-wrong-address]].
+  [[2026-08-19-nas-backup-wrong-address]].
 - ✅ **All 831 GB of raw recordings are now on the NAS too**, checksum-verified, which was never
-  true before. See [[01-infrastructure/raw-recording-archive-to-nas]].
+  true before. See [[raw-recording-archive-to-nas]].
 - **The office PC is PAUSED and UNSHARED from the vault folder.** To bring it back:
   put `.stignore` on its copy of the vault FIRST, then unpause, then re-share the
   folder, then verify its file count matches before trusting it. Do not simply

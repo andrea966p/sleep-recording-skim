@@ -1,7 +1,7 @@
 ---
 tags: [archive, 2026-05-rehaul]
 archived: 2026-05-24
-superseded-by: "[[02-procedures/installation/frigate-setup]]"
+superseded-by: "[[frigate-setup]]"
 reason: "Mosquitto authentication added; CLI examples now require -u nvr -P …"
 ---
 

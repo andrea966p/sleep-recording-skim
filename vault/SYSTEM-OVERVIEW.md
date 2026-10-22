@@ -7,7 +7,7 @@ updated: 2026-05-24
 # NeuroSurveillance — system overview
 
 > [!abstract] Read this first
-> One-page entry point for anyone opening this vault — advisors, lab members, paper reviewers, future you. For the full Q&A, durability guarantees, and glossary, jump to [[01-infrastructure/system-overview|the deeper overview]].
+> One-page entry point for anyone opening this vault — advisors, lab members, paper reviewers, future you. For the full Q&A, durability guarantees, and glossary, jump to [[nvr-system-overview|the deeper overview]].
 
 ## What this system is
 
@@ -28,10 +28,10 @@ Researchers interact through a Tauri desktop UI: enter mouse ID, recording type,
 
 | Topic | Document |
 |---|---|
-| Full Q&A overview + glossary | [[01-infrastructure/system-overview]] |
-| Day-one walkthrough for a new lab member | [[02-procedures/new-researcher-onboarding]] |
-| Session daemon architecture | [[01-infrastructure/session-daemon/architecture]] |
-| Session journal (WAL) details | [[01-infrastructure/session-daemon/session-journal]] |
-| Nightly reconciler details | [[01-infrastructure/session-daemon/reconciler]] |
-| Recording workflow (researcher view) | [[02-procedures/session-recording-workflow]] |
+| Full Q&A overview + glossary | [[nvr-system-overview]] |
+| Day-one walkthrough for a new lab member | [[new-researcher-onboarding]] |
+| Session daemon architecture | [[architecture]] |
+| Session journal (WAL) details | [[session-journal]] |
+| Nightly reconciler details | [[reconciler]] |
+| Recording workflow (researcher view) | [[session-recording-workflow]] |
 | Index of every doc | [[_INDEX]] |

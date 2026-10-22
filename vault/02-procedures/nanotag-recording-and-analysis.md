@@ -7,7 +7,7 @@ status: active
 # Nanotag studies: recording, read-out, NAS upload and analysis
 
 > [!abstract] TL;DR
-> **What this is:** the nanotag workflow from implant to report. It was run for HLBNSL (NS-SL SOD1 vs NW-SL water, 2026-09) and will be reused for NS-SD / NW-SD (surgery 2026-10-12). **Why it exists:** nanotag studies are the project's second recording method, without EEG and without the rig. Until 2026-10-05 the code and data lived only on the workstation Desktop. **How to read it:** the five steps below are the whole job; the sections expand each one. Device facts: [[nanotag-kissei-device-and-literature]]. Study page: [[2026-09-14-HLBNSL-nanotag-SOD1-sleep]]. Big picture: [[01-infrastructure/system-overview]].
+> **What this is:** the nanotag workflow from implant to report. It was run for HLBNSL (NS-SL SOD1 vs NW-SL water, 2026-09) and will be reused for NS-SD / NW-SD (surgery 2026-10-12). **Why it exists:** nanotag studies are the project's second recording method, without EEG and without the rig. Until 2026-10-05 the code and data lived only on the workstation Desktop. **How to read it:** the five steps below are the whole job; the sections expand each one. Device facts: [[nanotag-kissei-device-and-literature]]. Study page: [[2026-09-14-HLBNSL-nanotag-SOD1-sleep]]. Big picture: [[nvr-system-overview]].
 >
 > 1. **Plan reads around the memory.** At 12 s activity + 5 min temperature the tag **stops itself after 8 days**; with no temperature, after **9 days** (not 20, see below). Read before that.
 > 2. **Log every handling, read and test** with clock times in the sheet's `NANOTAG behavioral` tab. Each logged window is removed from the analysis: whole room, rounded out to the hour.

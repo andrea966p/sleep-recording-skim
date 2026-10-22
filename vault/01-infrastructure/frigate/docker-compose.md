@@ -13,7 +13,7 @@ version: "5.2"
 >
 > **How to read this page.** Scan the "Production Configuration" section to see what's deployed. Mosquitto requires authentication since 2026-05-22; the SHA-pinned image digest is what stops `docker compose pull` from silently swapping the broker version. Frigate's Python logs persist to `/srv/frigate/logs/frigate/` since 2026-05-22 so a container restart doesn't wipe them.
 >
-> See also [[../system-overview|System overview]] for the big picture.
+> See also [[nvr-system-overview|System overview]] for the big picture.
 
 > [!quote] Paper-ready
 > The Frigate NVR runs as a Docker container alongside an authenticated Mosquitto MQTT broker; the broker image is pinned by SHA-256 digest, anonymous connections are disallowed, and Frigate's Python-side logs persist to a host-mounted volume so they survive container restarts and are available for post-mortem analysis.
@@ -85,7 +85,7 @@ services:
 ```
 
 > [!info] Mosquitto image is SHA-pinned; Frigate is tag-pinned
-> The Mosquitto image is pinned by digest (`@sha256:…`) because the upstream `eclipse-mosquitto:2` tag is a moving target and a `docker compose pull` could otherwise swap in a new minor version unexpectedly. The Frigate image stays at the explicit `:0.16.1` tag because Frigate publishes per-version tags reliably. If you want full SHA-pinning across the board, follow the [[../../99-archive/2026-05-rehaul/frigate-docker-compose-2026-05-22|pre-sprint version pattern]] (but on the Frigate side too).
+> The Mosquitto image is pinned by digest (`@sha256:…`) because the upstream `eclipse-mosquitto:2` tag is a moving target and a `docker compose pull` could otherwise swap in a new minor version unexpectedly. The Frigate image stays at the explicit `:0.16.1` tag because Frigate publishes per-version tags reliably. If you want full SHA-pinning across the board, follow the [[frigate-docker-compose-2026-05-22|pre-sprint version pattern]] (but on the Frigate side too).
 
 ### Mosquitto Config
 
@@ -99,10 +99,10 @@ persistence false
 log_dest stdout
 ```
 
-The `password_file` directive points at `/srv/frigate/mosquitto/passwd` on the host (mounted into the container via the `:ro` config volume). The credentials live in [[../../00-config/production-values#Mosquitto MQTT Authentication (since 2026-05-22)|production-values.md]]; do not commit them to a public repo.
+The `password_file` directive points at `/srv/frigate/mosquitto/passwd` on the host (mounted into the container via the `:ro` config volume). The credentials live in [[production-values#Mosquitto MQTT Authentication (since 2026-05-22)|production-values.md]]; do not commit them to a public repo.
 
 > [!history] Historical note — pre-2026-05-22
-> Before 2026-05-22 the broker ran with `allow_anonymous true` and no password file. The rationale at the time was "acceptable for an isolated lab LAN with no internet exposure." Frigate, the session daemon, and any operator's `mosquitto_pub` / `mosquitto_sub` connected without credentials. Full pre-change text: [[../../99-archive/2026-05-rehaul/frigate-docker-compose-2026-05-22|archived docker-compose.md]].
+> Before 2026-05-22 the broker ran with `allow_anonymous true` and no password file. The rationale at the time was "acceptable for an isolated lab LAN with no internet exposure." Frigate, the session daemon, and any operator's `mosquitto_pub` / `mosquitto_sub` connected without credentials. Full pre-change text: [[frigate-docker-compose-2026-05-22|archived docker-compose.md]].
 
 ## Critical Settings
 
@@ -155,4 +155,4 @@ curl -s http://localhost:5000/api/stats | python3 -m json.tool
 ## Related
 
 - [[config-yml]] - Frigate configuration
-- [[../../01-infrastructure/raspberry-pi/golden-go2rtc-config|go2rtc Config]]
+- [[golden-go2rtc-config|go2rtc Config]]

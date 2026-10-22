@@ -71,7 +71,7 @@ Frigate writes export MP4s as root. The daemon then `_move_export_file()` moves 
 
 ## Off-machine backup (status: WIRED via NAS over Tailscale)
 
-Originally [[../07-decisions/2026-05-01-llm-council-review#Stage 2 — One free afternoon (~3–4 h, the chain-of-custody fix)|council Stage 2.4]] specced a USB backup via systemd timer + rsync. Superseded 2026-05-26 once the Tailscale NAS became reachable — see [[../02-procedures/installation/nas-backup|nas-backup]]. Daily 00:00 snapshot, 3-day rolling retention. **Single NVR is still the SPOF for recordings between snapshots**; daily snapshots cover only config + vault + daemon state, not MP4s.
+Originally [[2026-05-01-llm-council-review#Stage 2 — One free afternoon (~3–4 h, the chain-of-custody fix)|council Stage 2.4]] specced a USB backup via systemd timer + rsync. Superseded 2026-05-26 once the Tailscale NAS became reachable — see [[nas-backup|nas-backup]]. Daily 00:00 snapshot, 3-day rolling retention. **Single NVR is still the SPOF for recordings between snapshots**; daily snapshots cover only config + vault + daemon state, not MP4s.
 
 Workaround: manually rsync to a local external drive after each cohort:
 ```bash
@@ -99,5 +99,5 @@ sqlite3 /srv/frigate/storage/frigate.db \
 ## References
 
 - 2026-04-02 — storage management system rollout. No journal entry exists for that date
-- [[../02-procedures/installation/storage-management-implementation|storage-management-implementation]] — full implementation guide
-- [[../03-troubleshooting/emergency-runbook|emergency-runbook]] (Symptom A) — first 10 min for disk full
+- [[storage-management-implementation|storage-management-implementation]] — full implementation guide
+- [[emergency-runbook|emergency-runbook]] (Symptom A) — first 10 min for disk full

@@ -17,7 +17,7 @@ status: active
 >
 > **The one thing to remember.** The console now compares what you declared against what Allego
 > actually found, and **refuses to record if they disagree**. Big picture:
-> [[01-infrastructure/system-overview]].
+> [[nvr-system-overview]].
 
 ## 1. What varies, and what does not
 
@@ -41,7 +41,7 @@ This is the piece most worth understanding, because it is also what the console 
 
 > "Each port is 64 slots because the **C3442 splitter puts two RHD2216 chips on one port**, and each
 > chip occupies **32 slots** in the RHD2000 data stream — of which only the first 16 are real."
-> — [[02-procedures/CANONICAL-allego-channel-selection]] §3
+> — [[CANONICAL-allego-channel-selection]] §3
 
     channels a port enumerates = (chips on it) × (slots that chip occupies)
 
@@ -51,7 +51,7 @@ This is the piece most worth understanding, because it is also what the console 
 | no splitter | 1 | **32** | 1 animal | `A` |
 
 A port without a splitter is called by its bare letter. The second animal on a split port sits at
-**`/33`, not `/29`** — the +32 trap in [[02-procedures/eight-mouse-acquisition-setup]] §6.
+**`/33`, not `/29`** — the +32 trap in [[eight-mouse-acquisition-setup]] §6.
 
 ### A port you are not using at all
 
@@ -113,7 +113,7 @@ The unipolar map: `/18` EMG left (`emg_l`), `/19` LFP target (`lfp_tgt`), `/20` 
 
 > [!warning] Corrected 2026-10-14
 > The map first written here and in
-> [[05-experiments/completed/2026-08-05-unipolar-lfp-mouse-reference]] (`/18` EMG 1, `/19` LFP ref,
+> [[2026-08-05-unipolar-lfp-mouse-reference]] (`/18` EMG 1, `/19` LFP ref,
 > `/20` LFP target, `/21` EEG frontal, `/22` EEG parietal, `/23` EMG 2) was a typo (Andrea,
 > 2026-10-14). The map above is the only correct one. No console run used the old one.
 
@@ -217,9 +217,9 @@ appended to an audit log shown at the bottom of the panel.
 
 ## 9. Related
 
-- [[02-procedures/eeg-recording-console]] — running a recording once the layout is declared
-- [[01-infrastructure/eeg-recorder/pipeline-architecture]] — every program and every failsafe
-- [[02-procedures/CANONICAL-allego-channel-selection]] — the measured channel map
-- [[02-procedures/eight-mouse-acquisition-setup]] — the +32 trap, and the physical topology
-- [[05-experiments/completed/2026-08-05-unipolar-lfp-mouse-reference]] — the unipolar measurement
-- [[02-procedures/installation/xdat-channel-stripping]] — what the strip keeps, and its gates
+- [[eeg-recording-console]] — running a recording once the layout is declared
+- [[pipeline-architecture]] — every program and every failsafe
+- [[CANONICAL-allego-channel-selection]] — the measured channel map
+- [[eight-mouse-acquisition-setup]] — the +32 trap, and the physical topology
+- [[2026-08-05-unipolar-lfp-mouse-reference]] — the unipolar measurement
+- [[xdat-channel-stripping]] — what the strip keeps, and its gates

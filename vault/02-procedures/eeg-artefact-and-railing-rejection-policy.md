@@ -18,7 +18,7 @@ created: 2026-08-06
 >
 > **How to read this page.** §1 is the policy itself. §2 explains railing in plain words. §3 is
 > the test you must run before applying the policy, and §4 is the measurement that showed why.
-> Big picture: [[01-infrastructure/system-overview]].
+> Big picture: [[nvr-system-overview]].
 
 Source data: [[2026-08-06-recording-data-quality-preregistration]] · contact context:
 [[2026-08-06-fleet-duty-cycle-census]] · signal signatures: [[signal-quality-and-grounding]]

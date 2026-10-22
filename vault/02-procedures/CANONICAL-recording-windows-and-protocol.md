@@ -16,7 +16,7 @@
 > The end of a recovery window is **13:00, the moment of sampling**. The end of a
 > baseline window is **09:00, ZT0**.
 >
-> Big picture: [[01-infrastructure/system-overview]].
+> Big picture: [[nvr-system-overview]].
 
 > [!quote] Paper-ready
 > Electroencephalogram and electromyogram were recorded from 09:00 KST (ZT0), the
@@ -110,8 +110,8 @@ the dated window on both counts.
 > | W-SL | 09-10 09:00 → 09-11 09:00 | 09-17 09:00 → 09-18 09:00 (first 9 s missing) |
 > | S-SL | 09-12 09:00 → 09-13 09:00 (last 47 s missing) | 09-21 09:00 → 09-22 09:00 |
 >
-> Format: [[02-procedures/per-mouse-csv-format]]. Scoreable mice on these windows:
-> [[05-experiments/completed/2026-09-30-scoreable-mice-on-the-24h-windows]].
+> Format: [[per-mouse-csv-format]]. Scoreable mice on these windows:
+> [[2026-09-30-scoreable-mice-on-the-24h-windows]].
 
 ## The canonical analysis set
 
@@ -163,6 +163,6 @@ column depends on it.
 
 ## Related
 
-- [[02-procedures/CANONICAL-recording-naming-and-inventory]] — what each recording is called, and the full inventory
-- [[02-procedures/backup-architecture]] — where each copy lives
-- [[02-procedures/eeg-data-analysis/animal-card-and-verdict-ladder]] — how a window is then judged
+- [[CANONICAL-recording-naming-and-inventory]] — what each recording is called, and the full inventory
+- [[backup-architecture]] — where each copy lives
+- [[animal-card-and-verdict-ladder]] — how a window is then judged

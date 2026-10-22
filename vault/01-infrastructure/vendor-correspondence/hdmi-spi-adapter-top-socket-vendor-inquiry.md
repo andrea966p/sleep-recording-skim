@@ -28,7 +28,7 @@ resolved: 2026-07-18
 > [!abstract] TL;DR
 > Draft emails to NeuroNexus (Jeffrey) and Kontex (KC Kong) asking why the **top SPI socket** of our SAdpt-XDAQ-OM12 HDMI↔SPI bridge adapter never detects a headstage, on **both** units we own. Root cause isolated 2026-06-18→07-01 (see [[first-headstage-connection]] and [[2026-07-01]]). Not currently blocking — we scaled around it with the bottom socket + C3442 splitter — but leaves capacity on the table and is worth an RMA/fix ask.
 >
-> **New thread, not a reply** — separate topic from the DB25/GPIO-sync thread in [[01-infrastructure/vendor-correspondence/neuronexus-inquiry-email|neuronexus-inquiry-email]].
+> **New thread, not a reply** — separate topic from the DB25/GPIO-sync thread in [[neuronexus-inquiry-email|neuronexus-inquiry-email]].
 
 ---
 
@@ -121,7 +121,7 @@ Andrea
 - [[first-headstage-connection]] — full bring-up log, top-socket false-trail-turned-real-fault section §3–§4
 - [[2026-07-01]] — root cause day: "HDMI top SPI socket is dead" (§2), dual-headstage validated
 - [[eight-mouse-acquisition-setup]] — current bottom-socket + C3442 8-mouse topology
-- [[01-infrastructure/vendor-correspondence/neuronexus-inquiry-email|neuronexus-inquiry-email]] — the other (DB25/GPIO-sync) vendor thread, contact pattern reference
+- [[neuronexus-inquiry-email|neuronexus-inquiry-email]] — the other (DB25/GPIO-sync) vendor thread, contact pattern reference
 - [[intan-headstage-troubleshooting]]
 
 ---

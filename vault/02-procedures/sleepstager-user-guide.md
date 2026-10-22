@@ -18,9 +18,9 @@ status: production
 > **How to read this page.** §1, §2 and §3 are at-a-glance tables: open/save/files, keys, what is
 > on the screen. §4 is how to use the automatic first pass and its marks without being misled by
 > them. The knowledge behind the calls (what θ/δ or RMS means, our conventions, the literature) is
-> in [[06-references/sleep-scoring-handbook|the sleep scoring handbook]]. Changes to the program are
-> logged in [[01-infrastructure/sleepstager/sleepstager-changes-and-backlog|SleepStager changes and backlog]].
-> Big picture: [[01-infrastructure/system-overview]].
+> in [[sleep-scoring-handbook|the sleep scoring handbook]]. Changes to the program are
+> logged in [[sleepstager-changes-and-backlog|SleepStager changes and backlog]].
+> Big picture: [[nvr-system-overview]].
 
 The full manual is the repository's `SleepStager/README.md` (sections 1–15). This page is the short
 version for daily work on the HLB data. On Linux and Windows every `⌘` in the README is **Ctrl**.
@@ -49,7 +49,7 @@ version for daily work on the HLB data. On Linux and Windows every `⌘` in the 
 
 | Field | HLB value | Why |
 |---|---|---|
-| Light ON (ZT0) | **09:00** | lights on in the animal room; every HLB window starts 09:00 ([[02-procedures/CANONICAL-recording-windows-and-protocol]]) |
+| Light ON (ZT0) | **09:00** | lights on in the animal room; every HLB window starts 09:00 ([[CANONICAL-recording-windows-and-protocol]]) |
 | Epoch | **4 s** | the only length the rule was checked at; also what the legacy tools read |
 | Start / End | filled in from the file | the CSV is already cut to its 24 h (or 20 h) analysis window |
 | Protocol: "sleep deprivation ends at" | **unticked** for Baseline and for SL Recovery · **ticked, 13:00** for SD Recovery (W-SD, S-SD) | the SD recovery CSV starts at 13:00; the window still starts at ZT0, so 09:00–13:00 shows as padding `U` |
@@ -157,7 +157,7 @@ marking `x` epochs), **Review →** which mark kinds are in the queue, and show/
 | **EMG tone** (lane 2) | black = EMG RMS per epoch; grey band = range of the 0.5-s RMS inside the epoch; dashed = W/NR/R medians | tall grey band with its bottom at sleep level = a burst over quiet muscle |
 | **Hypnogram** (lane 3) | W green, NR blue, R red; marks above; dark phase shaded | see bouts and where the marks are |
 | **Right panel** | navigator · gains · counters (`marks n/total`, `W→R n`) · band profile · total power box · **feature sliders** | slider dot inside one stage's band = that stage is drawn bold |
-| **Dossier** (`d`) | `this` · `28 s` (±3 epochs, geometric mean) · `pct` (percentile in this mouse) · W/NR/R medians; rows EMG, **tone (spike-proof)**, γ frac, θ/δ, θ sharp, δ, σ, γ, total, peak freq, θ peak | use it on every hard epoch; the meaning of each row is in the [[06-references/sleep-scoring-handbook#2. The measures, explained\|handbook §2]] |
+| **Dossier** (`d`) | `this` · `28 s` (±3 epochs, geometric mean) · `pct` (percentile in this mouse) · W/NR/R medians; rows EMG, **tone (spike-proof)**, γ frac, θ/δ, θ sharp, δ, σ, γ, total, peak freq, θ peak | use it on every hard epoch; the meaning of each row is in the [[sleep-scoring-handbook#2. The measures, explained\|handbook §2]] |
 
 ---
 
@@ -222,16 +222,16 @@ only marks and edges is defensible; many → score fully.
 
 - The rule was validated against human scoring only on the legacy `.3eg` recorder at 4 s, not on this rig.
 - The EMG features notch **50 Hz**, but our mains is **60 Hz**: in HLBSSL33 R, 60 Hz is 18 % of the
-  NREM EMG power and 22 % of REM ([[01-infrastructure/sleepstager/sleepstager-changes-and-backlog|backlog item 1]]).
+  NREM EMG power and 22 % of REM ([[sleepstager-changes-and-backlog|backlog item 1]]).
 - The heartbeat is visible in the EMG of HLBSSL33. It raises the quiet floor slightly; it does not change calls.
 - Per-mouse values (δ 4k, EMG 27…) are relative to that recording. Never compare raw numbers across mice.
 
 ## Related
 
-- [[06-references/sleep-scoring-handbook]] — the knowledge: measures, values, conventions, literature
-- [[01-infrastructure/sleepstager/sleepstager-changes-and-backlog]] — what changed in the program, and what is next
-- [[02-procedures/per-mouse-csv-format]] — the CSV the program now reads
-- [[05-experiments/completed/2026-09-30-scoreable-mice-on-the-24h-windows]] — which mice to score
-- [[02-procedures/blind-scoring-and-kappa]] — measuring agreement against a human
-- [[06-references/sleepyscore-japan-scoring-tool-algorithm]] — the older Japanese tool SleepStager descends from
+- [[sleep-scoring-handbook]] — the knowledge: measures, values, conventions, literature
+- [[sleepstager-changes-and-backlog]] — what changed in the program, and what is next
+- [[per-mouse-csv-format]] — the CSV the program now reads
+- [[2026-09-30-scoreable-mice-on-the-24h-windows]] — which mice to score
+- [[blind-scoring-and-kappa]] — measuring agreement against a human
+- [[sleepyscore-japan-scoring-tool-algorithm]] — the older Japanese tool SleepStager descends from
 - [[2026-10-07]] — the first scoring session, case by case, with screenshots

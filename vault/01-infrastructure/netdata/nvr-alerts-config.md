@@ -464,5 +464,5 @@ Add `delay: up 10m` to the alert definition to require the condition to persist 
 
 ## Related
 
-- [[06-references/monitoring-diagnostics|Monitoring Diagnostics Reference]] — API commands for querying alerts and metrics
-- [[02-procedures/installation/monitoring-setup|Monitoring Setup Procedure]]
+- [[monitoring-diagnostics|Monitoring Diagnostics Reference]] — API commands for querying alerts and metrics
+- [[monitoring-setup|Monitoring Setup Procedure]]

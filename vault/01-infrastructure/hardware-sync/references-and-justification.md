@@ -11,7 +11,7 @@ status: complete
 >
 > **Why it exists.** So the plan can be presented to the professor (and later a methods section) without any "trust me" choices. Every decision has a citation.
 >
-> **How to read this page.** Two reference layers: (B) *why each part* in the bill of materials — datasheets; (C) *why each pin and resistor value* — manufacturer electrical specs. The *scientific* "why TTL at all" case lives in its own page — see (A) below. The "Open items" section lists the two things that must be confirmed before money is spent. Big-picture context: [[01-infrastructure/system-overview|System Overview]].
+> **How to read this page.** Two reference layers: (B) *why each part* in the bill of materials — datasheets; (C) *why each pin and resistor value* — manufacturer electrical specs. The *scientific* "why TTL at all" case lives in its own page — see (A) below. The "Open items" section lists the two things that must be confirmed before money is spent. Big-picture context: [[nvr-system-overview|System Overview]].
 
 > [!quote] Paper-ready
 > Component selection and wiring for the XDAQ-to-Raspberry-Pi synchronization link were derived directly from the NeuroNexus XDAQ digital-I/O electrical specification (logic-high 3.6 V output, 2.2–5.5 V input) and the Raspberry Pi RP1 GPIO 3.3 V logic specification; a 1 kΩ/2 kΩ resistive divider reconciles the 3.6 V source with the 3.3 V-maximum GPIO input.
@@ -24,7 +24,7 @@ status: complete
 
 ## A. Why hardware TTL sync at all (scientific literature)
 
-The scientific case — that a TTL pulse over digital I/O, **not** software polling, is the field-standard method for video↔electrophysiology sync — is made in full in **[[01-infrastructure/hardware-sync/literature-review|Literature Review]]** (7 annotated papers: Syntalos, SyncGenie, Nakamura, Hasegawa, LSL review, OpenVEEG, Rodriguez-Santiago). **That page is the single source for the paper citations.** This page covers only the *engineering* references (parts and electrical values) in §B and §C below.
+The scientific case — that a TTL pulse over digital I/O, **not** software polling, is the field-standard method for video↔electrophysiology sync — is made in full in **[[literature-review|Literature Review]]** (7 annotated papers: Syntalos, SyncGenie, Nakamura, Hasegawa, LSL review, OpenVEEG, Rodriguez-Santiago). **That page is the single source for the paper citations.** This page covers only the *engineering* references (parts and electrical values) in §B and §C below.
 
 > [!note] Before any of those papers go into a manuscript bibliography, re-verify each DOI resolves — they were transcribed, not fetched.
 
@@ -87,7 +87,7 @@ The XDAQ DB Adapter / BNC breakout panel (User Manual p.18) is labelled with `DI
 > Pinout + electrical specs are now confirmed in [[xdaq-core2-manual-reference|XDAQ Core2 Manual Reference]] (manual figures archived). The original concerns and their resolutions are kept below for the record.
 
 > [!danger]- 1. Exact DB25 pin numbers — **RESOLVED (verified)**
-> The [[01-infrastructure/hardware-sync/wiring-guide|Wiring Guide]] assigns specific pins — **Pin 13 = DAQ_ON, Pin 2 = DI 03, Pin 14 = GND, Pin 25 = Sample_CLK**. The XDAQ User Manual confirms these *signals exist* but prints only BNC **labels**, not DB25 **pin numbers (1–25)**.
+> The [[wiring-guide|Wiring Guide]] assigns specific pins — **Pin 13 = DAQ_ON, Pin 2 = DI 03, Pin 14 = GND, Pin 25 = Sample_CLK**. The XDAQ User Manual confirms these *signals exist* but prints only BNC **labels**, not DB25 **pin numbers (1–25)**.
 > **Resolution:** the [[xdaq-core2-manual-reference|Core2 manual figure]] gives the full numbered pinout — these assignments are **correct** (`DI 03 = Pin 2`; note Pin 22 = `DO 03`). A NeuroNexus email reply mistakenly gave `DI 03 = Pin 22` (transposed with the output); the manual overrides it.
 
 > [!warning]- 2. DIY divider vs. level-shifter board — **RESOLVED (manual: DB25 = 3.3 V)**
@@ -109,7 +109,7 @@ The XDAQ DB Adapter / BNC breakout panel (User Manual p.18) is labelled with `DI
 [^aoe]: Horowitz & Hill, *The Art of Electronics*, 3rd ed., §1.2.3 (voltage divider) — for the divider derivation.
 
 ## Related
-- [[01-infrastructure/hardware-sync/overview|Hardware Sync Overview]]
-- [[01-infrastructure/hardware-sync/wiring-guide|Wiring Guide]] (the BOM and pinout this page justifies)
-- [[01-infrastructure/hardware-sync/literature-review|Literature Review]] (full paper annotations)
-- [[02-procedures/hardware-sync-setup|Hardware Sync Setup Procedure]]
+- [[overview|Hardware Sync Overview]]
+- [[wiring-guide|Wiring Guide]] (the BOM and pinout this page justifies)
+- [[literature-review|Literature Review]] (full paper annotations)
+- [[hardware-sync-setup|Hardware Sync Setup Procedure]]

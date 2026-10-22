@@ -62,4 +62,4 @@ If nothing works:
 
 - Always use `KillMode=control-group` in service file
 - Enable hardware watchdog (auto-reboots on freeze)
-- See [[../../01-infrastructure/raspberry-pi/golden-systemd-service|golden systemd service]]
+- See [[golden-systemd-service|golden systemd service]]

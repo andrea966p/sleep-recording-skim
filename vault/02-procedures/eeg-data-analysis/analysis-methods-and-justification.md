@@ -48,7 +48,7 @@ audience: PI / lab meeting / methods section
 > an analysis problem, and no amount of method design fixes it.
 
 Code: `02-procedures/eeg-data-analysis/pipeline/`. Operating manual:
-[[pipeline/README]]. Every numeric constant lives in one file,
+[[eeg-pipeline-manual]]. Every numeric constant lives in one file,
 `qc_thresholds.py`, with its justification written next to it, so there are no
 unexplained numbers anywhere else in the codebase.
 

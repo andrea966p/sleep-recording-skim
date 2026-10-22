@@ -39,7 +39,7 @@ priority: critical
 >   ~70 % expected), a check that uses none of our thresholds.
 >
 > Current numbers and the two-run comparison: [[2026-08-03-two-8-mouse-runs]].
-> Method: [[pipeline/README]].
+> Method: [[eeg-pipeline-manual]].
 
 
 > [!abstract] TL;DR

@@ -318,7 +318,7 @@ vcgencmd get_throttled
 
 ## Related
 
-- [[../../02-procedures/installation/new-pi-setup|New Pi Setup]] - Updated with rpicam-apps installation step
-- [[../../01-infrastructure/raspberry-pi/golden-go2rtc-config|Golden go2rtc Config]] - Fixed to use single-line exec format
-- [[../../01-infrastructure/raspberry-pi/golden-systemd-service|Golden systemd Service]] - Fixed inline comment issue
+- [[new-pi-setup|New Pi Setup]] - Updated with rpicam-apps installation step
+- [[golden-go2rtc-config|Golden go2rtc Config]] - Fixed to use single-line exec format
+- [[golden-systemd-service|Golden systemd Service]] - Fixed inline comment issue
 - [[boot-config-ssh-lockout]] - Related incident from same day

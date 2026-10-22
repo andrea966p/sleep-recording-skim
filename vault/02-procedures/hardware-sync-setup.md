@@ -11,7 +11,7 @@ status: planned
 >
 > **Why it exists.** When the lab moves to the TTL pulse sync (replacing 1-second software polling), this is the recipe. Not yet deployed.
 >
-> **How to read this page.** Prerequisites first — power off everything before touching wires. Then follow each phase in order. Cross-link: [[../01-infrastructure/hardware-sync/wiring-guide|wiring details]], [[../01-infrastructure/hardware-sync/gpio-sync-service|listener service]], [[../01-infrastructure/hardware-sync/overview|why and how]].
+> **How to read this page.** Prerequisites first — power off everything before touching wires. Then follow each phase in order. Cross-link: [[wiring-guide|wiring details]], [[gpio-sync-service|listener service]], [[overview|why and how]].
 
 > [!quote] Paper-ready
 > The XDAQ-to-Raspberry-Pi hardware synchronization is deployed via a staged procedure covering physical wiring (with safety power-off requirements), GPIO listener service installation on each Pi, daemon-side MQTT subscription, and end-to-end TTL pulse validation.
@@ -19,7 +19,7 @@ status: planned
 > [!warning] Prerequisites
 > - XDAQ Core powered off
 > - Raspberry Pi powered off
-> - All materials from [[01-infrastructure/hardware-sync/wiring-guide|Wiring Guide]] BOM procured
+> - All materials from [[wiring-guide|Wiring Guide]] BOM procured
 > - Multimeter available
 
 ## Phase 0: Physical Wiring
@@ -29,7 +29,7 @@ status: planned
 Attach the DB25 male screw-terminal breakout board to the XDAQ Core's DB25 connector on the rear panel. Do NOT power on yet.
 
 > [!check] 2026-06-21 — no voltage divider; gate = `DO 03` (pin 22) direct
-> `DO 03` (DB25 pin 22) is **3.3 V fixed** (KC + Jeffrey) = Pi GPIO ceiling exactly → **wire direct, no divider**. The old 1kΩ+2kΩ divider on `DAQ_ON` (pin 13) is removed. Use the **220 Ω series + 10 kΩ pull-down star node** from [[../01-infrastructure/hardware-sync/wiring-guide#Multi-Pi fan-out and star grounding|wiring-guide]]. Requires Allego "BNC Breakout Board" toggle ON + Digital Out Control = "Gated".
+> `DO 03` (DB25 pin 22) is **3.3 V fixed** (KC + Jeffrey) = Pi GPIO ceiling exactly → **wire direct, no divider**. The old 1kΩ+2kΩ divider on `DAQ_ON` (pin 13) is removed. Use the **220 Ω series + 10 kΩ pull-down star node** from [[wiring-guide#Multi-Pi fan-out and star grounding|wiring-guide]]. Requires Allego "BNC Breakout Board" toggle ON + Digital Out Control = "Gated".
 
 ### 2. Build the Star-Node Fan-Out (no divider)
 
@@ -51,11 +51,11 @@ On a small perfboard / breadboard near the Core:
 
 ### 4. Pre-Power Multimeter Checks
 
-See [[01-infrastructure/hardware-sync/wiring-guide#Pre-Power Validation (Multimeter)|Wiring Guide — Pre-Power Validation]].
+See [[wiring-guide#Pre-Power Validation (Multimeter)|Wiring Guide — Pre-Power Validation]].
 
 ### 5. Power On and Validate Voltages
 
-See [[01-infrastructure/hardware-sync/wiring-guide#Post-Power Validation (Multimeter)|Wiring Guide — Post-Power Validation]].
+See [[wiring-guide#Post-Power Validation (Multimeter)|Wiring Guide — Post-Power Validation]].
 
 ## Phase 1: GPIO Listener Software
 
@@ -173,7 +173,7 @@ Write a post-hoc script to:
 
 ## Related
 
-- [[01-infrastructure/hardware-sync/overview|Hardware Sync Overview]]
-- [[01-infrastructure/hardware-sync/wiring-guide|Wiring Guide]]
-- [[01-infrastructure/hardware-sync/gpio-sync-service|GPIO Sync Service]]
-- [[01-infrastructure/hardware-sync/literature-review|Literature Review]]
+- [[overview|Hardware Sync Overview]]
+- [[wiring-guide|Wiring Guide]]
+- [[gpio-sync-service|GPIO Sync Service]]
+- [[literature-review|Literature Review]]

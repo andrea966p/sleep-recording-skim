@@ -46,7 +46,7 @@ deprivation. Two consequences:
 
 **Matched hours.** Both SD recoveries exist only from 13:00 to 09:00 (ZT4–24), so every change from
 baseline uses ZT4–24 in both windows: light ZT4–12 (8 h), dark ZT12–24 (12 h). See
-[[02-procedures/CANONICAL-recording-windows-and-protocol]].
+[[CANONICAL-recording-windows-and-protocol]].
 
 ## Method
 

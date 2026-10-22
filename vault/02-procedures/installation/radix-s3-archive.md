@@ -203,7 +203,7 @@ never take down a backup.
 
 ## Related
 
-- [[02-procedures/backup-architecture]] — the whole picture, all three destinations
+- [[backup-architecture]] — the whole picture, all three destinations
 
 - `radix-archive.sh` — the NAS copy. Deliberately a separate script so either
   destination keeps working if the other's access is revoked.

@@ -151,7 +151,7 @@ suspect** and a **PASS is conservative and survives**. ⭐ **And it does not jus
 — re-running the 2026-08-08 EMG gate per-chip moves exactly one animal across the bar.
 
 🛑 **`floor_stats()` is NOT fixed.** Until it is, compute the per-chip floor alongside it, as
-`qc/score_2026-08-21/score.py` does. See [[05-experiments/completed/2026-08-21-39h-run-score]].
+`qc/score_2026-08-21/score.py` does. See [[2026-08-21-39h-run-score]].
 
 ## The two criteria, and why they must never be mixed
 

@@ -12,7 +12,7 @@ audience: anyone in the lab who is NOT Andrea
 > [!abstract] TL;DR — for non-technical readers
 > **What this is.** A short guide for keeping the video-monitoring rig running when Andrea is unreachable (sick, sabbatical, on a plane — or unavailable for any reason). It is deliberately written for someone who is *not* a software engineer and has never SSH'd into the system before.
 >
-> **Why it exists.** Right now Andrea is the only person who knows the system end-to-end. That is the single biggest risk on the [[../07-decisions/2026-05-01-llm-council-review#Blind Spots the Council Caught|council's blind-spot list]] (Reviewer 1). This runbook is the human side of that fix.
+> **Why it exists.** Right now Andrea is the only person who knows the system end-to-end. That is the single biggest risk on the [[2026-05-01-llm-council-review#Blind Spots the Council Caught|council's blind-spot list]] (Reviewer 1). This runbook is the human side of that fix.
 >
 > **How to read this page.** [[#First 30 seconds — is the system OK?]] tells you whether anything is broken right now. [[#I need to find my data]] and [[#I want to start or stop a recording]] cover the two things you most likely came here to do. [[#Something is broken]] points to the operational runbooks. [[#What NOT to do]] is short and load-bearing — read it before changing anything.
 
@@ -126,18 +126,18 @@ sqlite3 -readonly /opt/neurosurveillance/session_wal.db \
 
 ## Something is broken
 
-The first-10-minutes guide for specific symptoms lives in [[../03-troubleshooting/emergency-runbook|emergency-runbook]]. Match your symptom to one of these and follow that section:
+The first-10-minutes guide for specific symptoms lives in [[emergency-runbook|emergency-runbook]]. Match your symptom to one of these and follow that section:
 
 | If you see | Symptom | Where |
 |---|---|---|
-| Disk almost full | A | [[../03-troubleshooting/emergency-runbook#Symptom A — Disk full / nearly full]] |
-| `curl http://127.0.0.1:8585/...` connection refused | B | [[../03-troubleshooting/emergency-runbook#Symptom B — Session daemon down]] |
-| Frigate UI doesn't load / `docker ps` shows it unhealthy | C | [[../03-troubleshooting/emergency-runbook#Symptom C — Frigate down or unhealthy]] |
-| `mqtt_connected: false` in `/api/health` | D | [[../03-troubleshooting/emergency-runbook#Symptom D — MQTT broker (Mosquitto) down]] |
-| A camera shows offline in the Frigate UI | E | [[../03-troubleshooting/emergency-runbook#Symptom E — Pi unreachable / camera offline]] |
-| All cameras started recording without you doing anything | F | [[../03-troubleshooting/emergency-runbook#Symptom F — Unexpected recording fired (all cameras started without command)]] |
-| Slack STALL alert in `#nvr-alerts` | G | [[../03-troubleshooting/emergency-runbook#Symptom G — Watchdog STALL alert fired]] |
-| Disk died, machine wiped, config gone | H | [[../03-troubleshooting/emergency-runbook#Symptom H — Disk died / data lost / config wiped → restore from NAS]] |
+| Disk almost full | A | [[emergency-runbook#Symptom A — Disk full / nearly full]] |
+| `curl http://127.0.0.1:8585/...` connection refused | B | [[emergency-runbook#Symptom B — Session daemon down]] |
+| Frigate UI doesn't load / `docker ps` shows it unhealthy | C | [[emergency-runbook#Symptom C — Frigate down or unhealthy]] |
+| `mqtt_connected: false` in `/api/health` | D | [[emergency-runbook#Symptom D — MQTT broker (Mosquitto) down]] |
+| A camera shows offline in the Frigate UI | E | [[emergency-runbook#Symptom E — Pi unreachable / camera offline]] |
+| All cameras started recording without you doing anything | F | [[emergency-runbook#Symptom F — Unexpected recording fired (all cameras started without command)]] |
+| Slack STALL alert in `#nvr-alerts` | G | [[emergency-runbook#Symptom G — Watchdog STALL alert fired]] |
+| Disk died, machine wiped, config gone | H | [[emergency-runbook#Symptom H — Disk died / data lost / config wiped → restore from NAS]] |
 
 ### Restart the session daemon
 
@@ -162,7 +162,7 @@ Since 2026-05-24 the daemon's LWT defer guard prevents phantom manual sessions o
 
 ### Restore from the daily NAS snapshot
 
-If something catastrophic happened (disk failure, accidental wipe), the last 3 days of project state are on the Synology NAS over Tailscale. Full procedure in [[installation/nas-backup|NAS Backup procedure]] and [[../03-troubleshooting/emergency-runbook#Symptom H — Disk died / data lost / config wiped → restore from NAS]].
+If something catastrophic happened (disk failure, accidental wipe), the last 3 days of project state are on the Synology NAS over Tailscale. Full procedure in [[nas-backup|NAS Backup procedure]] and [[emergency-runbook#Symptom H — Disk died / data lost / config wiped → restore from NAS]].
 
 **Videos are not in the NAS snapshot.** Recorded MP4s live on the NVR's NVMe only. The snapshot covers config + code + vault + session WAL, which is what you need to bring the system back up — but historical videos older than the latest cache cycle are gone if the NVMe died.
 
@@ -170,7 +170,7 @@ If something catastrophic happened (disk failure, accidental wipe), the last 3 d
 
 ## Where everything lives
 
-Quick reference card. Full detail in [[../00-config/production-values|production-values]] (sensitive — do not share publicly).
+Quick reference card. Full detail in [[production-values|production-values]] (sensitive — do not share publicly).
 
 ### Machines
 
@@ -228,11 +228,11 @@ Short, load-bearing. **Do not** do any of the following without explicit confirm
 
 1. **Do not restart Frigate, the daemon, or Mosquitto while a recording is in flight.** Check `curl -s http://127.0.0.1:8585/api/status | jq .manual_recordings` first — must be `{}`. A restart mid-recording will produce broken or partial exports.
 2. **Do not set `record.enabled: false` in Frigate's `config.yml`.** Andrea investigated this — it breaks Frigate's pipeline. The flag stays `true`; recording is gated at the daemon/MQTT layer, not the config layer.
-3. **Do not click "Install" on the GNOME Update Manager popup** if it shows `docker-ce` or `containerd` in the list. Those packages are held with `apt-mark hold` (since 2026-05-20) because docker auto-upgrade restarts Frigate, which silently starts recording on all 4 cameras (see [[../04-journal/2026-05/2026-05-20|the 2026-05-20 incident]]). If the popup shows them anyway, **cancel** and tell a senior lab member.
+3. **Do not click "Install" on the GNOME Update Manager popup** if it shows `docker-ce` or `containerd` in the list. Those packages are held with `apt-mark hold` (since 2026-05-20) because docker auto-upgrade restarts Frigate, which silently starts recording on all 4 cameras (see [[2026-05-20|the 2026-05-20 incident]]). If the popup shows them anyway, **cancel** and tell a senior lab member.
 4. **Do not `rm -rf` inside `/srv/frigate/storage/recordings/`** without stopping Frigate first — Frigate's SQLite DB will become inconsistent with disk.
 5. **Do not edit or delete rows in `/opt/neurosurveillance/session_wal.db`.** It is append-only by design (the chain-of-custody fix). Read-only queries (`sqlite3 -readonly ...`) are fine.
 6. **Do not commit `production-values.md`, `/etc/nvr-mqtt-slack.env`, `/srv/frigate/mosquitto/passwd`, or anything under `/srv/frigate/config/secrets/` to a public repo.** They contain real credentials.
-7. **Do not change Mosquitto from authenticated back to `allow_anonymous true` permanently.** Anyone on the lab LAN could then publish recording-control messages to the broker and toggle recordings. Temporary fallback during a recovery is acceptable (see [[../03-troubleshooting/emergency-runbook#Symptom D — MQTT broker (Mosquitto) down]]); restore auth as soon as the password is recovered from production-values.
+7. **Do not change Mosquitto from authenticated back to `allow_anonymous true` permanently.** Anyone on the lab LAN could then publish recording-control messages to the broker and toggle recordings. Temporary fallback during a recovery is acceptable (see [[emergency-runbook#Symptom D — MQTT broker (Mosquitto) down]]); restore auth as soon as the password is recovered from production-values.
 8. **Do not power-cycle a Pi while it is recording for an active experiment.** Wait for the session to end, or use the Frigate UI to stop recording first, then power-cycle. Power-cycling the Pi cuts the RTSP stream — the watchdog will detect a STALL within ~90s and alert Slack.
 
 ---
@@ -269,16 +269,16 @@ These show up in vault docs, logs, and Slack alerts. None of them are obvious if
 | **LWT** | "Last Will and Testament" — Frigate's MQTT mechanism for announcing its own crash. The daemon subscribes to `frigate/available` to know when Frigate is *actually* online vs just republishing its retained state on reconnect. |
 | **Stage 1 / Stage 2 / Stage 3** | Phases of the [[../07-decisions/2026-05-stabilization-sprint-week-1-plan|stabilization sprint]]. Stage 1 = "stop the bleeding". Stage 2 = "chain of custody". Stage 3 = "before TTL pulse cutover" (hardware-sync upgrade, not yet deployed). |
 | **TTL pulse** | The planned hardware-sync upgrade. EEG rig will emit a TTL voltage edge on every recording start/stop, the Pis' GPIO pins will pick it up, eliminating the 1-second polling jitter. Not deployed yet. |
-| **Council** | The 2026-05-01 LLM Council review that produced the sprint plan. Full output: [[../07-decisions/2026-05-01-llm-council-review]]. |
+| **Council** | The 2026-05-01 LLM Council review that produced the sprint plan. Full output: [[2026-05-01-llm-council-review]]. |
 
 ---
 
 ## Related
 
-- [[../03-troubleshooting/emergency-runbook]] — first 10 minutes per-symptom playbook (this runbook references its sections)
-- [[../07-decisions/2026-05-stabilization-sprint-week-1-plan]] — sprint that built the chain-of-custody safety net this runbook depends on
-- [[../07-decisions/2026-05-01-llm-council-review#Blind Spots the Council Caught]] — why this doc exists (Reviewer 1's bus-factor point)
-- [[installation/nas-backup]] — daily project snapshot to NAS (restore source for catastrophic recovery)
-- [[../00-config/production-values]] — IPs, ports, paths, credentials (sensitive)
-- [[../01-infrastructure/system-overview]] — deeper architectural overview with the durability matrix
+- [[emergency-runbook]] — first 10 minutes per-symptom playbook (this runbook references its sections)
+- [[2026-05-stabilization-sprint-week-1-plan]] — sprint that built the chain-of-custody safety net this runbook depends on
+- [[2026-05-01-llm-council-review#Blind Spots the Council Caught]] — why this doc exists (Reviewer 1's bus-factor point)
+- [[nas-backup]] — daily project snapshot to NAS (restore source for catastrophic recovery)
+- [[production-values]] — IPs, ports, paths, credentials (sensitive)
+- [[nvr-system-overview]] — deeper architectural overview with the durability matrix
 - [[new-researcher-onboarding]] — day-0 access + first-recording walkthrough (the version of this doc you give to a new lab member who *isn't* in an emergency)

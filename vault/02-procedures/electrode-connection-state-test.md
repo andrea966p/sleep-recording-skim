@@ -13,7 +13,7 @@ priority: high
 > The method itself was RIGHT — and it is what exposed the error, because `/3`,`/4` matched the no-wire controls perfectly. They matched **because they ARE no-wire channels**. Apply the classifier to `/1` and `/2` only. See [[2026-08-01-channel-mapping-correction-first-sleep]].
 
 > [!abstract] TL;DR — for non-technical readers
-> **What this is.** A way to answer one question honestly: is this electrode actually connected to the mouse, or is it connected to nothing? For months we could not tell the difference, because a badly implanted electrode and a wire that is simply not attached produce almost the same number. See [[01-infrastructure/system-overview]] for the big picture.
+> **What this is.** A way to answer one question honestly: is this electrode actually connected to the mouse, or is it connected to nothing? For months we could not tell the difference, because a badly implanted electrode and a wire that is simply not attached produce almost the same number. See [[nvr-system-overview]] for the big picture.
 >
 > **Why it exists.** Every recording port contains spare amplifier inputs with no wire on them at all. Those spares are a free, perfect example of "not connected", measured by the same machine on the same day. Compare a real electrode against them and the answer stops being a guess. On 2026-07-31 this showed that most of our electrodes were reading exactly like nothing at all.
 >

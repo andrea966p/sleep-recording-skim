@@ -41,7 +41,7 @@ priority: critical
 Supersedes the per-run numbers in
 [[2026-08-01-channel-mapping-correction-first-sleep]] and
 [[2026-08-01-28h-contact-duty-cycle-and-c1-negative]]. Method:
-[[pipeline/README]]. Scored with `pipeline/stage1_qc.py` + `stage3_features.py`.
+[[eeg-pipeline-manual]]. Scored with `pipeline/stage1_qc.py` + `stage3_features.py`.
 
 > [!important] Both runs were COMMISSIONING TESTS, taken early. Read every number here in that light.
 > Surgery **21–23 July**. Tethered **Thursday 30 July**. Run 1 is therefore
@@ -96,7 +96,7 @@ Supersedes the per-run numbers in
 | D2 | 14.92 | 2.76 h | 2671 µV | DIRTY → REJECT | 0.00 | 2291 µV | OPEN |
 
 `pass%` is the share of 4 s epochs clearing the full QC gate. `mains` is the
-median 55–65 Hz amplitude against a **150 µV** limit — see [[pipeline/README]]
+median 55–65 Hz amplitude against a **150 µV** limit — see [[eeg-pipeline-manual]]
 for why hum amplitude *is* the contact measurement.
 
 > [!danger] Run 2 produced zero usable data

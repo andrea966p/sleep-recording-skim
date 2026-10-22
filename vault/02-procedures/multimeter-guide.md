@@ -16,7 +16,7 @@ status: complete
 >
 > **Why it exists.** The DMM steps were scattered across three other guides and the bench journals. We kept re-deriving "which dial position, which jack, what reading means what." This page is the consolidated, do-it-the-same-way-every-time reference, with the exact expected numbers from our own bench logs.
 >
-> **How to read this page.** §1 = the meter itself (dial + jacks). §2 = which mode for which test. §3 = the four core tests with expected readings. §4 = the reading-interpretation table (the part you'll glance at most). §5 = safety. Big picture: [[01-infrastructure/system-overview]]. For *what to do* with the results, see [[signal-quality-and-grounding]] and [[first-headstage-connection]].
+> **How to read this page.** §1 = the meter itself (dial + jacks). §2 = which mode for which test. §3 = the four core tests with expected readings. §4 = the reading-interpretation table (the part you'll glance at most). §5 = safety. Big picture: [[nvr-system-overview]]. For *what to do* with the results, see [[signal-quality-and-grounding]] and [[first-headstage-connection]].
 
 ---
 

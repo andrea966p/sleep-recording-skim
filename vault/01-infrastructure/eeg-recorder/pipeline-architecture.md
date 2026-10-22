@@ -21,8 +21,8 @@ status: active
 > single run from button to NAS. §3 is the failsafes, which is the part that matters. §4 is
 > what happens when things break. §5 is the list of defects this system has already had,
 > because every one of them is now a rule. Operator instructions:
-> [[02-procedures/eeg-recording-console]]. Background:
-> [[01-infrastructure/system-overview]].
+> [[eeg-recording-console]]. Background:
+> [[nvr-system-overview]].
 
 ## 1. The shape of it
 
@@ -125,7 +125,7 @@ immediately and `getsize()` returns **0 for a full 30 s**, then jumps to ~31 MB.
 is therefore two-stage — *started* (file exists + `R_ON`, immediate) and *growing* (size
 increased, only after ≥ 35 s) — and `confirm_growing()` **refuses a window shorter than
 35 s rather than lying**. The console tells the operator that 0 bytes is normal at first.
-See [[05-experiments/completed/2026-09-11-allego-control-bench-test]].
+See [[2026-09-11-allego-control-bench-test]].
 
 **Anything that asserts on growth stops the recorder in a `finally`.** A false negative that
 leaves the amplifiers running is worse than the false negative.
@@ -250,14 +250,14 @@ Fourteen defects, four provenances, and the mix is the point:
 - **`8mice_eeg_emg_ecg` has never been run through the console.** The strip is proven on a
   real three-role recording; start→stop→upload for it is not.
 - **The console does not know whether electrodes are connected.** It reports that bytes are
-  landing. [[02-procedures/pre-flight-connection-screen]] still gates any recording whose
+  landing. [[pre-flight-connection-screen]] still gates any recording whose
   timepoint dies with the animals.
 
 ## 7. Related
 
-- [[02-procedures/eeg-recording-console]] — how to use it
-- [[02-procedures/installation/xdat-channel-stripping]] — the strip contract and its gates
-- [[02-procedures/installation/skim-nas-smb-and-upload]] — the NAS and how uploads are verified
-- [[05-experiments/completed/2026-09-11-allego-control-bench-test]] — the 30 s size lag
-- [[03-troubleshooting/symptoms/recording-console-retry-was-a-dead-end]] — defects 1–3
-- [[02-procedures/multi-user-independent-recording-schedules]] — why recording is global
+- [[eeg-recording-console]] — how to use it
+- [[xdat-channel-stripping]] — the strip contract and its gates
+- [[skim-nas-smb-and-upload]] — the NAS and how uploads are verified
+- [[2026-09-11-allego-control-bench-test]] — the 30 s size lag
+- [[recording-console-retry-was-a-dead-end]] — defects 1–3
+- [[multi-user-independent-recording-schedules]] — why recording is global

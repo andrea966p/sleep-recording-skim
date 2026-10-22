@@ -15,7 +15,7 @@ only so a historical number can be reproduced. Do not run them.**
 `~/Monitoring_project/eeg-emg-analysis/pipeline/`
 
 The operating manual stayed in the vault:
-[[02-procedures/eeg-data-analysis/pipeline/README]]. The new first step is
+[[eeg-pipeline-manual]]. The new first step is
 [[animal-card-and-verdict-ladder]].
 
 ## Why it moved

@@ -273,7 +273,7 @@ Compare every other chip, whose floor slope p1 moved by less than 0.25 between t
 > PUBLISHED CONCLUSION for the S-SL batch — an "attrition" of five electrodes that never happened,
 > retracted on 2026-09-26. A scan of every card found **11 affected across S-SL, W-SL and S-SD**;
 > this page's A1 is one of them, and the reading above is confirmed.
-> Tracking moved to [[03-troubleshooting/symptoms/contaminated-floor-rejects-good-eeg]] so it is
+> Tracking moved to [[contaminated-floor-rejects-good-eeg]] so it is
 > no longer an open item buried in one experiment write-up.
 >
 > ✅ **FIXED 2026-09-26 (`2cc5892`). A1's card on this recording now reads UNJUDGEABLE**
@@ -365,4 +365,4 @@ movement-dependent contact pattern, at a slower cadence than usual.
 - Features: `~/eeg-processed/2026-08-26/feat_allego_1__uid0826-12-50-16.npz`, 7,317 × 128, 10 s epochs
 - Engine: `~/Monitoring_project/eeg-emg-analysis/core/criteria.py` and `core/qc_thresholds.py`
 - Cohort: `~/Monitoring_project/eeg-emg-analysis/cohorts/S-SD.yaml`
-- Related: [[2026-08-21-39h-run-score]] · [[03-troubleshooting/symptoms/per-animal-failure-signatures|per-animal failure signatures]] · [[02-procedures/eeg-artefact-and-railing-rejection-policy|artefact and railing policy]]
+- Related: [[2026-08-21-39h-run-score]] · [[per-animal-failure-signatures|per-animal failure signatures]] · [[eeg-artefact-and-railing-rejection-policy|artefact and railing policy]]

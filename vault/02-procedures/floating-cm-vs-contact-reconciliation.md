@@ -8,7 +8,7 @@ priority: high
 # Why early bring-up worked WITHOUT the earth wire — floating common-mode vs electrode contact (reconciliation)
 
 > [!abstract] TL;DR — for non-technical readers
-> **What this is.** An answer to a real doubt: if the recording system was floating (no earth) the whole time, how did the early troubleshooting (channel mapping, "one mouse per headstage", grounding topology, even the 2026-07-05 "5 of 8 mice usable" result) ever produce sensible signals? See [[01-infrastructure/system-overview]] for the big picture.
+> **What this is.** An answer to a real doubt: if the recording system was floating (no earth) the whole time, how did the early troubleshooting (channel mapping, "one mouse per headstage", grounding topology, even the 2026-07-05 "5 of 8 mice usable" result) ever produce sensible signals? See [[nvr-system-overview]] for the big picture.
 >
 > **Why it exists.** So this apparent contradiction does not resurface and get mis-diagnosed later. It also cross-checks that the "floating system" diagnosis and the newer "contact is the binding variable" verdict are the SAME physics, not two competing stories.
 >

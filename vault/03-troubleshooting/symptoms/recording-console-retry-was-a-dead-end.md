@@ -16,7 +16,7 @@ status: resolved
 > human using the tool for a one-minute test recording, which is the argument for doing that early.
 >
 > **How to read this page.** Each defect has its symptom, its cause and its fix. Defect 2 is the one
-> to read if you read only one. Background: [[02-procedures/eeg-recording-console]].
+> to read if you read only one. Background: [[eeg-recording-console]].
 
 **Trigger:** a manual 1-minute run on 2026-09-11 (`allego_0__uid0911-22-32-22`). The recording
 itself worked perfectly — started on time, growth confirmed at 2.86 GB/h, stopped cleanly. Everything
@@ -58,7 +58,7 @@ subsequent run by every user until the service was restarted** — and left no r
 happened.
 
 Stripping permanently destroys the in-file wire-free floor
-([[02-procedures/installation/xdat-channel-stripping]] §2). A guard against that which one click can
+([[xdat-channel-stripping]] §2). A guard against that which one click can
 switch off for the whole lab, invisibly, is not a guard.
 
 **Fix.** The override now lives in the **run's own record** (`results.skip_qc_bundle`), so it applies
@@ -98,6 +98,6 @@ Worth recording, because the same run demonstrated it:
 
 ## Related
 
-- [[02-procedures/eeg-recording-console]]
-- [[02-procedures/installation/xdat-channel-stripping]] — why the QC bundle is a precondition
-- [[05-experiments/completed/2026-09-11-allego-control-bench-test]]
+- [[eeg-recording-console]]
+- [[xdat-channel-stripping]] — why the QC bundle is a precondition
+- [[2026-09-11-allego-control-bench-test]]

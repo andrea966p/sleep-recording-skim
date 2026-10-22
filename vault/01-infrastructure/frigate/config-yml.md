@@ -126,4 +126,4 @@ logger:
 ## Related
 
 - [[docker-compose]] - Docker setup + Mosquitto config
-- [[../../01-infrastructure/raspberry-pi/golden-go2rtc-config|go2rtc Config]]
+- [[golden-go2rtc-config|go2rtc Config]]

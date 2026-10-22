@@ -139,7 +139,7 @@ curl -s 127.0.0.1:8600/api/state | python3 -m json.tool | grep -A3 active_run
 - The raw file on disk is whatever Allego wrote before it stopped. If Allego died mid-recording the
   file is short but valid; check it with bytes on disk, never by trusting the app's own state.
 
-Full rules: [[01-infrastructure/eeg-recorder/pipeline-architecture]] §3.5.
+Full rules: [[pipeline-architecture]] §3.5.
 
 ## 6. When something is actually wrong
 
@@ -154,7 +154,7 @@ Full rules: [[01-infrastructure/eeg-recorder/pipeline-architecture]] §3.5.
 
 ## 7. Related
 
-- [[02-procedures/eeg-recording-console]] — how to set up and run a recording once you are in
-- [[01-infrastructure/eeg-recorder/pipeline-architecture]] — every program, what fires it, every failsafe
-- [[02-procedures/installation/skim-nas-smb-and-upload]] — the mount, its guards, and how uploads are verified
-- [[02-procedures/pre-flight-connection-screen]] — still gates any recording whose timepoint cannot be repeated
+- [[eeg-recording-console]] — how to set up and run a recording once you are in
+- [[pipeline-architecture]] — every program, what fires it, every failsafe
+- [[skim-nas-smb-and-upload]] — the mount, its guards, and how uploads are verified
+- [[pre-flight-connection-screen]] — still gates any recording whose timepoint cannot be repeated

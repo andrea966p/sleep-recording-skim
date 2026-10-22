@@ -19,7 +19,7 @@ status: complete
 >
 > **How to read this page.** Section 1 is the two answers. Section 2 is the surprise, which turned
 > out to matter far more than the question we set out to ask. Section 3 is what changed in the code
-> because of it. Background on the rig is in [[01-infrastructure/system-overview]].
+> because of it. Background on the rig is in [[nvr-system-overview]].
 
 ## 1. The two answers
 
@@ -107,8 +107,8 @@ Run from `/opt/neurosurveillance/venv/bin/python3` — the only interpreter with
 
 ## 5. Related
 
-- [[02-procedures/eeg-recording-console]] — the tool this was built for
-- [[02-procedures/scheduled-recording-and-watchdogs]] — the existing unattended start path, whose
+- [[eeg-recording-console]] — the tool this was built for
+- [[scheduled-recording-and-watchdogs]] — the existing unattended start path, whose
   40-second window this validates
-- [[02-procedures/multi-user-independent-recording-schedules]] — carries the retraction of the
+- [[multi-user-independent-recording-schedules]] — carries the retraction of the
   per-port recording claim, measured the same day

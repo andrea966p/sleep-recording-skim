@@ -6,7 +6,7 @@ status: active
 
 # Sleep scoring — v2 (SUPERSEDED same day)
 
-> [!warning] Superseded 2026-08-03 by [[pipeline/README]]
+> [!warning] Superseded 2026-08-03 by [[eeg-pipeline-manual]]
 > `rescore_v2.py` fixed the persistence bug documented below and that fix is
 > correct — it was carried forward unchanged. But its **QC thresholds were
 > guesses**, and three of them were wrong:

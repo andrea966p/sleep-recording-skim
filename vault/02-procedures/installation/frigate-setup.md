@@ -11,7 +11,7 @@ status: production
 >
 > **Why it exists.** Reproducibility. If the NVR fails, this procedure restores the recording stack in ~1 hour.
 >
-> **How to read this page.** Top to bottom, ticking each prerequisite first. Step 4 (Mosquitto auth) requires the password from [[../../00-config/production-values|production-values.md]] — fetch it before you start. The Validation section confirms everything works end-to-end.
+> **How to read this page.** Top to bottom, ticking each prerequisite first. Step 4 (Mosquitto auth) requires the password from [[production-values|production-values.md]] — fetch it before you start. The Validation section confirms everything works end-to-end.
 
 > [!quote] Paper-ready
 > The Frigate NVR and Mosquitto MQTT broker are deployed as Docker Compose services on the NVR machine via a reproducible 8-step procedure covering prerequisites, directory structure, authenticated MQTT configuration, Frigate config, container deployment, hardware-acceleration verification, recording test, and MQTT integration verification.
@@ -28,10 +28,10 @@ Deploy Frigate NVR with Mosquitto MQTT broker on the NUC for recording RTSP came
 - [ ] User in `render` group (`sudo usermod -aG render $USER`)
 - [ ] `/dev/dri/renderD128` exists with `render` group permissions
 - [ ] VA-API working: `vainfo` shows `VAProfileH264High: VAEntrypointVLD`
-- [ ] At least one Pi camera node streaming via go2rtc (see [[02-procedures/installation/new-pi-setup|New Pi Setup]])
+- [ ] At least one Pi camera node streaming via go2rtc (see [[new-pi-setup|New Pi Setup]])
 - [ ] Static IP assigned (currently `{NVR_IP}` = `192.168.0.50`)
 
-## Your Values (from [[00-config/production-values|Production Values]])
+## Your Values (from [[production-values|Production Values]])
 
 | Variable | Value |
 |----------|-------|
@@ -99,7 +99,7 @@ persistence false
 log_dest stdout
 ```
 
-Then create the password file. The plaintext password is in [[../../00-config/production-values#Mosquitto MQTT Authentication (since 2026-05-22)|production-values.md]]; never put it into a public repo.
+Then create the password file. The plaintext password is in [[production-values#Mosquitto MQTT Authentication (since 2026-05-22)|production-values.md]]; never put it into a public repo.
 
 ```bash
 # Start mosquitto once so we can use mosquitto_passwd from inside the container.
@@ -114,7 +114,7 @@ docker compose restart mosquitto
 ```
 
 > [!history] Historical note — pre-2026-05-22
-> Before 2026-05-22 this step used `allow_anonymous true` and no `password_file`; the rationale was "acceptable for an isolated lab LAN with no internet exposure." The current step requires auth so a compromised LAN device cannot inject Frigate state changes (which would create phantom sessions or stop recordings). Full pre-change text: [[../../99-archive/2026-05-rehaul/frigate-setup-mosquitto-2026-05-22|archived setup step]].
+> Before 2026-05-22 this step used `allow_anonymous true` and no `password_file`; the rationale was "acceptable for an isolated lab LAN with no internet exposure." The current step requires auth so a compromised LAN device cannot inject Frigate state changes (which would create phantom sessions or stop recordings). Full pre-change text: [[frigate-setup-mosquitto-2026-05-22|archived setup step]].
 
 ### 5. Deploy Frigate Configuration
 
@@ -122,10 +122,10 @@ docker compose restart mosquitto
 nano /srv/frigate/config/config.yml
 ```
 
-Paste the configuration from [[01-infrastructure/frigate/config-yml|Frigate Config v5.1]]
+Paste the configuration from [[config-yml|Frigate Config v5.1]]
 
 > [!warning] Replace Variables
-> Replace all `{VARIABLE}` placeholders with actual values from [[00-config/production-values|Production Values]] before deploying.
+> Replace all `{VARIABLE}` placeholders with actual values from [[production-values|Production Values]] before deploying.
 
 ### 6. Deploy Docker Compose
 
@@ -133,7 +133,7 @@ Paste the configuration from [[01-infrastructure/frigate/config-yml|Frigate Conf
 nano /srv/frigate/docker-compose.yml
 ```
 
-Paste the configuration from [[01-infrastructure/frigate/docker-compose|Docker Compose v5.1]]
+Paste the configuration from [[docker-compose|Docker Compose v5.1]]
 
 ### 7. Start Services
 
@@ -262,11 +262,11 @@ docker exec mosquitto mosquitto_sub \
 
 ## Related
 
-- [[02-procedures/installation/new-pi-setup|New Pi Setup]] — prerequisite Pi camera node deployment
-- [[01-infrastructure/frigate/docker-compose|Docker Compose Golden Config]]
-- [[01-infrastructure/frigate/config-yml|Frigate Config Golden Config]]
-- [[00-config/production-values|Production Values]]
-- [[01-infrastructure/raspberry-pi/golden-go2rtc-config|go2rtc Config]] — Pi-side streaming
+- [[new-pi-setup|New Pi Setup]] — prerequisite Pi camera node deployment
+- [[docker-compose|Docker Compose Golden Config]]
+- [[config-yml|Frigate Config Golden Config]]
+- [[production-values|Production Values]]
+- [[golden-go2rtc-config|go2rtc Config]] — Pi-side streaming
 
 ---
 

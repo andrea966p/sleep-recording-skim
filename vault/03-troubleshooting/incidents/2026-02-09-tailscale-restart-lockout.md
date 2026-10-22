@@ -105,5 +105,5 @@ ss -tulnp | grep rustdesk
 
 ## Related
 
-- [[../symptoms/system-freeze-ssh-hang|System Freeze SSH Hang]] - different issue (zombie processes)
+- [[system-freeze-ssh-hang|System Freeze SSH Hang]] - different issue (zombie processes)
 - RustDesk docs: P2P connection requires both peers advertising correct IPs

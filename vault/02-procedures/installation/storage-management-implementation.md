@@ -12,7 +12,7 @@ status: completed
 >
 > **Why it exists.** Without it, video recordings could fill the NVMe and break the XDAQ EEG capture mid-session. The cap reserves 200 GB and refuses new recordings before the disk falls below that threshold.
 >
-> **How to read this page.** This is the build log. The runtime behavior is documented at [[../../01-infrastructure/session-daemon/architecture#7. Storage Monitor (`storage_monitor.py`)|architecture §7]]. Use this page if you need to understand why a particular value was chosen.
+> **How to read this page.** This is the build log. The runtime behavior is documented at [[architecture#7. Storage Monitor (`storage_monitor.py`)|architecture §7]]. Use this page if you need to understand why a particular value was chosen.
 
 > [!quote] Paper-ready
 > Disk-space management is enforced by a background storage monitor that samples filesystem usage every 30 seconds and refuses to start new video recordings when available space falls below the configured 200 GB EEG reserve, protecting in-progress electrophysiology data from competing video writes.
@@ -1383,7 +1383,7 @@ When the Synology NAS (`bilab-syn.tail8808c0.ts.net` via Tailscale) is ready:
 > [!warning] SUPERSEDED APPROACH — rsync does NOT work against this NAS
 > The plan below proposes `rsync`. That was retested on 2026-08-19 and still fails (it falls back
 > to a password prompt and dies). Use the verified ssh-pipe pattern in
-> [[01-infrastructure/raw-recording-archive-to-nas]] instead, which is deployed and working.
+> [[raw-recording-archive-to-nas]] instead, which is deployed and working.
 
 
 1. Create `nas_transfer.py` — watches for `export_status == "completed"` sessions

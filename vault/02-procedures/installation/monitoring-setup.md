@@ -476,7 +476,7 @@ No `docker compose` action required after a fresh checkout: the volume is part o
 ### Removing the Apt Pin on WebKitGTK
 
 > [!note] Related Issue
-> WebKitGTK `2.50.4` is pinned to `2.44.0-2` due to a bug — see [[03-troubleshooting/incidents/2026-03-24-webkit-internal-error-tauri]]. When Ubuntu ships `2.52+`, test removing the pin:
+> WebKitGTK `2.50.4` is pinned to `2.44.0-2` due to a bug — see [[2026-03-24-webkit-internal-error-tauri]]. When Ubuntu ships `2.52+`, test removing the pin:
 > ```bash
 > sudo rm /etc/apt/preferences.d/pin-webkitgtk
 > sudo apt upgrade
@@ -531,7 +531,7 @@ Browser access:
 > [!info] Why Custom Alerts?
 > Netdata ships with **227 default alerts** — most irrelevant for an NVR (Ceph, Kubernetes, Redis, etc.). Rather than receiving noise, we silence all defaults and define only what matters for video surveillance.
 
-See [[01-infrastructure/netdata/nvr-alerts-config|NVR Alerts Golden Config]] for the full configuration reference and management guide.
+See [[nvr-alerts-config|NVR Alerts Golden Config]] for the full configuration reference and management guide.
 
 ### 8.1 Silence Default Alerts
 

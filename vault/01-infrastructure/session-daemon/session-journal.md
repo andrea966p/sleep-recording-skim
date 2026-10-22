@@ -22,10 +22,10 @@ related-plan: 2026-05-20
 
 The **session journal** is the daemon's crash-safe record of session lifecycle events. Every session state transition is appended to a SQLite WAL-mode database; the in-memory session managers are still the runtime truth, but the journal is the durable truth.
 
-Shipped 2026-05-23 as council Stage 2.1 (see [[../../04-journal/2026-05/2026-05-23|2026-05-23 journal]]).
+Shipped 2026-05-23 as council Stage 2.1 (see [[2026-05-23|2026-05-23 journal]]).
 
 > [!info] Why it exists
-> Before today, every session state transition existed in memory only. A daemon crash mid-session lost the metadata; MP4 chunks on disk became orphans with no record of which `mouse_id` they belonged to. Already seen on [[../../04-journal/2026-05/2026-05-18|2026-05-18 pi_cam_2]]. The journal closes that gap by writing each transition with `synchronous=FULL` before the recording path can proceed.
+> Before today, every session state transition existed in memory only. A daemon crash mid-session lost the metadata; MP4 chunks on disk became orphans with no record of which `mouse_id` they belonged to. Already seen on [[2026-05-18|2026-05-18 pi_cam_2]]. The journal closes that gap by writing each transition with `synchronous=FULL` before the recording path can proceed.
 
 ## File location
 
@@ -218,7 +218,7 @@ Use `sqlite3 .backup` rather than `cp`: the live `.db` plus `.db-wal` are not sa
 sqlite3 /opt/neurosurveillance/session_wal.db ".backup /path/to/backup/session_wal_$(date +%Y%m%d).db"
 ```
 
-Currently un-automated. Off-machine durability (Syncthing-replicated WAL, NAS-side `sqlite3 .backup`) is a [[../../04-journal/2026-05/2026-05-23#Future considerations & optimizations|sprint follow-up]].
+Currently un-automated. Off-machine durability (Syncthing-replicated WAL, NAS-side `sqlite3 .backup`) is a [[2026-05-23#Future considerations & optimizations|sprint follow-up]].
 
 ### Truncation / retention
 
@@ -254,8 +254,8 @@ The following modules are journal-aware (touched 2026-05-23):
 ## See also
 
 - [[architecture|Session Daemon Architecture]] — overall component map
-- [[../../04-journal/2026-05/2026-05-23|2026-05-23 daily journal]] — Phase 2 implementation log
-- [[../../07-decisions/2026-05-stabilization-sprint-week-1-plan|stabilization sprint plan]] — council Stage 2.1 spec (sprint execution)
-- [[../../07-decisions/2026-05-01-llm-council-review|2026-05-01 LLM council review]] — original WAL recommendation
-- [[../../04-journal/2026-05/2026-05-22|2026-05-22 journal]] — the regression that motivated the urgency
+- [[2026-05-23|2026-05-23 daily journal]] — Phase 2 implementation log
+- [[2026-05-stabilization-sprint-week-1-plan|stabilization sprint plan]] — council Stage 2.1 spec (sprint execution)
+- [[2026-05-01-llm-council-review|2026-05-01 LLM council review]] — original WAL recommendation
+- [[2026-05-22|2026-05-22 journal]] — the regression that motivated the urgency
 - Repo: `backend/session_journal.py`, `backend/scripts/backfill_journal.py` on `andrea966p/neurosurveillance` `main` after `7db66d2`

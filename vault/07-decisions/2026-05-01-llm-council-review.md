@@ -43,7 +43,7 @@ This entry captures the **full** council process (5 advisors, 5 peer reviews, ch
 sudo apt-mark hold docker-ce docker-ce-cli containerd.io docker-compose-plugin
 ```
 
-5 minutes. Prevents recurrence of the [[../04-journal/2026-04/2026-04-01|Apr 1 unintended-recording incident]] — documented, never actually fixed. `unattended-upgrades` blacklist is insufficient (aptdaemon bypasses it).
+5 minutes. Prevents recurrence of the [[2026-04-01|Apr 1 unintended-recording incident]] — documented, never actually fixed. `unattended-upgrades` blacklist is insufficient (aptdaemon bypasses it).
 
 ---
 
@@ -63,14 +63,14 @@ Council convened: Contrarian, First Principles, Expansionist, Outsider, Executor
 - **Race condition.** `frigate_controller.py:170` mutates `_last_known_state` from MQTT background thread *without* a lock. Only `_expected_states` is locked.
 - **Dead code.** `daemon.py:565-566` — duplicate `storage_monitor.stop()` call.
 - **No reconnect backoff.** `radiens_poller.py:63-84` — Radiens reconnect retries every 1 s if server is down; no backoff, will hammer.
-- **Export timeout has no retry.** `daemon.py:378-382` — 5-min timeout marks session "failed: export timed out", no retry mechanism. The [[../04-journal/2026-04/2026-04-08|Apr 8 incident]] needed manual recovery.
+- **Export timeout has no retry.** `daemon.py:378-382` — 5-min timeout marks session "failed: export timed out", no retry mechanism. The [[2026-04-08|Apr 8 incident]] needed manual recovery.
 - **Manual sessions persisted only at stop.** Crash mid-manual-recording → metadata gone, MP4 chunks unlabeled on disk.
 - **Active sessions in-memory only.** Daemon crash mid-export → `export_status="pending"` orphan forever.
 - **`sudo` in `_move_export_file`** without password caching — single password prompt blocks the export thread.
 - **Zero test coverage.** No `tests/`, no `pytest.ini`, no mocks.
 - **Type hints ≈ 41%** of functions.
 - **Logical duplication** between `session_manager.py` and `manual_session_manager.py` (export-status update, history load).
-- **`storage_monitor.py` recovered from `.pyc`** after the [[../04-journal/2026-04/2026-04-29|Apr 29 Syncthing wipe]] — pycdc artifacts noted in file header.
+- **`storage_monitor.py` recovered from `.pyc`** after the [[2026-04-29|Apr 29 Syncthing wipe]] — pycdc artifacts noted in file header.
 
 ### Frontend — concrete weak spots
 
@@ -84,11 +84,11 @@ Council convened: Contrarian, First Principles, Expansionist, Outsider, Executor
 ### Infrastructure / deployment — concrete weak spots
 
 - **Mosquitto runs `allow_anonymous true`** on the LAN. Any host can publish `frigate/+/recordings/set`.
-- **Docker NOT pinned with `apt-mark hold`** — only `unattended-upgrades` blacklist (proven insufficient, [[../04-journal/2026-04/2026-04-01|Apr 1]]).
+- **Docker NOT pinned with `apt-mark hold`** — only `unattended-upgrades` blacklist (proven insufficient, [[2026-04-01|Apr 1]]).
 - **Frigate `record.enabled: true` is fragile** — depends on Frigate not auto-upgrading.
 - **Single NVR is SPOF.** Frigate + Mosquitto + daemon all on one ASUS NUC. NVR down = no recording, no exports, no API.
 - **No automated backup.** NAS sync stubbed (`enabled: false`); MP4s + sidecars + Frigate sqlite all on one NVMe.
-- **No off-machine git remote.** [[../04-journal/2026-04/2026-04-29|Apr 29]] backend wipe was rebuilt from `.pyc` decompile + transcripts. Could have been a `git clone`.
+- **No off-machine git remote.** [[2026-04-29|Apr 29]] backend wipe was rebuilt from `.pyc` decompile + transcripts. Could have been a `git clone`.
 - **Vault gaps.** No emergency failover runbook, no storage troubleshooting guide, no "first 10 minutes" checklist for a new researcher.
 
 ---
@@ -311,7 +311,7 @@ Order matters — earlier stages buy stability that later stages depend on. This
 
 ### Stage 1 — Monday morning (≈50 minutes, blocks ~80% of known data-loss vectors)
 
-- **Pin Docker packages** (5 min) — `sudo apt-mark hold docker-ce docker-ce-cli containerd.io docker-compose-plugin`. Prevents recurrence of [[../04-journal/2026-04/2026-04-01|Apr 1]]. `unattended-upgrades` blacklist is insufficient.
+- **Pin Docker packages** (5 min) — `sudo apt-mark hold docker-ce docker-ce-cli containerd.io docker-compose-plugin`. Prevents recurrence of [[2026-04-01|Apr 1]]. `unattended-upgrades` blacklist is insufficient.
 - **Stop Syncthing from touching the backend** (15 min) — remove `neurosurveillance/backend/` from the synced folder set; do NOT rely on `.stignore` alone.
 - **Pin Frigate image tag** (10 min) — replace any `:latest` / floating tag with `:0.16.1` in `/srv/frigate/docker-compose.yml`.
 - **Lock down Mosquitto** (20 min) — bind `listener 1883 127.0.0.1` OR add a password.
@@ -359,10 +359,10 @@ Live status is maintained in [[2026-05-stabilization-sprint-week-1-plan#Status s
 ## References
 
 - Plan file (mirror of this analysis, machine-readable): `~/.claude/plans/read-the-vault-and-optimized-hopcroft.md`
-- [[../04-journal/2026-04/2026-04-01]] — Frigate auto-upgrade, unintended recording (root cause for Stage-1 item 1).
-- [[../04-journal/2026-04/2026-04-08]] — Stuck Frigate export incident (root cause for Stage-2 reconciler).
-- [[../04-journal/2026-04/2026-04-29]] — Syncthing wipe + recovery (root cause for Stage-1 items 2 & 6).
-- [[../04-journal/2026-04/2026-04-30]] — Post-recovery verification.
-- [[../01-infrastructure/hardware-sync/overview|Hardware sync overview]] — TTL pulse design (Stage 3 prerequisite).
-- [[../00-config/production-values]] — canonical IPs/ports/paths.
+- [[2026-04-01]] — Frigate auto-upgrade, unintended recording (root cause for Stage-1 item 1).
+- [[2026-04-08]] — Stuck Frigate export incident (root cause for Stage-2 reconciler).
+- [[2026-04-29]] — Syncthing wipe + recovery (root cause for Stage-1 items 2 & 6).
+- [[2026-04-30]] — Post-recovery verification.
+- [[overview|Hardware sync overview]] — TTL pulse design (Stage 3 prerequisite).
+- [[production-values]] — canonical IPs/ports/paths.
 - [[2026-05-stabilization-sprint-week-1-plan]] — the executable sprint plan derived from this council.

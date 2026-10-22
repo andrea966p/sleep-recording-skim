@@ -19,10 +19,10 @@ status: active
 > parts: read them before every session. §2 explains each measure once; search it when a word blocks
 > you. §4 is our conventions, **drafts until the professor confirms them**. §5 is a library of real
 > cases from our data. §6–§7 are the literature. §8 is the running list of questions for the
-> professor. How to drive the program: [[02-procedures/sleepstager-user-guide]].
-> Big picture: [[01-infrastructure/system-overview]].
+> professor. How to drive the program: [[sleepstager-user-guide]].
+> Big picture: [[nvr-system-overview]].
 
-The general-purpose dictionary of the analysis pipeline is [[06-references/eeg-analysis-glossary]];
+The general-purpose dictionary of the analysis pipeline is [[eeg-analysis-glossary]];
 this page is about **scoring**.
 
 ---
@@ -153,7 +153,7 @@ HLBSSL33 R → **13.3 µV**.
 > The 20–90 Hz EMG band contains the 60 Hz mains, and the program only removes 50 Hz. In HLBSSL33 R,
 > 60 Hz is **18 % of the NREM EMG power and 22 % of REM** (1.7 % of wake). The sleep floor reads
 > slightly high (NR 6.5 instead of 5.9 µV). Item 1 of
-> [[01-infrastructure/sleepstager/sleepstager-changes-and-backlog|the backlog]].
+> [[sleepstager-changes-and-backlog|the backlog]].
 
 ### Reading the panel and the dossier
 
@@ -355,7 +355,7 @@ case in the journal.
 6. **Borderline arousal:** 617's spike-proof tone is 13.4 against a cut of 13.3. W or NR\*?
    ([[2026-10-07#Case 6. Epoch 617, a short wake run|617]])
 7. **The 60 Hz notch:** should SleepStager notch 60 Hz for our rig before more mice are scored?
-   ([[01-infrastructure/sleepstager/sleepstager-changes-and-backlog|backlog 1]])
+   ([[sleepstager-changes-and-backlog|backlog 1]])
 8. **Validation:** is checking only the rule's marks and the REM edges acceptable, or must every
    epoch be read? (Proposed test: score ZT0–2 completely and count unmarked changes.)
 9. **C12, one-sided arousals:** in NREM, does a 4-s epoch count as W when only the muscle wakes (1321, 1323) or only the
@@ -369,10 +369,10 @@ case in the journal.
 
 ## Related
 
-- [[02-procedures/sleepstager-user-guide]] — driving the program
-- [[01-infrastructure/sleepstager/sleepstager-changes-and-backlog]] — program changes and backlog
-- [[06-references/eeg-analysis-glossary]] — the pipeline's dictionary
-- [[02-procedures/blind-scoring-and-kappa]] — measuring agreement with a human scorer
-- [[06-references/sleepyscore-japan-scoring-tool-algorithm]] — the older tool's algorithm
-- [[06-references/is-our-qc-approach-sound]] — the literature check on our QC
-- [[05-experiments/_HLB-SOD1-project-hub]] — the project these scorings serve
+- [[sleepstager-user-guide]] — driving the program
+- [[sleepstager-changes-and-backlog]] — program changes and backlog
+- [[eeg-analysis-glossary]] — the pipeline's dictionary
+- [[blind-scoring-and-kappa]] — measuring agreement with a human scorer
+- [[sleepyscore-japan-scoring-tool-algorithm]] — the older tool's algorithm
+- [[is-our-qc-approach-sound]] — the literature check on our QC
+- [[_HLB-SOD1-project-hub]] — the project these scorings serve

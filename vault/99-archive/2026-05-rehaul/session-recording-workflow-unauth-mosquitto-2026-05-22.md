@@ -1,7 +1,7 @@
 ---
 tags: [archive, 2026-05-rehaul]
 archived: 2026-05-24
-superseded-by: "[[02-procedures/session-recording-workflow]]"
+superseded-by: "[[session-recording-workflow]]"
 reason: "Mosquitto authentication added; troubleshooting commands now require -u nvr -P …"
 ---
 

@@ -1,0 +1,476 @@
+old_path	new_path	type	area	status	canonical	superseded_by	banner	confidence	reason
+00-config/production-values.md	20-areas/computing/production-values.md	reference	computing	active	-	-	Netdata and Uptime Kuma alerts moved to ntfy 2026-09-14, deploy scripts (nvr-notify.sh) 2026-09-20; recording-stall and reconciler alerts still go to Slack via nvr-mqtt-slack.service. Cameras removed 2026-08-04.	medium	Production IPs/services/secrets locations; Slack env entries outdated; sensitive file
+00-config/task-dashboard.md	TASKS.md	hub	computing	active	-	-	-	high	Spec mapping: tasks dashboard becomes TASKS.md
+00-config/weekly-view.md	TASKS-WEEK.md	hub	computing	active	-	-	-	high	Spec mapping: weekly view becomes TASKS-WEEK.md
+01-infrastructure/2026-08-19-laptop-workflow-alignment-task.md	20-areas/computing/2026-08-19-laptop-workflow-alignment-task.md	procedure	computing	superseded	-	-	Syncthing retired 2026-09-16/19; workspace is one git repo synced manually with ./skim. Brief is historical.	medium	Syncthing-era laptop task brief; frontmatter says active but workflow retired
+01-infrastructure/2026-08-19-office-pc-nas-firewall-task.md	20-areas/computing/2026-08-19-office-pc-nas-firewall-task.md	procedure	computing	superseded	-	2026-08-19-nas-backup-wrong-address.md	-	high	Own banner: diagnosis wrong, replaced by wrong-address incident
+01-infrastructure/eeg-recorder/pipeline-architecture.md	20-areas/recording-console/pipeline-architecture.md	reference	recording-console	active	-	-	-	high	Recording console pipeline architecture
+01-infrastructure/frigate/config-yml.md	20-areas/video-nvr/frigate/config-yml.md	reference	video-nvr	active	-	-	-	medium	Frigate golden config; rename avoids ambiguity [coord: keep name, subfolder]
+01-infrastructure/frigate/docker-compose.md	20-areas/video-nvr/frigate/docker-compose.md	reference	video-nvr	active	-	-	-	medium	Frigate+Mosquitto compose golden config [coord: keep name, subfolder]
+01-infrastructure/hardware-sync/attachments/kontex-docs-20260721/sadpt-port-exp.html	30-resources/vendors/kontex-docs-20260721/sadpt-port-exp.html	-	-	-	-	-	-	high	Vendor html snapshot
+01-infrastructure/hardware-sync/attachments/kontex-docs-20260721/sadpt-xdaq-om12.html	30-resources/vendors/kontex-docs-20260721/sadpt-xdaq-om12.html	-	-	-	-	-	-	high	Vendor html snapshot
+01-infrastructure/hardware-sync/attachments/kontex-docs-20260721/synclink.html	30-resources/vendors/kontex-docs-20260721/synclink.html	-	-	-	-	-	-	high	Vendor html snapshot
+01-infrastructure/hardware-sync/attachments/kontex-docs-20260721/xdaq-index-aio-oneplus-core2.html	30-resources/vendors/kontex-docs-20260721/xdaq-index-aio-oneplus-core2.html	-	-	-	-	-	-	high	Vendor html snapshot
+01-infrastructure/hardware-sync/attachments/kontex-docs-20260721/xdaq-one-plus.html	30-resources/vendors/kontex-docs-20260721/xdaq-one-plus.html	-	-	-	-	-	-	high	Vendor html snapshot
+01-infrastructure/hardware-sync/attachments/xdaq-core2-db25-pinout.png	_attachments/xdaq-core2-db25-pinout.png	-	-	-	-	-	-	high	Attachment image
+01-infrastructure/hardware-sync/attachments/xdaq-core2-panels.png	_attachments/xdaq-core2-panels.png	-	-	-	-	-	-	high	Attachment image
+01-infrastructure/hardware-sync/attachments/xdaq-core2-tech-specs.png	_attachments/xdaq-core2-tech-specs.png	-	-	-	-	-	-	high	Attachment image
+01-infrastructure/hardware-sync/gpio-sync-service.md	20-areas/video-nvr/hardware-sync/gpio-sync-service.md	reference	video-nvr	planned	-	-	-	medium	GPIO listener service config; own banner says insufficient as written [coord: keep name, subfolder]
+01-infrastructure/hardware-sync/kontex-developer-portal-notes.md	20-areas/video-nvr/hardware-sync/kontex-developer-portal-notes.md	reference	video-nvr	superseded	-	xdaq-core-gen1-ubuntu-driver.md	-	medium	Core2 Thunderbolt/libxdaq notes; own banner says not applicable to our unit [coord: keep name, subfolder]
+01-infrastructure/hardware-sync/kontex-xdaq-hardware-reference.md	10-projects/rig-expansion/kontex-xdaq-hardware-reference.md	reference	rig-expansion	active	-	-	-	high	XDAQ models, Port Expander, SyncLink facts driving scale-up
+01-infrastructure/hardware-sync/literature-review.md	20-areas/video-nvr/hardware-sync/literature-review.md	reference	video-nvr	done	-	-	-	high	Literature review on video-EEG TTL sync [coord: keep name, subfolder]
+01-infrastructure/hardware-sync/overview.md	20-areas/video-nvr/hardware-sync/overview.md	reference	video-nvr	planned	-	-	Core2/Linux parts superseded by xdaq-core-gen1-ubuntu-driver; DB25 details confirmed for Gen-1. Cameras removed 2026-08-04.	medium	Video-EEG hardware sync plan; not deployed; generic basename prefixed [coord: keep name, subfolder]
+01-infrastructure/hardware-sync/radiens-api-reference.md	20-areas/allego/radiens-api-reference.md	reference	allego	active	-	-	-	medium	Radiens Python SDK AllegoClient digital I/O reference
+01-infrastructure/hardware-sync/references-and-justification.md	20-areas/video-nvr/hardware-sync/references-and-justification.md	reference	video-nvr	active	-	-	-	medium	Datasheet justification for sync BOM and pins [coord: keep name, subfolder]
+01-infrastructure/hardware-sync/wiring-guide.md	20-areas/video-nvr/hardware-sync/wiring-guide.md	procedure	video-nvr	planned	-	-	-	medium	XDAQ DB25 to Pi GPIO wiring; bench validation pending [coord: keep name, subfolder]
+01-infrastructure/hardware-sync/xdaq-core-gen1-ubuntu-driver.md	20-areas/eeg-rig/xdaq-core-gen1-ubuntu-driver.md	reference	eeg-rig	active	true	-	-	high	Gen-1 XDAQ hardware and Ubuntu driver verified setup; says it wins over Core2 pages
+01-infrastructure/hardware-sync/xdaq-core2-manual-reference.md	20-areas/video-nvr/hardware-sync/xdaq-core2-manual-reference.md	reference	video-nvr	active	-	-	Core2 manual. DB25 pinout confirmed identical on our Gen-1 Core by KC Kong 2026-06-05 (overview); host/driver parts do not apply: xdaq-core-gen1-ubuntu-driver.	medium	Core2 DB25 manual transcription; Core2 reference only [coord: keep name, subfolder]
+01-infrastructure/multi-machine-work-setup.md	20-areas/computing/multi-machine-work-setup.md	reference	computing	superseded	-	-	-	medium	Own banner: Syncthing workflow superseded 2026-09-10; kept for why; CLAUDE.md still cites its path table
+01-infrastructure/netdata/nvr-alerts-config.md	20-areas/computing/nvr-alerts-config.md	reference	computing	active	-	-	Alert rules still current; routing moved from Slack to ntfy 2026-09-14 (monitoring-setup §8.3b), so the Slack notify sections are historical. Embeds a Slack webhook URL (secret): redact.	medium	Netdata alerts routed to Slack; replaced by ntfy; keep config reference
+01-infrastructure/raspberry-pi/golden-boot-config.md	20-areas/video-nvr/raspberry-pi/golden-boot-config.md	reference	video-nvr	active	-	-	-	medium	Pi camera node golden config; filename prefixed pi- for clarity [coord: keep name, subfolder]
+01-infrastructure/raspberry-pi/golden-go2rtc-config.md	20-areas/video-nvr/raspberry-pi/golden-go2rtc-config.md	reference	video-nvr	active	-	-	-	medium	Pi camera node golden config; filename prefixed pi- for clarity [coord: keep name, subfolder]
+01-infrastructure/raspberry-pi/golden-systemd-service.md	20-areas/video-nvr/raspberry-pi/golden-systemd-service.md	reference	video-nvr	active	-	-	-	medium	Pi camera node golden config; filename prefixed pi- for clarity [coord: keep name, subfolder]
+01-infrastructure/raspberry-pi/watchdog-monitoring.md	20-areas/video-nvr/raspberry-pi/watchdog-monitoring.md	reference	video-nvr	active	-	-	-	medium	Pi camera node golden config; filename prefixed pi- for clarity [coord: keep name, subfolder]
+01-infrastructure/raw-recording-archive-to-nas.md	20-areas/data-storage/raw-recording-archive-to-nas.md	procedure	data-storage	active	-	-	Figures are as of 2026-08-21; S3 off-site archive added later; alerts now via ntfy; Syncthing retired.	medium	Raw archive to NAS procedure; point-in-time status numbers and Slack/Syncthing mentions
+01-infrastructure/session-daemon/architecture.md	20-areas/video-nvr/session-daemon/architecture.md	reference	video-nvr	active	-	-	Netdata and Uptime Kuma alerts moved to ntfy 2026-09-14, deploy scripts (nvr-notify.sh) 2026-09-20; recording-stall and reconciler alerts still go to Slack via nvr-mqtt-slack.service.	medium	Session daemon reference; generic basename prefixed [coord: keep name, subfolder]
+01-infrastructure/session-daemon/frontend-reference.md	20-areas/video-nvr/session-daemon/frontend-reference.md	reference	video-nvr	active	-	-	-	medium	Session daemon reference; generic basename prefixed [coord: keep name, subfolder]
+01-infrastructure/session-daemon/reconciler.md	20-areas/video-nvr/session-daemon/reconciler.md	reference	video-nvr	active	-	-	Netdata and Uptime Kuma alerts moved to ntfy 2026-09-14, deploy scripts (nvr-notify.sh) 2026-09-20; recording-stall and reconciler alerts still go to Slack via nvr-mqtt-slack.service.	medium	Session daemon reference; generic basename prefixed [coord: keep name, subfolder]
+01-infrastructure/session-daemon/session-journal.md	20-areas/video-nvr/session-daemon/session-journal.md	reference	video-nvr	active	-	-	-	medium	Session daemon reference; generic basename prefixed [coord: keep name, subfolder]
+01-infrastructure/session-daemon/session-service.md	20-areas/video-nvr/session-daemon/session-service.md	reference	video-nvr	active	-	-	Paths mentioning ~/Monitoring_project are stale: the repo is now ~/sleep-recording-skim.	medium	Session daemon reference; generic basename prefixed [coord: keep name, subfolder]
+01-infrastructure/sleepstager/sleepstager-changes-and-backlog.md	20-areas/sleep-scoring/sleepstager-changes-and-backlog.md	reference	sleep-scoring	active	-	-	-	high	SleepStager change log and backlog
+01-infrastructure/sleepstager/sleepstager-local-changes.patch	_attachments/sleepstager-local-changes.patch	-	-	-	-	-	-	high	Patch file per spec
+01-infrastructure/system-overview.md	20-areas/video-nvr/nvr-system-overview.md	reference	video-nvr	active	-	-	Alerts moved from Slack to ntfy on 2026-09-14..20; Slack sections are historical. Cameras physically removed 2026-08-04; video work resumes soon.	medium	Video-system Q&A; renamed to avoid clash with SYSTEM-OVERVIEW.md; Slack/camera facts dated
+01-infrastructure/vendor-correspondence/2026-07-21-kontex-kc-call-prep.md	30-resources/vendors/2026-07-21-kontex-kc-call-prep.md	reference	rig-expansion	done	-	-	-	high	Call prep for past 07-21 Kontex call
+01-infrastructure/vendor-correspondence/2026-07-29-kontex-kc-call-prep-rig-finalization.md	30-resources/vendors/2026-07-29-kontex-kc-call-prep-rig-finalization.md	reference	rig-expansion	done	-	-	-	medium	Call prep for 07-29 call; frontmatter live; questions Q12/Q13 still cited
+01-infrastructure/vendor-correspondence/hdmi-spi-adapter-top-socket-vendor-inquiry.md	30-resources/vendors/hdmi-spi-adapter-top-socket-vendor-inquiry.md	reference	rig-expansion	done	-	-	-	high	Vendor inquiry resolved 2026-07-18
+01-infrastructure/vendor-correspondence/kontex-call-confirmation-email-2026-07-29.md	30-resources/vendors/kontex-call-confirmation-email-2026-07-29.md	reference	rig-expansion	done	-	-	-	high	Sent confirmation email for 07-29 call
+01-infrastructure/vendor-correspondence/neuronexus-inquiry-email.md	30-resources/vendors/neuronexus-inquiry-email.md	reference	video-nvr	done	-	-	Describes XDAQ Core2 (Thunderbolt); our unit is a Gen-1 XDAQ Core (Opal Kelly USB). Early rounds assumed Core2; round 3b confirmed Gen-1.	medium	NeuroNexus/Kontex DB25 inquiry thread; frontmatter draft but replies received
+01-infrastructure/vendor-correspondence/openephys-inquiry-email.md	30-resources/vendors/openephys-inquiry-email.md	reference	rig-expansion	done	-	-	-	high	Open Ephys inquiry, replied 07-23
+02-procedures/60hz-mains-hum-discovery.md	20-areas/eeg-rig/60hz-mains-hum-discovery.md	reference	eeg-rig	active	-	-	-	medium	Discovery write-up: Korea mains is 60 Hz not 50 Hz; standing fact for interpreting signals
+02-procedures/CANONICAL-allego-channel-selection.md	20-areas/allego/CANONICAL-allego-channel-selection.md	reference	allego	active	true	-	-	high	Settled channel selection, tagged canonical
+02-procedures/CANONICAL-recording-naming-and-inventory.md	20-areas/recording-console/CANONICAL-recording-naming-and-inventory.md	reference	recording-console	active	true	-	-	high	Canonical recording names and inventory
+02-procedures/CANONICAL-recording-windows-and-protocol.md	20-areas/eeg-analysis/CANONICAL-recording-windows-and-protocol.md	reference	eeg-analysis	active	true	-	-	high	Canonical recording windows and analysis window per run
+02-procedures/allego-electrode-setup-sleep64.md	20-areas/allego/allego-electrode-setup-sleep64.md	procedure	allego	active	-	-	Paths mentioning ~/Monitoring_project are stale: the repo is now ~/sleep-recording-skim.	high	sleep64 electrode setup SOP in Allego; defers to CANONICAL channel selection
+02-procedures/allego-monitor-guide.md	20-areas/allego/allego-monitor-guide.md	procedure	allego	active	-	-	-	high	Monitor tab controls walkthrough
+02-procedures/allego-presets-workspace.md	20-areas/allego/allego-presets-workspace.md	reference	allego	active	-	-	-	high	What Save Workspace remembers and does not
+02-procedures/allego-sampling-rate.md	20-areas/allego/allego-sampling-rate.md	reference	allego	active	-	-	-	high	Allego cannot sample below 1 kHz; explanation page
+02-procedures/allego-settings-save-restore.md	20-areas/allego/allego-settings-save-restore.md	procedure	allego	active	-	-	-	medium	Workspace save/restore how-to; status review; overlaps allego-presets-workspace
+02-procedures/attachments/qc-2026-07-14/uid0710-72h-overview.png	_attachments/uid0710-72h-overview.png	-	-	-	-	-	-	high	Image attachment, flat folder
+02-procedures/attachments/qc-2026-07-14/uid0713-20h-overview.png	_attachments/uid0713-20h-overview.png	-	-	-	-	-	-	high	Image attachment, flat folder
+02-procedures/attachments/signal-mapping/sigmap-fig0-mode-dropdown.png	_attachments/sigmap-fig0-mode-dropdown.png	-	-	-	-	-	-	high	Image attachment, flat folder
+02-procedures/attachments/signal-mapping/sigmap-fig1-channel-select.png	_attachments/sigmap-fig1-channel-select.png	-	-	-	-	-	-	high	Image attachment, flat folder
+02-procedures/attachments/signal-mapping/sigmap-fig2-headstage-dropdown.png	_attachments/sigmap-fig2-headstage-dropdown.png	-	-	-	-	-	-	high	Image attachment, flat folder
+02-procedures/attachments/signal-mapping/sigmap-fig3-electrodes-loaded.png	_attachments/sigmap-fig3-electrodes-loaded.png	-	-	-	-	-	-	high	Image attachment, flat folder
+02-procedures/attachments/signal-mapping/sigmap-fig4-signal-map-table.png	_attachments/sigmap-fig4-signal-map-table.png	-	-	-	-	-	-	high	Image attachment, flat folder
+02-procedures/attachments/signal-mapping/sigmap-fig4b-signalmap-2mice32-ok.png	_attachments/sigmap-fig4b-signalmap-2mice32-ok.png	-	-	-	-	-	-	high	Image attachment, flat folder
+02-procedures/attachments/signal-mapping/sigmap-fig5-signalmap-nosite.png	_attachments/sigmap-fig5-signalmap-nosite.png	-	-	-	-	-	-	high	Image attachment, flat folder
+02-procedures/backup-architecture.md	20-areas/data-storage/backup-architecture.md	reference	data-storage	active	-	-	-	high	Three backup destinations and their jobs
+02-procedures/blind-scoring-and-kappa.md	20-areas/sleep-scoring/blind-scoring-and-kappa.md	procedure	sleep-scoring	planned	-	-	-	high	Blind scoring plus kappa procedure, ready to run, not yet run
+02-procedures/bus-factor-runbook.md	20-areas/video-nvr/bus-factor-runbook.md	procedure	video-nvr	active	-	-	Paths mentioning ~/Monitoring_project are stale: the repo is now ~/sleep-recording-skim. Netdata and Uptime Kuma alerts moved to ntfy 2026-09-14, deploy scripts (nvr-notify.sh) 2026-09-20; recording-stall and reconciler alerts still go to Slack via nvr-mqtt-slack.service.	medium	Video NVR continuity runbook; stale paths and Slack references
+02-procedures/camera-roi-framing.md	20-areas/video-nvr/camera-roi-framing.md	procedure	video-nvr	active	-	-	-	medium	Camera ROI crop how-to; in-progress; cameras removed but area active
+02-procedures/dmm-eeg-path-continuity-test.md	20-areas/eeg-rig/dmm-eeg-path-continuity-test.md	experiment	eeg-rig	done	-	-	-	high	DMM continuity bench test, closed and passed fleet-wide 2026-08-04
+02-procedures/earthing-60hz-hum-fix.md	20-areas/eeg-rig/earthing-60hz-hum-fix.md	reference	eeg-rig	superseded	-	headstage-shielding-faraday-foil.md	-	medium	Retracted 2026-07-16 (wrong device); carries its own banners; replacement unclear
+02-procedures/eeg-artefact-and-railing-rejection-policy.md	20-areas/eeg-analysis/eeg-artefact-and-railing-rejection-policy.md	procedure	eeg-analysis	active	-	-	-	medium	Epoch-level rejection policy; rule followed in analysis
+02-procedures/eeg-data-analysis/01-environment-setup.md	20-areas/eeg-analysis/01-environment-setup.md	procedure	eeg-analysis	active	-	-	Paths mentioning ~/Monitoring_project are stale: the repo is now ~/sleep-recording-skim.	medium	Analysis venv setup; contains stale Monitoring_project path
+02-procedures/eeg-data-analysis/02-file-formats-reference.md	20-areas/eeg-analysis/02-file-formats-reference.md	reference	eeg-analysis	active	-	-	-	high	XDAT/CSV/EDF format spec
+02-procedures/eeg-data-analysis/03-scripts-and-usage.md	20-areas/eeg-analysis/03-scripts-and-usage.md	reference	eeg-analysis	superseded	-	eeg-pipeline-manual.md	-	high	Page states superseded twice; scripts archived
+02-procedures/eeg-data-analysis/04-processing-guidelines.md	20-areas/eeg-analysis/04-processing-guidelines.md	reference	eeg-analysis	active	-	-	-	medium	Processing guidelines; older pre-pipeline science page, may overlap methods page
+02-procedures/eeg-data-analysis/_eeg-analysis-hub.md	20-areas/eeg-analysis/_eeg-analysis-hub.md	hub	eeg-analysis	active	-	-	Paths mentioning ~/Monitoring_project are stale: the repo is now ~/sleep-recording-skim.	high	Analysis hub; refers to old Monitoring_project path
+02-procedures/eeg-data-analysis/analysis-methods-and-justification.md	20-areas/eeg-analysis/analysis-methods-and-justification.md	reference	eeg-analysis	active	true	-	-	medium	Tagged canonical; has own banner that parts are superseded by council review
+02-procedures/eeg-data-analysis/animal-card-and-verdict-ladder.md	20-areas/eeg-analysis/animal-card-and-verdict-ladder.md	reference	eeg-analysis	active	-	-	Paths mentioning ~/Monitoring_project are stale: the repo is now ~/sleep-recording-skim.	high	Animal card and verdict ladder; read before analysis
+02-procedures/eeg-data-analysis/per-mouse-export.md	20-areas/eeg-analysis/per-mouse-export.md	procedure	eeg-analysis	active	-	-	Paths mentioning ~/Monitoring_project are stale: the repo is now ~/sleep-recording-skim.	medium	export_per_mouse.py guide; stale path; overlaps per-mouse-csv-format
+02-procedures/eeg-data-analysis/pipeline/README.md	20-areas/eeg-analysis/eeg-pipeline-manual.md	procedure	eeg-analysis	active	-	-	-	high	Pipeline manual from raw recording to sleep features; renamed from README
+02-procedures/eeg-data-analysis/scripts/_archive_pre_sleep64/README.md	20-areas/eeg-analysis/scripts-archive-pre-sleep64-readme.md	reference	eeg-analysis	superseded	-	eeg-pipeline-manual.md	Paths mentioning ~/Monitoring_project are stale: the repo is now ~/sleep-recording-skim.	high	Archived script README; scripts moved out of vault
+02-procedures/eeg-data-analysis/scripts/_archive_pre_sleep64/eeg_pipeline.py	OUT:eeg-emg-analysis/archive/vault-scripts/_archive_pre_sleep64/eeg_pipeline.py	-	-	-	-	-	-	high	Script moved out of the vault
+02-procedures/eeg-data-analysis/scripts/_archive_pre_sleep64/multimouse_scan.py	OUT:eeg-emg-analysis/archive/vault-scripts/_archive_pre_sleep64/multimouse_scan.py	-	-	-	-	-	-	high	Script moved out of the vault
+02-procedures/eeg-data-analysis/scripts/_archive_pre_sleep64/qc_report.py	OUT:eeg-emg-analysis/archive/vault-scripts/_archive_pre_sleep64/qc_report.py	-	-	-	-	-	-	high	Script moved out of the vault
+02-procedures/eeg-data-analysis/scripts/_archive_pre_sleep64/state_scan.py	OUT:eeg-emg-analysis/archive/vault-scripts/_archive_pre_sleep64/state_scan.py	-	-	-	-	-	-	high	Script moved out of the vault
+02-procedures/eeg-data-analysis/scripts/_archive_pre_sleep64/xdat_io.py	OUT:eeg-emg-analysis/archive/vault-scripts/_archive_pre_sleep64/xdat_io.py	-	-	-	-	-	-	high	Script moved out of the vault
+02-procedures/eeg-data-analysis/scripts/_archive_pre_sleep64/xdat_to_csv.py	OUT:eeg-emg-analysis/archive/vault-scripts/_archive_pre_sleep64/xdat_to_csv.py	-	-	-	-	-	-	high	Script moved out of the vault
+02-procedures/eeg-data-analysis/scripts/_archive_pre_sleep64/xdat_to_edf.py	OUT:eeg-emg-analysis/archive/vault-scripts/_archive_pre_sleep64/xdat_to_edf.py	-	-	-	-	-	-	high	Script moved out of the vault
+02-procedures/eeg-data-analysis/scripts/contact-state-2026-07-31/README.md	20-areas/eeg-analysis/scripts-contact-state-2026-07-31-readme.md	reference	eeg-analysis	superseded	-	eeg-pipeline-manual.md	Paths mentioning ~/Monitoring_project are stale: the repo is now ~/sleep-recording-skim.	medium	Archived script README; scripts moved out of vault
+02-procedures/eeg-data-analysis/scripts/contact-state-2026-07-31/c1_sleep_structure.py	OUT:eeg-emg-analysis/archive/vault-scripts/contact-state-2026-07-31/c1_sleep_structure.py	-	-	-	-	-	-	high	Script moved out of the vault
+02-procedures/eeg-data-analysis/scripts/contact-state-2026-07-31/c1_window.py	OUT:eeg-emg-analysis/archive/vault-scripts/contact-state-2026-07-31/c1_window.py	-	-	-	-	-	-	high	Script moved out of the vault
+02-procedures/eeg-data-analysis/scripts/contact-state-2026-07-31/gate_and_score_all.py	OUT:eeg-emg-analysis/archive/vault-scripts/contact-state-2026-07-31/gate_and_score_all.py	-	-	-	-	-	-	high	Script moved out of the vault
+02-procedures/eeg-data-analysis/scripts/contact-state-2026-07-31/longrun_coarse.py	OUT:eeg-emg-analysis/archive/vault-scripts/contact-state-2026-07-31/longrun_coarse.py	-	-	-	-	-	-	high	Script moved out of the vault
+02-procedures/eeg-data-analysis/scripts/contact-state-2026-07-31/score_all_mice.py	OUT:eeg-emg-analysis/archive/vault-scripts/contact-state-2026-07-31/score_all_mice.py	-	-	-	-	-	-	high	Script moved out of the vault
+02-procedures/eeg-data-analysis/scripts/contact-state-2026-07-31/score_sleep_corrected.py	OUT:eeg-emg-analysis/archive/vault-scripts/contact-state-2026-07-31/score_sleep_corrected.py	-	-	-	-	-	-	high	Script moved out of the vault
+02-procedures/eeg-data-analysis/scripts/contact-state-2026-07-31/summarize_states.py	OUT:eeg-emg-analysis/archive/vault-scripts/contact-state-2026-07-31/summarize_states.py	-	-	-	-	-	-	high	Script moved out of the vault
+02-procedures/eeg-data-analysis/scripts/rescore-v2-2026-08-03/README.md	20-areas/eeg-analysis/scripts-rescore-v2-2026-08-03-readme.md	reference	eeg-analysis	superseded	-	eeg-pipeline-manual.md	-	high	Archived script README; scripts moved out of vault
+02-procedures/eeg-data-analysis/scripts/rescore-v2-2026-08-03/__pycache__/rescore_v2.cpython-312.pyc	OUT:eeg-emg-analysis/archive/vault-scripts/rescore-v2-2026-08-03/__pycache__/rescore_v2.cpython-312.pyc	-	-	-	-	-	-	high	Script moved out of the vault
+02-procedures/eeg-data-analysis/scripts/rescore-v2-2026-08-03/rescore_v2.py	OUT:eeg-emg-analysis/archive/vault-scripts/rescore-v2-2026-08-03/rescore_v2.py	-	-	-	-	-	-	high	Script moved out of the vault
+02-procedures/eeg-data-analysis/scripts/rescore-v2-2026-08-03/run_all.sh	OUT:eeg-emg-analysis/archive/vault-scripts/rescore-v2-2026-08-03/run_all.sh	-	-	-	-	-	-	high	Script moved out of the vault
+02-procedures/eeg-emg-data-guide.md	20-areas/eeg-analysis/eeg-emg-data-guide.md	reference	eeg-analysis	active	-	-	-	high	EEG/EMG reading guide
+02-procedures/eeg-recording-console.md	20-areas/recording-console/eeg-recording-console.md	procedure	recording-console	active	-	-	-	high	Operator page for the recording console
+02-procedures/eight-mouse-acquisition-setup.md	20-areas/allego/eight-mouse-acquisition-setup.md	procedure	allego	active	-	-	-	high	8-mouse signal map and sensor files setup
+02-procedures/electrode-connection-state-test.md	20-areas/eeg-rig/electrode-connection-state-test.md	procedure	eeg-rig	active	-	-	-	high	Open vs shorted vs working method; has channel-map correction banner
+02-procedures/experiment-pad7-floating-input-B1.md	10-projects/rig-bringup/experiment-pad7-floating-input-B1.md	experiment	rig-bringup	planned	-	-	-	low	Planned B1 experiment never run; may be moot after 2026-10-07 grounding fix
+02-procedures/first-headstage-connection.md	10-projects/rig-bringup/first-headstage-connection.md	experiment	rig-bringup	done	-	-	-	high	First headstage bring-up log, resolved 2026-06-19
+02-procedures/floating-cm-vs-contact-reconciliation.md	20-areas/eeg-rig/floating-cm-vs-contact-reconciliation.md	reference	eeg-rig	active	-	-	-	medium	History/concept reconciling floating system with contact verdict
+02-procedures/grounding-reference-noise-concepts.md	20-areas/eeg-rig/grounding-reference-noise-concepts.md	reference	eeg-rig	active	-	-	-	high	Grounding vs reference vs noise concepts
+02-procedures/hardware-sync-bench-test-do03.md	20-areas/video-nvr/hardware-sync/hardware-sync-bench-test-do03.md	procedure	video-nvr	planned	-	-	-	medium	Video-EEG sync DO 03 bench test walkthrough
+02-procedures/hardware-sync-setup.md	20-areas/video-nvr/hardware-sync/hardware-sync-setup.md	procedure	video-nvr	planned	-	-	-	high	Planned hardware sync deployment, not deployed
+02-procedures/headstage-shielding-faraday-foil.md	20-areas/eeg-rig/headstage-shielding-faraday-foil.md	reference	eeg-rig	active	-	-	-	medium	Foil killed mains floor; sleep claim retracted; carries own banners
+02-procedures/installation/export-timeout-fix.md	20-areas/video-nvr/export-timeout-fix.md	procedure	video-nvr	done	-	-	-	high	Historical export timeout fix implementation
+02-procedures/installation/frigate-setup.md	20-areas/video-nvr/frigate-setup.md	procedure	video-nvr	active	-	-	-	high	Frigate and Mosquitto deployment
+02-procedures/installation/monitoring-setup.md	20-areas/computing/monitoring-setup.md	procedure	computing	active	-	-	Slack alerting described here was replaced by ntfy (2026-09-14..20).	high	Netdata/Uptime Kuma setup with Slack alerts
+02-procedures/installation/nas-backup.md	20-areas/data-storage/nas-backup.md	procedure	data-storage	active	-	-	Paths mentioning ~/Monitoring_project are stale: the repo is now ~/sleep-recording-skim.	medium	Nightly NAS backup; stale Monitoring_project paths
+02-procedures/installation/new-pi-setup.md	20-areas/video-nvr/new-pi-setup.md	procedure	video-nvr	active	-	-	-	high	Pi camera node setup
+02-procedures/installation/radix-s3-archive.md	20-areas/data-storage/radix-s3-archive.md	procedure	data-storage	active	-	-	-	high	S3 off-site archive
+02-procedures/installation/recording-health-watchdog.md	20-areas/video-nvr/recording-health-watchdog.md	procedure	video-nvr	done	-	-	-	high	Watchdog implementation history
+02-procedures/installation/skim-nas-smb-and-upload.md	20-areas/data-storage/skim-nas-smb-and-upload.md	procedure	data-storage	active	-	-	NAS layout changed 2026-09-29 to one CSV per mouse in 02_Data_Sleep.	medium	SKIM NAS mount and upload; layout changed later
+02-procedures/installation/storage-management-implementation.md	20-areas/video-nvr/storage-management-implementation.md	procedure	video-nvr	done	-	-	-	high	Storage monitor implementation history
+02-procedures/installation/watchdog-slack-bridge.md	20-areas/video-nvr/watchdog-slack-bridge.md	procedure	video-nvr	active	-	-	Still live: this bridge posts watchdog STALL and reconciler findings to Slack #nvr-alerts. Netdata/Uptime Kuma (2026-09-14) and deploy scripts (2026-09-20) moved to ntfy.	medium	Slack bridge retired in favour of ntfy; no replacement note named
+02-procedures/installation/xdat-channel-stripping.md	20-areas/recording-console/xdat-channel-stripping.md	procedure	recording-console	active	-	-	-	high	XDAT stripping tool guide
+02-procedures/intan-headstage-troubleshooting.md	20-areas/eeg-rig/intan-headstage-troubleshooting.md	incident	eeg-rig	active	-	-	-	high	Symptom to cause to fix lookup for headstage faults
+02-procedures/multi-user-independent-recording-schedules.md	20-areas/recording-console/multi-user-independent-recording-schedules.md	experiment	recording-console	planned	-	-	-	medium	TODO plan page; per-port API retracted 2026-09-11; own banner
+02-procedures/multimeter-guide.md	20-areas/eeg-rig/multimeter-guide.md	procedure	eeg-rig	active	-	-	-	high	DMM bench-test guide
+02-procedures/nanotag-recording-and-analysis.md	20-areas/nanotag/nanotag-recording-and-analysis.md	procedure	nanotag	active	true	-	-	high	Nanotag workflow, tagged canonical
+02-procedures/new-researcher-onboarding.md	20-areas/video-nvr/new-researcher-onboarding.md	procedure	video-nvr	active	-	-	Netdata and Uptime Kuma alerts moved to ntfy 2026-09-14, deploy scripts (nvr-notify.sh) 2026-09-20; recording-stall and reconciler alerts still go to Slack via nvr-mqtt-slack.service. New members need both ntfy topic and Slack #nvr-alerts.	medium	Day-one onboarding for NeuroSurveillance video system; Slack references
+02-procedures/openephys-gui-setup-xdaq-sleep-eeg.md	20-areas/allego/openephys-gui-setup-xdaq-sleep-eeg.md	procedure	allego	active	-	-	-	medium	Open Ephys GUI as alternative acquisition; validated on 1 headstage
+02-procedures/per-mouse-csv-format.md	20-areas/eeg-analysis/per-mouse-csv-format.md	reference	eeg-analysis	active	true	-	-	high	Per-mouse CSV format, tagged canonical
+02-procedures/positive-control-known-signal-injection.md	20-areas/eeg-analysis/positive-control-known-signal-injection.md	experiment	eeg-analysis	planned	-	-	-	high	Planned bench positive control
+02-procedures/pre-flight-connection-screen.md	20-areas/eeg-rig/pre-flight-connection-screen.md	procedure	eeg-rig	active	-	-	-	high	Pre-run connection screen procedure
+02-procedures/rig-assembly-guide.md	20-areas/eeg-rig/rig-assembly-guide.md	procedure	eeg-rig	active	-	-	-	high	Rig assembly checklist
+02-procedures/rig-layout-and-recording-settings.md	20-areas/recording-console/rig-layout-and-recording-settings.md	procedure	recording-console	active	-	-	-	high	Console rig layout and settings
+02-procedures/scheduled-recording-and-watchdogs.md	20-areas/recording-console/scheduled-recording-and-watchdogs.md	procedure	recording-console	active	-	-	Script alerts moved from Slack to ntfy 2026-09-20 (nvr-notify.sh). Paths mentioning ~/Monitoring_project are stale: the repo is now ~/sleep-recording-skim.	medium	Scheduled recording; mentions Slack message for result
+02-procedures/session-recording-workflow.md	20-areas/video-nvr/session-recording-workflow.md	procedure	video-nvr	active	-	-	-	high	Video+EEG session workflow for researchers
+02-procedures/signal-mapping-guide.md	20-areas/allego/signal-mapping-guide.md	reference	allego	active	-	-	-	high	Allego signal mapping guide
+02-procedures/signal-quality-and-grounding.md	20-areas/eeg-rig/signal-quality-and-grounding.md	procedure	eeg-rig	active	-	-	-	high	Ground connection and live signal quality check
+02-procedures/sleep-recording-operator-manual.md	20-areas/eeg-rig/sleep-recording-operator-manual.md	hub	eeg-rig	active	-	-	-	medium	Start-here operator hub; could belong to recording-console
+02-procedures/sleepstager-user-guide.md	20-areas/sleep-scoring/sleepstager-user-guide.md	procedure	sleep-scoring	active	-	-	-	high	SleepStager user guide
+02-procedures/sod1-sheet-change-log-workflow.md	10-projects/hlb-sod1/sod1-sheet-change-log-workflow.md	procedure	hlb-sod1	active	true	-	-	high	SOD1 sheet change-log workflow, tagged canonical
+02-procedures/starting-the-rig-after-a-restart.md	20-areas/recording-console/starting-the-rig-after-a-restart.md	procedure	recording-console	active	-	-	-	high	Restart runbook
+03-troubleshooting/emergency-runbook.md	20-areas/video-nvr/emergency-runbook.md	procedure	video-nvr	active	-	-	Netdata and Uptime Kuma alerts moved to ntfy 2026-09-14, deploy scripts (nvr-notify.sh) 2026-09-20; recording-stall and reconciler alerts still go to Slack via nvr-mqtt-slack.service. Cameras physically removed 2026-08-04; video work resumes soon.	medium	NVR first-10-minutes runbook; Slack alert paths outdated
+03-troubleshooting/incidents/2026-02-09-go2rtc-setup-troubleshooting.md	20-areas/video-nvr/2026-02-09-go2rtc-setup-troubleshooting.md	incident	video-nvr	done	-	-	-	high	go2rtc setup incident
+03-troubleshooting/incidents/2026-02-09-tailscale-restart-lockout.md	20-areas/computing/2026-02-09-tailscale-restart-lockout.md	incident	computing	done	-	-	-	high	Tailscale restart lockout of e10ubuntu
+03-troubleshooting/incidents/2026-02-10-post-boot-stream-crash.md	20-areas/video-nvr/2026-02-10-post-boot-stream-crash.md	incident	video-nvr	active	-	-	-	medium	Frontmatter says workaround
+03-troubleshooting/incidents/2026-02-11-persistent-journal-fix.md	20-areas/video-nvr/2026-02-11-persistent-journal-fix.md	incident	video-nvr	done	-	-	-	high	Pi persistent journal fix
+03-troubleshooting/incidents/2026-02-11-vscode-remote-cpu-exhaustion.md	20-areas/video-nvr/2026-02-11-vscode-remote-cpu-exhaustion.md	incident	video-nvr	done	-	-	-	high	Pi CPU exhaustion from VS Code remote
+03-troubleshooting/incidents/2026-02-19-pmic-fault-poe-death.md	20-areas/video-nvr/2026-02-19-pmic-fault-poe-death.md	incident	video-nvr	done	-	-	-	high	Pi PMIC PoE death
+03-troubleshooting/incidents/2026-02-23-session-daemon-radiens-auth-cors.md	20-areas/video-nvr/2026-02-23-session-daemon-radiens-auth-cors.md	incident	video-nvr	done	-	-	-	high	Daemon auth/CORS incident
+03-troubleshooting/incidents/2026-02-24-pi-unreachable-no-route.md	20-areas/video-nvr/2026-02-24-pi-unreachable-no-route.md	incident	video-nvr	done	-	-	-	high	Pi sudden death incident
+03-troubleshooting/incidents/2026-03-24-webkit-internal-error-tauri.md	20-areas/video-nvr/2026-03-24-webkit-internal-error-tauri.md	incident	video-nvr	done	-	-	-	high	Tauri WebKitGTK fix
+03-troubleshooting/incidents/2026-04-02-allegoserver-thermal-spikes.md	20-areas/allego/2026-04-02-allegoserver-thermal-spikes.md	incident	allego	done	-	-	-	high	allegoserver thermal spikes
+03-troubleshooting/incidents/2026-04-08-frigate-export-stuck-and-missing-on-edges.md	20-areas/video-nvr/2026-04-08-frigate-export-stuck-and-missing-on-edges.md	incident	video-nvr	active	-	-	-	medium	Partially resolved; root causes open
+03-troubleshooting/incidents/2026-04-29-syncthing-deletion-and-recovery.md	20-areas/computing/2026-04-29-syncthing-deletion-and-recovery.md	incident	computing	done	-	-	Syncthing retired 2026-09-16/19; workspace is one git repo synced manually with ./skim. This incident is why.	high	Syncthing wipe incident
+03-troubleshooting/incidents/2026-05-20-docker-upgrade-and-startup-guard-regression.md	20-areas/video-nvr/2026-05-20-docker-upgrade-and-startup-guard-regression.md	incident	video-nvr	done	-	-	Mentions Slack alerts; now ntfy.	medium	Partially resolved per frontmatter; Slack mention
+03-troubleshooting/incidents/2026-06-28-eeg-recording-troubleshooting-report.md	10-projects/rig-bringup/2026-06-28-eeg-recording-troubleshooting-report.md	experiment	rig-bringup	done	-	-	-	medium	06-28 troubleshooting report; spec places in rig-bringup
+03-troubleshooting/incidents/2026-08-19-nas-backup-wrong-address.md	20-areas/data-storage/2026-08-19-nas-backup-wrong-address.md	incident	data-storage	done	-	-	-	high	NAS backup wrong IP outage
+03-troubleshooting/incidents/boot-config-ssh-lockout.md	20-areas/video-nvr/boot-config-ssh-lockout.md	incident	video-nvr	done	-	-	-	high	Pi SSH lockout after boot config
+03-troubleshooting/symptoms/allego-iir-filter-design-errors.md	20-areas/allego/allego-iir-filter-design-errors.md	incident	allego	active	-	-	-	high	Deferred cosmetic symptom
+03-troubleshooting/symptoms/contaminated-floor-rejects-good-eeg.md	20-areas/eeg-analysis/contaminated-floor-rejects-good-eeg.md	incident	eeg-analysis	done	-	-	-	high	Fixed 2026-09-26
+03-troubleshooting/symptoms/docker-memory-crash.md	20-areas/video-nvr/docker-memory-crash.md	incident	video-nvr	active	-	-	-	high	Symptom stub
+03-troubleshooting/symptoms/eeg-analysis-problems.md	20-areas/eeg-analysis/eeg-analysis-problems.md	incident	eeg-analysis	active	-	-	-	high	Analysis symptom lookup
+03-troubleshooting/symptoms/emg-without-muscle-band-activity-passes-rung-2.md	20-areas/eeg-analysis/emg-without-muscle-band-activity-passes-rung-2.md	incident	eeg-analysis	active	-	-	-	high	Open symptom
+03-troubleshooting/symptoms/figure-and-analysis-audit-2026-08-08.md	20-areas/eeg-analysis/figure-and-analysis-audit-2026-08-08.md	experiment	eeg-analysis	done	-	-	-	high	Figure audit record
+03-troubleshooting/symptoms/frigate-high-cpu.md	20-areas/video-nvr/frigate-high-cpu.md	incident	video-nvr	active	-	-	-	high	Symptom stub
+03-troubleshooting/symptoms/no-frames-received.md	20-areas/video-nvr/no-frames-received.md	incident	video-nvr	active	-	-	-	high	Symptom stub
+03-troubleshooting/symptoms/per-animal-failure-signatures.md	20-areas/eeg-rig/per-animal-failure-signatures.md	incident	eeg-rig	active	-	-	-	high	Hardware failure signatures per animal
+03-troubleshooting/symptoms/recording-console-retry-was-a-dead-end.md	20-areas/recording-console/recording-console-retry-was-a-dead-end.md	incident	recording-console	done	-	-	-	high	Resolved console defects
+03-troubleshooting/symptoms/system-freeze-ssh-hang.md	20-areas/video-nvr/system-freeze-ssh-hang.md	incident	video-nvr	active	-	-	-	high	Symptom stub (Pi)
+03-troubleshooting/symptoms/weak-chip-ground-vs-open-electrode.md	20-areas/eeg-rig/weak-chip-ground-vs-open-electrode.md	incident	eeg-rig	active	-	-	-	high	Has own 10-02 banner
+05-experiments/_HLB-SOD1-project-hub.md	10-projects/hlb-sod1/_HLB-SOD1-project-hub.md	hub	hlb-sod1	active	-	-	-	high	Project hub, current, schedule updated 10-21.
+05-experiments/active.md	DELETE	-	-	-	-	-	-	high	0-byte stub.
+05-experiments/active/2026-08-02-run2-preregistration.md	10-projects/rig-bringup/2026-08-02-run2-preregistration.md	experiment	rig-bringup	done	-	-	-	high	Header says COMPLETE, scored 2026-08-03; frontmatter active is stale.
+05-experiments/active/2026-08-05-tether-comparison.md	10-projects/rig-bringup/2026-08-05-tether-comparison.md	experiment	rig-bringup	done	-	-	-	high	Session finished; later corrections already inline (08-09, 08-26).
+05-experiments/active/2026-08-06-recording-data-quality-preregistration.md	10-projects/rig-bringup/2026-08-06-recording-data-quality-preregistration.md	experiment	rig-bringup	done	-	-	-	high	Recording done and analysed; A2 falsification result recorded in note.
+05-experiments/active/2026-08-06-unloaded-chain-interference.md	10-projects/rig-bringup/2026-08-06-unloaded-chain-interference.md	experiment	rig-bringup	done	-	-	-	medium	Part A result recorded; Part B never shown run, effectively abandoned.
+05-experiments/active/2026-08-07-ecg-cohort-baseline.md	10-projects/rig-bringup/2026-08-07-ecg-cohort-baseline.md	experiment	rig-bringup	done	-	-	-	high	Ground miswire found; withdrawn hypotheses flagged inline; followed by ground re-pin night.
+05-experiments/active/2026-08-07-staging-preregistration.md	10-projects/rig-bringup/2026-08-07-staging-preregistration.md	experiment	rig-bringup	done	-	-	-	high	Prereg executed; correction banner on top already.
+05-experiments/active/2026-08-08-ground-fix-post-repin-night.md	10-projects/rig-bringup/2026-08-08-ground-fix-post-repin-night.md	experiment	rig-bringup	done	-	-	-	high	Ground re-pin worked; overnight tested; finished.
+05-experiments/active/2026-09-14-HLBNSL-nanotag-SOD1-sleep.md	10-projects/hlb-sod1/2026-09-14-HLBNSL-nanotag-SOD1-sleep.md	experiment	hlb-sod1	done	-	-	-	high	Study finished; merged analysis done 2026-10-05, no SOD1 effect.
+05-experiments/active/2026-09-30-xdaq-noise-series.md	10-projects/noise-hunt/2026-09-30-xdaq-noise-series.md	experiment	noise-hunt	done	-	-	-	high	Series closed by grounding fix 10-07, confirmed 24 h 10-09.
+05-experiments/active/2026-10-02-light-phase-run-rig-session.md	10-projects/noise-hunt/2026-10-02-light-phase-run-rig-session.md	experiment	noise-hunt	done	-	-	-	high	Run finished 10-02 21:02; full analysis exists in 4mice-24h note.
+05-experiments/active/2026-10-02-noise-troubleshooting-plan.md	10-projects/noise-hunt/2026-10-02-noise-troubleshooting-plan.md	experiment	noise-hunt	active	-	-	Scaled down 2026-10-06 (2026-10-06-noise-hunt-verdict); main target met 2026-10-07. Still open: foil busbar A/B/A and Phase 3 per-mouse reliability.	medium	Plan scaled down 10-06 and target met 10-07; only foil busbar and phase 3 remain optional.
+05-experiments/active/2026-10-05-HLBNSL-sheet-handover-run2.md	10-projects/hlb-sod1/2026-10-05-HLBNSL-sheet-handover-run2.md	procedure	hlb-sod1	active	-	-	Sheet edits listed here were not confirmed applied; since 2026-10-19 sheet changes go through sod1-sheet-change-log-workflow.	low	"Frontmatter open, ""nothing applied""; unknown whether Andrea applied it; change-log workflow replaced handovers."
+05-experiments/attachments/2026-08-06-figA-threshold.png	_attachments/2026-08-06-figA-threshold.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-06-figB-duty-cycle.png	_attachments/2026-08-06-figB-duty-cycle.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-06-figC-D2-armC.png	_attachments/2026-08-06-figC-D2-armC.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-06-psd.png	_attachments/2026-08-06-psd.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-06-traces-filtered.png	_attachments/2026-08-06-traces-filtered.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-07-figD-D2-before-after.png	_attachments/2026-08-07-figD-D2-before-after.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-07-figE-usable-timeline.png	_attachments/2026-08-07-figE-usable-timeline.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-HLB-cohort-sheet.pdf	_attachments/2026-08-09-HLB-cohort-sheet.pdf	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-HLB-cohort-sheet.png	_attachments/2026-08-09-HLB-cohort-sheet.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-card-allego_0__uid0806-12-45-02__B1__HLB-B1b.png	_attachments/2026-08-09-card-allego_0__uid0806-12-45-02__B1__HLB-B1b.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-card-allego_1__uid0731-18-06-37__C1__HLB-C1.png	_attachments/2026-08-09-card-allego_1__uid0731-18-06-37__C1__HLB-C1.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-card-allego_1__uid0731-18-06-37__C2__HLB-C2.png	_attachments/2026-08-09-card-allego_1__uid0731-18-06-37__C2__HLB-C2.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-card-allego_1__uid0806-16-57-38__B1__HLB-B1b.png	_attachments/2026-08-09-card-allego_1__uid0806-16-57-38__B1__HLB-B1b.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-card-allego_1__uid0806-16-57-38__D2__HLB-D2.png	_attachments/2026-08-09-card-allego_1__uid0806-16-57-38__D2__HLB-D2.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-card-uid0731-18-06-37__A1__HLB-A1.png	_attachments/2026-08-09-card-uid0731-18-06-37__A1__HLB-A1.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-card-uid0731-18-06-37__A2__HLB-A2-NO-MOUSE.png	_attachments/2026-08-09-card-uid0731-18-06-37__A2__HLB-A2-NO-MOUSE.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-card-uid0731-18-06-37__B1__HLB-B1a.png	_attachments/2026-08-09-card-uid0731-18-06-37__B1__HLB-B1a.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-card-uid0731-18-06-37__B2__HLB-B2.png	_attachments/2026-08-09-card-uid0731-18-06-37__B2__HLB-B2.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-card-uid0731-18-06-37__C1__HLB-C1.png	_attachments/2026-08-09-card-uid0731-18-06-37__C1__HLB-C1.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-card-uid0731-18-06-37__C2__HLB-C2.png	_attachments/2026-08-09-card-uid0731-18-06-37__C2__HLB-C2.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-card-uid0731-18-06-37__D1__HLB-D1.png	_attachments/2026-08-09-card-uid0731-18-06-37__D1__HLB-D1.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-card-uid0731-18-06-37__D2__HLB-D2.png	_attachments/2026-08-09-card-uid0731-18-06-37__D2__HLB-D2.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-card-uid0802-01-46-57__A1__HLB-A1.png	_attachments/2026-08-09-card-uid0802-01-46-57__A1__HLB-A1.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-card-uid0802-01-46-57__A2__HLB-A2-NO-MOUSE.png	_attachments/2026-08-09-card-uid0802-01-46-57__A2__HLB-A2-NO-MOUSE.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-card-uid0802-01-46-57__B1__HLB-B1a.png	_attachments/2026-08-09-card-uid0802-01-46-57__B1__HLB-B1a.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-card-uid0802-01-46-57__B2__HLB-B2.png	_attachments/2026-08-09-card-uid0802-01-46-57__B2__HLB-B2.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-card-uid0802-01-46-57__C1__HLB-C1.png	_attachments/2026-08-09-card-uid0802-01-46-57__C1__HLB-C1.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-card-uid0802-01-46-57__C2__HLB-C2.png	_attachments/2026-08-09-card-uid0802-01-46-57__C2__HLB-C2.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-card-uid0802-01-46-57__D1__HLB-D1.png	_attachments/2026-08-09-card-uid0802-01-46-57__D1__HLB-D1.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-card-uid0802-01-46-57__D2__HLB-D2.png	_attachments/2026-08-09-card-uid0802-01-46-57__D2__HLB-D2.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-card-uid0806-12-45-02__A1__HLB-A1.png	_attachments/2026-08-09-card-uid0806-12-45-02__A1__HLB-A1.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-card-uid0806-12-45-02__A2__HLB-A2-NO-MOUSE.png	_attachments/2026-08-09-card-uid0806-12-45-02__A2__HLB-A2-NO-MOUSE.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-card-uid0806-12-45-02__B1__HLB-B1b.png	_attachments/2026-08-09-card-uid0806-12-45-02__B1__HLB-B1b.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-card-uid0806-12-45-02__B2__HLB-B2.png	_attachments/2026-08-09-card-uid0806-12-45-02__B2__HLB-B2.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-card-uid0806-12-45-02__C1__HLB-C1.png	_attachments/2026-08-09-card-uid0806-12-45-02__C1__HLB-C1.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-card-uid0806-12-45-02__C2__HLB-C2.png	_attachments/2026-08-09-card-uid0806-12-45-02__C2__HLB-C2.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-card-uid0806-12-45-02__D1__HLB-D1.png	_attachments/2026-08-09-card-uid0806-12-45-02__D1__HLB-D1.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-card-uid0806-12-45-02__D2__HLB-D2.png	_attachments/2026-08-09-card-uid0806-12-45-02__D2__HLB-D2.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-card-uid0806-16-57-38__A1__HLB-A1.png	_attachments/2026-08-09-card-uid0806-16-57-38__A1__HLB-A1.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-card-uid0806-16-57-38__A2__HLB-A2-NO-MOUSE.png	_attachments/2026-08-09-card-uid0806-16-57-38__A2__HLB-A2-NO-MOUSE.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-card-uid0806-16-57-38__B1__HLB-B1b.png	_attachments/2026-08-09-card-uid0806-16-57-38__B1__HLB-B1b.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-card-uid0806-16-57-38__B2__HLB-B2.png	_attachments/2026-08-09-card-uid0806-16-57-38__B2__HLB-B2.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-card-uid0806-16-57-38__C1__HLB-C1.png	_attachments/2026-08-09-card-uid0806-16-57-38__C1__HLB-C1.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-card-uid0806-16-57-38__C2__HLB-C2.png	_attachments/2026-08-09-card-uid0806-16-57-38__C2__HLB-C2.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-card-uid0806-16-57-38__D1__HLB-D1.png	_attachments/2026-08-09-card-uid0806-16-57-38__D1__HLB-D1.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-card-uid0806-16-57-38__D2__HLB-D2.png	_attachments/2026-08-09-card-uid0806-16-57-38__D2__HLB-D2.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-fig01-impedance-trajectories.export.json	_attachments/2026-08-09-fig01-impedance-trajectories.export.json	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-fig01-impedance-trajectories.pdf	_attachments/2026-08-09-fig01-impedance-trajectories.pdf	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-fig01-impedance-trajectories.png	_attachments/2026-08-09-fig01-impedance-trajectories.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-fig02-fleet-outcome.export.json	_attachments/2026-08-09-fig02-fleet-outcome.export.json	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-fig02-fleet-outcome.pdf	_attachments/2026-08-09-fig02-fleet-outcome.pdf	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-fig02-fleet-outcome.png	_attachments/2026-08-09-fig02-fleet-outcome.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-fig03-signal-traces.export.json	_attachments/2026-08-09-fig03-signal-traces.export.json	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-fig03-signal-traces.pdf	_attachments/2026-08-09-fig03-signal-traces.pdf	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-fig03-signal-traces.png	_attachments/2026-08-09-fig03-signal-traces.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-fig04-spectra-and-discriminator.export.json	_attachments/2026-08-09-fig04-spectra-and-discriminator.export.json	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-fig04-spectra-and-discriminator.pdf	_attachments/2026-08-09-fig04-spectra-and-discriminator.pdf	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-fig04-spectra-and-discriminator.png	_attachments/2026-08-09-fig04-spectra-and-discriminator.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-fig05-hypnograms.export.json	_attachments/2026-08-09-fig05-hypnograms.export.json	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-fig05-hypnograms.pdf	_attachments/2026-08-09-fig05-hypnograms.pdf	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-fig05-hypnograms.png	_attachments/2026-08-09-fig05-hypnograms.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-fig06-threshold-sensitivity.export.json	_attachments/2026-08-09-fig06-threshold-sensitivity.export.json	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-fig06-threshold-sensitivity.pdf	_attachments/2026-08-09-fig06-threshold-sensitivity.pdf	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-fig06-threshold-sensitivity.png	_attachments/2026-08-09-fig06-threshold-sensitivity.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-fig07-yield-timeline.export.json	_attachments/2026-08-09-fig07-yield-timeline.export.json	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-fig07-yield-timeline.pdf	_attachments/2026-08-09-fig07-yield-timeline.pdf	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-fig07-yield-timeline.png	_attachments/2026-08-09-fig07-yield-timeline.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-fig08-hardware-statistics.export.json	_attachments/2026-08-09-fig08-hardware-statistics.export.json	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-fig08-hardware-statistics.pdf	_attachments/2026-08-09-fig08-hardware-statistics.pdf	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-fig08-hardware-statistics.png	_attachments/2026-08-09-fig08-hardware-statistics.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-fig09-sleep-statistics.export.json	_attachments/2026-08-09-fig09-sleep-statistics.export.json	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-fig09-sleep-statistics.pdf	_attachments/2026-08-09-fig09-sleep-statistics.pdf	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-08-09-fig09-sleep-statistics.png	_attachments/2026-08-09-fig09-sleep-statistics.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-09-18-W-SL-fig01-hypnograms.export.json	_attachments/2026-09-18-W-SL-fig01-hypnograms.export.json	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-09-18-W-SL-fig01-hypnograms.pdf	_attachments/2026-09-18-W-SL-fig01-hypnograms.pdf	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-09-18-W-SL-fig01-hypnograms.png	_attachments/2026-09-18-W-SL-fig01-hypnograms.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-09-18-W-SL-fig02-timecourse.export.json	_attachments/2026-09-18-W-SL-fig02-timecourse.export.json	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-09-18-W-SL-fig02-timecourse.pdf	_attachments/2026-09-18-W-SL-fig02-timecourse.pdf	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-09-18-W-SL-fig02-timecourse.png	_attachments/2026-09-18-W-SL-fig02-timecourse.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-09-18-W-SL-fig03-architecture.export.json	_attachments/2026-09-18-W-SL-fig03-architecture.export.json	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-09-18-W-SL-fig03-architecture.pdf	_attachments/2026-09-18-W-SL-fig03-architecture.pdf	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-09-18-W-SL-fig03-architecture.png	_attachments/2026-09-18-W-SL-fig03-architecture.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-09-30-noise-fig1-psd-open-inputs-vs-mice.png	_attachments/2026-09-30-noise-fig1-psd-open-inputs-vs-mice.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-09-30-noise-fig2-allchip-event-waveforms.png	_attachments/2026-09-30-noise-fig2-allchip-event-waveforms.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-10-01-noise-fig3-usb-isolator-ABA.png	_attachments/2026-10-01-noise-fig3-usb-isolator-ABA.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-10-01-noise-fig4-mice4-first-look.png	_attachments/2026-10-01-noise-fig4-mice4-first-look.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-10-01-noise-fig5-overnight-port-A-events.png	_attachments/2026-10-01-noise-fig5-overnight-port-A-events.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-10-02-light-phase-run-MARKERS.tsv	_attachments/2026-10-02-light-phase-run-MARKERS.tsv	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-10-02-noise-MARKERS-lightphase-uid1002-09-16-58.tsv	_attachments/2026-10-02-noise-MARKERS-lightphase-uid1002-09-16-58.tsv	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-10-02-noise-MARKERS-overnight-uid1001-21-00-07.tsv	_attachments/2026-10-02-noise-MARKERS-overnight-uid1001-21-00-07.tsv	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-10-02-noise-figA-overnight-trend.png	_attachments/2026-10-02-noise-figA-overnight-trend.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-10-02-noise-figB-lights-on-event.png	_attachments/2026-10-02-noise-figB-lights-on-event.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-10-02-noise-figC-B1-site-floors.png	_attachments/2026-10-02-noise-figC-B1-site-floors.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-10-02-noise-figD-gate-floor-vs-config.png	_attachments/2026-10-02-noise-figD-gate-floor-vs-config.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-10-02-noise-figE-emg-mains-staging-effect.png	_attachments/2026-10-02-noise-figE-emg-mains-staging-effect.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-10-02-noise-figF-presence-test.png	_attachments/2026-10-02-noise-figF-presence-test.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-10-02-noise-figG-probe-tests.png	_attachments/2026-10-02-noise-figG-probe-tests.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-10-02-noise-figH-light-phase-run-overview.png	_attachments/2026-10-02-noise-figH-light-phase-run-overview.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-10-02-noise-figI-air-shower.png	_attachments/2026-10-02-noise-figI-air-shower.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-10-02-noise-figJ-air-shower-2.png	_attachments/2026-10-02-noise-figJ-air-shower-2.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-10-02-noise-figK-emg-notch-all-days.png	_attachments/2026-10-02-noise-figK-emg-notch-all-days.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-10-02-noise-figL-system-events-both-runs.png	_attachments/2026-10-02-noise-figL-system-events-both-runs.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-10-02-noise-figM-24h-signal-quality.png	_attachments/2026-10-02-noise-figM-24h-signal-quality.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-10-02-noise-figN-24h-sleep-wake.png	_attachments/2026-10-02-noise-figN-24h-sleep-wake.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-10-02-noise-figO-24h-eeg-delta.png	_attachments/2026-10-02-noise-figO-24h-eeg-delta.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-10-02-noise-figP-emg-notch-validation.png	_attachments/2026-10-02-noise-figP-emg-notch-validation.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-10-05-HLBNSL-nanotag-actograms.png	_attachments/2026-10-05-HLBNSL-nanotag-actograms.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-10-05-HLBNSL-nanotag-change-from-baseline.png	_attachments/2026-10-05-HLBNSL-nanotag-change-from-baseline.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-10-05-HLBNSL-nanotag-daily-sleep.png	_attachments/2026-10-05-HLBNSL-nanotag-daily-sleep.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-10-05-HLBNSL-nanotag-rhythm.png	_attachments/2026-10-05-HLBNSL-nanotag-rhythm.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-10-06-S-SD-EMG-rescue-per-mouse.tsv	_attachments/2026-10-06-S-SD-EMG-rescue-per-mouse.tsv	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-10-06-SOD1-sleep-2x2-per-mouse.tsv	_attachments/2026-10-06-SOD1-sleep-2x2-per-mouse.tsv	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-10-07-noise-figQ-grounding-fix-before-after.png	_attachments/2026-10-07-noise-figQ-grounding-fix-before-after.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-10-07-scoring/2026-10-07-scoring-01-staging-window-dialog.png	_attachments/2026-10-07-scoring-01-staging-window-dialog.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-10-07-scoring/2026-10-07-scoring-02-e433-burst-in-nrem.png	_attachments/2026-10-07-scoring-02-e433-burst-in-nrem.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-10-07-scoring/2026-10-07-scoring-03-e134-sleep-onset-twitches.png	_attachments/2026-10-07-scoring-03-e134-sleep-onset-twitches.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-10-07-scoring/2026-10-07-scoring-04-e164-microarousal.png	_attachments/2026-10-07-scoring-04-e164-microarousal.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-10-07-scoring/2026-10-07-scoring-05-e310-nrem-to-rem.png	_attachments/2026-10-07-scoring-05-e310-nrem-to-rem.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-10-07-scoring/2026-10-07-scoring-06-e334-after-rem-awakening.png	_attachments/2026-10-07-scoring-06-e334-after-rem-awakening.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-10-07-scoring/2026-10-07-scoring-07-e331-rem-tail.png	_attachments/2026-10-07-scoring-07-e331-rem-tail.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-10-07-scoring/2026-10-07-scoring-08-e332-rem-tail.png	_attachments/2026-10-07-scoring-08-e332-rem-tail.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-10-07-scoring/2026-10-07-scoring-09-e333-awakening.png	_attachments/2026-10-07-scoring-09-e333-awakening.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-10-07-scoring/2026-10-07-scoring-10-e334-transition.png	_attachments/2026-10-07-scoring-10-e334-transition.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-10-07-scoring/2026-10-07-scoring-11-e335-back-to-nrem.png	_attachments/2026-10-07-scoring-11-e335-back-to-nrem.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-10-07-scoring/2026-10-07-scoring-12-e338-microarousal.png	_attachments/2026-10-07-scoring-12-e338-microarousal.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-10-07-scoring/2026-10-07-scoring-13-e617-dossier-short-wake.png	_attachments/2026-10-07-scoring-13-e617-dossier-short-wake.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-10-07-scoring/2026-10-07-scoring-14-e682-dossier-burst-in-nrem.png	_attachments/2026-10-07-scoring-14-e682-dossier-burst-in-nrem.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-10-07-scoring/2026-10-07-scoring-15-e764-dossier-short-rem.png	_attachments/2026-10-07-scoring-15-e764-dossier-short-rem.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-10-07-scoring/2026-10-07-scoring-16-e765-dossier.png	_attachments/2026-10-07-scoring-16-e765-dossier.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-10-07-scoring/2026-10-07-scoring-17-e766-dossier.png	_attachments/2026-10-07-scoring-17-e766-dossier.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-10-07-scoring/2026-10-07-scoring-18-e767-dossier-tone-returns.png	_attachments/2026-10-07-scoring-18-e767-dossier-tone-returns.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-10-07-scoring/2026-10-07-scoring-19-e838-rem-wake-rem.png	_attachments/2026-10-07-scoring-19-e838-rem-wake-rem.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-10-07-scoring/2026-10-07-scoring-20-e839-dossier.png	_attachments/2026-10-07-scoring-20-e839-dossier.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-10-07-scoring/2026-10-07-scoring-21-e840-dossier-rem-onset.png	_attachments/2026-10-07-scoring-21-e840-dossier-rem-onset.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-10-08-hlbssl33r-ep1008-short-rem.png	_attachments/2026-10-08-hlbssl33r-ep1008-short-rem.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-10-08-noise-MARKERS-visit-uid1007-15-28-38.tsv	_attachments/2026-10-08-noise-MARKERS-visit-uid1007-15-28-38.tsv	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-10-08-sleepstager-rules-card.png	_attachments/2026-10-08-sleepstager-rules-card.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/2026-10-09-noise-figR-grounding-24h-before-after.png	_attachments/2026-10-09-noise-figR-grounding-24h-before-after.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/superseded/2026-08-08-figures/2026-08-08-fig1-impedance-trajectories.png	_attachments/2026-08-08-fig1-impedance-trajectories.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/superseded/2026-08-08-figures/2026-08-08-fig10-sleep-statistics.png	_attachments/2026-08-08-fig10-sleep-statistics.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/superseded/2026-08-08-figures/2026-08-08-fig2-fleet-outcome.png	_attachments/2026-08-08-fig2-fleet-outcome.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/superseded/2026-08-08-figures/2026-08-08-fig3-signal-traces.png	_attachments/2026-08-08-fig3-signal-traces.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/superseded/2026-08-08-figures/2026-08-08-fig4-spectra-and-discriminator.png	_attachments/2026-08-08-fig4-spectra-and-discriminator.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/superseded/2026-08-08-figures/2026-08-08-fig5-hypnograms.png	_attachments/2026-08-08-fig5-hypnograms.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/superseded/2026-08-08-figures/2026-08-08-fig6-validity.png	_attachments/2026-08-08-fig6-validity.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/superseded/2026-08-08-figures/2026-08-08-fig7-threshold-sensitivity.png	_attachments/2026-08-08-fig7-threshold-sensitivity.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/superseded/2026-08-08-figures/2026-08-08-fig8-yield-timeline.png	_attachments/2026-08-08-fig8-yield-timeline.png	-	-	-	-	-	-	high	attachment
+05-experiments/attachments/superseded/2026-08-08-figures/2026-08-08-fig9-hardware-statistics.png	_attachments/2026-08-08-fig9-hardware-statistics.png	-	-	-	-	-	-	high	attachment
+05-experiments/completed/2026-02-05-optimization-resource-reduction.md	20-areas/video-nvr/2026-02-05-optimization-resource-reduction.md	experiment	video-nvr	done	-	-	-	medium	Frontmatter says testing, but a Feb 2026 Pi config optimisation record; no later follow-up seen.
+05-experiments/completed/2026-02-11-mpegts-container-test.md	20-areas/video-nvr/2026-02-11-mpegts-container-test.md	experiment	video-nvr	done	-	-	-	high	NVR experiment, completed per frontmatter.
+05-experiments/completed/2026-07-02-eeg-recording-checkpoint.md	10-projects/rig-bringup/2026-07-02-eeg-recording-checkpoint.md	decision	rig-bringup	done	-	-	"Its ""no validated recording yet"" status was overtaken: see 2026-08-11-a2-control-48h-reference-profile; frontmatter status active is stale."	medium	Council checkpoint; frontmatter active but goals since reached; keep as record.
+05-experiments/completed/2026-07-13-72h-4mouse-recording-audit.md	10-projects/rig-bringup/2026-07-13-72h-4mouse-recording-audit.md	experiment	rig-bringup	done	-	-	-	high	Audit of 72 h run, finished; hum cause since fixed.
+05-experiments/completed/2026-07-31-contact-intermittency-no-wire-control.md	10-projects/rig-bringup/2026-07-31-contact-intermittency-no-wire-control.md	experiment	rig-bringup	superseded	-	2026-08-01-channel-mapping-correction-first-sleep.md	-	high	Major retraction banner already present: wrong channel map; EMG claims retracted.
+05-experiments/completed/2026-08-01-28h-contact-duty-cycle-and-c1-negative.md	10-projects/rig-bringup/2026-08-01-28h-contact-duty-cycle-and-c1-negative.md	experiment	rig-bringup	superseded	-	2026-08-01-channel-mapping-correction-first-sleep.md	-	high	Retraction banner present: wrong channel map; C1 no-sleep claim retracted.
+05-experiments/completed/2026-08-01-channel-mapping-correction-first-sleep.md	10-projects/rig-bringup/2026-08-01-channel-mapping-correction-first-sleep.md	experiment	rig-bringup	done	-	-	-	high	Corrects channel map; numbers partly superseded by 08-02 rescore, flagged inline.
+05-experiments/completed/2026-08-03-data-quality-report-for-professor.md	30-resources/meetings/2026-08-03-data-quality-report-for-professor.md	meeting	rig-bringup	done	-	-	-	high	Professor report; sent copy lacks addendum; annotated inline.
+05-experiments/completed/2026-08-03-two-8-mouse-runs.md	10-projects/rig-bringup/2026-08-03-two-8-mouse-runs.md	experiment	rig-bringup	done	-	-	-	high	Two 8-mouse runs comparison, finished.
+05-experiments/completed/2026-08-04-movement-dependent-contact.md	10-projects/rig-bringup/2026-08-04-movement-dependent-contact.md	experiment	rig-bringup	done	-	-	-	high	Finished session; one wrong claim retracted inline.
+05-experiments/completed/2026-08-05-unipolar-lfp-mouse-reference.md	10-projects/unipolar-lfp/2026-08-05-unipolar-lfp-mouse-reference.md	experiment	unipolar-lfp	done	-	-	-	high	Reference prep; channel-map typo correction banner already present.
+05-experiments/completed/2026-08-06-fleet-duty-cycle-census.md	10-projects/rig-bringup/2026-08-06-fleet-duty-cycle-census.md	experiment	rig-bringup	done	-	-	-	high	Fleet census finished.
+05-experiments/completed/2026-08-06-rig-status-for-professor.md	30-resources/meetings/2026-08-06-rig-status-for-professor.md	meeting	rig-bringup	done	-	-	-	high	Professor status report, updated 08-07.
+05-experiments/completed/2026-08-07-overnight-recording-two-animals-work.md	10-projects/rig-bringup/2026-08-07-overnight-recording-two-animals-work.md	experiment	rig-bringup	done	-	-	-	high	23.66 h run analysed; p value corrected inline.
+05-experiments/completed/2026-08-08-full-update-for-professor.md	30-resources/meetings/2026-08-08-full-update-for-professor.md	meeting	rig-bringup	done	-	-	-	high	Long working record behind the short update; points to short handout.
+05-experiments/completed/2026-08-08-professor-update-short.md	30-resources/meetings/2026-08-08-professor-update-short.md	meeting	rig-bringup	done	-	-	-	high	Two-page handout to professor.
+05-experiments/completed/2026-08-09-HLB-cohort-report-generated.md	20-areas/eeg-analysis/2026-08-09-HLB-cohort-report-generated.md	reference	eeg-analysis	done	-	-	-	medium	Generated cohort report from animal cards; spec places it in eeg-analysis; possibly stale numbers.
+05-experiments/completed/2026-08-11-a2-control-48h-reference-profile.md	10-projects/rig-bringup/2026-08-11-a2-control-48h-reference-profile.md	experiment	rig-bringup	done	-	-	-	high	A2 48 h control reference profile, finished.
+05-experiments/completed/2026-08-11-analysis-stack-audit-measurements.md	20-areas/eeg-analysis/2026-08-11-analysis-stack-audit-measurements.md	experiment	eeg-analysis	done	-	-	-	high	Audit measurements; partly corrected 08-21 inline; consolidation decision pairs with it.
+05-experiments/completed/2026-08-18-W-SD-cohort-first-screen.md	10-projects/hlb-sod1/2026-08-18-W-SD-cohort-first-screen.md	experiment	hlb-sod1	done	-	-	-	high	First screen of W-SD; batch closed banner already points to close-out.
+05-experiments/completed/2026-08-21-39h-run-score.md	10-projects/hlb-sod1/2026-08-21-39h-run-score.md	experiment	hlb-sod1	done	-	-	-	high	W-SD run score; recompute banner 08-29 present.
+05-experiments/completed/2026-08-24-S-SD-first-hour-screen.md	10-projects/hlb-sod1/2026-08-24-S-SD-first-hour-screen.md	experiment	hlb-sod1	done	-	-	-	high	S-SD first hour screen, finished.
+05-experiments/completed/2026-08-25-S-SD-24h-ZT0-run.md	10-projects/hlb-sod1/2026-08-25-S-SD-24h-ZT0-run.md	experiment	hlb-sod1	done	-	-	-	high	S-SD 24 h run; one claim retracted inline.
+05-experiments/completed/2026-08-27-B1-swap-baseline-20h-run.md	10-projects/hlb-sod1/2026-08-27-B1-swap-baseline-20h-run.md	experiment	hlb-sod1	done	-	-	-	high	S-SD B1 swap baseline run, finished; 09-26 retraction of 11 cards noted inline.
+05-experiments/completed/2026-08-27-W-SD-recovery-sleep.md	10-projects/hlb-sod1/2026-08-27-W-SD-recovery-sleep.md	experiment	hlb-sod1	done	-	-	-	high	W-SD recovery sleep window, finished.
+05-experiments/completed/2026-08-28-W-SD-cohort-closeout.md	10-projects/hlb-sod1/2026-08-28-W-SD-cohort-closeout.md	experiment	hlb-sod1	done	-	-	-	high	W-SD batch close-out record.
+05-experiments/completed/2026-09-02-S-SD-recovery-sleep.md	10-projects/hlb-sod1/2026-09-02-S-SD-recovery-sleep.md	experiment	hlb-sod1	done	-	-	-	high	S-SD recovery sleep; EMG claim corrected 09-26 inline.
+05-experiments/completed/2026-09-11-allego-control-bench-test.md	20-areas/allego/2026-09-11-allego-control-bench-test.md	experiment	allego	done	-	-	-	high	Bench test of Allego stop/alive checks; spec places in allego.
+05-experiments/completed/2026-09-18-W-SL-light-phase-sleep.md	10-projects/hlb-sod1/2026-09-18-W-SL-light-phase-sleep.md	experiment	hlb-sod1	done	-	-	-	medium	Frontmatter provisional; first W-SL analysis; later scoreable-mice table covers it.
+05-experiments/completed/2026-09-23-S-SL-connection-audit.md	10-projects/hlb-sod1/2026-09-23-S-SL-connection-audit.md	experiment	hlb-sod1	done	-	-	-	high	Revised 09-26; attrition claim retracted at top of page.
+05-experiments/completed/2026-09-28-HLBNSL-sheet-handover.md	10-projects/hlb-sod1/2026-09-28-HLBNSL-sheet-handover.md	procedure	hlb-sod1	done	-	-	-	high	Handover applied per note; points 10-11 superseded banner present.
+05-experiments/completed/2026-09-30-scoreable-mice-on-the-24h-windows.md	10-projects/hlb-sod1/2026-09-30-scoreable-mice-on-the-24h-windows.md	experiment	hlb-sod1	done	-	-	-	high	Scoreable mice table across batches.
+05-experiments/completed/2026-10-02-noise-series-4mice-24h-analysis.md	10-projects/noise-hunt/2026-10-02-noise-series-4mice-24h-analysis.md	experiment	noise-hunt	done	-	-	-	high	Complete 24 h analysis of noise-series mice.
+05-experiments/completed/2026-10-02-noise-series-method-audit.md	10-projects/noise-hunt/2026-10-02-noise-series-method-audit.md	experiment	noise-hunt	done	-	-	-	high	Method audit; frontmatter active stale; later rounds superseded earlier versions inline.
+05-experiments/completed/2026-10-05-HLBNSL-nanotag-merged-analysis.md	10-projects/hlb-sod1/2026-10-05-HLBNSL-nanotag-merged-analysis.md	experiment	hlb-sod1	done	-	-	-	high	Merged Run 1+2 analysis, final.
+05-experiments/completed/2026-10-06-S-SD-EMG-rescue-between-harmonics.md	10-projects/hlb-sod1/2026-10-06-S-SD-EMG-rescue-between-harmonics.md	experiment	hlb-sod1	done	-	-	-	high	S-SD EMG rescue analysis, finished.
+05-experiments/completed/2026-10-06-SOD1-sleep-EEG-2x2-quick-compute.md	10-projects/hlb-sod1/2026-10-06-SOD1-sleep-EEG-2x2-quick-compute.md	experiment	hlb-sod1	done	-	-	-	high	SOD1 2x2 compute, finished.
+05-experiments/completed/2026-10-06-noise-hunt-verdict.md	10-projects/noise-hunt/2026-10-06-noise-hunt-verdict.md	experiment	noise-hunt	done	-	-	-	high	Verdict note; 10-07 update banner on top.
+05-experiments/completed/h265-encoding-failure.md	20-areas/video-nvr/h265-encoding-failure.md	experiment	video-nvr	done	-	-	-	high	Short NVR experiment record of H.265 failure, completed.
+05-experiments/templates.md	DELETE	-	-	-	-	-	-	high	0-byte stub.
+05-experiments/templates/TEMPLATE-experiment.md	DELETE	-	-	-	-	-	-	medium	Older copy of _templates/Experiment.md; differs only by Templater placeholders and a stripped body.
+06-references/2026-10-16-pinnacle-wireless-16-mice-evaluation.md	10-projects/rig-expansion/2026-10-16-pinnacle-wireless-16-mice-evaluation.md	decision	rig-expansion	active	-	-	Settled 2026-10-19 on custom 4-ch 8474-HR-SE4-C; K9-SL plan below is superseded	high	Pinnacle wireless evaluation and purchase; settled with professor 10-19
+06-references/2026-10-19-pinnacle-electrode-setup-meeting-brief.pdf	30-resources/meetings/2026-10-19-pinnacle-electrode-setup-meeting-brief.pdf	meeting	rig-expansion	done	-	-	-	high	PDF brief for Pinnacle electrode setup meeting
+06-references/attachments/2026-10-19-custom-headmount-concept.png	_attachments/2026-10-19-custom-headmount-concept.png	-	rig-expansion	active	-	-	-	high	Headmount concept image, flat attachment
+06-references/attachments/2026-10-19-custom-headmount-concept.svg	_attachments/2026-10-19-custom-headmount-concept.svg	-	rig-expansion	active	-	-	-	high	Headmount concept image, flat attachment
+06-references/attachments/headmount_drawing.py	_attachments/headmount_drawing.py	-	rig-expansion	-	-	-	-	medium	writes its png/svg next to itself [coord]
+06-references/command-cheatsheet.md	20-areas/video-nvr/command-cheatsheet.md	reference	video-nvr	active	-	-	-	medium	Pi/NVR command cheatsheet dated 2026-03
+06-references/daq-ecosystem-comparison-xdaq-vs-openephys.md	10-projects/rig-expansion/daq-ecosystem-comparison-xdaq-vs-openephys.md	decision	rig-expansion	superseded	-	2026-07-24-daq-32-mouse-final-comparison.md	-	high	Frontmatter says superseded by final 32-mouse comparison
+06-references/daq-research-findings-primary-sources.md	10-projects/rig-expansion/daq-research-findings-primary-sources.md	reference	rig-expansion	active	-	-	-	high	Primary-source DAQ corrections, status live
+06-references/datasheets/Intan_RHD2000_SPI_cable.pdf	30-resources/datasheets/Intan_RHD2000_SPI_cable.pdf	reference	eeg-rig	active	-	-	-	high	Vendor datasheet or manual
+06-references/datasheets/Intan_RHD2000_dual_headstage_adapter.pdf	30-resources/datasheets/Intan_RHD2000_dual_headstage_adapter.pdf	reference	eeg-rig	active	-	-	-	high	Vendor datasheet or manual
+06-references/datasheets/Intan_RHD2000_series_datasheet.pdf	30-resources/datasheets/Intan_RHD2000_series_datasheet.pdf	reference	eeg-rig	active	-	-	-	high	Vendor datasheet or manual
+06-references/datasheets/Intan_RHD2164_datasheet.pdf	30-resources/datasheets/Intan_RHD2164_datasheet.pdf	reference	eeg-rig	active	-	-	-	high	Vendor datasheet or manual
+06-references/datasheets/Intan_Recording_Controller_user_guide.pdf	30-resources/datasheets/Intan_Recording_Controller_user_guide.pdf	reference	eeg-rig	active	-	-	-	high	Vendor datasheet or manual
+06-references/datasheets/Kissei_nanotagViewer_UsersManual_JP.pdf	30-resources/datasheets/Kissei_nanotagViewer_UsersManual_JP.pdf	reference	nanotag	active	-	-	-	high	Vendor datasheet or manual
+06-references/datasheets/Kissei_nanotag_VSMN210_UsersManual_2025-09-25.pdf	30-resources/datasheets/Kissei_nanotag_VSMN210_UsersManual_2025-09-25.pdf	reference	nanotag	active	-	-	-	high	Vendor datasheet or manual
+06-references/datasheets/Radiens Technical Documentation.pdf	DELETE	reference	allego	active	-	-	-	high	byte-identical duplicate of neuronexus/Radiens-Technical-Documentation.pdf, which is the embedded copy [coord]
+06-references/eeg-analysis-glossary.md	20-areas/eeg-analysis/eeg-analysis-glossary.md	reference	eeg-analysis	active	-	-	-	high	Analysis glossary
+06-references/electrode-failure-and-impedance-literature.md	30-resources/literature/electrode-failure-and-impedance-literature.md	reference	eeg-rig	active	-	-	-	high	Cross-area literature check on electrode failure and impedance
+06-references/impedance-sweep-register.md	20-areas/eeg-rig/impedance-sweep-register.md	reference	eeg-rig	active	-	-	-	high	Register of impedance sweeps
+06-references/intan-rhd-spi-wiring-and-headstage-limits.md	10-projects/rig-expansion/intan-rhd-spi-wiring-and-headstage-limits.md	reference	rig-expansion	active	-	-	-	high	SPI/MISO headstage limits, part of rig expansion
+06-references/intan-rhd2216-reference.md	20-areas/eeg-rig/intan-rhd2216-reference.md	reference	eeg-rig	active	-	-	-	high	Intan RHD2216 headstage reference
+06-references/is-our-qc-approach-sound.md	20-areas/eeg-analysis/is-our-qc-approach-sound.md	reference	eeg-analysis	active	-	-	-	high	QC literature check, listed in eeg-analysis spec
+06-references/lab-meeting-2026-04-10-final-script.md	30-resources/meetings/lab-meeting-2026-04-10-final-script.md	meeting	video-nvr	done	-	-	-	high	Lab meeting 2026-04-10 NeuroSurveillance presentation material
+06-references/lab-meeting-2026-04-10-presentation-brief.md	30-resources/meetings/lab-meeting-2026-04-10-presentation-brief.md	meeting	video-nvr	done	-	-	-	high	Lab meeting 2026-04-10 NeuroSurveillance presentation material
+06-references/lab-meeting-2026-04-10-presentation-plan.md	30-resources/meetings/lab-meeting-2026-04-10-presentation-plan.md	meeting	video-nvr	done	-	-	-	high	Lab meeting 2026-04-10 NeuroSurveillance presentation material
+06-references/lab-meeting-2026-04-10-presentation-revisions.md	30-resources/meetings/lab-meeting-2026-04-10-presentation-revisions.md	meeting	video-nvr	done	-	-	-	high	Lab meeting 2026-04-10 NeuroSurveillance presentation material
+06-references/lab-meeting-2026-04-10-presentation.html	30-resources/meetings/lab-meeting-2026-04-10-presentation.html	meeting	video-nvr	done	-	-	-	high	Lab meeting 2026-04-10 NeuroSurveillance presentation material
+06-references/lab-meeting-2026-04-10-presentation.pptx	30-resources/meetings/lab-meeting-2026-04-10-presentation.pptx	meeting	video-nvr	done	-	-	-	high	Lab meeting 2026-04-10 NeuroSurveillance presentation material
+06-references/lab-meeting-2026-04-10-speaker-notes.md	30-resources/meetings/lab-meeting-2026-04-10-speaker-notes.md	meeting	video-nvr	done	-	-	-	high	Lab meeting 2026-04-10 NeuroSurveillance presentation material
+06-references/live-signal-quality-terms.md	20-areas/allego/live-signal-quality-terms.md	reference	allego	active	-	-	-	high	Allego live signal-quality terms, listed in allego spec
+06-references/monitoring-diagnostics.md	20-areas/computing/monitoring-diagnostics.md	reference	computing	active	-	-	Alerting section says Slack webhook; Netdata and Uptime Kuma moved to ntfy 2026-09-14 (monitoring-setup §8.3b).	medium	Netdata/Uptime Kuma query reference; mentions Slack alerting
+06-references/nanotag-kissei-device-and-literature.md	20-areas/nanotag/nanotag-kissei-device-and-literature.md	reference	nanotag	active	-	-	-	high	Nanotag device reference and literature
+06-references/neuronexus/Radiens-Technical-Documentation.pdf	30-resources/datasheets/Radiens-Technical-Documentation.pdf	-	allego	-	-	-	-	high	embedded by radiens-software-reference; keep this copy [coord]
+06-references/neuronexus/sensor-maps/2mice32.csv	30-resources/datasheets/sensor-maps/2mice32.csv	reference	allego	active	-	-	-	high	Sensor-map CSV
+06-references/neuronexus/sensor-maps/2mice32_probe.csv	30-resources/datasheets/sensor-maps/2mice32_probe.csv	reference	allego	active	-	-	-	high	Sensor-map CSV
+06-references/neuronexus/sensor-maps/8mice_EEG_EMG.csv	30-resources/datasheets/sensor-maps/8mice_EEG_EMG.csv	reference	allego	active	-	-	-	medium	Sensor-map CSV; byte-identical to its twin (8mice_EEG_EMG.csv = sleep64.csv, 383 B), kept for name
+06-references/neuronexus/sensor-maps/8mice_EEG_EMG_probe.csv	30-resources/datasheets/sensor-maps/8mice_EEG_EMG_probe.csv	reference	allego	active	-	-	-	high	Sensor-map CSV
+06-references/neuronexus/sensor-maps/csv2sensor-README.md	30-resources/datasheets/sensor-maps/csv2sensor-README.md	reference	allego	active	-	-	-	high	README for csv2sensor tool and sensor maps
+06-references/neuronexus/sensor-maps/csv2sensor-linux-x86_64	30-resources/datasheets/sensor-maps/csv2sensor-linux-x86_64	-	allego	-	-	-	-	high	procedures run it next to the sensor-map CSVs [coord]
+06-references/neuronexus/sensor-maps/dual_mouse_c3442.csv	30-resources/datasheets/sensor-maps/dual_mouse_c3442.csv	reference	allego	active	-	-	-	high	Sensor-map CSV
+06-references/neuronexus/sensor-maps/dual_mouse_c3442_probe.csv	30-resources/datasheets/sensor-maps/dual_mouse_c3442_probe.csv	reference	allego	active	-	-	-	high	Sensor-map CSV
+06-references/neuronexus/sensor-maps/mouse1_headstage.csv	30-resources/datasheets/sensor-maps/mouse1_headstage.csv	reference	allego	active	-	-	-	high	Sensor-map CSV
+06-references/neuronexus/sensor-maps/mouse1_probe.csv	30-resources/datasheets/sensor-maps/mouse1_probe.csv	reference	allego	active	-	-	-	high	Sensor-map CSV
+06-references/neuronexus/sensor-maps/mouse_4ch.csv	30-resources/datasheets/sensor-maps/mouse_4ch.csv	reference	allego	active	-	-	-	high	Sensor-map CSV
+06-references/neuronexus/sensor-maps/mouse_4ch_probe.csv	30-resources/datasheets/sensor-maps/mouse_4ch_probe.csv	reference	allego	active	-	-	-	high	Sensor-map CSV
+06-references/neuronexus/sensor-maps/radiens.log	DELETE	-	allego	-	-	-	-	high	Log file from 2026-07-14 gRPC errors
+06-references/neuronexus/sensor-maps/single_mouse.csv	30-resources/datasheets/sensor-maps/single_mouse.csv	reference	allego	active	-	-	-	high	Sensor-map CSV
+06-references/neuronexus/sensor-maps/single_mouse_probe.csv	30-resources/datasheets/sensor-maps/single_mouse_probe.csv	reference	allego	active	-	-	-	high	Sensor-map CSV
+06-references/neuronexus/sensor-maps/sleep64.csv	30-resources/datasheets/sensor-maps/sleep64.csv	reference	allego	active	-	-	-	medium	Sensor-map CSV; byte-identical to its twin (8mice_EEG_EMG.csv = sleep64.csv, 383 B), kept for name
+06-references/neuronexus/sensor-maps/sleep64_probe.csv	30-resources/datasheets/sensor-maps/sleep64_probe.csv	reference	allego	active	-	-	-	high	Sensor-map CSV
+06-references/progress-meeting-2026-03-12.md	30-resources/meetings/progress-meeting-2026-03-12.md	meeting	video-nvr	done	-	-	-	high	Progress meeting brief, marked Done
+06-references/radiens-software-reference.md	20-areas/allego/radiens-software-reference.md	reference	allego	active	-	-	-	high	Primary Radiens/Allego software reference
+06-references/sleep-scoring-handbook.md	20-areas/sleep-scoring/sleep-scoring-handbook.md	reference	sleep-scoring	active	-	-	-	high	Sleep scoring handbook
+06-references/sleepyscore-japan-scoring-tool-algorithm.md	20-areas/sleep-scoring/sleepyscore-japan-scoring-tool-algorithm.md	reference	sleep-scoring	active	-	-	-	high	SleepyScore algorithm notes
+06-references/storage-troubleshooting.md	20-areas/video-nvr/storage-troubleshooting.md	reference	video-nvr	active	-	-	-	medium	NVR disk-space quick reference
+06-references/tsukuba-sleep-recording-method.md	20-areas/eeg-rig/tsukuba-sleep-recording-method.md	reference	eeg-rig	active	-	-	-	high	Tsukuba montage source, listed in eeg-rig spec
+06-references/video-parameters.md	20-areas/video-nvr/video-parameters.md	reference	video-nvr	active	-	-	-	medium	Video parameters table, dated 2026-02
+06-references/xdaq-32-mouse-wiring-and-channel-law.md	10-projects/rig-expansion/xdaq-32-mouse-wiring-and-channel-law.md	reference	rig-expansion	active	-	-	"Table labels the lab device ""CORE2 (our Gen-1 class)""; lab owns XDAQ Core Gen-1, not Core2"	medium	32-mouse wiring and channel law
+07-decisions/2026-05-01-llm-council-review.md	20-areas/video-nvr/2026-05-01-llm-council-review.md	decision	video-nvr	done	-	-	-	high	NVR council review, closed; stages 1-2 shipped.
+07-decisions/2026-05-stabilization-sprint-week-1-plan.md	20-areas/video-nvr/2026-05-stabilization-sprint-week-1-plan.md	decision	video-nvr	done	-	-	Reconciler and stall alerts still reach Slack through nvr-mqtt-slack.service; other alerts moved to ntfy 2026-09-14/20.	medium	Sprint closed 05-26; also references Slack bridge, since retired.
+07-decisions/2026-07-15-earth-and-sleep-council.md	10-projects/rig-bringup/2026-07-15-earth-and-sleep-council.md	decision	rig-bringup	done	-	-	Frontmatter says open; outcome same evening was shielding (headstage-shielding-faraday-foil). Building grounding fixed 2026-10-07: 2026-09-30-xdaq-noise-series Entry 11.	medium	Grounding questions settled by foil and 10-07 fix; Gen-1 GND claim corrected 09-30.
+07-decisions/2026-07-16-camera-node-scale-up.md	20-areas/video-nvr/2026-07-16-camera-node-scale-up.md	decision	video-nvr	planned	-	-	-	medium	Approved pending validation; no purchase evidence; cameras removed 08-04 but area active.
+07-decisions/2026-07-21-acquisition-device-16-32-mice-and-kontex-thread.md	10-projects/rig-expansion/2026-07-21-acquisition-device-16-32-mice-and-kontex-thread.md	decision	rig-expansion	done	-	-	Thread record; XDAQ route never committed (last activity 2026-07-29 call). A separate Pinnacle wireless 16-mouse plan was settled 2026-10-19; see 2026-10-16-pinnacle-wireless-16-mice-evaluation.	low	Status open; Pinnacle wireless settled 10-19, but XDAQ route might remain for 32 mice.
+07-decisions/2026-07-21-openephys-acquisition-board-scale-up-option.md	10-projects/rig-expansion/2026-07-21-openephys-acquisition-board-scale-up-option.md	reference	rig-expansion	done	-	-	-	medium	Option write-up, not chosen; stays valid as comparison; status open is stale.
+07-decisions/2026-07-24-daq-32-mouse-final-comparison.md	10-projects/rig-expansion/2026-07-24-daq-32-mouse-final-comparison.md	decision	rig-expansion	active	-	-	Open since 2026-07-28; no XDAQ purchase recorded. A separate 16-mouse Pinnacle wireless plan was settled 2026-10-19 (2026-10-16-pinnacle-wireless-16-mice-evaluation); its relation to this route is not recorded.	low	Open DAQ decision overtaken by Pinnacle; unclear whether 32-mouse XDAQ plan survives.
+07-decisions/2026-07-27-video-eeg-sync-recording-architecture.md	20-areas/video-nvr/2026-07-27-video-eeg-sync-recording-architecture.md	decision	video-nvr	active	-	-	-	medium	Sync architecture still the plan; frontmatter open; LED question settled in note.
+07-decisions/2026-08-07-council-review-of-the-analysis-pipeline.md	20-areas/eeg-analysis/2026-08-07-council-review-of-the-analysis-pipeline.md	decision	eeg-analysis	done	-	-	-	high	Council review; findings drive later fixes; marked current.
+07-decisions/2026-08-07-rig-specification-and-analysis-method.md	20-areas/eeg-analysis/2026-08-07-rig-specification-and-analysis-method.md	decision	eeg-analysis	active	-	-	-	medium	"Synthesis ""page to argue from"" of 08-07; later grounding and analysis changes may outdate parts."
+07-decisions/2026-08-11-analysis-stack-consolidation.md	20-areas/eeg-analysis/2026-08-11-analysis-stack-consolidation.md	decision	eeg-analysis	done	-	-	-	high	Consolidation choices, 08-11; no status frontmatter.
+07-decisions/2026-10-06-sleepstager-csv-ingestion.md	20-areas/sleep-scoring/2026-10-06-sleepstager-csv-ingestion.md	decision	sleep-scoring	done	-	-	-	high	Settled 2026-10-08.
+07-decisions/RIG-EXPANSION-HUB.md	10-projects/rig-expansion/RIG-EXPANSION-HUB.md	hub	rig-expansion	active	-	-	Section 1 status is dated 2026-07-29 and was not updated. A separate 16-mouse Pinnacle wireless plan (EEG + pons LFP) was settled 2026-10-19, PC 10-20: 2026-10-16-pinnacle-wireless-16-mice-evaluation.	high	Hub still the front door but its status table is outdated.
+99-archive/2026-05-rehaul/frigate-docker-compose-2026-05-22.md	90-archive/2026-05-rehaul/frigate-docker-compose-2026-05-22.md	reference	video-nvr	superseded	-	docker-compose.md	-	high	Archived pre-2026-05-22 snapshot, superseded by live doc
+99-archive/2026-05-rehaul/frigate-setup-mosquitto-2026-05-22.md	90-archive/2026-05-rehaul/frigate-setup-mosquitto-2026-05-22.md	reference	video-nvr	superseded	-	frigate-setup.md	-	high	Archived pre-2026-05-22 snapshot, superseded by live doc
+99-archive/2026-05-rehaul/frontend-reference-api-pre-journal-2026-05-23.md	90-archive/2026-05-rehaul/frontend-reference-api-pre-journal-2026-05-23.md	reference	video-nvr	superseded	-	frontend-reference.md	-	high	Archived pre-2026-05-22 snapshot, superseded by live doc
+99-archive/2026-05-rehaul/session-recording-workflow-unauth-mosquitto-2026-05-22.md	90-archive/2026-05-rehaul/session-recording-workflow-unauth-mosquitto-2026-05-22.md	reference	video-nvr	superseded	-	session-recording-workflow.md	-	high	Archived pre-2026-05-22 snapshot, superseded by live doc
+99-archive/2026-07-02-vault-reorganization-plan.md	90-archive/2026-07-02-vault-reorganization-plan.md	decision	computing	superseded	-	-	Never executed; superseded by the 2026-10 rehaul	high	Never-executed vault reorganization plan
+99-archive/2026-07-18-eeg-emg-analysis-checkpoint.md	90-archive/2026-07-18-eeg-emg-analysis-checkpoint.md	decision	eeg-analysis	done	-	-	-	medium	Analysis codebase checkpoint 07-18; kept in archive per spec
+99-archive/2026-08-09-pipeline-moved-to-repo/README.md	90-archive/2026-08-09-pipeline-moved-to-repo/pipeline-moved-to-repo-readme.md	reference	eeg-analysis	superseded	-	-	Archived code, do not run; kept only to reproduce historical numbers	high	README for archived pipeline scripts; renamed to avoid README dup
+99-archive/2026-08-09-pipeline-moved-to-repo/cohort_summary.py	OUT:eeg-emg-analysis/archive/vault-scripts/2026-08-09-pipeline-moved-to-repo/cohort_summary.py	-	eeg-analysis	-	-	-	-	high	Archived pipeline code leaves vault
+99-archive/2026-08-09-pipeline-moved-to-repo/pipeline_common.py	OUT:eeg-emg-analysis/archive/vault-scripts/2026-08-09-pipeline-moved-to-repo/pipeline_common.py	-	eeg-analysis	-	-	-	-	high	Archived pipeline code leaves vault
+99-archive/2026-08-09-pipeline-moved-to-repo/qc_thresholds.py	OUT:eeg-emg-analysis/archive/vault-scripts/2026-08-09-pipeline-moved-to-repo/qc_thresholds.py	-	eeg-analysis	-	-	-	-	high	Archived pipeline code leaves vault
+99-archive/2026-08-09-pipeline-moved-to-repo/qc_thresholds.py.bak	OUT:eeg-emg-analysis/archive/vault-scripts/2026-08-09-pipeline-moved-to-repo/qc_thresholds.py.bak	-	eeg-analysis	-	-	-	-	high	Archived pipeline code leaves vault
+99-archive/2026-08-09-pipeline-moved-to-repo/run_pipeline.sh	OUT:eeg-emg-analysis/archive/vault-scripts/2026-08-09-pipeline-moved-to-repo/run_pipeline.sh	-	eeg-analysis	-	-	-	-	high	Archived pipeline code leaves vault
+99-archive/2026-08-09-pipeline-moved-to-repo/stage1_qc.py	OUT:eeg-emg-analysis/archive/vault-scripts/2026-08-09-pipeline-moved-to-repo/stage1_qc.py	-	eeg-analysis	-	-	-	-	high	Archived pipeline code leaves vault
+99-archive/2026-08-09-pipeline-moved-to-repo/stage2_split.py	OUT:eeg-emg-analysis/archive/vault-scripts/2026-08-09-pipeline-moved-to-repo/stage2_split.py	-	eeg-analysis	-	-	-	-	high	Archived pipeline code leaves vault
+99-archive/2026-08-09-pipeline-moved-to-repo/stage3_features.py	OUT:eeg-emg-analysis/archive/vault-scripts/2026-08-09-pipeline-moved-to-repo/stage3_features.py	-	eeg-analysis	-	-	-	-	high	Archived pipeline code leaves vault
+99-archive/2026-08-09-pipeline-moved-to-repo/stage3_features.py.bak	OUT:eeg-emg-analysis/archive/vault-scripts/2026-08-09-pipeline-moved-to-repo/stage3_features.py.bak	-	eeg-analysis	-	-	-	-	high	Archived pipeline code leaves vault
+99-archive/2026-08-09-pipeline-moved-to-repo/stage4_export_edf.py	OUT:eeg-emg-analysis/archive/vault-scripts/2026-08-09-pipeline-moved-to-repo/stage4_export_edf.py	-	eeg-analysis	-	-	-	-	high	Archived pipeline code leaves vault
+99-archive/mpegts-test-handoff.md	90-archive/mpegts-test-handoff.md	experiment	video-nvr	done	-	-	-	medium	MPEG-TS container test handoff, Feb 2026
+99-archive/ui-handoff-project-idx.md	90-archive/ui-handoff-project-idx.md	procedure	video-nvr	done	-	-	-	high	Frontend build prompt handoff, completed Feb 2026
+99-archive/vault-setup-log-2026-02.md	90-archive/vault-setup-log-2026-02.md	reference	computing	done	-	-	-	high	Vault setup log, Feb 2026
+AI-INSTRUCTIONS.md	90-archive/AI-INSTRUCTIONS.md	reference	-	superseded	-	-	-	high	merged into CLAUDE.md
+SYSTEM-OVERVIEW.md	90-archive/SYSTEM-OVERVIEW.md	reference	video-nvr	superseded	-	-	-	high	pre-rehaul pitch; replaced by HOME.md
+_INDEX.md	90-archive/_INDEX.md	reference	-	superseded	-	-	-	high	pre-rehaul index; replaced by HOME.md
+_templates/Daily Journal.md	_templates/Daily Journal.md	-	-	-	-	-	-	high	Template, rewritten later
+_templates/Experiment.md	_templates/Experiment.md	-	-	-	-	-	-	high	Template, rewritten later
+_templates/Incident Report.md	_templates/Incident Report.md	-	-	-	-	-	-	high	Template, rewritten later
+_templates/Meeting Notes.md	_templates/Meeting Notes.md	-	-	-	-	-	-	high	Template, rewritten later
+_templates/Procedure.md	_templates/Procedure.md	-	-	-	-	-	-	high	Template, rewritten later
+_templates/Symptom.md	_templates/Symptom.md	-	-	-	-	-	-	high	Template, rewritten later
+radiens.log	DELETE	-	-	-	-	-	-	high	stray Allego log

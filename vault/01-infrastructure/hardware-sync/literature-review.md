@@ -163,5 +163,5 @@ Multiple sources warn about GPIO jitter on Linux:
 
 ## Related
 
-- [[01-infrastructure/hardware-sync/overview|Hardware Sync Overview]]
-- [[06-references/progress-meeting-2026-03-12|Progress Meeting 2026-03-12]]
+- [[overview|Hardware Sync Overview]]
+- [[progress-meeting-2026-03-12|Progress Meeting 2026-03-12]]

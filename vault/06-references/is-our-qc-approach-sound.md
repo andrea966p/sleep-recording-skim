@@ -105,6 +105,6 @@ search over biorxiv.org rather than swept systematically. This is enough to esta
 method exists for this", which is all it is used for here. It is **not** a novelty search and must
 not be cited as one.
 
-Related: [[05-experiments/completed/2026-08-21-39h-run-score]] ·
-[[02-procedures/eeg-data-analysis/animal-card-and-verdict-ladder]] ·
-[[02-procedures/eeg-data-analysis/analysis-methods-and-justification]]
+Related: [[2026-08-21-39h-run-score]] ·
+[[animal-card-and-verdict-ladder]] ·
+[[analysis-methods-and-justification]]

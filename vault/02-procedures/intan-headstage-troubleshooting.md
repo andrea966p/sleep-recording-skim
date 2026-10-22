@@ -19,7 +19,7 @@ status: complete
 >
 > **Why it exists.** We have repeatedly burned days chasing the wrong cause — a "dead headstage" that was really the wrong software mode, a "broken solder joint" that was really a missing animal-ground electrode. This page captures the verified cases from our own bench logs so the next person jumps straight to the real fix.
 >
-> **How to read this page.** §1 = the one-glance master table. §2–§6 = the deep dive per symptom, each linking the dedicated guide. Tests live in [[multimeter-guide]]; assembly in [[rig-assembly-guide]]. Big picture: [[01-infrastructure/system-overview]].
+> **How to read this page.** §1 = the one-glance master table. §2–§6 = the deep dive per symptom, each linking the dedicated guide. Tests live in [[multimeter-guide]]; assembly in [[rig-assembly-guide]]. Big picture: [[nvr-system-overview]].
 
 > [!important] Two independent questions — never conflate them
 > **(1) Does the headstage enumerate?** = a bus-powered SPI chip-ID read; **independent of the electrode/GND/animal side.** A bare headstage with nothing on the electrode inputs still reports its channels.

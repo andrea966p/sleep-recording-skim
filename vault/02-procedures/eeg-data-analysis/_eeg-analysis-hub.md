@@ -82,7 +82,7 @@ status: active
 > [[eeg-analysis-glossary]]. Do not follow the archived pages unless you are
 > reproducing a historical number.
 >
-> Big picture: [[01-infrastructure/system-overview]].
+> Big picture: [[nvr-system-overview]].
 > Acquisition side, everything before the file exists:
 > [[sleep-recording-operator-manual]].
 
@@ -92,7 +92,7 @@ status: active
 
 | I want to | Read |
 | --- | --- |
-| **run the analysis** | this page, then [[pipeline/README]] for detail on each stage |
+| **run the analysis** | this page, then [[eeg-pipeline-manual]] for detail on each stage |
 | **know why each step is done, and what a reviewer will ask** | [[analysis-methods-and-justification]] |
 | **look up a term or parameter** (`nperseg`, `r@1min`, `DIRTY`, `ZT`) | [[eeg-analysis-glossary]] |
 | **fix something that misbehaved** | [[eeg-analysis-problems]] |
@@ -263,7 +263,7 @@ Opening an `.npz` in Python, and the meaning of every array inside it, is in
 ## Supporting pages in this folder
 
 **Current:**
-- [[pipeline/README]] — the operating manual: every stage, every threshold, why
+- [[eeg-pipeline-manual]] — the operating manual: every stage, every threshold, why
 - [[analysis-methods-and-justification]] — standard versus ours, with citations.
   Read this before writing a methods section or presenting to the PI
 - [[02-file-formats-reference]] — XDAT, CSV and EDF format specs, byte layouts, sizes

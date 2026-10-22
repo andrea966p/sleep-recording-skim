@@ -84,7 +84,7 @@ Failure 3 survives even if you fix 1 and 2. The clock written into the mp4 refle
 
 ## The hole in the planned hardware sync
 
-[[01-infrastructure/hardware-sync/overview|Hardware Sync Overview]], Software Integration section, as written before today:
+[[overview|Hardware Sync Overview]], Software Integration section, as written before today:
 
 ```
 EEG_START → Start Frigate recording (same as R_OFF→R_ON)
@@ -105,7 +105,7 @@ The decisive property: **Wire 2 does not care what Frigate does.** It does not c
 
 ### Second hole: Wire 2 as currently specced cannot measure drift
 
-[[01-infrastructure/hardware-sync/gpio-sync-service|GPIO Sync Service]] `gpio_sync.py` emits a pulse only inside the rising-edge and falling-edge branches:
+[[gpio-sync-service|GPIO Sync Service]] `gpio_sync.py` emits a pulse only inside the rising-edge and falling-edge branches:
 
 ```python
 frame_sync_line.set_value(1)
@@ -113,7 +113,7 @@ time.sleep(0.001)  # 1 ms pulse
 frame_sync_line.set_value(0)
 ```
 
-That is two pulses per session, one at start and one at stop. [[01-infrastructure/hardware-sync/overview|Overview]] labels this Phase 1, with per-frame 15 Hz pulses as an optional Phase 2.
+That is two pulses per session, one at start and one at stop. [[overview|Overview]] labels this Phase 1, with per-frame 15 Hz pulses as an optional Phase 2.
 
 > [!warning] TWO PULSES PER SESSION GIVES OFFSET BUT LEAVES DRIFT UNRECOVERABLE
 > Start and stop markers pin the two endpoints. They tell you nothing about what the camera clock did in between. For a 12 hour sleep run, a camera clock error of only 0.1 percent is about 43 seconds of accumulated skew, and with two pulses you cannot tell whether it accrued linearly, in a step, or not at all. You need a pulse train to recover the drift curve.
@@ -362,9 +362,9 @@ Until the pulse train exists, video and EEG stay alignable only to roughly ±10 
 
 ## Related
 
-- [[01-infrastructure/hardware-sync/overview|Hardware Sync Overview]] — Software Integration section amended 2026-07-27 to match this doc
-- [[01-infrastructure/hardware-sync/gpio-sync-service|GPIO Sync Service]] — pulse cadence and capture-callback requirement amended 2026-07-27
-- [[01-infrastructure/hardware-sync/wiring-guide|Wiring Guide]]
-- [[01-infrastructure/hardware-sync/literature-review|Literature Review]] — line 62 notes the in-frame LED option
-- [[01-infrastructure/session-daemon/architecture|Session Daemon Architecture]]
+- [[overview|Hardware Sync Overview]] — Software Integration section amended 2026-07-27 to match this doc
+- [[gpio-sync-service|GPIO Sync Service]] — pulse cadence and capture-callback requirement amended 2026-07-27
+- [[wiring-guide|Wiring Guide]]
+- [[literature-review|Literature Review]] — line 62 notes the in-frame LED option
+- [[architecture|Session Daemon Architecture]]
 - `neurosurveillance/backend/scripts/frame_integrity_check.py` — the test that gates the LED question

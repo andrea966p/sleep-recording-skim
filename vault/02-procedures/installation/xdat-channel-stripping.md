@@ -19,7 +19,7 @@ status: active
 >
 > **How to read this page.** Section 1 is how to run it. Section 2 is the one thing you give up by
 > stripping, which is scientific rather than technical and matters more than anything else here.
-> Section 3 is for anyone modifying the tool. Background: [[01-infrastructure/system-overview]].
+> Section 3 is for anyone modifying the tool. Background: [[nvr-system-overview]].
 
 ## 1. Running it
 
@@ -187,7 +187,7 @@ to `{pri: 24, aux: 2, din: 2, dout: 2, total: 30}`, integrity `INTACT`.
 
 > [!danger] CORRECTION, 2026-09-14 — the line that stood here was false
 > It read *"No unipolar headstage has ever been connected to this rig."* **It has.**
-> [[05-experiments/completed/2026-08-05-unipolar-lfp-mouse-reference]] documents a real unipolar
+> [[2026-08-05-unipolar-lfp-mouse-reference]] documents a real unipolar
 > Intan headstage streaming on port A on 2026-08-05, with **all six sites live at once and clean
 > physiological signal on each** — the only time this project has achieved that. The true statement
 > is that no unipolar headstage has run through the **console**.
@@ -211,7 +211,7 @@ the RHD2216's inactive slots cause, reached from the opposite direction.
 > Why the distinction is load-bearing: *"the shape does not fit"* invites the next person to fix the
 > shape and derive a floor from `/24`–`/32`. *"Nobody characterised these inputs"* does not.
 
-See [[02-procedures/eeg-recording-console]] §2.5.
+See [[eeg-recording-console]] §2.5.
 
 ## 5. Tests
 
@@ -223,6 +223,6 @@ it. Run as a script, not under pytest:
 
 ## 6. Related
 
-- [[02-procedures/installation/skim-nas-smb-and-upload]] — where stripped copies go
-- [[02-procedures/eeg-data-analysis/animal-card-and-verdict-ladder]] — the QC bundle this depends on
-- [[02-procedures/CANONICAL-allego-channel-selection]] — which sites are the wired ones
+- [[skim-nas-smb-and-upload]] — where stripped copies go
+- [[animal-card-and-verdict-ladder]] — the QC bundle this depends on
+- [[CANONICAL-allego-channel-selection]] — which sites are the wired ones

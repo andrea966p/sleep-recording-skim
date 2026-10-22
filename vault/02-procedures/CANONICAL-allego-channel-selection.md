@@ -183,8 +183,8 @@ register-write path at all). Detail and consequences:
 
 [[eight-mouse-acquisition-setup]] · [[allego-electrode-setup-sleep64]] ·
 [[signal-mapping-guide]] · [[grounding-reference-noise-concepts]] ·
-[[eeg-data-analysis/04-processing-guidelines]] ·
+[[04-processing-guidelines]] ·
 [[2026-08-01-channel-mapping-correction-first-sleep]]
 
-Analysis implementation: [[pipeline/README]] — `derive_layout()` reads
+Analysis implementation: [[eeg-pipeline-manual]] — `derive_layout()` reads
 `sensors_by_port` and applies exactly the rule on this page.

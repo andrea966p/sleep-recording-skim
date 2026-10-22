@@ -1,7 +1,7 @@
 ---
 tags: [archive, 2026-05-rehaul]
 archived: 2026-05-24
-superseded-by: "[[01-infrastructure/frigate/docker-compose]]"
+superseded-by: "[[docker-compose]]"
 reason: "Mosquitto allow_anonymous→false + nvr auth; SHA-pinning of Frigate/Mosquitto/Netdata images; Frigate Python log host volume"
 ---
 

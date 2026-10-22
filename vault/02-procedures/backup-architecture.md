@@ -13,7 +13,7 @@
 > **How to read this page.** Start at the three-line summary. Use the "where does
 > X live?" table when you are looking for a specific file. The per-destination
 > sections are only needed when something breaks. Big picture:
-> [[01-infrastructure/system-overview]].
+> [[nvr-system-overview]].
 
 ## The three destinations, in one line each
 
@@ -59,7 +59,7 @@ auth as user `Andrea`.
 - **Notifies** on success and on all three failure modes (tar failed, NAS
   unreachable, upload corrupt) — see below.
 
-Full page: [[02-procedures/installation/nas-backup]].
+Full page: [[nas-backup]].
 
 ## SKIM NAS — what the lab works on today
 
@@ -89,7 +89,7 @@ over CIFS at `/mnt/skimnas` (autofs, mounts on access). 7 TB, ~4.6 TB free.
 > condition to be named after. Only the experiment folders carry `allego_base` in
 > their `UPLOAD.json`; for the older four the directory name IS the base.
 > Naming rules and the full recording inventory:
-> [[02-procedures/CANONICAL-recording-naming-and-inventory]].
+> [[CANONICAL-recording-naming-and-inventory]].
 
 ## AWS S3 — what must survive the building burning down
 
@@ -169,7 +169,7 @@ hard-stop at 08:30 for the morning recording window.
 > ⚠️ GLACIER_IR bills a **90 day minimum** per object, so deleting something
 > recently uploaded still costs the remainder of its 90 days.
 
-Full page: [[02-procedures/installation/radix-s3-archive]].
+Full page: [[radix-s3-archive]].
 
 ### Video — planned, not yet built
 
@@ -209,7 +209,7 @@ nvr-notify.sh <ok|warn|fail|info> "<title>" "<body>"
 > [!warning] The recipient must be a full URL
 > A bare topic name makes curl treat it as a hostname and fail silently with no
 > config error. Always `https://ntfy.sh/<topic>`. See
-> [[02-procedures/installation/monitoring-setup]] §8.3b.
+> [[monitoring-setup]] §8.3b.
 
 ## Verifying each path
 
@@ -243,6 +243,6 @@ ssh e10 'neurosurveillance/deploy/nvr-notify.sh info "test" "reachable"'
 
 ## Related
 
-- [[02-procedures/installation/nas-backup]] · [[02-procedures/installation/radix-s3-archive]]
-- [[02-procedures/installation/monitoring-setup]] — Netdata, Uptime Kuma, ntfy
-- [[01-infrastructure/system-overview]] — the whole system
+- [[nas-backup]] · [[radix-s3-archive]]
+- [[monitoring-setup]] — Netdata, Uptime Kuma, ntfy
+- [[nvr-system-overview]] — the whole system

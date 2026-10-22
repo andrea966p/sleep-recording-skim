@@ -30,7 +30,7 @@ Synchronize Frigate video recording with NeuroNexus Radiens EEG/EMG recording fo
 - [ ] Mouse prepared and connected to EEG/EMG headstage in the correct chamber
 - [ ] NeuroSurveillance Session Controller app open (optional but recommended)
 
-## Your Values (from [[00-config/production-values|Production Values]])
+## Your Values (from [[production-values|Production Values]])
 
 | Variable | Value |
 |----------|-------|
@@ -289,7 +289,7 @@ curl "http://127.0.0.1:8585/api/session/history?source=manual" | python3 -m json
 | MQTT messages flowing? | `docker exec mosquitto mosquitto_sub -u nvr -P "$NVR_MQTT_PASSWORD" -t 'frigate/#' -v` |
 
 > [!history] Historical note — pre-2026-05-22
-> Before 2026-05-22 the same `mosquitto_sub` command worked without `-u nvr -P …`. Authentication is now required on the broker; any unauthenticated subscriber gets `Connection error: Bad user name or password`. Pre-change examples: [[../99-archive/2026-05-rehaul/session-recording-workflow-unauth-mosquitto-2026-05-22|archived workflow]].
+> Before 2026-05-22 the same `mosquitto_sub` command worked without `-u nvr -P …`. Authentication is now required on the broker; any unauthenticated subscriber gets `Connection error: Bad user name or password`. Pre-change examples: [[session-recording-workflow-unauth-mosquitto-2026-05-22|archived workflow]].
 
 ### How to ask the journal what happened
 
@@ -302,7 +302,7 @@ Since 2026-05-23 every session lifecycle event (`START`, `EXPORT_BEGIN`, `EXPORT
 | "Is anything stuck right now?" | `curl 'http://127.0.0.1:8585/api/reconciler/last' \| python3 -m json.tool` (returns the most recent nightly run's findings) |
 | "Force a reconciler check now" | `curl -X POST 'http://127.0.0.1:8585/api/reconciler/run?window_hours=24' \| python3 -m json.tool` |
 
-If `/api/journal` shows a `START` but no `EXPORT_COMPLETE`, the export hung or the daemon crashed mid-export. The nightly reconciler will flag the session as `STUCK` after 24 h. To unstick it manually, follow the "Export failed" recipe below. Full reference: [[../01-infrastructure/session-daemon/session-journal|session-journal]] and [[../01-infrastructure/session-daemon/reconciler|reconciler]].
+If `/api/journal` shows a `START` but no `EXPORT_COMPLETE`, the export hung or the daemon crashed mid-export. The nightly reconciler will flag the session as `STUCK` after 24 h. To unstick it manually, follow the "Export failed" recipe below. Full reference: [[session-journal|session-journal]] and [[reconciler|reconciler]].
 
 ### Export failed
 
@@ -331,7 +331,7 @@ When NAS connectivity is configured via Tailscale, the daemon will automatically
 
 ## Related
 
-- [[01-infrastructure/session-daemon/architecture|Session Daemon Architecture]] -- technical details and failure modes
-- [[01-infrastructure/session-daemon/frontend-reference|Frontend Reference]] -- desktop UI component details
-- [[01-infrastructure/frigate/config-yml|Frigate Config]] -- recording settings
-- [[00-config/production-values|Production Values]] -- all IPs and ports
+- [[architecture|Session Daemon Architecture]] -- technical details and failure modes
+- [[frontend-reference|Frontend Reference]] -- desktop UI component details
+- [[config-yml|Frigate Config]] -- recording settings
+- [[production-values|Production Values]] -- all IPs and ports

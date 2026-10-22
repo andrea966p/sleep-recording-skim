@@ -34,7 +34,7 @@ affects: [S-SL, W-SL, S-SD]
 > applied".
 >
 > 🛑 **NOT NEW.** This was diagnosed correctly on **2026-08-27** in
-> [[05-experiments/completed/2026-08-27-B1-swap-baseline-20h-run]], which named the
+> [[2026-08-27-B1-swap-baseline-20h-run]], which named the
 > mechanism, said the verdict should be UNJUDGEABLE, and logged it as an open item.
 > Nothing was done, and a month later it produced a wrong published conclusion for
 > S-SL. **This page exists because a finding on one experiment page did not reach
@@ -250,8 +250,8 @@ threshold was itself checked.
 
 ## Related
 
-[[03-troubleshooting/symptoms/weak-chip-ground-vs-open-electrode]] ·
-[[02-procedures/eeg-data-analysis/animal-card-and-verdict-ladder]] ·
-[[05-experiments/completed/2026-09-23-S-SL-connection-audit]] ·
-[[05-experiments/completed/2026-09-18-W-SL-light-phase-sleep]] ·
-[[05-experiments/completed/2026-08-27-B1-swap-baseline-20h-run]]
+[[weak-chip-ground-vs-open-electrode]] ·
+[[animal-card-and-verdict-ladder]] ·
+[[2026-09-23-S-SL-connection-audit]] ·
+[[2026-09-18-W-SL-light-phase-sleep]] ·
+[[2026-08-27-B1-swap-baseline-20h-run]]
