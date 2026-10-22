@@ -8,6 +8,8 @@ created: 2026-09-13
 
 # Starting everything after a restart, a crash, or a screen that went black
 
+> [!warning] Updated 2026-10-22: section 4 says to launch Allego with `--disable-gpu`. That flag was removed on 2026-09-16 because it blanks the Monitor (the 262-signal canvas exceeds the software renderer's texture limit); Allego now runs on hardware GL under kernel 7.0.0-28, and the Mesa crash risk is the accepted trade-off. [[allego-blank-monitor-canvas-texture-limit]]
+
 > [!abstract] TL;DR
 > **Almost nothing needs starting.** The console, the NAS mount and the network come back by
 > themselves. The only thing a human ever launches is the **Allego GUI**.

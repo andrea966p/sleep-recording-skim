@@ -9,6 +9,8 @@ created: 2026-04-13
 
 # Radiens AllegoClient API — Digital I/O Reference
 
+> [!warning] Updated 2026-10-22: the `start_recording(port)` and `stop_recording(port)` rows below do not exist in the installed radiens 4.0.0 client; recording control is the global `set_recording(mode)` only. See the section "Known gaps in radiens 4.0.0" at the end of this page. [[multi-user-independent-recording-schedules]]
+
 > [!abstract] TL;DR — for non-technical readers
 > **What this is.** A reference for the parts of the NeuroNexus Radiens Python SDK that the daemon talks to — `AllegoClient`, digital I/O, recording state.
 >
@@ -120,6 +122,18 @@ with AllegoClient() as client:
 ## Optional: IO Expander
 
 The XDAQ IO Expander adds 24 more digital I/O and 6 analog I/O channels. Connects via HDMI cable to EXP1/EXP2 ports. Not needed for our basic sync setup but available for future expansion.
+
+## Known gaps in radiens 4.0.0
+
+> [!info] Promoted from a Claude memory file on 2026-10-22
+> From the memory note `radiens-4-has-no-per-port-recording` (measured 2026-09-11). The per-port facts were already in [[multi-user-independent-recording-schedules]]; the `restart()` fact was missing from the vault.
+
+- **No per-port recording.** `radiens.AllegoClient` in `/opt/neurosurveillance/venv` exposes 25 public methods and none is `start_recording` or `stop_recording`. Recording control is global `set_recording(mode)`, `RecordMode` = `{OFF:0, ON:1}`. `splitFilesByPort` exists only in the protobuf (`grpc_radiens/allegoserver_pb2.pyi`). Re-checked by introspection on 2026-10-22: version 4.0.0, 25 public methods, `set_recording`, `set_recording_config` and `restart` present, no `start_recording`.
+- **4.0.0 is the latest stable on PyPI** (as measured 2026-09-11; only `5.0.0.dev1`, a January 2026 dev pre-release, was newer). Do not "fix" the gap by upgrading, least of all to a dev build under a live-animal instrument.
+- **One recording, all four ports, one file.** Per-user recording is impossible on this rig; per-user slicing afterwards is the only route ([[xdat-channel-stripping]]).
+- `set_recording('off')` works (bench-tested 2026-09-11, [[2026-09-11-allego-control-bench-test]]).
+- `set_recording_config()` is broken (the required `recordingType` enum is never set); the message is built directly in `qc/start_recording_at.py` and `eeg-recorder/backend/allego.py`.
+- ⚠️ **`AllegoClient.restart()` is also reported broken** (`mode.enum`); call the `Restart` gRPC with `mode.value` instead. This is the memory note's report; the method source calls `api_allego.restart(ALLEGO_CORE_ADDR, SystemMode.parse(mode))` and the failure was not re-run on 2026-10-22, because it would restart the live Allego.
 
 ## Related
 

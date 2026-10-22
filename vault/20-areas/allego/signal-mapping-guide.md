@@ -197,7 +197,7 @@ If you pick **Quick**, skip to **§7 (Select channels)**. If you pick **Custom**
 - a **headstage file** (`.hstg`) = "native channel → site number"
 - a **probe file** (`.prb`) = "where each site sits" (the picture)
 
-Tool + our example CSVs live in the vault: `06-references/neuronexus/sensor-maps/`.
+Tool + our example CSVs live in the vault: `30-resources/datasheets/sensor-maps/`.
 
 ### 6.1 Make the headstage CSV
 
@@ -244,7 +244,7 @@ site_num, center_x, center_y, radius, shape
 ### 6.3 Generate the files
 
 ```bash
-cd 06-references/neuronexus/sensor-maps      # (in the vault folder)
+cd 30-resources/datasheets/sensor-maps      # (in the vault folder)
 ./csv2sensor-linux-x86_64 -type headstage 2mice32.csv
 ./csv2sensor-linux-x86_64 -type probe    2mice32_probe.csv
 ```
@@ -367,4 +367,4 @@ Because both mice share **one** headstage, there is **one** sensor file covering
 - [[radiens-software-reference]] — main Allego/Radiens software reference (embeds the full manual; `csv2sensor` section)
 - [[first-headstage-connection]] — first-rig bring-up + our exact channel map (§8.1)
 - [[radiens-api-reference]] — the Python SDK (read-only `get_channel_metadata` etc.)
-- Source files: `06-references/neuronexus/sensor-maps/` (`csv2sensor` tool + our CSVs)
+- Source files: `30-resources/datasheets/sensor-maps/` (`csv2sensor` tool + our CSVs)

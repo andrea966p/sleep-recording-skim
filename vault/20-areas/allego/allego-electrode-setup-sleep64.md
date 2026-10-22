@@ -9,6 +9,8 @@ created: 2026-07-13
 
 # Allego Electrode Setup — the `sleep64` map (READ THIS, ignore the rest)
 
+> [!warning] Updated 2026-10-22: the repo is now `~/sleep-recording-skim` (the old `~/Monitoring_project` path in the rebuild command below was corrected), and the sensor-map files now live in `vault/30-resources/datasheets/sensor-maps`. [[CANONICAL-allego-channel-selection]]
+
 > [!success] ⭐ Channel selection is settled — see [[CANONICAL-allego-channel-selection]]
 > **Select `/1`, `/2`, `/33`, `/34` per port. 16 channels for 8 mice.**
 > `/1`=EEG and `/2`=EMG are ALREADY bipolar — never subtract them.
@@ -87,11 +89,11 @@ We made a pile of custom maps during setup (`2mice32`, `single_mouse`, `mouse_4c
 
 ## If `sleep64` ever disappears (rebuild it)
 The map is generated from two CSVs in the vault with NeuroNexus's `csv2sensor` tool, so it's fully reproducible:
-- Source CSVs: `06-references/neuronexus/sensor-maps/sleep64.csv` (headstage) + `sleep64_probe.csv` (probe)
-- Tool: `06-references/neuronexus/sensor-maps/csv2sensor-linux-x86_64`
+- Source CSVs: `30-resources/datasheets/sensor-maps/sleep64.csv` (headstage) + `sleep64_probe.csv` (probe)
+- Tool: `30-resources/datasheets/sensor-maps/csv2sensor-linux-x86_64`
 - Rebuild:
 ```bash
-cd ~/Monitoring_project/Monitoring_project_obsidian_vault/06-references/neuronexus/sensor-maps
+cd ~/sleep-recording-skim/vault/30-resources/datasheets/sensor-maps
 ./csv2sensor-linux-x86_64 -type headstage -out-dir ~/radix/devices sleep64.csv
 ./csv2sensor-linux-x86_64 -type probe    -out-dir ~/radix/devices sleep64_probe.csv
 ```

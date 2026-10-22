@@ -8,6 +8,8 @@ created: 2026-08-19
 
 # Starting a recording on a schedule, unattended, and knowing it worked
 
+> [!warning] Updated 2026-10-22: script alerts moved from Slack to ntfy on 2026-09-20 (`nvr-notify.sh`), and the repo is now `~/sleep-recording-skim` (the old `~/Monitoring_project` paths on this page were corrected; the 2026-08-19 cron line is shown as an example only). Console runs are the normal way to record since 2026-09-11 and the watchdog arms itself on them since 2026-10-14. [[eeg-recording-console]]
+
 > [!abstract] TL;DR
 > How to make Allego start recording at an exact wall-clock time with nobody in the room, and get a
 > Slack message telling you whether it actually worked. Used for the first time on 2026-08-19 to
@@ -42,7 +44,7 @@ silently stopped. So "it started" is worth very little on its own.
 > `radiens` is installed **only** in `/opt/neurosurveillance/venv/bin/python3`.
 > It is NOT in `~/eeg-analysis-venv` and NOT in the system python. Using the wrong one fails with
 > `ModuleNotFoundError: No module named 'radiens'`. Scripts must also set
-> `PYTHONPATH=/home/skimlab/Monitoring_project/eeg-emg-analysis` so `core.paths` resolves.
+> `PYTHONPATH=/home/skimlab/sleep-recording-skim/eeg-emg-analysis` so `core.paths` resolves.
 
 ## Scheduling a recording
 
@@ -51,7 +53,7 @@ crontab -e
 ```
 
 ```
-50 8 19 8 * [ "$(date +\%Y-\%m-\%d)" = "2026-08-19" ] && /home/skimlab/Monitoring_project/neurosurveillance/deploy/scheduled-recording.sh 09:00:00 >> /home/skimlab/Monitoring_project/neurosurveillance/deploy/logs/cron-recording.log 2>&1
+50 8 19 8 * [ "$(date +\%Y-\%m-\%d)" = "2026-08-19" ] && /home/skimlab/sleep-recording-skim/neurosurveillance/deploy/scheduled-recording.sh 09:00:00 >> /home/skimlab/sleep-recording-skim/neurosurveillance/deploy/logs/cron-recording.log 2>&1
 ```
 
 Three things about that line:

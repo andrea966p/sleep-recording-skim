@@ -10,6 +10,8 @@ priority: critical
 
 # ⭐ CANONICAL — which Allego channels to select. Settled by measurement.
 
+> [!warning] Updated 2026-10-22: this page is the answer for the bipolar EEG/EMG layout only. The unipolar layout used for ahyeon's 3 mice (run of 2026-10-15) selects sites `/18` to `/23` on ports A, B and C. [[rig-layout-and-recording-settings]]
+
 > [!success] THE ANSWER
 > **Select `/1`, `/2`, `/33`, `/34` on every port.**
 > 16 channels total for 8 mice. Nothing else.

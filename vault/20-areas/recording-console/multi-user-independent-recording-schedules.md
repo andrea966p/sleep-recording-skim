@@ -9,6 +9,8 @@ created: 2026-07-14
 
 # Multi-User Independent Recording Schedules — TODO
 
+> [!warning] Updated 2026-10-22: the per-port `start_recording(port=)` API is not in the installed radiens 4.0.0 client (checked again by introspection: 25 public methods, recording control is only `set_recording`), so the section 2 workaround (record the union, slice afterwards) is the design, not a stopgap. [[eeg-recording-console]]
+
 > [!abstract] TL;DR — for non-technical readers
 > **What this is.** The rig has one XDAQ box. Right now, pressing Record in Allego starts recording for the WHOLE box, every port, at once — there is no way to give two lab members two different start/stop times on the same physical rig. This page documents the problem, the workaround to use TODAY, and the open engineering questions for a real fix.
 > **Why it exists.** Came up 2026-07-14: I want to start my 4 mice Monday 9am for 48h, another lab member needs their 4 mice Monday 9pm for 48h, same rig. Allego can't do that natively.

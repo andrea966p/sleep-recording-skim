@@ -291,5 +291,5 @@ rig is worth pressing record on, nothing more.
 - [[eeg-analysis-glossary]] — the same job for the offline analysis
 - [[radiens-software-reference]] — the Allego interface itself, page by page
 - [[animal-card-verdict-ladder]] — where a real verdict comes from
-- `02-procedures/CANONICAL-allego-channel-selection.md` — the montage
+- `20-areas/allego/CANONICAL-allego-channel-selection.md` — the montage
 - [[allego-blank-monitor-canvas-texture-limit]] — when the Monitor draws nothing
