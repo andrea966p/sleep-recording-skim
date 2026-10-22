@@ -1,85 +1,27 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Guidance for Claude Code in the SKIM sleep lab workspace (repo `sleep-recording-skim`).
 
-## Project Context
+## Where knowledge lives
 
-This system is being prepared as a **Frigate NVR server** for scientific sleep research video surveillance. The full preparation guide is in `Frigate NVR Server Preparation.md`.
+The Obsidian vault `vault/` is the single source of truth: start at `vault/HOME.md`, and
+follow `vault/CLAUDE.md` for where notes go, the frontmatter schema and the accuracy rules.
+Claude memory (`claude-config/memory/`) holds behaviour rules and pointers into the vault,
+not facts. `./skim lint` checks the vault (read-only).
 
-## Target System
+## The rig host (checked 2026-10-22)
 
-- **Hardware:** ASUS NUC Pro 15 (Intel Ultra 7)
-- **OS:** Ubuntu 24.04 LTS
-- **Username:** `sleepigene`
-- **Hostname:** `frigate-server`
-- **Static IP:** `192.168.0.50`
-
-## Critical Constraints
-
-1. **Stability is paramount** - use only LTS packages
-2. **HWE kernel required** - for Intel Ultra 7 optimization (must be 6.11.x+, NOT 6.8.x)
-3. **All steps must be validated** before proceeding
-4. **Record all version numbers** for scientific publication
-
-## Key Commands
-
-### System Validation
-```bash
-/opt/frigate/system-check.sh          # Run full system validation
-cat /opt/frigate/SYSTEM_INFO.md       # View system documentation
-```
-
-### Intel Quick Sync Video
-```bash
-vainfo                                # Verify hardware acceleration
-sudo intel_gpu_top                    # Monitor GPU usage
-getent group render                   # Get render group GID (needed for Frigate)
-```
-
-### Docker
-```bash
-docker ps                             # List running containers
-docker compose up -d                  # Start Frigate (from /opt/frigate)
-docker stats frigate                  # Monitor Frigate resource usage
-docker logs -f frigate                # View Frigate logs
-```
-
-### Network
-```bash
-ip addr show                          # Check IP configuration
-```
-
-## Directory Structure
-
-```
-/opt/frigate/
-├── config/              # Frigate configuration files
-├── storage/
-│   ├── recordings/      # Short-term recordings cache
-│   └── clips/           # Event clips
-
-/media/frigate-recordings/  # Long-term recording storage
-```
-
-## Preparation Phases
-
-Execute phases from `Frigate NVR Server Preparation.md` sequentially:
-1. Base System Update
-2. Hardware Enablement Kernel Installation
-3. Network Configuration (static IP)
-4. Docker Installation
-5. Intel Quick Sync Video Setup
-6. Storage Preparation
-7. System Optimization
-8. System Documentation
-9. Final Validation
-
-## Development Tools
-
-### Node.js
-- Managed via **nvm** (Node Version Manager)
-- Default version: `lts/*`
-- Switch versions: `nvm use <version>`
+- **Host:** `e10ubuntu`, user `skimlab`, LAN `192.168.0.50`, Tailscale `100.82.250.62`
+- **Hardware:** ASUS NUC with Intel Core Ultra 5 125H, 30 GiB RAM, 1.9 TB NVMe
+- **OS:** Ubuntu 24.04.5 LTS, kernel `7.0.0-28-generic` (7.0.0-31 blocklists the Intel GPU
+  in Chromium, which Allego needs: see the Allego hub in the vault)
+- **Runs:** the EEG rig (XDAQ, Allego/Radiens), the recording console
+  (`http://127.0.0.1:8600`), and the video NVR stack (Frigate under `/srv/frigate`,
+  Mosquitto, the session daemon in `/opt/neurosurveillance`). The cameras are
+  disconnected since 2026-08-04; the video area is active and will resume.
+- **Constraints:** stability first (LTS packages, Docker images pinned by SHA and held with
+  `apt-mark`), validate every step, record version numbers for publication.
+- Node.js via **nvm** (`lts/*`).
 
 ## Working from a machine other than e10ubuntu
 
@@ -89,8 +31,8 @@ The rig, the NVR, Allego/Radiens, Docker, Frigate and the EEG data all live on
 Four machines share this workspace: `e10ubuntu` (the rig), the **SKIM office workstation**
 (`/home/skim`, added 2026-09-16), the **ThinkPad** (`thinkpadubuntu`, user `andrea`, live on
 the workflow 2026-09-19), and the office PC (`Andrea-KAIST-PC-ubuntu`, still on the old
-tree). The table in `vault/20-areas/computing/multi-machine-work-setup.md` has the paths and
-memory slugs.
+tree). The table in `vault/20-areas/computing/multi-machine-workflow.md` has the paths; the older
+`multi-machine-work-setup.md` beside it also lists each machine's memory slug.
 
 To drive the ThinkPad from here: `tailscale ssh andrea@thinkpadubuntu '<command>'`. It has
 no sshd, so ordinary `ssh` will not reach it. 🛑 Do not enable Tailscale SSH on `e10ubuntu`
@@ -144,7 +86,7 @@ start; every writing verb is typed by a human.
 > the template`. Diff it: a machine that used Claude Code before this repo can end up with
 > no hooks and therefore no `skim status` at SessionStart. See `machine/README.md`.
 
-Full setup and the workspace rules: `vault/20-areas/computing/multi-machine-work-setup.md`
+Full setup and the workspace rules: `vault/20-areas/computing/multi-machine-workflow.md`
 and `machine/README.md`.
 
 <!-- BEGIN AWS Agent Toolkit rules -->
