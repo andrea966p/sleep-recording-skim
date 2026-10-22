@@ -1,4 +1,7 @@
 ---
+type: decision
+area: rig-expansion
+status: active
 tags:
   - decision
   - hardware
@@ -10,7 +13,6 @@ tags:
   - scale-up
 created: 2026-07-24
 updated: 2026-07-28
-status: open
 supersedes: "[[daq-ecosystem-comparison-xdaq-vs-openephys]]"
 ---
 # DAQ Ecosystem Comparison, FINAL, 3-Way for 32 Mice — XDAQ vs Open Ephys vs Intan

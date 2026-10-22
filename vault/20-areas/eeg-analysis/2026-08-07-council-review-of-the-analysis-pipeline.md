@@ -1,7 +1,10 @@
 ---
+type: decision
+area: eeg-analysis
+status: done
+status-note: "current"
 tags: [decision, council, eeg, analysis, methods, review]
 created: 2026-08-07
-status: current
 ---
 
 # Council review of the analysis pipeline, its methods and its documentation

@@ -1,8 +1,10 @@
 ---
+type: procedure
+area: video-nvr
+status: done
 tags: [procedure, implementation, storage, monitoring]
 created: 2026-04-01
 completed: 2026-04-02
-status: completed
 ---
 
 # Storage Management System — Implementation Guide

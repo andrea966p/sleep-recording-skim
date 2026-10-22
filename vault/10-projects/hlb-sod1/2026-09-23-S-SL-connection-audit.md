@@ -1,7 +1,10 @@
 ---
+type: experiment
+area: hlb-sod1
+status: done
+status-note: "revised-2026-09-26"
 tags: [experiment, eeg, emg, S-SL, connection, sleep, audit, retracted-claim]
 created: 2026-09-23
-status: revised-2026-09-26
 recordings: [allego_0__uid0912-08-55-18, allego_0__uid0920-09-00-07, allego_0__uid0921-00-17-34]
 cohort: S-SL
 ---

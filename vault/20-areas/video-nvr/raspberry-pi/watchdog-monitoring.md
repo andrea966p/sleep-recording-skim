@@ -1,7 +1,9 @@
 ---
+type: reference
+area: video-nvr
+status: active
 tags: [infrastructure, raspberry-pi, watchdog, monitoring]
 created: 2026-02-05
-status: production
 ---
 
 # Pi Hardware Watchdog & Monitoring

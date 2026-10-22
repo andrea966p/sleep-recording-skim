@@ -1,7 +1,9 @@
 ---
+type: reference
+area: nanotag
+status: active
 tags: [reference, nanotag, kissei, actigraphy, sleep, literature]
 created: 2026-10-05
-status: active
 ---
 
 # Nanotag (Kissei Comtec VSMN 210): what it measures, and what the literature says

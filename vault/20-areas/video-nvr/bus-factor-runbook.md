@@ -1,8 +1,10 @@
 ---
+type: procedure
+area: video-nvr
+status: active
 tags: [procedure, runbook, bus-factor, escalation, continuity]
 date: 2026-05-28
 created: 2026-05-28
-status: active
 sourced-from: 07-decisions/2026-05-01-llm-council-review#Stage 3 — Before TTL cutover (council's emergent insight)
 audience: anyone in the lab who is NOT Andrea
 ---

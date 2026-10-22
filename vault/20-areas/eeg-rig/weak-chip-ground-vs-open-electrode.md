@@ -1,4 +1,7 @@
 ---
+type: incident
+area: eeg-rig
+status: active
 tags: [troubleshooting, symptom, eeg, grounding, qc]
 created: 2026-08-29
 ---

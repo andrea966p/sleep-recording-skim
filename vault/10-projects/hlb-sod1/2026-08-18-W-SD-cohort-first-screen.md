@@ -1,7 +1,9 @@
 ---
+type: experiment
+area: hlb-sod1
+status: done
 title: W-SD cohort, first screen after surgery
-date: 2026-08-18
-status: complete
+created: 2026-08-18
 tags: [experiment, eeg, emg, cohort, w-sd, recording, grounding, closeout]
 subjects: 8
 ---

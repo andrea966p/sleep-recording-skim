@@ -1,7 +1,10 @@
 ---
+type: incident
+area: data-storage
+status: done
+status-note: "resolved"
 tags: [incident, backup, nas, tailscale, troubleshooting]
 created: 2026-08-19
-status: resolved
 ---
 
 # The NAS backup was dead for six days because of one wrong digit

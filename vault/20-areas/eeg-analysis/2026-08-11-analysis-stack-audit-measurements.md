@@ -1,3 +1,8 @@
+---
+type: experiment
+area: eeg-analysis
+status: done
+---
 # Analysis stack audit: what I measured, 2026-08-10/11
 
 **TL;DR.** An LLM council reviewed the analysis stack, and then I checked the

@@ -1,7 +1,10 @@
 ---
+type: procedure
+area: computing
+status: superseded
+superseded-by: "[[2026-08-19-nas-backup-wrong-address]]"
 tags: [infrastructure, nas, tailscale, superseded]
 created: 2026-08-19
-status: superseded
 ---
 
 > [!danger] SUPERSEDED — THE DIAGNOSIS IN THIS BRIEF WAS WRONG. DO NOT ACT ON IT.

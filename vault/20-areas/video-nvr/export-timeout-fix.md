@@ -1,8 +1,10 @@
 ---
+type: procedure
+area: video-nvr
+status: done
 tags: [procedure, implementation, bugfix, frigate, session-daemon]
 created: 2026-05-18
 completed: 2026-05-18
-status: completed
 related-incident: 2026-05-11 export timeout
 ---
 

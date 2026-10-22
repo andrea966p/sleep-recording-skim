@@ -1,7 +1,10 @@
 ---
+type: experiment
+area: rig-bringup
+status: done
+status-note: "active"
 tags: [experiment, eeg, impedance, splitter, slip-ring, tether, interference, crosstalk, pre-registration]
 created: 2026-08-06
-status: active
 ---
 
 # Does an unloaded tether + slip ring + headstage interfere with other animals?

@@ -1,7 +1,10 @@
 ---
+type: decision
+area: video-nvr
+status: planned
+status-note: "approved-pending-validation"
 tags: [decision, hardware, scale-up, raspberry-pi, cameras, cost]
-date: 2026-07-16
-status: approved-pending-validation
+created: 2026-07-16
 decision: "Hybrid nodes: keep 2 CSI cameras per existing Pi 5, add 2 USB H.264 cameras (Arducam B0490, IMX462, 940nm) → 4 cams/Pi, 8 cams total, zero new compute. Buy one camera first and validate before the rest."
 supersedes: []
 ---

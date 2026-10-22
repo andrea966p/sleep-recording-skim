@@ -1,7 +1,9 @@
 ---
+type: procedure
+area: data-storage
+status: active
 tags: [procedure, installation, backup, nas, systemd]
 created: 2026-05-26
-status: active
 ---
 
 # NAS Backup — Daily Project Snapshot

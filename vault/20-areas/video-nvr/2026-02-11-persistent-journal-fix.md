@@ -1,8 +1,11 @@
 ---
+type: incident
+area: video-nvr
+status: done
+status-note: "resolved"
 tags: [troubleshooting, incident, raspberry-pi, systemd]
-date: 2026-02-11
+created: 2026-02-11
 severity: medium
-status: resolved
 affected: [raspberry-pi]
 ---
 

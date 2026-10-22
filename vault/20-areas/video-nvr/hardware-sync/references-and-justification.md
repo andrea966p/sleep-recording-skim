@@ -1,7 +1,10 @@
 ---
+type: reference
+area: video-nvr
+status: active
+status-note: "complete"
 tags: [infrastructure, hardware-sync, reference, justification, bom]
 created: 2026-05-25
-status: complete
 ---
 
 # XDAQ ↔ Raspberry Pi Sync — Design Justification & References

@@ -1,7 +1,10 @@
 ---
+type: experiment
+area: hlb-sod1
+status: done
+status-note: "active"
 tags: [experiment, nanotag, sod1, sleep, activity, NS-SL, NW-SL, cohort]
 created: 2026-10-05
-status: active
 cohort: HLBNSL (NS-SL + NW-SL)
 ---
 

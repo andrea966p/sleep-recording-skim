@@ -1,3 +1,9 @@
+---
+type: reference
+area: eeg-analysis
+status: superseded
+superseded-by: "[[eeg-pipeline-manual]]"
+---
 # ARCHIVED — pre-sleep64 analysis scripts (retired 2026-07-18)
 
 These scripts predate the canonical **sleep64 8-headstage** rig and are kept for

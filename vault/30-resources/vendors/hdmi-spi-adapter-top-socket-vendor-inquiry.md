@@ -1,4 +1,8 @@
 ---
+type: reference
+area: rig-expansion
+status: done
+status-note: "resolved"
 tags:
   - procedure
   - vendor
@@ -9,7 +13,6 @@ tags:
   - sadpt
   - headstage
 created: 2026-07-14
-status: resolved
 resolved: 2026-07-18
 ---
 

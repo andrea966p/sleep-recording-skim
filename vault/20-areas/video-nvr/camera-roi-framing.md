@@ -1,4 +1,7 @@
 ---
+type: procedure
+area: video-nvr
+status: active
 tags:
   - procedure
   - raspberry-pi
@@ -6,7 +9,6 @@ tags:
   - camera
   - framing
 created: '2026-06-19'
-status: in-progress
 scope: 'Pi1 (pi_cam_0, pi_cam_1); Pi2 off'
 ---
 # Camera Per-Partition Framing via rpicam-vid `--roi`

@@ -1,7 +1,10 @@
 ---
+type: experiment
+area: rig-bringup
+status: done
+status-note: "active"
 title: ECG cohort baseline, 7 new mice plus the B1 control
-date: 2026-08-07
-status: active
+created: 2026-08-07
 tags: [eeg, emg, ecg, impedance, tether, cohort]
 ---
 

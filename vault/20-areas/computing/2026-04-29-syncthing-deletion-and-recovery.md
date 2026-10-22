@@ -1,8 +1,11 @@
 ---
+type: incident
+area: computing
+status: done
+status-note: "resolved"
 tags: [troubleshooting, incident, syncthing, git, neurosurveillance, recovery, claude-code]
-date: 2026-04-29
+created: 2026-04-29
 severity: critical
-status: resolved
 affected: [Andrea-KAIST-PC-ubuntu, e10ubuntu, neurosurveillance-private-repo, syncthing]
 ---
 

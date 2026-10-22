@@ -1,7 +1,10 @@
 ---
+type: experiment
+area: rig-bringup
+status: done
+status-note: "COMPLETE — analysed 2026-08-03"
 tags: [experiment, active, eeg, emg, preregistration, prediction, contact-intermittency]
 created: 2026-08-02
-status: COMPLETE — analysed 2026-08-03
 priority: critical
 ---
 

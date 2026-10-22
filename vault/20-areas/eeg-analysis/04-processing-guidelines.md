@@ -1,7 +1,10 @@
 ---
+type: reference
+area: eeg-analysis
+status: active
+status-note: "complete"
 tags: [procedure, eeg, analysis, guidelines, filtering, referencing, onboarding]
 created: 2026-06-30
-status: complete
 ---
 
 # 04 — Processing Guidelines (the science)

@@ -1,4 +1,9 @@
 ---
+type: reference
+area: eeg-rig
+status: superseded
+status-note: "RETRACTED-2026-07-16 — wrong device, unvalidated, superseded"
+superseded-by: "[[headstage-shielding-faraday-foil]]"
 tags:
   - procedure
   - grounding
@@ -11,7 +16,6 @@ tags:
   - xdaq
 created: 2026-07-13
 updated: 2026-07-16
-status: RETRACTED-2026-07-16 — wrong device, unvalidated, superseded
 ---
 
 # Earthing Fix for the 60 Hz Hum (Float-to-Earth)

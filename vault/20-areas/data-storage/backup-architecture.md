@@ -1,3 +1,8 @@
+---
+type: reference
+area: data-storage
+status: active
+---
 # Backup architecture — where everything goes
 
 > [!abstract] TL;DR — for non-technical readers

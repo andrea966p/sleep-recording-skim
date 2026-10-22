@@ -1,4 +1,8 @@
 ---
+type: reference
+area: video-nvr
+status: active
+status-note: "complete"
 tags:
   - infrastructure
   - hardware-sync
@@ -7,7 +11,6 @@ tags:
   - xdaq
   - pinout
 created: 2026-05-27T00:00:00.000Z
-status: complete
 source: https://docs.kontex.io/XDAQ/CORE2/#xdaqtm-db25-io-connector-pinout
 ---
 

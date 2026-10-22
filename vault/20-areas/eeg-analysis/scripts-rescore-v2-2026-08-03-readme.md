@@ -1,7 +1,11 @@
 ---
+type: reference
+area: eeg-analysis
+status: superseded
+status-note: "active"
+superseded-by: "[[eeg-pipeline-manual]]"
 tags: [scripts, eeg, scoring, methods, xdat]
 created: 2026-08-03
-status: active
 ---
 
 # Sleep scoring — v2 (SUPERSEDED same day)

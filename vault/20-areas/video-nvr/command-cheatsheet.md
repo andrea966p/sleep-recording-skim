@@ -1,4 +1,7 @@
 ---
+type: reference
+area: video-nvr
+status: active
 tags: [reference, commands, cheatsheet]
 created: 2026-02-05
 updated: 2026-03-05

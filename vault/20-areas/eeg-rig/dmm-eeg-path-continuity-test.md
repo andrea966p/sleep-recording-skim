@@ -1,7 +1,10 @@
 ---
+type: experiment
+area: eeg-rig
+status: done
+status-note: "CLOSED — run and passed fleet-wide 2026-08-04"
 tags: [procedure, eeg, electrodes, multimeter, diagnostics, bench-test]
 created: 2026-08-04
-status: CLOSED — run and passed fleet-wide 2026-08-04
 ---
 
 # DMM continuity test on the EEG path — the free tier-1 bench test

@@ -1,7 +1,10 @@
 ---
+type: reference
+area: eeg-analysis
+status: active
+canonical: true
 tags: [methods, eeg, emg, procedure, scoring, report, canonical]
 created: 2026-08-03
-status: active
 audience: PI / lab meeting / methods section
 ---
 

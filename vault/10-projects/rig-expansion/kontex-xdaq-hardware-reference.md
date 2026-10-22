@@ -1,7 +1,10 @@
 ---
+type: reference
+area: rig-expansion
+status: active
+status-note: "complete"
 tags: [reference, kontex, xdaq, hardware, port-expander, synclink, sadpt, scale-up]
 created: 2026-07-21
-status: complete
 source: docs.kontex.io (retrieved 2026-07-21 via curl; raw HTML archived in attachments/kontex-docs-20260721/)
 ---
 

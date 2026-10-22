@@ -1,7 +1,9 @@
 ---
+type: reference
+area: video-nvr
+status: done
 tags: [infrastructure, hardware-sync, reference, literature]
 created: 2026-04-13
-status: complete
 ---
 
 # Literature Review — Video-EEG Hardware Synchronization

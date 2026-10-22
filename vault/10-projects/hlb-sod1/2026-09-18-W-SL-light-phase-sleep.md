@@ -1,7 +1,10 @@
 ---
+type: experiment
+area: hlb-sod1
+status: done
+status-note: "provisional"
 tags: [experiment, eeg, sleep, W-SL, light-phase, provisional]
 created: 2026-09-18
-status: provisional
 recordings: [allego_0__uid0910-09-00-00, allego_0__uid0917-09-00-09]
 ---
 

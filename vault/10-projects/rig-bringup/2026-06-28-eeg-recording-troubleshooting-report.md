@@ -1,4 +1,8 @@
 ---
+type: experiment
+area: rig-bringup
+status: done
+status-note: "final"
 tags:
   - report
   - eeg
@@ -8,7 +12,6 @@ tags:
   - troubleshooting
   - for-professor
 created: 2026-06-28
-status: final
 audience: professor
 note: final-to-print version (andrea's edits) lives in ~/Downloads/ as "eeg-recording-troubleshooting-report final to print.odt" + .docx/.pdf
 ---

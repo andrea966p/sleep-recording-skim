@@ -1,4 +1,8 @@
 ---
+type: reference
+area: eeg-analysis
+status: active
+status-note: "complete"
 tags:
   - procedure
   - eeg
@@ -8,7 +12,6 @@ tags:
   - radiens
   - onboarding
 created: 2026-06-27
-status: complete
 ---
 
 # EEG/EMG Data Guide — Reading and Analyzing Sleep Signals

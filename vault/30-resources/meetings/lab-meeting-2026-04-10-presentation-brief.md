@@ -1,3 +1,8 @@
+---
+type: meeting
+area: video-nvr
+status: done
+---
 # NeuroSurveillance — Lab Meeting Presentation Brief
 
 > **Purpose of this document.** A detailed, slide-by-slide briefing intended to be fed to an AI presentation generator (Gamma, Tome, Beautiful.ai, etc.). It follows the structure of `lab-meeting-2026-04-10-presentation-plan.md` but expands every section with full talking points, numbers, citations, and visual suggestions. Source of all facts: this Obsidian vault — no fabrication.

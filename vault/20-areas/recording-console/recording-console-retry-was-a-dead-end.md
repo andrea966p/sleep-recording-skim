@@ -1,7 +1,10 @@
 ---
+type: incident
+area: recording-console
+status: done
+status-note: "resolved"
 tags: [troubleshooting, symptom, eeg, recording, console, bug]
 created: 2026-09-11
-status: resolved
 ---
 
 # The console's retry button did nothing — three defects, found by the first real run

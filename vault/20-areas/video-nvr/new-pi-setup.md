@@ -1,8 +1,10 @@
 ---
+type: procedure
+area: video-nvr
+status: active
 tags: [procedure, installation, raspberry-pi]
 created: 2026-02-04
 updated: 2026-03-07
-status: production
 ---
 
 # New Raspberry Pi Camera Node Setup

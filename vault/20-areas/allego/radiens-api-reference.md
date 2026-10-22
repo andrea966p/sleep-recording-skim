@@ -1,7 +1,10 @@
 ---
+type: reference
+area: allego
+status: active
+status-note: "complete"
 tags: [infrastructure, hardware-sync, reference, radiens, api]
 created: 2026-04-13
-status: complete
 ---
 
 # Radiens AllegoClient API — Digital I/O Reference

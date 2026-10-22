@@ -1,3 +1,8 @@
+---
+type: procedure
+area: data-storage
+status: active
+---
 # Off-site S3 archive of the raw recordings
 
 Nightly, incremental copy of `~/radix/data` (raw Allego `.xdat`) from `e10ubuntu`

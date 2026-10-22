@@ -1,7 +1,10 @@
 ---
+type: experiment
+area: rig-bringup
+status: done
+status-note: "active"
 tags: [experiment, eeg, staging, hypnogram, circadian, pre-registration]
 created: 2026-08-07
-status: active
 ---
 
 # Pre-registration: sleep staging of the two working animals

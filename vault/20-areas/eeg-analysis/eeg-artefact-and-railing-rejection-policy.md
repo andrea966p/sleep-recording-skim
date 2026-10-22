@@ -1,4 +1,7 @@
 ---
+type: procedure
+area: eeg-analysis
+status: active
 tags: [procedure, eeg, artefact, railing, quality-control, scoring]
 created: 2026-08-06
 ---

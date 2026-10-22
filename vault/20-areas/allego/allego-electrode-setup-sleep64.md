@@ -1,7 +1,10 @@
 ---
+type: procedure
+area: allego
+status: active
+status-note: "complete"
 tags: [procedure, allego, radiens, electrode-setup, sleep64, onboarding, sop]
 created: 2026-07-13
-status: complete
 ---
 
 # Allego Electrode Setup — the `sleep64` map (READ THIS, ignore the rest)

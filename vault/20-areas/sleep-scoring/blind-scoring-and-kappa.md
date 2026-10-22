@@ -1,7 +1,10 @@
 ---
+type: procedure
+area: sleep-scoring
+status: planned
+status-note: "ready to run"
 tags: [procedure, eeg, scoring, kappa, validation, pre-registration]
 created: 2026-08-08
-status: ready to run
 ---
 
 # Blind scoring and Cohen's kappa: how to run it, and what the answer will mean

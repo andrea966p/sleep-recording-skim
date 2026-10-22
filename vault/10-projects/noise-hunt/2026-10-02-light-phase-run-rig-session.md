@@ -1,7 +1,10 @@
 ---
+type: experiment
+area: noise-hunt
+status: done
+status-note: "active"
 tags: [experiment, noise, light-phase, run-log, markers, foil, presence, multimeter, figures]
 created: 2026-10-02
-status: active
 ---
 
 # Light-phase run 8f84e3e62af6 (2026-10-02): what was done to it, when, and what it showed

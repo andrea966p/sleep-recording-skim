@@ -1,7 +1,10 @@
 ---
+type: reference
+area: eeg-analysis
+status: active
+canonical: true
 tags: [procedure, eeg, data-format, nas, canonical]
 created: 2026-09-29
-status: active
 ---
 
 # Per-mouse CSV: the format the analysis reads

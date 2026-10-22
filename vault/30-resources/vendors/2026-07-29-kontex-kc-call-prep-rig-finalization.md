@@ -1,4 +1,8 @@
 ---
+type: reference
+area: rig-expansion
+status: done
+status-note: "live"
 tags:
   - decision
   - kontex
@@ -9,7 +13,6 @@ tags:
   - rig-finalization
 created: 2026-07-28
 updated: 2026-07-29
-status: live
 call_date: 2026-07-29
 counterpart: KC Kong (KonteX Neuroscience)
 attendees: Andrea, Prof. Kim Staci Jakyong, KC Kong

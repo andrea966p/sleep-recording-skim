@@ -1,3 +1,9 @@
+---
+type: reference
+area: recording-console
+status: active
+canonical: true
+---
 # CANONICAL — recording names, and the inventory of every recording
 
 > [!abstract] TL;DR

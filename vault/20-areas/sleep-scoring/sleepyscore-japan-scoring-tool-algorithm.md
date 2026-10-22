@@ -1,4 +1,7 @@
 ---
+type: reference
+area: sleep-scoring
+status: active
 tags: [reference, eeg, scoring, algorithm, iiis, comparison]
 created: 2026-08-08
 ---

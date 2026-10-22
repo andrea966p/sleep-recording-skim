@@ -1,4 +1,7 @@
 ---
+type: incident
+area: computing
+status: done
 tags: [troubleshooting, incident, tailscale, rustdesk, remote-access]
 created: 2026-02-09
 severity: medium

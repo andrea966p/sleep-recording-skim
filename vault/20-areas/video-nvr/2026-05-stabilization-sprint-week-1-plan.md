@@ -1,9 +1,12 @@
 ---
+type: decision
+area: video-nvr
+status: done
+status-note: "closed (week 1 burn-in clean 2026-05-26; 4.6 reconciler→Slack enabled 2026-05-28)"
+type-note: "sprint-plan"
 tags: [decision, sprint, stabilization, plan, status]
 date: 2026-05-20
 created: 2026-05-20
-type: sprint-plan
-status: closed (week 1 burn-in clean 2026-05-26; 4.6 reconciler→Slack enabled 2026-05-28)
 sourced-from: 04-journal/2026-05/2026-05-20.md
 derived-from: 2026-05-01-llm-council-review.md
 ---

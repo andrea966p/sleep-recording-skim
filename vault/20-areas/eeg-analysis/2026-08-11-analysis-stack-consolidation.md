@@ -1,3 +1,8 @@
+---
+type: decision
+area: eeg-analysis
+status: done
+---
 # Analysis stack consolidation: the choices, 2026-08-11
 
 Choices only. The measurements behind every one of them are in

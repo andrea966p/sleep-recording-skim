@@ -1,7 +1,9 @@
 ---
+type: reference
+area: eeg-rig
+status: active
 tags: [procedure, eeg, grounding, mains-hum, reconciliation, history]
 created: 2026-07-15
-status: active
 priority: high
 ---
 

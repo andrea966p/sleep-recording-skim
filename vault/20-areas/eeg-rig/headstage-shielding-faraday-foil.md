@@ -1,8 +1,11 @@
 ---
+type: reference
+area: eeg-rig
+status: active
+status-note: "active — the 60 Hz result stands, the sleep claim is RETRACTED"
 tags: [procedure, eeg, emg, signal-quality, shielding, faraday, mains-hum, 60hz, critical, discovery]
 created: 2026-07-15
 updated: 2026-07-16
-status: active — the 60 Hz result stands, the sleep claim is RETRACTED
 priority: high
 ---
 

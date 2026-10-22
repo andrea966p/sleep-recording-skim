@@ -1,6 +1,8 @@
 ---
+type: reference
+area: video-nvr
+status: active
 tags: [infrastructure, session-daemon, reconciler, golden-config]
-status: production
 version: 1.0
 added: 2026-05-24
 related-commit: 3830dba

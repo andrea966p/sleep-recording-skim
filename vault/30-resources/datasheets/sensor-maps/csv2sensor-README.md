@@ -1,3 +1,8 @@
+---
+type: reference
+area: allego
+status: active
+---
 # csv2sensor: Custom Sensor Definition Tool
 
 `csv2sensor` is a command-line utility for converting custom sensor definition CSV files into Radiens-compatible Headstage (`.hstg`) and Probe (`.prb`) configuration files.

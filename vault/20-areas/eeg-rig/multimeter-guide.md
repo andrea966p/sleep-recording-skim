@@ -1,4 +1,8 @@
 ---
+type: procedure
+area: eeg-rig
+status: active
+status-note: "complete"
 tags:
   - procedure
   - headstage
@@ -6,7 +10,6 @@ tags:
   - grounding
   - onboarding
 created: 2026-06-27
-status: complete
 ---
 
 # Multimeter Guide — Bench-Testing the Headstage Chain with the Harden 661002 DMM

@@ -1,7 +1,9 @@
 ---
+type: reference
+area: recording-console
+status: active
 tags: [infrastructure, eeg, recording, architecture, pipeline, allego, nas]
 created: 2026-09-13
-status: active
 ---
 
 # The recording pipeline: what runs, what fires it, and what stops it going wrong

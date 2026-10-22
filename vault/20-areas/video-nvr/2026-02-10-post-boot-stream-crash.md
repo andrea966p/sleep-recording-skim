@@ -1,12 +1,15 @@
 ---
+type: incident
+area: video-nvr
+status: active
+status-note: "workaround"
 tags:
   - troubleshooting
   - incident
   - go2rtc
   - raspberry-pi
-date: 2026-02-10
+created: 2026-02-10
 severity: high
-status: workaround
 affected:
   - raspberry-pi
 ---

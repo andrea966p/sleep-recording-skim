@@ -1,7 +1,9 @@
 ---
+type: experiment
+area: rig-bringup
+status: done
 tags: [experiment, eeg, recording, data-quality, tether, slip-ring, retraction]
 created: 2026-08-07
-status: complete
 ---
 
 # Overnight recording, 23.66 h: two animals work, and yesterday's harm conclusion was wrong

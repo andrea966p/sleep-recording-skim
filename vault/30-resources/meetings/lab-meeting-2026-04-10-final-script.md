@@ -1,6 +1,9 @@
 ---
+type: meeting
+area: video-nvr
+status: done
 tags: [presentation, lab-meeting, script]
-date: 2026-04-10
+created: 2026-04-10
 ---
 
 # Lab Meeting Transcript — 2026-04-10

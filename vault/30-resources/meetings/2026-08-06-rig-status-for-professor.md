@@ -1,7 +1,9 @@
 ---
+type: meeting
+area: rig-bringup
+status: done
 tags: [status, eeg, impedance, recording, data-quality, report, professor]
 created: 2026-08-06
-status: complete
 ---
 
 # Rig status, 6 to 7 August 2026: what the rig can do, what it is doing, and how we know

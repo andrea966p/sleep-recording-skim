@@ -1,7 +1,9 @@
 ---
+type: reference
+area: computing
+status: active
 tags: [reference, monitoring, netdata, uptime-kuma, diagnostics]
 created: 2026-04-03
-status: production
 ---
 
 # Monitoring Diagnostics Reference

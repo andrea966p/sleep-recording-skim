@@ -1,7 +1,9 @@
 ---
+type: experiment
+area: allego
+status: done
 tags: [experiment, allego, radiens, recording, control, measurement]
 created: 2026-09-11
-status: complete
 ---
 
 # Bench test: can we stop Allego from Python, and can we tell a recording is alive?

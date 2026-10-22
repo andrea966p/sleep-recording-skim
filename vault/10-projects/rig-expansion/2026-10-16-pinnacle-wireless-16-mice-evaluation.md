@@ -1,7 +1,9 @@
 ---
+type: decision
+area: rig-expansion
+status: active
 tags: [reference, hardware, wireless, pinnacle, eeg, emg, lfp, pons, purchase]
 created: 2026-10-16
-status: open
 ---
 
 # Pinnacle wireless EEG + pons LFP + EMG for up to 16 mice: verified setup and purchase

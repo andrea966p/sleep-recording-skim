@@ -1,8 +1,10 @@
 ---
+type: hub
+area: eeg-analysis
+status: active
 tags: [procedure, eeg, analysis, hub, onboarding, python]
 created: 2026-06-30
 updated: 2026-08-03
-status: active
 ---
 
 > [!important] ⭐⭐⭐ 2026-08-09: THE CODE MOVED, AND THERE IS A NEW FIRST STEP

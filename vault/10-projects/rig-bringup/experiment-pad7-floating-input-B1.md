@@ -1,4 +1,8 @@
 ---
+type: experiment
+area: rig-bringup
+status: planned
+status-note: "TO DO — not yet run"
 tags:
   - experiment
   - todo
@@ -9,7 +13,6 @@ tags:
   - signal-quality
   - B1
 created: 2026-07-22
-status: TO DO — not yet run
 priority: critical
 ---
 

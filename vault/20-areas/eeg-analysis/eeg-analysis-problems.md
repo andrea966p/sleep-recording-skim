@@ -1,7 +1,9 @@
 ---
+type: incident
+area: eeg-analysis
+status: active
 tags: [troubleshooting, symptom, eeg, analysis, pipeline, python]
 created: 2026-08-03
-status: active
 ---
 
 # EEG analysis — what to do when a step misbehaves

@@ -1,7 +1,10 @@
 ---
+type: reference
+area: allego
+status: active
+canonical: true
 tags: [procedure, eeg, allego, channel-selection, canonical, critical]
 created: 2026-08-03
-status: canonical
 priority: critical
 ---
 

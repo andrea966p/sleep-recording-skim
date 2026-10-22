@@ -1,7 +1,9 @@
 ---
+type: reference
+area: allego
+status: active
 tags: [reference, eeg, allego, glossary, signal-quality, onboarding]
 created: 2026-09-16
-status: active
 ---
 
 # Reading the rig live — signal quality terms

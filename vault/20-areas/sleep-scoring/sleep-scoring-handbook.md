@@ -1,7 +1,9 @@
 ---
+type: reference
+area: sleep-scoring
+status: active
 tags: [reference, sleep-scoring, eeg, emg, conventions, literature, onboarding]
 created: 2026-10-07
-status: active
 ---
 
 # Sleep scoring handbook: states, measures, values, conventions, literature

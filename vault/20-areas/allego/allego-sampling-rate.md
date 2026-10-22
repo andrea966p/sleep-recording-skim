@@ -1,4 +1,8 @@
 ---
+type: reference
+area: allego
+status: active
+status-note: "complete"
 tags:
   - procedure
   - radiens
@@ -8,7 +12,6 @@ tags:
   - emg
   - onboarding
 created: 2026-06-27
-status: complete
 ---
 
 # Allego Sample Rate — Why 128–256 Hz Is Not Possible (and What To Do)

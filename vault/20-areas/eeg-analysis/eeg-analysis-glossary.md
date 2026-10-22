@@ -1,7 +1,9 @@
 ---
+type: reference
+area: eeg-analysis
+status: active
 tags: [reference, eeg, analysis, glossary, onboarding]
 created: 2026-08-03
-status: active
 ---
 
 # EEG analysis glossary — every term and parameter, in plain words

@@ -1,3 +1,9 @@
+---
+type: reference
+area: eeg-analysis
+status: active
+canonical: true
+---
 # CANONICAL — recording windows, and which window of each run to analyse
 
 > [!abstract] TL;DR

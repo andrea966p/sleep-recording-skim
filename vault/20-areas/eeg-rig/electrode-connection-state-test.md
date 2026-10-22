@@ -1,7 +1,9 @@
 ---
+type: procedure
+area: eeg-rig
+status: active
 tags: [procedure, eeg, emg, impedance, electrode-contact, signal-quality, qc, method]
 created: 2026-07-31
-status: active
 priority: high
 ---
 

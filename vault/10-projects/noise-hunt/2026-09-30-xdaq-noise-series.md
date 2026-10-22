@@ -1,7 +1,10 @@
 ---
+type: experiment
+area: noise-hunt
+status: done
+status-note: "active"
 tags: [experiment, noise, grounding, ground-loop, usb, xdaq, mains, 60hz, 120hz, series]
 created: 2026-09-30
-status: active
 ---
 
 # XDAQ noise series: power, cabling, grounding (started 2026-09-30)

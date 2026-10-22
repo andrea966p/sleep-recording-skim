@@ -1,4 +1,8 @@
 ---
+type: incident
+area: video-nvr
+status: done
+status-note: "partially-resolved"
 tags:
   - troubleshooting
   - incident
@@ -6,9 +10,8 @@ tags:
   - docker
   - daemon
   - neurosurveillance
-date: '2026-05-20'
+created: '2026-05-20'
 severity: medium
-status: partially-resolved
 affected:
   - e10ubuntu
   - frigate

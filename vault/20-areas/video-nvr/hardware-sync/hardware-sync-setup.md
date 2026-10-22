@@ -1,7 +1,9 @@
 ---
+type: procedure
+area: video-nvr
+status: planned
 tags: [procedure, hardware-sync, installation]
 created: 2026-04-13
-status: planned
 ---
 
 # Hardware Sync Setup Procedure

@@ -1,4 +1,8 @@
 ---
+type: reference
+area: rig-expansion
+status: done
+status-note: "open"
 tags:
   - meeting
   - kontex
@@ -7,7 +11,6 @@ tags:
   - scale-up
   - call-prep
 created: 2026-07-21
-status: open
 ---
 
 # Kontex Video Call Prep — KC Kong, 4 PM Today (2026-07-21)

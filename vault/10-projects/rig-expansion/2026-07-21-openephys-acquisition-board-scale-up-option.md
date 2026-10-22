@@ -1,4 +1,8 @@
 ---
+type: reference
+area: rig-expansion
+status: done
+status-note: "open"
 tags:
   - decision
   - hardware
@@ -7,7 +11,6 @@ tags:
   - scale-up
   - option
 created: 2026-07-21
-status: open
 ---
 # Open Ephys Acquisition Board — a Possible Scale-Up Path (16 mice)
 

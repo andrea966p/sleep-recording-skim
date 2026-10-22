@@ -1,7 +1,9 @@
 ---
+type: procedure
+area: sleep-scoring
+status: active
 tags: [procedure, sleep-scoring, sleepstager, eeg, emg]
 created: 2026-10-07
-status: production
 ---
 
 # SleepStager user guide: open, save, keys, and how to read the rule

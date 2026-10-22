@@ -1,8 +1,10 @@
 ---
+type: reference
+area: computing
+status: active
 tags: [config, production, sensitive]
 created: 2026-02-04
 updated: 2026-04-02
-status: active
 ---
 
 # Production Configuration Values

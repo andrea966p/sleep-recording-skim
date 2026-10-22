@@ -1,7 +1,10 @@
 ---
+type: reference
+area: eeg-analysis
+status: done
+status-note: "generated"
 tags: [report, eeg, cohort, cards, generated]
 created: 2026-08-09
-status: generated
 ---
 
 # HLB-fem-profsurgery-troubleshooting — cohort report

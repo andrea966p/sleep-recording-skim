@@ -1,7 +1,9 @@
 ---
+type: procedure
+area: eeg-analysis
+status: active
 tags: [procedure, eeg, export, matlab, analysis]
 created: 2026-08-22
-status: active
 ---
 
 # Splitting a recording into one folder per mouse

@@ -1,7 +1,9 @@
 ---
+type: experiment
+area: hlb-sod1
+status: done
 tags: [experiment, eeg, emg, qc, ladder, W-SD, S-SD, W-SL, S-SL, completed]
 created: 2026-09-30
-status: complete
 recordings: [allego_1__uid0819-17-25-20, allego_2__uid0827-12-58-32, allego_0__uid0825-09-00-00, allego_2__uid0902-13-00-28, allego_0__uid0910-09-00-00, allego_0__uid0917-09-00-09, allego_0__uid0912-08-55-18, allego_0__uid0921-00-17-34]
 ---
 

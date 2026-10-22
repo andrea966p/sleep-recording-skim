@@ -1,10 +1,12 @@
 ---
+type: meeting
+area: video-nvr
+status: done
 tags:
   - meeting
   - progress
   - professor
-date: 2026-03-12
-status: Done
+created: 2026-03-12
 ---
 # Progress meeting completed. DISCUSSION POINT DIDN'T LEAD TO ANYTHING NEW
 # NeuroSurveillance — Progress Meeting Brief

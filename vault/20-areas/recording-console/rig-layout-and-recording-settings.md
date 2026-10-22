@@ -1,7 +1,9 @@
 ---
+type: procedure
+area: recording-console
+status: active
 tags: [procedure, eeg, allego, recording, console, layout, headstage, splitter, settings]
 created: 2026-09-14
-status: active
 ---
 
 # Telling the console what the rig is: splitters, headstages and recording settings

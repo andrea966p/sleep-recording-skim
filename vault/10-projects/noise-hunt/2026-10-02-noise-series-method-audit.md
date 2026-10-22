@@ -1,7 +1,10 @@
 ---
+type: experiment
+area: noise-hunt
+status: done
+status-note: "active"
 tags: [audit, qc, noise, methods, critique, eeg]
 created: 2026-10-02
-status: active
 ---
 
 # Method audit of the XDAQ noise series and tonight's QC (overnight 2026-10-01/02)

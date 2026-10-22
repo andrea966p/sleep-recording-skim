@@ -1,7 +1,10 @@
 ---
+type: experiment
+area: rig-bringup
+status: done
+status-note: "active"
 tags: [experiment, eeg, recording, data-quality, pre-registration, duty-cycle]
 created: 2026-08-06
-status: active
 ---
 
 # Pre-registration: is the recorded data clean and usable, per mouse?

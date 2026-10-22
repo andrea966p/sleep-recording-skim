@@ -1,7 +1,10 @@
 ---
+type: experiment
+area: recording-console
+status: planned
+status-note: "open-todo"
 tags: [procedure, todo, radiens, allego, multi-user, scheduling, xdaq]
 created: 2026-07-14
-status: open-todo
 ---
 
 # Multi-User Independent Recording Schedules — TODO

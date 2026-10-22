@@ -1,7 +1,9 @@
 ---
+type: procedure
+area: hlb-sod1
+status: active
 tags: [handover, nanotag, sheet, NS-SL, NW-SL]
 created: 2026-10-05
-status: open
 ---
 
 # Sheet handover, 2026-10-05: Run 2 is now analysed (HLBNSL nanotag tabs)

@@ -1,7 +1,10 @@
 ---
+type: experiment
+area: eeg-analysis
+status: planned
+status-note: "PLANNED, not scheduled"
 tags: [procedure, eeg, control, validation, calibration, bench, planned]
 created: 2026-08-08
-status: PLANNED, not scheduled
 ---
 
 # Positive control: pushing a known signal through the whole pipeline

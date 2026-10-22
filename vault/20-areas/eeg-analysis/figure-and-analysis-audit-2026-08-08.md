@@ -1,7 +1,9 @@
 ---
+type: experiment
+area: eeg-analysis
+status: done
 tags: [troubleshooting, figures, statistics, audit, integrity]
 created: 2026-08-09
-status: complete
 ---
 
 # Audit of the 2026-08-08 figures, and what had to be rebuilt

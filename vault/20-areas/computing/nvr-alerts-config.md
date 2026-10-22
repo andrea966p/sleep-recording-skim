@@ -1,7 +1,9 @@
 ---
+type: reference
+area: computing
+status: active
 tags: [infrastructure, netdata, golden-config, monitoring, alerting]
 created: 2026-04-01
-status: production
 version: "1.0"
 ---
 

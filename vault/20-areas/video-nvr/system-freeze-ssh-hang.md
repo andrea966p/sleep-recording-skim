@@ -1,4 +1,7 @@
 ---
+type: incident
+area: video-nvr
+status: active
 tags: [troubleshooting, symptom, raspberry-pi]
 created: 2026-02-05
 severity: critical

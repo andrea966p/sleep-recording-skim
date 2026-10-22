@@ -1,7 +1,9 @@
 ---
+type: reference
+area: sleep-scoring
+status: active
 tags: [infrastructure, sleepstager, sleep-scoring, changelog, backlog]
 created: 2026-10-07
-status: active
 ---
 
 # SleepStager: changes we made, and what to improve next

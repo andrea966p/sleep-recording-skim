@@ -1,4 +1,8 @@
 ---
+type: decision
+area: rig-bringup
+status: done
+status-note: "active"
 tags:
   - decision
   - checkpoint
@@ -7,7 +11,6 @@ tags:
   - council
   - grounding
 created: 2026-07-02
-status: active
 audience: team
 supersedes-status-in:
   - 03-troubleshooting/incidents/2026-06-28-eeg-recording-troubleshooting-report.md

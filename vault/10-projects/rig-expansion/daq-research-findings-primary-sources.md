@@ -1,4 +1,7 @@
 ---
+type: reference
+area: rig-expansion
+status: active
 tags:
   - decision
   - research
@@ -10,7 +13,6 @@ tags:
   - 32-mice
   - corrections
 created: 2026-07-28
-status: live
 method: 5 parallel research agents, primary sources only, verbatim quotes
 ---
 # DAQ Research Findings, 2026-07-28 — Primary Sources, and What They Overturn

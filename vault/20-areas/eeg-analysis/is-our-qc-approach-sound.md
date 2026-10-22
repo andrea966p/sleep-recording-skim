@@ -1,7 +1,9 @@
 ---
+type: reference
+area: eeg-analysis
+status: active
 tags: [reference, eeg, methods, literature, qc]
 created: 2026-08-21
-status: active
 ---
 
 # Is our QC approach sound, or are we doing something very wrong?

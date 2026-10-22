@@ -1,8 +1,11 @@
 ---
+type: incident
+area: video-nvr
+status: done
+status-note: "resolved"
 tags: [troubleshooting, incident, tauri, webkit, frontend]
-date: 2026-03-24
+created: 2026-03-24
 severity: medium
-status: resolved
 affected: [neurosurveillance-ui]
 ---
 

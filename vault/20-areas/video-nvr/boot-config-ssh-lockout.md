@@ -1,8 +1,11 @@
 ---
+type: incident
+area: video-nvr
+status: done
+status-note: "resolved"
 tags: [troubleshooting, ssh, boot-config, raspberry-pi]
 created: 2026-02-09
 severity: high
-status: resolved
 ---
 
 # SSH Lockout After Boot Config Changes

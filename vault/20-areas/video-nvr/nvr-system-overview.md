@@ -1,4 +1,7 @@
 ---
+type: reference
+area: video-nvr
+status: active
 tags: [overview, infrastructure, q-and-a]
 audience: anyone
 updated: 2026-05-24

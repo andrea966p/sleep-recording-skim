@@ -1,7 +1,9 @@
 ---
+type: experiment
+area: hlb-sod1
+status: done
 tags: [experiment, nanotag, sod1, sleep, analysis, NS-SL, NW-SL, completed]
 created: 2026-10-05
-status: complete
 cohort: HLBNSL (NS-SL + NW-SL)
 ---
 

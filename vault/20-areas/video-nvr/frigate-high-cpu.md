@@ -1,4 +1,7 @@
 ---
+type: incident
+area: video-nvr
+status: active
 tags: [troubleshooting, symptom, frigate]
 created: 2026-02-05
 severity: high

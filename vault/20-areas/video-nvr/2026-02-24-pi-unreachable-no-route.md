@@ -1,8 +1,11 @@
 ---
+type: incident
+area: video-nvr
+status: done
+status-note: "resolved"
 tags: [troubleshooting, incident, raspberry-pi, network, poe, pmic]
-date: 2026-02-24
+created: 2026-02-24
 severity: high
-status: resolved
 affected: [raspberry-pi, frigate, network]
 ---
 

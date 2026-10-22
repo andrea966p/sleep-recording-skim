@@ -1,7 +1,9 @@
 ---
+type: experiment
+area: unipolar-lfp
+status: done
 tags: [experiment, eeg, emg, lfp, unipolar, impedance, reference-prep]
 created: 2026-08-05
-status: completed
 ---
 
 # The unipolar LFP mouse, 2026-08-05: a working reference prep

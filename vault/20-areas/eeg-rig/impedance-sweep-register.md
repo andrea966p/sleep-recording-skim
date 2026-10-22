@@ -1,7 +1,9 @@
 ---
+type: reference
+area: eeg-rig
+status: active
 tags: [reference, eeg, impedance, electrodes, register]
 created: 2026-08-03
-status: active
 ---
 
 # Impedance sweep register

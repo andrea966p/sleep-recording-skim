@@ -1,4 +1,8 @@
 ---
+type: procedure
+area: eeg-rig
+status: active
+status-note: "complete"
 tags:
   - procedure
   - radiens
@@ -9,7 +13,6 @@ tags:
   - emg
   - onboarding
 created: 2026-06-19
-status: complete
 ---
 
 # Signal Quality & Grounding — Is the Signal Good Enough to Record?

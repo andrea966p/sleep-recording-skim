@@ -1,8 +1,11 @@
 ---
+type: incident
+area: allego
+status: active
+status-note: "DEFERRED, does NOT affect recording, display band CONFIRMED to apply 2026-08-03"
 tags: [troubleshooting, symptom, allego, radiens, deferred]
 created: 2026-08-03
 severity: cosmetic
-status: DEFERRED, does NOT affect recording, display band CONFIRMED to apply 2026-08-03
 ---
 
 # Allego throws IIR filter design errors when I change the Monitor band filter

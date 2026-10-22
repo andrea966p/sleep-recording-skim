@@ -1,7 +1,10 @@
 ---
+type: experiment
+area: rig-bringup
+status: done
+status-note: "active"
 title: Ground re-pin, the after state, and the overnight recording
-date: 2026-08-08
-status: active
+created: 2026-08-08
 tags: [eeg, emg, ecg, impedance, ground, cohort, overnight]
 ---
 

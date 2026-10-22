@@ -1,7 +1,9 @@
 ---
+type: experiment
+area: video-nvr
+status: done
 tags: [experiment, completed, failure]
-date: 2026-02-05
-status: completed
+created: 2026-02-05
 outcome: failure
 ---
 

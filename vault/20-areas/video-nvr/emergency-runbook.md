@@ -1,11 +1,13 @@
 ---
+type: procedure
+area: video-nvr
+status: active
 tags:
   - troubleshooting
   - runbook
   - emergency
 created: '2026-05-21'
 updated: '2026-05-25'
-status: active
 ---
 First 10 minutes when something is wrong on the NVR. Each section: how to confirm the symptom, the safest immediate action, where to look next. **Do not restart Frigate or the daemon while a recording is active unless the recording is already broken.**
 

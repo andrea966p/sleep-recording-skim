@@ -1,7 +1,10 @@
 ---
+type: experiment
+area: rig-bringup
+status: done
+status-note: "active"
 tags: [decision, eeg, emg, contact, impedance, sleep-architecture, critical]
 created: 2026-08-03
-status: active
 priority: critical
 ---
 

@@ -1,7 +1,10 @@
 ---
+type: experiment
+area: rig-bringup
+status: done
+status-note: "active"
 tags: [decision, eeg, emg, channel-mapping, correction, sleep-architecture, breakthrough, critical]
 created: 2026-08-01
-status: active
 priority: critical
 ---
 

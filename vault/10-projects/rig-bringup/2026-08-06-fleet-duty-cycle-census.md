@@ -1,7 +1,9 @@
 ---
+type: experiment
+area: rig-bringup
+status: done
 tags: [experiment, eeg, impedance, duty-cycle, fleet, tether, recovery-time]
 created: 2026-08-06
-status: complete
 ---
 
 # Fleet duty cycle census, 2026-08-06: what all 8 mice actually do, and the mouse that works

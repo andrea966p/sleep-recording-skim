@@ -1,7 +1,10 @@
 ---
+type: procedure
+area: computing
+status: superseded
+status-note: "active"
 tags: [infrastructure, handoff, syncthing, claude-portable, laptop]
 created: 2026-08-19
-status: active
 ---
 
 # Task brief: finalize and align the laptop workflow

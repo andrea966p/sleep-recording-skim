@@ -1,8 +1,10 @@
 ---
+type: reference
+area: video-nvr
+status: active
 tags: [infrastructure, session-daemon, session-journal, golden-config, wal]
 created: 2026-05-23
 updated: 2026-05-23
-status: production
 version: 1.0
 related-sprint-phase: phase-2
 related-plan: 2026-05-20

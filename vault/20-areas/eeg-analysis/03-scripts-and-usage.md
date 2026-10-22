@@ -1,7 +1,11 @@
 ---
+type: reference
+area: eeg-analysis
+status: superseded
+status-note: "complete"
+superseded-by: "[[eeg-pipeline-manual]]"
 tags: [procedure, eeg, analysis, python, scripts, onboarding]
 created: 2026-06-30
-status: complete
 ---
 
 # 03 — Scripts and Usage

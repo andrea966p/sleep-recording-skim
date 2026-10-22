@@ -1,7 +1,9 @@
 ---
+type: experiment
+area: rig-bringup
+status: done
 tags: [decision, audit, eeg, recording, thermal, frigate, grounding]
-date: 2026-07-13
-status: complete
+created: 2026-07-13
 subjects: [mouse-A, mouse-B, mouse-C, mouse-D]
 recording: allego_0__uid0710-08-53-31
 ---

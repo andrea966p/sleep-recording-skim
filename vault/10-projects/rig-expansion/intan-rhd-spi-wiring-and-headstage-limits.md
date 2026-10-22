@@ -1,7 +1,10 @@
 ---
+type: reference
+area: rig-expansion
+status: active
+status-note: "complete"
 tags: [reference, intan, spi, headstage, xdaq, miso, channel-limits, datasheet]
 created: 2026-07-21
-status: complete
 source: 06-references/datasheets/Intan_RHD2000_SPI_cable.pdf, Intan_RHD2000_dual_headstage_adapter.pdf
 ---
 

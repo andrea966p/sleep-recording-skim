@@ -1,3 +1,8 @@
+---
+type: reference
+area: computing
+status: superseded
+---
 # Multi machine work setup: laptop and office PC alongside e10ubuntu
 
 Created 2026-08-16.

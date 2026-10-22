@@ -1,4 +1,8 @@
 ---
+type: reference
+area: allego
+status: active
+status-note: "complete"
 tags:
   - procedure
   - radiens
@@ -7,7 +11,6 @@ tags:
   - settings
   - onboarding
 created: 2026-06-27
-status: complete
 ---
 
 # Allego Save Workspace & User Profile — What Gets Remembered

@@ -1,4 +1,8 @@
 ---
+type: reference
+area: eeg-rig
+status: active
+status-note: "complete"
 tags:
   - reference
   - intan
@@ -9,7 +13,6 @@ tags:
   - emg
   - datasheet
 created: 2026-06-27
-status: complete
 source: 06-references/datasheets/Intan_RHD2000_series_datasheet.pdf
 ---
 

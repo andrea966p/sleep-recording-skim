@@ -1,4 +1,8 @@
 ---
+type: reference
+area: eeg-rig
+status: active
+status-note: "complete"
 tags:
   - reference
   - eeg
@@ -8,7 +12,6 @@ tags:
   - surgery
   - method-provenance
 created: 2026-06-28
-status: complete
 source: Iwasaki et al., STAR Protocols 2021
 ---
 

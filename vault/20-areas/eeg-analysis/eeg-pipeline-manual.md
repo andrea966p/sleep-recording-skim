@@ -1,7 +1,9 @@
 ---
+type: procedure
+area: eeg-analysis
+status: active
 tags: [procedures, eeg, pipeline, scoring, qc]
 created: 2026-08-03
-status: active
 ---
 
 # EEG analysis pipeline — raw recording to sleep features

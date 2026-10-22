@@ -1,7 +1,9 @@
 ---
+type: experiment
+area: video-nvr
+status: done
 tags: [experiment]
-date: 2026-02-11
-status: completed
+created: 2026-02-11
 subjects:
 chambers:
 ---

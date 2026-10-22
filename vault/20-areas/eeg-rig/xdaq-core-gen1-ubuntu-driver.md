@@ -1,4 +1,9 @@
 ---
+type: reference
+area: eeg-rig
+status: active
+status-note: "complete"
+canonical: true
 tags:
   - infrastructure
   - hardware-sync
@@ -7,7 +12,6 @@ tags:
   - ubuntu
   - golden-config
 created: '2026-05-29'
-status: complete
 supersedes: >-
   Core2/Thunderbolt assumption in overview, wiring-guide, manual-reference,
   kontex-developer-portal-notes

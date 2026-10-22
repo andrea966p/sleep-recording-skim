@@ -1,4 +1,8 @@
 ---
+type: reference
+area: allego
+status: active
+status-note: "complete"
 tags:
   - procedure
   - radiens
@@ -9,7 +13,6 @@ tags:
   - emg
   - onboarding
 created: 2026-06-19
-status: complete
 ---
 
 # Signal Mapping Guide — Telling Allego Which Channel Is Which Electrode

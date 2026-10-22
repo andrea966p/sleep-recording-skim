@@ -1,7 +1,9 @@
 ---
+type: experiment
+area: hlb-sod1
+status: done
 tags: [experiment, eeg, emg, S-SD, tether, completed]
 created: 2026-08-27
-status: complete
 recording: allego_1__uid0826-12-50-16
 cohort: S-SD
 ---

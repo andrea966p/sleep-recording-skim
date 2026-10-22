@@ -1,7 +1,11 @@
 ---
+type: experiment
+area: rig-bringup
+status: superseded
+status-note: "active"
+superseded-by: "[[2026-08-01-channel-mapping-correction-first-sleep]]"
 tags: [decision, eeg, contact-intermittency, duty-cycle, sleep-scoring, negative-result, methods, critical]
 created: 2026-08-01
-status: active
 priority: critical
 ---
 

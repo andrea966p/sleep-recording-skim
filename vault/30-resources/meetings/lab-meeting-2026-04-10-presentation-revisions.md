@@ -1,6 +1,9 @@
 ---
+type: meeting
+area: video-nvr
+status: done
 tags: [presentation, revisions]
-date: 2026-04-08
+created: 2026-04-08
 related: [[lab-meeting-2026-04-10-presentation-brief]]
 ---
 

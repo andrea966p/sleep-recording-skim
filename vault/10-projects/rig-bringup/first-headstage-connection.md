@@ -1,4 +1,8 @@
 ---
+type: experiment
+area: rig-bringup
+status: done
+status-note: "resolved"
 tags:
   - procedure
   - hardware-sync
@@ -8,7 +12,6 @@ tags:
   - intan
   - first-light
 created: 2026-06-18
-status: resolved
 system: XDAQ Core Gen-1 (XDAQ_ONE_REC mode) + 32-ch RHD XR headstage + SAdpt-XDAQ-OM12 + C3026
 ---
 

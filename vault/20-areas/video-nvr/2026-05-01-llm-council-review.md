@@ -1,9 +1,12 @@
 ---
+type: decision
+area: video-nvr
+status: done
+status-note: "closed (Stage 1 + 2 shipped; Stage 3 deferred — see status appendix)"
+type-note: "architectural-review"
 tags: [decision, council, audit, review, weak-spots, roadmap]
 date: 2026-05-01
 created: 2026-05-01
-type: architectural-review
-status: closed (Stage 1 + 2 shipped; Stage 3 deferred — see status appendix)
 sourced-from: 04-journal/2026-05/2026-05-01.md
 ---
 

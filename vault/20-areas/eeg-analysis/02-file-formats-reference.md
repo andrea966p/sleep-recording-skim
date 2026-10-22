@@ -1,7 +1,10 @@
 ---
+type: reference
+area: eeg-analysis
+status: active
+status-note: "complete"
 tags: [procedure, eeg, analysis, file-formats, xdat, edf, csv, onboarding]
 created: 2026-06-30
-status: complete
 ---
 
 # 02 — File Formats Reference

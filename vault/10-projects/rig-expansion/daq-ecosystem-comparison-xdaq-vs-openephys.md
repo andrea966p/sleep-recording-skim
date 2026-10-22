@@ -1,4 +1,7 @@
 ---
+type: decision
+area: rig-expansion
+status: superseded
 tags:
   - decision
   - hardware
@@ -8,7 +11,6 @@ tags:
   - acquisition
   - scale-up
 created: 2026-07-23
-status: superseded
 superseded-by: "[[2026-07-24-daq-32-mouse-final-comparison]]"
 ---
 # DAQ Ecosystem Comparison — XDAQ/NeuroNexus vs Open Ephys (16 → 32 mice)

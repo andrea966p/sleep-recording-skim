@@ -1,4 +1,8 @@
 ---
+type: reference
+area: rig-expansion
+status: done
+status-note: "sent"
 tags:
   - email
   - kontex
@@ -7,7 +11,6 @@ tags:
   - 32-mice
   - sent
 created: 2026-07-28
-status: sent
 recipient: KC Kong (KonteX Neuroscience)
 call_date: 2026-07-29
 ---

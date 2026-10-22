@@ -1,7 +1,9 @@
 ---
+type: procedure
+area: data-storage
+status: active
 tags: [procedure, installation, nas, smb, cifs, tailscale, synology, backup]
 created: 2026-09-11
-status: active
 ---
 
 # The SKIM Lab NAS: mounting it, and uploading recordings to it safely

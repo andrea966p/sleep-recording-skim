@@ -1,7 +1,9 @@
 ---
+type: meeting
+area: rig-bringup
+status: done
 tags: [status, eeg, report, professor, figures]
 created: 2026-08-08
-status: complete
 ---
 
 # EEG rig update, 8 August 2026

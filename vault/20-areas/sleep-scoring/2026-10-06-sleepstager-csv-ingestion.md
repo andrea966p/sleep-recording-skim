@@ -1,9 +1,12 @@
 ---
+type: decision
+area: sleep-scoring
+status: done
+status-note: "settled (2026-10-08)"
+type-note: "council + decision"
 tags: [decision, council, sleepstager, sleep-scoring, data-format]
 date: 2026-10-06
 created: 2026-10-07
-type: council + decision
-status: settled (2026-10-08)
 sourced-from: 04-journal/2026-10/2026-10-06.md, 04-journal/2026-10/2026-10-07.md
 ---
 

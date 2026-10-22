@@ -1,9 +1,11 @@
 ---
+type: experiment
+area: hlb-sod1
+status: done
 tags: [experiment, eeg, S-SD, recovery-sleep, endpoint]
 date: 2026-09-02
 created: 2026-09-01
 updated: 2026-09-14
-status: completed
 ---
 
 # S-SD recovery sleep, Wednesday 13:00 to Thursday 09:00, the terminal endpoint

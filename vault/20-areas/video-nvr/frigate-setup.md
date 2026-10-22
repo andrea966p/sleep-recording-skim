@@ -1,7 +1,9 @@
 ---
+type: procedure
+area: video-nvr
+status: active
 tags: [procedure, installation, frigate, docker]
 created: 2026-02-12
-status: production
 ---
 
 # Frigate NVR + Mosquitto MQTT Setup

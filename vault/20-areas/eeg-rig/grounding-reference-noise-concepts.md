@@ -1,4 +1,8 @@
 ---
+type: reference
+area: eeg-rig
+status: active
+status-note: "complete"
 tags:
   - procedure
   - grounding
@@ -9,7 +13,6 @@ tags:
   - headstage
   - onboarding
 created: 2026-06-27
-status: complete
 ---
 
 # Grounding vs Reference vs Tissue Noise vs Environmental Noise — concepts + the slip-ring color defect

@@ -1,7 +1,9 @@
 ---
+type: experiment
+area: noise-hunt
+status: done
 tags: [experiment, conclusion, noise, emg, notch, grounding, series]
 created: 2026-10-06
-status: completed
 ---
 
 # Is the noise hunt chasing a ghost? The verdict (2026-10-06)

@@ -1,7 +1,9 @@
 ---
+type: experiment
+area: noise-hunt
+status: done
 tags: [noise, eeg, emg, sleep, qc, analysis, nas]
 created: 2026-10-02
-status: complete
 ---
 
 # The four noise-series mice over 24 h (2026-10-01 21:00 → 10-02 21:02): full analysis

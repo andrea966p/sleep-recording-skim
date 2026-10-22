@@ -1,4 +1,8 @@
 ---
+type: procedure
+area: video-nvr
+status: planned
+status-note: "active"
 tags:
   - procedure
   - hardware-sync
@@ -6,7 +10,6 @@ tags:
   - bench-test
   - beginner
 created: 2026-06-29
-status: active
 ---
 
 # Hardware sync, first bench test: prove DO 03 (pin 22) is the recording gate — beginner walkthrough

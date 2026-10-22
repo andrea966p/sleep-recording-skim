@@ -1,7 +1,9 @@
 ---
+type: reference
+area: eeg-analysis
+status: active
 tags: [procedure, eeg, qc, figures, cards]
 created: 2026-08-09
-status: active
 ---
 
 # The animal card and the verdict ladder

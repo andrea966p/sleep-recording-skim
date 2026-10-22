@@ -1,8 +1,11 @@
 ---
+type: incident
+area: allego
+status: done
+status-note: "resolved"
 tags: [troubleshooting, incident, nvr, thermal, cpu, allegoserver]
-date: 2026-04-02
+created: 2026-04-02
 severity: high
-status: resolved
 affected: [e10ubuntu, nvr-server]
 ---
 

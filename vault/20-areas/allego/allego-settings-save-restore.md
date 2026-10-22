@@ -1,4 +1,8 @@
 ---
+type: procedure
+area: allego
+status: active
+status-note: "review"
 tags:
   - procedure
   - radiens
@@ -8,7 +12,6 @@ tags:
   - config
   - eeg
 created: 2026-07-13
-status: review
 ---
 
 # Allego Settings — Save & Restore (so we never re-enter the whole rig again)

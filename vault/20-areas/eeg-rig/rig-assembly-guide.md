@@ -1,4 +1,8 @@
 ---
+type: procedure
+area: eeg-rig
+status: active
+status-note: "complete"
 tags:
   - procedure
   - headstage
@@ -7,7 +11,6 @@ tags:
   - grounding
   - onboarding
 created: 2026-06-27
-status: complete
 ---
 
 # Rig Assembly Guide — Building the Recording Chain (Mouse → Allego)

@@ -1,8 +1,10 @@
 ---
+type: procedure
+area: computing
+status: active
 tags: [procedure, installation, monitoring, netdata, uptime-kuma]
 created: 2026-03-24
 updated: 2026-04-01
-status: production
 ---
 
 # Centralized Monitoring Setup (Netdata + Uptime Kuma)

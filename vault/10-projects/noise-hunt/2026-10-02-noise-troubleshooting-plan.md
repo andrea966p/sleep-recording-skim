@@ -1,7 +1,10 @@
 ---
+type: experiment
+area: noise-hunt
+status: active
+status-note: "planned"
 tags: [experiment, plan, noise, shielding, grounding, usb-isolator, faraday, slip-ring, tether, counterbalance, series]
 created: 2026-10-02
-status: planned
 ---
 
 # Noise troubleshooting plan: the next trials, with mice (from 2026-10-02)

@@ -1,8 +1,10 @@
 ---
+type: reference
+area: video-nvr
+status: active
 tags: [infrastructure, frigate, docker, golden-config]
 created: 2026-02-05
 updated: 2026-05-24
-status: production
 version: "5.2"
 ---
 

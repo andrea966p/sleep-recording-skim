@@ -1,7 +1,9 @@
 ---
+type: reference
+area: video-nvr
+status: planned
 tags: [infrastructure, hardware-sync, golden-config, gpio]
 created: 2026-04-13
-status: planned
 ---
 
 # Hardware Synchronization — XDAQ GPIO ↔ Raspberry Pi

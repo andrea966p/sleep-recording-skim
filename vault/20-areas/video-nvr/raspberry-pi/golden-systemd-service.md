@@ -1,7 +1,9 @@
 ---
+type: reference
+area: video-nvr
+status: active
 tags: [infrastructure, raspberry-pi, systemd, golden-config]
 created: 2026-02-04
-status: production
 version: "5.1"
 ---
 

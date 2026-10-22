@@ -1,7 +1,9 @@
 ---
+type: procedure
+area: allego
+status: active
 tags: [procedure, radiens, allego, signal-mapping, headstage, eeg, emg, eight-mouse, c3442]
 created: 2026-07-04
-status: active
 ---
 
 # 8-Mouse Acquisition Setup — Signal Map + Sensor Files + Channel Selection

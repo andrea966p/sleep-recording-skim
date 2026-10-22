@@ -1,7 +1,10 @@
 ---
+type: meeting
+area: rig-bringup
+status: done
+status-note: "current"
 tags: [report, eeg, emg, data-quality, scoring, impedance, noise, methods]
 created: 2026-08-03
-status: current
 audience: PI / lab meeting
 ---
 

@@ -1,7 +1,10 @@
 ---
+type: experiment
+area: rig-bringup
+status: done
+status-note: "active"
 tags: [experiment, eeg, impedance, tether, slip-ring, electrodes]
 created: 2026-08-05
-status: active
 ---
 
 # Tether comparison, 2026-08-05: does construction or the slip ring change the duty cycle?

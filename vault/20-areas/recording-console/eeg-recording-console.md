@@ -1,7 +1,9 @@
 ---
+type: procedure
+area: recording-console
+status: active
 tags: [procedure, eeg, allego, recording, console, automation, multi-user]
 created: 2026-09-11
-status: active
 ---
 
 # The EEG recording console — set up a run, leave the room, find your data on the NAS

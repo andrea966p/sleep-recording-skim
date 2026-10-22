@@ -1,7 +1,10 @@
 ---
-date: 2026-02-05
-status: testing
-type: optimization
+type: experiment
+area: video-nvr
+status: done
+status-note: "testing"
+type-note: "optimization"
+created: 2026-02-05
 components:
   - raspberry-pi
   - frigate

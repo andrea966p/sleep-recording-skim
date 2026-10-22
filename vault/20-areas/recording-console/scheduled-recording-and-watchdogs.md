@@ -1,7 +1,9 @@
 ---
+type: procedure
+area: recording-console
+status: active
 tags: [procedure, eeg, allego, recording, automation, monitoring]
 created: 2026-08-19
-status: active
 ---
 
 # Starting a recording on a schedule, unattended, and knowing it worked

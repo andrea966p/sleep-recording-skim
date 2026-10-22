@@ -1,4 +1,8 @@
 ---
+type: reference
+area: rig-expansion
+status: active
+status-note: "complete"
 tags:
   - reference
   - xdaq
@@ -9,7 +13,6 @@ tags:
   - channel-limits
   - one-plus
 created: 2026-07-28
-status: complete
 source: docs.kontex.io retrieved 2026-07-28 via curl + doc figure images
   (compatibility tables are IMAGES, not HTML text)
 ---

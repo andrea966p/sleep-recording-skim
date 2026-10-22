@@ -1,4 +1,8 @@
 ---
+type: incident
+area: eeg-rig
+status: active
+status-note: "complete"
 tags:
   - procedure
   - headstage
@@ -9,7 +13,6 @@ tags:
   - emg
   - onboarding
 created: 2026-06-27
-status: complete
 ---
 
 # Intan Headstage Troubleshooting — Symptom → Cause → Fix

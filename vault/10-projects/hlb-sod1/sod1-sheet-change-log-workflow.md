@@ -1,7 +1,10 @@
 ---
+type: procedure
+area: hlb-sod1
+status: active
+canonical: true
 tags: [procedure, sheet, hlb, sod1, nanotag, claude, canonical]
 created: 2026-10-19
-status: active
 ---
 
 # Changing the SOD1 intake sheet: the "Pending changes instructions" tab

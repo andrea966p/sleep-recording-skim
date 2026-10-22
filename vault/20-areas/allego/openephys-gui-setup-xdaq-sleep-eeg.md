@@ -1,4 +1,8 @@
 ---
+type: procedure
+area: allego
+status: active
+status-note: "draft-validated-1-headstage"
 tags:
   - procedure
   - open-ephys
@@ -9,7 +13,6 @@ tags:
   - acquisition
   - setup
 created: 2026-07-23
-status: draft-validated-1-headstage
 ---
 # Open Ephys GUI Setup for the XDAQ Core (Sleep EEG/EMG)
 

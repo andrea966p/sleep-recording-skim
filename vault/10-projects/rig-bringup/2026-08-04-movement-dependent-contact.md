@@ -1,7 +1,9 @@
 ---
+type: experiment
+area: rig-bringup
+status: done
 tags: [experiment, eeg, electrodes, impedance, contact, intermittency]
 created: 2026-08-04
-status: completed
 ---
 
 # 2026-08-04 — The electrodes are good. The contact is intermittent. The trigger is unknown.

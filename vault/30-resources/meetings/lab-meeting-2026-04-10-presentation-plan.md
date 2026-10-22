@@ -1,3 +1,8 @@
+---
+type: meeting
+area: video-nvr
+status: done
+---
 # Lab Meeting Presentation Outline — NeuroSurveillance System
 
 **Presenter**: Andrea

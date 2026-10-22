@@ -1,4 +1,7 @@
 ---
+type: hub
+area: rig-expansion
+status: active
 tags:
   - hub
   - moc
@@ -10,7 +13,6 @@ tags:
   - acquisition
   - procurement
 created: 2026-07-28
-status: live
 note_type: map-of-content
 ---
 # ⭐ RIG EXPANSION HUB — 8 → 32 Mice

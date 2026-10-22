@@ -1,7 +1,10 @@
 ---
+type: procedure
+area: eeg-analysis
+status: active
+status-note: "complete"
 tags: [procedure, eeg, analysis, python, environment, onboarding]
 created: 2026-06-30
-status: complete
 ---
 
 # 01 — Environment Setup (the one analysis venv)

@@ -1,7 +1,10 @@
 ---
+type: procedure
+area: nanotag
+status: active
+canonical: true
 tags: [procedure, nanotag, sleep, activity, nas, analysis, canonical]
 created: 2026-10-05
-status: active
 ---
 
 # Nanotag studies: recording, read-out, NAS upload and analysis

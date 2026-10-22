@@ -1,4 +1,8 @@
 ---
+type: hub
+area: eeg-rig
+status: active
+status-note: "complete"
 tags:
   - procedure
   - operator-manual
@@ -10,7 +14,6 @@ tags:
   - sleep
   - onboarding
 created: 2026-06-27
-status: complete
 ---
 
 # Sleep-Recording Operator Manual (Intan RHD2216 + NeuroNexus Allego)

@@ -1,4 +1,7 @@
 ---
+type: procedure
+area: video-nvr
+status: active
 tags:
   - procedure
   - installation
@@ -6,7 +9,6 @@ tags:
   - watchdog
 created: '2026-05-25'
 updated: '2026-05-25'
-status: active
 ---
 
 # Watchdog → Slack Bridge (`nvr-mqtt-slack.service`)

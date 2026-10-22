@@ -1,4 +1,7 @@
 ---
+type: reference
+area: video-nvr
+status: active
 tags: [reference, video, configuration]
 created: 2026-02-05
 ---

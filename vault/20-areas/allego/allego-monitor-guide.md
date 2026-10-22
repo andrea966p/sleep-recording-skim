@@ -1,4 +1,8 @@
 ---
+type: procedure
+area: allego
+status: active
+status-note: "complete"
 tags:
   - procedure
   - radiens
@@ -7,7 +11,6 @@ tags:
   - signal-quality
   - onboarding
 created: 2026-06-27
-status: complete
 ---
 
 # Allego Monitor Tab — Reading the Live Signal

@@ -1,8 +1,10 @@
 ---
+type: reference
+area: video-nvr
+status: active
 tags: [infrastructure, session-daemon, architecture]
 created: 2026-02-20
 updated: 2026-05-24
-status: production
 version: "3.0"
 ---
 

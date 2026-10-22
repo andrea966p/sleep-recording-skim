@@ -1,7 +1,9 @@
 ---
+type: experiment
+area: hlb-sod1
+status: done
 tags: [experiment, eeg, emg, S-SD, screen, completed]
 created: 2026-08-27
-status: complete
 recording: allego_0__uid0824-17-56-51
 cohort: S-SD
 ---

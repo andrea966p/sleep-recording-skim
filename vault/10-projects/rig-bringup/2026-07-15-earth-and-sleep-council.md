@@ -1,9 +1,12 @@
 ---
+type: decision
+area: rig-bringup
+status: done
+status-note: "open (superseded in priority by the FOIL discovery same evening — see [[headstage-shielding-faraday-foil]])"
+type-note: "technical-review"
 tags: [decision, council, audit, review, eeg, grounding, sleep-scoring]
 date: 2026-07-15
 created: 2026-07-15
-type: technical-review
-status: open (superseded in priority by the FOIL discovery same evening — see [[headstage-shielding-faraday-foil]])
 sourced-from: 04-journal/2026-07/2026-07-15.md
 ---
 

@@ -1,4 +1,7 @@
 ---
+type: procedure
+area: eeg-rig
+status: active
 tags: [procedure, eeg, qc, recording]
 created: 2026-08-29
 ---

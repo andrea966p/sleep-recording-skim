@@ -1,4 +1,8 @@
 ---
+type: reference
+area: video-nvr
+status: done
+status-note: "draft"
 tags:
   - infrastructure
   - hardware-sync
@@ -6,7 +10,6 @@ tags:
   - email
   - draft
 created: '2026-05-26T00:00:00.000Z'
-status: draft
 ---
 
 # NeuroNexus / KONTEX Inquiry — XDAQ Core2 Digital I/O

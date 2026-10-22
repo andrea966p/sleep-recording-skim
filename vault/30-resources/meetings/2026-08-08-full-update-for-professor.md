@@ -1,7 +1,9 @@
 ---
+type: meeting
+area: rig-bringup
+status: done
 tags: [status, eeg, report, professor, troubleshooting, analysis, claims]
 created: 2026-08-08
-status: complete
 ---
 
 # The test mice, start to finish: the rig, the troubleshooting, and what the data can and cannot say

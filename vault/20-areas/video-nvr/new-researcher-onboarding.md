@@ -1,8 +1,10 @@
 ---
+type: procedure
+area: video-nvr
+status: active
 tags: [procedure, onboarding]
 created: 2026-05-21
 updated: 2026-05-24
-status: production
 audience: new-lab-member
 ---
 

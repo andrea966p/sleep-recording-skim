@@ -1,8 +1,11 @@
 ---
+type: incident
+area: eeg-analysis
+status: done
+status-note: "fixed"
 tags: [troubleshooting, symptom, eeg, qc, verdict-ladder, floor, fixed]
 created: 2026-09-26
 first_observed: 2026-08-27
-status: fixed
 fixed: 2026-09-26
 affects: [S-SL, W-SL, S-SD]
 ---

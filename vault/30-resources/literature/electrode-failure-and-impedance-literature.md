@@ -1,7 +1,9 @@
 ---
+type: reference
+area: eeg-rig
+status: active
 tags: [decision, eeg, impedance, electrodes, literature, methods, critical]
 created: 2026-08-03
-status: active
 priority: critical
 ---
 

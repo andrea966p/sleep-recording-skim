@@ -1,7 +1,9 @@
 ---
+type: procedure
+area: recording-console
+status: active
 tags: [procedure, eeg, allego, recording, console, runbook, recovery, startup]
 created: 2026-09-13
-status: active
 ---
 
 # Starting everything after a restart, a crash, or a screen that went black

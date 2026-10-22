@@ -1,7 +1,9 @@
 ---
+type: decision
+area: video-nvr
+status: active
 tags: [decision, hardware-sync, frigate, recording, video-eeg-sync]
 created: 2026-07-27
-status: open
 ---
 
 # Video-EEG Sync — The Recording Toggle Is Not Sync-Capable

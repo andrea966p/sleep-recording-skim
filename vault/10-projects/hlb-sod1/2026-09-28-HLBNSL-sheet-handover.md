@@ -1,7 +1,9 @@
 ---
+type: procedure
+area: hlb-sod1
+status: done
 tags: [handover, nanotag, sheet, NS-SL, NW-SL]
 created: 2026-09-28
-status: complete
 ---
 
 > [!note] Filed in the vault 2026-10-05

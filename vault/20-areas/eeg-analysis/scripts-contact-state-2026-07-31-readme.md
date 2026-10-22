@@ -1,7 +1,11 @@
 ---
+type: reference
+area: eeg-analysis
+status: superseded
+status-note: "active"
+superseded-by: "[[eeg-pipeline-manual]]"
 tags: [scripts, eeg, contact-intermittency, methods, xdat]
 created: 2026-08-01
-status: active
 ---
 
 # Contact-state analysis scripts (2026-07-31 / 2026-08-01)

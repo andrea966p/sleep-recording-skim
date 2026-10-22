@@ -1,7 +1,9 @@
 ---
+type: procedure
+area: video-nvr
+status: planned
 tags: [infrastructure, hardware-sync, wiring, gpio]
 created: 2026-04-13
-status: planned
 ---
 
 # XDAQ ↔ Raspberry Pi Wiring Guide

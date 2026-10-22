@@ -1,8 +1,10 @@
 ---
+type: incident
+area: eeg-analysis
+status: active
 tags: [troubleshooting, symptom, eeg, emg, qc, verdict-ladder, open]
 created: 2026-09-26
 first_observed: 2026-09-01
-status: open
 affects: [S-SD]
 ---
 

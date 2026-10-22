@@ -1,7 +1,9 @@
 ---
+type: reference
+area: video-nvr
+status: active
 tags: [infrastructure, session-daemon, systemd, production]
 created: 2026-02-23
-status: production
 version: "1.1"
 ---
 

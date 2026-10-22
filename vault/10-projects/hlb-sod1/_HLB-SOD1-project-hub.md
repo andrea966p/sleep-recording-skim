@@ -1,7 +1,9 @@
 ---
+type: hub
+area: hlb-sod1
+status: active
 tags: [hub, project, hlb, sod1, sleep, eeg, nanotag]
 created: 2026-10-06
-status: active
 ---
 
 # HLB SOD1 project hub: what the project is, what was tried, where it stands

@@ -1,4 +1,8 @@
 ---
+type: reference
+area: rig-expansion
+status: done
+status-note: "replied"
 tags:
   - infrastructure
   - hardware-sync
@@ -7,7 +11,6 @@ tags:
   - inquiry
   - scale-up
 created: 2026-07-21
-status: replied
 sent: 2026-07-22
 replied: 2026-07-23
 followup_drafted: 2026-07-23

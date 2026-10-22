@@ -1,7 +1,11 @@
 ---
+type: experiment
+area: rig-bringup
+status: superseded
+status-note: "active"
+superseded-by: "[[2026-08-01-channel-mapping-correction-first-sleep]]"
 tags: [decision, eeg, 60hz, impedance, electrode-contact, intermittency, no-wire-control, critical]
 created: 2026-07-31
-status: active
 priority: critical
 ---
 

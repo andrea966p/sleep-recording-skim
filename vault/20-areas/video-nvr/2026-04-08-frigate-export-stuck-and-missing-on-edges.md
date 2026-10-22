@@ -1,8 +1,11 @@
 ---
+type: incident
+area: video-nvr
+status: active
+status-note: "partially-resolved"
 tags: [troubleshooting, incident, frigate, neurosurveillance, daemon, export]
-date: 2026-04-08
+created: 2026-04-08
 severity: medium
-status: partially-resolved
 affected: [e10ubuntu, frigate, neurosurveillance-session-daemon]
 ---
 

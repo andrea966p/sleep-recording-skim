@@ -1,7 +1,9 @@
 ---
+type: experiment
+area: hlb-sod1
+status: done
 tags: [experiment, eeg, emg, W-SD, cohort, closeout, completed]
 created: 2026-08-29
-status: complete
 cohort: W-SD
 batch_status: SAMPLED 2026-08-28
 ---

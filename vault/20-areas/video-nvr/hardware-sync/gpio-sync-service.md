@@ -1,7 +1,9 @@
 ---
+type: reference
+area: video-nvr
+status: planned
 tags: [infrastructure, hardware-sync, gpio, systemd, golden-config]
 created: 2026-04-13
-status: planned
 ---
 
 # GPIO Sync Listener — Service Configuration

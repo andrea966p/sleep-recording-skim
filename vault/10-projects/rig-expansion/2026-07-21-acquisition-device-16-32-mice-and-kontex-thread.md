@@ -1,7 +1,10 @@
 ---
+type: decision
+area: rig-expansion
+status: done
+status-note: "open"
 tags: [ decision, hardware, xdaq, kontex, acquisition, scale-up, email-log ]
 created: 2026-07-21
-status: open
 ---
 
 # Acquisition Device for 16 (→32) Mice + Kontex Email Thread (Jul 2026)

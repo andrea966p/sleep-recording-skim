@@ -1,4 +1,8 @@
 ---
+type: reference
+area: allego
+status: active
+status-note: "complete"
 tags:
   - reference
   - radiens
@@ -6,7 +10,6 @@ tags:
   - neuronexus
   - manual
 created: 2026-06-19
-status: complete
 role: PRIMARY reference for the Radiens / Allego software
 source: NeuroNexus — Radiens Technical Documentation (©2025, 177 pp)
 ---

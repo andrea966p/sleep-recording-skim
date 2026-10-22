@@ -1,7 +1,9 @@
 ---
+type: procedure
+area: data-storage
+status: active
 tags: [infrastructure, backup, nas, eeg, archive]
 created: 2026-08-19
-status: active
 ---
 
 # Raw recording archive to the NAS

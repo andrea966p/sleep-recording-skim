@@ -1,7 +1,11 @@
 ---
+type: reference
+area: video-nvr
+status: superseded
+status-note: "complete"
+superseded-by: "[[xdaq-core-gen1-ubuntu-driver]]"
 tags: [infrastructure, hardware-sync, reference, kontex, libxdaq, driver, thunderbolt]
 created: 2026-05-28T00:00:00.000Z
-status: complete
 source: https://developer.kontex.io/libxdaq-docs/index.html
 ---
 

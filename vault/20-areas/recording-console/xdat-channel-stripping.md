@@ -1,7 +1,9 @@
 ---
+type: procedure
+area: recording-console
+status: active
 tags: [procedure, eeg, xdat, allego, storage, data-management, analysis]
 created: 2026-09-11
-status: active
 ---
 
 # Stripping an XDAT recording down to the channels that were actually wired

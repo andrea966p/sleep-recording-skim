@@ -1,7 +1,9 @@
 ---
+type: reference
+area: eeg-rig
+status: active
 tags: [procedure, eeg, emg, signal-quality, mains-hum, 60hz, critical, discovery]
 created: 2026-07-05
-status: active
 priority: critical
 ---
 

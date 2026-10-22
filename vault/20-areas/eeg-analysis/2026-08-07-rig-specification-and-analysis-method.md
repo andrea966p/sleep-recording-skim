@@ -1,7 +1,9 @@
 ---
+type: decision
+area: eeg-analysis
+status: active
 tags: [decision, eeg, rig, specification, analysis-method, synthesis]
 created: 2026-08-07
-status: current
 ---
 
 # The rig specification and the analysis method, as established by evidence

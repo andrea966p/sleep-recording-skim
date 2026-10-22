@@ -1,7 +1,9 @@
 ---
+type: experiment
+area: rig-bringup
+status: done
 title: A2, the control mouse, 48 hours, two complete circadian cycles
-date: 2026-08-11
-status: completed
+created: 2026-08-11
 tags: [eeg, emg, control, circadian, recording, reference]
 ---
 

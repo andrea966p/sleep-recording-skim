@@ -1,7 +1,9 @@
 ---
+type: experiment
+area: hlb-sod1
+status: done
 tags: [experiment, eeg, emg, W-SD, sleep-deprivation, completed]
 created: 2026-08-28
-status: complete
 batch_status: SAMPLED 2026-08-28
 recording: allego_2__uid0827-12-58-32
 cohort: W-SD
