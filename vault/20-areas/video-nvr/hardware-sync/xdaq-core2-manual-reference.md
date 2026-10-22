@@ -10,7 +10,7 @@ tags:
   - manual
   - xdaq
   - pinout
-created: 2026-05-27T00:00:00.000Z
+created: 2026-05-27
 source: https://docs.kontex.io/XDAQ/CORE2/#xdaqtm-db25-io-connector-pinout
 ---
 

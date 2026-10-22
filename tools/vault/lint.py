@@ -107,7 +107,8 @@ def main():
                     or (top == "30-resources" and f.split("/")[1] in RESOURCE_SUBS))
         if not ok_place:
             err["note outside the skeleton"].append(f)
-        if f.startswith(("_templates/", "_meta/", "_bases/", "90-archive/")) or f in ROOT_FILES:
+        if f.startswith(("_templates/", "_meta/", "_bases/", "90-archive/")) or f in ROOT_FILES \
+                or f == "04-journal/_JOURNAL-INDEX.md":
             continue
         fm = frontmatter(text)
         if fm is None or fm == "INVALID":

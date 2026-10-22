@@ -9,7 +9,7 @@ tags:
   - vendor
   - email
   - draft
-created: '2026-05-26T00:00:00.000Z'
+created: 2026-05-26
 ---
 
 # NeuroNexus / KONTEX Inquiry — XDAQ Core2 Digital I/O
