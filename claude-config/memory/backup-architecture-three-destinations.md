@@ -1,52 +1,12 @@
 ---
 name: backup-architecture-three-destinations
-description: "The three backup destinations and their one job each, plus the ntfy switch — set 2026-09-20"
+description: "Three backup destinations, one job each (settled 2026-09-20): bilab NAS = rebuild the rig, SKIM NAS = working copy NOT a backup, S3 = survive the fire; nvr-notify.sh pushes to ntfy."
 metadata:
   type: project
 ---
 
-Settled **2026-09-20**. Full page: `20-areas/data-storage/backup-architecture.md` — the
-"where does X live?" table lives there, not here.
+**Settled 2026-09-20.** bilab NAS (21 TB) = how to rebuild the rig (repo, settings, daemon state, Frigate config, no bulk data; nightly 00:00, keep 3 tarballs, skips unchanged nights since 2026-09-26). SKIM NAS (7 TB) = what the lab works on today (stripped xdat, written on recording stop). AWS S3 = what survives the building burning down (raw + stripped xdat, nightly 01:30). 🔑 The SKIM NAS is NOT a backup. Video will dominate (~0.32 GB/h/camera, ~930 GB/month for 4 chambers); the video uploader is deliberately not built until cameras return.
 
-| Destination | Its ONE job |
-|---|---|
-| **bilab NAS** (21 TB) | *how to rebuild the rig* — repo, settings, daemon state, Frigate config. **No bulk data.** Nightly 00:00, keep 3 tarballs. |
-| **SKIM NAS** (7 TB) | *what the lab works on today* — stripped xdat, students, protocols. Written on recording stop. |
-| **AWS S3** | *what survives the building burning down* — raw + stripped xdat, video later. Nightly 01:30. |
+Details: [[backup-architecture]] (also [[radix-s3-archive]], [[nas-backup]])
 
-🔑 **The SKIM NAS is NOT a backup.** It is the working copy. A file only there has
-one copy. [[raw-data-had-no-offsite-copy-since-aug19]]
-
-🔴 **The premise "e10 lost access to the bilab NAS" was FALSE** — checked
-2026-09-20: reachable, active direct Tailscale link, and the nightly backup had
-succeeded that very morning. All three tailnets are already cross-shared into
-e10's: `skimlab.kaist@` (e10), `bilab.kaist@` (bilab NAS), `sleepigene@` (SKIM NAS).
-**Verify reachability before planning any "reconnect" work.**
-
-✅ **`nvr-notify.sh` now pushes to ntfy, not Slack** — same topic Netdata and Uptime
-Kuma use (`DEFAULT_RECIPIENT_NTFY` in `/etc/netdata/health_alarm_notify.conf`).
-One file, **7 callers** benefit. `fail` uses priority `max` to bypass Do Not
-Disturb. Still always `exit 0` — a broken notifier must never take down a backup.
-`NVR_NOTIFY_SLACK=1` falls back to the still-live Slack webhook.
-🔴 Recipient must be the **full URL**; a bare topic silently fails as a hostname lookup.
-⚠️ `SEND_SLACK="NO"` in the netdata conf only disables *netdata's own* Slack path —
-`nvr-notify.sh` read that URL directly, so Slack was never actually broken.
-
-✅ `nas-backup.sh` had **zero** notifications for its whole life; now has 4 (tar
-failed, NAS unreachable, upload corrupt, success).
-
-⚠️ **Video will dominate everything**: measured **~0.32 GB/h/camera**, so 4 chambers
-continuous = **~31 GB/day, ~930 GB/month**. Structure decided
-(`video/<researcher>/<mouse>/<date>/`, source `/opt/neurosurveillance/exports/`,
-never `/srv/frigate/storage/`), **uploader deliberately NOT built** until cameras
-return. [[radix-s3-offsite-archive]]
-
-✅ **2026-09-26: bilab NAS skips unchanged nights** (fingerprint `~/.cache/nas-backup.fingerprint`,
-ignores `deploy/logs/` + `.git/FETCH_HEAD` churn). Still runs during recordings, by
-user decision. S3 got a fast path + 30 min settle guard [[radix-s3-offsite-archive]].
-SKIM NAS already event-driven, unchanged.
-
-
-## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
-
-- ✅⭐⭐⭐ **[BACKUP ARCHITECTURE: 3 DESTINATIONS, ONE JOB EACH — 2026-09-20](backup-architecture-three-destinations.md). NEWEST.** bilab NAS = rebuild the rig · SKIM NAS = **working copy, NOT a backup** · S3 = survive the fire. 🔴 "e10 lost the bilab NAS" was FALSE — verify before planning a reconnect. ✅ `nvr-notify.sh` → **ntfy** for all 7 scripts. ⚠️ Video ≈ **930 GB/month** once cameras return.
+🔴 The premise "e10 lost access to the bilab NAS" was FALSE (checked 2026-09-20): verify reachability before planning any "reconnect" work. `nvr-notify.sh` pushes to ntfy (same topic as Netdata and Uptime Kuma), `fail` uses priority `max`, it always `exit 0`; the recipient must be the FULL URL (a bare topic silently fails as a hostname lookup).

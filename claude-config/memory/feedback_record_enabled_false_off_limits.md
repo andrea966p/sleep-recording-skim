@@ -13,6 +13,6 @@ Do not propose setting `record.enabled: false` in Frigate's config.yml as a fix 
 
 **How to apply:** When investigating "Frigate restart causes unwanted recordings," skip the obvious `record.enabled: false` suggestion. Look instead at:
 1. Preventing the restart trigger (e.g., `apt-mark hold` on docker packages — done 2026-05-20)
-2. Strengthening the daemon's existing startup guard (10s grace period + `_last_known_state` check documented in `20-areas/video-nvr/session-daemon/architecture.md`) — this guard failed on 2026-05-20 16:28 cold start (see [[project-daemon-startup-guard-regression]])
+2. Strengthening the daemon's existing startup guard (10s grace period + `_last_known_state` check documented in `20-areas/video-nvr/session-daemon/architecture.md`) — this guard failed on 2026-05-20 16:28 cold start (see [[2026-05-20-docker-upgrade-and-startup-guard-regression]])
 
-Related: [[project-docker-upgrade-recordings]]
+Related: [[project_docker_upgrade_recordings]]

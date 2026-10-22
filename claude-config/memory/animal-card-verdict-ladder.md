@@ -1,6 +1,6 @@
 ---
 name: animal-card-verdict-ladder
-description: "The ANIMAL CARD + six-rung VERDICT LADDER is now the analysis entry point; code consolidated into eeg-emg-analysis, cohort HLB-fem-profsurgery-troubleshooting"
+description: "The animal card + six-rung verdict ladder is the analysis entry point; core/qc_thresholds.py and core/criteria.py are the only engines. The 'three suites all green = contract' claim is stale (2026-10-22)."
 metadata: 
   node_type: memory
   type: project
@@ -8,49 +8,8 @@ metadata:
   modified: 2026-08-09T02:15:54.458Z
 ---
 
-Built 2026-08-09. Replaces "run a script and squint" with one A4 page + JSON per
-animal-recording. **Start at vault `20-areas/eeg-analysis/animal-card-and-verdict-ladder.md`.**
+**Built 2026-08-09.** One A4 card + JSON per animal-recording. Rungs: 0 FILE, 1 IDENTITY, 2 CONNECTION, 3 SCOREABILITY, 4 ARCHITECTURE (always PROVISIONAL until a kappa), 5 EXPORT; a rung whose predecessor failed reads BLOCKED and draws no panel; INSUFFICIENT ("could not ask") is distinct from FAIL. `core/qc_thresholds.py` is the ONLY constants file and `core/criteria.py` the ONLY usable-fraction engine. Rung 2 gates on the LONGEST UNBROKEN BLOCK (>= 15 min), not the total fraction. The animal (cohort manifest `cohorts/*.yaml`), not the rig position, is the key. Hard errors: the HUM criterion is refused when it contradicts SLOPE (EEG roles only); SLOPE is refused on non-EEG roles.
 
-**Rungs:** 0 FILE · 1 IDENTITY · 2 CONNECTION · 3 SCOREABILITY · 4 ARCHITECTURE
-(always PROVISIONAL until a kappa) · 5 EXPORT. 🔑 **A rung is not evaluated if the
-one below failed — it reads BLOCKED and NO PANEL IS DRAWN.** INSUFFICIENT ("could
-not ask") is deliberately distinct from FAIL.
+Details: [[animal-card-and-verdict-ladder]]
 
-**Code moved out of the vault** to `~/sleep-recording-skim/eeg-emg-analysis/`:
-`core/qc_thresholds.py` is the ONLY constants file (vault copies archived at
-`99-archive/2026-08-09-pipeline-moved-to-repo/`); `core/criteria.py` is the ONLY
-usable-fraction engine (was 3 copies) and filter chain (was 5). Reconciled:
-`IMP_CONNECTED_MOHM` 2.0 → **0.5**; `EPOCH_S` split into `EPOCH_S_STAGING=4` and
-`EPOCH_S_QC=10`.
-
-🔴 **Two guards that fire as hard errors:** the HUM criterion is refused when it
-contradicts SLOPE (the no-ground signature) — **but only on EEG roles**, because
-a healthy EMG is also quiet+flat; and SLOPE is refused on any non-EEG role.
-
-🔑 **Rung 2 gates on LONGEST UNBROKEN BLOCK (≥15 min), not on total fraction.** A
-fraction gate rejects C1 on 2026-07-31 (30.3% usable, but one 485.7 min block =
-the project's only real sleep).
-
-⭐ **Cohort manifest `cohorts/HLB-fem-profsurgery-troubleshooting.yaml`** makes the
-ANIMAL the key, not the rig position — B1 was two different mice. Tether-arm
-placements carry a TIME (D2's arm C swap was 16:27 on 08-06, between two
-recordings that day). Husbandry fields are nearly all "not recorded" and the card
-says so on every page; join a sheet with `--husbandry x.xlsx`.
-
-**Three test suites, all green, and they are the contract:**
-`tests/test_criteria_regression.py` reproduces every published number exactly
-(floor 415.02 µV / 953,904 measurements; B1 99.62% / 215.80 min; D2 86.54% /
-87.30 min). `tests/test_ladder_verdicts.py` reproduces the vault's scoreable set
-16/16. **Any movement is a bug, not an improvement.**
-
-Outputs: `cards/out/<cohort>/` (32 card JSON + PNG/PDF), cohort sheet, and
-generated report `20-areas/eeg-analysis/2026-08-09-HLB-cohort-report-generated.md`
-(NO typed-in numbers — regenerate with `cards/report_cohort.py`).
-
-Related: [[eeg-analysis-pipeline]] · [[recording-usable-fraction-analysis]] ·
-[[ground-fix-worked-2026-08-08]]
-
-
-## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
-
-- ⭐⭐⭐ **[ANIMAL CARD + VERDICT LADDER](animal-card-verdict-ladder.md). READ BEFORE ANY ANALYSIS OR FIGURE.** Six rungs. `core/qc_thresholds.py` + `core/criteria.py` are the only engines. Rung 2 gates on longest unbroken block ≥15 min.
+⚠️ STALE in the original: "three test suites, all green, and they are the contract". On 2026-10-22 the regression and ladder suites verified NOTHING on e10 (their fixtures exist only in S3; vault contradiction EA-2). Any movement in a published number is still a bug to explain, not an improvement, but it cannot be checked by those suites here.

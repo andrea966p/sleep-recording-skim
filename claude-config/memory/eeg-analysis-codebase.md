@@ -7,6 +7,8 @@ metadata:
   originSessionId: 87b56c60-b78e-4a98-83a2-e0bd910a1986
 ---
 
+> **STALE (2026-10-22), DELETION PROPOSED.** Describes the 2026-07-18 codebase (4 rows per mouse, EEG/EMG differenced OFFLINE, `sleep/` module, EMG 10-100 Hz, `MA1..MD2` names). The signals are bipolar on the chip ([[CANONICAL-allego-channel-selection]]) and half of that repo (`core/config.py`, `core/channel_map.py`, `sleep/`) was deleted 2026-08-11 ([[2026-08-11-analysis-stack-consolidation]], vault contradiction EA-13). Current names are `port{P}-slot{S}` ([[eeg-pipeline-manual]]). Never subtract EEG from EMG.
+
 **Strong checkpoint 2026-07-18.** New standalone analysis codebase at
 `sleep-recording-skim/eeg-emg-analysis/` (Python-only, VSCode/MATLAB-openable), replacing the
 stale vault scripts under `02-procedures/eeg-data-analysis/scripts/` (those archived to

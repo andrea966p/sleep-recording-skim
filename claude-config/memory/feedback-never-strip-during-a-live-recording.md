@@ -28,7 +28,7 @@ any manual strip after it finishes. A dry run is fine; the real thing waits.
 ⚠️ The automatic strip keeps only the run's frozen `keep_labels` — the 16 wired
 channels — so the stripped copy has **no wire-free floor** and can never be QC'd
 by this project's own criterion. The original on the rig is the record of truth.
-See [[skim-nas-smb-and-channel-stripper]].
+See [[skim-nas-smb-and-channel-stripper]]. Vault copy of the rule: [[xdat-channel-stripping]] section 5b.
 
 
 ## From the memory index, trimmed there 2026-10-06 (kept here verbatim)

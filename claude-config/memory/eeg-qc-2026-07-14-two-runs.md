@@ -7,6 +7,8 @@ metadata:
   originSessionId: b09f2ba3-d823-4258-b11c-cbced541c54f
 ---
 
+> **STALE (2026-10-22), DELETION PROPOSED.** The last paragraph ("VALIDATED same day, fix CONFIRMED") was withdrawn: it rested on one ~42 s single-electrode clip, not a controlled before/after ([[2026-07-15-earth-and-sleep-council]], [[earthing-60hz-hum-fix]] retracted entirely as the wrong device; vault contradiction RB-3). The facts and the `multimouse_scan.py` tool are in journal [[2026-07-14]]; the tool's defects are in [[scripts-archive-pre-sleep64-readme]]. "Which mouse = which cable" is UNANSWERABLE from that data.
+
 Post-processed two recordings on 2026-07-14. Both UNUSABLE, NOT scoreable, same floating-ground 60 Hz disease as the [[eeg-72h-4mouse-2026-07-10]] audit. Earthing fix STILL not applied before either run.
 
 **Files** (both 1000 S/s, 262 sig = 256 pri (4 ports×64) + aux/din/dout):

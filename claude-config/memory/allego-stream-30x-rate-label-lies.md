@@ -1,6 +1,6 @@
 ---
 name: allego-stream-30x-rate-label-lies
-description: Allego reported sample_freq 1000 while the XDAQ streamed at 30 kHz (stream time 30x wall clock); Monitor froze. Label check is not enough.
+description: "2026-09-30: Allego reported sample_freq 1000 while the XDAQ streamed at 30 kHz (stream time 30x wall clock); Monitor froze. Measure stream.time_range vs wall clock before recording."
 metadata:
   node_type: memory
   type: project
@@ -8,21 +8,8 @@ metadata:
   modified: 2026-09-30T10:32:16.527Z
 ---
 
-2026-09-30 ~15:20 KST, after a fresh Allego launch: `get_status().sample_freq == 1000.0`, XDAQ_ONE_REC,
-ports A/B 64 ch — yet `stream.time_range` advanced **150 s per 5 s of wall clock (30x)**, i.e. the box
-was still at the fresh-launch 30 kHz ([[allego-mesa-gpu-crash-and-log-storm]]). Symptom Andrea saw:
-Monitor draws, then freezes. By 19:06 (after Andrea re-streamed) rate was 1.0x and a 15 min console run
-gave 898,688 samples in 898 s.
+**2026-09-30:** after a fresh Allego launch `get_status().sample_freq == 1000.0` (XDAQ_ONE_REC, ports A/B 64 ch) while `stream.time_range` advanced 150 s per 5 s of wall clock (30x): the box was still at the fresh-launch 30 kHz. Symptom: Monitor draws, then freezes. The console's `allego.py` pre-flight compared only the label, so it would have passed a 30x stream and written a wrong-rate header (a rate check in the console pre-flight was not built as of 2026-09-30).
 
-**Why:** the eeg-recorder `allego.py` pre-flight checks only the `sample_freq` label, so it would pass
-a 30x stream and record a file with a wrong-rate header.
+Details: [[allego-stream-30x-rate-label-lies]]
 
-**How to apply:** before any recording after an Allego launch, stream ~10 s and compare
-`time_range[1]` delta to wall clock (must be ~1.0x). If 30x: stop stream, set another rate, set 1 kHz
-again, restream; else relaunch Allego and set 1 kHz + XDAQ ONE REC before Stream. A rate check in the
-console pre-flight is not built yet.
-
-
-## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
-
-- 🔴⭐⭐⭐ **[STREAM RAN 30× REAL TIME WHILE ALLEGO SAID 1000 Hz — 2026-09-30](allego-stream-30x-rate-label-lies.md). NEWEST.** Monitor freezes. Box kept fresh-launch 30 kHz. Console checks only the label ⇒ measure `stream.time_range` vs wall clock (~1.0×) before recording.
+How to apply: before any recording after an Allego launch, stream ~10 s and compare the `time_range[1]` delta to wall clock (must be ~1.0x). If 30x: stop stream, set another rate, set 1 kHz again, restream; otherwise relaunch Allego and set 1 kHz + XDAQ ONE REC before Stream.
