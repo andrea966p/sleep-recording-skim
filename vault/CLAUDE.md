@@ -1,153 +1,136 @@
-# CLAUDE.md
+# CLAUDE.md — rules for this vault
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This is the SKIM sleep lab's knowledge base (KAIST): mouse sleep EEG/EMG recording,
+its analysis, the HLB SOD1 study, nanotag activity loggers, the video NVR, and the
+machines behind them. It is an Obsidian vault inside the git repo `sleep-recording-skim`.
+Humans read it in Obsidian; agents read and write the markdown. **The vault is the single
+source of truth.** Claude's memory files only point here and hold behaviour rules.
 
-## Repository Overview
+Start every session at [[HOME]]. Rebuilt 2026-10-22; the old index is in `90-archive/`.
 
-This is an **Obsidian vault** for documenting a neuroscience surveillance system. It tracks configuration, procedures, and operational knowledge for a Raspberry Pi 5 + Frigate NVR video monitoring setup used in neuroscience research.
+## Layout
 
-**Key Infrastructure:**
-- **Raspberry Pi 5** (`192.168.0.11`) running go2rtc (dual camera RTSP streaming)
-- **ASUS Mini PC** (`192.168.0.50`) running Frigate NVR (Docker-based video processing)
-- **One git repository** (`sleep-recording-skim`) holds this vault and all the code; every machine clones it and syncs by hand with `./skim`. Syncthing is RETIRED.
-- **Tailscale** for remote access
+| Folder | Holds |
+|---|---|
+| `HOME.md` | front door: areas, projects, where to put things |
+| `00-inbox/` | anything not yet filed. New notes land here by default |
+| `04-journal/YYYY-MM/YYYY-MM-DD.md` | one note per working day |
+| `10-projects/<key>/` | time-bound efforts with a goal and an end: `hlb-sod1`, `rig-expansion`, `rig-bringup`, `noise-hunt`, `unipolar-lfp` |
+| `20-areas/<key>/` | systems we keep running: `eeg-rig`, `allego`, `recording-console`, `eeg-analysis`, `sleep-scoring`, `nanotag`, `data-storage`, `computing`, `video-nvr` |
+| `30-resources/` | `literature/`, `vendors/` (emails, call preps, quotes), `meetings/` (lab meetings, reports for the professor), `datasheets/` (PDFs, sensor maps) |
+| `90-archive/` | pre-2026-10-22 navigation pages and content archived before the rehaul |
+| `_attachments/` | every image and figure file, flat. Never overwrite one: date-prefix new names |
+| `_templates/`, `_bases/`, `_meta/` | templates, Bases views, rehaul and lint records |
 
-## Documentation Architecture
+Every project and area folder has one hub, `_<key>-hub.md`. A folder never encodes status:
+a finished project stays where it is with `status: done`.
 
-### Folder Structure
-```
-00-config/              # Production values (IPs, paths, credentials)
-01-infrastructure/      # Golden configs (go2rtc, systemd, boot settings)
-  raspberry-pi/         # Pi-specific configs (H.264 only, no H.265!)
-  frigate/              # Frigate Docker configs
-02-procedures/          # Step-by-step operational guides
-03-troubleshooting/     # Incident reports and symptom lookup
-04-journal/            # Daily work logs (organized by month)
-05-experiments/        # Research experiment documentation
-06-references/          # Cross-cutting patterns + cheatsheets
-07-decisions/           # Architectural reviews, council outputs, sprint plans (live status)
-_templates/            # Templater plugin templates
-99-archive/            # Old content (Notion import)
-```
+`video-nvr` is an **active** area: the cameras were disconnected on 2026-08-04 and the work
+will resume. Never call it retired.
 
-**`07-decisions/`** holds long-lived strategic artifacts that should not rot in daily journals:
-- LLM council reviews (full advisor responses, peer reviews, chairman synthesis)
-- Sprint plans with rolling status tables (single source of truth for "what's done vs open")
-- Architectural decision records
+## Where does a new thing go?
 
-Daily journals link forward to these; the decision docs link back. When the user asks "what was the council verdict" or "what's left from the sprint", the answer is in `07-decisions/`, not scattered across `04-journal/`.
+| I have… | Put it in | type |
+|---|---|---|
+| what happened today | `04-journal/YYYY-MM/YYYY-MM-DD.md` | journal |
+| a run, a result, an analysis, a pre-registration, an audit | the project or area it is about | experiment |
+| steps someone follows | the area the steps operate | procedure |
+| a fact sheet, spec, concept, glossary, how something works | its area | reference |
+| a choice between options (incl. council reviews) | the project or area it decides | decision |
+| something that broke, or a symptom and its fix | the area that broke | incident |
+| a meeting, slides, a report for the professor | `30-resources/meetings/` | meeting |
+| a vendor email, quote, call prep | `30-resources/vendors/` | reference |
+| a paper summary used across areas | `30-resources/literature/` | reference |
+| not sure | `00-inbox/` | (any) |
 
-> **Filing rule, enforced 2026-08-03.** `07-decisions/` had grown to 26 files, most of which were not decisions. It was trimmed to 9. A document belongs there only if it records **a choice between options**. Everything else goes where it belongs:
->
-> | If the document is… | It goes in |
-> |---|---|
-> | a choice between options, a council, a sprint plan | `07-decisions/` |
-> | a run, an audit, a result, a report on data | `05-experiments/completed/` |
-> | literature, a vendor/product comparison, a spec, a glossary | `06-references/` |
-> | steps someone follows to do a thing | `02-procedures/` |
-> | a symptom and its fix | `03-troubleshooting/symptoms/` |
-> | a failure that already happened, with a date | `03-troubleshooting/incidents/` |
-> | vendor emails, call prep, quotes | `01-infrastructure/vendor-correspondence/` |
-> | done and no longer followed | `99-archive/` |
->
-> "It is important" is not a reason to file something under `07-decisions/`. Add an `_INDEX.md` line instead — that is what makes a document findable.
+A new area or project is a new folder plus its hub, and a line in [[HOME]].
 
-### Critical Files
+## Frontmatter
 
-- **`00-config/production-values.md`**: Single source of truth for all production values
-  - Contains actual IPs, usernames, paths, camera settings
-  - Uses `{VARIABLE}` notation that maps to deployed configs
-  - **NEVER modify** without updating deployed systems
-
-- **`01-infrastructure/raspberry-pi/golden-go2rtc-config.md`**: Production go2rtc config
-  - **CRITICAL**: H.264 only (H.265 causes kernel panics on Pi5)
-  - Uses `rpicam-vid` streaming directly to go2rtc (single-line exec strings, no ffmpeg pipes)
-  - `KillMode=control-group` in systemd is mandatory (prevents zombie processes)
-
-- **`_INDEX.md`**: Vault home page with quick links and system status
-
-## Working with This Vault
-
-### Variable System
-Templates use `{VARIABLE}` placeholders that reference `production-values.md`:
 ```yaml
-# Template:
-path: rtsp://{PI_IP}:{RTSP_PORT}/{CAMERA_0_ID}
-
-# Actual value (from production-values.md):
-path: rtsp://192.168.0.11:8554/pi_cam_0
+type: experiment          # hub | procedure | reference | experiment | decision | incident | meeting | journal
+area: hlb-sod1            # the folder key; resources name the most related key
+status: done              # planned | active | done | superseded
+created: 2026-10-22
+summary: "one line"       # required for journal notes and hubs
+superseded-by: "[[note]]" # required when status is superseded
+canonical: true           # only on a page that wins every disagreement
+tags: [eeg, w-sd]         # few, lowercase
 ```
 
-**When creating new docs**: Always use `{VARIABLE}` notation, define variables in `production-values.md`.
+- `active` = in use, current, still followed, or still running. `done` = finished, the record
+  stays valid. `superseded` = replaced or retracted; say by what.
+- Keep every other key a note already has (`cohort`, `recordings`, `status-note`, …).
+- `status-note` holds the old free-text status from before the rehaul. Do not delete it.
 
-### Templates (Templater Plugin)
-Located in `_templates/`, using Templater syntax:
-- Date: `2026-02-04`
-- Filename: `CLAUDE`
+## Names and links
 
-**Folder auto-templates configured:**
-- `04-journal/` → Daily Journal
-- `03-troubleshooting/incidents/` → Incident Report
-- `05-experiments/active/` → Experiment
+- File names: lowercase kebab-case; dated notes start `YYYY-MM-DD-`. Never rename a
+  file casually: code, memory and other notes cite names. `CANONICAL-*` names stay.
+- Every file name is unique in the vault (lint enforces it), so links are bare names:
+  `[[per-mouse-csv-format]]`, `[[per-mouse-csv-format#Columns|the columns]]`. No folder
+  paths, no `../`, never a link to a Claude memory file.
+- In a table cell, escape the alias pipe: `[[note\|alias]]`.
+- Images: `![[2026-10-22-fig01-name.png]]`, the file in `_attachments/`.
 
-### SSH Access Commands
-```bash
-# Pi
-ssh skimlab@192.168.0.11
+## Hubs
 
-# NVR
-ssh skimlab@192.168.0.50
+Plain markdown first (agents cannot see Bases views), in this order:
+1. What this area/project is — three lines.
+2. **Current state** — dated bullets, each with a link. The only place in the vault
+   that may say "current", "latest", "newest" or "now". Replace a bullet when it changes;
+   do not stack "NEWEST" markers.
+3. Start here — at most five links.
+4. Rules that must not be broken — each with a link to its evidence.
+5. Open items.
+6. `![[area.base]]` views.
 
-# Check go2rtc streams
-curl http://192.168.0.11:1984/api/streams
+## The journal
 
-# Check Frigate
-curl http://192.168.0.50:5000/api/stats
-```
+Title `# YYYY-MM-DD: headline`, `summary:` in frontmatter, a short TL;DR, then sections.
+The journal records what happened and **links out**; detail lives in the area/project
+note. When a day produces a result, a decision or a procedure, write that note and link it.
 
-## Critical Rules
+## Operations (for agents)
 
-1. **Golden Configs**: Files tagged `golden-config` are production-stable. Do NOT modify without extensive testing and user approval.
+- **INGEST** — new information arrives (a run ended, a vendor replied, a decision was made):
+  1. write or update the note in its project/area (template from `_templates/`);
+  2. update that hub's Current state (date + link);
+  3. add a line to today's journal linking the note;
+  4. if it contradicts an older note, add a dated callout to the older note pointing at
+     the newer one and set `superseded-by` when it is replaced.
+- **CLOSE-OUT** — a run or project ends: `status: done`, write the result note, update the hub.
+- **TRIAGE** — file everything in `00-inbox/` using the table above.
+- **LINT** — `./skim lint` (read-only). Zero errors before you stop.
+- **LOG** — vault-wide changes (renames, restructures) get a line in `_meta/log.md`.
 
-2. **H.264 Only**: Never suggest H.265/HEVC for Raspberry Pi (causes kernel panics).
+## Accuracy rules
 
-3. **Sync Awareness**: Nothing syncs automatically. This vault lives inside the `sleep-recording-skim` repo; run `./skim pull` before editing and `./skim push "message"` after. Mention sync implications for infrastructure changes.
+- Experiment, result and decision notes are records. Never rewrite their claims or numbers.
+  Add a dated callout instead: `> [!warning] 2026-10-22: superseded by [[newer-note]] …`.
+- Scientific numbers change only with Andrea's say-so.
+- When two notes disagree, settle it only from primary evidence (the code, a read-only check
+  of the live system, a later dated measurement). Otherwise log it in
+  `_meta/contradictions.md` as `needs-Andrea`.
+- Write dates as `YYYY-MM-DD`. Times are KST unless stated.
 
-4. **Configuration Variables**: When showing configs with `{VARIABLES}`, remind user to replace with actual values from `production-values.md`.
+## Things code depends on
 
-5. **Sensitive Data**: `production-values.md` contains real IPs and usernames. Never suggest committing to public repos.
+- `eeg-emg-analysis` writes figures to `vault/_attachments/` (`core/paths.py`).
+- Code comments, `eeg-recorder/config/users.yaml` and systemd units cite note names.
+  If you rename a note, grep the repo for its old name.
+- `_meta/path-map-2026-10-22.tsv` maps every pre-rehaul path to its new one.
 
-6. **Markdown Formatting**: Use backticks for values (`` `192.168.0.11` ``) for visual distinction.
+## Sync
 
-## System Context
+Nothing syncs or commits by itself. `./skim pull` before editing, `./skim push "message"`
+after; a human types both. Obsidian Git plugin timers are off.
 
-**Hardware:**
-- Raspberry Pi 5 with dual camera modules (1024x768 @ 15fps)
-- ASUS Mini PC (Ubuntu, Docker)
-- Synology NAS for storage
+## Video system rules (still in force)
 
-**Software Stack:**
-- go2rtc v5.0 (RTSP streaming)
-- Frigate NVR (Docker)
-- Obsidian with Templater plugin
-- PostgreSQL (planned, not deployed)
-
-**Use Case:** 24/7 video monitoring for neuroscience experiments with EEG/EMG data correlation.
-
-## Claude Skill Integration
-
-User has a `neurosurveillance-expert` skill on claude.ai containing parameterized configurations. This vault contains the **production values** that fill those parameters.
-
-## Vault conventions (added 2026-05-24)
-
-The 2026-05-24 rehaul introduced three reusable Obsidian callout patterns. When editing or creating new docs under `01-infrastructure/` or `02-procedures/`, preserve them.
-
-- **`> [!abstract] TL;DR — for non-technical readers`** at the top of every major doc, after the frontmatter and H1. Three short paragraphs: "What this is," "Why it exists," "How to read this page." Always include a cross-link to [[nvr-system-overview]] for the big picture.
-- **`> [!quote] Paper-ready`** at load-bearing technical claims. Present-tense active voice, 1-2 sentences, written so a user can paste it directly into a paper's methods section. Aim for 1-3 per major doc.
-- **`> [!history] Historical note (pre-YYYY-MM-DD)`** inline where the doc replaces older behavior. Links forward to a verbatim pre-change archive in `99-archive/2026-05-rehaul/` (or a date-stamped sub-folder for future sprints). The archive file's `superseded-by` frontmatter links back. Bidirectional.
-
-Two new entry-point files exist:
-- `SYSTEM-OVERVIEW.md` (vault root) — ~250-word elevator pitch.
-- `01-infrastructure/system-overview.md` — full Q&A overview + durability matrix + glossary.
-
-Files under `03-troubleshooting/`, `04-journal/`, `05-experiments/`, and `06-references/` are the historical work log and are intentionally not rehauled. Do not retrofit TL;DR blocks into journal entries or incident reports; those represent the state of knowledge at the time of writing.
+- H.264 only on the Raspberry Pi 5 (H.265 causes kernel panics). No ffmpeg pipes in go2rtc;
+  exec streams are single-line strings. systemd comments go on their own line;
+  `KillMode=control-group` is mandatory.
+- Files tagged `golden-config` are production-stable: change only after testing on the
+  hardware, with Andrea's approval.
+- [[production-values]] holds real IPs and usernames. The repo is private; keep it that way.

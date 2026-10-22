@@ -16,7 +16,7 @@ superseded-by: "[[2026-07-24-daq-32-mouse-final-comparison]]"
 # DAQ Ecosystem Comparison — XDAQ/NeuroNexus vs Open Ephys (16 → 32 mice)
 
 > [!tip] Part of the rig expansion program
-> Front door for all of this: **[[RIG-EXPANSION-HUB]]** (decision, vendor correspondence, wiring, open items).
+> Front door for all of this: **[[_rig-expansion-hub]]** (decision, vendor correspondence, wiring, open items).
 
 > [!history] SUPERSEDED 2026-07-24 → [[2026-07-24-daq-32-mouse-final-comparison]]
 > This is the 16-mouse, 2-way (XDAQ vs Open Ephys) snapshot. The FINAL comparison is now 3-way (adds **Intan direct**), scoped to **32 mice**, with **priced bills of materials** for every ecosystem and the **two-headstages-per-port question SETTLED** from Intan datasheets. Read [[2026-07-24-daq-32-mouse-final-comparison]] instead. This doc is kept for its 16-mouse snapshot and the original per-row vendor-quote notes.

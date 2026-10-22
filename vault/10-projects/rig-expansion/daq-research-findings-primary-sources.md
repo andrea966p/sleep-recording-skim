@@ -18,7 +18,7 @@ method: 5 parallel research agents, primary sources only, verbatim quotes
 # DAQ Research Findings, 2026-07-28 — Primary Sources, and What They Overturn
 
 > [!tip] Part of the rig expansion program
-> Front door: **[[RIG-EXPANSION-HUB]]**. This note feeds [[2026-07-24-daq-32-mouse-final-comparison]] and the professor-facing `DAQ-comparison-32-mice.docx`.
+> Front door: **[[_rig-expansion-hub]]**. This note feeds [[2026-07-24-daq-32-mouse-final-comparison]] and the professor-facing `DAQ-comparison-32-mice.docx`.
 
 > [!abstract] What this is
 > Findings from five parallel research passes over PRIMARY sources only (vendor manuals, datasheets, API docs, peer-reviewed papers), commissioned because the earlier comparison rested partly on our own bench experience and on documents we had only partially read. **Several previously-held claims did not survive.** Every claim below carries a verbatim quote and a source.
@@ -162,4 +162,4 @@ Headstage prices deliberately omitted.
 - Retire the "2 mice per headstage is a no-go" folklore as unverified
 
 ## Related
-[[RIG-EXPANSION-HUB]] · [[2026-07-24-daq-32-mouse-final-comparison]] · [[xdaq-32-mouse-wiring-and-channel-law]] · [[eeg-60hz-saga]] · [[2026-07-29-kontex-kc-call-prep-rig-finalization]]
+[[_rig-expansion-hub]] · [[2026-07-24-daq-32-mouse-final-comparison]] · [[xdaq-32-mouse-wiring-and-channel-law]] · [[eeg-60hz-saga]] · [[2026-07-29-kontex-kc-call-prep-rig-finalization]]

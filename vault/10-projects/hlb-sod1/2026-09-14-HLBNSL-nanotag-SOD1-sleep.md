@@ -11,10 +11,10 @@ cohort: HLBNSL (NS-SL + NW-SL)
 # HLBNSL: oral SOD1 vs water, home-cage sleep by implanted nanotag (NS-SL / NW-SL)
 
 > [!abstract] TL;DR
-> - **What:** the first nanotag batch of the HLB SOD1 project ([[_HLB-SOD1-project-hub]]), and the project's second recording method beside the EEG rig. **No EEG**: sleep is scored from immobility on an implanted accelerometer ([[nanotag-kissei-device-and-literature]]).
+> - **What:** the first nanotag batch of the HLB SOD1 project ([[_hlb-sod1-hub]]), and the project's second recording method beside the EEG rig. **No EEG**: sleep is scored from immobility on an implanted accelerometer ([[nanotag-kissei-device-and-literature]]).
 > - **Arms:** **NS-SL**, SOD1 6.8 U/mL in drinking water (HLBNSSL41, 42, 43†, 44, 49), and **NW-SL**, UV-sterilised water (HLBNWSL45–48, 50). Both sleep ad libitum. Male C57BL/6J, DOB 2026-05-28, sampled 2026-10-02 at 18.1 weeks.
 > - **Status:** recordings and sampling done. Analysis (Run 1 + Run 2 merged) done 2026-10-05: [[2026-10-05-HLBNSL-nanotag-merged-analysis]]. **No detectable effect of SOD1 on sleep.**
-> - **Next:** the sleep-deprivation batch **NS-SD / NW-SD** (HLBNSSD51–55, HLBNWSD56–60). Surgery 2026-10-12, single housing 10-19, tag recording from 2026-10-22, SOD1 from 2026-10-24, 4-day SD 11-02 → 11-05, sampling **Thu 2026-11-05** (re-planned 2026-10-19: [[_HLB-SOD1-project-hub#NS-SD / NW-SD: current schedule (re-planned 2026-10-19)]]). It reuses [[nanotag-recording-and-analysis]].
+> - **Next:** the sleep-deprivation batch **NS-SD / NW-SD** (HLBNSSD51–55, HLBNWSD56–60). Surgery 2026-10-12, single housing 10-19, tag recording from 2026-10-22, SOD1 from 2026-10-24, 4-day SD 11-02 → 11-05, sampling **Thu 2026-11-05** (re-planned 2026-10-19: [[_hlb-sod1-hub#NS-SD / NW-SD: current schedule (re-planned 2026-10-19)]]). It reuses [[nanotag-recording-and-analysis]].
 > - **Registry:** Google Sheet `HLB_SOD1_Intake_Monitoring_SDSLNANO` (Drive id `1jgQpYiUGzEwFpjAhy8SvCamGoeMFZEycLFpzwgfgxhs`), tabs NANOTAG registry / recordings / History / sampling / behavioral. Pending sheet edits: [[2026-10-05-HLBNSL-sheet-handover-run2]]. From 2026-10-19 all sheet changes go through the `Pending changes instructions` tab: [[sod1-sheet-change-log-workflow]].
 
 ## Mice and tags

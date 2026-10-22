@@ -165,6 +165,6 @@ the 2026-09-30 list, but only once the notch is adopted.
 
 ## Related
 
-[[_HLB-SOD1-project-hub]] · [[2026-09-30-scoreable-mice-on-the-24h-windows]] ·
+[[_hlb-sod1-hub]] · [[2026-09-30-scoreable-mice-on-the-24h-windows]] ·
 [[2026-08-28-W-SD-cohort-closeout]] ·
 [[2026-09-02-S-SD-recovery-sleep]] · [[2026-09-18-W-SL-light-phase-sleep]]

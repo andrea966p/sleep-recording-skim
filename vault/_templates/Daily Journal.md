@@ -1,30 +1,20 @@
 ---
-tags: [journal, daily]
-date: <% tp.date.now("YYYY-MM-DD") %>
-created: <% tp.date.now("YYYY-MM-DD") %>
+type: journal
+date: <% tp.file.title %>
+summary: ""
+tags: [journal]
 ---
 
-## Due Today
+# <% tp.file.title %>: <% tp.file.cursor(1) %>
 
-```tasks
-not done
-due on <% tp.date.now("YYYY-MM-DD") %>
-```
+> [!abstract] TL;DR
+> -
 
-## Tasks
-- [ ]
+## 
 
-## Focus
--
+## Filed to
+<!-- every result, decision or procedure written today, as [[links]] -->
+- 
 
-## Work Log
-
-
-
-## Issues
-
-
-
-## Notes
-
-
+## Open items
+- [ ] 

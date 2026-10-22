@@ -1,0 +1,3 @@
+old_path	new_path	type	area	status	canonical	superseded_by	banner	confidence	reason
+10-projects/hlb-sod1/_HLB-SOD1-project-hub.md	10-projects/hlb-sod1/_hlb-sod1-hub.md	hub	hlb-sod1	active	-	-	-	high	hub naming _<key>-hub
+10-projects/rig-expansion/RIG-EXPANSION-HUB.md	10-projects/rig-expansion/_rig-expansion-hub.md	hub	rig-expansion	active	-	-	-	high	hub naming _<key>-hub

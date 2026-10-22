@@ -1,44 +1,17 @@
----
-tags: [procedure]
-created: <% tp.date.now("YYYY-MM-DD") %>
-status: draft/review/production
----
+> [!abstract] TL;DR
+> **What this does.** 
+> **When to use it.** 
 
-## Purpose
-
-
-## Prerequisites
-- [ ]
+## Before you start
+- 
 
 ## Steps
+1. 
 
-### 1.
+## Check it worked
+- 
 
-```bash
-# Commands
-```
-
-**Expected result:**
-
-### 2.
-
-```bash
-# Commands
-```
-
-**Expected result:**
-
-## Validation
-
-```bash
-# Verification commands
-```
-
-## Troubleshooting
-
-| Issue | Solution |
-|-------|----------|
-| | |
-
-## Related
--
+## If it goes wrong
+| Symptom | Cause | Fix |
+|---|---|---|
+|  |  |  |

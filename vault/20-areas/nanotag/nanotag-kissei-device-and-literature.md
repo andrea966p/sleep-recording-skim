@@ -82,7 +82,7 @@ The English edition missed the Japanese 2024 corrections. Where they disagree, t
 
 ## SOD1 context
 
-The project's rationale (oral microbial SOD against sleep-loss oxidative stress), design and the EEG → nanotag pivot are in [[_HLB-SOD1-project-hub]].
+The project's rationale (oral microbial SOD against sleep-loss oxidative stress), design and the EEG → nanotag pivot are in [[_hlb-sod1-hub]].
 
 ## History
 

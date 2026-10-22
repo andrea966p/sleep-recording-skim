@@ -1,0 +1,15 @@
+# Every project and area hub with its status and one-line summary. Embedded in HOME.
+filters:
+  and:
+    - type == "hub"
+    - '!file.inFolder("90-archive")'
+views:
+  - type: table
+    name: Hubs
+    order:
+      - file.name
+      - status
+      - summary
+    sort:
+      - property: file.path
+        direction: ASC

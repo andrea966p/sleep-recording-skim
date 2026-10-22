@@ -153,7 +153,7 @@ Production IPs, usernames, paths, and settings.
 - ⭐ [[_JOURNAL-INDEX|Journal Index — chronological master navigator]] — **every day in date order.** The journal records what happened and links down into the detail notes. Start here to navigate by time rather than by topic.
 
 ### Experiments
-- ⭐⭐⭐ [[_HLB-SOD1-project-hub|HLB SOD1 PROJECT HUB — START HERE for the science]] — HLB-sponsored: does oral microbial SOD protect sleep and cognition under chronic sleep restriction? Proposal vs what runs, every batch (intake trials → 4 EEG batches → nanotag), what the EEG → nanotag pivot gives up (no NREM/REM), and 🔴 **four decisions before NS-SD/NW-SD** (activity-only tags so one 20-day run needs no mid-study read; SD hours analysed, not dropped; SD length 4 vs 6 h and 5 vs 7 d; read and stop tags at sampling).
+- ⭐⭐⭐ [[_hlb-sod1-hub|HLB SOD1 PROJECT HUB — START HERE for the science]] — HLB-sponsored: does oral microbial SOD protect sleep and cognition under chronic sleep restriction? Proposal vs what runs, every batch (intake trials → 4 EEG batches → nanotag), what the EEG → nanotag pivot gives up (no NREM/REM), and 🔴 **four decisions before NS-SD/NW-SD** (activity-only tags so one 20-day run needs no mid-study read; SD hours analysed, not dropped; SD length 4 vs 6 h and 5 vs 7 d; read and stop tags at sampling).
 
 **Manual sleep scoring with SleepStager (added 2026-10-07). Start with the handbook.**
 - ⭐⭐⭐ [[sleep-scoring-handbook|SLEEP SCORING HANDBOOK — states, measures, units, values, conventions, literature]] — what W / NREM / REM look like in a mouse, what every number on the screen means (θ/δ, RMS, **spike-proof tone**, σ, γ, µV vs µV²), this mouse's typical values, the **draft scoring conventions C1–C10 awaiting the professor**, a case library, and **24 papers verified in PubMed**. 🔑 The rule labels NR any sleep epoch it cannot call REM: check every NR epoch whose δ sits at wake level.
@@ -230,7 +230,7 @@ Production IPs, usernames, paths, and settings.
 - [[video-parameters|Video Parameters]]
 
 ### Rig Expansion (8 → 32 mice)
-- ⭐ [[RIG-EXPANSION-HUB|RIG EXPANSION HUB — 8 → 32 Mice]] — **START HERE.** Single entry point: the decision, all vendor correspondence, wiring, open items, superseded claims
+- ⭐ [[_rig-expansion-hub|RIG EXPANSION HUB — 8 → 32 Mice]] — **START HERE.** Single entry point: the decision, all vendor correspondence, wiring, open items, superseded claims
 - [[2026-07-24-daq-32-mouse-final-comparison|DAQ 3-way comparison, 32 mice (XDAQ vs Open Ephys vs Intan)]] — the decision doc + professor summary
 - [[xdaq-32-mouse-wiring-and-channel-law|XDAQ 32-mouse wiring + the channel law]] — animals = channels ÷ 64; full power-to-mouse wiring
 - [[2026-07-29-kontex-kc-call-prep-rig-finalization|Kontex call prep, 2026-07-29 — rig finalization]] — 45 questions + live build checklist
@@ -242,7 +242,7 @@ sprint plans. Trimmed 2026-08-03 from 26 files to 9; results moved to
 procedures to `02-procedures/`, vendor call prep to
 `01-infrastructure/vendor-correspondence/`.
 
-- ⭐ [[RIG-EXPANSION-HUB|RIG EXPANSION HUB — 8 → 32 mice]] — the entry point for the expansion decision
+- ⭐ [[_rig-expansion-hub|RIG EXPANSION HUB — 8 → 32 mice]] — the entry point for the expansion decision
 - [[2026-10-06-sleepstager-csv-ingestion|2026-10-06 — how SleepStager reads the rig's CSV]] — council verdict (converter) superseded by a native reader; proven identical to the xdat route on HLBSSL33 R (21,600/21,600 stages)
 - [[2026-07-27-video-eeg-sync-recording-architecture|2026-07-27 — video/EEG sync + recording architecture]] — the alignment plan; no clocks, pulse train mandatory
 - [[2026-07-24-daq-32-mouse-final-comparison|2026-07-24 — DAQ 3-way comparison, 32 mice]]

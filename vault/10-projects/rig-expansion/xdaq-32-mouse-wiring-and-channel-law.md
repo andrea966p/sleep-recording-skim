@@ -22,7 +22,7 @@ source: docs.kontex.io retrieved 2026-07-28 via curl + doc figure images
 > Andrea confirmed on the rig on 2026-09-30 that the Gen-1 Core has a chassis GND, and that it is wired to the building earth through the wall socket (continuity tested with a DMM; see [[2026-09-30-xdaq-noise-series]]). Every line on this page saying the Gen-1 has "no Chassis GND" or "no chassis ground terminal" is **wrong**. What the 07-15/16 work MEASURED still stands (foil cut the mains floor; the residual hum tracked electrode impedance). What rested on "there is nothing to wire" does not. Still unverified: whether a separate Sys GND exists on the Gen-1 and how it relates to chassis.
 
 > [!tip] Part of the rig expansion program
-> Front door for all of this: **[[RIG-EXPANSION-HUB]]** (decision, vendor correspondence, wiring, open items).
+> Front door for all of this: **[[_rig-expansion-hub]]** (decision, vendor correspondence, wiring, open items).
 
 > [!abstract] TL;DR — for non-technical readers
 > **What this is.** The complete, vendor-sourced answer to three questions: (1) exactly what cables and boxes are needed to run 32 mice on XDAQ, from the wall socket to the animal's head; (2) which XDAQ model can actually do it; and (3) whether the SPI splitter can push one box past 16 mice.

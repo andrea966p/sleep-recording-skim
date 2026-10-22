@@ -240,4 +240,4 @@ The comparison does not move: HLBSSD15 +6.3 and HLBWSD08 +16.2 points over 13:00
 ## Related
 
 [[2026-10-06-SOD1-sleep-EEG-2x2-quick-compute]] · [[2026-10-02-noise-series-4mice-24h-analysis]] (the notch) ·
-[[2026-09-02-S-SD-recovery-sleep]] · [[2026-09-30-scoreable-mice-on-the-24h-windows]] · [[_HLB-SOD1-project-hub]]
+[[2026-09-02-S-SD-recovery-sleep]] · [[2026-09-30-scoreable-mice-on-the-24h-windows]] · [[_hlb-sod1-hub]]

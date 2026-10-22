@@ -377,4 +377,4 @@ case in the journal.
 - [[blind-scoring-and-kappa]] — measuring agreement with a human scorer
 - [[sleepyscore-japan-scoring-tool-algorithm]] — the older tool's algorithm
 - [[is-our-qc-approach-sound]] — the literature check on our QC
-- [[_HLB-SOD1-project-hub]] — the project these scorings serve
+- [[_hlb-sod1-hub]] — the project these scorings serve

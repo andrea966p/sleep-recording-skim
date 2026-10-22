@@ -1,0 +1,41 @@
+# Notes that break the schema in CLAUDE.md. `./skim lint` is the authority; this is the
+# same idea inside Obsidian.
+filters:
+  and:
+    - file.ext == "md"
+    - '!file.inFolder("_templates")'
+    - '!file.inFolder("90-archive")'
+    - '!file.inFolder("_meta")'
+    - '!file.inFolder("_bases")'
+    - 'file.path != "HOME.md"'
+    - 'file.path != "CLAUDE.md"'
+    - '!file.name.startsWith("TASKS")' 
+views:
+  - type: table
+    name: Missing type or status
+    filters:
+      or:
+        - type.isEmpty()
+        - and:
+            - status.isEmpty()
+            - type != "journal"
+    order:
+      - file.path
+      - type
+      - status
+  - type: table
+    name: Superseded without superseded-by
+    filters:
+      and:
+        - status == "superseded"
+        - 'note["superseded-by"].isEmpty()' 
+    order:
+      - file.path
+  - type: table
+    name: In the inbox
+    filters:
+      and:
+        - file.inFolder("00-inbox")
+    order:
+      - file.name
+      - created

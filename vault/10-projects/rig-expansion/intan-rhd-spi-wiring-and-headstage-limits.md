@@ -11,7 +11,7 @@ source: 06-references/datasheets/Intan_RHD2000_SPI_cable.pdf, Intan_RHD2000_dual
 # Intan RHD SPI Wiring & the Headstage-Count Limit (why Core = 8, One+ = 16)
 
 > [!tip] Part of the rig expansion program
-> Front door for all of this: **[[RIG-EXPANSION-HUB]]** (decision, vendor correspondence, wiring, open items).
+> Front door for all of this: **[[_rig-expansion-hub]]** (decision, vendor correspondence, wiring, open items).
 
 > [!abstract] TL;DR — for non-technical readers
 > **What this is.** The physical reason a given data acquisition box can only record so many mice at once, taken straight from the Intan cable and adapter datasheets (page-cited). This is the note to read before anyone proposes "clever" ways to squeeze more animals onto our XDAQ.

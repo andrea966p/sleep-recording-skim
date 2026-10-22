@@ -10,7 +10,7 @@ created: 2026-07-21
 # Acquisition Device for 16 (→32) Mice + Kontex Email Thread (Jul 2026)
 
 > [!tip] Part of the rig expansion program
-> Front door for all of this: **[[RIG-EXPANSION-HUB]]** (decision, vendor correspondence, wiring, open items).
+> Front door for all of this: **[[_rig-expansion-hub]]** (decision, vendor correspondence, wiring, open items).
 
 > [!abstract] TL;DR
 > We want a rig that records **at least 16 mice simultaneously**, and ideally scales to **32** later. Question was framed as Intan vs Open Ephys, but for us the real fork is which **DAQ** drives our existing Intan RHD2216 headstages. The physics is now nailed (see [[intan-rhd-spi-wiring-and-headstage-limits]]): **our XDAQ Core is hard-capped at 8 mice — a wire-count limit, not firmware.** No adapter, splitter, re-route, or "small-headstage" trick beats it. Path to 16 = one **XDAQ One+**; path to 32 = **two One+ linked by SyncLink**. Add the **Port Expander** for independent per-animal grounding.

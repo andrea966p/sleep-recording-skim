@@ -17,7 +17,7 @@ call_date: 2026-07-29
 # Email Draft — KC Kong, confirming the 2026-07-29 call + advance questions
 
 > [!tip] Part of the rig expansion program
-> Front door for all of this: **[[RIG-EXPANSION-HUB]]** (decision, vendor correspondence, wiring, open items).
+> Front door for all of this: **[[_rig-expansion-hub]]** (decision, vendor correspondence, wiring, open items).
 
 > [!info] Status
 > ✅ **SENT 2026-07-28.** Drafted 2026-07-28 for a call on **2026-07-29 at 11:30 Taipei time (12:30 Korea time)**. Purpose is to confirm the time and give KC a heads up so he arrives prepared, since this is meant to be the call that finalizes the rig before purchase.

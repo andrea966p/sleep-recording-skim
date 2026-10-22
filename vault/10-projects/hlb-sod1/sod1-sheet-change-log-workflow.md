@@ -19,7 +19,7 @@ created: 2026-10-19
 >   cells; checked 2026-10-19). Claude Code reads the sheet as an .xlsx export and gives Andrea **paste-ready rows**.
 > - **Every request names the exact tab and cell range,** says what the cell should contain afterwards, and says why.
 > - **How to read this page:** the layout, then the loop, then the rules for writing a request. Project context:
->   [[_HLB-SOD1-project-hub]]; nanotag workflow: [[nanotag-recording-and-analysis]]; big picture:
+>   [[_hlb-sod1-hub]]; nanotag workflow: [[nanotag-recording-and-analysis]]; big picture:
 >   [[nvr-system-overview]].
 
 ## Where it is

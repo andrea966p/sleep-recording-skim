@@ -1,0 +1,56 @@
+# Embedded in every hub as ![[area.base]]. `this` is the hub that embeds it, so each
+# view lists the notes whose `area` matches the hub's own `area`.
+filters:
+  and:
+    - file.ext == "md"
+    - area == this.area
+    - file.path != this.file.path
+views:
+  - type: table
+    name: By type
+    groupBy:
+      property: type
+      direction: ASC
+    order:
+      - file.name
+      - status
+      - created
+      - summary
+    sort:
+      - property: created
+        direction: DESC
+  - type: table
+    name: Experiments, newest first
+    filters:
+      and:
+        - type == "experiment"
+    order:
+      - file.name
+      - status
+      - created
+    sort:
+      - property: file.name
+        direction: DESC
+  - type: table
+    name: Open (planned or active)
+    filters:
+      or:
+        - status == "planned"
+        - status == "active"
+    order:
+      - file.name
+      - type
+      - status
+      - created
+    sort:
+      - property: type
+        direction: ASC
+  - type: table
+    name: Superseded
+    filters:
+      and:
+        - status == "superseded"
+    order:
+      - file.name
+      - note.superseded-by
+      - created
