@@ -36,7 +36,7 @@ This area holds the device facts and the procedure; the studies (HLBNSL, NS-SD /
 - 🛑 Starting a recording or setting a reservation erases the tag; reading never does. Read first. [[nanotag-kissei-device-and-literature]]
 - 🛑 Never restrain a mouse on the metal grid for a read; read from the open hand and stop if it will not settle (HLBNSSL43 died 2026-09-28). [[nanotag-recording-and-analysis]]
 - Plan every read before the memory is full (8 days with temperature, 9 days without). [[nanotag-recording-and-analysis]]
-- Claude Code never edits the study sheet; changes go through the `Pending changes instructions` tab. [[sod1-sheet-change-log-workflow]]
+- Claude Code never edits the study sheet (it has no write access). Since 2026-10-21 change requests go to Claude for Sheets as one chat message; the `Pending changes instructions` route is being redesigned. [[sod1-sheet-change-log-workflow]] [[2026-10-21]]
 - The SKIM NAS is a working copy, not a backup. [[backup-architecture]]
 
 ## Open items

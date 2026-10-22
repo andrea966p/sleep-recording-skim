@@ -27,10 +27,10 @@ That run (2026-10-15) was lost to hardware after 13 minutes, so no unipolar data
 
 ## Rules that must not be broken
 - Use only the corrected map (`/18` to `/23` above); read the 08-05 page's role names as site numbers only. [[2026-10-15-unipolar-lfp-run-ahyeon]]
-- On unipolar preps judge contact by signal, never by impedance: unused inputs are tied to ground and depth electrodes legitimately read high. [[2026-08-05-unipolar-lfp-mouse-reference]]
+- On unipolar preps judge contact by signal, never by impedance: unused inputs can read low (median 0.17 MOhm on 2026-08-05; on 2026-10-14 only sites 1-8 and 25-32 behaved as ground-tied) and depth electrodes legitimately read high. [[2026-08-05-unipolar-lfp-mouse-reference]] [[2026-10-14]]
 - Before any run confirm that every port enumerates 32 channels on the console's state panel. [[2026-10-15-unipolar-lfp-run-ahyeon]]
 - For a live quality check, remember that `get_signals()` carries the Allego visualization filters; analyse the recorded file. [[2026-10-15-unipolar-lfp-run-ahyeon]]
-- Do not troubleshoot mouse A's 3.4 mV of 60 Hz: it is a known surgical issue that ahyeon knows about. [[2026-10-15-unipolar-lfp-run-ahyeon]]
+- Do not troubleshoot the 3.4 mV of 60 Hz on ahyeon's mouse B6JF020112 (port A, 2026-10-14/15): a known surgical issue she knows about. A new mouse on port A is judged afresh. [[2026-10-15-unipolar-lfp-run-ahyeon]]
 
 ## Open items
 - [ ] ahyeon to reconnect ports B and C at the head and decide whether to reschedule. [[2026-10-15-unipolar-lfp-run-ahyeon]]

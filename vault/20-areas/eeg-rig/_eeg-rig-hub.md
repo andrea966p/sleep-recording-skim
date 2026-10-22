@@ -23,7 +23,7 @@ Allego settings live in `allego`, runs and the console in `recording-console`, s
 - 2026-09-30: the Gen-1 XDAQ Core has a chassis GND, wired to building earth. [[2026-09-30-xdaq-noise-series]]
 - 2026-09-01: flicker of an open channel separates a bending tether from a severed one. [[tether-bend-vs-break-flicker]]
 - 2026-08-26: the recurring B slot 1 fault followed the animal and its chewed tether, not the port. [[2026-08-27-B1-swap-baseline-20h-run]]
-- 2026-08-04: electrodes and implants proven good; contact is intermittent within minutes and the trigger is unknown. [[2026-08-04-movement-dependent-contact]]
+- 2026-08-04: contact is intermittent within minutes (B1 EEG 6.236, 0.052, 8.649, 0.177 MOhm in 23 min) and the trigger is unknown. One low reading proves nothing: unwired inputs reach 0.051 MOhm [[2026-08-06-unloaded-chain-interference]]. Implants can work: D2 gave 87.9 % usable EEG [[2026-08-07-overnight-recording-two-animals-work]]. [[2026-08-04-movement-dependent-contact]]
 
 ## Start here
 - [[pre-flight-connection-screen]]: the check before any run that cannot be repeated
@@ -34,13 +34,13 @@ Allego settings live in `allego`, runs and the console in `recording-console`, s
 
 ## Rules that must not be broken
 - 🛑 Never suggest reseating an implanted electrode or EMG wire. The only animal-side option is a tether change under isoflurane, which ruins the batch. [[eeg-60hz-saga]]
-- Do not schedule surgeries on contact evidence: the implants were proven good on 2026-08-04. [[2026-08-04-movement-dependent-contact]]
-- The signals are already bipolar (`/1` EEG, `/2` EMG, `/33`, `/34` for the second mouse). Never subtract EEG from EMG. [[CANONICAL-allego-channel-selection]]
+- Do not schedule surgeries (Andrea's rule). Impedance cannot decide an implant either way: an unwired input reads 0.051 MOhm, and only a multi-hour recording is an outcome. [[2026-08-02-run2-preregistration]] [[2026-08-06-unloaded-chain-interference]]
+- In the bipolar EEG/EMG layout the signals are already bipolar (`/1` EEG, `/2` EMG, `/33`, `/34` for the second mouse): never subtract EEG from EMG. The unipolar layout (`/18`-`/23`) is different. [[CANONICAL-allego-channel-selection]] [[rig-layout-and-recording-settings]]
 - The Allego 60 Hz notch is display-only; the saved data are raw (verified 2026-07-31 and 2026-10-01). [[eeg-60hz-saga]]
-- Impedance sweeps need the stream OFF, and one sweep cannot classify a channel: use a block duty cycle. [[impedance-sweep-register]]
+- Impedance sweeps need the stream OFF. Neither one sweep nor a block duty cycle classifies a channel: blocks are the record and bracket hardware changes, but screen on the stream (2026-08-09). [[impedance-sweep-register]]
 - UNJUDGEABLE is not FAIL: a low or collapsing chip floor means the rig could not answer, so re-mate the connectors and re-screen. [[weak-chip-ground-vs-open-electrode]]
 - A recurrence argument is not a swap test: swap before naming a root cause. [[2026-08-27-B1-swap-baseline-20h-run]]
-- One mouse per headstage, on the bottom SPI socket only (the top one is dead on the Core by design). [[eight-mouse-acquisition-setup]]
+- One mouse per headstage, on the bottom SPI socket only (the top one is dead on the Core by design). [[eight-mouse-acquisition-setup]] [[hdmi-spi-adapter-top-socket-vendor-inquiry]]
 - Earth the XDAQ, never the animal; the animal is grounded only through its headstage GND lead. [[eeg-60hz-saga]]
 
 ## Open items

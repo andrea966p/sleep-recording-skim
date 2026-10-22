@@ -31,9 +31,9 @@ An ACTIVE area, not retired: the cameras are unplugged until the next video run,
 ## Rules that must not be broken
 - H.264 only on the Raspberry Pi 5; H.265 causes kernel panics. [[h265-encoding-failure]]
 - Never propose `record.enabled: false` in Frigate `config.yml`; it was investigated and is off the table. [[2026-05-20-docker-upgrade-and-startup-guard-regression]] [[config-yml]]
-- Pin Docker images by SHA digest and keep `apt-mark hold` on the docker packages (aptdaemon upgrades fired recordings on all cameras). [[docker-compose]] [[2026-05-20-docker-upgrade-and-startup-guard-regression]]
+- Keep the Mosquitto image pinned by SHA digest and Frigate at an explicit version tag (`:0.16.1`), and keep `apt-mark hold` on the six docker packages (aptdaemon upgrades fired recordings on all cameras). [[docker-compose]] [[2026-05-20-docker-upgrade-and-startup-guard-regression]]
 - No ffmpeg pipes in go2rtc; `KillMode=control-group` is mandatory; `golden-config` notes change only after hardware testing and Andrea's approval. [[golden-go2rtc-config]] [[golden-systemd-service]]
-- Frigate recording is gated by a retained MQTT topic; check runtime state, not the YAML. [[2026-07-27-video-eeg-sync-recording-architecture]]
+- Frigate recording is gated by a retained MQTT topic, so the YAML does not tell you whether a camera is recording; read runtime state (`/api/config`). [[2026-07-27-video-eeg-sync-recording-architecture]] [[architecture]]
 - Check `/opt/neurosurveillance/exports/` before declaring an export failed. [[exports-move-out-of-frigate-dir]]
 
 ## Open items

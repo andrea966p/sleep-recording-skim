@@ -30,8 +30,8 @@ tags: [hub, recording, console]
 
 ## Rules that must not be broken
 - 🛑 Do not strip or run any heavy disk job while the rig is recording; a console run strips itself on stop, and `RIG BUSY` in a dry run means stop. [[xdat-channel-stripping]]
-- A recording is "started" only when bytes grow on disk; the file size reads 0 for about 30 s after a healthy start, and the 40 s growth window must not be shortened. [[2026-09-11-allego-control-bench-test]]
-- Recording is global: one run owns the rig, there is no per-port recording, and there is no default owner in the dropdown. [[multi-user-independent-recording-schedules]]
+- A recording is confirmed writing only when bytes grow on disk over a window longer than 35 s; the file size reads 0 for about 30 s after a healthy start, and the 40 s window in `start_recording_at.py` must not be shortened. [[2026-09-11-allego-control-bench-test]]
+- Recording is global: one run owns the rig and there is no per-port recording [[multi-user-independent-recording-schedules]]; there is no default owner in the dropdown [[eeg-recording-console]].
 - Check Allego mode (`XDAQ_ONE_REC`) and the measured rate before recording; the console checks only the label. [[allego-stream-30x-rate-label-lies]]
 - Each animal needs its own ID (case does not make one different), or the run is unjudgeable. [[eeg-recording-console]]
 - The QC bundle is a precondition of stripping: stripping deletes the wire-free floor. [[pipeline-architecture]]

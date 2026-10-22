@@ -19,7 +19,7 @@ Alerts from all of these jobs go to ntfy through `nvr-notify.sh` ([[backup-archi
 - 2026-09-29: SKIM NAS holds one CSV plus `info.json` per mouse in `02_Data_Sleep/<user>/<batch>/<Baseline|Recovery>/` [[skim-nas-smb-and-upload]]
 - 2026-09-23: every file under `~/radix/data` has an S3 copy, quarantined runs included [[backup-architecture]]
 - 2026-09-20: audit found 931 GB (83 percent) of raw data without a raw backup; closed by the S3 archive [[2026-09-20-raw-data-had-no-offsite-copy]]
-- 2026-08-21: old raw archive to the bilab NAS finished (130 files) and stood down by design [[raw-recording-archive-to-nas]]
+- 2026-08-21: old raw archive to the bilab NAS finished (130 files) and stood down by design [[raw-recording-archive-to-nas]] [[2026-09-20-raw-data-had-no-offsite-copy]]
 
 ## Start here
 - [[backup-architecture]]: the three destinations and the "where does X live" table

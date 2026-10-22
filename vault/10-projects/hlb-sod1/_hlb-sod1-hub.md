@@ -35,7 +35,7 @@ tags: [hub, project, hlb, sod1, sleep, eeg, nanotag]
 - 🛑 EEG/EMG and nanotag findings on SOD1 and sleep are reported separately: never pooled, never "the nanotag agrees", no nanotag value as a plausibility reference for EEG. [[2026-10-06-eeg-and-nanotag-findings-reported-separately]]
 - 🛑 Every run is new mice unless Andrea says otherwise; a rig position is not an animal. [[2026-08-18-every-run-is-new-mice]]
 - EEG "baselines" are already on treatment: SOD1 / water starts at tethering, so baseline = SOD1 without deprivation, not pre-treatment. [[2026-10-06-SOD1-sleep-EEG-2x2-quick-compute]]
-- Claude Code never edits the SOD1 sheet directly; every change is a request in the `Pending changes instructions` tab, reviewed on an export. [[sod1-sheet-change-log-workflow]]
+- Claude Code never edits the SOD1 sheet (no write access). Since 2026-10-21 change requests go to Claude for Sheets as one chat message and are reviewed on an export; the request route is being redesigned. [[sod1-sheet-change-log-workflow]] [[2026-10-21]]
 - Nanotag: the mouse comes from the header tag ID, not the file name; the `.nta` file time is the save time, not the read time. [[2026-10-05-HLBNSL-nanotag-merged-analysis]] · [[2026-10-05-HLBNSL-sheet-handover-run2]]
 - NS-SD: the SD hours are the treatment; analyse them, do not remove them as handling windows. [[2026-10-19-NS-SD-NW-SD-nanotag-study]]
 

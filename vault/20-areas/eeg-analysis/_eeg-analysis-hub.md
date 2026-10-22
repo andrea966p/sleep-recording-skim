@@ -19,15 +19,15 @@ and the connection criterion, wire-free floor and filter chain are in `core/crit
 
 ## Current state
 
-- 2026-10-22: The code runs from `~/sleep-recording-skim/eeg-emg-analysis/` with `PYTHONPATH=.`; `~/eeg-analysis-venv`'s editable install and the `core/paths.py` defaults for the vault and the figure style still point at the deleted `~/Monitoring_project`. [[eeg-analysis-quickstart]]
+- 2026-10-22: The code runs from `~/sleep-recording-skim/eeg-emg-analysis/` with `PYTHONPATH=.`; `~/eeg-analysis-venv`'s editable install and the `core/paths.py` figure-style default still point at the deleted `~/Monitoring_project` (the vault default was fixed in 90f7847). [[eeg-analysis-quickstart]]
 - 2026-10-14: After the 2026-10-07 grounding fix the 800 µV ground gate cannot judge the rig, and the −1.90 floor-slope gate keeps A1, A2 and B2 of uid1007 UNJUDGEABLE; option (c) (keep 800 before 2026-10-07 14:34, no hum gate after) is recommended and is Andrea's decision, not taken. [[2026-10-14]]
 - 2026-10-06: A mains-free EMG measure (power between the 60 Hz harmonics, raw 1000 Hz) reproduces the notched staging (κ median 0.95 over 33 windows); not adopted. [[2026-10-06-S-SD-EMG-rescue-between-harmonics]]
 - 2026-10-02: Notching 60/120 Hz in the stage 3 EMG turns SCOREABLE 44 → 69 of 100 animal-recordings and passes its shuffle control; not adopted, because it re-scores published numbers. [[2026-10-02-noise-series-4mice-24h-analysis]]
-- 2026-09-29: The analysis reads one CSV per mouse on the SKIM NAS, not the xdat. [[per-mouse-csv-format]]
+- 2026-09-29: Every console recording is exported as one CSV per mouse on the SKIM NAS; scoring and cohort analyses read the CSV, while pipeline stages 1-4 (QC ladder, split, features, EDF) still read the xdat. [[per-mouse-csv-format]]
 - 2026-09-26: A grounded floor steeper than −1.90 now gives UNJUDGEABLE instead of a false 0.0 % (`2cc5892`). [[contaminated-floor-rejects-good-eeg]]
 - 2026-09-26: The two regression suites exit 2 "VERIFIED NOTHING" on e10: their source recordings are only in S3. [[analysis-test-suites]]
 - 2026-09-26: Rung 2 can pass an EMG with no muscle-band activity; rung 3 catches it; not fixed. [[emg-without-muscle-band-activity-passes-rung-2]]
-- 2026-09-23: Analysis windows set: 24 h from ZT0 for baselines, 24 h from 13:00 (SD) or 28 h from 09:00 (ad lib) for recoveries. [[CANONICAL-recording-windows-and-protocol]]
+- 2026-09-29: Analysis windows set: baseline 09:00 → 09:00 (24 h); recovery 09:00 → 09:00 (ad lib, 24 h) or 13:00 → 09:00 (SD, 20 h). The 2026-09-23 shapes (24 h from 13:00, 28 h from 09:00) are recording windows. [[CANONICAL-recording-windows-and-protocol]]
 - 2026-08-26: Each animal is judged against its own chip's wire-free floor; an ungrounded chip is UNJUDGEABLE, not FAIL. [[2026-08-26-per-chip-floor-fix]]
 - 2026-08-08: No human-scored kappa exists, so rung 4 (architecture) is PROVISIONAL for every animal. [[blind-scoring-and-kappa]]
 
@@ -41,13 +41,13 @@ and the connection criterion, wire-free floor and filter chain are in `core/crit
 
 ## Rules that must not be broken
 
-- The signals are already bipolar on the chip. Never subtract EEG from EMG or re-reference. [[CANONICAL-allego-channel-selection]]
+- In the bipolar EEG/EMG layout the signals are already bipolar on the chip: never subtract EEG from EMG or re-reference. Unipolar recordings are differenced by design. [[CANONICAL-allego-channel-selection]]
 - Analyse inside unbroken blocks, never across them; lagged statistics across gaps produced `r = +0.854` on pure wake. [[scripts-contact-state-2026-07-31-readme]]
 - Never report a REM percentage: the percentile rule fixes it by construction. [[animal-card-and-verdict-ladder]]
 - Every constant lives in `core/qc_thresholds.py`; after changing one, re-run stage 1 with `--force`. [[eeg-analysis-problems]]
 - Never choose a threshold that maximises `r@1min`; it is the validity statistic. [[blind-scoring-and-kappa]]
 - Never judge contact from a filtered trace: a wire-free input band-passed 0.5-30 Hz looks like EEG (median 69 µV). [[2026-08-07-rig-specification-and-analysis-method]]
-- UNJUDGEABLE is not PASS, and INSUFFICIENT is not a negative result. [[contaminated-floor-rejects-good-eeg]]
+- UNJUDGEABLE is not PASS, and INSUFFICIENT is not a negative result. [[contaminated-floor-rejects-good-eeg]] [[animal-card-and-verdict-ladder]]
 - Never test the floor against the animal: a dead electrode is as flat as the floor (circular). [[contaminated-floor-rejects-good-eeg]]
 - Test EMG state-dependence on absolute delta power, never the delta ratio. [[2026-08-21-39h-run-score]]
 - Reject at epoch level, never repair; railed epochs are missing data. [[eeg-artefact-and-railing-rejection-policy]]

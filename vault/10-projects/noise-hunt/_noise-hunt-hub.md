@@ -15,7 +15,7 @@ It ended in a verdict that the room noise was mostly a ghost except the EMG main
 Why the hum appeared in July and August, and the ground gate itself, live in [[_eeg-rig-hub]]; the unipolar mice recorded after the fix are in [[_unipolar-lfp-hub]].
 
 ## Current state
-- 2026-10-14: no automatic ground detector is supportable on post-fix data; the 800 µV hum gate would unblock only one of four chips, and the era-gate option is waiting for Andrea. [[2026-10-14]]
+- 2026-10-14: no automatic ground detector is supportable on post-fix data; replacing the 800 µV hum gate would unblock only B1 of uid1007, because the slope-validity gate keeps A1, A2 and B2 UNJUDGEABLE; the era-gate option (c) is waiting for Andrea. [[2026-10-14]]
 - 2026-10-09: the grounding fix held over 29.5 h: chip floors under 240 µV every hour, A2 EMG 60 Hz 0.5-2.3 µV, A2 scores without the notch (r@1min 0.615); light-switch spikes unchanged. [[2026-09-30-xdaq-noise-series]]
 - 2026-10-07: the isolated-earth socket and the XDAQ bonded to the earthed rack cut chip floors 12-60x and A2's EMG 60 Hz from 26-33 to 1 µV; the 800 µV ground gate now calls every chip UNJUDGEABLE. [[2026-09-30-xdaq-noise-series]]
 - 2026-10-06: verdict: with per-mouse faults set aside, the remaining noise is mostly a ghost; the EMG mains is the only real one and a 60/120 Hz notch removes it (not adopted). [[2026-10-06-noise-hunt-verdict]]
@@ -29,7 +29,7 @@ Why the hum appeared in July and August, and the ground gate itself, live in [[_
 - [[2026-10-02-noise-series-4mice-24h-analysis]]: the first 24 h with four mice
 
 ## Rules that must not be broken
-- 🛑 Do not propose new environmental-noise trials or spending (Phase 2 boxes, Faraday cage, T3, the electrician's expensive earthing). Put the effort into per-mouse reliability. [[2026-10-06-noise-hunt-verdict]]
+- Recommendation of 2026-10-06 (Claude's; Andrea decides): no new environmental-noise trials or spending beyond the cheap socket and foil busbar (no Phase 2 boxes, Faraday cage, T3 or expensive earthing); put the effort into per-mouse reliability. [[2026-10-06-noise-hunt-verdict]]
 - Never write "all our EEG is clean": before 2026-08-08 the hum was in mV on some channels, and light switching still spikes the EEG. [[2026-10-06-noise-hunt-verdict]]
 - Judge every recording by its QC verdict, and any future noise trial by our scripts, not the official QC, while the 800 µV gate stands. [[2026-10-02-noise-troubleshooting-plan]]
 - Do not undo the socket or the rack bond, and copy both at E7: they changed together and cannot be split. [[2026-09-30-xdaq-noise-series]]

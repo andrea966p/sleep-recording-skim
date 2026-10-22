@@ -31,9 +31,9 @@ This page is the map. The detail lives in the linked notes; if a note and this p
 - **Animals = recording channels / 64.** Never reason from channel counts. A 1024-channel box records 16 mice; 32 mice always means two boxes; order the ONE+ as **R1024**, because R512 records only 8. [[xdaq-32-mouse-wiring-and-channel-law]]
 - **Do not revive the killed ideas** (DDR doubling on the Core, 4 sockets per port, a splitter past the slot ceiling): the XDAQ Core is capped at 8 headstages by wire count. [[2026-07-21-acquisition-device-16-32-mice-and-kontex-thread]] [[intan-rhd-spi-wiring-and-headstage-limits]]
 - **Pricing stays inside the vault.** Kontex quote 262024 carries a do-not-disclose clause: never publish a page or Artifact with these numbers. [[2026-07-24-daq-32-mouse-final-comparison]]
-- **No Allego licence for the 32-mouse comparison**: all three ecosystems are priced on the free Open Ephys GUI (Andrea's ground rule, 2026-07-28). Cost: per-mouse independent start and stop is gone. [[2026-07-24-daq-32-mouse-final-comparison]] [[daq-research-findings-primary-sources]]
+- **No Allego licence for the 32-mouse comparison**: all three ecosystems are priced on the free Open Ephys GUI (Andrea, 2026-07-28). Per-mouse start and stop is global on every option; the radiens per-port API is absent in 4.0.0 (2026-09-11). [[2026-07-24-daq-32-mouse-final-comparison]] [[multi-user-independent-recording-schedules]]
 - **Pinnacle: get answers in writing before the purchase order**, and do not trust the handover brief's part numbers or ranges. [[2026-10-16-pinnacle-wireless-16-mice-evaluation]]
-- **Pinnacle: 512 Hz for runs longer than 48 h; label every via hole and test it before cement.** At ±465 µV a bad ground rails the channel and clipped data cannot be notched. [[2026-10-16-pinnacle-wireless-16-mice-evaluation]]
+- **Pinnacle: label every via hole and test it before cement** [[2026-10-16-pinnacle-wireless-16-mice-evaluation]]. The 512 Hz and +/-465 uV figures are for the 3-channel 8274-HR; confirm range and battery life of the 4-channel 8474-HR in writing before choosing a rate.
 
 ## Open items
 - XDAQ route: outcome of the 2026-07-29 call, a written Kontex quote, commutator inventory (swings the budget by about €70k), headstage count, sample rate. [[2026-07-24-daq-32-mouse-final-comparison]]

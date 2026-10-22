@@ -14,11 +14,11 @@ All of them share one private git repo, `sleep-recording-skim`, synced by hand w
 Monitoring is Netdata plus Uptime Kuma, pushing to ntfy; real addresses and usernames are in [[production-values]].
 
 ## Current state
-- 2026-10-22: Netdata is v2.12.1 and alerts go to ntfy; recording-stall and reconciler alerts still go to Slack through `nvr-mqtt-slack.service` [[production-values]]
+- 2026-10-22: Netdata is v2.12.1 (live `netdata -v`) and alerts go to ntfy; recording-stall and reconciler alerts still go to Slack through `nvr-mqtt-slack.service` [[monitoring-setup]] [[watchdog-slack-bridge]]
 - 2026-09-20: deploy scripts push to ntfy through `nvr-notify.sh` instead of Slack [[backup-architecture]]
 - 2026-09-19: ThinkPad is on the push/pull workflow; Syncthing is confirmed gone from every machine [[multi-machine-workflow]]
 - 2026-09-19: AWS access exists (account, profile, region) [[aws-access-and-agent-toolkit]]
-- 2026-09-16: SKIM office workstation joined as the fourth machine [[multi-machine-workflow]]
+- 2026-09-16: SKIM office workstation joined as the fourth machine [[multi-machine-work-setup]] [[multi-machine-workflow]]
 - 2026-09-14: Netdata and Uptime Kuma alerts moved from Slack to ntfy [[monitoring-setup]]
 - 2026-09-10: workspace became one git repo synced manually with `./skim` [[multi-machine-work-setup]]
 
