@@ -66,7 +66,7 @@
 - ✅ **[Gen-1 XDAQ HAS a chassis GND, wired to building earth (09-30)](xdaq-gen1-has-chassis-gnd.md).** The 07-16 claim was wrong. Noise tests → `~/radix/noise-tests/`.
 
 ## Rig expansion (8 → 32 mice)
-- 🛒 **[Pinnacle wireless, 16 mice, pons LFP (10-16)](pinnacle-wireless-16-mice-evaluation.md).** Handover part numbers WRONG: system = 8200-K9-SL, K10 = accessory kit. ±465 µV fixed, no TTL, Windows only, 512 Hz for 72 h. Pilot 4 first. 🔁 10-19: custom 4-ch 8474-HR-SE4-C + our own headmount PCB (pins at stereotaxic sites, 6.4 x 7.8 mm).
+- 🛒 **[Pinnacle wireless, 16 mice, pons LFP (10-16)](pinnacle-wireless-16-mice-evaluation.md).** Handover part numbers WRONG: system = 8200-K9-SL, K10 = accessory kit. ±465 µV fixed, no TTL, Windows only, 512 Hz for 72 h. Pilot 4 first. 🔁 10-19: custom 4-ch 8474-HR-SE4-C + our own headmount PCB (pins at stereotaxic sites, 6.4 x 7.8 mm). 🖥️ 10-20: one custom PC, B550-PLUS + 4 x1 USB cards = 16 dongles; 2nd PC if unstable.
 - **Start at `07-decisions/RIG-EXPANSION-HUB.md`.** [DAQ corrections](daq-research-corrections-2026-07-28.md) (Core has no isolation, PortExp mandatory, don't buy Allego, Intan via White Mountain) · [XDAQ channel law](xdaq-channel-law-and-32-mouse-wiring.md) (animals = ch ÷ 64, order ONE-R1024, 32 mice = 2 boxes) · [DAQ comparison](daq-ecosystem-comparison.md) (confidential) · [16→32 device](acquisition-device-16-32-mice.md) · [Open Ephys](openephys-scale-up-option.md). Kontex quote 262024 = $10,002.89.
 
 ## Nanotag studies (SOD1, no EEG)

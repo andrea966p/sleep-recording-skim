@@ -162,6 +162,8 @@ What is known:
 - **Windows 10/11 only** (✅). Our machines are all Ubuntu, so these are NEW PCs. Linux support of the Python API: ❓.
 - If we ever use Pinnacle's own video: at most 4 cameras per PC (✅ catalog p.22 "Up to four cameras can be added to a single video system").
 
+> [!success] DECIDED 2026-10-20 (supersedes the topology below): ONE custom PC, ASUS PRIME B550-PLUS, single-slot GPU + 4 PCIe x1 USB cards, 4 dongles per card = 16 (12 now, 4 in January). Unstable ⇒ second identical PC, move 2 cards (8 + 8). Details: [[2026-10-20]].
+
 Proposed topology (only verified constraints, the rest flagged):
 1. 16 × K9-SL kits, each dongle on its own 9052 extension, placed close to the cages it serves (distance guidance: ❓).
 2. **Start with 4 PCs × 4 mice**, which is the published tested load (Morrone) and the Pinnacle video limit. Move to **2 PCs × 8** only after Pinnacle confirms in writing AND the pilot shows no gaps with 8 units on one PC.

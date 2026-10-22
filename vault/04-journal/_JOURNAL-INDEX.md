@@ -7,13 +7,14 @@
 >
 > Read a day here, then follow its links down. **Detail belongs in the linked notes, not in the journal.**
 
-**72 entries.** Dates with no entry had no vault activity, mostly weekends.
+**73 entries.** Dates with no entry had no vault activity, mostly weekends.
 
 
 ## September 2026
 
 | Date | Day | What happened |
 |---|---|---|
+| [[2026-10-20]] | Tue | 🖥️ **Pinnacle acquisition PC = custom build:** ASUS PRIME B550-PLUS (DDR4, no WiFi, 1 x16 + 1 x16@x4 + 3 x1 = GPU + 4 x1 USB cards, 4 dongles per card = 16). 12 units by end of 2026, 4 more in January. Unstable ⇒ second identical PC, 8 + 8. [[2026-10-16-pinnacle-wireless-16-mice-evaluation]] |
 | [[2026-10-19]] | Mon | 🛒 **Pinnacle wireless settled with the professor:** custom 4-ch **8474-HR-SE4-C** (2 EEG + 2 independent), EEG HP 0.5/0.1 Hz, our own headmount PCB ≤ 6 mm AP, 16 mice on one PC. Verified pin map = Pinnacle **4-ch standard** (8 pins, no spare; "2nd GND" retracted). To-scale headmount concept drawing. [[2026-10-16-pinnacle-wireless-16-mice-evaluation]] · 🧪 **Nanotag NS-SD re-planned** (single-housed 10-19, tags from 10-22, SOD 10-24, SD 11-05 → 11-08, sampling 11-08) + sheet change-log tab, round 1 approved [[sod1-sheet-change-log-workflow]] |
 | [[2026-10-16]] | Fri | 🧪 **NS-SD / NW-SD nanotag schedule brought in from the workstation** (decided there 10-12): SOD1 10-22 → sampling **11-02** (11 d), 4-day SD 10-30 → 11-02, one live tag read 10-27. 🔴 12 s activity-only memory = **9 days, not 20** (English-manual misprint); hub, procedure and device reference corrected. [[_HLB-SOD1-project-hub]] |
 | [[2026-10-09]] | Fri | ⚡⭐⭐⭐ **The grounding fix holds over 24 h** (run `ee0263bffeaa`, 29.5 h): floors < 240 µV and A2 EMG 60 Hz < 2.3 µV in every hour; **A2 scores WITHOUT the notch** (r@1min 0.615, before REJECT), B1 0.587; wake dark 2-3x light; building events 1 vs 6; light-switch spikes unchanged. Lab member's visit 10-08 16:41-17:37 marked. Strip finished with `--gpio-never-connected` (din_1 glitches, nothing wired). [[2026-09-30-xdaq-noise-series]] |

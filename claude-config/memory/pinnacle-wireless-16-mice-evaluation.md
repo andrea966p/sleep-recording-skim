@@ -30,3 +30,7 @@ Related: [[unipolar-run-2026-10-15-ahyeon]] · [[project_hardware_sync_neuronexu
 (redesigned 10-19 in skull coordinates: pins at Tsukuba EEG sites + separate pons LFP target/reference pins, 6.4 ML x 7.8 AP mm, routed 2-layer, clearance check PASS). Target: all 16 mice on one PC.
 Pin map verified (catalog p.10): 4-ch standard = CH1/CH2 vs COMMON, CH3/CH4 differential, 1 COMMON + 1 GND, 8 pins, NO spare
 (my "2nd GND" was wrong). Headmount socket female, openings up. Drawing + script: `vault/06-references/attachments/`. Journal [[2026-10-19]].
+
+**PC DECIDED 2026-10-20:** 16 units total (12 by end 2026, 4 in Jan 2027). Custom build, DDR4, ASUS PRIME B550-PLUS (verified 5 slots:
+x16 + x16@x4 + 3 x1, no WiFi) = single-slot GPU + 4 x1 USB cards (one controller each), 4 dongles per card. Unstable ⇒ 2nd identical PC, 8 + 8.
+Lenovo/HP/Dell towers and Pinnacle's 9001-K1-AW rejected. Neither Morrone nor Kolling gives PC specs. Journal [[2026-10-20]].

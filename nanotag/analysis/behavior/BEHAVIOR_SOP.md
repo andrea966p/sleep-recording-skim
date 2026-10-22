@@ -1,0 +1,239 @@
+# Behavioural scoring SOP — HLB SOD1 project
+
+Frozen scoring rules for the Y-maze / OFT / NOR battery. The HLBNSL
+(sleep-normal) and HLBNSD (sleep-deprived) cohorts form one 2x2 design, so
+**both batches must be scored under the rules below, unchanged.** Any edit to a
+threshold or zone definition requires re-deriving both batches; record the date
+and the reason in the changelog at the end.
+
+Source protocol: `Acute_SD_Behavioral_Protocol.pdf` (KAIST / HLB SOD1).
+
+| | |
+|---|---|
+| Batch 1 | HLBNSL — NS-SL (SOD1, n=5) vs NW-SL (water, n=5), **minus mouse 43** (died 2026-09-28) → n=5 vs n=4 |
+| Batch 1 testing | Y-maze 2026-09-30, OFT/NOR habituation 2026-10-01, NOR T1+T2 and sampling 2026-10-02 |
+| Batch 2 | HLBNSD — NS-SD (51-55, SOD1) vs NW-SD (56-60, water), sampling 2026-11-02 |
+| Capture | Phone camera, top-down overhead |
+| Tracking | EthoVision XT on the Windows PC (night sessions) |
+| Object exploration | Manual, blinded, in BORIS on the Linux workstation |
+
+---
+
+## 1. Video preparation (Linux workstation)
+
+Phone video is variable frame rate; EthoVision assumes a constant time base, and
+Noldus guarantees import only for files their own encoders wrote. Every file is
+transcoded to CFR 30 fps H.264, 1080p, rotation baked in, **before** it reaches
+the Windows PC.
+
+```bash
+B=nanotag/analysis/behavior/prep.py
+/usr/bin/python3 $B inventory <raw_dir> -o inventory.csv   # QC: VFR? rotation? resolution?
+/usr/bin/python3 $B convert   <raw_dir> <cfr_dir>          # transcode + blind
+/usr/bin/python3 $B verify    <raw_dir> <cfr_dir>          # CFR 30, duration unchanged
+```
+
+`convert` writes `blind_key.csv` **in the parent of `<cfr_dir>`**, so the key does
+not sit in the folder the scorer opens. Fill the `mouse`, `group`, `test`, `trial`
+columns by hand, then keep the key closed until the stats step.
+
+Originals are never modified. A duration drift > 0.1 s between original and
+converted file means frames were dropped — that file is re-converted, not used.
+
+### Checks before any batch processing (Phase 0 gate)
+- [ ] Camera fixed, not handheld, for the whole trial (drift breaks arena calibration)
+- [ ] Whole arena in frame, with a known length visible for scale calibration
+- [ ] 1x lens, not ultrawide (barrel distortion inflates path length near the walls)
+- [ ] Mouse/floor contrast adequate, no hard shadows crossing the arena
+
+Answers for batch 1 (HLBNSL), checked 2026-10-20 from mid-trial frames:
+
+| Check | Y-maze | OFT / NOR |
+|---|---|---|
+| Camera fixed during a trial | yes | yes |
+| Framing identical across videos | **no — drifted between mice** | yes |
+| Whole apparatus in frame | **no, see below** | yes, with margin |
+| Lens | 1x, no ultrawide | 1x, no ultrawide |
+| Mouse/floor contrast | excellent (black on white) | excellent |
+| View | **oblique — arm inner walls visible** | near-overhead |
+
+Capture format, all 36 files: 1440x1440 square, H.264, **already constant 30 fps**
+(not VFR), **rotation -90 in metadata on every file**. So the CFR conversion is not
+needed for the time base, but the rotation still has to be baked in before EthoVision.
+
+**Y-maze framing, per video** (distal arm end out of frame = that arm's tip is not
+recorded):
+
+| Mouse | Truncated arm | Margin at the tightest edge |
+|---|---|---|
+| HLBNSSL41 | left arm | top arm has ~85 px |
+| HLBNSSL42 | **top arm** | — |
+| HLBNSSL44 | **top arm** | — |
+| HLBNSSL49 | none | ~10 px |
+| HLBNWSL45 | none | ~10 px |
+| HLBNWSL46 | none | ~10 px |
+| HLBNWSL47 | **top arm** | — |
+| HLBNWSL48 | none | ~20 px |
+| HLBNWSL50 | none | ~15 px |
+
+Decided with the experimenter 2026-10-20: **the mouse is in frame throughout every trial**,
+which is the criterion that matters. The truncation affects only the apparatus outline, so:
+
+- Y-maze videos are **rotated to align the maze** and each gets its **arena and zones set
+  manually, per video**. They do not share one arena definition.
+- **Arm entries and SA% are the primary Y-maze endpoints** and are unaffected: entries are
+  scored at the arm's proximal threshold near the centre triangle, in frame in every video.
+- **Distance and speed in cm are secondary.** Rotation is an in-plane transform, so it
+  aligns the maze but does not remove the wide-angle parallax that makes one scale factor
+  slightly position-dependent across the frame. Report them as relative/secondary, or
+  calibrate per video and state the method.
+- **The in-frame assumption is verified for free during tracking:** EthoVision reports
+  missed/unreliable samples per trial. A trial with an unusual missed-sample count gets
+  looked at before its data is used.
+- Truncation is not confounded with treatment group (42, 44 are SOD1; 47 is water).
+- NOR/OFT videos are **cropped** to the arena before tracking, which also removes the
+  second empty compartment at the left edge.
+
+Video durations exceed the protocol windows (Y-maze 548-730 s for an 8 min test;
+OFT 664-757 s and NOR 642-857 s for 10 min tests), so every file carries handling
+before and after the trial and **must be trimmed to the trial window** before tracking.
+HLBNWSL50's NOR-T2 is the outlier at 857 s.
+
+Checked and cleared: no escapes and no experimenter hands inside the apparatus in the
+frames sampled from HLBNWSL45 and HLBNWSL48 Y-maze.
+
+**NOR objects:** T1 used two identical **red pyramids** (triangular, point apex).
+T2 kept one red pyramid in place and replaced the other with a **blue triangular prism**
+(flat top ridge instead of an apex), confirmed by zooming on the objects 2026-10-20. So
+the novelty differs in **both shape and colour**, which is an acceptable NOR pair.
+
+Two caveats that remain:
+- The objects are **small and low** — roughly the size of the mouse's head. Confirm they
+  were fixed to the floor; an object the mouse can shift or topple invalidates that trial.
+  Small, low objects are also easy to climb and sit on, which is exactly what the manual
+  scoring rule in section 3 has to exclude.
+- Both are smooth plastic, so they differ in shape and colour but **not in texture**.
+  Note it in the methods; no action needed.
+
+**Batch 2 (testing 2026-10-31 to 11-02) should fix the Y-maze camera framing** so all
+three arm ends clear the frame with margin.
+
+---
+
+## 2. EthoVision settings
+
+One experiment per test type, so the arena and zones are defined once.
+Sample rate **30/s**, matching the converted video. Record the exact version used.
+
+| Setting | Value |
+|---|---|
+| EthoVision version | _(fill in)_ |
+| Detection method | _(fill in: greyscaling / differencing)_ |
+| Subject points | Centre-point (nose-point additionally, if licensed) |
+| Sample rate | 30/s |
+
+### Y-maze (8 min)
+- Scale calibrated on: _(fill in — arm length, cm)_
+- Zones: 3 arm zones + centre triangle. Arm zone boundary pulled **_(fill in)_ cm**
+  into the arm from the centre triangle, so a centre-point crossing approximates
+  the protocol's all-four-paws criterion.
+- **Known deviation:** the protocol defines an entry as all four paws crossing the
+  threshold; EthoVision scores the centre-point. Validated against hand-scored
+  entry sequences on 3 videos — agreement: _(fill in)_ %.
+- Export: raw centre-point XY track **and** the zone-visit sequence.
+
+### Open field / NOR habituation (10 min, 50 x 50 cm, 20 lux)
+- Scale calibrated on the 50 cm wall.
+- Centre zone: inner **25 x 25 cm** = 25% of the arena area. Periphery = remainder.
+- Thigmotaxis band: within **5 cm** of any wall (computed here from the raw track,
+  not in EthoVision — see `metrics.thigmotaxis`).
+- Export: total distance, mean velocity, centre time/entries, raw XY track.
+
+### NOR T1 / T2 (10 min each)
+- Tracked for locomotion and as a sanity check only.
+- **EthoVision nose-point zone time is NOT the exploration endpoint.** Contour
+  tracking loses the animal against objects and walls, and zone dwell does not
+  exclude climbing. Exploration comes from BORIS (section 3).
+
+Always export raw track data, not only the summary statistics — summaries can be
+recomputed, tracks cannot be recovered.
+
+---
+
+## 3. Manual NOR scoring (BORIS, blinded)
+
+Scored from `<cfr_dir>` on the blinded codes alone. The scorer must not have the
+key open.
+
+Ethogram — state events, one key each:
+
+| Trial | Events |
+|---|---|
+| T1 | `explore_A`, `explore_B` (the two identical objects, by position) |
+| T2 | `explore_familiar`, `explore_novel` |
+
+**Scoring rule (verbatim):**
+
+> Exploration = the snout is directed at and within 2 cm of the object.
+> Excluded: sitting on the object; climbing or rearing with the forepaws on the
+> object; chewing or gnawing the object; and passing the object with the snout
+> oriented elsewhere.
+
+- Judge the 2 cm distance against a landmark of known size in frame, decided once
+  per arena setup and written here: _(fill in)_
+- Second rater independently scores a random 20% of videos. Report the intraclass
+  correlation on exploration durations — this cannot be collected later.
+- The same session also hand-scores arm-entry sequences for 3 Y-maze videos, to
+  validate the EthoVision entry definition above.
+
+Export per-behaviour total duration, latency and bout count to CSV.
+
+---
+
+## 4. Derived measures and exclusions
+
+Implemented in `metrics.py`; run it to execute its asserts.
+
+| Endpoint | Definition |
+|---|---|
+| Spontaneous alternation % | `alternations / (total_entries - 2) * 100`, overlapping triplets of three different arms. Undefined below 3 entries. |
+| Total arm entries | Arm entries including re-entries into the same arm (`collapse_repeats=False`) |
+| d2 | `(T_novel - T_familiar) / (T_novel + T_familiar)`, range -1 to +1 |
+| T1 location bias | Share of T1 exploration on the more-visited object, 0.5 to 1.0 |
+| Thigmotaxis | Fraction of tracked samples within 5 cm of a wall |
+
+**NOR exclusions** (logged with counts in the output; they do **not** remove the
+mouse from Y-maze or OFT):
+1. Total exploration < 20 s across both objects in T1 **or** T2
+2. T1 location bias > 80%
+
+---
+
+## 5. Statistics
+
+With n=5 vs n=4 in batch 1, the between-group tests are underpowered; the output
+says so explicitly rather than implying otherwise.
+
+- **Per group:** one-sample test of d2 against 0, and of SA% against 50% chance.
+  These are the primary questions — did the group recognise the novel object,
+  did it alternate above chance.
+- **Between groups:** Mann-Whitney U per endpoint, reporting effect size and CI
+  rather than leaning on the p-value.
+- **Headline 2x2 (SOD1 x SD):** held until batch 2 is scored, then two-way ANOVA
+  on the pooled four groups. **Batch 1 alone cannot answer the project question**;
+  it supplies the sleep-normal half of the design.
+- **Protocol control check:** Pearson correlation between total arm entries and
+  SA%, to show any cognitive drop is not locomotor.
+
+Figures follow the lab convention already used in `analysis/cohort.py`: reuse
+`style(ax)`, bar charts start at 0, bounded measures span their full scale,
+SOD1 `#c2410c` / water `#1d4ed8`, mean ± SEM with per-mouse dots and a
+significance bracket.
+
+---
+
+## Changelog
+
+| Date | Change | Reason | Batches re-derived |
+|---|---|---|---|
+| 2026-10-20 | Initial version, before any video was scored | — | — |
