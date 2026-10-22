@@ -1,35 +1,14 @@
 ---
 name: radiens-4-has-no-per-port-recording
-description: Measured 2026-09-11 - the installed radiens 4.0.0 AllegoClient has no start_recording(port=) at all, so per-user recording is impossible and only post-hoc slicing works.
+description: "Measured 2026-09-11: radiens 4.0.0 AllegoClient has no per-port recording (only global set_recording); 4.0.0 is the latest stable, do not upgrade; restart() is broken. Detail in the vault"
 metadata:
   type: reference
 ---
 
-`vault/20-areas/recording-console/multi-user-independent-recording-schedules.md` records
-`start_recording(*, port=...)` / `stop_recording(*, port=...)` and
-`RecordingConfig.split_files_by_port` as "DOC-VERIFIED against raw API HTML" (2026-07-24).
+The installed radiens 4.0.0 `AllegoClient` (25 public methods) has only global `set_recording(mode)` (`RecordMode` OFF/ON); `start_recording(port=)`, `stop_recording(port=)` and `split_files_by_port` exist only in the protobuf. One recording, all four ports, one file: per-user slicing after the fact is the only route. 4.0.0 IS the latest stable on PyPI (only `5.0.0.dev1` is newer).
 
-**Those methods do not exist in the installed client.** Measured 2026-09-11 by introspecting
-`radiens.AllegoClient` in `/opt/neurosurveillance/venv`: 25 public methods, and the only
-recording control is **global `set_recording(mode)`** with `RecordMode` = `{OFF:0, ON:1}`.
-`grep` over the whole installed package finds `splitFilesByPort` **only** in
-`grpc_radiens/allegoserver_pb2.pyi`, i.e. in the protobuf, never in the client.
+Details: [[radiens-api-reference]] (Known gaps in radiens 4.0.0) · [[multi-user-independent-recording-schedules]] (retraction) · [[2026-09-11-allego-control-bench-test]] · [[skim-nas-smb-and-upload]]
 
-⭐ **radiens 4.0.0 IS the latest stable on PyPI.** Only `5.0.0.dev1` (a Jan-2026 dev
-pre-release) is newer, and its PyPI description mentions none of these methods. So this is
-not a case of being behind — do not "fix" it by upgrading, especially not to a dev build
-under a live-animal instrument.
-
-⇒ **One recording, all four ports, one file.** Per-user *recording* is impossible on this rig;
-per-user *slicing after the fact* is the only route. That is what
-[[skim-nas-smb-and-channel-stripper]] implements.
-
-🔑 `set_recording('off')` DOES exist (resolves to `api_allego.set_record_state(...,
-RecordMode.OFF)`) but **no code in this repo has ever called it** — bench-test on a junk
-recording before it goes near an animal run.
-
-⚠️ `AllegoClient.restart()` is also broken (`mode.enum`); call the `Restart` gRPC with `mode.value` instead. (Moved here from the MEMORY.md index, 2026-10-06.)
-
-## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
-
-- 🔴⭐⭐ **[radiens 4.0.0 HAS NO PER-PORT RECORDING](radiens-4-has-no-per-port-recording.md).** Recording is GLOBAL. 4.0.0 IS latest stable — don't upgrade to fix it. ⚠️ `AllegoClient.restart()` is also broken (`mode.enum`); call the `Restart` gRPC with `mode.value`.
+- 🛑 Do NOT "fix" this by upgrading radiens, least of all to a dev build under a live-animal instrument.
+- 🔑 `set_recording('off')` exists but no repo code had called it as of 2026-09-11: bench-test on a junk recording before any animal run.
+- ⚠️ `AllegoClient.restart()` is broken (`mode.enum`): call the `Restart` gRPC with `mode.value` (reported 2026-09, not re-run).

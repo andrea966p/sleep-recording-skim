@@ -40,7 +40,7 @@ This page is the map. The detail lives in the linked notes; if a note and this p
 - Relation between the two routes (replace, or run side by side): not recorded. Ask Andrea.
 - Pinnacle: connector drawing and written answers from Pinnacle, electrode sites and the board layout, whether the 6 mm headmount limit holds, the video-sync decision (the wireless unit has no TTL input). [[pinnacle-wireless-plan-status]]
 - Pinnacle: December 72 h test of 12 units on one PC, then the last 4 in January 2027. [[2026-10-20]]
-- Contradictions found in this folder, settled and open: [[rig-expansion|contradictions log]]
+- Contradictions found in this folder, settled and open: [[contradictions-rig-expansion|contradictions log]]
 
 ## Everything here
 ![[area.base]]

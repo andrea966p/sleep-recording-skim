@@ -8,6 +8,8 @@ metadata:
   modified: 2026-08-03T09:43:11.829Z
 ---
 
+> 🔴 **STALE, 2026-10-22: the vault was rebuilt and `07-decisions/` no longer exists.** The filing rules (decision = a choice between options; where runs, references, procedures, incidents, vendor mail go; journal `created:` field) now live in `vault/CLAUDE.md` ("Where does a new thing go?") and `vault/HOME.md`. Do not use the folder names or the table below. Deletion proposed.
+
 The vault (`sleep-recording-skim/vault/`) gained a `07-decisions/` top-level section on 2026-05-28. It holds long-lived strategic artifacts so they stop rotting inside daily journals and become citable.
 
 Current contents:

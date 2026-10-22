@@ -5,6 +5,8 @@ metadata:
   type: project
 ---
 
+> 🔴 **STALE, 2026-10-22: the headline of this file is OVERTURNED.** "Circadian check PASSED, validates the whole analysis chain" is wrong as stated: an Otsu +-25 % sweep moves D2's asleep-in-light from 23.0 % to 88.9 %, so the check is NOT threshold-independent, and 4 of the 5 "physiology PASS" checks are forced by the staging rule and cannot fail (council review 2026-08-08). Only the REM-from-NREM order property survived (72.4 % vs null 56.6 %). Read [[2026-08-07-staging-preregistration]] (corrected banner) and [[2026-08-07-council-review-of-the-analysis-pipeline]] instead, and always quote the threshold swing beside any asleep-in-light number. Per-animal forensics live in [[per-animal-failure-signatures]]. Deletion proposed.
+
 **Pre-registration + results:** vault `10-projects/rig-bringup/2026-08-07-staging-preregistration.md`.
 ⭐⭐⭐ **THE SYNTHESIS PAGE TO ARGUE FROM: `20-areas/eeg-analysis/2026-08-07-rig-specification-and-analysis-method.md`**
 — established claims with evidence-strength ratings, the rig spec, the analysis method, what may not

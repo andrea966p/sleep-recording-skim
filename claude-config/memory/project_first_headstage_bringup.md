@@ -1,22 +1,17 @@
 ---
 name: project_first_headstage_bringup
-description: "First headstage bring-up RESOLVED 2026-06-19 — root cause = wrong Allego mode; correct = XDAQ One (G1) + XR Headstage (XDAQ_ONE_REC). Hardware was always fine."
+description: "First headstage bring-up RESOLVED 2026-06-19: root cause was the wrong Allego mode (SMARTBOX_PRO reports priSigs=0), never hardware. Full record in the vault; keeps the mode lesson and the Stream-not-Record rule"
 metadata: 
   node_type: memory
   type: project
   originSessionId: 68182adf-7c89-4b69-97a8-4783530bdd8b
 ---
 
-First-ever recording-headstage bring-up on the XDAQ. **✅ RESOLVED 2026-06-19 — headstage detected, streaming shows signal.** `port_num_channels={<Port.D:3>:32}`, `priSigs=32`, `mode=XDAQ_ONE_REC`.
+Resolved 2026-06-19: the headstage was detected (Port D, `priSigs=32`) as soon as Allego was switched from `SMARTBOX_PRO` (reports `priSigs=0` for this hardware) to "XDAQ One (G1) with XR Headstage" (`XDAQ_ONE_REC`). The 2-day teardown (DMM 3.56 V, cables, adapters, ports, C3442) chased a false trail; hardware was always fine. Escalation emails were drafted but NOT sent.
 
-**ROOT CAUSE = wrong Allego system mode.** Allego was set to **`SMARTBOX_PRO`**, which reports `priSigs=0` for this hardware. **Correct mode = "XDAQ One (G1) with XR Headstage" (`XDAQ_ONE_REC`).** Switching modes → instant detection (32 ch, Port D). **It was never a hardware fault.** All the 2-day teardown (DMM, swaps, ports) chased a false trail.
+Details: [[first-headstage-connection]] · [[signal-mapping-guide]] · [[radiens-software-reference]] (Allego has no per-channel rename; XDAT is sorted by `pri_N`)
 
-**Key lesson — don't repeat:** `SMARTBOX_PRO` shares the `IntanUSB3Instrument` USB3 backend, so it *connects*, scans all 8 ports, and enumerates onboard GPIO — but reports `priSigs=0` because the headstage **profile** is wrong. **Controller-connects ≠ correct-mode.** Also: enumerating Allego modes from the *log* is unreliable — the log only shows modes that have *ever been selected*; `XDAQ_ONE_REC` was invisible until first chosen. Kontex's "verify an XR-type headstage is connected" hint was literally pointing at the XR mode. Earlier vault claim "SmartBox Pro = correct mode" was WRONG (now corrected in vault §4).
-
-**False trail (all healthy, ignore as suspects):** Intan **RHD2216 (C3313)** + spare headstage, both **C3026** cables, both **SAdpt-XDAQ-OM12** adapters, **Ports 1/3/4**, **C3442**, electrode side, power cycle. **DMM at headstage VDD↔GND = 3.56 V** (validated on-pad; a first misread air-float read 3.33 V — open DC leads drift, disregard). Bus power was always good. License (Radiens **Analytical Suite**) was a non-issue — acquisition runs under `Feat_NoLicenseRequired`. **Escalation emails were drafted (vault §11) but NOT sent — no RMA needed.**
-
-Full record: vault `10-projects/rig-bringup/first-headstage-connection.md` (status banner = RESOLVED; §11 emails marked ⛔ NOT SENT). Probe cmd: `/opt/neurosurveillance/venv/bin/python -c "from radiens import AllegoClient; print(AllegoClient().get_status().port_num_channels)"`. allegoserver log: `~/.local/state/radiens/logs/allegoserver.log`.
-
-**Channel map / naming (2026-06-19):** 2 mice on ONE 32-ch RHD XR headstage (`hstg__passthrough_32`, Port D). M1 = headstage pads 0–3 = Allego `D/1–4` = `pri_0–3` (EEG+,EEG−,EMG+,EMG−); M2 = pads 8–11 = `D/9–12` = `pri_8–11`. Record **8 ch** (selected via System→Signals SELECT/DESELECT + Select More). 3rd pair (pads 4,5 / 12,13) wired-but-unused (green=ground). GUI is 1-indexed `D/n` = pad `n−1` = `pri_(n−1)`. **Allego has NO per-channel rename** — Signal Map is read-only, XDAT sorts by `pri_N`; apply EEG/EMG labels in OFFLINE analysis by index. **Custom sensor BUILT (2026-06-19)** via NeuroNexus **`csv2sensor`** CLI (`.hstg`=`ntv_chan,site_num`; `.prb`=site geometry; no name column — only site#/geometry): `hstg__usrdef_2mice32` + `probe__usrdef_2mice32_probe` map native 0–3→sites 1–4 (M1), 8–11→sites 5–8 (M2), rest→9–32. **GOTCHA: must map ALL 32 native channels** — csv2sensor sets headstage size = row count + requires natives 0…(N−1); a partial 8-row file with natives 8–11 → all `no-site`/`-23`. (mouse1 4-row worked only by contiguous luck.) Re-scan dropdown by toggling "Use local devices". Tool+CSVs in vault `06-references/neuronexus/sensor-maps/`; generated files in `/home/skimlab/radix/devices/`; load via Electrodes tab → "Use local devices" → pick usrdef headstage+probe → Apply. **Primary Radiens software reference (NEW):** vault `20-areas/allego/radiens-software-reference.md` — embeds the full 177-pg NeuroNexus manual + our facts (mode p33, Signal Map p37, Signals/select p38, Electrodes p60, Reference Types p70). PDF stored at `30-resources/datasheets/Radiens-Technical-Documentation.pdf`.
-
-**Still TODO before real recordings:** (1) **C3410 solder reflow** — messy joints (bridges/icicles/cold), wreck signal + short risk; (2) capture the real Allego config once tuning (CAR/referencing OFF for bipolar RHD2216, passthrough probe map) — see vault §8; (3) **use `Stream` not `Record`** for checks — `Record` triggers the session daemon → Frigate video session. Note: detected **32 ch** on Port D (RHD2216 is 16-ch bipolar — XR/mode reports 32; verify channel map at tuning). Distinct track from [[project_hardware_sync_neuronexus_reply]] (TTL sync). Daemon-restart-after-Allego gotcha: [[xdaq-core-gen1-ubuntu-driver]].
+- 🔑 Controller-connects is not correct-mode; Allego modes cannot be enumerated from the log (it lists only modes ever selected).
+- 🔴 `csv2sensor` custom maps must list ALL 32 native channels (headstage size = row count, natives 0..N-1) or every site reads `no-site`/-23.
+- Use `Stream`, not `Record`, for checks (Record triggers the session daemon / video session). Retracted since: the 2-mice-on-one-headstage map (see the vault banner).
+- Related: [[project_hardware_sync_neuronexus_reply]] · [[xdaq-core-gen1-ubuntu-driver]]

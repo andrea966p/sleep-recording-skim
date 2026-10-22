@@ -1,15 +1,10 @@
 ---
 name: sleep-scoring-vault-pages
-description: Where the sleep-scoring knowledge, the SleepStager guide, its backlog and the scoring cases live in the vault
+description: "Where the sleep-scoring knowledge, the SleepStager guide, its backlog and the scoring cases live in the vault: start at the sleep-scoring hub"
 metadata:
   type: reference
 ---
-- vault/20-areas/sleep-scoring/sleep-scoring-handbook.md: states, measures and units, HLBSSL33 medians, draft conventions C1-C12 (C11-C12 are Andrea's own, 2026-10-08; all await the
-  professor), case library, 24 PubMed-verified papers, §8 questions for the professor.
-- vault/20-areas/sleep-scoring/sleepstager-user-guide.md: open/save/files, keys, how to read the rule's marks.
-- vault/20-areas/sleep-scoring/sleepstager-changes-and-backlog.md: change log + prioritised backlog.
-- vault/20-areas/sleep-scoring/2026-10-06-sleepstager-csv-ingestion.md: the council and the CSV decision.
-- vault/04-journal/2026-10/2026-10-07.md: first scoring session, 9 cases with screenshots (attachments in
-  vault/05-experiments/attachments/2026-10-07-scoring/).
-- vault/04-journal/2026-10/2026-10-08.md: scoring session 2 (840 -> 8441), Andrea's calls vs suggestions, cases 1008, 1314-1326,
-  2240/2002/2137, REM-onset lag; attachments 2026-10-08-*.png.
+
+Start at [[_sleep-scoring-hub]] ("Start here" lists the handbook, user guide, changes and backlog, working method and the kappa test). First scoring sessions with Andrea's calls and screenshots: journals 2026-10-07 and 2026-10-08 (attachments in `vault/_attachments/2026-10-07-scoring/` and `2026-10-08-*.png`).
+
+Details: [[sleep-scoring-handbook]] · [[sleepstager-user-guide]] · [[sleepstager-changes-and-backlog]] · [[2026-10-06-sleepstager-csv-ingestion]] · [[scoring-working-method]]

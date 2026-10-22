@@ -7,6 +7,8 @@ metadata:
   originSessionId: 078f71a9-9428-4207-8d58-9d7959424972
 ---
 
+> 🔴 **STALE, 2026-10-22: the per-port start/stop TODO below is FALSIFIED.** The installed radiens 4.0.0 `AllegoClient` has no `start_recording(port=)` at all (measured 2026-09-11, introspection re-checked 2026-10-22); only post-hoc slicing of one master file works. Current facts: vault [[multi-user-independent-recording-schedules]] and [[radiens-4-has-no-per-port-recording]]. Do not act on the TODO. Deletion proposed.
+
 Came up 2026-07-14: user wants to start their 4 mice Monday 9am (48h) while another lab member starts their 4 mice Monday 9pm (48h), same shared rig/XDAQ.
 
 **Confirmed constraint:** Allego Record button = ONE global R_ON/R_OFF for the whole XDAQ box (all 4 ports, one file). Vault `session-recording-workflow.md`: "Radiens provides a single global R_ON/R_OFF signal." Per-port channel SELECTION exists but that's not per-port timing. Multiple Allego GUI windows do NOT help — all windows are clients of the same `allegoserver` backend (same one the Python SDK talks to over gRPC/50051), so state is shared, not per-window (architectural inference, not yet bench-tested).
