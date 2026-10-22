@@ -150,7 +150,7 @@ Full rules: [[pipeline-architecture]] §3.5.
 | `SMARTBOX_PRO` or `30000.0 Hz` | fresh Allego defaults | fix in the GUI **before** recording — see the danger box above |
 | `nas NOT USABLE` | share unreachable or sentinel missing | `systemctl start mnt-skimnas.mount`; recording still works, uploads queue |
 | page loads but shows stale numbers | browser cached an old page | hard reload (Ctrl+Shift+R) |
-| the desktop keeps dropping | RustDesk / HDMI switch | the fix (a forced `video=HDMI-A-1:1920x1080@60e` kernel line) is in [[04-journal/2026-07/2026-07-15]] |
+| the desktop keeps dropping | RustDesk / HDMI switch | the fix (a forced `video=HDMI-A-1:1920x1080@60e` kernel line) is in [[2026-07-15]] |
 
 ## 7. Related
 

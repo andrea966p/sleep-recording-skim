@@ -350,7 +350,7 @@ Until the pulse train exists, video and EEG stay alignable only to roughly ±10 
 
 - ✅ **DONE 2026-07-28: `frame_integrity_check.py` over the 14.97 h overnight run. ZERO frame loss across 5388 segments → LED permanently rejected, frame counting confirmed valid.** Still worth repeating on `pi_cam_0/1/3` and on a run that spans a Pi wobble, since RTSP reconnects remain the plausible drop source and Pi1 was down during this one.
 - 🆕 **Drift is MEASURED and it is big: +204 ppm, +8.8 s per 12 h, ~18x over the ±0.5 s budget.** Confirms the pulse train is mandatory, not a refinement.
-- ✅ **DONE 2026-07-28 (code written + unit tested, NOT DEPLOYED): the daemon stop-path fix.** Lease model in `frigate_controller.py` (`acquire_lease`/`release_lease`/`adopt_lease`), 30 s drain before the last release, fail-ON at shutdown, non-stomping startup. 12/12 behavioural tests pass in `backend/tests/test_recording_leases.py`. Journal: [[04-journal/2026-07/2026-07-28]].
+- ✅ **DONE 2026-07-28 (code written + unit tested, NOT DEPLOYED): the daemon stop-path fix.** Lease model in `frigate_controller.py` (`acquire_lease`/`release_lease`/`adopt_lease`), 30 s drain before the last release, fail-ON at shutdown, non-stomping startup. 12/12 behavioural tests pass in `backend/tests/test_recording_leases.py`. Journal: [[2026-07-28]].
 - ⏳ **DEPLOY that fix** — copy to `/opt/neurosurveillance/` and restart the service. Until then production still has the bug.
 - **Flip `sessions.auto_start` to `true`** once the fix is DEPLOYED. Not before, or you auto-start into the same stop bug.
 - Bench validation of Phase 0a, scope on DB25 pin 22, ~$40 bill of materials. Unchanged, still owed.

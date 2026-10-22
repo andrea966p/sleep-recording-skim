@@ -245,7 +245,7 @@ Setup + ops: [[nas-backup|NAS Backup procedure]].
 | OS | Ubuntu 24.04 LTS |
 | Kernel | `6.17.0-14-generic` (HWE) |
 | VA-API Driver | `iHD` (Intel Media Driver) |
-| Docker CE | `29.3.1` (needs `apt-mark hold` — see [[04-journal/2026-04/2026-04-01\|2026-04-01 journal]]) |
+| Docker CE | `29.3.1` (needs `apt-mark hold` — see [[2026-04-01\|2026-04-01 journal]]) |
 | Docker Compose | `v5.1.1` |
 | Frigate | `0.16.1` (pinned in docker-compose.yml) |
 | Netdata | `2.9.0` (installed 2026-03-27, 16 custom NVR alerts) |

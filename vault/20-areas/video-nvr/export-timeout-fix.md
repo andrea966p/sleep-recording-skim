@@ -208,6 +208,6 @@ Revert both edits to `frigate_controller.py` (one constants block + one method b
 
 ## Related
 
-- [[04-journal/2026-03/2026-03-06|Mar 6 race-condition fix]] — added `in_progress` polling; this guide reuses that signal as the primary wait condition
+- [[2026-03-06|Mar 6 race-condition fix]] — added `in_progress` polling; this guide reuses that signal as the primary wait condition
 - 2026-05-11 incident (this guide) — three Diane / H5S251A sessions, 95.5 h each, marked failed; two files recovered (~8.3 h each — recording itself was truncated; the export wait bug is independent of that), pi_cam_2 export never produced by Frigate and source segments now aged out by `retain.days: 7`
 - [[session-recording-workflow#manual-export|session-recording-workflow]] — the "manual export" fallback section is what users had to fall back to with the bug present; keep it for the rare cases where this fix doesn't help (e.g. Frigate truly stuck)

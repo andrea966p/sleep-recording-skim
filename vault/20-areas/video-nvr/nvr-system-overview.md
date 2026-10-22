@@ -90,15 +90,15 @@ In plain language, the system went from "works for the happy path" to "survives 
 |---|---|
 | Day-one walkthrough for a new researcher | [[new-researcher-onboarding]] |
 | Step-by-step session recording workflow | [[session-recording-workflow]] |
-| Full daemon architecture (10 components + frontend) | [[session-daemon/architecture]] |
-| Session journal (WAL) design + schema | [[session-daemon/session-journal]] |
-| Nightly reconciler (findings categories + tuning) | [[session-daemon/reconciler]] |
+| Full daemon architecture (10 components + frontend) | [[architecture]] |
+| Session journal (WAL) design + schema | [[session-journal]] |
+| Nightly reconciler (findings categories + tuning) | [[reconciler]] |
 | Recording stall detection (watchdog) | [[recording-health-watchdog]] |
 | Storage cap + EEG reserve | [[storage-management-implementation]] |
-| Frigate Docker compose (Mosquitto auth, SHA pins) | [[frigate/docker-compose]] |
-| Frigate config.yml (recording, cameras, MQTT) | [[frigate/config-yml]] |
-| Raspberry Pi camera streaming setup | [[raspberry-pi/golden-go2rtc-config]] |
-| Hardware-sync (planned XDAQ GPIO trigger) | [[hardware-sync/overview]] |
+| Frigate Docker compose (Mosquitto auth, SHA pins) | [[docker-compose]] |
+| Frigate config.yml (recording, cameras, MQTT) | [[config-yml]] |
+| Raspberry Pi camera streaming setup | [[golden-go2rtc-config]] |
+| Hardware-sync (planned XDAQ GPIO trigger) | [[overview]] |
 | Netdata alerts | [[nvr-alerts-config]] |
 | Original sprint plan + status table | [[2026-05-20]] |
 | Daily journals during the sprint | [[2026-05-22]], [[2026-05-23]], [[2026-05-24]] |

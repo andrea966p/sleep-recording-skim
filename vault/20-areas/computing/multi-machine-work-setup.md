@@ -395,7 +395,7 @@ Ran end to end on 2026-08-16, laptop paired and verified:
 > [!warning] DEFERRED 2026-08-16, by choice
 > The first two items below both need me to be **physically at a machine that is not the
 > laptop**, so they were deliberately postponed on 2026-08-16 rather than forgotten. See
-> [[04-journal/2026-08/2026-08-16]]. ✅ **The backup gap is CLOSED as of 2026-08-19** — see below.
+> [[2026-08-16]]. ✅ **The backup gap is CLOSED as of 2026-08-19** — see below.
 
 - ✅ **RESOLVED 2026-08-19 — the Synology backup works again, and the fix was not what this
   page predicted.** I did not have to touch the Synology, and it did not need to be logged into

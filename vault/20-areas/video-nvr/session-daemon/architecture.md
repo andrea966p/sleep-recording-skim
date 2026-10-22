@@ -163,7 +163,7 @@ Controls Frigate recording via MQTT and handles video export via HTTP API. Also 
 | **Frigate timezone** | Timestamps in UTC (system timezone `Asia/Seoul`, UTC+9) |
 
 > [!warning] MQTT Recording Toggle Prerequisite
-> `record.enabled: true` must be set in Frigate's `config.yml` for the MQTT toggle to work. If disabled in config, MQTT/UI toggle has no effect. The current production config already has this set -- see [[../frigate/config-yml|Frigate Config]].
+> `record.enabled: true` must be set in Frigate's `config.yml` for the MQTT toggle to work. If disabled in config, MQTT/UI toggle has no effect. The current production config already has this set -- see [[config-yml|Frigate Config]].
 
 **Recording control flow (REWRITTEN 2026-07-28 — lease model):**
 
@@ -893,6 +893,6 @@ Both Radiens and manual sessions produce JSON sidecars in `{SESSION_DATA_DIR}`.
 
 - [[frontend-reference|Frontend Reference]] -- desktop UI component details
 - [[production-values|Production Values]] -- all IPs, ports, paths
-- [[../frigate/config-yml|Frigate Config]] -- recording settings, MQTT toggle prerequisite
-- [[../frigate/docker-compose|Docker Compose]] -- Frigate + Mosquitto deployment
+- [[config-yml|Frigate Config]] -- recording settings, MQTT toggle prerequisite
+- [[docker-compose|Docker Compose]] -- Frigate + Mosquitto deployment
 - [[session-recording-workflow|Session Recording Workflow]] -- user-facing procedure

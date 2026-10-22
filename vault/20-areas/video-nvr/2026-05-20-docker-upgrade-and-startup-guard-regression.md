@@ -150,7 +150,7 @@ rm /opt/neurosurveillance/sessions/2605201628_manual_pi_cam_*_session.json
 - [ ] **Fix the daemon startup guard so it also handles Frigate-only restarts.** Options:
   - Subscribe to Frigate's `frigate/available` MQTT LWT topic; when it transitions `offline → online`, re-arm the same 10s grace period.
   - Tag in-flight `ON` transitions with a "config-reassertion" flag derived from frigate's startup timestamp (visible via `/api/stats` `service.uptime`).
-- [ ] **`record.enabled: false` in Frigate config is OFF THE TABLE** — already investigated and rejected ([[../../04-journal/2026-03/2026-03-09|2026-03-09 journal]]: "would solve the restart issue but loses fail-safe if daemon crashes mid-session"; user has confirmed this breaks Frigate in practice).
+- [ ] **`record.enabled: false` in Frigate config is OFF THE TABLE** — already investigated and rejected ([[2026-03-09|2026-03-09 journal]]: "would solve the restart issue but loses fail-safe if daemon crashes mid-session"; user has confirmed this breaks Frigate in practice).
 - [ ] **Add monitoring alert for unexpected Docker container restarts.** Netdata + Slack already wired; need a rule on `docker.service` restart count or container `RestartCount` jumps so the next occurrence is caught in minutes, not hours.
 - [ ] **Investigate 2026-05-18 residue** in `/srv/frigate/storage/recordings/2026-05-18/` (~430 MB) — likely from the docker 29.4.1 → 29.5.0 upgrade earlier this month.
 
@@ -160,7 +160,7 @@ rm /opt/neurosurveillance/sessions/2605201628_manual_pi_cam_*_session.json
 > - **Docker upgrade:** host uptime intact, only `docker.service` shows stop/start in `journalctl`, `/var/log/apt/history.log` has a matching `aptdaemon role='role-commit-packages'` transaction.
 
 ## Related
-- [[../../04-journal/2026-04/2026-04-01|2026-04-01 journal]] — first occurrence of this pattern, root-cause investigation
-- [[../../04-journal/2026-03/2026-03-09|2026-03-09 journal]] — `record.enabled: false` considered and deferred; `50unattended-upgrades` blacklist added (now known insufficient)
+- [[2026-04-01|2026-04-01 journal]] — first occurrence of this pattern, root-cause investigation
+- [[2026-03-09|2026-03-09 journal]] — `record.enabled: false` considered and deferred; `50unattended-upgrades` blacklist added (now known insufficient)
 - [[2026-04-08-frigate-export-stuck-and-missing-on-edges]] — same `_handle_external_recording_change` path, different failure mode
 - [[architecture|session-daemon/architecture.md]] — describes the startup guard that failed here

@@ -259,7 +259,7 @@ State: `~/.local/state/eeg-recorder/runs.db`.
 
 ✅ **Unipolar, 3 mice, one per port (2026-10-14):** a scheduled 10-minute rehearsal (run `901e16ee8bf8`, layout
 `4mice_unipolar_lfp`) went start → stop → strip (18 channels) → 3 CSVs → NAS verified → `DONE` in 41 s after the stop.
-See [[04-journal/2026-10/2026-10-14]].
+See [[2026-10-14]].
 
 ✅ **The full chain has run end-to-end on a real recording** (2026-09-11, `allego_0__uid0911-22-32-22`,
 91 s, eight slots): started on time, growth confirmed at 2.86 GB/h, stopped `R_ON → R_OFF`, held at

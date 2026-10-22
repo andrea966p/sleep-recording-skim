@@ -131,4 +131,4 @@ Configure the Pi 5 bootloader to wait before retrying after a failed boot. This 
 - [[2026-02-19-pmic-fault-poe-death|PMIC Fault PoE Death (Feb 19)]] — same failure class, but no auto-reboot (pre-eeprom fix)
 - [[golden-boot-config|Boot Config]] — eeprom settings
 - [[watchdog-monitoring|Watchdog Monitoring]] — monitoring stack
-- [[../../04-journal/2026-02/2026-02-24|Journal: 2026-02-24]]
+- [[2026-02-24|Journal: 2026-02-24]]

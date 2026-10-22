@@ -2,6 +2,7 @@
 """Rewrite vault links so they survive the move map (rehaul P3).
 
     relink.py VAULT --map MAP [--apply] [--report OUT.tsv]           # P3a: no meaning change
+    relink.py VAULT --map MAP --normalize [--apply]                  # path links -> bare names
     relink.py VAULT --map MAP --repairs [--apply] [--report OUT.tsv] [--allow OUT.tsv]   # P3b
 
 P3a: every link is resolved the way Obsidian resolves it TODAY. If its current text would
@@ -33,6 +34,8 @@ def main():
     ap.add_argument("--map", required=True)
     ap.add_argument("--apply", action="store_true")
     ap.add_argument("--repairs", action="store_true")
+    ap.add_argument("--normalize", action="store_true",
+                    help="also rewrite links that still resolve but use a path (../x, dir/x)")
     ap.add_argument("--report")
     ap.add_argument("--allow")
     a = ap.parse_args()
@@ -103,7 +106,9 @@ def main():
             if not tgt_fin:
                 report.append((f, "TARGET-LEAVES-VAULT", lk.raw, rows[tgt].new))
                 continue
-            if p3.resolve(lk.linkpath, src_p3) == tgt_p3 and fin.resolve(lk.linkpath, src_fin) == tgt_fin:
+            if p3.resolve(lk.linkpath, src_p3) == tgt_p3 and fin.resolve(lk.linkpath, src_fin) == tgt_fin \
+                    and not (a.normalize and lk.kind == "wiki" and lk.linkpath != fin.shortest(tgt_fin)
+                             and "/" in lk.linkpath):
                 continue
             lp = fin.shortest(tgt_fin)
             if p3.resolve(lp, src_p3) != tgt_p3 or fin.resolve(lp, src_fin) != tgt_fin:

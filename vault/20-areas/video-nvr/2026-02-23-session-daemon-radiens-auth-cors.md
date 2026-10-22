@@ -68,4 +68,4 @@ affected: [session-daemon, radiens, ui]
 ## Related
 - [[architecture|Session Daemon Architecture]]
 - [[session-recording-workflow|Session Recording Workflow]]
-- [[../../04-journal/2026-02/2026-02-23|Journal: 2026-02-23]]
+- [[2026-02-23|Journal: 2026-02-23]]

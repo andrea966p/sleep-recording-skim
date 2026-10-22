@@ -150,7 +150,7 @@ Production IPs, usernames, paths, and settings.
 - [[2026-02-23-session-daemon-radiens-auth-cors|2026-02-23 Session Daemon Auth + CORS]]
 
 ### 📓 Daily Journal
-- ⭐ [[04-journal/_JOURNAL-INDEX|Journal Index — chronological master navigator]] — **every day in date order.** The journal records what happened and links down into the detail notes. Start here to navigate by time rather than by topic.
+- ⭐ [[_JOURNAL-INDEX|Journal Index — chronological master navigator]] — **every day in date order.** The journal records what happened and links down into the detail notes. Start here to navigate by time rather than by topic.
 
 ### Experiments
 - ⭐⭐⭐ [[_HLB-SOD1-project-hub|HLB SOD1 PROJECT HUB — START HERE for the science]] — HLB-sponsored: does oral microbial SOD protect sleep and cognition under chronic sleep restriction? Proposal vs what runs, every batch (intake trials → 4 EEG batches → nanotag), what the EEG → nanotag pivot gives up (no NREM/REM), and 🔴 **four decisions before NS-SD/NW-SD** (activity-only tags so one 20-day run needs no mid-study read; SD hours analysed, not dropped; SD length 4 vs 6 h and 5 vs 7 d; read and stop tags at sampling).

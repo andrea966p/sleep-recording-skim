@@ -236,5 +236,5 @@ unless a human types a verb.
 removed. If anyone ever reinstalls Syncthing and points it at this repository, the
 check fails loudly.
 
-See [[../../04-journal/2026-09/2026-09-16|the 2026-09-16 journal]] for the removal
+See [[2026-09-16|the 2026-09-16 journal]] for the removal
 itself and for what was kept.
