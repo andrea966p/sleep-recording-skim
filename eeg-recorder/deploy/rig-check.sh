@@ -104,7 +104,7 @@ echo
 echo "=== the Allego GUI (a human launches this, nothing else does) ==="
 # The MAIN window process, not its --type=zygote/gpu-process/renderer children.
 # `pgrep -f '^/opt/allego/allego$'` was WRONG: it anchors on end-of-string, so the
-# moment the --disable-gpu flag this very script asks for is present, the pattern
+# moment a --disable-gpu flag (which this script once asked for) is present, the pattern
 # stops matching and the check reports Allego as not running. Caught 2026-09-13,
 # minutes after the flag was applied -- the checker would have called a correctly
 # launched rig broken. Pick the one process whose arguments contain no `--type=`.
@@ -119,11 +119,14 @@ done
 if [[ -n "$apid" ]]; then
   cmd=$(tr '\0' ' ' < "/proc/$apid/cmdline")
   good "allego process" "running"
-  # Mesa GPU crashes took down a run on 2026-08-24 and produced a 6.5 GB log
-  # storm. --disable-gpu is the fix, and it is easy to forget on a relaunch.
+  # Allego runs WITHOUT --disable-gpu (decided 2026-10-23). The flag forces the
+  # software renderer, whose 8192 px texture limit is smaller than the Monitor
+  # canvas (262 signals x 50 px), so the Monitor draws nothing. The flag had been
+  # added after the 2026-08-24 Mesa crash; that risk is accepted. Vault:
+  # allego-blank-monitor-canvas-texture-limit, allego-mesa-gpu-crash-and-log-storm.
   case "$cmd" in
-    *--disable-gpu*) good "  launched with" "--disable-gpu" ;;
-    *) warn "  launched WITHOUT --disable-gpu" "see 03-troubleshooting: Mesa GPU crash" ;;
+    *--disable-gpu*) warn "  launched WITH --disable-gpu" "the Monitor will be blank: relaunch /opt/allego/allego plainly" ;;
+    *) good "  launched without" "--disable-gpu" ;;
   esac
 else
   bad "allego process" "not running -> launch it from the desktop, then re-run this"
