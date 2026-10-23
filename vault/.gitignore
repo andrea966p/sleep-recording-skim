@@ -23,6 +23,7 @@ Thumbs.db
 
 # Per-machine secrets and runtime state (untracked 2026-10-22, vault rehaul P0)
 # local-rest-api holds an API key and a self-signed certificate's private key.
+# The plugin was uninstalled 2026-10-23; the rule stays in case it is reinstalled.
 .obsidian/plugins/obsidian-local-rest-api/data.json
 # Claude Code rewrites this as permissions are approved.
 .claude/settings.local.json

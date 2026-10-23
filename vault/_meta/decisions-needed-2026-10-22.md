@@ -55,4 +55,4 @@ and in the per-area log in `_meta/contradictions/`.
 - ✅ 2026-10-23: `_JOURNAL-INDEX.md` moved to `90-archive/`; [[journal.base]] is the journal index.
 - ✅ 2026-10-23: the six stale memory files were deleted (verbatim copies stay in `90-archive/claude-memory-2026-10-22/`).
 - Outside the vault, not changed: `~/eeg-analysis-venv`'s editable install and the `FIGURE_STYLE_DIR` default in `eeg-emg-analysis/core/paths.py` still point at the deleted `~/Monitoring_project`.
-- Regenerate the Obsidian Local REST API key, or remove the plugin (see [[2026-10-23]]).
+- ✅ 2026-10-23: the Obsidian Local REST API plugin was uninstalled (nothing used it; the vault MCP reads the files directly), so its old key is dead. [[2026-10-23]]
