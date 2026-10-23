@@ -106,13 +106,11 @@ def main():
             continue
         top = f.split("/")[0]
         ok_place = (f in ROOT_FILES or f.startswith(FREE_DIRS) or JOURNAL_RE.match(f)
-                    or f == "04-journal/_JOURNAL-INDEX.md"
                     or (top in ("10-projects", "20-areas") and area_key(f))
                     or (top == "30-resources" and f.split("/")[1] in RESOURCE_SUBS))
         if not ok_place:
             err["note outside the skeleton"].append(f)
-        if f.startswith(("_templates/", "_meta/", "_bases/", "90-archive/")) or f in ROOT_FILES \
-                or f == "04-journal/_JOURNAL-INDEX.md":
+        if f.startswith(("_templates/", "_meta/", "_bases/", "90-archive/")) or f in ROOT_FILES:
             continue
         fm = frontmatter(text)
         if fm is None or fm == "INVALID":

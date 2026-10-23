@@ -135,10 +135,10 @@ rules and short pointers into the vault: when a hook and the vault disagree, the
 - [Work on local copies](work-on-local-copies.md) — Stage in `~/sleep-data`, check sha256 against `info.json`; never work on the NAS
 - [SleepStager csv-reader branch](sleepstager-csv-reader-branch.md) — PR #1 + #2 open (checked 10-22). 🛑 Never push to `main` of somnocode. Tone row + rules card local only; feature notch still 50 Hz
 - [Sleep-scoring vault pages](sleep-scoring-vault-pages.md) — Start at `_sleep-scoring-hub` (handbook, user guide, backlog, working method, kappa)
-## Stale, kept for history (deletion proposed)
-- [EEG analysis codebase, 07-18](eeg-analysis-codebase.md) — Describes offline EEG−EMG differencing and `MA1..MD2` names; half that code was deleted 08-11
-- [QC of two runs, 07-14](eeg-qc-2026-07-14-two-runs.md) — Its "earthing fix VALIDATED" rested on one 42 s clip and was withdrawn (vault RB-3)
-- [EEG rig state, 08-03/04](eeg-rig-current-state.md) — Movement root cause contradicted (ER-1); its hard rules live in eeg-60hz-saga, electrode-failure-literature and `_eeg-rig-hub`
-- [Multi-user schedules](project_multiuser_recording_schedules.md) — Per-port start/stop TODO falsified: radiens 4.0.0 has no per-port recording
-- [Staging + circadian check, 08-07](staging-circadian-validation-2026-08-07.md) — "Circadian PASSED" overturned: Otsu sweep 23-89 %, 4 of 5 physiology checks cannot fail
-- [Vault 07-decisions rule](reference_vault_07_decisions.md) — `07-decisions/` no longer exists; filing rules are in `vault/CLAUDE.md`
+
+## Deleted 2026-10-23 (stale)
+Six memory files contradicted by later vault notes were deleted; verbatim copies are in
+`vault/90-archive/claude-memory-2026-10-22/` (memory-eeg-analysis-codebase,
+memory-eeg-qc-2026-07-14-two-runs, memory-eeg-rig-current-state,
+memory-project_multiuser_recording_schedules, memory-staging-circadian-validation-2026-08-07,
+memory-reference_vault_07_decisions). Do not recreate them; the vault holds the current facts.

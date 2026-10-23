@@ -21,3 +21,9 @@ Append-only. One entry per vault-wide change. Newest at the bottom.
 - Independent audits: hub claims 174/204 supported, 30 corrected; records 0 changed beyond
   added callouts; promoted notes' dropped facts restored. Usability test from HOME: 7/7.
 - Open questions: [[decisions-needed-2026-10-22]].
+
+## [2026-10-23] cleanup | stale memory deleted, journal index archived
+
+- Six stale memory files deleted (copies in `90-archive/claude-memory-2026-10-22/`); MEMORY.md
+  says so in its last section.
+- `04-journal/_JOURNAL-INDEX.md` moved to `90-archive/`; [[journal.base]] is the journal index.

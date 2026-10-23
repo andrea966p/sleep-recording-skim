@@ -54,7 +54,7 @@ settled in its log.
 
 ## Housekeeping left from the rehaul
 
-- Archive `04-journal/_JOURNAL-INDEX.md` now that [[journal.base]] lists every day? (It is kept until you are happy with the Bases view.)
-- Delete the six memory files marked stale (they are archived verbatim): `eeg-analysis-codebase`, `eeg-qc-2026-07-14-two-runs`, `eeg-rig-current-state`, `project_multiuser_recording_schedules`, `staging-circadian-validation-2026-08-07`, `reference_vault_07_decisions`.
+- ✅ 2026-10-23: `_JOURNAL-INDEX.md` moved to `90-archive/`; [[journal.base]] is the journal index.
+- ✅ 2026-10-23: the six stale memory files were deleted (verbatim copies stay in `90-archive/claude-memory-2026-10-22/`).
 - Outside the vault, not changed: `~/eeg-analysis-venv`'s editable install and the `FIGURE_STYLE_DIR` default in `eeg-emg-analysis/core/paths.py` still point at the deleted `~/Monitoring_project`.
 - Regenerate the Obsidian Local REST API key (its old key was in git history; the settings file is no longer tracked).
