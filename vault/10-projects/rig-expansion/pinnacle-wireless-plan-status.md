@@ -8,6 +8,8 @@ tags: [pinnacle, wireless, headmount, purchase, pc]
 ---
 # Pinnacle wireless 16-mouse plan: settled facts and open items
 
+> [!info] 2026-10-23: Andrea confirmed the head-unit model code **8474-HR-SE4-C** and the 6 mm headmount limit (average B6 skull and surgical area). [[2026-10-23]]
+
 > [!abstract] What this is
 > One page for the Pinnacle wireless plan, because its facts are spread over the evaluation page and two journal days.
 > The evaluation page ([[2026-10-16-pinnacle-wireless-16-mice-evaluation]]) is still the source for the spec, the

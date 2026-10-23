@@ -20,3 +20,9 @@ No record note was reworded; where a note in this folder presents the older clai
 | RB-13 | The mouse in port A slot 2 is "the old B1 mouse" ([[2026-08-07-ecg-cohort-baseline]], [[2026-08-11-a2-control-48h-reference-profile]]) | The original B1 was euthanised on 2026-08-05 ([[2026-08-05-tether-comparison]]) | The census note says the new mouse "occupies the B1 slot" and was implanted 21 July, tethered 6 Aug. | **Settled** as a naming ambiguity: the A2 mouse is the replacement mouse first seen in the B1 slot, not the original B1. Confirm only if the animal ever matters again. | No |
 | RB-14 | [[2026-08-11-a2-control-48h-reference-profile]]: the dark phase of `allego_0__uid0808-16-17-36` "is still unscored" | [[2026-08-11-analysis-stack-audit-measurements]]: EMG state dependence was run on the full 16.39 h including the dark phase (A2 -0.734) | Both notes are dated 2026-08-11. | **Open, minor**: the EMG test covers the dark phase; no note shows an EEG usable-fraction or staging pass on it. Treat the staging as unscored. | No |
 | RB-15 | [[experiment-pad7-floating-input-B1]] is a planned experiment (`status: planned`, priority raised 2026-07-31) | Its only test animal (the original B1) was euthanised on 2026-08-05 and the old cohort was replaced on 2026-08-07 | [[2026-08-05-tether-comparison]] section 11; [[2026-08-07-ecg-cohort-baseline]]. | **Open**: the status was left `planned`. It can no longer be run as written. | Yes: close it, or re-target the idea to a current animal? |
+
+## Andrea's answers, 2026-10-23
+
+Settled unless marked still open. [[2026-10-23]]
+
+- **RB-15**: Close the pad 7 test (done).

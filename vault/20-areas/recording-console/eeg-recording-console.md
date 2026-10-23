@@ -8,7 +8,7 @@ created: 2026-09-11
 
 # The EEG recording console — set up a run, leave the room, find your data on the NAS
 
-> [!warning] Updated 2026-10-22: section 5 says to start Allego "with `--disable-gpu`", which was dropped on 2026-09-16 (it blanks the Monitor). Section 6 "No unattended overnight run has completed yet" is outdated: a 28 h unattended console run finished on 2026-09-18. The "takes effect after the next `eeg-recorder` restart" remark in section 3 is also outdated: the service has been running since 2026-10-15 09:56, after the last edit of `scheduler.py`. [[allego-blank-monitor-canvas-texture-limit]] [[2026-09-17-W-SL-28h-run]]
+> [!warning] Updated 2026-10-22: Allego is started WITHOUT `--disable-gpu` since 2026-09-16 (the flag blanks the Monitor); Andrea confirmed this on 2026-10-23 and the troubleshooting table now says so. Section 6 "No unattended overnight run has completed yet" is outdated: a 28 h unattended console run finished on 2026-09-18. The "takes effect after the next `eeg-recorder` restart" remark in section 3 is also outdated: the service has been running since 2026-10-15 09:56, after the last edit of `scheduler.py`. [[allego-blank-monitor-canvas-texture-limit]] [[2026-09-17-W-SL-28h-run]]
 
 > [!abstract] TL;DR — for non-technical readers
 > **What this is.** A page you open in a browser on the recording computer. You pick your name, say
@@ -245,7 +245,7 @@ State: `~/.local/state/eeg-recorder/runs.db`.
 
 | Symptom | Meaning | What to do |
 |---|---|---|
-| Allego pill red, "unreachable" | the acquisition software is not running or not answering | start Allego (with `--disable-gpu`), then reload |
+| Allego pill red, "unreachable" | the acquisition software is not running or not answering | start Allego (plainly, **without** `--disable-gpu`: the flag blanks the Monitor), then reload |
 | Allego pill amber, "sample rate is 30000" | a freshly launched Allego comes up at 30 kHz in `SMARTBOX_PRO` | fix the mode and rate in Allego; the console refuses to start until they are right |
 | live panel shows 0 bytes | **normal for the first ~30 s** | wait. If it persists past the growth check the console says so explicitly |
 | "R_ON but NOT GROWING" | the recorder claims to be recording and no bytes are landing | needs a person. This is the silent-failure signature that cost a 72 h run before |

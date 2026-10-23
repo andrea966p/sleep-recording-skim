@@ -17,3 +17,10 @@ No record note was reworded; where a note presents the older claim as current it
 | HS-10 | Nanotag design: "SOD 6.8 U/mL from 3 days after baseline" ([[hlb-sod1-design]] design table, "Running now" column) | HLBNSL bottles started 09-17 14:00, the day the 09-14 → 09-17 baseline ended ([[2026-09-14-HLBNSL-nanotag-SOD1-sleep]]); NS-SD SOD starts 10-24, the end of baseline ([[2026-10-19-NS-SD-NW-SD-nanotag-study]]) | Timelines in both notes | OPEN: the table cell may mean "after a 3-day baseline". Left verbatim | yes (low) |
 | HS-11 | "C1 on 09-17 reads SCOREABLE with the file's best persistence (0.697) on a chip whose floor is 7 µV" ([[2026-09-18-W-SL-light-phase-sleep]], light phase) | B2 / HLBWSL24 full-file r@1min 0.697; C1 rung 3 BLOCKED, chip floor 5 µV (same page's re-card table; card files) | Cards checked; the light-phase stage 3 output for C1 was not re-run | OPEN: possibly a coincidence of windows, possibly a copied number. Re-run stage 3 on ZT0-12 of uid0917 to check C1's light-phase r | no |
 | HS-12 | HLBWSD08 rebound +11.9 points (notched +16.3) ([[2026-10-06-SOD1-sleep-EEG-2x2-quick-compute]]) | +16.1 points ([[2026-10-06-S-SD-EMG-rescue-between-harmonics]]) | Both pages name their staging: official, notched, EMG between harmonics | SETTLED: three methods, three numbers; quote the method with the number | no |
+
+## Andrea's answers, 2026-10-23
+
+Settled unless marked still open. [[2026-10-23]]
+
+- **HS-8**: Still open: the Claude for Sheets connector is not yet approved by the professor.
+- **HS-10**: Yes: SOD1 or water administration and monitoring start after the baseline recording.

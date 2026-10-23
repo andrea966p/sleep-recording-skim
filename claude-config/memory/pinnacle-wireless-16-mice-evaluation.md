@@ -14,3 +14,4 @@ Details: [[pinnacle-wireless-plan-status]] (current) · [[2026-10-16-pinnacle-wi
 
 - 🔴 Before any Pinnacle order or answer read the status page and check whether Pinnacle's written answers are filed. The memory's old "4 x1 USB cards = 16 dongles" PC layout is superseded by the status page (4 rear ports + 3 cards).
 - Related: [[unipolar-run-2026-10-15-ahyeon]] · [[project_hardware_sync_neuronexus_reply]]
+- 2026-10-23, Andrea: model 8474-HR-SE4-C confirmed; headmount max 6 mm (average B6 skull and surgical area); Pinnacle on its own Windows PC (Sirenia has no Linux); ask Pinnacle whether the premium software alone gives a TTL pulse. Vault: `_rig-expansion-hub`.

@@ -10,3 +10,10 @@ Found while rebuilding `10-projects/noise-hunt` and `10-projects/unipolar-lfp`. 
 | NU-4 | [[2026-08-05-unipolar-lfp-mouse-reference]] section 1: sites `A/18` EMG 1, `A/19` LFP reference, `A/20` LFP target, `A/21` EEG frontal, `A/22` EEG parietal, `A/23` EMG 2 | Corrected map (Andrea, 2026-10-14): `/18` EMG left, `/19` LFP target, `/20` LFP reference, `/21` EMG right, `/22` EEG parietal, `/23` EEG frontal; `users.yaml` `eeg_emg_lfp` | Journal [[2026-10-14]]; `eeg-recorder/config/users.yaml` carries the corrected map and a comment on the typo | SETTLED: the 10-14 map is the only correct one; the 08-05 page already carries a callout, so it was not edited again | no |
 | NU-5 | Claude memory unipolar-run-2026-10-15-ahyeon: mouse A carries about 3.5-4 mV of 60 Hz on all channels, 81 % of the time (20:19) | Journals [[2026-10-14]] and [[2026-10-15]]: about 3.4 mV on all channels (rehearsal data, 21:08-21:18) | Different windows of the same mouse, same order of magnitude | SETTLED: not a conflict; the run note quotes both with their times | no |
 | NU-6 | Claude memory grounding-fix-2026-10-07-mains-collapsed and the gate sections: "FLOOR_MIN_HUM_UV is Andrea's decision, raise it before the next real run" | Journal 2026-10-14: no automatic ground detector is supportable post-fix; option (c), an era-dated gate, is recommended | `core/qc_thresholds.py` still has `FLOOR_MIN_HUM_UV = 800.0` on 2026-10-22; no journal after 10-14 records a decision | OPEN: replacing the gate is not a threshold change but a criterion choice (the hub lists it as open). Same item as ER-4 in `_meta/contradictions/eeg-rig.md` | yes |
+
+## Andrea's answers, 2026-10-23
+
+Settled unless marked still open. [[2026-10-23]]
+
+- **NU-1**: The foil busbar is still not fitted.
+- **NU-6**: Replace the 800 µV ground gate by measuring the current (post-fix) grounds; to do.

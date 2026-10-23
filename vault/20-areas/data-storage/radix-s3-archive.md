@@ -167,8 +167,8 @@ Caveats that bite:
   after 7 days. Without that rule, a few failed 13 GB uploads silently accrue
   charges forever.
 
-The bill goes to the collaborating lab's consolidated account, so a budget alert
-is configured on top of this.
+The bill goes to the collaborating lab's consolidated account. No budget alert is set
+and none is needed (Andrea, 2026-10-23; an earlier one was deleted on 2026-09-20). [[2026-10-23]]
 
 ## Operating it
 

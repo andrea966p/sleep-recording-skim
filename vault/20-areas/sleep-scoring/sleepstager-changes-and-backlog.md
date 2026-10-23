@@ -8,6 +8,8 @@ created: 2026-10-07
 
 # SleepStager: changes we made, and what to improve next
 
+> [!info] 2026-10-23, Andrea: we have the 60 Hz mains notch and use it as our own modification of the fork; the professor does not need to approve the PR. Item 1 below (the features notch, 50 Hz in `features.py` when last checked) should be checked on the SKIM workstation, where the fork lives, before it is closed. [[2026-10-23]]
+
 > [!abstract] TL;DR — for non-technical readers
 > **What this is.** The log of every change made to SleepStager for this lab, and the list of
 > improvements still to make, in priority order.

@@ -1,7 +1,7 @@
 ---
 type: experiment
 area: rig-bringup
-status: planned
+status: done
 status-note: "TO DO — not yet run"
 tags:
   - experiment
@@ -17,6 +17,8 @@ priority: critical
 ---
 
 # EXPERIMENT TO DO — ground pad 7 floating input on B1, does the clean-leg 60 Hz floor drop?
+
+> [!info] Closed 2026-10-23 without being run (Andrea): the B1 animal was euthanised on 2026-08-05, and the grounding fix of 2026-10-07 changed the question. [[2026-10-23]]
 
 > [!warning] Updated 2026-10-22: Never run. The "B1 frontal is open" framing came from the wrong channel map and was dropped on 2026-08-03 [[2026-08-03]]; the test animal, the original B1, was euthanised on 2026-08-05 [[2026-08-05-tether-comparison]] and the old cohort was replaced on 2026-08-07 [[2026-08-07-ecg-cohort-baseline]].
 

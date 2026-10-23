@@ -44,9 +44,9 @@ tags: [hub, project, hlb, sod1, sleep, eeg, nanotag]
 - [ ] Review CHG-005 → CHG-009 once Claude for Sheets has applied them. [[sod1-sheet-change-log-workflow]]
 - [ ] NS-SD questions for Andrea: cracked tag ID, bottle swap time on SD days, sampling details. [[2026-10-19-NS-SD-NW-SD-nanotag-study]]
 - [ ] HLBNSL Run 2 sheet edits: not confirmed applied. [[2026-10-05-HLBNSL-sheet-handover-run2]]
-- [ ] Redesign the sheet request route: hand-pasting files was rejected by Andrea on 2026-10-19. [[sod1-sheet-change-log-workflow]]
+- [ ] Redesign the sheet request route: hand-pasting files was rejected by Andrea on 2026-10-19, and the Claude for Sheets connector is not yet approved by the professor (2026-10-23). [[sod1-sheet-change-log-workflow]] [[2026-10-23]]
 - [ ] Reconcile the proposal's two-way ANOVA with the permutation tests used at small n before the final report. [[hlb-sod1-design]]
-- [ ] The nanotag raw data have no off-site copy. [[2026-09-14-HLBNSL-nanotag-SOD1-sleep]]
+- [x] 2026-10-23: Andrea keeps off-site copies of the nanotag raw data. [[2026-10-23]]
 - [ ] Say in the final report what the nanotag pivot costs: no NREM/REM split and no slow-wave activity. [[hlb-sod1-design]]
 
 ## Everything here

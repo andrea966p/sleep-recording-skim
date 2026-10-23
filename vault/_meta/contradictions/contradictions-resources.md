@@ -20,3 +20,9 @@ Claim A and claim B are quoted or paraphrased from the named notes. Record notes
 
 ## Lint issue for the coordinator
 - `30-resources/_resources-hub.md` is flagged "note outside the skeleton" because `tools/vault/lint.py` allows files under `30-resources/` only in its subfolders (`RESOURCE_SUBS`). The brief placed the hub at the folder top. Either the lint rule or the hub location needs deciding; the lint script was not edited.
+
+## Andrea's answers, 2026-10-23
+
+Settled unless marked still open. [[2026-10-23]]
+
+- **RS-4**: Not important now: parked.

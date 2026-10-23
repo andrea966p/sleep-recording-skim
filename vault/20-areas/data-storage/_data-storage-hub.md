@@ -39,9 +39,8 @@ Alerts from all of these jobs go to ntfy through `nvr-notify.sh` ([[backup-archi
 - Use the plain ssh pipe to the bilab NAS, never rsync or scp. Evidence: [[nas-backup]]
 
 ## Open items
-- Whether an AWS budget alert exists is unconfirmed: the S3 note says one is configured, the memory record says it was deleted on 2026-09-20 [[radix-s3-archive]]
+- ✅ 2026-10-23: no AWS budget alert, and none is needed (Andrea). [[radix-s3-archive]] [[2026-10-23]]
 - Video uploader to S3 is not built; the structure is decided and waits for the cameras [[backup-architecture]]
-- Nothing yet watches AWS spend if no alert exists; ask Andrea to check the Budgets console
 
 ## Everything here
 ![[area.base]]

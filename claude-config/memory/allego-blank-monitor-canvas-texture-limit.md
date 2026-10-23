@@ -13,3 +13,4 @@ metadata:
 Details: [[allego-blank-monitor-canvas-texture-limit]]
 
 🔴 The 2026-08-24 Mesa crash risk ([[allego-mesa-gpu-crash-and-log-storm]]) is therefore BACK for long unattended runs. Untested option that keeps both: `--disable-gpu` plus Chan height <= 30 (262 x 30 = 7860 < 8192). Ruled out, do not chase: licensing `FeatureStop` log lines (routine teardown noise), Radiens cloud 502 (only a sensor-map fallback), RustDesk capture, Electrodes-tab / Viz / AMP-range settings, kernel rollback alone.
+- 2026-10-23, Andrea: keep Allego without `--disable-gpu`; no Chan-height test. `rig-check.sh` now warns if the flag is present. Later: move to the Open Ephys GUI.

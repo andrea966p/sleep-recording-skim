@@ -42,10 +42,11 @@ Monitoring is Netdata plus Uptime Kuma, pushing to ntfy; real addresses and user
 - Keep this vault private: [[production-values]] holds real addresses.
 
 ## Open items
-- The Slack webhook URL was in `nvr-alerts-config` (now redacted) and in git history; the webhook is still live, so consider rotating it [[nvr-alerts-config]]
+- [ ] Rotate the Slack webhook (Andrea agreed 2026-10-23): create a new incoming webhook in Slack, put it in `/etc/netdata/health_alarm_notify.conf` and `/etc/nvr-mqtt-slack.env`, restart `netdata` and `nvr-mqtt-slack`, check an alert arrives, then revoke the old one. [[nvr-alerts-config]] [[2026-10-23]]
+- [ ] Remove the duplicate tailnet device `skimworkstation-1` in the Tailscale admin console (Andrea, 2026-10-23). [[2026-10-23]]
 - Uptime Kuma and Netdata notes still describe Slack in their body text; only banners were added [[monitoring-diagnostics]]
 - Office PC `Andrea-KAIST-PC-ubuntu` holds uncommitted work in the old tree and is not on the workflow [[multi-machine-work-setup]]
-- The root `CLAUDE.md` still says Ultra 7 and hostname `frigate-server`; the live machine is Ultra 5 125H and `e10ubuntu`
+- [x] 2026-10-22: the user-level `CLAUDE.md` now gives the real host (Core Ultra 5 125H, `e10ubuntu`).
 
 ## Everything here
 ![[area.base]]

@@ -50,11 +50,11 @@ It does not cover the cohorts that followed (see [[_hlb-sod1-hub]]), the noise h
 - **The animals do not carry across runs: every run has new mice unless Andrea says otherwise, and a rig position is not an animal.** [[rig-bringup-lessons]]
 
 ## Open items
-- [ ] The pad 7 floating-input test on B1 was never run and its animal was euthanised on 2026-08-05: close it or re-target it (Andrea). [[experiment-pad7-floating-input-B1]]
+- [x] 2026-10-23: the pad 7 floating-input test is closed without being run (Andrea; its animal was euthanised on 2026-08-05). [[experiment-pad7-floating-input-B1]] [[2026-10-23]]
 - [ ] Part B of the interference test (does a dangling cable disturb a working neighbour) was designed and never run; the eight mice were replaced on 2026-08-07. [[2026-08-06-unloaded-chain-interference]]
 - [ ] Which part of the tether chain does the work is still unanswered: construction, slip ring, connector re-seating and anaesthesia changed together; soldered and resin-encapsulated joints are the leading, circumstantial candidate. [[2026-08-07-overnight-recording-two-animals-work]]
 - [ ] Only the positive input of each electrode pair has ever been measured. [[2026-08-07-rig-specification-and-analysis-method]]
-- [ ] C1's persistence is quoted as +0.744 and as +0.761 in different notes (two gates); the logged resolution is in `_meta/contradictions/rig-bringup.md`. [[2026-08-03-two-8-mouse-runs]]
+- [ ] C1's persistence is quoted as +0.744 and as +0.761 in different notes (two gates); the logged resolution is in [[contradictions-rig-bringup]]. [[2026-08-03-two-8-mouse-runs]]
 
 ## Everything here
 ![[area.base]]

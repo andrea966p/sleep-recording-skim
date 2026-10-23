@@ -14,5 +14,5 @@ Details: [[2026-10-19-NS-SD-NW-SD-nanotag-study]] (NS-SD) · [[2026-09-14-HLBNSL
 
 - 🔴 Mouse = header tag ID (Run 2 files are all named `HLBNSSL_<n>`, water mice too). `.nta` mtime = SAVE time, 30-80 min after the read: never use it as read time. Get windows from the sheet's NANOTAG behavioral tab, never from the data.
 - 🛑 Andrea does NO SD or behavioural tests at weekends (why sampling moved from Sun 11-08 to Thu 11-05). 12 s activity-only = 9 days (the English manual's 20 is a misprint). SD hours are analysed, not excluded.
-- ⚠️ No off-site copy of the nanotag raw data. Re-run the Run-2-withheld regression after any loader change.
+- Off-site copies of the nanotag raw data exist (Andrea, 2026-10-23). Re-run the Run-2-withheld regression after any loader change.
 - Related: [[backup-architecture-three-destinations]]

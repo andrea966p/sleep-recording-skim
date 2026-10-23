@@ -15,3 +15,4 @@ Details: [[2026-10-06-noise-hunt-verdict]] · [[_noise-hunt-hub]]
 - 🛑 Do NOT propose new environmental-noise trials or spending (Phase 2 boxes, Faraday cage, T3, expensive earthing). Push the notch decision and per-mouse reliability; judge each recording by its QC verdict.
 - Never say "all EEG clean": before the 08-08 ground re-pin the hum was in mV.
 - Related: [[emg-mains-corrupts-sleep-staging]] · [[xdaq-gen1-has-chassis-gnd]] · [[ground-fix-worked-2026-08-08]]
+- 2026-10-23, Andrea: no more long tests chasing the noise; it is considered fixed. The foil busbar is not fitted; a GND bus with the headstages in an aluminium box is planned (`_eeg-rig-hub`).

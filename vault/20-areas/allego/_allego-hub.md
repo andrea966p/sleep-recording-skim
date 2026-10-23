@@ -15,6 +15,7 @@ tags: [hub, allego, radiens]
 > The Open Ephys route for the XDAQ is [[openephys-gui-setup-xdaq-sleep-eeg]].
 
 ## Current state
+- 2026-10-23: Andrea: keep Allego without `--disable-gpu` (`rig-check.sh` now warns if the flag is present); the switch to the Open Ephys GUI is for later. [[2026-10-23]]
 - 2026-10-22: read-only check: Allego launches without `--disable-gpu` (launcher `Exec` line has no flag), kernel 7.0.0-28 is pinned and held, and `allegoserver` has the GUI as its parent (not orphaned). The flag-vs-Mesa-crash trade-off is still open. [[allego-blank-monitor-canvas-texture-limit]]
 - 2026-09-30: after a fresh launch the stream ran 30x real time while Allego said 1000 Hz; the console pre-flight still checks only the label. [[allego-stream-30x-rate-label-lies]]
 - 2026-09-16: the Monitor drew nothing because the 262-signal canvas exceeded the software renderer's 8192 px texture limit; fixed by dropping `--disable-gpu`. An orphaned `allegoserver` can make a healthy rig look dead. [[allego-blank-monitor-canvas-texture-limit]] [[allego-orphaned-server-blocks-the-rig]]
@@ -31,7 +32,7 @@ tags: [hub, allego, radiens]
 - [[starting-the-rig-after-a-restart]]: relaunching Allego and checking mode and rate
 
 ## Rules that must not be broken
-- Launch Allego without `--disable-gpu`, on kernel 7.0.0-28; do not move the kernel (the hold is deliberate). [[allego-blank-monitor-canvas-texture-limit]]
+- Launch Allego without `--disable-gpu` (confirmed by Andrea 2026-10-23), on kernel 7.0.0-28; do not move the kernel (the hold is deliberate). [[allego-blank-monitor-canvas-texture-limit]] [[2026-10-23]]
 - After any launch, check `XDAQ_ONE_REC` and 1000 Hz, then stream about 10 s and compare `stream.time_range` with wall clock (about 1.0x). [[allego-stream-30x-rate-label-lies]]
 - Before any other theory for "no data", check the `allegoserver` parent PID; kill an orphan by PID, relaunch, and verify exactly one instance exists. [[allego-orphaned-server-blocks-the-rig]]
 - 🛑 Never `pkill -f /opt/allego/allego`: it kills your own shell and `pkill -f "^/opt/allego/allego"` creates an orphan. [[allego-mesa-gpu-crash-and-log-storm]]
@@ -43,7 +44,8 @@ tags: [hub, allego, radiens]
 - Impedance cannot be measured while streaming. [[allego-mesa-gpu-crash-and-log-storm]]
 
 ## Open items
-- [ ] Test `--disable-gpu` with Monitor Chan height 30 or less (262 x 30 = 7860 px) so the Mesa crash protection and the Monitor can both be had. [[allego-blank-monitor-canvas-texture-limit]]
+- [x] 2026-10-23: no Chan-height test needed; Allego stays without the flag (Andrea). [[2026-10-23]]
+- [ ] Later (Andrea, 2026-10-23): move acquisition from Allego to the Open Ephys GUI with our XDAQ. A big switch for the recorder code and the session daemon; not scheduled. [[openephys-gui-setup-xdaq-sleep-eeg]] [[2026-10-23]]
 - [ ] Build a measured-rate check (`time_range` against wall clock) into the console pre-flight. [[allego-stream-30x-rate-label-lies]]
 - [ ] Report the Mesa crash and the `autoScanWorker` retry loop to Kontex. [[allego-mesa-gpu-crash-and-log-storm]]
 - [ ] The IIR filter-design error when changing the Monitor band is deferred (display only). [[allego-iir-filter-design-errors]]

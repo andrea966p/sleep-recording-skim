@@ -11,3 +11,11 @@ Found while rebuilding `20-areas/sleep-scoring` and `20-areas/nanotag`. Settled 
 | SC-5 | [[sleepstager-changes-and-backlog]], backlog 1: the feature notch is 50 Hz, the mains is 60 Hz; "decide before scoring more mice" | Scoring continued on 2026-10-08 (epochs 840-8441) with the 50 Hz feature notch; no entry records the professor's decision | Journal 2026-10-08, backlog | OPEN: the professor decides; epochs scored before the decision used 50 Hz features | yes (ask the professor) |
 | SC-6 | [[nanotag-recording-and-analysis]] TL;DR: NS-SD / NW-SD "surgery 2026-10-12", reuse of the workflow | [[2026-10-19-NS-SD-NW-SD-nanotag-study]]: schedule re-planned 2026-10-19 (single housing 10-19, tag Run 1 10-22, sampling 11-05) | Both notes; the surgery date is the same, only the later schedule changed | SETTLED: no conflict on the surgery date; the procedure carries no schedule. Schedule lives in the study note | no |
 | SC-7 | [[nanotag-recording-and-analysis]]: "no off-site copy yet" for nanotag raw data (2026-10-05) | [[backup-architecture]] lists no nanotag row; S3 holds `radix/` only | Both notes; no later entry about a nanotag copy | OPEN, low stakes: confirm nanotag raw has still no off-site copy; hub lists it as an open item | yes |
+
+## Andrea's answers, 2026-10-23
+
+Settled unless marked still open. [[2026-10-23]]
+
+- **SC-4**: Not sure yet: stays open.
+- **SC-5**: The 60 Hz mains notch is our own modification of the fork; no professor approval needed.
+- **SC-7**: Off-site copies of the nanotag raw data exist.

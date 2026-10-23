@@ -19,6 +19,7 @@ and the connection criterion, wire-free floor and filter chain are in `core/crit
 
 ## Current state
 
+- 2026-10-23: Andrea decided: replace the 800 µV gate by measuring the current grounds, and redesign the −1.90 slope cut. Both are still open in `core/qc_thresholds.py`. [[2026-10-23]]
 - 2026-10-22: The code runs from `~/sleep-recording-skim/eeg-emg-analysis/` with `PYTHONPATH=.`; `~/eeg-analysis-venv`'s editable install and the `core/paths.py` figure-style default still point at the deleted `~/Monitoring_project` (the vault default was fixed in 90f7847). [[eeg-analysis-quickstart]]
 - 2026-10-14: After the 2026-10-07 grounding fix the 800 µV ground gate cannot judge the rig, and the −1.90 floor-slope gate keeps A1, A2 and B2 of uid1007 UNJUDGEABLE; option (c) (keep 800 before 2026-10-07 14:34, no hum gate after) is recommended and is Andrea's decision, not taken. [[2026-10-14]]
 - 2026-10-06: A mains-free EMG measure (power between the 60 Hz harmonics, raw 1000 Hz) reproduces the notched staging (κ median 0.95 over 33 windows); not adopted. [[2026-10-06-S-SD-EMG-rescue-between-harmonics]]
@@ -54,7 +55,8 @@ and the connection criterion, wire-free floor and filter chain are in `core/crit
 
 ## Open items
 
-- Replace or retire the 800 µV ground gate and decide how floors are judged after the grounding fix (Andrea). [[2026-10-14]]
+- Replace the 800 µV ground gate with one derived from measurements of the current (post-fix) grounds: decided by Andrea on 2026-10-23; not yet measured or coded. [[2026-10-23]] [[2026-10-14]]
+- Redesign the −1.90 floor-slope cut, which no longer separates contaminated floors after 2026-10-07 (Andrea, 2026-10-23: yes). [[2026-10-23]]
 - Decide whether to adopt the EMG mains notch or the between-harmonics EMG measure (pre-register, falsification suite, re-score). [[2026-10-02-noise-series-4mice-24h-analysis]]
 - Re-point `~/eeg-analysis-venv` (`pip install -e`) and the `core/paths.py` defaults at `~/sleep-recording-skim`; `pipeline/run_pipeline.sh` calls the stages without `PYTHONPATH`. [[eeg-analysis-quickstart]]
 - Blind human scoring and Cohen's kappa: packs are built, no epoch scored. [[blind-scoring-and-kappa]]

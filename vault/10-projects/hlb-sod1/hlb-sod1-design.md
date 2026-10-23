@@ -9,6 +9,8 @@ tags: [hlb, sod1, design, schedule, nanotag, eeg]
 
 # HLB SOD1: design, batches, NS-SD / NW-SD schedules and Drive map
 
+> [!info] 2026-10-23, Andrea: "SOD from 3 days after baseline" means SOD1 or water administration and monitoring start right after the 3-day baseline recording. [[2026-10-23]]
+
 > [!warning] Updated 2026-10-22: the TL;DR below says "SOD from 10-24 (15 d)"; Andrea decided 12 days on 2026-10-21 (sampling Thu 11-05), as the schedule section says. The S-SL row's source is now [[2026-09-23-S-SL-connection-audit]]. [[2026-10-19-NS-SD-NW-SD-nanotag-study]]
 
 > [!note] Moved verbatim from [[_hlb-sod1-hub]] on 2026-10-22

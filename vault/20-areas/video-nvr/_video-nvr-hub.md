@@ -38,11 +38,11 @@ An ACTIVE area, not retired: the cameras are unplugged until the next video run,
 
 ## Open items
 - Bench-validate the DO 03 gate and build the pulse train (about 40 USD of parts). [[hardware-sync-bench-test-do03]] [[wiring-guide]]
-- Decide when to flip `sessions.auto_start` to true; not before a deliberate daemon restart check. [[2026-07-27-video-eeg-sync-recording-architecture]]
+- Decide when to flip `sessions.auto_start` to true; not before a deliberate daemon restart check. Deferred until video work resumes (Andrea, 2026-10-23). [[2026-07-27-video-eeg-sync-recording-architecture]] [[2026-10-23]]
 - Frame-integrity and drift checks still to repeat on pi_cam_0, 1 and 3; NTP/chrony on the Pis never addressed. [[2026-07-27-video-eeg-sync-recording-architecture]]
 - Camera scale-up to 8 cameras, approved pending validation. [[2026-07-16-camera-node-scale-up]]
 - Settings sync gap (localStorage vs config.yaml), deferred. [[settings-sync-gap]]
-- Stale and conflicting claims are listed in `_meta/contradictions/video-nvr.md`.
+- Stale and conflicting claims are listed in [[contradictions-video-nvr]].
 
 ## Everything here
 ![[area.base]]

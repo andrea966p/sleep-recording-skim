@@ -11,3 +11,9 @@ Found while rebuilding `20-areas/video-nvr`. Settled = decided from primary evid
 | VN-5 | Several runbooks list Slack as the alert channel ([[emergency-runbook]], [[bus-factor-runbook]], [[new-researcher-onboarding]]) | Netdata and Uptime Kuma moved to ntfy 2026-09-14, scripts 2026-09-20 ([[monitoring-setup]]); nvr-mqtt-slack.service is still active for stall and reconciler alerts | Journal and monitoring-setup 8.3b; `nvr-notify.sh` header; `systemctl is-active nvr-mqtt-slack` = active | SETTLED: both true for different alert classes. Banners added; run bodies not rewritten. | no |
 | VN-6 | Memory index says the NVR hostname/Frigate version context of CLAUDE.md (`frigate-server`, Ultra 7) | Vault: host is `e10ubuntu`, Core Ultra 5 | Memory index host section; not re-measured here | SETTLED 2026-10-22: the user-level CLAUDE.md host facts were corrected in commit 7518044. | no |
 | VN-7 | Notes under `session-daemon/` and [[bus-factor-runbook]] cite `~/Monitoring_project/...` paths | Repo is now `~/sleep-recording-skim` | Workspace layout; `/opt/neurosurveillance/session-daemon` symlink noted in memory | SETTLED: banners added; command paths not rewritten because the replacement paths were not each verified. | no |
+
+## Andrea's answers, 2026-10-23
+
+Settled unless marked still open. [[2026-10-23]]
+
+- **VN-2**: Later, when video work resumes.

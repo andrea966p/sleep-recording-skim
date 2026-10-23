@@ -14,6 +14,7 @@ tags: [hub, recording, console]
 > It covers runs, scheduling, the watchdogs, stripping, uploads, naming and the inventory; the Allego software itself is in [[_allego-hub]], and the older crontab path is [[scheduled-recording-and-watchdogs]].
 
 ## Current state
+- 2026-10-23: Andrea: recording stays global; what matters is that several people can queue schedules for different dates, which the console already accepts. Overlap refusal at booking is the open item. [[2026-10-23]]
 - 2026-10-15: ahyeon's 3-mouse run was lost to hardware (port B dropped off the scan the night before) and the console had started without re-checking ports; since then a start with a missing port goes ahead, records the live enumeration, shows a red tag and sends an ntfy alert; the service has been running since 2026-10-15 09:56 KST, after the last edit of `scheduler.py` (09:45), so the check is live. [[2026-10-15]] [[eeg-recording-console]]
 - 2026-10-14: the console gained a cancel button for reservations, the hourly watchdog arms itself on console runs, the strip passes the GPIO flag, and the unipolar map was corrected; a 10-minute scheduled rehearsal ran end to end. Overlapping reservations are still accepted at creation. [[2026-10-14]]
 - 2026-09-30: output is one CSV per mouse in `02_Data_Sleep`; the first real run from the UI reached `DONE` unattended in 20 s after stop. [[2026-09-29]] [[per-mouse-csv-format]]
@@ -41,7 +42,7 @@ tags: [hub, recording, console]
 - Always write a recording as `allego_N__uidMMDD-HH-MM-SS`; match NAS folders by `allego_base`, never by date. [[CANONICAL-recording-naming-and-inventory]]
 
 ## Open items
-- [ ] Refuse overlapping reservations at creation (the later one fails at its own start). [[2026-10-14]]
+- [ ] Refuse overlapping reservations at creation (the later one fails at its own start). Andrea, 2026-10-23: several people must be able to schedule their runs for following dates; that already works (any number of SCHEDULED runs is accepted), this item only makes an overlap fail when it is booked. [[2026-10-14]] [[2026-10-23]]
 - [ ] `UPLOAD_PENDING` had no periodic retry when last checked; it waits for a restart or the retry button. [[2026-09-29]]
 - [ ] Whether the Radiens reader accepts a stripped file is unproven. [[eeg-recording-console]]
 - [ ] A measured-rate check in the pre-flight is not built. [[allego-stream-30x-rate-label-lies]]

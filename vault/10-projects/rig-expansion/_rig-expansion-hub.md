@@ -14,6 +14,7 @@ tethered comparison for 32 mice (July 2026), and the **Pinnacle wireless** plan 
 This page is the map. The detail lives in the linked notes; if a note and this page disagree, the note wins and this page is wrong.
 
 ## Current state
+- 2026-10-23: Andrea: head-unit model code 8474-HR-SE4-C confirmed; 6 mm headmount limit confirmed (average B6 skull and surgical area), so the 6.4 x 7.8 mm drawing must shrink; Pinnacle runs on a separate Windows PC (Sirenia is Windows-only). The one-or-two-PC and "proven on our bench" questions are parked. [[2026-10-23]]
 - 2026-10-22: No note says whether the Pinnacle plan replaces the XDAQ route or runs beside it; neither is marked closed. [[2026-07-24-daq-32-mouse-final-comparison]] [[pinnacle-wireless-plan-status]]
 - 2026-10-20: **Pinnacle acquisition PC decided**: 16 head units in total (12 before the end of 2026, 4 in January 2027), one custom PC (ASUS PRIME B550-PLUS) with USB cards for the dongles, a second identical PC if it proves unstable. A 72 h test of the first 12 is planned for December. [[2026-10-20]] [[pinnacle-wireless-plan-status]]
 - 2026-10-19: **Pinnacle plan settled with the professor**: custom 4-channel head unit (quote model 8474-HR-SE4-C, from Andrea's recollection, to be checked against the quote), our own headmount board, all 16 mice on one PC as the target. It replaces the 3-channel 8200-K9-SL purchase plan on the evaluation page. [[2026-10-16-pinnacle-wireless-16-mice-evaluation]] [[2026-10-19]]
@@ -37,8 +38,10 @@ This page is the map. The detail lives in the linked notes; if a note and this p
 
 ## Open items
 - XDAQ route: outcome of the 2026-07-29 call, a written Kontex quote, commutator inventory (swings the budget by about €70k), headstage count, sample rate. [[2026-07-24-daq-32-mouse-final-comparison]]
-- Relation between the two routes (replace, or run side by side): not recorded. Ask Andrea.
-- Pinnacle: connector drawing and written answers from Pinnacle, electrode sites and the board layout, whether the 6 mm headmount limit holds, the video-sync decision (the wireless unit has no TTL input). [[pinnacle-wireless-plan-status]]
+- Pinnacle runs on its own Windows PC, because Sirenia does not support Linux (Andrea, 2026-10-23); the XDAQ route is not replaced. A Linux interface of our own is an option, depending on whether the premium software package (sleep scoring, video sync) is bought. [[2026-10-23]]
+- Ask Pinnacle: does the premium software alone make the head units expose a TTL pulse, or is Pinnacle's TTL pulse generator needed, or can we use our own? Not clear on their website. [[2026-10-23]]
+- The headmount board is drawn at 6.4 x 7.8 mm, over the 6 mm limit Andrea confirmed on 2026-10-23 (based on the average B6 skull and surgical area). [[2026-10-23]]
+- Pinnacle: connector drawing and written answers from Pinnacle, electrode sites and the board layout, the video-sync decision (the wireless unit has no TTL input). [[pinnacle-wireless-plan-status]]
 - Pinnacle: December 72 h test of 12 units on one PC, then the last 4 in January 2027. [[2026-10-20]]
 - Contradictions found in this folder, settled and open: [[contradictions-rig-expansion|contradictions log]]
 

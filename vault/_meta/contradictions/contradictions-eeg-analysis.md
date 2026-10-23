@@ -24,3 +24,10 @@ No record note was reworded; notes in this folder that present the older claim a
 | EA-17 | Format spec: 38 channels (one port), read with `scripts/xdat_io.py`, EDF includes bipolar derivations ([[02-file-formats-reference]], listed "Current" on the old hub) | 262 channels for the 8-mouse file ([[2026-08-06-recording-data-quality-preregistration]]); per-mouse CSV ([[per-mouse-csv-format]]); EDF writer derives nothing ([[eeg-pipeline-manual]]) | Archived scripts in `eeg-emg-analysis/archive/vault-scripts/_archive_pre_sleep64/` | SETTLED for B. Banner added, status left active (the XDAT 3-file spec still holds) | no |
 | EA-18 | Decimate to 256 Hz; edit `CHANNEL_MAPS` in `scripts/xdat_io.py` ([[04-processing-guidelines]], status active) | `OUTPUT_FS = 250`; layout derived from metadata ([[eeg-pipeline-manual]]) | `core/qc_thresholds.py` line 312; old hub listed the page as "historical, do not follow" | SETTLED for B. Status set to superseded, superseded-by [[analysis-methods-and-justification]] | no |
 | EA-19 | A loader is at `/home/skimlab/Desktop/andrea/eeg-per-mouse/load_mouse.py` with a `HOW-TO-USE.md` (old hub, now in [[eeg-analysis-quickstart]]) | Not present on e10 | `ls` on 2026-10-22 | OPEN. May be on another machine; check the workstation and laptops before deleting the pointer | no |
+
+## Andrea's answers, 2026-10-23
+
+Settled unless marked still open. [[2026-10-23]]
+
+- **EA-10**: Replace the 800 µV ground gate by measuring the current (post-fix) grounds; to do.
+- **EA-11**: Yes: redesign the −1.90 floor-slope cut; to do.

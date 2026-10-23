@@ -18,6 +18,7 @@ The rig's CSV, the analysis and the verdict ladder live in [[_eeg-analysis-hub]]
 
 ## Current state
 
+- 2026-10-23: Andrea: the SleepStager 60 Hz notch is our own modification and needs no professor approval; C12 (one-sided arousal in NREM) is still undecided. [[2026-10-23]]
 - 2026-10-22: PR #1 (CSV reader, display notch 50/60 Hz, unsaved marker) and PR #2 (resume fix) on `somnocode/SleepStager` are both still open and unmerged; read-only GitHub check on 2026-10-22, both last updated 2026-10-08. [[sleepstager-changes-and-backlog]]
 - 2026-10-08: HLBSSL33 Recovery scored to epoch 8441 of 21,600 (235 epochs re-staged); conventions C11 and C12 drafted, and 1317 (NR) vs 2971 (W) is an unsettled inconsistency. [[sleep-scoring-handbook]]
 - 2026-10-08: CSV reading was declared settled (21,600 of 21,600 stages identical to the `.mat` route); the display notch now cycles off, 50 Hz, 60 Hz, while the feature notch is still 50 Hz. [[2026-10-06-sleepstager-csv-ingestion]]
@@ -43,8 +44,8 @@ The rig's CSV, the analysis and the verdict ladder live in [[_eeg-analysis-hub]]
 ## Open items
 
 - Professor to review and merge PR #1 and PR #2. [[sleepstager-changes-and-backlog]]
-- Professor to decide the feature notch (60 Hz mains, backlog item 1) before more mice are scored. [[sleepstager-changes-and-backlog]]
-- Continue HLBSSL33 R from epoch 8441 (check 763 first) and settle 1317 vs 2971 (C12). [[2026-10-08]]
+- ✅ 2026-10-23: the 60 Hz mains notch is our own modification of our SleepStager fork; it does not need the professor's approval (Andrea). Epochs up to 8441 of HLBSSL33 R were scored with 50 Hz. [[sleepstager-changes-and-backlog]] [[2026-10-23]]
+- Continue HLBSSL33 R from epoch 8441 (check 763 first) and settle 1317 vs 2971 (C12; Andrea not sure yet, 2026-10-23). [[2026-10-08]]
 - The running list of questions for the professor (handbook §8). [[sleep-scoring-handbook]]
 - Blind-score a pack and compute kappa. [[blind-scoring-and-kappa]]
 - Decide where finished scorings go back on the NAS. [[scoring-working-method]]

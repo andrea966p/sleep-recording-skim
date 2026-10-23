@@ -8,6 +8,8 @@ created: 2026-10-16
 
 # Pinnacle wireless EEG + pons LFP + EMG for up to 16 mice: verified setup and purchase
 
+> [!info] 2026-10-23: Andrea confirmed the model code 8474-HR-SE4-C. Pinnacle will run on its own Windows PC (Sirenia does not support Linux). [[2026-10-23]]
+
 > [!warning] Updated 2026-10-22: settled 2026-10-19 on a custom 4-channel 8474-HR head unit (model code 8474-HR-SE4-C is Andrea's recollection, not yet checked against the quote) and, on 2026-10-20, one PC with USB cards; the K9-SL purchase plan, the 4-mouse pilot and the 4-PC topology below are superseded. [[pinnacle-wireless-plan-status]]
 
 > [!success] SETTLED WITH THE PROFESSOR (2026-10-19), supersedes the 3-channel K9-SL plan below

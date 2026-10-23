@@ -37,7 +37,7 @@ For an ordinary exploratory run it is optional, though it still costs almost not
 
 1. **Record 10 minutes.** Same sampling rate, same channel selection, same mode as the real run.
    Confirm the file is 1000 Hz and 262 channels — a fresh Allego launch can come up at 30 kHz in
-   `SMARTBOX_PRO` mode. Launch Allego with `--disable-gpu`.
+   `SMARTBOX_PRO` mode. Launch Allego plainly, without `--disable-gpu` (the flag blanks the Monitor; decided 2026-10-23, [[allego-blank-monitor-canvas-texture-limit]]).
 
 2. **Score it, position by position.** Run the connection check against the **wire-free floor in
    that same file**. Three numbers per position, and nothing else is needed at this stage:

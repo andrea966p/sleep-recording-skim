@@ -15,6 +15,7 @@ It ended in a verdict that the room noise was mostly a ghost except the EMG main
 Why the hum appeared in July and August, and the ground gate itself, live in [[_eeg-rig-hub]]; the unipolar mice recorded after the fix are in [[_unipolar-lfp-hub]].
 
 ## Current state
+- 2026-10-23: Andrea: no busbar fitted; no more long noise-chasing tests (the noise is considered fixed). [[2026-10-23]]
 - 2026-10-14: no automatic ground detector is supportable on post-fix data; replacing the 800 µV hum gate would unblock only B1 of uid1007, because the slope-validity gate keeps A1, A2 and B2 UNJUDGEABLE; the era-gate option (c) is waiting for Andrea. [[2026-10-14]]
 - 2026-10-09: the grounding fix held over 29.5 h: chip floors under 240 µV every hour, A2 EMG 60 Hz 0.5-2.3 µV, A2 scores without the notch (r@1min 0.615); light-switch spikes unchanged. [[2026-09-30-xdaq-noise-series]]
 - 2026-10-07: the isolated-earth socket and the XDAQ bonded to the earthed rack cut chip floors 12-60x and A2's EMG 60 Hz from 26-33 to 1 µV; the 800 µV ground gate now calls every chip UNJUDGEABLE. [[2026-09-30-xdaq-noise-series]]
@@ -29,7 +30,7 @@ Why the hum appeared in July and August, and the ground gate itself, live in [[_
 - [[2026-10-02-noise-series-4mice-24h-analysis]]: the first 24 h with four mice
 
 ## Rules that must not be broken
-- Recommendation of 2026-10-06 (Claude's; Andrea decides): no new environmental-noise trials or spending beyond the cheap socket and foil busbar (no Phase 2 boxes, Faraday cage, T3 or expensive earthing); put the effort into per-mouse reliability. [[2026-10-06-noise-hunt-verdict]]
+- 🛑 No more long tests chasing the noise: Andrea decided on 2026-10-23 not to keep running them, because the noise is considered fixed since 2026-10-07 [[2026-10-23]]. The 2026-10-06 recommendation behind it: no new environmental-noise trials or spending beyond the cheap socket and foil busbar (no Phase 2 boxes, Faraday cage, T3 or expensive earthing); put the effort into per-mouse reliability. [[2026-10-06-noise-hunt-verdict]]
 - Never write "all our EEG is clean": before 2026-08-08 the hum was in mV on some channels, and light switching still spikes the EEG. [[2026-10-06-noise-hunt-verdict]]
 - Judge every recording by its QC verdict, and any future noise trial by our scripts, not the official QC, while the 800 µV gate stands. [[2026-10-02-noise-troubleshooting-plan]]
 - Do not undo the socket or the rack bond, and copy both at E7: they changed together and cannot be split. [[2026-09-30-xdaq-noise-series]]
@@ -38,14 +39,14 @@ Why the hum appeared in July and August, and the ground gate itself, live in [[_
 - Test the Raspberry Pi cameras A/B/A before adding them for good. [[2026-10-09]]
 
 ## Open items
-- [ ] Foil busbar (T2a/T2b) as an A/B/A test, judged against the new floors (about 40 µV); no entry yet records the busbar fitted. [[2026-10-02-noise-troubleshooting-plan]]
+- [ ] Foil busbar (T2a/T2b) as an A/B/A test, judged against the new floors (about 40 µV); not fitted (Andrea, 2026-10-23); a GND bus with the headstages in an aluminium box is planned instead, see [[_eeg-rig-hub]]. [[2026-10-02-noise-troubleshooting-plan]]
 - [ ] Phase 3, per-mouse reliability: counterbalance arm and slip ring, judged on long runs. [[2026-10-02-noise-troubleshooting-plan]]
-- [ ] Replace the 800 µV ground gate (still 800 in `core/qc_thresholds.py` on 2026-10-22); era gate option (c) awaits Andrea. [[2026-10-14]]
+- [ ] Replace the 800 µV ground gate (still 800 in `core/qc_thresholds.py` on 2026-10-22); Andrea decided on 2026-10-23 to derive it from measurements of the current grounds (owned by [[_eeg-analysis-hub]]). [[2026-10-14]]
 - [ ] Andrea's decision on the notch, now only for recordings made before 2026-10-07. [[2026-10-06-noise-hunt-verdict]]
 - [ ] Light-switch spikes: not changed by the fix. [[2026-09-30-xdaq-noise-series]]
 - [ ] Facilities' AHU and chiller log for 10-01 and 10-02, for the unexplained building events. [[2026-10-06-noise-hunt-verdict]]
 - [ ] Cameras A/B/A before they are re-added. [[2026-10-09]]
-- [ ] Contradictions: `_meta/contradictions/noise-unipolar.md`.
+- [ ] Contradictions: [[contradictions-noise-unipolar]].
 
 ## Everything here
 ![[area.base]]

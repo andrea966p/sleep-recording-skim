@@ -15,3 +15,11 @@ Found while rebuilding `20-areas/allego` and `20-areas/recording-console`. Settl
 | AC-9 | [[multi-user-independent-recording-schedules]] has `type: experiment`, `status: planned` ("open-todo") | Its own retraction: the TODOs that depend on `start_recording(port=)` cannot be run | The note | OPEN: status left unchanged because no evidence says whether Andrea still wants the second-XDAQ option; `done` or `superseded` fits better than `planned` | yes |
 | AC-10 | Claude memory `allego-mesa-gpu-crash-and-log-storm` and `eeg-recording-console` text: `--disable-gpu` is "the fix" for the 2026-08-24 crash | Memory `allego-blank-monitor-canvas-texture-limit`: the Mesa crash risk is "BACK" without it, the Chan height 30 option untested | Both memory files, the launcher history comment | OPEN, same root as AC-1: nobody has run a long unattended run with the flag and Chan height 30 | yes (same decision as AC-1) |
 | AC-11 | Memory `raw-data-archive-and-recording-automation`: hand-started recordings never arm the watchdog | Journal 2026-10-14: the watchdog arms itself on console runs | `recording-watchdog-cron.sh` header (lines 11-21) | SETTLED: both true; hand-started GUI recordings still need manual arming, console runs do not. Hub rule says so | no |
+
+## Andrea's answers, 2026-10-23
+
+Settled unless marked still open. [[2026-10-23]]
+
+- **AC-1**: Keep Allego without `--disable-gpu`; no Chan-height test. Later: move to the Open Ephys GUI with our XDAQ (a big switch for the recorder code and the daemon). Procedures and `rig-check.sh` updated.
+- **AC-9**: Recording stays global; several people must be able to queue schedules for following dates. Already works; refusing overlaps at booking is the open item.
+- **AC-10**: Keep Allego without `--disable-gpu`; no Chan-height test. Later: move to the Open Ephys GUI with our XDAQ (a big switch for the recorder code and the daemon). Procedures and `rig-check.sh` updated.

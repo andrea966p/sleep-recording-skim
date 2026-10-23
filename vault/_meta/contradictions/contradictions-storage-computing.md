@@ -15,3 +15,11 @@ Found while rebuilding `20-areas/data-storage` and `20-areas/computing`. Settled
 | ST-9 | [[nvr-alerts-config]] embedded the live Slack webhook URL in plain text | Vault rule: [[production-values]] is the only place for real values, repo is private | The URL was the only match for the webhook ids in the working tree; it is also in git history. Redacted 2026-10-22 | SETTLED for the working tree. The webhook is still live (nvr-notify.sh fallback, nvr-mqtt-slack bridge); rotating it would fully remove the exposure | yes (rotate or not) |
 | ST-10 | [[multi-machine-work-setup]] machine table and [[production-values]] tailnet table: workstation `skimworkstation` `100.111.139.53`, device `Skim` `100.107.145.68` | `tailscale status` on 2026-10-22 also lists `skimworkstation-1` (`100.107.18.24`, owner andrea.piazzola4@, offline) and shows `skim` as a Windows host | Tailscale status only | OPEN, low stakes. Possibly a duplicate registration of the workstation under the other account | yes |
 | ST-11 | [[nas-backup]] and `nas-backup.service` / `.timer` `Documentation=` lines point at `vault/02-procedures/installation/nas-backup.md` | That path no longer exists after the rehaul; the note is [[nas-backup]] | `ls` of `/etc/systemd/system/nas-backup.*` and the repo copies | OPEN, cosmetic. Code outside this folder; update the two `Documentation=` lines when next touching the units | no |
+
+## Andrea's answers, 2026-10-23
+
+Settled unless marked still open. [[2026-10-23]]
+
+- **ST-1**: No AWS budget alert needed.
+- **ST-9**: Rotate the Slack webhook: steps in the computing hub (needs Slack and sudo).
+- **ST-10**: Remove `skimworkstation-1` from the tailnet (Tailscale admin console).

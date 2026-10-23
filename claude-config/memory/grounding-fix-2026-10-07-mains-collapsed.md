@@ -10,3 +10,4 @@ metadata:
 Details: [[2026-09-30-xdaq-noise-series]] (entries 11 and 12; gate review in journal [[2026-10-14]])
 
 🔴 The ground gate `FLOOR_MIN_HUM_UV = 800` (`core/qc_thresholds.py`, still 800 on 2026-10-22) now calls ALL chips UNJUDGEABLE, so any new official QC rejects every mouse at rung 2 until the gate is replaced: raise it before the next real run. Recommended option (c), an era-dated gate (800 before 2026-10-07 14:34, none after, with "ground unverified"), is 🛑 ANDREA'S DECISION, pending. No automatic ground detector is supportable post-fix; the slope-validity gate keeps A1, A2, B2 UNJUDGEABLE (recovering A2 = criterion redesign).
+- 2026-10-23, Andrea: replace the 800 µV gate by measuring the current (post-fix) grounds; redesign the −1.90 slope cut. Vault: `_eeg-analysis-hub`.

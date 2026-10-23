@@ -1,13 +1,15 @@
 ---
 type: experiment
 area: recording-console
-status: planned
+status: done
 status-note: "open-todo"
 tags: [procedure, todo, radiens, allego, multi-user, scheduling, xdaq]
 created: 2026-07-14
 ---
 
 # Multi-User Independent Recording Schedules — TODO
+
+> [!info] 2026-10-23, Andrea: recording stays global. What is needed is that several people can schedule their runs for following dates, and the console already accepts any number of scheduled runs ([[eeg-recording-console]]). The open part, refusing an overlapping reservation when it is booked, is tracked in [[_recording-console-hub]]. [[2026-10-23]]
 
 > [!warning] Updated 2026-10-22: the per-port `start_recording(port=)` API is not in the installed radiens 4.0.0 client (checked again by introspection: 25 public methods, recording control is only `set_recording`), so the section 2 workaround (record the union, slice afterwards) is the design, not a stopgap. [[eeg-recording-console]]
 

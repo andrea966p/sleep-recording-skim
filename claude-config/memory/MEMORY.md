@@ -6,7 +6,7 @@ rules and short pointers into the vault: when a hook and the vault disagree, the
 
 ## Allego (vault: 20-areas/allego)
 - [Allego 30x stream, rate label lies](allego-stream-30x-rate-label-lies.md) — 09-30: said 1000 Hz, streamed 30 kHz. Before recording, compare `stream.time_range` with wall clock (~1.0x)
-- [Blank Monitor = canvas over texture limit](allego-blank-monitor-canvas-texture-limit.md) — 09-16: launch WITHOUT `--disable-gpu`; kernel pinned 7.0.0-28 (7.0.0-31 blocklists the Intel GPU)
+- [Blank Monitor = canvas over texture limit](allego-blank-monitor-canvas-texture-limit.md) — Launch WITHOUT `--disable-gpu` (confirmed 10-23; rig-check warns if present); kernel pinned 7.0.0-28. Later: move to Open Ephys GUI
 - [Orphaned allegoserver blocks the rig](allego-orphaned-server-blocks-the-rig.md) — Parent `systemd --user`, holds ports 50051-4: check PPID first; kill by PID; verify exactly one instance
 - [Allego Mesa GPU crash + log storm](allego-mesa-gpu-crash-and-log-storm.md) — 08-24: frozen GUI ≠ lost data, app death ends the recording. Fresh launch = 30 kHz + wrong mode: re-check. Risk back since 09-16
 - [allegoserver runaway thread](allegoserver-runaway-thread-thermal.md) — Spins a core after the GUI closes (+10 W, +11 °C); `ps %CPU` is a lifetime average, use `top -b -n2`; plain `kill` fixes it
@@ -63,13 +63,13 @@ rules and short pointers into the vault: when a hook and the vault disagree, the
 - [S-SD first screen](recording-2026-08-24-new-8-mice.md) — 08-24: real ids HLBSSD11-19, `cohorts/S-SD.yaml`; surgical bleeding notes do not predict signal
 - [W-SD first screen](recording-2026-08-18-eight-new-mice.md) — 08-18: strict rung 2 = EEG AND EMG in the same epoch; B1 verdicts after 08-19 17:16 belong to the old animal
 ## Noise hunt, Sep to Oct 2026 (vault: 10-projects/noise-hunt)
-- [Grounding fix: mains collapsed](grounding-fix-2026-10-07-mains-collapsed.md) — 10-07/09: floors ÷12-60, A2 EMG 60 Hz → 1 µV. The 800 µV gate now calls EVERY chip UNJUDGEABLE: replacement is Andrea's call, open
-- [Noise hunt verdict](noise-hunt-verdict-2026-10-06.md) — 10-06: EMG mains is the only real noise. 🛑 No more environmental-noise trials or spending. Never claim "all EEG clean"
+- [Grounding fix: mains collapsed](grounding-fix-2026-10-07-mains-collapsed.md) — 10-07/09: floors ÷12-60, A2 EMG 60 Hz → 1 µV. 800 µV gate calls EVERY chip UNJUDGEABLE: re-measure grounds, new gate (Andrea 10-23)
+- [Noise hunt verdict](noise-hunt-verdict-2026-10-06.md) — 10-06: EMG mains is the only real noise. 🛑 No more long noise-chasing tests or spending (Andrea, 10-23: noise considered fixed). Never claim "all EEG clean"
 - [Noise series, 4 mice, 24 h](recording-2026-10-01-noise-4mice-overnight.md) — 10-01/02: placeholder ids `POS-<slot>`; A1/B2 EMG open; Andrea's clock ≥ 8 s ahead. Console runs arm the watchdog since 10-14
 ## Unipolar LFP (vault: 10-projects/unipolar-lfp)
 - [ahyeon's unipolar run](unipolar-run-2026-10-15-ahyeon.md) — Map /18 emg_l /19 lfp_tgt /20 lfp_ref /21 emg_r /22 eeg_p /23 eeg_f. 10-15 run lost (B off SPI scan, C reference). `get_signals()` is viz-filtered
 ## Rig expansion, 8 → 16/32 mice (vault: 10-projects/rig-expansion, start at `_rig-expansion-hub`)
-- [Pinnacle wireless, 16 mice](pinnacle-wireless-16-mice-evaluation.md) — 10-19/20: custom 4-ch 8474-HR, own headmount PCB, 12 + 4 units on one PC (4 rear USB + 3 PCIe x1 cards). Read `pinnacle-wireless-plan-status`
+- [Pinnacle wireless, 16 mice](pinnacle-wireless-16-mice-evaluation.md) — 10-19/23: 8474-HR-SE4-C confirmed, own headmount ≤ 6 mm, 12 + 4 units on one Windows PC (Sirenia has no Linux); ask Pinnacle about TTL
 - [DAQ research corrections](daq-research-corrections-2026-07-28.md) — 07-28: Core has no isolation, Port Expander mandatory, don't buy Allego, Intan only via White Mountain
 - [XDAQ channel law](xdaq-channel-law-and-32-mouse-wiring.md) — Animals = XR channels ÷ 64; order ONE-R1024 (R512 records 8); 32 mice = 2 boxes. Reason from animals, never channels
 - [DAQ ecosystem comparison](daq-ecosystem-comparison.md) — 🛑 VAULT-ONLY (Kontex quote confidentiality): never publish as an Artifact. The "Intan strongest" reading is stale
@@ -86,7 +86,7 @@ rules and short pointers into the vault: when a hook and the vault disagree, the
 ## Data storage and AWS (vault: 20-areas/data-storage)
 - [Backup: 3 destinations](backup-architecture-three-destinations.md) — 09-20: bilab NAS = rebuild the rig, SKIM NAS = working copy NOT a backup, S3 = survive the fire. ntfy needs the full URL
 - [83 % of raw had no raw backup](raw-data-had-no-offsite-copy-since-aug19.md) — 09-20: "NAS-verified" = the STRIPPED file (16/262 ch). Resolve NAS dirs via `UPLOAD.json` `allego_base`
-- [Raw recordings off-site to S3](radix-s3-offsite-archive.md) — Bucket `skim-eeg-radix-archive-760396521414`, GLACIER_IR, cron 01:30, delete denied. No budget/alerts (user, 09-20; vault disagrees)
+- [Raw recordings off-site to S3](radix-s3-offsite-archive.md) — Bucket `skim-eeg-radix-archive-760396521414`, GLACIER_IR, cron 01:30, delete denied. No budget alert, none needed (Andrea, 10-23)
 - [AWS access + agent toolkit](aws-access-and-agent-toolkit.md) — Account 760396521414, profile `andrea`, `ap-northeast-2`. 🔴 SSO never for unattended jobs. `chmod 700 ~/.aws` dirs on new machines
 - [SKIM NAS per-mouse CSV layout](skim-nas-per-mouse-csv-layout.md) — Since 09-29: one CSV per mouse in `02_Data_Sleep/<user>/<batch>/<B|R>/`, 24 h windows; analysis reads the CSV, never the xdat
 - [Nightly NAS backup](nas-backup.md) — Excludes `*.mp4`: exported video has no backup. GUI deletes sit in `~/.local/share/Trash` and free nothing until emptied
@@ -133,7 +133,7 @@ rules and short pointers into the vault: when a hook and the vault disagree, the
 ## Sleep scoring (vault: 20-areas/sleep-scoring)
 - [Andrea is learning sleep scoring](andrea-learning-sleep-scoring.md) — Scoring questions also go to the professor; log cases with screenshots in the journal; write Andrea's own rules
 - [Work on local copies](work-on-local-copies.md) — Stage in `~/sleep-data`, check sha256 against `info.json`; never work on the NAS
-- [SleepStager csv-reader branch](sleepstager-csv-reader-branch.md) — PR #1 + #2 open (checked 10-22). 🛑 Never push to `main` of somnocode. Tone row + rules card local only; feature notch still 50 Hz
+- [SleepStager csv-reader branch](sleepstager-csv-reader-branch.md) — PR #1 + #2 open (10-22). 🛑 Never push to somnocode `main`. 60 Hz notch = our own fork change, no prof approval (10-23); check features notch
 - [Sleep-scoring vault pages](sleep-scoring-vault-pages.md) — Start at `_sleep-scoring-hub` (handbook, user guide, backlog, working method, kappa)
 
 ## Deleted 2026-10-23 (stale)

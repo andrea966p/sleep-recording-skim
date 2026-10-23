@@ -19,3 +19,12 @@ No record note was reworded; where a note in this folder presents the older clai
 | ER-12 | Operator manual: "Current EEG status: [[2026-08-03-two-8-mouse-runs]]"; Phase 9 "paired-reference" ([[sleep-recording-operator-manual]]) | Later runs and the console workflow ([[pre-flight-connection-screen]], [[_eeg-rig-hub]]) | Notes | SETTLED; banner added, the link stays as a record | no |
 | ER-13 | Top SPI socket dead: RMA emails to VivoSolutions drafted (Claude memory 2mice_per_board_test; [[2026-07-01]]) | Dead by design on the Core (MISO3/4 absent), do not RMA ([[hdmi-spi-adapter-top-socket-vendor-inquiry]], 2026-07-18 vendor reply) | Vendor reply in that note | SETTLED for B (the memory itself held the emails) | no |
 | ER-14 | Claude memory eeg-rig-current-state: "~10.4 scoreable mouse-hours, ALL from 2026-07-31"; "only ONE recording has real sleep" | Later runs produced scoreable animals (e.g. A2 48 h control, [[2026-08-11-a2-control-48h-reference-profile]]; [[2026-09-30-scoreable-mice-on-the-24h-windows]]) | Note titles and dates | SETTLED: true on 2026-08-03, superseded by time. Memory should not state it as current | no |
+
+## Andrea's answers, 2026-10-23
+
+Settled unless marked still open. [[2026-10-23]]
+
+- **ER-3**: No separate Sys GND on the Gen-1, only the chassis GND.
+- **ER-4**: Replace the 800 µV ground gate by measuring the current (post-fix) grounds; to do.
+- **ER-5**: Keep Allego without `--disable-gpu`; no Chan-height test. Later: move to the Open Ephys GUI with our XDAQ (a big switch for the recorder code and the daemon). Procedures and `rig-check.sh` updated.
+- **ER-11**: Planned GND bus: headstages (in their 3D-printed plastic enclosures) inside a closed aluminium box, a wire from the box to the bus; where the bus connects (perhaps the metal rack) is open.

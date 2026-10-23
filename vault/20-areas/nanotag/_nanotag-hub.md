@@ -41,7 +41,7 @@ This area holds the device facts and the procedure; the studies (HLBNSL, NS-SD /
 
 ## Open items
 
-- Raw nanotag data exists only on the workstation Desktop and the SKIM NAS; no off-site copy is recorded. [[nanotag-recording-and-analysis]]
+- ✅ 2026-10-23: Andrea keeps off-site copies of the raw nanotag data (beyond the workstation Desktop and the SKIM NAS). [[nanotag-recording-and-analysis]] [[2026-10-23]]
 - `cohort.py` still needs the NS-SD blocks and an `SD` window list before analysis (cohort.py has no SD block as of 2026-10-22). [[2026-10-16]]
 - Anchor the tag next time: HLBNSL tags migrated from the neck to the right flank, a site Kissei has not validated. [[nanotag-recording-and-analysis]]
 - Nobody has validated the nanotag against EEG in mice. [[nanotag-kissei-device-and-literature]]

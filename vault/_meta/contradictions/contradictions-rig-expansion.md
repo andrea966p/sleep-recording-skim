@@ -23,3 +23,13 @@ Claim A and claim B are quoted from the named notes. No record note was reworded
 These were Claude memory slugs, not vault notes (the first now resolves). They sit in record notes that I may not reword.
 - `[[eeg-60hz-saga]]` now resolves to a vault note (`20-areas/eeg-rig/eeg-60hz-saga.md`, promoted 2026-10-22). The old hub link was retargeted to `60hz-mains-hum-discovery` in [[2026-07-29-rig-expansion-xdaq-route-map]]; decide whether it should point at the saga instead.
 - `[[project_multiuser_recording_schedules]]`: the vault note is `multi-user-independent-recording-schedules` (exists, recording-console, planned).
+
+## Andrea's answers, 2026-10-23
+
+Settled unless marked still open. [[2026-10-23]]
+
+- **RX-1**: Pinnacle runs on a separate Windows PC (Sirenia does not support Linux); later maybe our own Linux interface, depending on the premium software (sleep scoring, video sync). Ask Pinnacle whether the premium software alone exposes a TTL pulse or their TTL generator (or our own) is needed.
+- **RX-3**: The 6 mm headmount limit is real (average B6 skull and surgical area); the 6.4 x 7.8 mm drawing must shrink.
+- **RX-5**: Model code 8474-HR-SE4-C confirmed.
+- **RX-8**: Not important now: parked.
+- **RX-12**: Not important now: parked.
