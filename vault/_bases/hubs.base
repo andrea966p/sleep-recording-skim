@@ -1,4 +1,3 @@
-# Every project and area hub with its status and one-line summary. Embedded in HOME.
 filters:
   and:
     - type == "hub"

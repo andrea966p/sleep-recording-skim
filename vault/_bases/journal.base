@@ -1,4 +1,3 @@
-# The journal index: every daily note, newest first, with its one-line summary.
 filters:
   and:
     - file.inFolder("04-journal")

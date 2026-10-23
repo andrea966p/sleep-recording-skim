@@ -1,5 +1,3 @@
-# Embedded in every hub as ![[area.base]]. `this` is the hub that embeds it, so each
-# view lists the notes whose `area` matches the hub's own `area`.
 filters:
   and:
     - file.ext == "md"
@@ -52,5 +50,5 @@ views:
         - status == "superseded"
     order:
       - file.name
-      - note.superseded-by
+      - superseded-by
       - created
