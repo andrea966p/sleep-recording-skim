@@ -42,7 +42,9 @@
     "caveman@caveman": true,
     "humanizer@humanizer": true,
     "ponytail@ponytail": true,
-    "agent-skills@addy-agent-skills": true
+    "agent-skills@addy-agent-skills": true,
+    "savvy-progress@claude-kit": true,
+    "filetree@claude-code-filetree": true
   },
   "extraKnownMarketplaces": {
     "caveman": {
@@ -67,6 +69,18 @@
       "source": {
         "source": "github",
         "repo": "addyosmani/agent-skills"
+      }
+    },
+    "claude-kit": {
+      "source": {
+        "source": "github",
+        "repo": "JohnnyVizz/claude-kit"
+      }
+    },
+    "claude-code-filetree": {
+      "source": {
+        "source": "github",
+        "repo": "data-goblin/claude-code-filetree"
       }
     }
   },
