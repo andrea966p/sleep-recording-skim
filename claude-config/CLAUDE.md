@@ -28,10 +28,11 @@ not facts. `./skim lint` checks the vault (read-only).
 The rig, the NVR, Allego/Radiens, Docker, Frigate and the EEG data all live on
 `e10ubuntu` (Tailscale `100.82.250.62`). Only that machine can run those commands.
 
-Four machines share this workspace: `e10ubuntu` (the rig), the **SKIM office workstation**
+Five machines share this workspace: `e10ubuntu` (the rig), the **SKIM office workstation**
 (`/home/skim`, added 2026-09-16), the **ThinkPad** (`thinkpadubuntu`, user `andrea`, live on
-the workflow 2026-09-19), and the office PC (`Andrea-KAIST-PC-ubuntu`, still on the old
-tree). The table in `vault/20-areas/computing/multi-machine-workflow.md` has the paths; the older
+the workflow 2026-09-19), **`kaist-bilab-win`** (Windows, Git Bash, for EthoVision and Office,
+added 2026-10-24; from e10: `ssh andrea@100.88.120.75`), and the office PC
+(`Andrea-KAIST-PC-ubuntu`, still on the old tree). The table in `vault/20-areas/computing/multi-machine-workflow.md` has the paths; the older
 `multi-machine-work-setup.md` beside it also lists each machine's memory slug.
 
 To drive the ThinkPad from here: `tailscale ssh andrea@thinkpadubuntu '<command>'`. It has

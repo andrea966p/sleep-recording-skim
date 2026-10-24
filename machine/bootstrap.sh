@@ -36,7 +36,15 @@ if [[ ! -d "$CONFIG" ]]; then
     exit 2
 fi
 
-SLUG="$(printf '%s' "$WORKSPACE" | sed 's/[^a-zA-Z0-9]/-/g')"
+# Claude Code derives the slug from the NATIVE path. Under Git Bash on Windows that is
+# C:\Users\..., not /c/Users/..., so convert first (cygpath exists only there).
+NATIVE="$WORKSPACE"
+command -v cygpath >/dev/null 2>&1 && NATIVE="$(cygpath -w "$WORKSPACE")"
+SLUG="$(printf '%s' "$NATIVE" | sed 's/[^a-zA-Z0-9]/-/g')"
+
+# Git Bash's ln -s silently makes a COPY unless told otherwise, which would leave this
+# machine with its own private memory/. nativestrict makes it fail instead.
+command -v cygpath >/dev/null 2>&1 && export MSYS=winsymlinks:nativestrict
 
 echo "workspace: $WORKSPACE"
 echo "slug:      $SLUG"

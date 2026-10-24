@@ -13,7 +13,11 @@ set -uo pipefail
 
 WORKSPACE="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CONFIG="$WORKSPACE/claude-config"
-SLUG="$(printf '%s' "$WORKSPACE" | sed 's/[^a-zA-Z0-9]/-/g')"
+# Claude Code derives the slug from the NATIVE path. Under Git Bash on Windows that is
+# C:\Users\..., not /c/Users/..., so convert first (cygpath exists only there).
+NATIVE="$WORKSPACE"
+command -v cygpath >/dev/null 2>&1 && NATIVE="$(cygpath -w "$WORKSPACE")"
+SLUG="$(printf '%s' "$NATIVE" | sed 's/[^a-zA-Z0-9]/-/g')"
 
 fail=0
 

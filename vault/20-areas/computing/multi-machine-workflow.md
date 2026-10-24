@@ -36,6 +36,7 @@ tags: [computing, git, tailscale, workflow]
 | SKIM office workstation | `skimworkstation`, user `skim` | `/home/skim/sleep-recording-skim` | Tailscale SSH, check mode: capture the approval URL with `script -qfc "tailscale ssh skim@skimworkstation …"` and give it to Andrea |
 | ThinkPad | `thinkpadubuntu`, user `andrea` | `/home/andrea/sleep-recording-skim` | `tailscale ssh andrea@thinkpadubuntu '<cmd>'` (tag `tag:thinkpad`) |
 | Office PC | `Andrea-KAIST-PC-ubuntu`, user `andrea` | still the old `~/Monitoring_project` tree | not on the workflow |
+| KAIST BIlab PC, **Windows** side (2026-10-24) | `kaist-bilab-win`, Tailscale `100.88.120.75`, user `andrea` (admin) | `C:\Users\Andrea\sleep-recording-skim` (Git Bash: `~/sleep-recording-skim`) | `ssh andrea@100.88.120.75` (Windows OpenSSH server, key only, tailnet only) |
 
 The other direction (laptop to e10) is ordinary sshd with a key and a `Host e10` block in
 `~/.ssh/config`. `~/.ssh/config` is deliberately not in the repo. Why e10 must not run
@@ -81,6 +82,32 @@ Tailscale SSH, and how the tag rule works: [[multi-machine-work-setup]], section
 - On e10 the git identity is repo-local (.git/config), not ~/.gitconfig.
 - Do not paste a large heredoc into someone's shell; it is mangled into a quote continuation. Use printf or an editor, then verify.
 - An archived GitHub repo is read-only: to change its visibility, unarchive, flip, re-archive (403 otherwise). `neurosurveillance-system` was made private on 2026-09-11.
+
+## The Windows machine (`kaist-bilab-win`, set up 2026-10-24)
+
+Dual boot Windows/Ubuntu. The **Windows** side is on the workflow because EthoVision XT 11.5
+(nanotag behaviour videos) and Office only run there; the Ubuntu side is not set up yet.
+Only one OS runs at a time: `./skim push` before rebooting into the other, `./skim pull` after.
+Everything below was checked live on 2026-10-24.
+
+- **Run `./skim` from Git Bash**, not PowerShell. Git for Windows 2.56.0, Python 3.12.10
+  (`~/bin/python3` is a shim, because `python3` otherwise hits the Microsoft Store alias),
+  Node 24.22.1, jq 1.8.2, all via `winget`. Lint needs `markdown-it-py 3.0.0` and `pyyaml 6.0.1`
+  (`pip install --user`, same versions as e10).
+- **Global git config is not optional on Windows**: `core.autocrlf false` (the repo has no
+  `.gitattributes`; CRLF breaks the bash scripts), `core.symlinks true` and Developer Mode on
+  (66 tracked symlinks, verified as real `<SYMLINK>` entries), `core.longpaths true`.
+- **Claude Code memory slug** is derived from the native path, `C--Users-Andrea-sleep-recording-skim`,
+  not `/c/Users/...`. `bootstrap.sh` and `check.sh` use `cygpath -w` since 2026-10-24, and force
+  `MSYS=winsymlinks:nativestrict`, because Git Bash's `ln -s` otherwise silently COPIES.
+- **SSH in**: OpenSSH Server, `PasswordAuthentication no`, firewall rule `sshd-tailnet`
+  (remote `100.64.0.0/10` only); the default `OpenSSH-Server-In-TCP` rule is disabled.
+  e10's key is in `C:\ProgramData\ssh\administrators_authorized_keys` (admin account: the user
+  `authorized_keys` is ignored). The PC's own key `andrea@kaist-bilab-win` is on GitHub and in
+  e10's `authorized_keys`; `Host e10` is in `~/.ssh/config`.
+- It first joined Tailscale in Andrea's home tailnet and showed up on e10 only as
+  `device-of-shared-to-user` (no SSH, no route to e10). It must be logged in to the
+  `skimlab.kaist@gmail.com` tailnet.
 
 ## Long-running work over SSH
 

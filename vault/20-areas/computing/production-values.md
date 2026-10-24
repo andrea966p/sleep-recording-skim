@@ -71,6 +71,7 @@ updated: 2026-04-02
 | `Andrea-KAIST-PC-ubuntu` | `100.125.44.24` | `andrea-kaist-pc-ubuntu.tail706d43.ts.net` | andrea.piazzola4@ |
 | `Skim` | `100.107.145.68` | `skim.tail706d43.ts.net` | skimlab.kaist@ |
 | `sleepi-BOOK` | `100.72.151.79` | `sleepi-book.tail706d43.ts.net` | skimlab.kaist@ |
+| `KAIST_BIlab_win` (added 2026-10-24) | `100.88.120.75` | `kaist-bilab-win.tail706d43.ts.net` | andrea.piazzola4@ |
 
 **Shared INTO the NVR's tailnet (not members):**
 

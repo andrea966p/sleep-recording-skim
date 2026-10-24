@@ -40,7 +40,7 @@ def list_files(root: str) -> list[str]:
         for fn in sorted(fns):
             if fn.startswith("."):
                 continue
-            out.append(posixpath.relpath(os.path.join(dp, fn), root).replace(os.sep, "/"))
+            out.append(os.path.relpath(os.path.join(dp, fn), root).replace(os.sep, "/"))
     return out
 
 

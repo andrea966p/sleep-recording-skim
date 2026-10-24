@@ -57,6 +57,14 @@ Validate before restarting Claude Code:
 python3 -m json.tool ~/.claude/settings.json > /dev/null && echo VALID
 ```
 
+### Windows (Git Bash)
+
+Works, checked on `kaist-bilab-win` on 2026-10-24. Before cloning: Developer Mode on, and
+`git config --global core.autocrlf false`, `core.symlinks true`, `core.longpaths true`.
+Run `bootstrap.sh`, `check.sh` and `./skim` from Git Bash; both scripts handle the Windows
+slug and native symlinks. Details and the remaining traps: the Windows section of
+`vault/20-areas/computing/multi-machine-workflow.md`.
+
 ### The e10 alias
 
 Not in the repository, since `~/.ssh/config` is machine state. Once per machine:
