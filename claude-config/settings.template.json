@@ -40,7 +40,9 @@
     "rust-analyzer-lsp@claude-plugins-official": true,
     "superpowers@claude-plugins-official": true,
     "caveman@caveman": true,
-    "humanizer@humanizer": true
+    "humanizer@humanizer": true,
+    "ponytail@ponytail": true,
+    "agent-skills@addy-agent-skills": true
   },
   "extraKnownMarketplaces": {
     "caveman": {
@@ -53,6 +55,18 @@
       "source": {
         "source": "github",
         "repo": "blader/humanizer"
+      }
+    },
+    "ponytail": {
+      "source": {
+        "source": "github",
+        "repo": "dietrichgebert/ponytail"
+      }
+    },
+    "addy-agent-skills": {
+      "source": {
+        "source": "github",
+        "repo": "addyosmani/agent-skills"
       }
     }
   },
