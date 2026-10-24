@@ -95,6 +95,10 @@ are kept in the repo under `nanotag/sheet-changes/`.
 ## History
 
 > [!history]
+> - **2026-10-24** — Round 2 (CHG-005 → CHG-009, sent 2026-10-21 as one chat message) applied 2026-10-24 and verified on
+>   an export: every target cell right, formula-driven text followed, no error values. Claude for Sheets left the five rows
+>   in ① PENDING as well as ②, against workflow step 2. The diff also found edits outside the log: new tabs `S-SPF` and
+>   `W-SPF`, EEG `Registry` rows 50-61 (two new batches) and `NS-SL` C58 = 2.
 > - **2026-10-19** — Round closed: verdicts, ③ HISTORY rows S10:AA13 and clearing of ② done by Claude for Sheets from one
 >   pasted chat message (checked on export). 🔴 **An edit outside the log:** after the round, `NANOTAG registry`
 >   R19:R23, R25:R29 changed from `=G+4` (10-16, CHG-003) to `=G+7` (10-19) with no request. Andrea confirmed it is

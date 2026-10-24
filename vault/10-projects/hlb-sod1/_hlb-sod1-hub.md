@@ -15,6 +15,7 @@ tags: [hub, project, hlb, sod1, sleep, eeg, nanotag]
 > Design, batch list, schedules, literature and the Drive map: [[hlb-sod1-design]]. The rig, Allego and the analysis code have their own areas.
 
 ## Current state
+- 2026-10-24: sheet round 2 (CHG-005 → CHG-009) verified on an export: sampling Thu 11-05, SD 11-02 → 11-05, behavioural read row on 10-30, clean window 10-31 → 11-02; all approved and moved to History. New, outside the log: tabs `S-SPF` / `W-SPF` and EEG `Registry` rows 50-61 (HLBSSPF01-05, HLBWSPF01-05), not yet described in the vault. [[2026-10-24]]
 - 2026-10-22: NS-SD / NW-SD is running: tag Run 1 from 10-22 09:00, 48 h baseline, SOD1 / water from 10-24 for 12 days, SD Mon 11-02 → Thu 11-05, sampling Thu 11-05. [[2026-10-19-NS-SD-NW-SD-nanotag-study]]
 - 2026-10-21: sampling moved from Sun 11-08 to Thu 11-05 (no SD or tests at weekends); sheet requests CHG-005 → CHG-009 sent, review pending. [[2026-10-21]]
 - 2026-10-19: sheet changes go through the `Pending changes instructions` tab; Claude Code cannot write to the sheet. [[sod1-sheet-change-log-workflow]]
