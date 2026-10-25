@@ -129,7 +129,9 @@ def cmd_convert(args):
     rng = random.Random(args.seed)
     used, rows = set(), []
     for src in files:
-        while True:
+        # --keep-names: unblinded copies for automated tracking (EthoVision), not for BORIS
+        code = os.path.basename(src)
+        while not args.keep_names:
             code = code_for(src, rng)
             if code not in used:
                 used.add(code)
@@ -138,9 +140,14 @@ def cmd_convert(args):
         # -vf fps= forces CFR; scale only downwards; autorotate is ffmpeg's default
         # so the rotation ends up baked into the pixels.
         vf = f"scale=-2:'min({TARGET_HEIGHT},ih)',fps={TARGET_FPS}"
+        if args.encoder == "h264_nvenc":
+            # NVIDIA GPU: same CFR/scale/rotation, constant-quality VBR at --crf
+            hw, enc = ["-hwaccel", "cuda"], ["-c:v", "h264_nvenc", "-preset", "p7", "-tune", "hq",
+                                             "-rc", "vbr", "-cq", str(args.crf), "-b:v", "0"]
+        else:
+            hw, enc = [], ["-c:v", "libx264", "-preset", args.preset, "-crf", str(args.crf)]
         subprocess.run(
-            ["ffmpeg", "-nostdin", "-y", "-i", src, "-vf", vf,
-             "-c:v", "libx264", "-preset", args.preset, "-crf", str(args.crf),
+            ["ffmpeg", "-nostdin", "-y", *hw, "-i", src, "-vf", vf, *enc,
              "-pix_fmt", "yuv420p", "-an", "-movflags", "+faststart", dst],
             check=True, capture_output=True)
         before, after = probe(src), probe(dst)
@@ -223,6 +230,9 @@ def main():
     c.add_argument("--preset", default="slow")
     c.add_argument("--seed", type=int, default=None)
     c.add_argument("--force", action="store_true")
+    c.add_argument("--encoder", choices=["libx264", "h264_nvenc"], default="libx264")
+    c.add_argument("--keep-names", action="store_true",
+                   help="keep the source filenames (no blinding)")
     c.set_defaults(func=cmd_convert)
 
     v = sub.add_parser("verify"); v.add_argument("video_dir"); v.add_argument("out_dir")

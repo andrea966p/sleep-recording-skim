@@ -3,9 +3,11 @@
 
     rename_videos.py <behavioral_videos_dir> [--apply]
 
-The mice were run in ascending ID order within each session (user, 2026-10-20),
-so the Nth video by timestamp in a folder is the Nth surviving mouse. Mouse 43
-died 2026-09-28 and was never tested, so there are 9 mice, not 10.
+The mice were run in a fixed order in every session, SOD1 first then water:
+41, 42, 44, 49, 45, 46, 47, 48, 50 (checked against the mouse cards in the video,
+Andrea 2026-10-24; the 2026-10-20 "ascending ID" rule was wrong for 45-49). So the
+Nth video by timestamp in a folder is the Nth mouse in ORDER. Mouse 43 died
+2026-09-28 and was never tested, so there are 9 mice, not 10.
 
 Default is a dry run. --apply renames and writes rename_log.csv next to the
 videos, which is enough to undo it.
@@ -15,17 +17,17 @@ import argparse, csv, os, re, sys
 # NS-SL = SOD1 in drinking water, NW-SL = UV water. 43 died before testing.
 SOD1 = [41, 42, 44, 49]
 WATER = [45, 46, 47, 48, 50]
-ORDER = sorted(SOD1 + WATER)
+ORDER = SOD1 + WATER          # run order, not sorted: see the docstring
 
 def mouse_name(m):
     return f"HLBNSSL{m}" if m in SOD1 else f"HLBNWSL{m}"
 
 # subfolder -> short test tag used in the new filename
 TESTS = {
-    "Y_maze":                        "Ymaze",
-    "NOR/NOR_day1_OFT":              "OFT",
-    "NOR/NOR_day2/NOR_day2_part1":   "NOR-T1",
-    "NOR/NOR_day2/NOR_day2_part2":   "NOR-T2",
+    "Y-maze":                              "Ymaze",
+    "NOR/NOR_day1_OFT":                    "OFT",
+    "NOR/NOR_day2/NOR_day2_part1":         "NOR-T1",
+    "NOR/NOR_day2/NOR_day2_part2_novel":   "NOR-T2",
 }
 
 STAMP = re.compile(r"^(\d{8})_(\d{6})\.mp4$", re.I)

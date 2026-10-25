@@ -76,6 +76,12 @@ recorded):
 | HLBNWSL48 | none | ~20 px |
 | HLBNWSL50 | none | ~15 px |
 
+> **2026-10-24: the mouse labels in this table are wrong for 45-49.** They came from the
+> "ascending ID" run order, but the mice ran SOD1 first: 41, 42, 44, 49, 45, 46, 47, 48, 50
+> (checked against the mouse cards in the videos). Read the rows as: HLBNWSL45 here = true
+> **HLBNSSL49**, 46 = **45**, 47 = **46**, 48 = **47**, HLBNSSL49 here = true **HLBNWSL48**.
+> So the truncated top arms are 42, 44 (SOD1) and **46** (water); still not confounded with group.
+
 Decided with the experimenter 2026-10-20: **the mouse is in frame throughout every trial**,
 which is the criterion that matters. The truncation affects only the apparatus outline, so:
 
@@ -127,13 +133,15 @@ Sample rate **30/s**, matching the converted video. Record the exact version use
 
 | Setting | Value |
 |---|---|
-| EthoVision version | _(fill in)_ |
-| Detection method | _(fill in: greyscaling / differencing)_ |
+| EthoVision version | XT 11.5.1026 |
+| Detection method | Y-maze batch 1: **Gray scaling, range 0-82**, contour erosion 1 px + dilation 1 px (erode first), subject size 517-15533 px, track noise reduction off (2026-10-24). Dynamic subtraction also detected well; gray scaling chosen |
 | Subject points | Centre-point (nose-point additionally, if licensed) |
 | Sample rate | 30/s |
 
 ### Y-maze (8 min)
-- Scale calibrated on: _(fill in — arm length, cm)_
+- Scale calibrated on: **35 cm, maze centre to arm end**, one line per arm along the arm's
+  centre line at floor level. This is the **design** value (Andrea 2026-10-24), not measured on
+  the maze; measure it before batch 2 and correct if it differs. Affects distance/speed only.
 - Zones: 3 arm zones + centre triangle. Arm zone boundary pulled **_(fill in)_ cm**
   into the arm from the centre triangle, so a centre-point crossing approximates
   the protocol's all-four-paws criterion.
@@ -237,3 +245,7 @@ significance bracket.
 | Date | Change | Reason | Batches re-derived |
 |---|---|---|---|
 | 2026-10-20 | Initial version, before any video was scored | — | — |
+| 2026-10-24 | Batch 1 prepared on the Windows EthoVision PC, not the workstation: originals renamed to mouse IDs (`rename_videos.py`, log `rename_log.csv`), upright copies made with `prep.py convert --keep-names` (ffmpeg 9.0.2), so **EthoVision tracking is not blinded**. BORIS NOR scoring still uses blinded copies. EthoVision version: XT 11.5. Clicking guide: vault note `ethovision-11-5-y-maze-tracking` | Andrea's decision: tracking is automated; arenas are drawn per video by the experimenter anyway | none (nothing scored yet) |
+| 2026-10-24 | Encoder: batch 1 Y-maze with `libx264 -crf 18 -preset slow` (CPU); batch 1 OFT/NOR with `h264_nvenc -preset p7 -tune hq -rc vbr -cq 18` (GPU, RTX 3080 Ti, new `--encoder` flag). Trial window: Andrea crops each video by hand from door closed to door opened. Batch 2 must use the same encoder per test as batch 1 | CPU at 90 % for ~2 h; same window rule Andrea timed during testing | none |
+| 2026-10-25 | **Y-maze entries scored with EthoVision Zone alternation, zone exit threshold 3 cm (provisional)**, arms A/B/C only, instead of a gap strip between centre and arm zones: the batch 1 arm zones touch the centre triangle and arenas 41/50 lack a centre zone, so border flicker made 36-44 false re-entries per mouse at 0 cm. SA% plateaus from 3 cm (1/2/3/4 cm: 44.5/56.6/61.6/62.6 SOD1). Batch 2 uses the same threshold. Validate on 3 hand-scored videos before final | Noldus's documented remedy for false re-entries; no re-tracking needed | batch 1 Y-maze |
+| 2026-10-24 | **Mouse order corrected**: run order is 41, 42, 44, 49, 45, 46, 47, 48, 50, not ascending. All 36 originals and copies renamed (log `Desktop\Nanotag videos\rename_fix_log_2026-10-24.csv`); `rename_videos.py` ORDER fixed; framing table above annotated. Checked on the mouse cards for Y-maze and OFT; NOR assumed the same order (Andrea). Y-maze trial clips: door closed + 480 s, cut from the originals with `h264_nvenc` (`Y-maze\trial_8min\`, times in `Y-maze\door_times.csv`); 8 files 14400 frames, HLBNWSL45 14399 (source drops a frame, within 0.1 s) | Andrea saw the mouse cards in the videos | none (nothing scored yet) |
