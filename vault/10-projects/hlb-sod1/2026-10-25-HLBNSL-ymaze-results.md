@@ -1,13 +1,19 @@
 ---
 type: experiment
 area: hlb-sod1
-status: active
+status: superseded
+superseded-by: "[[2026-10-25-HLBNSL-ymaze-hand-scored-results]]"
 created: 2026-10-25
 summary: "HLBNSL Y-maze (2026-09-30), EthoVision, zone exit threshold 3 cm (provisional): both groups alternate about 60 %, no SOD1 vs water difference; n = 4 vs 5"
 tags: [behaviour, ethovision, y-maze, nanotag, hlbnsl]
 ---
 
 # 2026-10-25: HLBNSL Y-maze results (provisional)
+
+> [!warning] 2026-10-25: superseded by [[2026-10-25-HLBNSL-ymaze-hand-scored-results]]
+> SA% and arm entries are now hand-scored for all 9 mice; EthoVision SA% per mouse depended on
+> the zone drawing. The conclusions below (about 60 % in both groups, no SOD1 effect, more
+> entries in SOD1) held. The numbers on this page are the EthoVision-only record.
 
 > [!abstract] TL;DR
 > - Both groups alternate above chance: SOD1 61.6 ± 2.0 %, water 58.6 ± 2.2 % (mean ± SEM).
@@ -78,9 +84,14 @@ Statistics (BEHAVIOR_SOP section 5):
 - HLBNWSL50 is the least active (38 entries) and closest to chance (52.8 %).
 - Distance and velocity use the 35 cm design arm length, not a measured one (secondary endpoints).
 
+> [!info] 2026-10-25: hand-scoring check done
+> On 3 videos, 3 cm matched the hand-scored SA% best (within about 4 points, mouse order kept).
+> EthoVision arm entries are 7-26 % higher than the four-paw count, so read the entries row as
+> relative activity, not a true entry count. [[2026-10-25-HLBNSL-ymaze-hand-scoring]]
+
 ## Still open
 - Hand-score the arm sequence of 3 videos (41, 46, 50) and confirm or change the 3 cm threshold;
-  then this note loses "provisional".
+  then this note loses "provisional". Scoring sheet: [[2026-10-25-HLBNSL-ymaze-hand-scoring]].
 - Batch 2 (HLBNSD, Y-maze 2026-10-31 onward): fixed overhead camera, one arena, same threshold, so the
   2x2 two-way ANOVA can run on both batches.
 - Measure the real arm length.

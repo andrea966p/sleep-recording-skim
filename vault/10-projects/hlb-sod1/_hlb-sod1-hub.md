@@ -15,7 +15,7 @@ tags: [hub, project, hlb, sod1, sleep, eeg, nanotag]
 > Design, batch list, schedules, literature and the Drive map: [[hlb-sod1-design]]. The rig, Allego and the analysis code have their own areas.
 
 ## Current state
-- 2026-10-25: HLBNSL Y-maze (provisional, 3 cm zone exit threshold): SA% SOD1 61.6 vs water 58.6, no detectable difference; SOD1 more arm entries (g 1.2, p = 0.06). n = 4 vs 5. [[2026-10-25-HLBNSL-ymaze-results]]
+- 2026-10-25: HLBNSL Y-maze, hand-scored (final): SA% SOD1 60.5 vs water 62.8, no detectable difference; SOD1 more arm entries (g 1.2, p = 0.06). n = 4 vs 5. [[2026-10-25-HLBNSL-ymaze-hand-scored-results]]
 - 2026-10-24: HLBNSL behaviour videos ready for EthoVision XT 11.5 on `kaist-bilab-win`: 36 renamed to mouse IDs, upright 30 fps copies of all 36 in `Desktop\Nanotag videos upright\<test>\videos\`, all verified; not yet cut to the trial window; Y-maze tracking first. [[ethovision-11-5-y-maze-tracking]]
 - 2026-10-24: sheet round 2 (CHG-005 → CHG-009) verified on an export: sampling Thu 11-05, SD 11-02 → 11-05, behavioural read row on 10-30, clean window 10-31 → 11-02; all approved and moved to History. New, outside the log: tabs `S-SPF` / `W-SPF` and EEG `Registry` rows 50-61 (HLBSSPF01-05, HLBWSPF01-05), not yet described in the vault. [[2026-10-24]]
 - 2026-10-22: NS-SD / NW-SD is running: tag Run 1 from 10-22 09:00, 48 h baseline, SOD1 / water from 10-24 for 12 days, SD Mon 11-02 → Thu 11-05, sampling Thu 11-05. [[2026-10-19-NS-SD-NW-SD-nanotag-study]]

@@ -2,10 +2,15 @@
 """Y-maze results, statistics and figures from an EthoVision XT statistics export.
 
     ymaze_report.py <Statistics-*.xlsx> <out_dir> [--alt "Zone alternation 3"] [--tag HLBNSL]
+                    [--trials 10-18] [--hand <hand-scoring note.md>]
 
 --alt names the Zone alternation variable to score (EthoVision numbers the copies;
 for HLBNSL "Zone alternation 3" = zone exit threshold 3 cm). Every other Zone
 alternation variable in the file is drawn as a threshold-sensitivity panel.
+--trials keeps only those EthoVision trials (one per mouse).
+--hand takes SA% and arm entries from the hand-scored sequences in a vault note
+(a "## HLBN..." heading followed by a ``` block of arm letters), scored by metrics.py;
+EthoVision then gives distance and velocity, and its SA% is shown against the hand SA%.
 
 Statistics follow BEHAVIOR_SOP.md section 5: per group, exact Wilcoxon signed-rank
 of SA% against 50 %; between groups, exact Mann-Whitney U with the mean difference,
@@ -22,6 +27,8 @@ from scipy import stats
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 from cohort import GCOL, style, stars, plt  # noqa: E402  (lab plotting convention)
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from metrics import spontaneous_alternation  # noqa: E402
 
 GROUPS = ("SOD1", "water")
 CHANCE = 50.0
@@ -34,7 +41,7 @@ def read_stats(path):
     var, sub, stat = rows[0], rows[1], rows[2]
     out = []
     for r in rows[4:]:
-        d = {"mouse": r[3], "group": r[2]}
+        d = {"mouse": r[3], "group": r[2], "trial": int(str(r[1]).split()[-1])}
         for i in range(4, len(r)):
             d[(str(var[i]).strip(), str(sub[i]).strip(), str(stat[i]).strip())] = r[i]
         out.append(d)
@@ -51,6 +58,21 @@ def sa(d, alt):
 
 def defined(v):
     return [x for x in v if x is not None]
+
+
+def read_hand(path):
+    """vault note -> {mouse: "ABCAB..."}: each "## HLBN..." heading, then its ``` block."""
+    txt = open(path, encoding="utf-8").read()
+    return {m: s.upper() for m, s in
+            re.findall(r"^#{2,3} (HLBN\w+)[^\n]*\n.*?```\s*\n\s*([abcABC]+)\s*\n```", txt, re.M | re.S)}
+
+
+def hand_scores(seq):
+    """arm letters -> (SA%, entries, alternations, direct revisits, indirect revisits)."""
+    alts, n, pct = spontaneous_alternation(list(seq))
+    direct = sum(seq[i] == seq[i + 1] for i in range(n - 1))
+    indirect = sum(seq[i] == seq[i + 2] != seq[i + 1] for i in range(n - 2))
+    return pct, n, alts, direct, indirect
 
 
 def hedges_g(a, b):
@@ -98,10 +120,21 @@ def main():
     pa.add_argument("out_dir")
     pa.add_argument("--alt", default="Zone alternation 3")
     pa.add_argument("--tag", default="HLBNSL")
+    pa.add_argument("--trials", help="first-last EthoVision trial to keep, e.g. 10-18")
+    pa.add_argument("--hand", help="vault note with the hand-scored arm sequences")
     a = pa.parse_args()
     os.makedirs(a.out_dir, exist_ok=True)
 
     data = read_stats(a.stats_xlsx)
+    if a.trials:
+        lo_t, hi_t = map(int, a.trials.split("-"))
+        data = [d for d in data if lo_t <= d["trial"] <= hi_t]
+    mice = [d["mouse"] for d in data]
+    if len(set(mice)) != len(mice):
+        sys.exit("a mouse appears in more than one trial: pick one set with --trials")
+    hand = read_hand(a.hand) if a.hand else {}
+    if hand and set(hand) != set(mice):
+        sys.exit(f"hand sequences {sorted(hand)} do not match the mice {sorted(mice)}")
     if not any((a.alt, "center-point / Alternations", "Frequency") in d for d in data):
         sys.exit(f"{a.alt!r} not in {a.stats_xlsx}")
     alts = sorted({k[0] for k in data[0] if isinstance(k, tuple) and k[0].startswith("Zone alternation")})
@@ -116,6 +149,12 @@ def main():
                     "indirect_revisits": d[(a.alt, "center-point / Indirect revisits", "Frequency")],
                     "distance_m": round(d[("Distance moved", "center-point", "Total")] / 100, 2),
                     "velocity_cm_s": round(d[("Velocity", "center-point", "Mean")], 2)})
+        if hand:
+            r = res[-1]
+            r["ev_sa_pct"], r["ev_arm_entries"] = r["sa_pct"], r["arm_entries"]
+            s, n, alt_n, dr, ir = hand_scores(hand[d["mouse"]])
+            r.update(sa_pct=None if s is None else round(s, 1), arm_entries=n if s is not None else None,
+                     alternations=alt_n, direct_revisits=dr, indirect_revisits=ir)
     with open(os.path.join(a.out_dir, f"{a.tag}_ymaze_results.csv"), "w", newline="") as fh:
         w = csv.DictWriter(fh, fieldnames=list(res[0]))
         w.writeheader()
@@ -123,7 +162,9 @@ def main():
 
     by = {k: {g: defined(r[k] for r in res if r["group"] == g) for g in GROUPS}
           for k in ("sa_pct", "arm_entries", "distance_m", "velocity_cm_s")}
-    lines = [f"Y-maze {a.tag}, alternation variable {a.alt!r}", ""]
+    src = "hand-scored sequences" if hand else f"EthoVision {a.alt!r}"
+    lines = [f"Y-maze {a.tag}, SA% and arm entries from {src}"
+             + (f"; EthoVision trials {a.trials}" if a.trials else ""), ""]
     low = [r["mouse"] for r in res if r["sa_pct"] is None]
     if low:
         lines += [f"fewer than 3 arm entries, left out of SA% and entries: {', '.join(low)}", ""]
@@ -148,6 +189,13 @@ def main():
     sens = {alt: {g: defined(sa(d, alt)[0] for d in data if d["group"] == g) for g in GROUPS} for alt in alts}
     lines += ["", "threshold sensitivity, mean SA% (SOD1 / water):"]
     lines += [f"  {alt}: {st.mean(v['SOD1']):.1f} / {st.mean(v['water']):.1f}" for alt, v in sens.items()]
+    both = [x for x in ok if x["ev_sa_pct"] is not None] if hand else []
+    if both:
+        lines += ["", f"hand vs EthoVision {a.alt!r} (EthoVision minus hand):"]
+        lines += [f"  {x['mouse']}: entries {x['ev_arm_entries'] - x['arm_entries']:+d}, "
+                  f"SA {x['ev_sa_pct'] - x['sa_pct']:+.1f} points" for x in both]
+        lines.append(f"  mean |SA difference| {st.mean(abs(x['ev_sa_pct'] - x['sa_pct']) for x in both):.1f} points, "
+                     f"Pearson r (SA) {stats.pearsonr([x['sa_pct'] for x in both], [x['ev_sa_pct'] for x in both]).statistic:+.2f}")
     txt = "\n".join(lines)
     open(os.path.join(a.out_dir, f"{a.tag}_ymaze_stats.txt"), "w").write(txt + "\n")
     print(txt)
@@ -179,19 +227,31 @@ def main():
                     fontsize=10.5, color="0.1")
     ax[0].legend(frameon=False, fontsize=9)
     style(ax[0])
-    # the un-numbered original variable has no known threshold, so it stays off the curve
-    numbered = [alt for alt in alts if re.search(r"\d+$", alt)]
-    xs = list(range(len(numbered)))
-    for g in GROUPS:
-        mu = [st.mean(sens[alt][g]) for alt in numbered]
-        se = [st.stdev(sens[alt][g]) / len(sens[alt][g]) ** .5 for alt in numbered]
-        ax[1].errorbar(xs, mu, se, color=GCOL[g], lw=2, marker="o", ms=6, mec="white", mew=1.2,
-                       capsize=3, label=g)
-    ax[1].axhline(CHANCE, color="0.45", ls="--", lw=1)
-    ax[1].set_xticks(xs, [re.sub(r"^Zone alternation\s*", "", s) for s in numbered])
-    ax[1].set_ylim(0, 100)
-    ax[1].set_xlabel("Zone alternation variable (number = exit threshold, cm)", fontsize=9.5, color="0.2")
-    ax[1].set_title("SA% vs zone exit threshold", loc="left", fontsize=10.5, color="0.1")
+    if both:                                          # hand scores are primary: show the agreement
+        for g in GROUPS:
+            ax[1].plot([x["sa_pct"] for x in both if x["group"] == g],
+                       [x["ev_sa_pct"] for x in both if x["group"] == g],
+                       "o", color=GCOL[g], ms=7, mec="white", mew=1.3, label=g)
+        ax[1].plot([0, 100], [0, 100], color="0.45", ls="--", lw=1)
+        ax[1].set_xlim(30, 80)
+        ax[1].set_ylim(30, 80)
+        ax[1].set_xlabel("Hand-scored SA (%)", fontsize=9.5, color="0.2")
+        ax[1].set_ylabel(f"EthoVision SA (%), {a.alt}", fontsize=9.5, color="0.2")
+        ax[1].set_title("EthoVision vs hand scoring (dashed = equal)", loc="left", fontsize=10.5, color="0.1")
+    else:
+        # the un-numbered original variable has no known threshold, so it stays off the curve
+        numbered = [alt for alt in alts if re.search(r"\d+$", alt)]
+        xs = list(range(len(numbered)))
+        for g in GROUPS:
+            mu = [st.mean(sens[alt][g]) for alt in numbered]
+            se = [st.stdev(sens[alt][g]) / len(sens[alt][g]) ** .5 for alt in numbered]
+            ax[1].errorbar(xs, mu, se, color=GCOL[g], lw=2, marker="o", ms=6, mec="white", mew=1.2,
+                           capsize=3, label=g)
+        ax[1].axhline(CHANCE, color="0.45", ls="--", lw=1)
+        ax[1].set_xticks(xs, [re.sub(r"^Zone alternation\s*", "", s) for s in numbered])
+        ax[1].set_ylim(0, 100)
+        ax[1].set_xlabel("Zone alternation variable (number = exit threshold, cm)", fontsize=9.5, color="0.2")
+        ax[1].set_title("SA% vs zone exit threshold", loc="left", fontsize=10.5, color="0.1")
     ax[1].legend(frameon=False, fontsize=9)
     style(ax[1])
     for ext in ("png", "pdf"):
@@ -207,4 +267,7 @@ if __name__ == "__main__":
     assert sa(row, k[0]) == (None, None)             # a mouse with < 3 entries must not crash
     lo, hi = welch_ci([1.0, 2.0, 3.0, 4.0], [1.0, 2.0, 3.0, 4.0, 5.0])
     assert lo < -0.5 < hi
+    # ABCAB: 3 triplets, all alternations; ABA is an indirect revisit, AA a direct one
+    assert hand_scores("ABCAB")[:3] == (100.0, 5, 3)
+    assert hand_scores("AABAC")[3:] == (1, 1)
     main()

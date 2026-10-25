@@ -148,6 +148,12 @@ Sample rate **30/s**, matching the converted video. Record the exact version use
 - **Known deviation:** the protocol defines an entry as all four paws crossing the
   threshold; EthoVision scores the centre-point. Validated against hand-scored
   entry sequences on 3 videos — agreement: _(fill in)_ %.
+  Batch 1 (2026-10-25, HLBNSSL41, HLBNWSL46, HLBNWSL50, zone exit threshold 3 cm): SA% within
+  3.8-4.0 points of hand scoring (mean 3.9), mouse order preserved; EthoVision arm entries
+  7-26 % above the four-paw count (partial entries). Sequence-level agreement not computed
+  (EthoVision does not export the per-threshold sequence). Vault: `2026-10-25-HLBNSL-ymaze-hand-scoring`.
+  All 9 after redrawing with a gap (trials 10-18): entries +0 to +7, SA% mean |difference| 5.3
+  points, EthoVision lower in 8 of 9, r +0.88. Hence hand scoring is the Y-maze endpoint.
 - Export: raw centre-point XY track **and** the zone-visit sequence.
 
 ### Open field / NOR habituation (10 min, 50 x 50 cm, 20 lux)
@@ -247,5 +253,6 @@ significance bracket.
 | 2026-10-20 | Initial version, before any video was scored | — | — |
 | 2026-10-24 | Batch 1 prepared on the Windows EthoVision PC, not the workstation: originals renamed to mouse IDs (`rename_videos.py`, log `rename_log.csv`), upright copies made with `prep.py convert --keep-names` (ffmpeg 9.0.2), so **EthoVision tracking is not blinded**. BORIS NOR scoring still uses blinded copies. EthoVision version: XT 11.5. Clicking guide: vault note `ethovision-11-5-y-maze-tracking` | Andrea's decision: tracking is automated; arenas are drawn per video by the experimenter anyway | none (nothing scored yet) |
 | 2026-10-24 | Encoder: batch 1 Y-maze with `libx264 -crf 18 -preset slow` (CPU); batch 1 OFT/NOR with `h264_nvenc -preset p7 -tune hq -rc vbr -cq 18` (GPU, RTX 3080 Ti, new `--encoder` flag). Trial window: Andrea crops each video by hand from door closed to door opened. Batch 2 must use the same encoder per test as batch 1 | CPU at 90 % for ~2 h; same window rule Andrea timed during testing | none |
+| 2026-10-25 | **Y-maze SA% and arm entries are hand-scored** (all four paws, re-entries kept, `metrics.py`), from the 480 s clips; EthoVision gives distance and velocity only, with arm zones starting about 3 cm into each arm and a centre triangle (batch 1 trials 10-18, arenas `…b`). Supersedes the 3 cm EthoVision row below. Batch 2 is scored the same way | Redrawing the zones moved EthoVision SA% per mouse by up to 13 points; with gap zones it still ran 5.3 points below hand scoring on average (r +0.88) | batch 1 Y-maze |
 | 2026-10-25 | **Y-maze entries scored with EthoVision Zone alternation, zone exit threshold 3 cm (provisional)**, arms A/B/C only, instead of a gap strip between centre and arm zones: the batch 1 arm zones touch the centre triangle and arenas 41/50 lack a centre zone, so border flicker made 36-44 false re-entries per mouse at 0 cm. SA% plateaus from 3 cm (1/2/3/4 cm: 44.5/56.6/61.6/62.6 SOD1). Batch 2 uses the same threshold. Validate on 3 hand-scored videos before final | Noldus's documented remedy for false re-entries; no re-tracking needed | batch 1 Y-maze |
 | 2026-10-24 | **Mouse order corrected**: run order is 41, 42, 44, 49, 45, 46, 47, 48, 50, not ascending. All 36 originals and copies renamed (log `Desktop\Nanotag videos\rename_fix_log_2026-10-24.csv`); `rename_videos.py` ORDER fixed; framing table above annotated. Checked on the mouse cards for Y-maze and OFT; NOR assumed the same order (Andrea). Y-maze trial clips: door closed + 480 s, cut from the originals with `h264_nvenc` (`Y-maze\trial_8min\`, times in `Y-maze\door_times.csv`); 8 files 14400 frames, HLBNWSL45 14399 (source drops a frame, within 0.1 s) | Andrea saw the mouse cards in the videos | none (nothing scored yet) |
