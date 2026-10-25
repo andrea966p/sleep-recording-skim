@@ -30,7 +30,7 @@ from cohort import GCOL, style, stars, plt  # noqa: E402  (lab plotting conventi
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from metrics import spontaneous_alternation  # noqa: E402
 
-GROUPS = ("SOD1", "water")
+GROUPS = ("water", "SOD1")          # control first: plotted left
 CHANCE = 50.0
 
 

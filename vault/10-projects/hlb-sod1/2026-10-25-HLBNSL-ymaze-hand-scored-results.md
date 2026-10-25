@@ -54,8 +54,10 @@ Statistics (BEHAVIOR_SOP section 5):
   - velocity: +0.98 cm/s (−0.96 to +2.93), g +0.86, p = 0.41
 - Control check, arm entries vs SA%: Pearson r = +0.38, p = 0.32.
 
-![[2026-10-25-HLBNSL-ymaze-hand-fig1-endpoints.png]]
-![[2026-10-25-HLBNSL-ymaze-hand-fig2-checks.png]]
+![[2026-10-25-HLBNSL-ymaze-hand-fig1-endpoints-v2.png]]
+![[2026-10-25-HLBNSL-ymaze-hand-fig2-checks-v2.png]]
+
+Figures v2 (2026-10-25): control (water) on the left; same data as the first version.
 
 ## EthoVision against the hand scores (gap zones, 3 cm exit threshold)
 - Entries: EthoVision +0 to +7 per mouse (mean +2.9).
