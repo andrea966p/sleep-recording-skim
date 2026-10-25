@@ -42,9 +42,15 @@ def read_stats(path):
 
 
 def sa(d, alt):
+    """-> (SA%, arm entries). Both None below 3 entries: SA% is undefined there
+    (SOP) and Max alternations = 0 cannot tell 0, 1 or 2 entries apart."""
     a = d[(alt, "center-point / Alternations", "Frequency")]
     m = d[(alt, "center-point / Max alternations", "Frequency")]
-    return (100.0 * a / m if m else None), m + 2      # entries = max alternations + 2
+    return (100.0 * a / m, m + 2) if m else (None, None)
+
+
+def defined(v):
+    return [x for x in v if x is not None]
 
 
 def hedges_g(a, b):
@@ -104,7 +110,7 @@ def main():
     for d in data:
         s, n = sa(d, a.alt)
         res.append({"mouse": d["mouse"], "group": d["group"],
-                    "sa_pct": round(s, 1), "arm_entries": n,
+                    "sa_pct": None if s is None else round(s, 1), "arm_entries": n,
                     "alternations": d[(a.alt, "center-point / Alternations", "Frequency")],
                     "direct_revisits": d[(a.alt, "center-point / Direct revisits", "Frequency")],
                     "indirect_revisits": d[(a.alt, "center-point / Indirect revisits", "Frequency")],
@@ -115,9 +121,12 @@ def main():
         w.writeheader()
         w.writerows(res)
 
-    by = {k: {g: [r[k] for r in res if r["group"] == g] for g in GROUPS}
+    by = {k: {g: defined(r[k] for r in res if r["group"] == g) for g in GROUPS}
           for k in ("sa_pct", "arm_entries", "distance_m", "velocity_cm_s")}
     lines = [f"Y-maze {a.tag}, alternation variable {a.alt!r}", ""]
+    low = [r["mouse"] for r in res if r["sa_pct"] is None]
+    if low:
+        lines += [f"fewer than 3 arm entries, left out of SA% and entries: {', '.join(low)}", ""]
     for g in GROUPS:
         v = by["sa_pct"][g]
         w = stats.wilcoxon([x - CHANCE for x in v], method="exact")
@@ -133,9 +142,10 @@ def main():
         lines.append(f"{lab}: SOD1 {st.mean(s_):.2f} vs water {st.mean(w_):.2f}; "
                      f"diff {st.mean(s_) - st.mean(w_):+.2f} (95% CI {lo:+.2f} to {hi:+.2f}), "
                      f"Hedges g {hedges_g(s_, w_):+.2f}, Mann-Whitney U={u.statistic:.0f} p={u.pvalue:.3f}")
-    r = stats.pearsonr([x["arm_entries"] for x in res], [x["sa_pct"] for x in res])
+    ok = [x for x in res if x["sa_pct"] is not None]
+    r = stats.pearsonr([x["arm_entries"] for x in ok], [x["sa_pct"] for x in ok])
     lines += ["", f"control check, entries vs SA% (all mice): Pearson r={r.statistic:+.2f} p={r.pvalue:.3f}"]
-    sens = {alt: {g: [sa(d, alt)[0] for d in data if d["group"] == g] for g in GROUPS} for alt in alts}
+    sens = {alt: {g: defined(sa(d, alt)[0] for d in data if d["group"] == g) for g in GROUPS} for alt in alts}
     lines += ["", "threshold sensitivity, mean SA% (SOD1 / water):"]
     lines += [f"  {alt}: {st.mean(v['SOD1']):.1f} / {st.mean(v['water']):.1f}" for alt, v in sens.items()]
     txt = "\n".join(lines)
@@ -157,12 +167,12 @@ def main():
     # figure 2: control check and threshold sensitivity
     fig, ax = plt.subplots(1, 2, figsize=(10, 4.2), layout="constrained")
     for g in GROUPS:
-        xs = [x["arm_entries"] for x in res if x["group"] == g]
-        ys = [x["sa_pct"] for x in res if x["group"] == g]
+        xs = [x["arm_entries"] for x in ok if x["group"] == g]
+        ys = [x["sa_pct"] for x in ok if x["group"] == g]
         ax[0].plot(xs, ys, "o", color=GCOL[g], ms=7, mec="white", mew=1.3, label=g)
     ax[0].axhline(CHANCE, color="0.45", ls="--", lw=1)
     ax[0].set_ylim(0, 100)
-    ax[0].set_xlim(0, max(x["arm_entries"] for x in res) * 1.2)
+    ax[0].set_xlim(0, max(x["arm_entries"] for x in ok) * 1.2)
     ax[0].set_xlabel("Total arm entries", fontsize=9.5, color="0.2")
     ax[0].set_ylabel("Spontaneous alternation (%)", fontsize=9.5, color="0.2")
     ax[0].set_title(f"Entries vs SA%  (r = {r.statistic:+.2f}, p = {r.pvalue:.2f})", loc="left",
@@ -192,6 +202,9 @@ def main():
 
 if __name__ == "__main__":
     assert abs(hedges_g([1, 2, 3], [1, 2, 3])) < 1e-12
+    k = ("Zone alternation 3", "center-point / {}", "Frequency")
+    row = {(k[0], k[1].format(s), k[2]): 0 for s in ("Alternations", "Max alternations")}
+    assert sa(row, k[0]) == (None, None)             # a mouse with < 3 entries must not crash
     lo, hi = welch_ci([1.0, 2.0, 3.0, 4.0], [1.0, 2.0, 3.0, 4.0, 5.0])
     assert lo < -0.5 < hi
     main()
