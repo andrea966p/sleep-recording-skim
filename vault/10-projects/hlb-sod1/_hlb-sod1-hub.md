@@ -16,7 +16,9 @@ tags: [hub, project, hlb, sod1, sleep, eeg, nanotag]
 
 ## Current state
 - 2026-10-25: HLBNSL Y-maze, hand-scored (final): SA% SOD1 60.5 vs water 62.8, no detectable difference; SOD1 more arm entries (g 1.2, p = 0.06). n = 4 vs 5. [[2026-10-25-HLBNSL-ymaze-hand-scored-results]]
-- 2026-10-24: HLBNSL behaviour videos ready for EthoVision XT 11.5 on `kaist-bilab-win`: 36 renamed to mouse IDs, upright 30 fps copies of all 36 in `Desktop\Nanotag videos upright\<test>\videos\`, all verified; not yet cut to the trial window; Y-maze tracking first. [[ethovision-11-5-y-maze-tracking]]
+- 2026-10-25: HLBNSL NOR from pose, provisional until hand scoring: d2 water +0.30, SOD1 +0.24, no group difference; the novel object was lower-right in every T2, where the mice already went (T1 57 %), so most of d2 is side preference (T1 → T2 rise 7/9 mice, p = 0.07; model1 gives the novel object +6 s and 9/9, p = 0.004, so this depends on the model until hand scoring). [[2026-10-25-HLBNSL-nor-pose-results]]
+- 2026-10-25: HLBNSL open field (NOR day 1), YOLO pose model2, cross-checked by model1 (r ≥ 0.995 per mouse): SOD1 more active (64 vs 51 m, g +1.7, p = 0.11; less immobility, p = 0.06), no difference in centre time or thigmotaxis, no arena side preference. n = 4 vs 5. Floor scale still to confirm with a ruler in frame. [[2026-10-25-HLBNSL-oft-day1-results]]
+- 2026-10-25: HLBNSL behaviour videos all cut to the trial window on `kaist-bilab-win` (Y-maze 480 s, OFT / NOR-T1 / NOR-T2 600 s from Andrea's start times); OFT and NOR tracked with the labmate's YOLO pose models, not EthoVision. [[hlbnsl-oft-nor-pose-tracking]] · [[2026-10-25-nor-day1-oft-feature-set]]
 - 2026-10-24: sheet round 2 (CHG-005 → CHG-009) verified on an export: sampling Thu 11-05, SD 11-02 → 11-05, behavioural read row on 10-30, clean window 10-31 → 11-02; all approved and moved to History. New, outside the log: tabs `S-SPF` / `W-SPF` and EEG `Registry` rows 50-61 (HLBSSPF01-05, HLBWSPF01-05), not yet described in the vault. [[2026-10-24]]
 - 2026-10-22: NS-SD / NW-SD is running: tag Run 1 from 10-22 09:00, 48 h baseline, SOD1 / water from 10-24 for 12 days, SD Mon 11-02 → Thu 11-05, sampling Thu 11-05. [[2026-10-19-NS-SD-NW-SD-nanotag-study]]
 - 2026-10-21: sampling moved from Sun 11-08 to Thu 11-05 (no SD or tests at weekends); sheet requests CHG-005 → CHG-009 sent, review pending. [[2026-10-21]]
@@ -43,6 +45,8 @@ tags: [hub, project, hlb, sod1, sleep, eeg, nanotag]
 - NS-SD: the SD hours are the treatment; analyse them, do not remove them as handling windows. [[2026-10-19-NS-SD-NW-SD-nanotag-study]]
 
 ## Open items
+- [ ] HLBNSL NOR: hand-score the blinded validation subset in BORIS (`NOR-blind`, 4 clips; rules and score sheet in [[2026-10-26-HLBNSL-nor-hand-scoring]]) and compare with the pose scoring; then decide the endpoint. [[2026-10-25-HLBNSL-nor-pose-results]]
+- [ ] HLBNSD (batch 2) NOR: counterbalance the novel object's side; put a ruler in frame (objects measured 11-12.5 cm from the walls, placed at 10 cm). [[2026-10-25-nor-day1-oft-feature-set]]
 - [ ] `nanotag/analysis/cohort.py` needs the NS-SD blocks and an `SD` window list before analysis. [[2026-10-19-NS-SD-NW-SD-nanotag-study]]
 - [ ] Review CHG-005 → CHG-009 once Claude for Sheets has applied them. [[sod1-sheet-change-log-workflow]]
 - [ ] NS-SD questions for Andrea: cracked tag ID, bottle swap time on SD days, sampling details. [[2026-10-19-NS-SD-NW-SD-nanotag-study]]

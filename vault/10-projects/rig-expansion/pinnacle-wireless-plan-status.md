@@ -67,8 +67,9 @@ tags: [pinnacle, wireless, headmount, purchase, pc]
 
 ## Still open
 - [ ] Pinnacle: connector drawing for the custom unit, written answers to the 14 questions in section 9 of the evaluation page. Whether the email draft was sent is not recorded.
+  2026-10-26: a new question set (software, TTL, connector drawing, PC) was sent; answers pending. [[2026-10-25-pinnacle-software-video-pc-questions-email]]
 - [ ] Update the meeting brief and the evaluation page body to the 4-channel unit (listed open on 2026-10-19).
 - [ ] Electrode sites, then the KiCad board and Gerbers.
-- [ ] Decide on video sync (no TTL input on the wireless unit).
+- [ ] Decide on video sync (no TTL input on the wireless unit). 2026-10-25: routes and questions in [[2026-10-25-pinnacle-software-video-pc-questions-email]].
 - [ ] Head mass 3.8 to 3.9 g plus cement and a depth wire on a 20 to 30 g mouse: check against the animal protocol.
 - [ ] Is ahyeon's LFP target the same pons site? Her next run with REM would give a direct clipping test (`eeg-emg-analysis/qc/wireless_range_clip_check.py`).

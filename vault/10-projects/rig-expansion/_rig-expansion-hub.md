@@ -14,6 +14,7 @@ tethered comparison for 32 mice (July 2026), and the **Pinnacle wireless** plan 
 This page is the map. The detail lives in the linked notes; if a note and this page disagree, the note wins and this page is wrong.
 
 ## Current state
+- 2026-10-26: **Questions sent to Pinnacle** (Andrea; shortened from the 2026-10-25 draft): software modules, what is strictly needed to record our own cameras' TTL pulses (free Sirenia, TTL Plus 9085-N, or a paid licence), Sleep Pro, the 8474-HR-SE4-C pin map, range and connector drawing, and the one-PC plan for 16 dongles. Awaiting answers. [[2026-10-25-pinnacle-software-video-pc-questions-email]] [[2026-10-26]]
 - 2026-10-23: Andrea: head-unit model code 8474-HR-SE4-C confirmed; 6 mm headmount limit confirmed (average B6 skull and surgical area), so the 6.4 x 7.8 mm drawing must shrink; Pinnacle runs on a separate Windows PC (Sirenia is Windows-only). The one-or-two-PC and "proven on our bench" questions are parked. [[2026-10-23]]
 - 2026-10-22: No note says whether the Pinnacle plan replaces the XDAQ route or runs beside it; neither is marked closed. [[2026-07-24-daq-32-mouse-final-comparison]] [[pinnacle-wireless-plan-status]]
 - 2026-10-20: **Pinnacle acquisition PC decided**: 16 head units in total (12 before the end of 2026, 4 in January 2027), one custom PC (ASUS PRIME B550-PLUS) with USB cards for the dongles, a second identical PC if it proves unstable. A 72 h test of the first 12 is planned for December. [[2026-10-20]] [[pinnacle-wireless-plan-status]]

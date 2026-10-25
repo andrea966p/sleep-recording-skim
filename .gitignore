@@ -93,3 +93,8 @@ claude-config/skills/synced/
 
 # --- nested repos with their own remote (synced by their own git, not ./skim) ---
 SleepStager/
+
+# --- YOLO pose weights from a labmate (about 20 MB each): kept on kaist-bilab-win only,
+#     see vault note hlbnsl-oft-nor-pose-tracking ---
+/model1/
+/model2/

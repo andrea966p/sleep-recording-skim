@@ -100,6 +100,12 @@ which is the criterion that matters. The truncation affects only the apparatus o
 - NOR/OFT videos are **cropped** to the arena before tracking, which also removes the
   second empty compartment at the left edge.
 
+> **2026-10-25: OFT framing is NOT identical across videos** (table above says yes). On the 600 s
+> OFT clips the box floor shifts by tens of pixels between mice (overlays in
+> `Desktop\Nanotag videos upright\OFT\arena\`). Each clip gets its own floor corners
+> (`oft_arena.py`), and the videos are not cropped: pixels are mapped to the floor by a
+> homography instead, and detections off the floor are rejected.
+
 Video durations exceed the protocol windows (Y-maze 548-730 s for an 8 min test;
 OFT 664-757 s and NOR 642-857 s for 10 min tests), so every file carries handling
 before and after the trial and **must be trimmed to the trial window** before tracking.
@@ -162,6 +168,10 @@ Sample rate **30/s**, matching the converted video. Record the exact version use
 - Thigmotaxis band: within **5 cm** of any wall (computed here from the raw track,
   not in EthoVision — see `metrics.thigmotaxis`).
 - Export: total distance, mean velocity, centre time/entries, raw XY track.
+- **2026-10-25: batch 1 day 1 is tracked with the labmate's YOLO pose models, not EthoVision**
+  (`pose_infer.py`, `oft_arena.py`, `oft_features.py`; vault `hlbnsl-oft-nor-pose-tracking`).
+  Scale = the inner floor square taken as 50 x 50 cm (to be confirmed by measuring the box).
+  Feature definitions: vault `2026-10-25-nor-day1-oft-feature-set`. Batch 2 uses the same code.
 
 ### NOR T1 / T2 (10 min each)
 - Tracked for locomotion and as a sanity check only.
@@ -255,4 +265,6 @@ significance bracket.
 | 2026-10-24 | Encoder: batch 1 Y-maze with `libx264 -crf 18 -preset slow` (CPU); batch 1 OFT/NOR with `h264_nvenc -preset p7 -tune hq -rc vbr -cq 18` (GPU, RTX 3080 Ti, new `--encoder` flag). Trial window: Andrea crops each video by hand from door closed to door opened. Batch 2 must use the same encoder per test as batch 1 | CPU at 90 % for ~2 h; same window rule Andrea timed during testing | none |
 | 2026-10-25 | **Y-maze SA% and arm entries are hand-scored** (all four paws, re-entries kept, `metrics.py`), from the 480 s clips; EthoVision gives distance and velocity only, with arm zones starting about 3 cm into each arm and a centre triangle (batch 1 trials 10-18, arenas `…b`). Supersedes the 3 cm EthoVision row below. Batch 2 is scored the same way | Redrawing the zones moved EthoVision SA% per mouse by up to 13 points; with gap zones it still ran 5.3 points below hand scoring on average (r +0.88) | batch 1 Y-maze |
 | 2026-10-25 | **Y-maze entries scored with EthoVision Zone alternation, zone exit threshold 3 cm (provisional)**, arms A/B/C only, instead of a gap strip between centre and arm zones: the batch 1 arm zones touch the centre triangle and arenas 41/50 lack a centre zone, so border flicker made 36-44 false re-entries per mouse at 0 cm. SA% plateaus from 3 cm (1/2/3/4 cm: 44.5/56.6/61.6/62.6 SOD1). Batch 2 uses the same threshold. Validate on 3 hand-scored videos before final | Noldus's documented remedy for false re-entries; no re-tracking needed | batch 1 Y-maze |
+| 2026-10-25 | **NOR exploration also scored from pose, as a candidate** (`nor_explore.py`, `nor_objects.py`): section 3 rule applied per frame (nose ≤ 2 cm from the object outline, head within 45° or nose ≤ 0.5 cm; body centre or a paw 0.5 cm inside the outline excluded; chewing not excluded). **BORIS hand scoring stays the endpoint** until the blinded subset (`NOR-blind`, 4 clips) agrees; then Andrea decides. Note: the novel object was lower-right in every batch 1 T2, where mice already went (T1 57 %); counterbalance the novel side in batch 2 | Andrea asked for model-based scoring of all videos; manual scoring follows | none (candidate only) |
+| 2026-10-25 | **OFT / NOR trial clips and day 1 tracking.** OFT, NOR-T1, NOR-T2 cut to 600 s from Andrea's start times (`<test>\door_times.csv`) with the Y-maze encoder (`h264_nvenc`, 1080p, 30 fps) into `<test>\trial_10min\`; 18000 frames except OFT HLBNSSL42, NOR-T1 49/45/46/47/48/50 and NOR-T2 45 at 17999 (source drops a frame, within 0.1 s). Day 1 tracked with YOLO pose (model2 primary, model1 cross-check), `max_det` 3 instead of the labmate's 1 so the ring light outside the box can be rejected; floor taken as 50 x 50 cm; immobility < 2 cm/s for ≥ 2 s; centre entries with 1 cm hysteresis; no centre latency (release is near the centre) | Andrea gave the start times and the models; OFT framing shifts between videos | batch 1 OFT (first scoring) |
 | 2026-10-24 | **Mouse order corrected**: run order is 41, 42, 44, 49, 45, 46, 47, 48, 50, not ascending. All 36 originals and copies renamed (log `Desktop\Nanotag videos\rename_fix_log_2026-10-24.csv`); `rename_videos.py` ORDER fixed; framing table above annotated. Checked on the mouse cards for Y-maze and OFT; NOR assumed the same order (Andrea). Y-maze trial clips: door closed + 480 s, cut from the originals with `h264_nvenc` (`Y-maze\trial_8min\`, times in `Y-maze\door_times.csv`); 8 files 14400 frames, HLBNWSL45 14399 (source drops a frame, within 0.1 s) | Andrea saw the mouse cards in the videos | none (nothing scored yet) |

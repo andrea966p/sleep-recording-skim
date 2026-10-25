@@ -78,7 +78,7 @@ rules and short pointers into the vault: when a hook and the vault disagree, the
 ## Nanotag and the SOD1 sheet (vault: 20-areas/nanotag, 10-projects/hlb-sod1)
 - [Nanotag SOD1 studies](nanotag-sod1-hlbnsl.md) — HLBNSL 10-05: no SOD1 effect. NS-SD: SOD1 from 10-24 (12 d), sampling Thu 11-05. 🛑 No SD/tests at weekends. Mouse = header tag ID
 - [SOD1 sheet: Pending changes tab](sod1-sheet-pending-changes-tab.md) — Claude Code has NO sheet write access (export xlsx to read). 🛑 No hand-pasted TSVs: one message for the Claude for Sheets chat
-- [HLBNSL behaviour videos](hlbnsl-behavior-videos-pointer.md) — Rules frozen in `nanotag/analysis/behavior/BEHAVIOR_SOP.md`. Videos on the Windows EthoVision PC, not yet rotated/trimmed/blinded (10-24)
+- [HLBNSL behaviour videos](hlbnsl-behavior-videos-pointer.md) — Rules frozen in `nanotag/analysis/behavior/BEHAVIOR_SOP.md`. Videos on `kaist-bilab-win`; all cut to the trial (10-25). OFT/NOR tracked by YOLO pose: `max_det` > 1, floor per clip
 ## Computing: machines and workspace (vault: 20-areas/computing)
 - Host `e10ubuntu` @ 192.168.0.50, user `skimlab`, Core Ultra 5 125H (not Ultra 7, not `frigate-server`). We are ON it: no SSH for local commands. Facts: `production-values`
 - [One repo `sleep-recording-skim`](workspace-single-repo-sleep-recording-skim.md) — Manual `./skim status|pull|push|check|lint`, 5 machines (incl. Windows `kaist-bilab-win`, Git Bash). Diff a KEPT `settings.json`; set git identity. 🛑 No Tailscale SSH on e10
