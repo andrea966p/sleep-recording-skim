@@ -49,6 +49,9 @@ sessions/
 # --- Obsidian per-machine window layout --------------------------------------
 .obsidian/workspace*.json
 .trash/
+# The vault is vault/, not the repo root. Opening the root in Obsidian creates this
+# (office PC, 2026-10-26, pushed by accident in ee9c9e5).
+/.obsidian/
 
 # --- misc --------------------------------------------------------------------
 *.deb
