@@ -35,7 +35,7 @@ tags: [computing, git, tailscale, workflow]
 | `e10ubuntu` (the rig) | `192.168.0.50`, Tailscale `100.82.250.62`, user `skimlab`, Core Ultra 5 125H | `~/sleep-recording-skim` | local |
 | SKIM office workstation | `skimworkstation`, user `skim` | `/home/skim/sleep-recording-skim` | Tailscale SSH, check mode: capture the approval URL with `script -qfc "tailscale ssh skim@skimworkstation …"` and give it to Andrea |
 | ThinkPad | `thinkpadubuntu`, user `andrea` | `/home/andrea/sleep-recording-skim` | `tailscale ssh andrea@thinkpadubuntu '<cmd>'` (tag `tag:thinkpad`) |
-| Office PC | `Andrea-KAIST-PC-ubuntu`, user `andrea` | still the old `~/Monitoring_project` tree | not on the workflow |
+| Office PC (2026-10-26) | `Andrea-KAIST-PC-ubuntu`, user `andrea`, **bilab** tailnet `100.117.204.8` | `/home/andrea/sleep-recording-skim` | no inbound: it is not in e10's tailnet. It reaches e10 because e10 is shared into bilab, where e10 is `100.99.161.30` |
 | KAIST BIlab PC, **Windows** side (2026-10-24) | `kaist-bilab-win`, Tailscale `100.88.120.75`, user `andrea` (admin) | `C:\Users\Andrea\sleep-recording-skim` (Git Bash: `~/sleep-recording-skim`) | `ssh andrea@100.88.120.75` (Windows OpenSSH server, key only, tailnet only) |
 
 The other direction (laptop to e10) is ordinary sshd with a key and a `Host e10` block in
@@ -62,6 +62,9 @@ Tailscale SSH, and how the tag rule works: [[multi-machine-work-setup]], section
   sync was dead 2026-08-22 to 2026-09-10. Never use `git rebase` in an automated script without `--autostash`.
 - **Never let a second sync system touch the repo.** [[2026-04-29-syncthing-deletion-and-recovery]] is why.
   Syncthing is gone from every machine (2026-09-16 on e10 and the office PC, confirmed on the ThinkPad 2026-09-19).
+- **A shared Tailscale node does NOT keep its IP.** e10 is `100.82.250.62` in its own tailnet but
+  `100.99.161.30` when shared into bilab (2026-10-26). A machine reaching e10 through a share needs
+  that address in its `Host e10` block, and a new address means a new `known_hosts` entry.
 - **A path move is never just a rename** (cron jobs, scripts, the gitignored `deploy/logs/`, the MCP server path):
   see the 2026-09-11 cutover section of [[multi-machine-work-setup]].
 - **Renaming the workspace orphans every Claude Code session**: `claude --resume` is scoped to the working

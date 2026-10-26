@@ -14,6 +14,7 @@ All of them share one private git repo, `sleep-recording-skim`, synced by hand w
 Monitoring is Netdata plus Uptime Kuma, pushing to ntfy; real addresses and usernames are in [[production-values]].
 
 ## Current state
+- 2026-10-26: the office PC (`Andrea-KAIST-PC-ubuntu`) is on the push/pull workflow; it stays in the bilab tailnet and reaches e10 through a share at `100.99.161.30`. The old tree is retired [[multi-machine-workflow]]
 - 2026-10-24: `kaist-bilab-win` (Windows side of a dual-boot PC, for EthoVision and Office) is on the push/pull workflow, with Claude Code wired [[multi-machine-workflow]]
 - 2026-10-22: Netdata is v2.12.1 (live `netdata -v`) and alerts go to ntfy; recording-stall and reconciler alerts still go to Slack through `nvr-mqtt-slack.service` [[monitoring-setup]] [[watchdog-slack-bridge]]
 - 2026-09-20: deploy scripts push to ntfy through `nvr-notify.sh` instead of Slack [[backup-architecture]]

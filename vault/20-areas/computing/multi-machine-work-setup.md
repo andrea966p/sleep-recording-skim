@@ -41,6 +41,15 @@ This part is current, unlike the Syncthing material below.
 | ThinkPad | `thinkpadubuntu`, `100.66.98.20`, user `andrea` | `/home/andrea/sleep-recording-skim` | `-home-andrea-sleep-recording-skim` | day to day work. Tagged `tag:thinkpad` so e10 can SSH in |
 | Office PC | `Andrea-KAIST-PC-ubuntu`, user `andrea` | old tree only, at `~/Monitoring_project` | — | **not yet on the one repo.** Holds uncommitted work, see the 2026-09-16 journal |
 
+> [!note] Office PC, on the one repo since 2026-10-26
+> Workspace `/home/andrea/sleep-recording-skim`, slug `-home-andrea-sleep-recording-skim`. It stays
+> in the **bilab** tailnet (`100.117.204.8`) because `pi5-deadman.sh` (cron, every 10 min) probes the
+> Pi5 over bilab. e10 was shared into bilab instead, where it answers as `100.99.161.30`, so this
+> PC's `Host e10` uses that address. Nothing reaches the PC from e10. The old `~/Monitoring_project`,
+> the Desktop copy, both `neurosurveillance-recovery` folders, the parked Syncthing identity and
+> the bootstrap backups are in `~/old-setup-retired-2026-10-26/`, with push disabled on every
+> retired clone. See [[2026-10-26]].
+
 Every machine needs the same six things: git with an SSH key on GitHub, **a git identity**,
 Obsidian, Claude Code wired by `machine/bootstrap.sh`, Tailscale, and tmux.
 

@@ -80,6 +80,14 @@ updated: 2026-04-02
 | `Bilab_Syn` (the NAS) | `100.120.86.9` | `bilab-syn.tail8808c0.ts.net` | bilab.kaist@ |
 | `SKIM_NAS` (the SKIM Lab NAS) | `100.85.231.100` | `skim-nas.tailec38b9.ts.net` | sleepigene@ |
 
+**Shared OUT of the NVR's tailnet:**
+
+| Device | Shared to | Address seen there | Why |
+|---|---|---|---|
+| `e10ubuntu` (2026-10-26) | bilab.kaist@ | `100.99.161.30` (not `100.82.250.62`: a shared node gets a new IP) | the office PC stays in bilab for `pi5-deadman.sh` |
+
+The office PC's old skimlab node above (`100.125.44.24`) has been offline since roughly 2026-01; it can be deleted in the skimlab admin console.
+
 > [!tip] The SKIM_NAS path is DIRECT, not relayed
 > Measured 2026-09-11: `CurAddr 143.248.26.53:49231`, **1 ms RTT**, both ends on the KAIST
 > campus network. The first `tailscale ping` reported `via DERP(tok)` only because

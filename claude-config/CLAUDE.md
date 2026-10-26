@@ -32,7 +32,7 @@ Five machines share this workspace: `e10ubuntu` (the rig), the **SKIM office wor
 (`/home/skim`, added 2026-09-16), the **ThinkPad** (`thinkpadubuntu`, user `andrea`, live on
 the workflow 2026-09-19), **`kaist-bilab-win`** (Windows, Git Bash, for EthoVision and Office,
 added 2026-10-24; from e10: `ssh andrea@100.88.120.75`), and the office PC
-(`Andrea-KAIST-PC-ubuntu`, still on the old tree). The table in `vault/20-areas/computing/multi-machine-workflow.md` has the paths; the older
+(`Andrea-KAIST-PC-ubuntu`, on the workflow 2026-10-26; bilab tailnet, reaches e10 at `100.99.161.30`, no inbound). The table in `vault/20-areas/computing/multi-machine-workflow.md` has the paths; the older
 `multi-machine-work-setup.md` beside it also lists each machine's memory slug.
 
 To drive the ThinkPad from here: `tailscale ssh andrea@thinkpadubuntu '<command>'`. It has
