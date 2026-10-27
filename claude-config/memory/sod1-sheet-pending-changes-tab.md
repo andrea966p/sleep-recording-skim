@@ -1,15 +1,19 @@
 ---
 name: sod1-sheet-pending-changes-tab
-description: "How Claude Code changes the HLB SOD1 intake Google Sheet: request rows in the 'Pending changes instructions' tab, Claude for Sheets applies, Claude Code reviews; Claude Code has NO write access. Workflow in the vault"
+description: "How Claude Code changes the HLB SOD1 intake Google Sheet: directly with the Google Sheets connector (since 2026-10-26), every change logged in the 'Pending changes instructions' tab. Workflow in the vault"
 metadata:
   type: reference
 ---
 
-Sheet `HLB_SOD1_Intake_Monitoring_SDSLNANO` (Drive id 1jgQpYiUGzEwFpjAhy8SvCamGoeMFZEycLFpzwgfgxhs), tab `Pending changes instructions` (data from row 10): Claude Code writes requests (A:G), Claude for Sheets applies them (I:O) when Andrea says "apply pending changes" in the sheet chat, Claude Code reviews (P verdict, Q comment) and moves Approved rows to history (S:AA). IDs CHG-001..., rework CHG-001-R1.
+Sheet `HLB_SOD1_Intake_Monitoring_SDSLNANO` (id 1jgQpYiUGzEwFpjAhy8SvCamGoeMFZEycLFpzwgfgxhs), tab `Pending changes instructions` (data from row 10): ① PENDING A:G, ② APPLIED I:Q (N old value, P verdict, Q comment), ③ HISTORY S:AA append-only. Last ID CHG-011 (HISTORY row 20); rework = CHG-xxx-R1.
 
-Details: [[sod1-sheet-change-log-workflow]] · [[_hlb-sod1-hub]]
+Procedure: [[sod1-sheet-change-log-workflow]] · [[_hlb-sod1-hub]]
 
-- 🔴 There is NO Google Sheets connector (Drive only): read = export xlsx via Drive `download_file_content`, load with openpyxl in a scratch venv (twice: formulas and data_only). Claude Code cannot write the sheet.
-- 🛑 Andrea (2026-10-19): hand-copy-pasting TSV files is NOT an acceptable workflow. Give ONE message for the Claude for Sheets chat that carries the full request or verdict text, never files to paste into cells.
-- 🔴 Cells over 300 characters get cut on paste: keep every request cell <= 300 chars. No log cell may start with `=`. Never insert whole sheet rows on that tab; append at the bottom of each section.
-- Review = export, check target cells and downstream cells, diff ALL other input cells against the previous export, scan for #-errors. Related: [[nanotag-sod1-hlbnsl]]
+- ✅ Since 2026-10-26 Claude Code writes the sheet itself with the **Google Sheets connector** (`get_spreadsheet` grid read for formulas, `update_values`, `update_formulas`, `batch_clear_values`). Check `session_connectors_status` first; if Sheets is missing, STOP and tell Andrea. 🛑 Never fall back to Drive exports + hand-pasted TSVs or Claude for Sheets chat messages (both retired).
+- 🛑 Show Andrea the exact cells (tab, range, header, old → new) and wait for OK before writing.
+- Loop: ① row → re-read targets → write → ② row with old value → read back (formulas + #REF!/#VALUE!/#N/A/#ERROR!) → ③ row → clear ① and ② → read the log back.
+- 🔴 Each section fills from row 10 on its own: the ① row goes at the first empty row of column A, NOT at HISTORY's next row (slip on 2026-10-26, fixed at once).
+- 🔴 No log cell may start with `=`; every log cell < 300 chars; dates yyyy-mm-dd; find columns by header text; never insert rows/columns on batch tabs or the log tab; never type over a formula unless asked.
+- Sheets API read quota per minute is small: batch reads into one grid read; on a quota error wait ~60 s.
+- Registry has no gavage/SD-time column; such plans go in `Notes` (col X). Related: [[nanotag-sod1-hlbnsl]]
+- 🔴 Config `DAILY PREPARATION CALCULATOR` and each batch tab `B36` are the DRINKING-WATER concentration (6.8 U/mL), shared by all batches. Gavage (0.2 mL = 20.4 U) is 102 U/mL: change only that batch row (CHG-011, S-SPF E48), never Config.

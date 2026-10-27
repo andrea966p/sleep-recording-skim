@@ -77,12 +77,13 @@ rules and short pointers into the vault: when a hook and the vault disagree, the
 - [Open Ephys scale-up](openephys-scale-up-option.md) — Extension board dead (07-23); OE GUI drives our XDAQ licence-free. Close Allego before OE; never reflash the Core without KC
 ## Nanotag and the SOD1 sheet (vault: 20-areas/nanotag, 10-projects/hlb-sod1)
 - [Nanotag SOD1 studies](nanotag-sod1-hlbnsl.md) — HLBNSL 10-05: no SOD1 effect. NS-SD: SOD1 from 10-24 (12 d), sampling Thu 11-05. 🛑 No SD/tests at weekends. Mouse = header tag ID
-- [SOD1 sheet: Pending changes tab](sod1-sheet-pending-changes-tab.md) — Claude Code has NO sheet write access (export xlsx to read). 🛑 No hand-pasted TSVs: one message for the Claude for Sheets chat
+- [SOD1 sheet: change log + direct edits](sod1-sheet-pending-changes-tab.md) — Since 10-26 Claude Code edits via the Google Sheets connector, every change logged (last CHG-011). 🛑 Andrea OKs exact cells first; no paste files, no Drive-export fallback
 - [HLBNSL behaviour videos](hlbnsl-behavior-videos-pointer.md) — Rules frozen in `nanotag/analysis/behavior/BEHAVIOR_SOP.md`. Videos on `kaist-bilab-win`; all cut to the trial (10-25). OFT/NOR tracked by YOLO pose: `max_det` > 1, floor per clip
 ## Computing: machines and workspace (vault: 20-areas/computing)
 - Host `e10ubuntu` @ 192.168.0.50, user `skimlab`, Core Ultra 5 125H (not Ultra 7, not `frigate-server`). We are ON it: no SSH for local commands. Facts: `production-values`
 - [One repo `sleep-recording-skim`](workspace-single-repo-sleep-recording-skim.md) — Manual `./skim status|pull|push|check|lint`, 5 machines (incl. Windows `kaist-bilab-win`, Git Bash). Diff a KEPT `settings.json`; set git identity. 🛑 No Tailscale SSH on e10
 - [Syncthing retired, vault safety](multi-machine-setup-and-vault-safety.md) — Gone everywhere (09-19). `apt purge` doesn't stop the daemon; read the `apt autoremove` list on that machine every time
+- [ThinkPad: NAS + e10 via personal tailnet b888](thinkpad-personal-tailnet-nas-e10.md) — 10-23: a share lands in the tailnet where it was accepted. Tailscale SSH on e10 was ON and blocked shared users: disabled
 - [USB HDD NTFS dirty bit](usb-hdd-ntfs-dirty-bit.md) — Won't mount = dirty bit, not a dying drive: `sudo ntfsfix -d /dev/sda1`. 🛑 Bare `ntfsfix` SETS the bit
 ## Data storage and AWS (vault: 20-areas/data-storage)
 - [Backup: 3 destinations](backup-architecture-three-destinations.md) — 09-20: bilab NAS = rebuild the rig, SKIM NAS = working copy NOT a backup, S3 = survive the fire. ntfy needs the full URL

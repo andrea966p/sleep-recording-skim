@@ -28,7 +28,7 @@ This area holds the device facts and the procedure; the studies (HLBNSL, NS-SD /
 2. [[nanotag-kissei-device-and-literature]]: what the tag measures, its limits, the English-manual errors, the literature
 3. [[2026-10-19-NS-SD-NW-SD-nanotag-study]]: the running study and its schedule
 4. [[2026-10-05-HLBNSL-nanotag-merged-analysis]]: the finished study, as the worked example
-5. [[sod1-sheet-change-log-workflow]]: how changes to the study sheet are requested
+5. [[sod1-sheet-change-log-workflow]]: how changes to the study sheet are made and logged
 
 ## Rules that must not be broken
 
@@ -36,7 +36,7 @@ This area holds the device facts and the procedure; the studies (HLBNSL, NS-SD /
 - 🛑 Starting a recording or setting a reservation erases the tag; reading never does. Read first. [[nanotag-kissei-device-and-literature]]
 - 🛑 Never restrain a mouse on the metal grid for a read; read from the open hand and stop if it will not settle (HLBNSSL43 died 2026-09-28). [[nanotag-recording-and-analysis]]
 - Plan every read before the memory is full (8 days with temperature, 9 days without). [[nanotag-recording-and-analysis]]
-- Claude Code never edits the study sheet (it has no write access). Since 2026-10-21 change requests go to Claude for Sheets as one chat message; the `Pending changes instructions` route is being redesigned. [[sod1-sheet-change-log-workflow]] [[2026-10-21]]
+- Every change to the study sheet goes through the `Pending changes instructions` log; since 2026-10-26 Claude Code writes it with the Google Sheets connector after Andrea OKs the cells. [[sod1-sheet-change-log-workflow]]
 - The SKIM NAS is a working copy, not a backup. [[backup-architecture]]
 
 ## Open items

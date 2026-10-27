@@ -9,20 +9,19 @@ created: 2026-10-19
 
 # Changing the SOD1 intake sheet: the "Pending changes instructions" tab
 
-> [!warning] Updated 2026-10-22: Andrea rejected hand-pasting TSV files on 2026-10-19; until the route is redesigned, requests go to Claude for Sheets as one chat message (CHG-005 to CHG-009 were sent that way on 2026-10-21). [[2026-10-21]]
+> [!info] 2026-10-26: Claude Code now edits the sheet directly with the Google Sheets connector (CHG-010 was the first change made this way). Hand-pasting TSV files and Claude for Sheets chat messages are retired. [[2026-10-26]]
 
 > [!abstract] TL;DR
-> - **What this is:** the only route for Claude Code to change the Google Sheet `HLB_SOD1_Intake_Monitoring_SDSLNANO`
->   (Drive id `1jgQpYiUGzEwFpjAhy8SvCamGoeMFZEycLFpzwgfgxhs`). Claude Code **requests** a change, Claude for Sheets (the
->   Claude add-on inside the sheet) **applies** it, Claude Code **reviews** it. Set up 2026-10-19.
-> - **Why:** the sheet has shared formulas and array formulas everywhere. An .xlsx export → re-upload destroys them, and
->   the earlier handover files on the workstation Desktop left no trail of what was actually changed.
-> - 🔴 **Claude Code cannot write to the sheet.** There is no Google Sheets connector (only Google Drive, read-only for
->   cells; checked 2026-10-19). Claude Code reads the sheet as an .xlsx export and gives Andrea **paste-ready rows**.
-> - **Every request names the exact tab and cell range,** says what the cell should contain afterwards, and says why.
-> - **How to read this page:** the layout, then the loop, then the rules for writing a request. Project context:
->   [[_hlb-sod1-hub]]; nanotag workflow: [[nanotag-recording-and-analysis]]; big picture:
->   [[nvr-system-overview]].
+> - **What this is:** the only route for changing the Google Sheet `HLB_SOD1_Intake_Monitoring_SDSLNANO`
+>   (Drive id `1jgQpYiUGzEwFpjAhy8SvCamGoeMFZEycLFpzwgfgxhs`). Every change gets a Change ID and leaves a trail in the
+>   tab `Pending changes instructions`.
+> - **Who writes:** Claude Code, through the **Google Sheets connector** (`get_spreadsheet`, `get_values`,
+>   `update_values`, `update_formulas`, `batch_clear_values`). It writes the request, applies it, verifies it by
+>   reading it back and files it in HISTORY, all in one session, after Andrea OKs the exact cells.
+> - **Why the log:** the sheet has shared formulas and array formulas everywhere. An .xlsx export → re-upload destroys
+>   them, and edits made without a log left no trail of what changed or why.
+> - **How to read this page:** the layout, then the loop, then the rules. Project context: [[_hlb-sod1-hub]]; nanotag
+>   workflow: [[nanotag-recording-and-analysis]]; big picture: [[nvr-system-overview]].
 
 ## Where it is
 
@@ -31,70 +30,60 @@ row 9 the headers. Data starts at **row 10**. Three tables sit side by side so e
 
 | Section | Columns | Written by | Columns in order |
 |---|---|---|---|
-| **① PENDING** | **A:G** | Claude Code (via Andrea's paste) | A Change ID · B Requested (date) · C Target sheet · D Target range · E Instruction (what to change) · F Rationale / context · G Status |
-| **② APPLIED** | **I:Q** | Claude for Sheets; P:Q by Claude Code | I Change ID · J Applied (date) · K Target sheet · L Range(s) changed · M Summary of what was done · N Previous value / formula · O Deviations / issues · **P Review verdict** · **Q Reviewer comments** |
-| **③ HISTORY** | **S:AA** | Claude Code (via Andrea's paste), append-only | S Change ID · T Requested · U Applied · V Approved · W Target sheet · X Range(s) · Y Instruction · Z Summary of what was done · AA Reviewer comments |
+| **① PENDING** | **A:G** | Claude Code | A Change ID · B Requested (date) · C Target sheet · D Target range · E Instruction (what to change) · F Rationale / context · G Status |
+| **② APPLIED** | **I:Q** | Claude Code | I Change ID · J Applied (date) · K Target sheet · L Range(s) changed · M Summary of what was done · N Previous value / formula · O Deviations / issues · **P Review verdict** · **Q Reviewer comments** |
+| **③ HISTORY** | **S:AA** | Claude Code, append-only | S Change ID · T Requested · U Applied · V Approved · W Target sheet · X Range(s) · Y Instruction · Z Summary of what was done · AA Reviewer comments |
 
 Dropdowns: **G** = `Pending` / `In progress` / `Blocked`. **P** = `Awaiting review` / `Approved` / `Needs fix` / `Superseded`.
 Dates are `yyyy-mm-dd`.
 
-## The loop
+## The loop (Claude Code, Google Sheets connector)
 
-1. **Request (Claude Code).** One row in ① per self-contained change, Status `Pending`. IDs run `CHG-001`, `CHG-002`, …
-   A rework of a change keeps the number with a suffix: `CHG-001-R1`.
-2. **Apply (Claude for Sheets).** It acts **only when Andrea tells it in the sheet's Claude chat**, e.g. "apply pending
-   changes". For each row it applies, it writes a row in ② with `Awaiting review` and removes the row from ①. If it can't
-   apply one, it sets ① Status to `Blocked` and writes the reason into F.
-3. **Review (Claude Code).** Claude Code exports the sheet, checks every `Awaiting review` row against the actual cells
-   (values AND formulas), and gives a verdict:
-   - **Approved** → the row moves to ③ HISTORY and is deleted from ②.
-   - **Needs fix** → a new request `CHG-xxx-R1` in ①, and the ② row is set to `Superseded`.
-4. **③ HISTORY is append-only.** Nobody edits or deletes its rows.
+0. **Check the connector.** `session_connectors_status` must show Google Sheets connected and the tools loaded. If
+   not, stop and tell Andrea. Never fall back to Drive exports and hand-pasted files.
+1. **Read first, the same session.** Read the log tab and every target range with formulas: `get_spreadsheet` with
+   `includeGridData` and the fields `userEnteredValue` + `formattedValue`. Find columns by their **header text**,
+   never by letter.
+2. **Show Andrea the exact cells** (tab, range, header, current value, new value) and wait for an OK.
+3. **Request.** Write the row in ① at the first empty row of **column A** at or below row 10 (each section fills
+   from row 10 on its own; do not use HISTORY's next row). Status `In progress`.
+4. **Apply.** Read the target cells again right before writing, then write them (`update_values` for text and dates,
+   `update_formulas` for formulas).
+5. **Record.** Write the ② row: what was done, the **previous value or formula** (N), deviations (O), verdict
+   `Awaiting review`.
+6. **Verify.** Read back the changed cells and the cells that depend on them, with formulas. Check that formulas are
+   still formulas and that no `#REF!` / `#VALUE!` / `#N/A` / `#ERROR!` appeared.
+7. **File.** Append the row to ③ HISTORY (first empty row of column S), with the verification in AA. Then clear
+   that change's cells in ① and ②, and read the log tab back once more.
+8. A failed verification gets a rework `CHG-xxx-R1` instead of a HISTORY row.
 
-Because Claude Code can't write, steps 1 and 3 end with Claude Code giving Andrea the text to paste, or a sentence to
-give Claude for Sheets ("set P12 to Approved, Q12 to '…', then move CHG-001 to HISTORY").
+③ HISTORY is append-only. Nobody edits or deletes its rows.
 
-## Rules for Claude Code when writing a request
+## Rules
 
-- **Read the sheet first, the same day.** Export it (Drive `download_file_content`, export type
-  `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`), decode, open with `openpyxl` twice: once for
-  formulas, once with `data_only=True` for the computed values. The export is ~300 KB, so the tool saves it to a file.
-  There is no system `openpyxl`: make a scratch venv (`python3 -m venv …; pip install openpyxl`).
-- **Exact tab and range.** `NANOTAG registry` + `W19:W23, W25:W29`, never "the read column". Name the column header too,
-  because letters drift when columns are added (the registry gained `W Live tag read` on 2026-10-19 and every column after
-  it moved one letter).
-- **Say what the cell must contain afterwards,** formula or value, and what it computes to. State the current content so
-  Claude for Sheets can check it is editing the right thing.
-- **Formulas stay formulas.** Never ask for a typed value over a formula unless that is the point of the change, and say
-  so. A date that records something that already happened may be typed.
-- **List the cells that should change as a consequence** (formulas downstream), so the review can check them.
-- **Never ask for whole rows or columns to be inserted on a batch tab** (README rule), and never insert whole sheet rows on
-  this tab (it shifts the other two sections). New entries go at the bottom of each section.
-- **One request = one change** that can be approved or rejected on its own.
-- 🔴 **No log cell may start with `=`.** The sheet reads it as a formula and shows `#ERROR!` (N12, CHG-003, 2026-10-19).
-  Write old formulas as `S19-3`, or start the cell with a word.
-- 🔴 **Keep every cell under 300 characters.** On 2026-10-19 the first paste cut three longer cells at 300 characters
-  plus "…" (CHG-001 E/F, CHG-004 E), which would have handed Claude for Sheets a half note. Long text = split into
-  two requests, or shorten. After every paste, Claude Code re-exports and diffs the pasted rows against the file.
-- **Rationale** says why, with the date of the decision and who made it (usually Andrea), so the trail explains itself.
-
-## Pasting rows (Andrea)
-
-Claude Code saves the rows as a tab-separated file, one line per request, columns A→G (or P→Q, or S→AA). Open it, select
-all, copy, click the first empty cell of the section's first column (for ① the first empty row in column **A** at or below
-row 10), and paste. Google Sheets splits on the tabs. Check that the Status column landed on the dropdown. Request files
-are kept in the repo under `nanotag/sheet-changes/`.
-
-## Reviewing (Claude Code)
-
-- Re-export the sheet. For each `Awaiting review` row in ②: open the ranges in L, compare formula and value with the
-  request, check the downstream cells listed in the request, check no `#REF!`/`#VALUE!`/`#N/A` appeared anywhere.
-- Read O (Deviations) and decide whether the deviation is acceptable.
-- Write the verdict and comment as paste-ready text for P:Q, and for every `Approved` row the ③ HISTORY line (S:AA).
+- **Formulas stay formulas.** Never type a value over a formula unless the request says so. A date that records
+  something that already happened may be typed.
+- **List the cells that change as a consequence** (downstream formulas) and check them in step 6.
+- **Never insert whole rows or columns** on a batch tab or on this tab (insertion shifts the other two sections).
+  New columns go only on `Registry`, as its row-3 note says, and only when Andrea asks.
+- **One Change ID = one change** that could be undone on its own.
+- 🔴 **No log cell may start with `=`.** The sheet reads it as a formula and shows `#ERROR!` (N12, CHG-003,
+  2026-10-19). Write old formulas as `S19-3`, or start the cell with a word.
+- 🔴 **Keep every log cell under 300 characters.** Long text = split into two changes, or shorten.
+- **Dates are `yyyy-mm-dd`.** The write tools parse `2026-10-26` as a date, the same as the existing HISTORY cells.
+  Text that looks like a number or date and must stay text gets a leading `'`.
+- **Rationale** says why, with the date of the decision and who made it (usually Andrea).
+- **Read quota.** The Sheets API allows a limited number of reads per minute; batch reads into one grid read and
+  wait a minute after a quota error.
+- **Edits made by hand outside the log** are logged afterwards as a record-only change (see CHG-005).
 
 ## History
 
 > [!history]
+> - **2026-10-27** — CHG-011: `S-SPF` E48 (Day 6 `Water to add`) uses the gavage concentration 102 U/mL; HISTORY row 20. [[2026-10-27]]
+> - **2026-10-26** — Route changed: Claude Code edits the sheet directly with the Google Sheets connector, keeping the
+>   log. First change CHG-010 (Registry `Notes` X51:X55, X57:X61, SPF plan for 2026-10-27) written, verified by
+>   read-back and filed in ③ HISTORY row 19. Paste files and Claude for Sheets chat messages retired.
 > - **2026-10-24** — Round 2 (CHG-005 → CHG-009, sent 2026-10-21 as one chat message) applied 2026-10-24 and verified on
 >   an export: every target cell right, formula-driven text followed, no error values. Claude for Sheets left the five rows
 >   in ① PENDING as well as ②, against workflow step 2. The diff also found edits outside the log: new tabs `S-SPF` and
