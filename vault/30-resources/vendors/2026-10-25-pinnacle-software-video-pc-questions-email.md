@@ -194,6 +194,6 @@ PC (Q19-20), and the formal quote with lead time and warranty, manual and surger
 - [ ] Check whether the 2026-10-16 email ([[2026-10-16-pinnacle-wireless-16-mice-evaluation]] §9) was ever sent.
   Questions 10 to 15 and 21 overlap with it.
 - [ ] Graphics card: the PC plan says GT 1030 2 GB, Sirenia asks for 1 GB VRAM. Fine for EEG; check again if video goes on this PC.
-- [ ] File Pinnacle's answers in [[pinnacle-wireless-plan-status]] and the rig-expansion hub.
+- [x] File Pinnacle's answers in [[pinnacle-wireless-plan-status]] and the rig-expansion hub. 2026-10-27: [[2026-10-27-pinnacle-reply-software-ttl-headunit-pc]]
 
 Related: [[pinnacle-wireless-plan-status]] · [[2026-10-20]] · [[2026-10-23]] · [[_rig-expansion-hub]]

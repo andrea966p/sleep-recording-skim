@@ -68,8 +68,13 @@ tags: [pinnacle, wireless, headmount, purchase, pc]
 ## Still open
 - [ ] Pinnacle: connector drawing for the custom unit, written answers to the 14 questions in section 9 of the evaluation page. Whether the email draft was sent is not recorded.
   2026-10-26: a new question set (software, TTL, connector drawing, PC) was sent; answers pending. [[2026-10-25-pinnacle-software-video-pc-questions-email]]
+  2026-10-27: Pinnacle answered most of it; the connector drawing, dongle count per unit and the 8276 battery are still unanswered. [[2026-10-27-pinnacle-reply-software-ttl-headunit-pc]]
+- [ ] Answer Pinnacle's four questions (2026-10-27): sync accuracy needed, camera count and TTL per camera, ideal Ch3 range, 0.1 Hz vs their proposed 1.0 Hz high-pass. [[2026-10-27-pinnacle-reply-software-ttl-headunit-pc]]
 - [ ] Update the meeting brief and the evaluation page body to the 4-channel unit (listed open on 2026-10-19).
 - [ ] Electrode sites, then the KiCad board and Gerbers.
 - [ ] Decide on video sync (no TTL input on the wireless unit). 2026-10-25: routes and questions in [[2026-10-25-pinnacle-software-video-pc-questions-email]].
+  2026-10-26: the Sirenia 3.3.5 installer shows TTL pods and wireless units share only the PC clock; five new questions for Pinnacle, top one the model string of the custom unit.
+  2026-10-27: Morelia and firmware read: the model-string risk holds in Pinnacle's Python API too; four more questions (8 to 11). [[2026-10-26-sirenia-3-3-5-installer-static-analysis]]
+  2026-10-27: Pinnacle: TTL Plus is required, alignment no better than about ±78 ms at 512 Hz, RTSP cameras need software changes. [[2026-10-27-pinnacle-reply-software-ttl-headunit-pc]]
 - [ ] Head mass 3.8 to 3.9 g plus cement and a depth wire on a 20 to 30 g mouse: check against the animal protocol.
 - [ ] Is ahyeon's LFP target the same pons site? Her next run with REM would give a direct clipping test (`eeg-emg-analysis/qc/wireless_range_clip_check.py`).
