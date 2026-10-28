@@ -77,6 +77,24 @@ tags: [pinnacle, wireless, vendor, email, video-sync, ttl]
 - Head-unit clock tick in each packet; 8474 firmware; Morelia release with 8474HR.
 - Dropout behaviour (firmware read says no buffering): confirm.
 
+## Meeting with the professor (2026-10-28)
+
+> [!info] Status: 🟢 agreed and settled · 🟡 uncertain or inferred, needs a test · 🟠 not answered, to ask · 🔴 not applicable to us · 🔵 our decision (Andrea / professor)
+
+| Status | Topic | Outcome |
+|---|---|---|
+| 🔵 | PC | Fixed. Bandwidth is not an issue: start with 8 to 12 units on one PC; if unstable, a second PC with a USB hub or PCIe cards |
+| 🔴 | TTL / video sync | No more questions to Pinnacle; we work it out ourselves. Drop draft questions 1, 2, 10, 11, 12 |
+| 🔴 | Video licence | Not needed: it only counts cameras recorded inside Sirenia; our Pi cameras record on our own system |
+| 🔴 | UDP stream | Not the head unit: Sirenia (on the PC) can re-send live data as UDP multicast. Not needed |
+| 🔵 | Sleep Pro | Value unclear to us: it adds auto scoring, bouts, spectra, hypnogram inside Sirenia only; free Sleep Basic + EDF export + our own code cover it. Leaning no purchase; trial optional |
+| 🟠 | High-pass 1.0 Hz | Ask why 1.0 Hz (settling, drift, noise), filter order, whether 0.5 Hz is possible |
+| 🟠 | Gain / input range | Ask how gain and range are set: per channel or global, at build only or changeable. Our read: analog, fixed at build, no gain command over Bluetooth; Ch3 stays ±465 µV |
+| 🟠 | Pin orientation | Confirm "longitudinal" means pins in a row front to back (AP), not ear to ear, COMMON and AGND anterior; needs the connector drawing |
+| 🟠 | EEG COMMON vs AGND | Ask why separate and whether they can be one input (one screw). Our read: COMMON = reference of Ch1/Ch2, AGND = amplifier ground; merging makes Ch1/Ch2 ground referenced, more noise risk |
+
+The email draft below predates this meeting: revise it to these points before sending.
+
 ## Email draft
 
 **To:** Sam Kaplan · **cc:** Staci Kim, ahyeon, VIVO Solutions Korea, Shaheen Latif (same list as their reply)
