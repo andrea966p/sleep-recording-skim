@@ -111,3 +111,17 @@ Rules for this draft: no dashes in emails, Andrea's voice.
 
 - [ ] Andrea: review and send the reply above; record Rosaria's answer here.
 - [ ] Decide whether to move the rig to Allego 4 at all. The alternative in [[openephys-gui-setup-xdaq-sleep-eeg]] still stands. 🛑 No install on e10 during a recording.
+
+## Install on e10 (2026-10-28)
+
+- Before the install, the rig was idle (`R_OFF`, `S_OFF`, no active run). The 3.11.3 installer no longer exists, so I archived `/opt/allego`, `/opt/curate` and the configs in `~/allego-3.11.3-rollback/` (1.5 GB) as the only way back.
+- Andrea installed `allego` and `videre` `4.1.2-1455` with sudo and held them with `apt-mark hold`. `curate` 1.9.1 is still installed.
+- `radiens-core` 0.1.2 is in a separate venv, `~/radiens-core-venv`, on the system Python 3.12.3. The production venv still has `radiens` 4.0.0.
+- API check after sign-in, through `radiens-core`:
+  - The server reports version `(5, 8, 0)`.
+  - Mode is `XDAQ_CORE_REC`, so the account is licensed for XDAQ.
+  - Ports A to D show 32 channels each.
+  - The measured stream rate is 1.003x wall clock.
+  - Recording config: `split_files_by_port=False`, base path `~/radix/data`.
+- Fresh-launch defaults are wrong for us. The base sample rate came up at **625 Hz**, not 1000 Hz. Set the rate and channel selection before any recording.
+- The EEG console now fails with `RpcException: Invalid authentication. Error code: 16`, because `radiens` 4.0.0 cannot authenticate to Allego 4. It has to be ported to `radiens-core`; this was deferred by Andrea.
