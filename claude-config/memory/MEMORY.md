@@ -11,7 +11,7 @@ rules and short pointers into the vault: when a hook and the vault disagree, the
 - [Allego Mesa GPU crash + log storm](allego-mesa-gpu-crash-and-log-storm.md) — 08-24: frozen GUI ≠ lost data, app death ends the recording. Fresh launch = 30 kHz + wrong mode: re-check. Risk back since 09-16
 - [allegoserver runaway thread](allegoserver-runaway-thread-thermal.md) — Spins a core after the GUI closes (+10 W, +11 °C); `ps %CPU` is a lifetime average, use `top -b -n2`; plain `kill` fixes it
 - [Allego stop works; size lags ~30 s](allego-stop-works-and-the-30s-size-lag.md) — 09-11: growth checks < 35 s are false negatives. Any script asserting growth stops the recording in a `finally`
-- [radiens 4.0.0 has no per-port recording](radiens-4-has-no-per-port-recording.md) — Recording is GLOBAL; 4.0.0 is latest stable, 🛑 do not upgrade; `AllegoClient.restart()` broken
+- [radiens 4.0.0 has no per-port recording](radiens-4-has-no-per-port-recording.md) — Recording is GLOBAL; 🛑 never install 4.0.1 (deprecated, broken); successor `radiens-core` needs Allego 4 (10-28); `restart()` broken
 - [First headstage bring-up](project_first_headstage_bringup.md) — 06-19: wrong Allego mode (SMARTBOX_PRO), never hardware. Use `Stream`, not `Record`, for checks (Record starts a video session)
 ## EEG rig: hardware and signal interpretation (vault: 20-areas/eeg-rig)
 - [60 Hz saga and the hard rules](eeg-60hz-saga.md) — 🛑 NEVER suggest reseating an electrode/EMG wire (impossible post-implant; tether change = isoflurane). 🛑 Do NOT schedule surgeries
