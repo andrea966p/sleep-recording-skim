@@ -55,7 +55,7 @@ tags: [pinnacle, wireless, vendor, email, video-sync, ttl, pc]
 1. What EEG to video synchronization accuracy do we need?
 2. How many cameras, and does each camera send its own TTL signal?
 3. What input range would be ideal on Ch3 (pons LFP)? Our only data: ahyeon's 10 min awake test peaked at 522 and 921 µV,
-   mouse P-waves are about 0.3 to 0.5 mV ([[2026-10-16-pinnacle-wireless-16-mice-evaluation]] §4).
+   mouse P-waves are about 0.3 to 0.5 mV ([[2026-10-16-pinnacle-wireless-16-mice-evaluation]] §4). signal mainly sits under 0.2mV (detected pontine waves) > 465uV seems sufficient 
 4. Is the 0.1 Hz high-pass necessary, or is 1.0 Hz acceptable?
 
 ## Not answered yet
