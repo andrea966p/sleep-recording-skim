@@ -70,6 +70,7 @@ tags: [pinnacle, wireless, headmount, purchase, pc]
   2026-10-26: a new question set (software, TTL, connector drawing, PC) was sent; answers pending. [[2026-10-25-pinnacle-software-video-pc-questions-email]]
   2026-10-27: Pinnacle answered most of it; the connector drawing, dongle count per unit and the 8276 battery are still unanswered. [[2026-10-27-pinnacle-reply-software-ttl-headunit-pc]]
 - [ ] Answer Pinnacle's four questions (2026-10-27): sync accuracy needed, camera count and TTL per camera, ideal Ch3 range, 0.1 Hz vs their proposed 1.0 Hz high-pass. [[2026-10-27-pinnacle-reply-software-ttl-headunit-pc]]
+  2026-10-28: reply drafted; Ch3 stays standard ±465 µV (Andrea: pontine waves mainly under 0.2 mV); high-pass and camera count still brackets; not sent. [[2026-10-28-pinnacle-reply-draft-range-highpass-sync]]
 - [ ] Update the meeting brief and the evaluation page body to the 4-channel unit (listed open on 2026-10-19).
 - [ ] Electrode sites, then the KiCad board and Gerbers.
 - [ ] Decide on video sync (no TTL input on the wireless unit). 2026-10-25: routes and questions in [[2026-10-25-pinnacle-software-video-pc-questions-email]].
