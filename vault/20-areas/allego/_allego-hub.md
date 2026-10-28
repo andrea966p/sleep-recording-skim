@@ -15,6 +15,7 @@ tags: [hub, allego, radiens]
 > The Open Ephys route for the XDAQ is [[openephys-gui-setup-xdaq-sleep-eeg]].
 
 ## Current state
+- 2026-10-28: NeuroNexus moved to Radiens 4 (Allego/Videre 4.1.2, sign-in, Standard free vs Pro $2,000/yr) and offered Legacy users Pro free; e10 still on Allego 3.11.3 + `radiens` 4.0.0; Allego 4 needs `radiens-core`. Installed 4.1.2 on e10 the same day (held); the console cannot talk to it until ported. [[2026-10-28-radiens-4-tiers-and-legacy-licence]]
 - 2026-10-23: Andrea: keep Allego without `--disable-gpu` (`rig-check.sh` now warns if the flag is present); the switch to the Open Ephys GUI is for later. [[2026-10-23]]
 - 2026-10-22: read-only check: Allego launches without `--disable-gpu` (launcher `Exec` line has no flag), kernel 7.0.0-28 is pinned and held, and `allegoserver` has the GUI as its parent (not orphaned). The flag-vs-Mesa-crash trade-off is still open. [[allego-blank-monitor-canvas-texture-limit]]
 - 2026-09-30: after a fresh launch the stream ran 30x real time while Allego said 1000 Hz; the console pre-flight still checks only the label. [[allego-stream-30x-rate-label-lies]]
