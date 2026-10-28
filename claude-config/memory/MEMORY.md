@@ -132,6 +132,7 @@ rules and short pointers into the vault: when a hook and the vault disagree, the
 - [Verify operational details](feedback_verify_operational_details.md) — Read the real unit/config files before naming services or paths (it is `neurosurveillance-session`)
 - [Sudo command style](feedback_sudo_command_style.md) — Bare terminal commands, one per step, expected output stated; never the chat `!` prefix
 - [Report writing style](feedback_report_writing_style.md) — Andrea's voice: informal first person, acronyms expanded, commas not dashes, TL;DR first, "still open" last
+- [Colour-coded comparison tables](feedback-colour-coded-comparison-tables.md) — Status column first: 🟢 settled 🟡 uncertain 🟠 to ask 🔴 not applicable 🔵 our decision, legend callout above
 ## Sleep scoring (vault: 20-areas/sleep-scoring)
 - [Andrea is learning sleep scoring](andrea-learning-sleep-scoring.md) — Scoring questions also go to the professor; log cases with screenshots in the journal; write Andrea's own rules
 - [Work on local copies](work-on-local-copies.md) — Stage in `~/sleep-data`, check sha256 against `info.json`; never work on the NAS

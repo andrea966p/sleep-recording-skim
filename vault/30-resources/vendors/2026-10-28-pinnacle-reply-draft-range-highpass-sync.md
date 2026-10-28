@@ -23,22 +23,24 @@ tags: [pinnacle, wireless, vendor, email, video-sync, ttl]
 
 ## Their answers against what we read in the files
 
-| Topic | Pinnacle 2026-10-27 | Installer / Morelia / firmware | Verdict |
-|---|---|---|---|
-| Video licence | per camera, no expiry, one with each 9000-K30 | "Video Recording 1" to "8", counted per camera | agrees, settled |
-| TTL Plus required | yes | 8474 class has no TTL members or command | agrees, settled |
-| TTL to EEG timing | PC timestamps, assume ≥ ±40 samples (±78 ms at 512 Hz) | samples placed by PC arrival with a ±2 % PLL; snaps only when > max(8 samples, 1 s) off; up to ~1 s early after uncounted losses | agrees; the files add a worse case (~1 s after a dropout) they did not mention |
-| 30 pulses/s | "should be feasible", TTL Plus samples to 2000 Hz | no rate limit; one annotation row per edge (~7.8 M rows in 72 h) | agrees; database load over 72 h untested |
-| One experiment per TTL Plus | stated | not checked in the files | new fact; see open item on 16 units in one experiment |
-| RTSP cameras | need software changes | no RTSP, ONVIF or H.264; HTTP MJPEG and Windows cameras only | agrees; HTTP MJPEG not discussed by them |
-| Channel layout, headmount orientation | Ch1/Ch2 vs EEG COMMON, Ch3 3A/3B, Ch4 4A/4B, AGND; COMMON and AGND anterior | not in the files | settled by them, matches our map |
-| Range ±465 µV | standard; Ch3 can be wider with a software change | 14-bit, ±465.4 µV, chosen from the model string, no override | agrees; adds the model-string dependency |
-| High-pass | propose 1.0 Hz, ask if 0.1 Hz is needed | no hardware high-pass corner in the software | new from them |
-| 16 units per PC | official 4 (video), > 16 done | no dongle or device cap | agrees |
-| USB bandwidth | not a limit, no PCIe cards needed | FTDI "BT5 Dongle", 921600 baud, probably full speed | agrees |
-| Morelia on Linux | yes; may need changes for per-channel gain | 8474HR only on unreleased `develop`, exact-name allow-list; timing code assumes 40 samples/packet where 4-channel HR has 30 | agrees; they did not mention it is unreleased |
-| Dongle per unit | not answered | one head unit per dongle in Sirenia (dongle has 4 slots, Sirenia uses one) | settled from the files, confirm |
-| Battery 16 units | ~5 d at 512 Hz, may shorten, not validated | no battery reporting in 0.4.1 firmware | partly open |
+> [!info] Status: 🟢 agreed and settled · 🟡 uncertain or inferred, needs a test · 🟠 not answered, to ask · 🔴 not applicable to us · 🔵 our decision (Andrea / professor)
+
+| Status | Topic | Pinnacle 2026-10-27 | Installer / Morelia / firmware | Verdict |
+|---|---|---|---|---|
+| 🟢 | Video licence | per camera, no expiry, one with each 9000-K30 | "Video Recording 1" to "8", counted per camera | agrees, settled |
+| 🟢 | TTL Plus required | yes | 8474 class has no TTL members or command | agrees, settled |
+| 🟡 | TTL to EEG timing | PC timestamps, assume ≥ ±40 samples (±78 ms at 512 Hz) | samples placed by PC arrival with a ±2 % PLL; snaps only when > max(8 samples, 1 s) off; up to ~1 s early after uncounted losses | agrees; the files add a worse case (~1 s after a dropout) they did not mention |
+| 🟡 | 30 pulses/s | "should be feasible", TTL Plus samples to 2000 Hz | no rate limit; one annotation row per edge (~7.8 M rows in 72 h) | agrees; database load over 72 h untested |
+| 🟠 | One experiment per TTL Plus | stated | not checked in the files | new fact; see open item on 16 units in one experiment |
+| 🟠 | RTSP cameras | need software changes | no RTSP, ONVIF or H.264; HTTP MJPEG and Windows cameras only | agrees; HTTP MJPEG not discussed by them |
+| 🟢 | Channel layout, headmount orientation | Ch1/Ch2 vs EEG COMMON, Ch3 3A/3B, Ch4 4A/4B, AGND; COMMON and AGND anterior | not in the files | settled by them, matches our map |
+| 🟢 | Range ±465 µV | standard; Ch3 can be wider with a software change | 14-bit, ±465.4 µV, chosen from the model string, no override | agrees; adds the model-string dependency |
+| 🔵 | High-pass | propose 1.0 Hz, ask if 0.1 Hz is needed | no hardware high-pass corner in the software | new from them |
+| 🟡 | 16 units per PC | official 4 (video), > 16 done | no dongle or device cap | agrees |
+| 🟢 | USB bandwidth | not a limit, no PCIe cards needed | FTDI "BT5 Dongle", 921600 baud, probably full speed | agrees |
+| 🟡 | Morelia on Linux | yes; may need changes for per-channel gain | 8474HR only on unreleased `develop`, exact-name allow-list; timing code assumes 40 samples/packet where 4-channel HR has 30 | agrees; they did not mention it is unreleased |
+| 🟡 | Dongle per unit | not answered | one head unit per dongle in Sirenia (dongle has 4 slots, Sirenia uses one) | settled from the files, confirm |
+| 🟠 | Battery 16 units | ~5 d at 512 Hz, may shorten, not validated | no battery reporting in 0.4.1 firmware | partly open |
 
 ## Settled vs still open (for Andrea)
 

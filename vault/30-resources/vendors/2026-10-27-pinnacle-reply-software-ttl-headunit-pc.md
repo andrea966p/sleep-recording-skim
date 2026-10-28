@@ -23,22 +23,24 @@ tags: [pinnacle, wireless, vendor, email, video-sync, ttl, pc]
 
 ## Answers, by section
 
-| Our question | Pinnacle's answer | Against the installer read |
-|---|---|---|
-| A. Video licence: per PC, camera or instance? K30 key? | Per camera, does not expire. Each 9000-K30 kit includes its video licence | Agrees (per-camera count, up to 8) |
-| A. Sleep Pro at 512 Hz, separate PC, trial | 512 Hz "more than sufficient" for mouse scoring (no validation study named). Cluster and threshold scoring. Separate analysis PC allowed under normal licensing. 30-day trial offered | Not testable statically |
-| B. Is TTL Plus always needed? | Yes, TTL Plus is required to capture external TTL alongside wireless recordings | Agrees: 8474 has no TTL |
-| B. Alignment: sample counter or PC arrival? Accuracy, drift | PC timestamps incoming data, so clock drift "is not expected to be an issue". Packets give timing uncertainty: assume **≥ ±40 samples (±78 ms at 512 Hz)** | Agrees: PC clock with PLL. The head-unit tick in each packet stays unused |
-| B. TTL Plus per PC, 30 pulses/s for 72 h | Samples up to 2000 Hz, so 30 Hz "should be feasible". 4 inputs per TTL Plus, **one Sirenia experiment per TTL Plus at a time**. Count depends on cameras and how recordings are organised | Installer: each edge is one annotation, no rate limit. 72 h not answered |
-| B. Third-party USB / RTSP cameras, 4 per PC | Third-party USB cameras work for customers, not tested or guaranteed. **RTSP needs software modifications.** Pulses must also be tied to specific video frames to correct video latency | Agrees: no RTSP. HTTP MJPEG not mentioned by them (our question 4, not yet asked) |
-| C. Channel layout | Ch1 EEG1 vs EEG COMMON, Ch2 EEG2 vs EEG COMMON, Ch3 EEG3A vs EEG3B, Ch4 EEG4A vs EEG4B, 8th pin AGND. Headmount **longitudinal, EEG COMMON and AGND toward the anterior end** | Matches our map (Ch3 = pons LFP, Ch4 = EMG) |
-| C. Range | Standard ±465 µV, catalog "mV" is a typo. **Wider range on Ch3 possible**, they ask what range. Per-channel gain needs a software adjustment | Agrees: scaling is chosen by model string, no user override, so a different Ch3 gain means a Sirenia change |
-| C. Connector drawing | **Not sent** | |
-| C. Battery with 16 units, 8276 battery | About 5 days at 512 Hz nominal; many systems in one area may shorten it; not validated for 16. 8276 not answered | |
-| D. 16 units on one PC | Official max **4 per PC** (conservative, video). They have run **more than 16 wireless units on one PC**. Ryzen 5 fine for EEG; no guarantee for 16 with video without testing | Installer: no dongle cap |
-| D. One dongle per head unit? | Not answered | Installer: one unit per dongle in Sirenia |
-| D. PCIe cards vs hubs, full or high speed | USB bandwidth not a significant limit: dedicated PCIe controllers or special hubs not needed for bandwidth. Space receivers apart, close to their transmitters, extensions ≤ 3 m | |
-| D. Morelia on Linux for the 8474 | Open source, usable on Linux. The custom unit may need changes for channel-specific gain; they think it is straightforward but want to confirm first | Agrees: 8474HR support only on `develop`, exact-name allow-list |
+> [!info] Status: 🟢 agreed and settled · 🟡 uncertain or inferred, needs a test · 🟠 not answered, to ask · 🔴 not applicable to us · 🔵 our decision (Andrea / professor)
+
+| Status | Our question | Pinnacle's answer | Against the installer read |
+|---|---|---|---|
+| 🟢 | A. Video licence: per PC, camera or instance? K30 key? | Per camera, does not expire. Each 9000-K30 kit includes its video licence | Agrees (per-camera count, up to 8) |
+| 🟡 | A. Sleep Pro at 512 Hz, separate PC, trial | 512 Hz "more than sufficient" for mouse scoring (no validation study named). Cluster and threshold scoring. Separate analysis PC allowed under normal licensing. 30-day trial offered | Not testable statically |
+| 🟢 | B. Is TTL Plus always needed? | Yes, TTL Plus is required to capture external TTL alongside wireless recordings | Agrees: 8474 has no TTL |
+| 🟢 | B. Alignment: sample counter or PC arrival? Accuracy, drift | PC timestamps incoming data, so clock drift "is not expected to be an issue". Packets give timing uncertainty: assume **≥ ±40 samples (±78 ms at 512 Hz)** | Agrees: PC clock with PLL. The head-unit tick in each packet stays unused |
+| 🟡 | B. TTL Plus per PC, 30 pulses/s for 72 h | Samples up to 2000 Hz, so 30 Hz "should be feasible". 4 inputs per TTL Plus, **one Sirenia experiment per TTL Plus at a time**. Count depends on cameras and how recordings are organised | Installer: each edge is one annotation, no rate limit. 72 h not answered |
+| 🟠 | B. Third-party USB / RTSP cameras, 4 per PC | Third-party USB cameras work for customers, not tested or guaranteed. **RTSP needs software modifications.** Pulses must also be tied to specific video frames to correct video latency | Agrees: no RTSP. HTTP MJPEG not mentioned by them (our question 4, not yet asked) |
+| 🟢 | C. Channel layout | Ch1 EEG1 vs EEG COMMON, Ch2 EEG2 vs EEG COMMON, Ch3 EEG3A vs EEG3B, Ch4 EEG4A vs EEG4B, 8th pin AGND. Headmount **longitudinal, EEG COMMON and AGND toward the anterior end** | Matches our map (Ch3 = pons LFP, Ch4 = EMG) |
+| 🟢 | C. Range | Standard ±465 µV, catalog "mV" is a typo. **Wider range on Ch3 possible**, they ask what range. Per-channel gain needs a software adjustment | Agrees: scaling is chosen by model string, no user override, so a different Ch3 gain means a Sirenia change |
+| 🟠 | C. Connector drawing | **Not sent** | |
+| 🟠 | C. Battery with 16 units, 8276 battery | About 5 days at 512 Hz nominal; many systems in one area may shorten it; not validated for 16. 8276 not answered | |
+| 🟡 | D. 16 units on one PC | Official max **4 per PC** (conservative, video). They have run **more than 16 wireless units on one PC**. Ryzen 5 fine for EEG; no guarantee for 16 with video without testing | Installer: no dongle cap |
+| 🟠 | D. One dongle per head unit? | Not answered | Installer: one unit per dongle in Sirenia |
+| 🟢 | D. PCIe cards vs hubs, full or high speed | USB bandwidth not a significant limit: dedicated PCIe controllers or special hubs not needed for bandwidth. Space receivers apart, close to their transmitters, extensions ≤ 3 m | |
+| 🟡 | D. Morelia on Linux for the 8474 | Open source, usable on Linux. The custom unit may need changes for channel-specific gain; they think it is straightforward but want to confirm first | Agrees: 8474HR support only on `develop`, exact-name allow-list |
 
 ## What this changes
 - **Video sync through TTL Plus is ±78 ms at best**, about ±2 frames at 30 fps. Good enough to find a behaviour epoch

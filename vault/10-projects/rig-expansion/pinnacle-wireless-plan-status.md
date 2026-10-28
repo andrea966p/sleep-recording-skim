@@ -58,12 +58,14 @@ tags: [pinnacle, wireless, headmount, purchase, pc]
   Kolling 2026 ran 10, neither gives PC specs).
 
 ## What the evaluation page no longer says
-| Evaluation page, section | Now |
-|---|---|
-| Title block and section 8: 4 x 8200-K9-SL pilot, then 16 | Superseded by the custom 4-channel unit; 12 + 4 units instead of a 4-mouse pilot (2026-10-19, 2026-10-20) |
-| Section 6: start with 4 PCs x 4 mice | Superseded by one PC with USB cards (2026-10-20) |
-| Section 3: 3-channel pin map (CH3 = EMG) | Replaced by the 4-channel map above |
-| Section 7: no TTL, so Pi-pulse video sync cannot work | Still true; no decision on video sync is recorded |
+> [!info] Status: 🔴 superseded, no longer applies · 🟢 still true
+
+| | Evaluation page, section | Now |
+|---|---|---|
+| 🔴 | Title block and section 8: 4 x 8200-K9-SL pilot, then 16 | Superseded by the custom 4-channel unit; 12 + 4 units instead of a 4-mouse pilot (2026-10-19, 2026-10-20) |
+| 🔴 | Section 6: start with 4 PCs x 4 mice | Superseded by one PC with USB cards (2026-10-20) |
+| 🔴 | Section 3: 3-channel pin map (CH3 = EMG) | Replaced by the 4-channel map above |
+| 🟢 | Section 7: no TTL, so Pi-pulse video sync cannot work | Still true; no decision on video sync is recorded |
 
 ## Still open
 - [ ] Pinnacle: connector drawing for the custom unit, written answers to the 14 questions in section 9 of the evaluation page. Whether the email draft was sent is not recorded.
