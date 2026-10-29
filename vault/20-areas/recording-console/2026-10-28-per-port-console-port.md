@@ -3,7 +3,7 @@ type: reference
 area: recording-console
 status: active
 created: 2026-10-28
-summary: "The recording console ported to Allego 4 and radiens-core: one run per port, several runs at once, overlapping bookings refused (409), rig-wide impedance and restart only when idle, per-port files and post-processing; tested end to end on an isolated console (port 8601); in production since 2026-10-29"
+summary: "The recording console ported to Allego 4 and radiens-core: one run per port, several runs at once, overlapping bookings refused (409), rig-wide impedance and restart only when idle, per-port files and post-processing; tested end to end on an isolated console (port 8601); in production since 2026-10-29; mixed EEG and LFP configurations and a splitter port tested 2026-10-29"
 tags: [recording-console, allego, radiens-core, per-port]
 ---
 
@@ -85,6 +85,24 @@ The canonical name is now `allego_port<X>_<N>__uid<MMDD-HH-MM-SS>`, for example 
 - A draft with no stop time on port C was refused at booking (409), because an open-ended run overlaps everything after its start.
 - Run `ec47a21d83ea` waited in `STOPPED` while C and D were still recording (`deferred_since` set), then went through strip, export and upload once the rig was idle. Both runs reached `DONE`; the NAS CSVs had 213,120 rows per mouse for C and D and 66,560 rows for A.
 
+### Third live test: mixed configurations, 2026-10-29 (16:35 to 16:44 KST)
+
+- Rig: ports A, B and C held bipolar EEG/EMG test mice (2 channels selected each), port D an LFP mouse (6 channels selected, `/18` to `/23`). Isolated console on 8601 again, outputs under `~/radix/port-tests`.
+- Four runs, one per port: A, B and C with setting `eeg_emg` (no splitter), D with `eeg_emg_lfp`. A, D and B were started with Start now at 16:35:06, 16:35:43 and 16:36:28; C was **scheduled** and started itself at 16:37:15. All four ports recorded at once from 16:37:15.
+- Stops were staggered: B by hand at 16:39:01, D at 16:40:00, A at 16:40:30, C by its scheduled stop at 16:40:58. Each stop ended only its own port; the other ports kept growing.
+- All four runs reached `DONE` by 16:43:43. Each port's strip kept its own configuration: `A/1 A/2`, `B/1 B/2`, `C/1 C/2` (columns EEG, EMG) and `D/18` to `D/23` (columns EMG_L, LFP_TGT, LFP_REF, EMG_R, EEG_P, EEG_F). CSV rows equal the file samples (322,176, 150,400, 223,104 and 254,848, which match the wall-clock durations), and the spot checks agree with the xdat to 0.0002 µV.
+- The raw per-port file grows at the same rate (0.38 GB/h) whatever the channel selection, so the raw file keeps the whole port and only the strip applies the layout.
+- The production console (8600) logged nothing during the test. Cleanup: NAS folder `02_Data_Sleep/andrea/PORTMIX` deleted, `~/radix/port-tests` (153 MB) moved to the local trash, Allego reset to `~/radix/data`, base name `allego`, split on. Nothing was written under `~/radix/data` or `~/radix/stripped`.
+
+### Fourth live test: a splitter port next to 32-channel ports, 2026-10-29 (16:58 to 17:07 KST)
+
+- Rig: port A had an SPI splitter with two EEG/EMG mice (64 channels enumerated, `A/1 A/2 A/33 A/34` selected), port B was empty, port C held one EEG/EMG mouse (32 channels), port D the LFP mouse on the unipolar Intan headstage (32 channels, `/18` to `/23`). So the rig mixed three headstage set-ups and two channel counts at once.
+- Rewiring re-enumerated the ports and **reset the channel selection to every channel** (mode, rate and split survived); Andrea reselected before the test.
+- Three runs: A (setting `eeg_emg`, splitter on A, slots A1 and A2), D (`eeg_emg_lfp`) and C (`eeg_emg`, scheduled). Starts: A 16:58:54, D 16:59:30, C 17:00:17 by its schedule. Stops: A by hand at 17:02:17, D at 17:03:08, C by its schedule at about 17:03:45. Each stop ended only its own port.
+- The port A file holds all 64 amplifier channels and grew at twice the rate of the 32-channel files. All runs reached `DONE` by 17:06:40. Port A's strip gave two CSVs, `PSA1` (`A/1`, `A/2`) and `PSA2` (`A/33`, `A/34`), 201,728 rows each; C 208,128 rows; D 215,808 rows with the six unipolar columns. Spot checks agree with the xdat to 0.0002 µV.
+- Production logged nothing. Cleanup as before: NAS folder `02_Data_Sleep/andrea/PORTSPLIT` deleted, `~/radix/port-tests` (128 MB) to the local trash, Allego reset to `~/radix/data`, `allego`, split on.
+- Still not tested: connecting a headstage and rescanning while another port records, and runs longer than about 5 min.
+
 ### Cleanup
 
 - The four NAS test folders (`02_Data_Sleep/andrea/PORTTESTA`, `PORTTESTA2`, `PORTTESTB`, `PORTTESTCD`) were deleted. The NAS recycle bin (`#recycle`) is not readable from the rig account, so a NAS admin has to empty it if the copies there should go too.
@@ -109,9 +127,8 @@ Three reviewers (Opus, Sonnet and Haiku) went through the port. They found the f
 
 ## What is not deployed or not tested yet
 
-- Production restart done 2026-10-29 09:15 KST. The code is not committed yet.
-- The backend review fixes are done: a double-start guard, the shared gRPC client is no longer closed, `FAILED_STOP` can be retried, startup adopts a port that really started instead of orphaning it, start measures the rate when it is unknown, a port that is not growing raises an alert, and stop requires explicit ports. They are not in production until the restart.
-- Splitter ports (64 channels) in per-port files are untested.
+- Production restart done 2026-10-29 09:15 KST; the code is committed and pushed as `1907090` (2026-10-29).
+- The backend review fixes are done: a double-start guard, the shared gRPC client is no longer closed, `FAILED_STOP` can be retried, startup adopts a port that really started instead of orphaning it, start measures the rate when it is unknown, a port that is not growing raises an alert, and stop requires explicit ports. They are in production since the 2026-10-29 restart.
 - A 24 to 72 h per-port run with several owners has not been run ([[2026-10-28-per-port-recording-bench-test]]).
 - The stale copy `neurosurveillance-system/session-daemon` still imports the old `radiens`. It is not deployed.
 - Allego itself died once the same evening with no log line: [[2026-10-28-allegoserver-death-and-fresh-launch-defaults]].
@@ -122,4 +139,5 @@ Three reviewers (Opus, Sonnet and Haiku) went through the port. They found the f
 - [x] 2026-10-29 09:15 KST: both services restarted in production.
 - [ ] Delete the stale `neurosurveillance-system` copy of the session daemon.
 - [ ] Run a 24 to 72 h per-port recording with several owners.
-- [ ] Test splitter ports in per-port files.
+- [x] 2026-10-29: splitter port in per-port files tested (fourth live test).
+- [x] 2026-10-29: Andrea: no need to test connecting a headstage while another port records; connect and select every mouse with the whole rig idle.
