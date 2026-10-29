@@ -384,3 +384,77 @@ def write_full_sidecar(base: str | Path,
     }
     Path(base + ".xdat.json").write_text(json.dumps(meta, separators=(",", ":")))
     return base
+
+
+# --------------------------------------------------------------------------- #
+# an Allego 4 PER-PORT file (split_files_by_port=True, since 2026-10-28)
+# --------------------------------------------------------------------------- #
+# Measured on the bench files `porttest_port{A,B}_0__uid1028-...` on 2026-10-28
+# (Allego 4.1.2): one file per port, 32 amplifier channels with site_num 1..32
+# plus aux_1, din_1, dout_1 = 35 channels. Three things differ from a combined
+# file and each is reproduced here, because each is something a reader could
+# get wrong:
+#   - ntv_chan_name and sys_chan_idx are RIG-WIDE: port B's rows are
+#     `port_B_32`..`port_B_63` at sys_chan_idx 32..63, and aux/din/dout sit at
+#     sys_chan_idx 128..130. Only port + site_num give the label.
+#   - start_time is LOCAL with an offset and nanoseconds
+#     (`2026-10-28T18:36:08.644028952+09:00`), where Allego 3 wrote UTC + `Z`.
+#   - is_live_recording moved to `session_metadata`.
+
+_PORT_INDEX = {"A": 0, "B": 1, "C": 2, "D": 3}
+
+
+def write_port_file(base: str | Path, port: str, pri: dict[int, np.ndarray], *,
+                    n_sites: int = 32,
+                    start_time: str = "2026-10-28T18:36:08.644028952+09:00",
+                    din: np.ndarray | None = None, live: bool = False,
+                    ts0: int = 964352) -> str:
+    """One Allego 4 per-port recording: `n_sites` amplifier channels on `port`
+    plus aux_1, din_1, dout_1. `pri` maps site number -> microvolts; sites not
+    given are filled with a realistic wire-free floor. Timestamps start at
+    `ts0` (the server's running sample counter, never 0 on a real file)."""
+    n = len(next(iter(pri.values())))
+    rng = np.random.default_rng(20261028 + _PORT_INDEX[port])
+    items = []
+    for s in range(1, n_sites + 1):
+        items.append((f"{port}/{s}", pri[s] if s in pri else realistic_floor(n, rng)))
+    items += [("GPIO-AIN/0", np.full(n, 0.1, dtype=np.float32)),
+              ("GPIO-DIN/0", din if din is not None else np.zeros(n, dtype=np.float32)),
+              ("GPIO-DOUT/0", np.ones(n, dtype=np.float32))]
+    types = [_PRI] * n_sites + [_AUX, _DIN, _DOUT]
+    base = write_full_sidecar(base, items, chan_types=types,
+                              selected=[i < 2 for i in range(len(items))],
+                              start_time_utc=start_time,
+                              headstage_id="hstg__passthrough_32",
+                              probe_id="probe__default_4x8")
+    off = _PORT_INDEX[port] * 32
+    np.arange(ts0, ts0 + n, dtype=np.int64).tofile(base + "_timestamp.xdat")
+    import hashlib
+    h = hashlib.sha256()
+    for suffix in ("_data.xdat", "_timestamp.xdat"):
+        h.update(Path(base + suffix).read_bytes())
+    meta = json.loads(Path(base + ".xdat.json").read_text())
+    bm = meta["sapiens_base"]["biointerface_map"]
+    bm["ntv_chan_name"] = ([f"port_{port}_{off + i}" for i in range(n_sites)]
+                           + ["aux_1", "din_1", "dout_1"])
+    bm["ntv_chan_idx"] = [off + i for i in range(n_sites)] + [0, 0, 0]
+    bm["sys_chan_idx"] = [off + i for i in range(n_sites)] + [128, 129, 130]
+    # the neighbourhood graph is keyed by ntv_chan_idx, so it moves with it
+    hood = meta["sapiens_base"]["neighborhoods"]["site_hood"]
+    new_hood = {}
+    for key, entry in hood.items():
+        entry["home_ntv_chan_idx"] = off + int(key)
+        for f in entry.get("friends", []):
+            f["ntv_chan_idx"] = off + int(f["ntv_chan_idx"])
+        new_hood[str(off + int(key))] = entry
+    meta["sapiens_base"]["neighborhoods"]["site_hood"] = new_hood
+    st = meta["status"]
+    st.pop("is_live_recording", None)
+    st["timestamp_range"] = [ts0, ts0 + n]
+    st["dataset_checksum"] = h.hexdigest()
+    meta["session_metadata"] = {"metadata_version": "1.0.0", "is_live_recording": live}
+    meta["sapiens_base"]["sensors_by_port"] = {
+        port: {"num_channels": n_sites, "headstage_id": "hstg__passthrough_32",
+               "probe_id": "probe__default_4x8", "connection_ntv_idx": 0}}
+    Path(base + ".xdat.json").write_text(json.dumps(meta, separators=(",", ":")))
+    return base

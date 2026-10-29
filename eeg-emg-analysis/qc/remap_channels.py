@@ -3,26 +3,29 @@
 MUST be run after any port/headstage change. ntvChanIdx is global, so adding a
 port shifts every downstream index and would silently mislabel every file.
 """
-from radiens.allego_client import AllegoClient
+from radiens_core import AllegoClient
+from radiens_core.models.signals import SignalType
 
 c = AllegoClient()
 c.get_status()
-t = c.get_channel_metadata().table
-amp = t[t["ntv_chan_name"].astype(str).str.startswith("port_")]
+meta = c.get_channel_metadata()
+amp = SignalType.AMP
+keys = meta.sig_map[amp].ntv          # native index of each amp channel, parallel to the lists below
+rows = [(int(k), port.name, name) for k, port, name in
+        zip(keys, meta.ports[amp], meta.ntv_chan_names[amp]) if name.startswith("port_")]
 
 per_port = {}
-for _, r in amp.iterrows():
-    per_port.setdefault(str(r["port"]), []).append(str(r["ntv_chan_name"]))
+for _, p, name in rows:
+    per_port.setdefault(p, []).append(name)
 
 print("ports present:", sorted(per_port))
 for p in sorted(per_port):
     print(f"  port {p}: {len(per_port[p])} amp channels")
 
-# global ntv index -> label, in table order
+# global ntv index -> label, keyed on the native index (not list position); sorted by it
 sites = []
 counters = {}
-for _, r in amp.iterrows():
-    p = str(r["port"])
+for k, p, _ in sorted(rows):
     counters[p] = counters.get(p, 0) + 1
     sites.append(f"{p}/{counters[p]}")
 

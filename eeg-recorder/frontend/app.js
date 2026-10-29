@@ -16,7 +16,8 @@ const $ = s => document.querySelector(s);
 const api = async (path, opts) => {
   const r = await fetch(path, opts);
   const body = await r.json().catch(() => ({}));
-  if (!r.ok) throw new Error(body.error || `HTTP ${r.status}`);
+  if (!r.ok) throw Object.assign(new Error(body.error || `HTTP ${r.status}`),
+                                 {status: r.status});
   return body;
 };
 const post = (p, b) => api(p, {
@@ -83,6 +84,11 @@ function dur(sec) {
         s = Math.floor(sec % 60);
   return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
 }
+const esc = t => String(t ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+// Allego 4 states are "ON"/"OFF"; the old client sent "R_ON"/"S_ON". Accept both.
+const isOn = v => v === 'ON' || v === 'R_ON' || v === 'S_ON' || v === true;
+// measured_utc may come without a zone suffix; it is UTC either way.
+const utcLocal = iso => iso ? local(/[zZ]|[+-]\d\d:?\d\d$/.test(iso) ? iso : iso + 'Z') : '–';
 const local = iso => iso ? new Date(iso).toLocaleString([], {
   month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', hour12:false}) : '–';
 
@@ -117,7 +123,7 @@ function renderPills(s) {
   if (!a.reachable)      pill('#p-allego', 'bad', 'unreachable');
   else if (!a.server_running) pill('#p-allego', 'bad', 'server down');
   else if (a.problems && a.problems.length) pill('#p-allego', 'warn', a.problems[0].slice(0, 44));
-  else if (a.recording === 'R_ON') pill('#p-allego', 'live', `recording · ${a.sample_freq/1000} kHz`);
+  else if (isOn(a.recording)) pill('#p-allego', 'live', `recording · ${a.sample_freq/1000} kHz`);
   else pill('#p-allego', 'ok', `ready · ${a.system_mode} · ${a.sample_freq/1000} kHz`);
 
   const st = s.storage;
@@ -168,7 +174,7 @@ function renderPresetPicker() {
 
   const chs = $('#cs-hs');
   chs.innerHTML = Object.entries(CFG.headstages).map(([n, h]) =>
-    `<option value="${n}">${h.label}</option>`).join('');
+    `<option value="${esc(n)}">${esc(h.label)}</option>`).join('');
   renderPorts();
 }
 
@@ -203,7 +209,7 @@ function renderPortCheck() {
   $('#port-note').innerHTML = chk.ok
     ? '<span style="color:var(--ok)">The declared rig matches what Allego sees.</span>'
     : '<b style="color:var(--bad)">Cannot record:</b> '
-      + chk.problems.map(x => `<div style="color:var(--bad)">• ${x}</div>`).join('');
+      + chk.problems.map(x => `<div style="color:var(--bad)">• ${esc(x)}</div>`).join('');
   renderKeepNote();
 }
 
@@ -263,7 +269,9 @@ async function loadLayout() {
     // the old preview must go -- showing a valid-looking line that contradicts
     // what is typed is worse than showing nothing.
     const where = customPayload() ? '#cs-preview' : '#port-note';
-    $(where).innerHTML = `<span style="color:var(--bad)">${e.message}</span>`;
+    const sp = Object.assign(document.createElement('span'), {textContent: e.message});
+    sp.style.color = 'var(--bad)';
+    $(where).replaceChildren(sp);
     if (where === '#cs-preview') $('#port-note').textContent = '';
     $('#slots').innerHTML = '';
     $('#keep-note').textContent = '';
@@ -282,11 +290,11 @@ async function loadLayout() {
     div.className = 'slot';
     div.dataset.slot = slot;
     div.innerHTML = `
-      <div class="hd"><span class="name">${slot}</span>
-        <span class="ch">${chans}</span></div>
+      <div class="hd"><span class="name">${esc(slot)}</span>
+        <span class="ch">${esc(chans)}</span></div>
       <input placeholder="mouse ID" data-k="mouse" maxlength="32">
       <select data-k="type">${CFG.recording_types.map(
-        t => `<option value="${t}">${(CFG.recording_type_labels || {})[t] || t}</option>`).join('')}</select>`;
+        t => `<option value="${esc(t)}">${esc((CFG.recording_type_labels || {})[t] || t)}</option>`).join('')}</select>`;
     const inp = div.querySelector('input');
     inp.addEventListener('input', () => {
       div.classList.toggle('on', !!inp.value.trim());
@@ -322,6 +330,26 @@ function gatherSlots() {
   return out;
 }
 
+/* The ports this run will occupy: slot[0] is the port. Start now is also held
+   back while one of them records or the rig is busy; Schedule is not, because a
+   future window on a busy port is checked by the server (409 on overlap). */
+let FORM_WHY = '';
+const formPorts = () => [...new Set(Object.keys(gatherSlots()).map(k => k[0]))].sort();
+function applyGate() {
+  const a = (STATE && STATE.allego) || {};
+  const up = !!(STATE && a.reachable);     // not before the first poll, not with Allego down
+  const taken = formPorts().filter(p => ((a.ports || {})[p] || {}).recording);
+  const busy = STATE && STATE.rig_busy && STATE.rig_busy.busy;
+  $('#btn-schedule').disabled = !!FORM_WHY;
+  $('#btn-now').disabled = !!FORM_WHY || !up || taken.length > 0 || !!busy || !!IMP_RUNNING || RESTARTING;
+  const fp = formPorts();
+  $('#run-ports').innerHTML = !fp.length ? '' : `This run will occupy port${fp.length > 1 ? 's' : ''} `
+    + `<b>${fp.join(', ')}</b>; Stop affects only these.`
+    + (taken.length ? `<div style="color:var(--bad)">Port ${taken.join(', ')} is recording now: `
+        + `Start now is disabled (Schedule books a later window).</div>` : '')
+    + (busy ? `<div style="color:var(--warn)">Rig busy: ${esc(STATE.rig_busy.reason || '')}. Start now is disabled.</div>` : '');
+}
+
 function renderKeepNote() {
   if (!PRESET) return;
   const slots = Object.keys(gatherSlots());
@@ -355,14 +383,14 @@ function renderKeepNote() {
   document.querySelectorAll('.slot').forEach(d =>
     d.classList.toggle('dupe', clashing.has(d.dataset.slot)));
 
-  $('#btn-now').disabled = !!why;
-  $('#btn-schedule').disabled = !!why;
+  FORM_WHY = why;
+  applyGate();
   if (why) { $('#keep-note').textContent = why; return; }
   const labels = slots.flatMap(s => PRESET.slot_channels[s]).sort();
   $('#keep-note').innerHTML =
     `<b>${labels.length} channels will be kept</b> for ${slots.length} `
     + `${slots.length === 1 ? 'mouse' : 'mice'}, exported as one CSV per mouse: `
-    + `<span class="mono">${labels.join(', ')}</span>`;
+    + `<span class="mono">${esc(labels.join(', '))}</span>`;
   renderNameNote();
 }
 
@@ -378,7 +406,7 @@ async function renderNameNote() {
   if (!batch || !owner || !PRESET) {
     el.innerHTML = batch ? '' :
       '<span style="color:var(--bad)">A batch name is required: each mouse is filed '
-      + `under <span class="mono">${(CFG && CFG.nas_root) || '02_Data_Sleep'}/&lt;user&gt;/`
+      + `under <span class="mono">${esc((CFG && CFG.nas_root) || '02_Data_Sleep')}/&lt;user&gt;/`
       + '&lt;batch&gt;/Baseline|Recovery/</span>.</span>';
     return;
   }
@@ -393,54 +421,93 @@ async function renderNameNote() {
     if (seq !== nameSeq) return;          // a later keystroke already answered
     if (!r.mice.length) { el.innerHTML = ''; return; }
     el.innerHTML = `Each mouse arrives as one CSV + info.json in `
-      + `<span class="mono">${r.root}/</span>:<br>`
-      + r.mice.map(m => `<span class="mono">&nbsp;&nbsp;${m.slot}&nbsp;&nbsp;`
-          + `${m.batch}/${m.condition_dir}/<b>${m.folder}</b>/${m.file_base}.csv</span>`)
+      + `<span class="mono">${esc(r.root)}/</span>:<br>`
+      + r.mice.map(m => `<span class="mono">&nbsp;&nbsp;${esc(m.slot)}&nbsp;&nbsp;`
+          + `${esc(m.batch)}/${esc(m.condition_dir)}/<b>${esc(m.folder)}</b>/${esc(m.file_base)}.csv</span>`)
           .join('<br>')
       // The folders are dated by the day the recording STARTS. After 09:00 the
       // pre-filled Start at is tomorrow, so the two buttons produce two
       // different dates and the preview must not silently show one of them.
       + (r.if_started_now
           ? `<br>Dated by the scheduled start. <b>Start now</b> instead and they `
-            + `would be dated <span class="mono">${r.today}</span>.`
+            + `would be dated <span class="mono">${esc(r.today)}</span>.`
           : '');
   } catch (e) {
     if (seq !== nameSeq) return;
-    el.innerHTML = `<span style="color:var(--bad)">${e.message}</span>`;
+    el.innerHTML = `<span style="color:var(--bad)">${esc(e.message)}</span>`;
   }
 }
 
 /* ---------- live panel ---------- */
-let liveStart = null;
-function renderLive(s) {
-  const r = s.active_run;
-  const on = r && ['STARTING','RECORDING','STOPPING'].includes(r.state);
-  $('#live').classList.toggle('hide', !on);
-  $('#setup').classList.toggle('hide', !!on);
-  if (!on) { liveStart = null; return; }
-  liveStart = r.actual_start ? new Date(r.actual_start) : null;
-  $('#live-id').textContent = r.run_id;
-  $('#live-owner').textContent = r.owner;
-  $('#live-file').textContent = r.base_name || '…';
-  $('#live-bytes').textContent = r.bytes_on_disk > 0 ? gb(r.bytes_on_disk) : '0 bytes';
-  $('#live-stop').textContent = r.scheduled_stop ? local(r.scheduled_stop) : 'manual';
-  $('#live-mice').innerHTML = Object.entries(r.slots)
-    .map(([k, v]) => `<span class="tag">${k} · ${v.mouse_id} · ${v.recording_type}</span>`)
-    .join(' ');
-  const elapsed = liveStart ? (Date.now() - liveStart) / 1000 : 0;
-  $('#live-elapsed').textContent = dur(elapsed);
-  $('#live-lag').classList.toggle('hide', !(elapsed < 90 && !(r.bytes_on_disk > 0)));
-  const g = (r.results || {}).growth;
-  if (g && !g.growing) {
-    $('#live-lag').className = 'badbox';
-    $('#live-lag').innerHTML =
-      `<b>The recorder says R_ON but no bytes landed in ${g.window_s} s.</b> ` +
-      `This needs a person — the run is not producing data.`;
-  }
+/* Several runs can record at once now (one run per set of ports), so this lists
+   every active run, each with its own Stop. Stop affects only that run's ports. */
+const activeRuns = s => (Array.isArray(s.active_runs) ? s.active_runs
+    : s.active_run ? [s.active_run] : [])
+  .filter(r => ['STARTING','RECORDING','STOPPING'].includes(r.state));
+// Ports of a run: the new field, else derived from the slots (slot[0] is the port).
+const runPorts = r => r.ports && r.ports.length ? r.ports
+  : [...new Set((r.occupied || Object.keys(r.slots || {})).map(k => k[0]))].sort();
+// Per-port files. Old runs have one combined file in base_name/data_path.
+function runFiles(r) {
+  const live = (STATE && STATE.allego && STATE.allego.ports) || {};
+  const bob = r.bytes_on_disk;
+  const pf = r.port_files && Object.keys(r.port_files).length ? r.port_files : null;
+  if (!pf) return [{port: runPorts(r).join(''), name: r.base_name,
+                    bytes: typeof bob === 'number' ? bob : null}];
+  return Object.entries(pf).map(([p, f]) => ({port: p, name: f.base_name,
+    bytes: (bob && typeof bob === 'object' ? bob[p] : null) ?? (live[p] || {}).bytes ?? null}));
 }
-setInterval(() => {
-  if (liveStart) $('#live-elapsed').textContent = dur((Date.now() - liveStart) / 1000);
-}, 1000);
+const bytesTxt = b => b > 0 ? (b < 1e9 ? (b / 1e6).toFixed(1) + ' MB' : gb(b)) : '0 bytes';
+let liveHtml = '';
+function renderLive(s) {
+  const runs = activeRuns(s);
+  $('#live').classList.toggle('hide', !runs.length);
+  if (!runs.length) { liveHtml = ''; $('#live-runs').innerHTML = ''; return; }
+  const html = runs.map(r => {
+    const files = runFiles(r);
+    const growth = (r.results || {}).growth;
+    return `<div class="livecard" data-run="${esc(r.run_id)}" style="margin-bottom:14px">
+      <div class="row" style="gap:26px">
+        <div><label>Run</label><div class="mono">${esc(r.run_id)}</div></div>
+        <div><label>Owner</label><div>${esc(r.owner)}</div></div>
+        <div><label>Batch</label><div>${esc(r.batch_name)}</div></div>
+        <div><label>State</label><div>${esc(r.state)}</div></div>
+        <div><label>Ports</label><div class="mono">${esc(runPorts(r).join(' '))}</div></div>
+        <div><label>Elapsed</label><div class="mono elapsed"
+          data-start="${esc(r.actual_start || '')}">–</div></div>
+        <div><label>Stops at</label><div class="mono">${r.scheduled_stop ? local(r.scheduled_stop) : 'manual'}</div></div>
+        <div style="margin-left:auto"><button class="danger" data-stop="${esc(r.run_id)}">Stop this run</button></div>
+      </div>
+      <table style="margin-top:6px"><thead><tr><th>Port</th><th>File</th><th>On disk</th></tr></thead><tbody>
+        ${files.map(f => `<tr><td class="mono">${esc(f.port)}</td>
+          <td class="mono">${esc(f.name || '…')}</td>
+          <td class="mono">${f.bytes == null ? '–' : bytesTxt(f.bytes)}</td></tr>`).join('')}
+      </tbody></table>
+      <div class="note">${Object.entries(r.slots || {}).map(([k, v]) =>
+        `<span class="tag">${esc(k)} · ${esc(v.mouse_id)} · ${esc(v.recording_type)}</span>`).join(' ')}</div>
+      ${growth && !growth.growing
+        ? `<div class="badbox"><b>The recorder says ON but no bytes landed in ${esc(growth.window_s)} s.</b> `
+          + `This needs a person — the run is not producing data.</div>`
+        : `<div class="warnbox lag" data-start="${esc(r.actual_start || '')}"
+             data-bytes="${files.reduce((n, f) => n + (f.bytes || 0), 0)}">
+             The file size does not move for about 30 seconds after a healthy start —
+             Allego flushes it in blocks. <b>0 bytes here is normal at first</b> and is not
+             evidence that anything is wrong.</div>`}
+    </div>`;
+  }).join('');
+  if (html !== liveHtml) { liveHtml = html; $('#live-runs').innerHTML = html; }
+  tickLive();
+}
+function tickLive() {
+  document.querySelectorAll('#live-runs .elapsed').forEach(el => {
+    el.textContent = el.dataset.start ? dur((Date.now() - new Date(el.dataset.start)) / 1000) : '–';
+  });
+  document.querySelectorAll('#live-runs .lag').forEach(el => {
+    const t = el.dataset.start ? (Date.now() - new Date(el.dataset.start)) / 1000 : 0;
+    el.classList.toggle('hide', !(t < 90 && !(+el.dataset.bytes > 0)));
+  });
+}
+setInterval(tickLive, 1000);
 
 /* ---------- history ---------- */
 const STATE_CLASS = s =>
@@ -448,16 +515,18 @@ const STATE_CLASS = s =>
   : s.startsWith('FAILED') ? 'bad'
   : (s === 'UPLOAD_PENDING' || s === 'EXPORTED') ? 'warn' : '';
 
+let RUNS = [];
 async function renderRuns() {
   const {runs} = await api('/api/runs?limit=40');
+  RUNS = runs;
   const tb = $('#runs');
   if (!runs.length) {
-    tb.innerHTML = '<tr><td colspan="8" class="note">No runs yet.</td></tr>';
+    tb.innerHTML = '<tr><td colspan="9" class="note">No runs yet.</td></tr>';
     return;
   }
   tb.innerHTML = runs.map(r => {
     const mice = Object.entries(r.slots)
-      .map(([k, v]) => `${k}:${v.mouse_id}`).join(' ');
+      .map(([k, v]) => `${esc(k)}:${esc(v.mouse_id)}`).join(' ');
     let d = '–';
     if (r.actual_start && r.actual_stop)
       d = dur((new Date(r.actual_stop) - new Date(r.actual_start)) / 1000);
@@ -467,19 +536,24 @@ async function renderRuns() {
     const retry = r.state.startsWith('FAILED') || r.state === 'UPLOAD_PENDING'
       ? `<button class="ghost" style="padding:4px 10px;font-size:12px"
            onclick="retryRun('${r.run_id}','${r.state}')"
-           title="${(r.error || '').replace(/"/g, '&quot;').slice(0, 300)}">retry</button>`
+           title="${esc((r.error || '').slice(0, 300))}">retry</button>`
       // A reservation made by mistake (a wrong date, 2026-10-14) could only be
       // removed through the API. /abort already refuses anything that has started.
       : (r.state === 'SCHEDULED' || r.state === 'DRAFT')
       ? `<button class="ghost" style="padding:4px 10px;font-size:12px"
            onclick="cancelRun('${r.run_id}')">cancel</button>` : '';
+    const ports = esc(runPorts(r).join(' ')) || '–';
+    const files = r.port_files && Object.keys(r.port_files).length
+      ? Object.entries(r.port_files).map(([p, f]) => `${esc(p)}: ${esc(f.base_name)}`).join('<br>')
+      : esc(r.base_name || '');
     return `<tr>
-      <td class="mono">${r.run_id}</td>
-      <td>${r.owner}</td>
+      <td class="mono">${esc(r.run_id)}</td>
+      <td>${esc(r.owner)}</td>
+      <td class="mono" style="font-size:11px"><b>${ports}</b><br>${files}</td>
       <td class="mono" style="font-size:11px">${mice}</td>
-      <td><span class="tag ${STATE_CLASS(r.state)}">${r.state}</span>${
+      <td><span class="tag ${STATE_CLASS(r.state)}">${esc(r.state)}</span>${
         (r.results && r.results.start_warning)
-          ? ` <span class="tag bad" title="${r.results.start_warning.replace(/"/g, '&quot;')}">port missing at start</span>`
+          ? ` <span class="tag bad" title="${esc(r.results.start_warning)}">port missing at start</span>`
           : ''}</td>
       <td class="mono">${local(r.actual_start || r.scheduled_start)}</td>
       <td class="mono">${d}</td>
@@ -553,20 +627,32 @@ async function createRun(schedule) {
     body.start_at = $('#start').value;
     if ($('#stop').value) body.stop_at = $('#stop').value;
   }
+  $('#form-error').classList.add('hide');
   return post('/api/runs', body);
+}
+
+/* A refused booking (409 on port overlap) is shown verbatim and stays on screen,
+   with the conflicting run looked up from the run list when its id is in the text. */
+function formError(e) {
+  toast(e.message, 'bad');
+  const hit = RUNS.find(r => e.message.includes(r.run_id));
+  const box = $('#form-error');
+  box.textContent = e.message + (hit ? `\nConflicting run: ${hit.run_id} · ${hit.owner} · `
+    + `ports ${runPorts(hit).join(' ')} · ${hit.state} · ${local(hit.scheduled_start)} to ${local(hit.scheduled_stop)}` : '');
+  box.classList.remove('hide');
 }
 
 $('#btn-schedule').onclick = async () => {
   try {
     const r = await createRun(true);
     if (r) { toast(`Scheduled ${r.run_id} for ${local(r.scheduled_start)}`, 'ok'); refresh(); }
-  } catch (e) { toast(e.message, 'bad'); }
+  } catch (e) { formError(e); }
 };
 
 $('#btn-now').onclick = async () => {
   const slots = gatherSlots();
   const n = Object.keys(slots).length;
-  if (!confirm(`Start recording now with ${n} ${n === 1 ? 'mouse' : 'mice'}?\n\n`
+  if (!confirm(`Start recording now with ${n} ${n === 1 ? 'mouse' : 'mice'} on port ${formPorts().join(', ')}?\n\n`
       + Object.entries(slots).map(([k, v]) => `  ${k}  ${v.mouse_id}  ${v.recording_type}`).join('\n')
       + `\n\nThis records ALL channels; the selection only affects the stripped copy `
       + `and the per-mouse CSVs.`))
@@ -577,20 +663,23 @@ $('#btn-now').onclick = async () => {
     await post(`/api/runs/${r.run_id}/start`);
     toast(`Recording started (${r.run_id})`, 'ok');
     refresh();
-  } catch (e) { toast(e.message, 'bad'); }
+  } catch (e) { formError(e); }
 };
 
-$('#btn-stop').onclick = async () => {
-  const r = STATE && STATE.active_run;
+$('#live-runs').onclick = async e => {
+  const id = e.target.dataset && e.target.dataset.stop;
+  const r = id && activeRuns(STATE).find(x => x.run_id === id);
   if (!r) return;
+  const ports = runPorts(r).join(', ');
   if (!confirm(`Stop recording ${r.base_name || r.run_id}?\n\n`
+    + `This stops only this run's ports (${ports}). Any other run that is recording keeps recording.\n\n`
     + `It will then be stripped to ${r.keep_labels.length} channels, exported as `
     + `one CSV per mouse and uploaded to ${r.owner}'s folder on the NAS.`)) return;
   try {
     await post(`/api/runs/${r.run_id}/stop`);
     toast('Stopped. Post-processing queued.', 'ok');
     refresh();
-  } catch (e) { toast(e.message, 'bad'); }
+  } catch (err) { toast(err.message, 'bad'); }
 };
 
 // Debounced: one request per pause in typing, not one per keystroke.
@@ -649,13 +738,164 @@ $('#owner').onchange = e => {
   renderKeepNote();
 };
 
+/* ====================================================================== */
+/* RIG, PORTS, IMPEDANCE, RESTART (per-port recording on Allego 4, 2026-10-28)  */
+/*                                                                         */
+/* Rig-wide actions (impedance, restart) need the WHOLE rig idle: Allego     */
+/* refuses impedance while streaming and a restart resets the rate. The      */
+/* buttons are disabled otherwise and the server refuses with 409 as well.   */
+/* Every field read here is optional so an old backend still renders.        */
+/* ====================================================================== */
+let PORTS_API = null, PORTS_TICK = 0, IMP_RUNNING = null, RESTARTING = false;
+const IMP = {};                       // port -> last saved/measured result or null
+const PORT_LETTERS = () => (CFG && CFG.ports) || ['A', 'B', 'C', 'D'];
+
+async function loadPortsApi() {
+  try { PORTS_API = await api('/api/ports'); } catch (e) { PORTS_API = null; }
+}
+// Merge /api/state (fresh) over /api/ports (reservations); old backends send a bare count.
+function portInfo(p) {
+  const raw = ((STATE.allego || {}).ports || {})[p];
+  const base = raw && typeof raw === 'object' ? raw : {channels: raw || 0, legacy: typeof raw === 'number'};
+  return {...(((PORTS_API || {}).ports || {})[p] || {}), ...base};
+}
+// '' when the rig is idle, else the reason it is not.
+function rigIdle() {
+  if (!STATE) return 'Waiting for the first state poll.';
+  const a = STATE.allego || {};
+  if (!a.reachable) return 'Allego is not reachable.';
+  if (PORT_LETTERS().some(p => portInfo(p).legacy)) return 'This backend does not support rig operations.';
+  if (IMP_RUNNING || RESTARTING) return 'A rig operation is running.';
+  if (STATE.rig_busy && STATE.rig_busy.busy) return `Rig busy: ${STATE.rig_busy.reason || ''}`;
+  if (isOn(a.recording) || PORT_LETTERS().some(p => portInfo(p).recording)) return 'A port is recording.';
+  if (activeRuns(STATE).length) return 'A run is active.';
+  return '';
+}
+
+function renderRig(s) {
+  const a = s.allego || {};
+  const hz = a.sample_freq;
+  let m = a.measured_rate;
+  // measured_rate may be a ratio to the nominal rate or Hz; show a ratio either way.
+  const ratio = m == null ? null : (m > 20 && hz ? m / hz : m);
+  const kv = (k, v, cls) => `<div><label>${k}</label><div class="mono"${cls ? ` style="color:var(--${cls})"` : ''}>${v}</div></div>`;
+  $('#rig-kv').innerHTML =
+      kv('Mode', esc(a.system_mode ?? '–'))
+    + kv('Sample rate', hz ? `${hz} Hz` : '–')
+    + kv('Measured rate', ratio == null ? '–' : `${ratio.toFixed(2)}x`
+        + (Math.abs(ratio - 1) > 0.1 ? ' (NOT 1.0x: do not record)' : ''),
+        ratio != null && Math.abs(ratio - 1) > 0.1 ? 'bad' : '')
+    + kv('Streaming', isOn(a.streaming) ? 'ON' : 'OFF')
+    + kv('Recording', isOn(a.recording) ? 'ON' : 'OFF')
+    + (a.split_files_by_port == null ? '' : kv('Split files by port', a.split_files_by_port ? 'true' : 'false (one combined file)',
+        a.split_files_by_port ? '' : 'warn'))
+    + (a.server_version ? kv('Allego', esc(a.server_version)) : '');
+  $('#rig-problems').innerHTML = (a.problems || []).map(x => `<div class="warnbox">${esc(x)}</div>`).join('')
+    + (a.error ? `<div class="badbox">${esc(a.error)}</div>` : '');
+  const busy = s.rig_busy && s.rig_busy.busy;
+  $('#busy-banner').classList.toggle('hide', !busy);
+  if (busy) $('#busy-banner').innerHTML = `<b>Rig busy:</b> ${esc(s.rig_busy.reason || 'a rig operation is running')}. Recording and rig changes are refused until it ends.`;
+  const why = rigIdle();
+  $('#btn-restart').disabled = !!why;
+  $('#restart-why').textContent = why;
+}
+
+function renderCards() {
+  const runs = activeRuns(STATE);
+  $('#pcards').innerHTML = PORT_LETTERS().map(p => {
+    const i = portInfo(p), n = i.channels || 0, rs = i.next_reservation;
+    const mins = rs && rs.start ? (new Date(rs.start) - Date.now()) / 60000 : null;
+    const soon = mins != null && mins <= 60;
+    const [cls, tag] = i.recording ? ['rec', 'recording'] : !n ? ['none', 'no headstage']
+      : soon ? ['soon', `reserved in ${Math.max(0, Math.round(mins))} min`] : ['', 'idle'];
+    const run = runs.find(r => r.run_id === i.run_id);
+    const why = rigIdle() || (!n ? 'No headstage on this port.' : '');
+    return `<div class="pcard ${cls}">
+      <div class="hd"><b>Port ${p}</b><span class="tag ${i.recording ? 'live' : soon ? 'warn' : !n ? '' : 'ok'}">${tag}</span></div>
+      <div>${n} channels${i.selected_channels != null ? `, ${i.selected_channels} selected` : ''}</div>
+      ${i.legacy ? '' : `<div>Recording: <b>${i.recording ? 'ON' : 'OFF'}</b></div>`}
+      ${i.recording ? `<div>Run: <span class="mono">${esc(i.run_id || '?')}</span> · ${esc((run && run.owner) || i.owner || '?')}${run ? ` · ${esc(run.batch_name)}` : ''}</div>
+        <div class="mono" style="word-break:break-all">${esc(i.file || '…')}</div>
+        <div class="mono">${i.bytes == null ? '–' : bytesTxt(i.bytes)}</div>` : ''}
+      <div>Next: ${rs ? `${esc(rs.owner)} · ${local(rs.start)} to ${local(rs.stop)} <span class="mono">${esc(rs.run_id)}</span>` : 'none'}</div>
+      <button class="ghost" data-imp="${p}" ${why ? 'disabled' : ''} title="${esc(why)}">${IMP_RUNNING === p ? 'Measuring…' : 'Impedance'}</button>
+    </div>`;
+  }).join('');
+}
+
+$('#pcards').onclick = async e => {
+  const p = e.target.dataset && e.target.dataset.imp;
+  if (!p || rigIdle()) return;
+  if (!confirm(`Measure impedance on port ${p}?\n\n`
+    + `This STOPS data streaming for about 30 seconds (Allego refuses the measurement while streaming). `
+    + `It cannot run while anyone is recording, and nobody can start a recording until it finishes.`)) return;
+  IMP_RUNNING = p; renderCards(); renderRig(STATE);
+  try {
+    IMP[p] = await post(`/api/ports/${p}/impedance`);
+    toast(`Impedance measured on port ${p}`, 'ok');
+  } catch (err) { toast(err.message, 'bad'); }
+  IMP_RUNNING = null;
+  renderImpedance(); refresh();
+};
+
+async function loadImpedance() {
+  for (const p of PORT_LETTERS()) {
+    try { IMP[p] = await api(`/api/ports/${p}/impedance`); } catch (e) { IMP[p] = IMP[p] || null; }
+  }
+  renderImpedance();
+}
+
+// Canonical bipolar channels are /1 /2 /33 /34 on every port.
+const CANON = /\/(1|2|33|34)$/;
+function renderImpedance() {
+  $('#imp-panel').innerHTML = PORT_LETTERS().filter(p => IMP[p]).map(p => {
+    const r = IMP[p];
+    return `<details style="margin-top:10px" open><summary><b>Port ${p} impedance</b> · saved ${utcLocal(r.measured_utc)}
+        · ${r.channels.length} channels${r.duration_s != null ? ` · ${Math.round(r.duration_s)} s` : ''}</summary>
+      <table style="max-width:420px"><thead><tr><th>Label</th><th>kΩ</th><th>Phase</th></tr></thead><tbody>
+      ${r.channels.map(c => `<tr class="${CANON.test(c.label) ? 'canon' : ''}"><td class="mono">${esc(c.label)}</td>
+        <td class="mono">${Number(c.kohm).toFixed(1)}</td><td class="mono">${Number(c.phase_deg).toFixed(1)}°</td></tr>`).join('')}
+      </tbody></table>
+      <div class="note">Highlighted: canonical bipolar channels /1 /2 /33 /34.</div></details>`;
+  }).join('');
+}
+
+function stateBrief(x) {
+  if (!x) return '–';
+  const ch = x.ports ? Object.entries(x.ports).map(([p, v]) => `${p}:${v && typeof v === 'object' ? v.channels : v}`).join(' ') : null;
+  return [x.system_mode, x.sample_freq != null ? `${x.sample_freq} Hz` : null,
+          x.streaming != null ? `streaming ${x.streaming}` : null,
+          x.split_files_by_port != null ? `split ${x.split_files_by_port}` : null,
+          ch && `channels ${ch}`].filter(Boolean).join(' · ') || JSON.stringify(x);
+}
+$('#btn-restart').onclick = async () => {
+  if (rigIdle()) return;
+  if (!confirm('Restart Allego (same mode)?\n\n'
+    + 'It re-enumerates the headstages, resets the sample rate (the console restores 1000 Hz afterwards) '
+    + 'and takes about 15 seconds. It cannot run while anyone is recording, and nobody can start a recording '
+    + 'until it finishes.')) return;
+  RESTARTING = true; renderRig(STATE); renderCards();
+  $('#restart-result').textContent = 'Restarting… (about 15 s)';
+  try {
+    const r = await post('/api/allego/restart');
+    $('#restart-result').innerHTML = `Restarted in ${Math.round(r.duration_s)} s.<br>Before: ${esc(stateBrief(r.before))}<br>After: ${esc(stateBrief(r.after))}`;
+    toast('Allego restarted', 'ok');
+  } catch (err) { $('#restart-result').textContent = ''; toast(err.message, 'bad'); }
+  RESTARTING = false;
+  refresh();
+};
+
 /* ---------- poll ---------- */
 async function refresh() {
   try {
     STATE = await api('/api/state');
     $('#offline').classList.add('hide');
     renderPills(STATE);
+    renderRig(STATE);
+    if (PORTS_TICK++ % 5 === 0) await loadPortsApi();   // reservations change slowly
+    renderCards();
     renderLive(STATE);
+    applyGate();
     await renderRuns();
   } catch (e) {
     $('#offline').classList.remove('hide');
@@ -694,6 +934,7 @@ async function refresh() {
   $('#start-hint').textContent = '(local time · ZT0 is 09:00)';
 
   await refresh();
+  loadImpedance();
   setInterval(refresh, 2000);
 })();
 
@@ -717,46 +958,46 @@ async function loadSettings() {
 
   $('#set-list').innerHTML = Object.entries(SETTINGS.settings).map(([n, s]) => {
     const sites = Object.entries(s.roles)
-      .sort((a, b) => a[1] - b[1]).map(([r, o]) => `${r}=/${o}`).join(', ');
+      .sort((a, b) => a[1] - b[1]).map(([r, o]) => `${esc(r)}=/${o}`).join(', ');
     // "no QC criterion" is a property of the layout, not a failure of the run,
     // and it is said here as well as before a run so nobody meets it first in
     // an error message.
     const qc = s.qc === 'none'
       ? ` <span style="color:var(--warn)">no QC criterion</span>` : '';
     const del = s.editable
-      ? ` <a href="#" data-del-set="${n}" style="color:var(--bad)">delete</a>`
+      ? ` <a href="#" data-del-set="${esc(n)}" style="color:var(--bad)">delete</a>`
       : ` <span style="color:var(--faint)">curated</span>`;
-    return `<div><span class="mono">${n}</span> — ${s.label}: `
+    return `<div><span class="mono">${esc(n)}</span> — ${esc(s.label)}: `
          + `<span class="mono">${sites}</span>${qc}${del}`
-         + (s.seen_in ? `<br><span style="color:var(--faint)">seen in ${s.seen_in}</span>` : '')
+         + (s.seen_in ? `<br><span style="color:var(--faint)">seen in ${esc(s.seen_in)}</span>` : '')
          + `</div>`;
   }).join('');
 
   $('#lay-list').innerHTML = Object.entries(SETTINGS.layouts).map(([n, t]) => {
-    const split = CFG.ports.filter(p => t.splitters[p]).join(', ') || 'none';
+    const split = esc(CFG.ports.filter(p => t.splitters[p]).join(', ')) || 'none';
     const del = t.editable
-      ? ` <a href="#" data-del-lay="${n}" style="color:var(--bad)">delete</a>`
+      ? ` <a href="#" data-del-lay="${esc(n)}" style="color:var(--bad)">delete</a>`
       : ` <span style="color:var(--faint)">curated</span>`;
-    return `<div><span class="mono">${n}</span> — ${t.label}: `
-         + `${t.setting}, splitters on ${split}${del}</div>`;
+    return `<div><span class="mono">${esc(n)}</span> — ${esc(t.label)}: `
+         + `${esc(t.setting)}, splitters on ${split}${del}</div>`;
   }).join('');
 
   $('#hs-list').innerHTML = Object.entries(SETTINGS.headstages).map(([n, h]) =>
-    `<div><span class="mono">${n}</span> — ${h.label}: ${h.slots_per_chip} slots, `
-    + `${h.real_channels} real, ${h.bipolar_in_hardware ? 'bipolar' : 'unipolar'}`
+    `<div><span class="mono">${esc(n)}</span> — ${esc(h.label)}: ${esc(h.slots_per_chip)} slots, `
+    + `${esc(h.real_channels)} real, ${h.bipolar_in_hardware ? 'bipolar' : 'unipolar'}`
     + (h.splitter_verified ? '' : ', <span style="color:var(--warn)">splitter unverified</span>')
-    + (h.source ? `<br><span style="color:var(--faint)">${h.source}</span>` : '')
+    + (h.source ? `<br><span style="color:var(--faint)">${esc(h.source)}</span>` : '')
     + `</div>`).join('');
 
   $('#audit-list').innerHTML = (SETTINGS.history || []).length
     ? SETTINGS.history.map(h =>
-        `<div><span class="mono">${h.utc}</span> ${h.action} `
-        + `<b>${h.name || ''}</b>${h.who ? ' by ' + h.who : ''}</div>`).join('')
+        `<div><span class="mono">${esc(h.utc)}</span> ${esc(h.action)} `
+        + `<b>${esc(h.name || '')}</b>${h.who ? ' by ' + esc(h.who) : ''}</div>`).join('')
     : '<span style="color:var(--faint)">nothing changed yet</span>';
 
   const hs = $('#ns-hs');
   hs.innerHTML = Object.entries(SETTINGS.headstages).map(([n, h]) =>
-    `<option value="${n}">${h.label}</option>`).join('');
+    `<option value="${esc(n)}">${esc(h.label)}</option>`).join('');
   if (!$('#ns-roles').children.length) { addRoleRow(); addRoleRow(); }
   previewSetting();
 
@@ -783,8 +1024,8 @@ function addRoleRow(role = '', site = '') {
   div.className = 'row';
   div.style.marginTop = '6px';
   div.innerHTML =
-    `<div><input data-k="role" placeholder="signal name, e.g. eeg" maxlength="24" value="${role}"></div>`
-  + `<div><input data-k="site" type="number" min="1" max="64" placeholder="site" value="${site}" style="width:90px"></div>`
+    `<div><input data-k="role" placeholder="signal name, e.g. eeg" maxlength="24" value="${esc(role)}"></div>`
+  + `<div><input data-k="site" type="number" min="1" max="64" placeholder="site" value="${esc(site)}" style="width:90px"></div>`
   + `<div><button class="ghost" data-k="drop">−</button></div>`;
   div.querySelector('[data-k=drop]').onclick = () => { div.remove(); previewSetting(); };
   div.querySelectorAll('input').forEach(i => i.addEventListener('input', previewSetting));
@@ -821,7 +1062,7 @@ function previewSetting() {
   qcbox.classList.toggle('hide', contiguous);
 
   const slot1 = Object.entries(roles).sort((a, b) => a[1] - b[1])
-    .map(([r, o]) => `A/${o} ${r}`).join(' · ');
+    .map(([r, o]) => `A/${o} ${esc(r)}`).join(' · ');
   const slot2 = Object.entries(roles).sort((a, b) => a[1] - b[1])
     .map(([, o]) => `A/${o + 32}`).join(' · ');
   let msg = `<b>${sites.length} channels per mouse.</b> First animal on port A: `
@@ -881,8 +1122,8 @@ function addCustomRole(role = '', site = '') {
   div.className = 'row';
   div.style.marginTop = '6px';
   div.innerHTML =
-    `<div><input data-k="role" placeholder="signal name, e.g. eeg" maxlength="24" value="${role}"></div>`
-  + `<div><input data-k="site" type="number" min="1" max="64" placeholder="site" value="${site}" style="width:90px"></div>`
+    `<div><input data-k="role" placeholder="signal name, e.g. eeg" maxlength="24" value="${esc(role)}"></div>`
+  + `<div><input data-k="site" type="number" min="1" max="64" placeholder="site" value="${esc(site)}" style="width:90px"></div>`
   + `<div><button class="ghost" data-k="drop">−</button></div>`;
   div.querySelector('[data-k=drop]').onclick = () => { div.remove(); loadLayout(); };
   div.querySelectorAll('input').forEach(i =>
@@ -905,8 +1146,8 @@ function renderCustomPreview() {
   $('#cs-preview').innerHTML =
       `<b>${n} channel${n === 1 ? '' : 's'} per mouse.</b> `
     + `First animal on port ${PRESET.slots[0][0]}: `
-    + `<span class="mono">${first.map((l, i) => `${l} ${roles[i] || ''}`).join(' · ')}</span>`
-    + (second ? `<br>Second animal on that port: <span class="mono">${second.join(' · ')}</span>` : '')
+    + `<span class="mono">${first.map((l, i) => esc(`${l} ${roles[i] || ''}`)).join(' · ')}</span>`
+    + (second ? `<br>Second animal on that port: <span class="mono">${esc(second.join(' · '))}</span>` : '')
     + (contiguous
         ? `<div style="color:var(--ok)">QC applies: the wire-free floor is `
           + `/${n + 1}–/${hs.real_channels || 16} on each chip.</div>`

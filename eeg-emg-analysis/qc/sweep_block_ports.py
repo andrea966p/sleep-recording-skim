@@ -6,6 +6,9 @@ with qc/block_duty_cycle_slots.py, which takes n from that log.
 
 🔑 Impedance is refused while streaming ("Z_measure attempted during data acq"): stop the stream
 first, restart it afterwards, and check the stream rate (~1.0x real time) before recording.
+Allego 4 (radiens-core 0.1.2, 2026-10-28): impedance is rig-wide, so no port may be recording either.
+The reply covers every attached port (128 values on a 2-port rig = 2 x 64); sweep_table reads only
+the sites of the channel table, so nothing is filtered by the requested port.
 
 Channel roles depend on the cohort:
   --roles eeg,emg        2 ch per mouse: /1 /2 and /33 /34
@@ -112,13 +115,17 @@ def main():
     args = ap.parse_args()
     roles = [r.strip().lower() for r in args.roles.split(",")]
 
-    import grpc, radiens.utils.interceptors as itc
-    from radiens.allego_client import AllegoClient
-    from radiens.grpc_radiens import allegoserver_pb2_grpc as ag, common_pb2 as cm, datasource_pb2 as ds
+    from radiens_core import AllegoClient
+    from radiens_core.exceptions import RadiensError
+    from radiens_core.models.signals import SignalType
 
     client = AllegoClient(); client.get_status()
-    table = client.get_channel_metadata().table
-    ntv2site = site_map(r for _, r in table.iterrows())
+    meta = client.get_channel_metadata()
+    amp = SignalType.AMP
+    rows = [{"ntv_chan_name": name, "ntv_key_idx": ntv, "port": port.name, "site_num": site}
+            for ntv, name, port, site in zip(meta.sig_map[amp].ntv, meta.ntv_chan_names[amp],
+                                             meta.ports[amp], meta.site_nums[amp])]
+    ntv2site = site_map(rows)
     site2ntv = {s: n for n, s in ntv2site.items()}
     ports = {s.split("/")[0] for s in site2ntv}
     try:
@@ -135,10 +142,6 @@ def main():
     first = prepare_outdir(args.outdir, header, args.append)
     print("ports", sorted(ports), "sites", len(ntv2site), "watching", watch, flush=True)
 
-    channel = grpc.intercept_channel(
-        grpc.insecure_channel("127.0.0.1:50051"),
-        itc.MetadataClientInterceptor(id_token=itc.SessionMetaData._instance._id_token))
-    stub = ag.AllegoCoreStub(channel)
     log = open(os.path.join(args.outdir, LOG_NAME), "a", buffering=1)
     if log.tell() == 0:
         log.write(header)
@@ -147,11 +150,11 @@ def main():
     for n in range(first, first + args.n):
         t0 = time.time(); stamp = datetime.now()
         try:
-            reply = stub.GetIntanImpedance(ds.ImpedanceRequest(port=cm.B), timeout=600)
-        except grpc.RpcError as exc:
-            print(f"[{n:02d}] RPC FAILED {exc.code()} {exc.details()}", flush=True)
+            imp = client.get_intan_impedance("B")
+        except RadiensError as exc:
+            print(f"[{n:02d}] RPC FAILED {exc}", flush=True)
             time.sleep(max(0.0, args.cadence - (time.time() - t0))); continue
-        vals = {x.ntvChanIdx: (x.zMag / 1e6, x.zPhase) for x in reply.impedances}
+        vals = {x.ntv_chan_idx: (x.magnitude_ohm / 1e6, x.phase_deg) for x in imp.measurements}
         if set(vals) != set(ntv2site):
             print(f"[{n:02d}] WARNING reply has {len(vals)} native indices, table has {len(ntv2site)} "
                   f"({len(set(ntv2site) - set(vals))} missing -> NaN)", flush=True)

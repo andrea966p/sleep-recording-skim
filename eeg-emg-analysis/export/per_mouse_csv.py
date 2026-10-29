@@ -18,7 +18,12 @@ names follow the lab's reference MATLAB export
   datetime_kst    status.start_time (UTC, ms) + (timestamp_raw - the FILE's first)
                   / fs, shown in KST. Absolute, so it is right in a trimmed CSV.
                   start_time is written by Allego when recording begins, so it is
-                  accurate to about a second, not to a sample.
+                  accurate to about a second, not to a sample. Allego 4 writes it
+                  in LOCAL time with an offset and nanoseconds
+                  (`2026-10-28T18:36:08.644028952+09:00`, measured 2026-10-28)
+                  where Allego 3 wrote UTC with `Z`; both parse to the same
+                  instant, and the report's `startTime_utc` is normalised to UTC
+                  so the field name stays true.
   EEG, EMG, ...   one column per ROLE the layout declares, upper-cased, in
                   microvolts, 3 decimals (Intan steps are 0.195 uV, so nothing
                   is rounded away that the amplifier resolved).
@@ -29,6 +34,11 @@ knows neither. It is handed `{"EEG": "A/1", "EMG": "A/2"}` per mouse and resolve
 each label against the stripped sidecar's own `kept_labels`. A label that is
 missing, or present twice, is REFUSED. A silent wrong-channel CSV would be the
 worst thing this tool could produce, because nothing downstream could tell.
+
+PER-PORT FILES (Allego 4, since 2026-10-28). A run now leaves one recording per
+port; the recorder strips each and calls this tool once per port file, with a
+spec naming only the mice on that port. Nothing in here is port-aware: labels
+like `B/1` resolve against that file's `kept_labels` exactly as before.
 
 READS THE STRIPPED FILE, NOT THE RAW. Sixteen columns instead of 262, and the
 strip has already verified those columns bit-exact against the original.
@@ -141,6 +151,15 @@ def read_stripped(base: str) -> dict:
             "data": data, "ts": ts}
 
 
+def _utc_text(raw: str, t0: datetime) -> str:
+    """`startTime_utc` as UTC text. An Allego 3 value (already `...Z`) is kept
+    VERBATIM, so reports for old recordings do not change by a character; an
+    Allego 4 value (local time with an offset) is converted, at ms precision."""
+    if str(raw).endswith("Z"):
+        return str(raw)
+    return t0.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
+
+
 def resolve_columns(spec: dict, labels: list[str]) -> list[dict]:
     """Each mouse's roles -> file column indices. Refuses any miss or ambiguity."""
     mice = spec.get("mice") or []
@@ -177,7 +196,13 @@ class _Clock:
     """Formats `datetime_kst` fast: one strftime per second, not per row."""
 
     def __init__(self, t0: datetime):
-        self.t0_ms = int(round(t0.timestamp() * 1000))
+        # TRUNCATED to the millisecond, exactly like startTime_kst/utc in the
+        # report, so row 1 and the report agree. Integer timedelta arithmetic,
+        # not timestamp() * 1000, which can land a hair under a whole ms. Allego 3
+        # start times are whole ms, so their output is unchanged; Allego 4 ones
+        # carry nanoseconds and used to round where the report truncated
+        # (2026-10-28).
+        self.t0_ms = (t0 - datetime(1970, 1, 1, tzinfo=timezone.utc)) // timedelta(milliseconds=1)
         self._cache: dict[int, str] = {}
 
     def prefix(self, sec: int) -> str:
@@ -331,7 +356,7 @@ def verify_csv(path: Path, *, n: int, first_raw: int, last_raw: int, roles: list
 
 
 def export(stripped_base: str, spec: dict, out_dir: str | Path, *,
-           require_idle: bool = False, source_base: str | None = None,
+           require_idle: bool = False, source_base: str | list[str] | None = None,
            min_free_gb: float = MIN_FREE_GB, chunk: int = CHUNK,
            progress=print) -> dict:
     say = progress or (lambda _m: None)
@@ -474,7 +499,8 @@ def export(stripped_base: str, spec: dict, out_dir: str | Path, *,
         "utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "stripped_base": base, "allego_base": name,
         "samplingRate": fs, "n_samples": n, "duration_h": round(n / fs / 3600, 4),
-        "startTime_utc": info["start_time"],
+        "startTime_utc": _utc_text(info["start_time"], t0),
+        "startTime_as_written": info["start_time"],
         "startTime_kst": t0.astimezone(KST).strftime("%Y-%m-%d %H:%M:%S.%f")[:-3],
         "timestamp_raw_first": ts_first, "timestamp_raw_last": ts_last,
         "window": {k: v for k, v in win.items() if k not in ("lo", "hi")} if win.get("requested") else None,
@@ -500,13 +526,17 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--spec", required=True, help="JSON file naming mice, file bases, columns")
     ap.add_argument("--out", help="output dir (default <PER_MOUSE_ROOT>/<base>)")
     ap.add_argument("--require-idle", action="store_true")
-    ap.add_argument("--source-base", help="the RAW recording, judged by growth when idle-checking")
+    ap.add_argument("--source-base", action="append", default=None,
+                    help="the RAW recording, judged by growth when idle-checking. "
+                         "Repeatable: pass every per-port file of the run, so its "
+                         "siblings are not mistaken for a live recording")
     a = ap.parse_args(argv)
     spec = json.loads(Path(a.spec).read_text())
     out = a.out or (PATHS.PER_MOUSE_ROOT / os.path.basename(a.stripped_base))
+    src = a.source_base[0] if a.source_base and len(a.source_base) == 1 else a.source_base
     try:
         export(a.stripped_base, spec, out, require_idle=a.require_idle,
-               source_base=a.source_base)
+               source_base=src)
     except ExportRefused as exc:
         print(f"REFUSED: {exc}", file=sys.stderr)
         return 2

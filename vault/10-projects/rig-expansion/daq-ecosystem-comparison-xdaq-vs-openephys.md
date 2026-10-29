@@ -15,6 +15,8 @@ superseded-by: "[[2026-07-24-daq-32-mouse-final-comparison]]"
 ---
 # DAQ Ecosystem Comparison — XDAQ/NeuroNexus vs Open Ephys (16 → 32 mice)
 
+> [!warning] 2026-10-28: VAULT-ONLY, never publish. Row 15 (XDAQ record start and stop is global) is true for `radiens` 4.0.0 on Allego 3.11.3 only; on Allego 4.1.2 with `radiens-core` the XDAQ records per port ([[2026-10-28-per-port-recording-bench-test]]). Nothing else on this page was changed.
+
 > [!tip] Part of the rig expansion program
 > Front door for all of this: **[[_rig-expansion-hub]]** (decision, vendor correspondence, wiring, open items).
 

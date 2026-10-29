@@ -25,6 +25,11 @@ that line as a stop, not a warning. `--require-idle` makes it a hard refusal.
 `active_run: RECORDING`, say the run will strip itself on stop and offer to do
 any manual strip after it finishes. A dry run is fine; the real thing waits.
 
+**Exception, Andrea 2026-10-29:** the console's OWN QC and strip of a per-port run
+(Allego 4, one file per port) may run while another port records, once that run's own
+files stopped growing (`--ignore-other-recordings`). Manual strips, the export and the
+archive jobs still wait. See [[2026-10-28-per-port-console-port]].
+
 ⚠️ The automatic strip keeps only the run's frozen `keep_labels` — the 16 wired
 channels — so the stripped copy has **no wire-free floor** and can never be QC'd
 by this project's own criterion. The original on the rig is the record of truth.

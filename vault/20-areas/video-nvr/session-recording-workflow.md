@@ -216,6 +216,8 @@ curl -X POST "http://127.0.0.1:8585/api/session/metadata?chamber_id=1" \
   -d '{"mouse_id": "HETCF7L2", "recording_type": "recovery", "user_name": "andrea"}'
 ```
 
+> [!warning] 2026-10-28: "Radiens provides a single global R_ON/R_OFF signal" was true for `radiens` 4.0.0 on Allego 3.11.3. On Allego 4.1.2 with `radiens-core`, recording is per port ([[2026-10-28-per-port-recording-bench-test]]). The global `record_mode` is still ON while any port records, and the session daemon still uses it to start video sessions; a new `port_modes` field carries the per-port modes. The cameras are disconnected, and the ported daemon is not restarted in production yet ([[2026-10-28-per-port-console-port]]).
+
 > [!info] Single Radiens Instance
 > The current design uses one Radiens instance controlling one headstage. Radiens provides a single global R_ON/R_OFF signal -- the daemon uses metadata presence to determine which chambers to include. If two headstages need independent control, additional Radiens instances and daemon configuration would be required.
 

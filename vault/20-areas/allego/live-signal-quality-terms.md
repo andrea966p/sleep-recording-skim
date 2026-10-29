@@ -240,7 +240,7 @@ cd ~/sleep-recording-skim/eeg-emg-analysis && /usr/bin/python3 -m qc.preflight_s
 🛑 **Under the normal 16-channel montage it CANNOT check grounding, and says so.**
 The per-chip floor lives on the 14 wire-free inputs of each chip. `get_signals()`
 returns only SELECTED channels, `get_metrics()` computes only those too (verified:
-exactly 16 of 256 non-zero), and radiens 4.0.0 has **no setter for the selection**.
+exactly 16 of 256 non-zero), and radiens 4.0.0 has **no setter for the selection**. (2026-10-28: the console now uses `radiens-core`; whether it has a selection setter was not checked. Metrics from `get_kpi_metrics` in STREAM mode are 2 s exponential moving average envelopes, so they are not comparable with the radiens 4.0.0 numbers on this page, [[2026-10-28-per-port-console-port]].)
 So the screen reports `NO FLOOR` instead of `CLEAN`.
 
 This matters because a floating chip looks perfect on its animal channels. On

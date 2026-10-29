@@ -5,13 +5,24 @@ Detects R_OFF -> R_ON (session start) and R_ON -> R_OFF (session end)
 transitions by polling AllegoClient.get_status() at a configurable interval.
 
 The poller only OBSERVES Radiens state. It never starts/stops EEG recording.
+
+2026-10-28: ported from the old `radiens` 4.0.0 client to `radiens-core` 0.1.2
+(Allego 4.1.2). The old client cannot even authenticate to Allego 4, and the two
+packages cannot be loaded in one process, so nothing here may import `radiens`.
+`record_mode` is an IntEnum (`str(RecordMode.ON) == "1"`), so we compare the enum
+and map it to this module's own RecordingState values ("R_ON"/"R_OFF"), which the
+daemon's API JSON exposes and must not change.
+
+The trigger stays GLOBAL: `recording.record_mode` is ON if ANY port records. With
+per-port recording (measured 2026-10-28) the per-port modes are also reported in
+`RadiensStatus.port_modes` ({"A": "ON", ...}) for information only.
 """
 
 import logging
 import time
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Callable, Optional
+from typing import Callable, Dict, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -44,6 +55,9 @@ class RadiensStatus:
     file_path: str = ""
     connected: bool = False
     error: Optional[str] = None
+    # Added 2026-10-28: per-port record modes by letter, "ON"/"OFF". Only ports the
+    # server reports are present. Informational: the trigger is the global state.
+    port_modes: Dict[str, str] = field(default_factory=dict)
     poll_time: float = field(default_factory=time.time)
 
 
@@ -98,18 +112,21 @@ class RadiensPoller:
         if now < self._next_attempt_at:
             return False
         try:
-            from radiens import AllegoClient
+            from radiens_core import AllegoClient
             self._client = AllegoClient()
             # Test the connection with a status poll
             status = self._client.get_status()
             self._connected = True
             self._on_success()
-            logger.info("Connected to Radiens (recording: %s)", status.recording)
+            logger.info(
+                "Connected to Radiens (recording: %s)",
+                status.recording.record_mode.name,
+            )
             return True
         except ImportError:
             logger.error(
-                "radiens package not installed. "
-                "Install it from NeuroNexus (not available on PyPI)."
+                "radiens_core package not installed. "
+                "Install radiens-core==0.1.2 into the daemon venv."
             )
             self._connected = False
             # No retry — module is structurally missing
@@ -159,24 +176,44 @@ class RadiensPoller:
             self._connected = True
             self._on_success()
 
-            # Parse recording state
+            # Parse recording state. record_mode is a RecordMode IntEnum; compare the
+            # NAME, never str() (str(RecordMode.ON) is "1"). Global: ON if any port records.
             rec = allego_status.recording
-            rec_mode = str(rec.mode) if hasattr(rec, "mode") else str(rec)
-            if rec_mode == "R_ON":
+            mode_name = getattr(getattr(rec, "record_mode", None), "name", None)
+            if mode_name == "ON":
                 current_state = RecordingState.ON
-            elif rec_mode == "R_OFF":
+            elif mode_name == "OFF":
                 current_state = RecordingState.OFF
             else:
                 current_state = RecordingState.UNKNOWN
-                logger.warning("Unexpected recording state: %s", rec_mode)
+                logger.warning("Unexpected recording state: %r", mode_name)
 
-            # Extract metadata from recording spec
+            # Per-port modes (None = not reported by the server).
+            port_modes: Dict[str, str] = {}
+            for letter in "abcdefgh":
+                pm = getattr(rec, "record_mode_port_" + letter, None)
+                if pm is not None:
+                    port_modes[letter.upper()] = pm.name
+
+            # Base name and directory live in the recording config, not in the status.
+            # A failure here must not fail the poll: the state is what matters.
+            base_name = ""
+            file_path = ""
+            try:
+                cfg = self._client.get_recording_config()
+                base_name = str(cfg.base_file_name)
+                file_path = str(cfg.base_file_path)
+            except Exception as cfg_err:
+                logger.debug("get_recording_config failed: %s", cfg_err)
+                base_name = str(getattr(rec, "active_filename", ""))
+
             status = RadiensStatus(
                 recording=current_state,
-                stream=str(getattr(allego_status, "stream", "")),
-                base_name=str(getattr(rec, "base_name", "")),
-                file_path=str(getattr(rec, "path", "")),
+                stream=getattr(getattr(allego_status.streaming, "stream_mode", None), "name", ""),
+                base_name=base_name,
+                file_path=file_path,
                 connected=True,
+                port_modes=port_modes,
             )
 
             # Detect transitions

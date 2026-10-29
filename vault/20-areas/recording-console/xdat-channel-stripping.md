@@ -230,6 +230,9 @@ it. Run as a script, not under pytest:
 
 🛑 **While a recording is in progress, do not start stripping or any other heavy read or write on that disk.**
 
+> [!info] 2026-10-29: one exception, decided by Andrea
+> The console's own QC bundle and strip of a **per-port** run (Allego 4, one file per port) may run while another port is recording, because per-port files are about 7.5 times smaller than the old combined file. The strip is called with `--ignore-other-recordings`, which still refuses while the run's own files are growing. Manual strips, the per-mouse export and the archive jobs keep the rule above. See [[2026-10-28-per-port-console-port]].
+
 - **Why.** A run started through the recording console (127.0.0.1:8600) is stripped and uploaded automatically by `eeg-recorder/backend/postprocess.py` when the scheduler stops it ([[pipeline-architecture]]). Doing it by hand is redundant, and competing for the same NVMe with a live 8-animal recording risks the thing that cannot be repeated.
 - **`RIG BUSY`.** `strip_channels.py --dry-run` prints `RIG BUSY` for exactly this reason; treat that line as a stop, not a warning. `--require-idle` makes it a hard refusal (see section 4, and [[radix-s3-archive]] for the same rule on the archive).
 - **How to apply.** If stripping is asked for while `api/state` shows `active_run: RECORDING`, say the run will strip itself on stop and offer to do any manual strip after it finishes. A dry run is fine; the real thing waits.

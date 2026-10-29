@@ -2,10 +2,12 @@
 """runs.py -- the durable record of what the rig was asked to do, and what happened.
 
 A "run" is one press of Record, from the moment a person sets it up to the moment
-its stripped copy is verified on the NAS. Because recording on this box is GLOBAL
-(one XDAQ, one R_ON for all four ports -- radiens 4.0.0 has no per-port control),
-a run owns the WHOLE RIG for its duration, and the per-animal detail it carries is
-what makes the single resulting file separable afterwards.
+its stripped copy is verified on the NAS. Until 2026-10-28 recording on this box was
+GLOBAL (one XDAQ, one R_ON for all four ports -- radiens 4.0.0 had no per-port
+control), so a run owned the WHOLE RIG and one combined file. Since 2026-10-28
+(Allego 4.1.2, radiens-core 0.1.2) a run records exactly ITS PORTS, each into its
+own file (`port_files`), and runs on disjoint ports may record at the same time.
+The per-animal detail a run carries is still what makes each file attributable.
 
 WHY SQLITE AND NOT A JSON FILE
     A 24 h recording outlives any process that started it. The service will be
@@ -174,6 +176,7 @@ CREATE TABLE IF NOT EXISTS runs (
     enumerated_json  TEXT,      -- what Allego reported at start: EVIDENCE, not a promise
     note             TEXT,
     results_json     TEXT NOT NULL DEFAULT '{}',
+    port_files_json  TEXT,      -- {port: {base_name, data_path}}; empty for pre-2026-10-28 runs
     error            TEXT
 );
 CREATE INDEX IF NOT EXISTS runs_state ON runs(state);
@@ -218,6 +221,10 @@ class Run:
     note: str | None = None
     results: dict = field(default_factory=dict)
     error: str | None = None
+    # One file per port since 2026-10-28. Old runs (one combined file) leave this
+    # empty and keep base_name/data_path; new runs ALSO set those to the first
+    # port's file for backward compatibility, but consumers iterate port_files.
+    port_files: dict = field(default_factory=dict)
 
     @property
     def occupied(self) -> list[str]:
@@ -227,9 +234,15 @@ class Run:
     def mice(self) -> dict:
         return {s: v["mouse_id"] for s, v in self.slots.items() if v.get("mouse_id")}
 
+    @property
+    def ports(self) -> list[str]:
+        """The ports this run records: exactly the ports of its occupied slots."""
+        return sorted({slot[0] for slot in self.occupied})
+
     def to_dict(self) -> dict:
         d = asdict(self)
         d["occupied"] = self.occupied
+        d["ports"] = self.ports
         return d
 
 
@@ -249,7 +262,7 @@ class RunStore:
             # raise. Additive only: no column is ever dropped or retyped here.
             have = {r["name"] for r in c.execute("PRAGMA table_info(runs)")}
             for col in ("batch_name", "nas_dir",
-                        "layout_json", "enumerated_json"):
+                        "layout_json", "enumerated_json", "port_files_json"):
                 if col not in have:
                     c.execute(f"ALTER TABLE runs ADD COLUMN {col} TEXT")
 
@@ -298,7 +311,8 @@ class RunStore:
             actual_start=r["actual_start"], actual_stop=r["actual_stop"],
             base_name=r["base_name"], base_path=r["base_path"],
             data_path=r["data_path"], dest_dir=r["dest_dir"], note=r["note"],
-            results=json.loads(r["results_json"] or "{}"), error=r["error"])
+            results=json.loads(r["results_json"] or "{}"), error=r["error"],
+            port_files=json.loads(r["port_files_json"] or "{}"))
 
     def get(self, run_id: str) -> Run:
         with self._conn() as c:
@@ -320,16 +334,20 @@ class RunStore:
             rows = c.execute(q, args).fetchall()
         return [self._row(r) for r in rows]
 
-    def active(self) -> Run | None:
-        """The run that owns the rig right now, if any.
+    def active_runs(self) -> list[Run]:
+        """Every run that is STARTING/RECORDING/STOPPING right now.
 
-        At most one: recording is global, so a second concurrent run is not a
-        scheduling inconvenience, it is two people's data in one file with no
-        record of whose is whose.
+        Until 2026-10-28 there was at most one, because recording was global and
+        a second concurrent run meant two people's data in one file. Since
+        per-port recording there can be one per port; the scheduler keeps their
+        port sets disjoint.
         """
-        for r in self.list(states=(STARTING, RECORDING, STOPPING), limit=5):
-            return r
-        return None
+        return self.list(states=(STARTING, RECORDING, STOPPING), limit=50)
+
+    def active(self) -> Run | None:
+        """The first active run, or None. Kept for callers that predate per-port runs."""
+        runs = self.active_runs()
+        return runs[0] if runs else None
 
     def events(self, run_id: str, limit: int = 200) -> list[dict]:
         with self._conn() as c:
@@ -369,17 +387,24 @@ class RunStore:
         return self.get(run_id)
 
     def transition(self, run_id: str, to_state: str, *, detail: str = "",
-                   **fields) -> Run:
+                   from_state: str | None = None, **fields) -> Run:
         """Move a run to a new state, refusing illegal moves.
 
         `fields` updates columns in the same transaction, so a state and the
-        facts that justify it can never disagree.
+        facts that justify it can never disagree. `from_state`, if given, must be
+        the current state or this raises: a background writer (the growth check)
+        uses it so it cannot rewind a run that was stopped meanwhile -- a
+        RECORDING->RECORDING write landing after RECORDING->STOPPING would
+        otherwise be the legal STOPPING->RECORDING rewind.
         """
         with self._conn() as c:
             row = c.execute("SELECT * FROM runs WHERE run_id=?", (run_id,)).fetchone()
             if not row:
                 raise RunError(f"no such run: {run_id}")
             frm = row["state"]
+            if from_state is not None and frm != from_state:
+                raise IllegalTransition(
+                    f"run {run_id} is {frm}, not {from_state}; not written")
             allowed = LEGAL.get(frm, set())
             # A FAILURE may be recorded from ANY non-terminal state. A start can
             # fail while still SCHEDULED (missed its instant, or another run owns
@@ -400,7 +425,7 @@ class RunStore:
                     prev.update(v)
                     sets.append("results_json=?")
                     args.append(json.dumps(prev))
-                elif k in ("layout", "enumerated"):
+                elif k in ("layout", "enumerated", "port_files"):
                     sets.append(f"{k}_json=?")
                     args.append(json.dumps(v))
                 elif k in ("slots", "keep_labels"):

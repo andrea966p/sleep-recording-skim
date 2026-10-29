@@ -70,12 +70,16 @@ past_hard_stop() {
   (( now >= 8*60+30 && hh < 20 ))
 }
 
+# 2026-10-28: radiens-core. record_mode is an IntEnum, so compare .name, never str().
+# FAILS SAFE: the old version read "R_ON" only, so an import error, a gRPC failure or a
+# timeout (empty output) counted as "idle, go ahead with heavy disk work". Now only an
+# explicit "OFF" means idle; anything else (ON, empty, error text) defers.
 recording_active() {
   local m
   m=$(cd "$REPO" && PYTHONPATH="$REPO" timeout 30 "$PY" -c "
-from radiens.allego_client import AllegoClient
-print(AllegoClient().get_status().recording.mode)" 2>/dev/null | tail -1)
-  [[ "$m" == "R_ON" ]]
+from radiens_core import AllegoClient
+print(AllegoClient().get_status().recording.record_mode.name)" 2>/dev/null | tail -1)
+  [[ "$m" != "OFF" ]]
 }
 
 human() { python3 -c "print(f'{$1/1e9:.1f} GB')" 2>/dev/null || echo "$1 B"; }

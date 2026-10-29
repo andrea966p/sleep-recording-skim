@@ -1,6 +1,6 @@
 """qc/record_block.py must refuse before touching Allego, and must never stop a recording it did not start.
 
-Why: recording is GLOBAL in radiens 4.0.0. A trial block that overlaps a console run, or that calls stop()
+Why: a start or stop with no port acts on every port (Allego 4, radiens-core 0.1.2). A trial block that overlaps a console run, or that calls stop()
 after its own start was refused, would end someone else's recording (2026-10-02).
 """
 import datetime as dt
@@ -86,32 +86,36 @@ class FakeAllego(types.ModuleType):
 
     def preflight(self, dest, min_free_gb=0):
         self.calls.append("preflight")
-        return {"free_gb": 600, "status": {"system_mode": "XDAQ_ONE_REC", "sample_freq": 1000.0}}
+        return {"free_gb": 600, "status": {"system_mode": "XDAQ_CORE_REC", "sample_freq": 1000.0}}
 
     def _client(self):
         outer = self
 
         class C:
-            def set_streaming(self, mode):
-                outer.calls.append(f"stream_{mode}")
+            def start_streaming(self):
+                outer.calls.append("start_streaming")
 
             def get_status(self):
                 outer.t += outer.stream_step
-                return types.SimpleNamespace(stream=types.SimpleNamespace(time_range=[0.0, outer.t]))
+                return types.SimpleNamespace(streaming=types.SimpleNamespace(primary_cache_t_range=[0.0, outer.t]))
         return C()
 
     def start(self, dest, base_name="", settle_s=0, min_free_gb=0):
         self.calls.append("start")
         if self.start_raises:
-            raise self.PreflightFailed("a recording is ALREADY running (R_ON) -- refusing to disturb it")
-        return {"base_name": base_name + "_0__uid1003-10-00-00", "base_path": f"{dest}/{base_name}",
-                "data_path": f"{dest}/{base_name}_data.xdat"}
+            raise self.PreflightFailed("a recording is ALREADY running (ON) -- refusing to disturb it")
+        name = base_name + "_portA_0__uid1003-10-00-00"
+        return {"base_name": name, "base_path": f"{dest}/{name}",
+                "data_path": f"{dest}/{name}_data.xdat",
+                "port_files": {"A": {"base_name": name, "data_path": f"{dest}/{name}_data.xdat"}}}
 
     def confirm_growing(self, path, window_s=40):
         self.calls.append("confirm"); return {"growing": True, "gb_per_h": 0.48}
 
-    def stop(self, stop_streaming=True):
-        self.calls.append("stop"); return {"before": "R_ON", "after": "R_OFF"}
+    def stop(self, ports, stop_streaming=True):
+        # allego.stop() requires explicit ports (2026-10-28): only the ones this block started
+        assert ports == ["A"], ports
+        self.calls.append("stop"); return {"before": {"A": "ON"}, "after": {"A": "OFF"}}
 
 
 def _fake(monkeypatch, **kw):

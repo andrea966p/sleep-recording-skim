@@ -59,7 +59,7 @@ mouse 4-pin dura electrode → tether → slip ring → **C3410** adapter → **
 - **Pass criterion:** ground beeps end-to-end; power reads ~3.3–3.6 V; no shorts.
 
 ## Phase 3 — Launch Allego, set the mode
-- **Do:** open Allego → set Mode = **"XDAQ One (G1) with XR Headstage"** (`XDAQ_ONE_REC`). Reference: [[radiens-software-reference]]; troubleshooting: [[intan-headstage-troubleshooting]].
+- **Do:** open Allego → set Mode = **"XDAQ One (G1) with XR Headstage"** (`XDAQ_ONE_REC`; `XDAQ_CORE_REC` on Allego 4.1.2, 2026-10-28). Reference: [[radiens-software-reference]]; troubleshooting: [[intan-headstage-troubleshooting]].
 - **Pass criterion:** the port shows a channel count > 0 (e.g. 32), **not** 0. If 0 → wrong mode or detection fault ([[intan-headstage-troubleshooting]], socket-swap test).
 
 ## Phase 4 — Set the sample rate

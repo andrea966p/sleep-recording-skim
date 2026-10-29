@@ -285,6 +285,9 @@ def refusals():
                FakeRun(slots={"A1": {"mouse_id": "M", "recording_type": "nonsense"}},
                        batch_name="X"), CFG),
            P.PresetError, "no code")
+    expect("refuse: a name that is not an Allego base",
+           lambda: naming.parse_allego_base("allego_portZ_0__uid1028"),
+           naming.NamingError, "not an allego base")
 
     import nas_upload as NU
     for comp in ("..", "a/b", "", "x y"):
@@ -294,13 +297,28 @@ def refusals():
                NU.UploadRefused, "unsafe")
 
 
+def t_allego_base_per_port_and_old():
+    """Since 2026-10-28 each port has its own file; old combined names still parse."""
+    assert naming.allego_base("b", 0, "1028-18-36-51") == "allego_portB_0__uid1028-18-36-51"
+    new = naming.parse_allego_base("allego_portB_0__uid1028-18-36-51_data.xdat")
+    assert new == {"base": "allego", "port": "B", "n": 0, "uid": "1028-18-36-51"}, new
+    old = naming.parse_allego_base("allego_0__uid0912-08-55-18")
+    assert old == {"base": "allego", "port": None, "n": 0, "uid": "0912-08-55-18"}, old
+    # the date still comes from the uid, for the per-port name too
+    f = naming.mouse_folders(FakeRun(slots={"B1": {"mouse_id": "M1", "recording_type": "basal"}},
+                                     batch_name="X",
+                                     base_name="allego_portB_3__uid1029-08-55-18",
+                                     actual_start="2026-10-28T23:55:18Z"), CFG)
+    assert f["B1"]["folder"].startswith("20261029_"), f
+
+
 def main() -> int:
     import tempfile
     print("NAMING")
     for fn in (t_the_example_from_the_request, t_each_code_and_folder, t_there_is_no_sd_type,
                t_mixed_conditions_file_each_mouse_by_its_own_type, t_empty_slots_are_skipped,
                t_date_is_local_and_from_the_uid, t_suffix_reaches_folder_file_and_path,
-               t_preview_matches_the_real_thing):
+               t_preview_matches_the_real_thing, t_allego_base_per_port_and_old):
         check(fn.__name__, fn)
     for fn in (t_config_refuses_a_type_without_a_folder, t_upload_lands_in_the_per_mouse_tree,
                t_a_changed_csv_is_refused_by_hash, t_second_folder_for_a_mouse_gets_a_suffix,

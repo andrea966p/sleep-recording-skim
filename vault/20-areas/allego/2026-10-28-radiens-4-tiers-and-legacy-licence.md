@@ -112,6 +112,8 @@ Rules for this draft: no dashes in emails, Andrea's voice.
 - [ ] Andrea: review and send the reply above; record Rosaria's answer here.
 - [ ] Decide whether to move the rig to Allego 4 at all. The alternative in [[openephys-gui-setup-xdaq-sleep-eeg]] still stands. 🛑 No install on e10 during a recording.
 
+> [!info] 2026-10-28, later the same day: the "untested" and "cannot talk to it until ported" statements below were overtaken. Per-port recording was bench-tested and works ([[2026-10-28-per-port-recording-bench-test]]), `radiens-core` was installed into `/opt/neurosurveillance/venv` next to `radiens` 4.0.0 (the two cannot be imported together; no code imports the old one), and the console was ported but is not restarted in production yet ([[2026-10-28-per-port-console-port]]). A fresh launch later came up at 30000 Hz with the split off ([[2026-10-28-allegoserver-death-and-fresh-launch-defaults]]).
+
 ## Install on e10 (2026-10-28)
 
 - Before the install, the rig was idle (`R_OFF`, `S_OFF`, no active run). The 3.11.3 installer no longer exists, so I archived `/opt/allego`, `/opt/curate` and the configs in `~/allego-3.11.3-rollback/` (1.5 GB) as the only way back.

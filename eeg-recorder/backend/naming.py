@@ -30,6 +30,11 @@ UTC on the PREVIOUS day. See `nas_upload.local_date_from_base`.
 THE LOCAL FILES KEEP THEIR ALLEGO NAMES. Only the per-mouse CSVs carry these
 names, and every `info.json` records the Allego base it came from, so the chain
 back to the raw file is never lost.
+
+THE ALLEGO NAME IS PER PORT SINCE 2026-10-28. With split_files_by_port=True each
+port records its own file, `allego_port<X>_<N>__uid<MMDD-HH-MM-SS>` (N counts per
+port). Runs recorded before that have one combined `allego_<N>__uid<...>`, and
+both forms are accepted, because those runs are still being post-processed.
 """
 from __future__ import annotations
 
@@ -38,6 +43,11 @@ import re
 # Same character class as a mouse id (layout.MOUSE_ID_RE). This becomes a
 # directory name on a shared network share, so `../` and spaces are not negotiable.
 BATCH_RE = re.compile(r"^[A-Za-z0-9_-]{1,32}$")
+
+# `allego_portB_0__uid1028-18-36-51` (since 2026-10-28) or `allego_0__uid0912-08-55-18`.
+ALLEGO_BASE_RE = re.compile(
+    r"^(?P<base>[A-Za-z0-9-]+(?:_[A-Za-z0-9-]+)*?)_(?:port(?P<port>[A-H])_)?"
+    r"(?P<n>\d+)__uid(?P<uid>\d{4}-\d{2}-\d{2}-\d{2})$")
 
 
 class NamingError(ValueError):
@@ -65,6 +75,25 @@ def require_batch(name: str | None) -> str:
             "filed under on the NAS (02_Data_Sleep/<user>/<batch>/...). Use the "
             "registry batch id, e.g. HLBSSL, or SCREEN for a test.")
     return b
+
+
+def allego_base(port: str, n: int, uid: str, base: str = "allego") -> str:
+    """The canonical per-port Allego base name: `allego_portA_0__uid1028-18-36-08`."""
+    return f"{base}_port{port.upper()}_{int(n)}__uid{uid}"
+
+
+def parse_allego_base(name: str) -> dict:
+    """{base, port, n, uid} from an Allego base name, new or old form.
+
+    `port` is None for a pre-2026-10-28 combined file. A trailing `_data.xdat`,
+    `_timestamp.xdat` or `.xdat.json` is ignored.
+    """
+    stem = re.sub(r"(_data\.xdat|_timestamp\.xdat|\.xdat\.json)$", "", str(name or ""))
+    m = ALLEGO_BASE_RE.match(stem)
+    if not m:
+        raise NamingError(f"{name!r} is not an Allego base name "
+                          "(allego_port<X>_<N>__uid<MMDD-HH-MM-SS> or allego_<N>__uid...)")
+    return {"base": m["base"], "port": m["port"], "n": int(m["n"]), "uid": m["uid"]}
 
 
 def n_mice(slots: dict) -> int:

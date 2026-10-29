@@ -33,8 +33,8 @@ Related: [[signal-mapping-guide]] (how to build + select the channel map), [[sig
 
 When Allego is closed and reopened, or when the XDAQ / headstage **re-enumerates** (unplug, power blip, backend crash + restart), the running configuration is lost and has to be typed back in by hand:
 
-- acquisition **Mode** = `XDAQ One (G1) with XR Headstage` (`XDAQ_ONE_REC`)
-- **Sample Rate** = 1000 S/s (Allego's floor; we decimate offline)
+- acquisition **Mode** = `XDAQ One (G1) with XR Headstage` (`XDAQ_ONE_REC`; on Allego 4.1.2 the mode is `XDAQ_CORE_REC`, 2026-10-28)
+- **Sample Rate** = 1000 S/s (Allego's floor; we decimate offline). 2026-10-28: Allego 4.1.2 keeps neither the rate nor "record ports in separate files" across launches (a fresh launch came up at 30000 Hz with the split off); set both again every time, and rescan the ports (`scan_ports()`) after a rate change ([[2026-10-28-allegoserver-death-and-fresh-launch-defaults]])
 - **Channel selection** = the `passthrough_64` map loaded, then per-port tick `/1-4` and `/33-36` (8-mouse map, 2nd headstage native +32)
 - **Filters** = notch now **60 Hz** (Korea mains is 60 Hz, see the 60 Hz mains discovery), highpass, etc.
 - **Montage / references**

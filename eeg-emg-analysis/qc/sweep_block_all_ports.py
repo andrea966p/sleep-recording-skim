@@ -9,15 +9,16 @@ Channel roles depend on the cohort:
 
 Every sweep is written to its own CSV, plus one _census_log.tsv for the block.
 Sweeps run back to back; a 256 ch sweep takes ~31 s.
+🔑 Impedance needs streaming OFF and no port recording (radiens-core 0.1.2 on Allego 4, 2026-10-28): the
+call is refused while streaming, and impedance is a rig-wide operation, so no port may be recording.
 
 Usage:
   python sweep_block_all_ports.py OUTDIR N CADENCE CONFIG [--roles eeg,emg,ecg]
 """
 import argparse, csv, os, time
 from datetime import datetime
-import grpc, radiens.utils.interceptors as itc
-from radiens.allego_client import AllegoClient
-from radiens.grpc_radiens import allegoserver_pb2_grpc as ag, common_pb2 as cm, datasource_pb2 as ds
+from radiens_core import AllegoClient
+from radiens_core.exceptions import RadiensError
 
 ap = argparse.ArgumentParser()
 ap.add_argument("outdir")
@@ -40,10 +41,6 @@ ANIMALS = [
 WATCH = [s for _, chans in ANIMALS for _, s in chans]
 
 client = AllegoClient(); client.get_status()
-channel = grpc.intercept_channel(
-    grpc.insecure_channel("127.0.0.1:50051"),
-    itc.MetadataClientInterceptor(id_token=itc.SessionMetaData._instance._id_token))
-stub = ag.AllegoCoreStub(channel)
 
 os.makedirs(args.outdir, exist_ok=True)
 log = open(os.path.join(args.outdir, "_census_log.tsv"), "a", buffering=1)
@@ -53,12 +50,12 @@ if log.tell() == 0:
 for n in range(1, args.n + 1):
     t0 = time.time(); stamp = datetime.now()
     try:
-        reply = stub.GetIntanImpedance(ds.ImpedanceRequest(port=cm.B), timeout=600)
-    except grpc.RpcError as exc:
-        print(f"[{n:02d}] RPC FAILED {exc.code()} {exc.details()}", flush=True)
+        imp = client.get_intan_impedance("B")
+    except RadiensError as exc:
+        print(f"[{n:02d}] RPC FAILED {exc}", flush=True)
         time.sleep(max(0.0, args.cadence - (time.time() - t0))); continue
 
-    vals = {x.ntvChanIdx: (x.zMag / 1e6, x.zPhase) for x in reply.impedances}
+    vals = {x.ntv_chan_idx: (x.magnitude_ohm / 1e6, x.phase_deg) for x in imp.measurements}
     if len(vals) != 256:
         print(f"[{n:02d}] WARNING n={len(vals)}, expected 256", flush=True)
 

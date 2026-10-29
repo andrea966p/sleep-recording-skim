@@ -11,15 +11,21 @@ records keeping the EEG scheduling path separate as a decision rather than an
 accident. A bug in recording control must not be able to take video recording
 down, and vice versa. Different port, different unit, different process.
 
-    GET  /api/state              everything the page polls: allego, storage, nas, active run
+    GET  /api/state              everything the page polls: allego, storage, nas,
+                                 active runs (one per port set), rig_busy
+    GET  /api/ports              per-port state, next reservation, recording config
+    GET  /api/ports/<P>/impedance  the last saved measurement of port P
+    POST /api/ports/<P>/impedance  measure port P (whole rig idle only, else 409)
+    POST /api/allego/restart     restart Allego in its CURRENT mode, 1000 Hz back (idle only)
     GET  /api/users              users + presets, for the setup form
     GET  /api/presets/<name>     resolved slots and labels
-    POST /api/runs               create a run (draft, or scheduled if given instants)
+    POST /api/runs               create a run (draft, or scheduled if given instants);
+                                 409 if its ports are booked in an overlapping window
     GET  /api/runs               history
     GET  /api/runs/<id>          one run plus its event log
     POST /api/runs/<id>/start    start now
     POST /api/runs/<id>/stop     stop now
-    POST /api/runs/<id>/schedule {start_at, stop_at}
+    POST /api/runs/<id>/schedule {start_at, stop_at}  (409 on overlap, as above)
     POST /api/runs/<id>/postprocess   re-run QC/strip/upload for a stuck run
     POST /api/runs/<id>/abort    abandon a draft or scheduled run
 """
@@ -50,6 +56,8 @@ import storage as ST
 HOST = os.environ.get("EEG_RECORDER_HOST", "127.0.0.1")
 PORT = int(os.environ.get("EEG_RECORDER_PORT", "8600"))
 RAW_ROOT = Path(os.environ.get("EEG_RAW_ROOT", "/home/skimlab/radix/data"))
+# Impedance results sit beside runs.db, so EEG_RECORDER_STATE moves both.
+IMPEDANCE_DIR = R.STATE_DIR / "impedance"
 # The UI is a single self-contained page, served straight from here. No build
 # step, no node_modules, nothing to go stale on a machine whose real job is
 # recording. Edit the file, reload the browser.
@@ -77,23 +85,126 @@ def _err(msg: str, code: int = 400):
 # --------------------------------------------------------------------------- #
 # state
 # --------------------------------------------------------------------------- #
+def _active_dicts(st: dict) -> list[dict]:
+    """Active runs with bytes_on_disk, and their run/file/bytes written into the
+    matching ports of an allego.status() dict.
+
+    bytes_on_disk is {port: bytes} for a per-port run, one int for an old
+    combined-file run.
+    """
+    out = []
+    for run in store.active_runs():
+        d = run.to_dict()
+        if run.port_files:
+            d["bytes_on_disk"] = {p: allego.bytes_now(f["data_path"])
+                                  for p, f in run.port_files.items()}
+        elif run.data_path:
+            d["bytes_on_disk"] = allego.bytes_now(run.data_path)
+        for p in run.ports:
+            row = (st.get("ports") or {}).get(p)
+            if row is not None:
+                f = run.port_files.get(p) or {}
+                row.update(run_id=run.run_id, owner=run.owner,
+                           file=f.get("base_name"),
+                           bytes=(d["bytes_on_disk"].get(p)
+                                  if isinstance(d.get("bytes_on_disk"), dict) else None))
+        out.append(d)
+    return out
+
+
 @app.get("/api/state")
 def api_state():
-    active = store.active()
+    st = allego.status()
+    actives = _active_dicts(st)
     out = {
         "utc": R.utcnow(),
         "local": datetime.now().astimezone().isoformat(timespec="seconds"),
-        "allego": allego.status(),
+        "allego": st,
         "storage": ST.status(RAW_ROOT),
         "nas": nas_upload.nas_status(),
-        "active_run": active.to_dict() if active else None,
+        "active_runs": actives,
+        "active_run": actives[0] if actives else None,     # pre-2026-10-28 callers
+        "rig_busy": sched.rig_busy(),
         "worker_busy": worker.current,
         "pending_upload": [r.run_id for r in store.list(states=(R.UPLOAD_PENDING,),
                                                         limit=20)],
     }
-    if active and active.data_path:
-        out["active_run"]["bytes_on_disk"] = allego.bytes_now(active.data_path)
     return jsonify(out)
+
+
+# --------------------------------------------------------------------------- #
+# ports: per-port state, impedance, restart
+# --------------------------------------------------------------------------- #
+@app.get("/api/ports")
+def api_ports():
+    st = allego.status()
+    _active_dicts(st)
+    sel = allego.selected_counts() if st["reachable"] else {}
+    booked = sorted((r for r in store.list(states=(R.SCHEDULED,), limit=200)
+                     if r.scheduled_start),
+                    key=lambda r: SCH.parse_instant(r.scheduled_start))
+    for p, row in st["ports"].items():
+        nxt = next((r for r in booked if p in r.ports), None)
+        row["next_reservation"] = ({"run_id": nxt.run_id, "owner": nxt.owner,
+                                    "start": nxt.scheduled_start,
+                                    "stop": nxt.scheduled_stop} if nxt else None)
+        row["selected_channels"] = sel.get(p, 0) if sel else None
+    return jsonify({
+        "ports": st["ports"],
+        "recording_config": {"base_file_path": st["base_path"],
+                             "base_file_name": st["base_name"],
+                             "split_files_by_port": st["split_files_by_port"],
+                             "recording_type": st["recording_type"]},
+        "sample_freq": st["sample_freq"], "system_mode": st["system_mode"]})
+
+
+def _port_or_404(port: str) -> str | None:
+    port = port.upper()
+    return port if port in P.PORTS else None
+
+
+@app.get("/api/ports/<port>/impedance")
+def api_impedance_last(port):
+    port = _port_or_404(port)
+    f = IMPEDANCE_DIR / f"port{port}.json"
+    if not port or not f.exists():
+        return _err(f"no saved impedance measurement for port {port}", 404)
+    return jsonify(json.loads(f.read_text()))
+
+
+@app.post("/api/ports/<port>/impedance")
+def api_impedance(port):
+    port = _port_or_404(port)
+    if not port:
+        return _err("unknown port", 404)
+    try:
+        with sched.rig_exclusive(f"impedance measurement on port {port}"):
+            res = allego.impedance(port)
+    except (SCH.RigBusy, allego.PreflightFailed) as exc:
+        return _err(exc, 409)
+    except Exception as exc:
+        return _err(f"{type(exc).__name__}: {exc}", 500)
+    IMPEDANCE_DIR.mkdir(parents=True, exist_ok=True)
+    tmp = IMPEDANCE_DIR / f".port{port}.json.tmp"
+    tmp.write_text(json.dumps(res, indent=1))
+    tmp.replace(IMPEDANCE_DIR / f"port{port}.json")      # never a half-written file
+    return jsonify(res)
+
+
+@app.post("/api/allego/restart")
+def api_allego_restart():
+    # The body is ignored on purpose: the mode is read from Allego, never taken
+    # from a request (licence rule, 2026-10-28).
+    try:
+        with sched.rig_exclusive("restarting Allego"):
+            return jsonify(allego.restart())
+    except (SCH.RigBusy, allego.PreflightFailed) as exc:
+        return _err(exc, 409)
+    except Exception as exc:
+        return _err(f"{type(exc).__name__}: {exc}", 500)
+
+
+# Overlap of bookings: scheduler.overlap (shared with Start now).
 
 
 @app.get("/api/users")
@@ -145,8 +256,8 @@ def api_layout_resolve():
     out["roles"] = {s: [lay.role_of(s, l) for l in lay.labels_for_slot(s)]
                     for s in lay.slots}
     st = allego.status()
-    out["check"] = lay.check(st.get("ports") or {})
-    out["enumerated"] = st.get("ports") or {}
+    out["check"] = lay.check(allego.port_counts(st))
+    out["enumerated"] = allego.port_counts(st)
     return jsonify(out)
 
 
@@ -309,7 +420,7 @@ def api_create_run():
     # disagrees means the strip would keep the wrong channels, and that is
     # discovered after the animals are done. Refuse here rather than warn.
     st = allego.status()
-    enumerated = st.get("ports") or {}
+    enumerated = allego.port_counts(st)
     chk = lay.check(enumerated)
     if not chk["ok"] and not body.get("ignore_layout_mismatch"):
         return _err("the declared rig does not match what Allego sees:\n  - "
@@ -320,21 +431,36 @@ def api_create_run():
     except naming.NamingError as exc:
         return _err(exc)
 
+    ports = sorted({s[0] for s, v in slots.items() if v.get("mouse_id")})
     try:
-        run = store.create(owner=owner, preset=tname, slots=slots, batch_name=batch,
-                           keep_labels=labels, with_gpio=bool(body.get("with_gpio")),
-                           layout=lay.to_dict(),
-                           scheduled_start=body.get("start_at"),
-                           scheduled_stop=body.get("stop_at"),
-                           note=body.get("note"), dest_dir=str(RAW_ROOT))
-        store.transition(run.run_id, run.state, enumerated=enumerated,
-                         detail=f"layout: {lay.setting.label}, "
-                                f"{len(lay.slots)} slots, "
-                                + ", ".join(f"{p}={enumerated.get(p, 0)}"
-                                            for p in P.PORTS))
-        run = store.get(run.run_id)
-    except R.RunError as exc:
-        return _err(exc)
+        s0 = SCH.parse_instant(body["start_at"]) if body.get("start_at") else None
+        e0 = SCH.parse_instant(body["stop_at"]) if body.get("stop_at") else None
+    except ValueError as exc:
+        return _err(f"could not parse an instant: {exc}")
+    if e0 and e0 <= (s0 or datetime.now().astimezone()):
+        return _err("stop_at must be after start_at (or after now, for a run with no start)")
+
+    # The overlap check and the create are ONE step under the store's (re-entrant)
+    # lock, so two bookings sent at the same moment cannot both pass the check.
+    with store._lock:
+        try:
+            clash = SCH.overlap(store, ports, body.get("start_at"), body.get("stop_at"))
+            if clash:
+                return _err(clash, 409)
+            run = store.create(owner=owner, preset=tname, slots=slots, batch_name=batch,
+                               keep_labels=labels, with_gpio=bool(body.get("with_gpio")),
+                               layout=lay.to_dict(),
+                               scheduled_start=body.get("start_at"),
+                               scheduled_stop=body.get("stop_at"),
+                               note=body.get("note"), dest_dir=str(RAW_ROOT))
+            store.transition(run.run_id, run.state, enumerated=enumerated,
+                             detail=f"layout: {lay.setting.label}, "
+                                    f"{len(lay.slots)} slots, "
+                                    + ", ".join(f"{p}={enumerated.get(p, 0)}"
+                                                for p in P.PORTS))
+            run = store.get(run.run_id)
+        except R.RunError as exc:
+            return _err(exc)
     return jsonify(run.to_dict()), 201
 
 
@@ -396,14 +522,19 @@ def api_schedule(run_id):
     if e and e <= s:
         return _err("stop_at must be after start_at")
     try:
-        run = store.get(run_id)
-        if run.state not in (R.DRAFT, R.SCHEDULED):
-            return _err(f"run is {run.state}, not schedulable", 409)
-        run = store.transition(run_id, R.SCHEDULED,
-                               detail=f"scheduled {s.isoformat()}"
-                                      + (f" -> {e.isoformat()}" if e else ""),
-                               scheduled_start=s.isoformat(),
-                               scheduled_stop=e.isoformat() if e else None)
+        with store._lock:                   # check + write as one step, as at creation
+            run = store.get(run_id)
+            if run.state not in (R.DRAFT, R.SCHEDULED):
+                return _err(f"run is {run.state}, not schedulable", 409)
+            clash = SCH.overlap(store, run.ports, s.isoformat(),
+                                e.isoformat() if e else None, exclude=run_id)
+            if clash:
+                return _err(clash, 409)
+            run = store.transition(run_id, R.SCHEDULED,
+                                   detail=f"scheduled {s.isoformat()}"
+                                          + (f" -> {e.isoformat()}" if e else ""),
+                                   scheduled_start=s.isoformat(),
+                                   scheduled_stop=e.isoformat() if e else None)
     except R.RunError as exc:
         return _err(exc, 409)
     return jsonify(run.to_dict())

@@ -137,6 +137,7 @@ rm /home/skimlab/sleep-recording-skim/neurosurveillance/deploy/logs/radix-archiv
 - **The live recording is excluded by definition** — a file still being written cannot be verified.
   It gets archived on the next pass after it is stopped.
 - The NAS has 13 terabytes free, so capacity is not a constraint for a long time.
+- [ ] 2026-10-28: `radix-archive.sh` lists `--verify-only` in its usage line but has no code for it, so running it with that flag would copy files to the NAS instead of only verifying. Use `radix-archive-verify.sh` (above) to verify, and either implement the flag or remove it from the usage line. The same day the archive, S3 archive and archive-watchdog scripts stopped treating an import or gRPC failure as "not recording" and now defer ([[2026-10-28-per-port-console-port]]).
 
 Related: [[nas-backup]] ·
 [[2026-08-19-nas-backup-wrong-address]] ·

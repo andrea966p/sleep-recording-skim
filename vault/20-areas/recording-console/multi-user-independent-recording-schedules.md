@@ -1,13 +1,16 @@
 ---
 type: experiment
 area: recording-console
-status: done
+status: superseded
+superseded-by: "[[2026-10-28-per-port-recording-bench-test]]"
 status-note: "open-todo"
 tags: [procedure, todo, radiens, allego, multi-user, scheduling, xdaq]
 created: 2026-07-14
 ---
 
 # Multi-User Independent Recording Schedules — TODO
+
+> [!success] 2026-10-28: per-port recording now works, and the console books per port. The 2026-09-11 retraction and the 2026-10-23 decision "recording stays global" below were true for radiens 4.0.0 on Allego 3.11.3; the bench test on Allego 4.1.2 with radiens-core 0.1.2 retracts them ([[2026-10-28-per-port-recording-bench-test]]). The console ported to per-port runs, refuses overlapping bookings with HTTP 409 and records several runs at once on different ports ([[2026-10-28-per-port-console-port]]). Status set to superseded; the history below is kept, and the section 2 workaround (record the union, slice afterwards) is now only the fallback for runs recorded on the old software. The open TODOs in section 3 about `start_recording(port=)` are answered by the bench test; the second-XDAQ item was a fallback for the case that per-port control did not exist. Still open: a 24 to 72 h per-port run with several owners.
 
 > [!info] 2026-10-23, Andrea: recording stays global. What is needed is that several people can schedule their runs for following dates, and the console already accepts any number of scheduled runs ([[eeg-recording-console]]). The open part, refusing an overlapping reservation when it is booked, is tracked in [[_recording-console-hub]]. [[2026-10-23]]
 

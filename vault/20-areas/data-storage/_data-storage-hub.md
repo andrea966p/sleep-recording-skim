@@ -40,6 +40,7 @@ Alerts from all of these jobs go to ntfy through `nvr-notify.sh` ([[backup-archi
 
 ## Open items
 - ✅ 2026-10-23: no AWS budget alert, and none is needed (Andrea). [[radix-s3-archive]] [[2026-10-23]]
+- `radix-archive.sh` lists `--verify-only` in its usage line but has no code for it; running it with that flag would copy to the NAS (2026-10-28). [[raw-recording-archive-to-nas]]
 - Video uploader to S3 is not built; the structure is decided and waits for the cameras [[backup-architecture]]
 
 ## Everything here

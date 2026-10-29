@@ -1,8 +1,11 @@
 # Session Daemon Dependencies
 # Install: python3 -m pip install -r requirements.txt
 #
-# Note: 'radiens' is on PyPI (v4.0.0+) but installed separately via the
-# NeuroNexus installer to ensure integration with the rest of the Allego suite.
+# Note (2026-10-28): the old `radiens` 4.0.0 client is replaced by `radiens-core`
+# for Allego 4.1.2. Never import both in one process (duplicate common.proto).
+# The daemon venv is /opt/neurosurveillance/venv (radiens-core also needs pydantic).
+
+radiens-core==0.1.2
 
 paho-mqtt>=2.0,<3.0
 flask>=3.0,<4.0

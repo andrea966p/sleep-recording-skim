@@ -9,6 +9,8 @@ created: 2026-04-13
 
 # Radiens AllegoClient API — Digital I/O Reference
 
+> [!warning] 2026-10-28: this page documents the `radiens` 4.0.0 package and its `AllegoClient`, which talked to Allego 3.11.3. Allego 4.1.2 needs `radiens-core` 0.1.2, whose client has `start_recording(port=)`, `stop_recording(port=)`, `update_recording_config()` with `split_files_by_port` and a working `restart(mode=)`. Per-port recording works on it ([[2026-10-28-per-port-recording-bench-test]]), so the "no per-port recording" rows and the "Known gaps in radiens 4.0.0" section below are true for 4.0.0 only. `radiens-core` 0.1.2 is now in `/opt/neurosurveillance/venv` (2026-10-28). The old `radiens` 4.0.0 is still installed there but must not be imported: the two cannot load in one process (`duplicate file name common.proto`), and no code imports it any more. The system mode is `XDAQ_CORE_REC` on Allego 4. The console uses `radiens-core` ([[2026-10-28-per-port-console-port]]); the digital I/O tables below were not re-checked against `radiens-core`.
+
 > [!warning] Updated 2026-10-22: the `start_recording(port)` and `stop_recording(port)` rows below do not exist in the installed radiens 4.0.0 client; recording control is the global `set_recording(mode)` only. See the section "Known gaps in radiens 4.0.0" at the end of this page. [[multi-user-independent-recording-schedules]]
 
 > [!abstract] TL;DR — for non-technical readers
@@ -124,6 +126,8 @@ with AllegoClient() as client:
 The XDAQ IO Expander adds 24 more digital I/O and 6 analog I/O channels. Connects via HDMI cable to EXP1/EXP2 ports. Not needed for our basic sync setup but available for future expansion.
 
 ## Known gaps in radiens 4.0.0
+
+> [!success] 2026-10-28: the gaps "no per-port recording", "one recording, all four ports, one file" and `restart()` broken are true for `radiens` 4.0.0 on Allego 3.11.3 only. `radiens-core` 0.1.2 on Allego 4.1.2 records per port and restarts ([[2026-10-28-per-port-recording-bench-test]]). "Do not upgrade" below referred to 4.0.1 and a dev build; 4.0.1 is deprecated and broken (still do not install it), and the successor is `radiens-core`. `get_status().recording.path` and `set_recording_config()` were not re-measured on `radiens-core`; the console finds a port's file by name pattern.
 
 > [!info] Promoted from a Claude memory file on 2026-10-22
 > From the memory note `radiens-4-has-no-per-port-recording` (measured 2026-09-11). The per-port facts were already in [[multi-user-independent-recording-schedules]]; the `restart()` fact was missing from the vault.

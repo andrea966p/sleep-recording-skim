@@ -113,7 +113,7 @@ In plain language, the system went from "works for the happy path" to "survives 
 - **chamber** — A physical mouse-housing enclosure with one camera. The system has 4 (numbered 0–3). Each chamber is independent; a session in one doesn't affect the others.
 - **silo** — The collapsible UI tile representing one chamber. Stacks vertically in the desktop app.
 - **headstage** — The NeuroNexus electrode interface that plugs into the mouse and feeds Radiens.
-- **Radiens / AllegoClient** — NeuroNexus's electrophysiology acquisition software. The daemon polls its `AllegoClient` gRPC interface to know when recording is on or off.
+- **Radiens / AllegoClient** — NeuroNexus's electrophysiology acquisition software. The daemon polls its `AllegoClient` gRPC interface to know when recording is on or off. (2026-10-28: on Allego 4 the daemon code uses `radiens-core` instead of `AllegoClient`; the global on/off state still starts sessions, see [[2026-10-28-per-port-console-port]].)
 - **`R_ON` / `R_OFF`** — The two states the daemon watches Radiens for. Transitions trigger session start/end.
 - **session daemon** — The Python systemd service that orchestrates everything. Source: `~/Monitoring_project/neurosurveillance/backend/`, deployed at `/opt/neurosurveillance/session-daemon/` (symlink).
 - **sidecar JSON** — A `<session_id>_session.json` file written next to each session, containing the metadata (mouse_id, recording_type, user_name, start_time, end_time, export_status, etc.). Atomic write — never half-written.

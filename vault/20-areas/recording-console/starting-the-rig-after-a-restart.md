@@ -8,6 +8,8 @@ created: 2026-09-13
 
 # Starting everything after a restart, a crash, or a screen that went black
 
+> [!warning] 2026-10-28: on Allego 4.1.2 the mode is `XDAQ_CORE_REC` (it was `XDAQ_ONE_REC` on Allego 3.11.3), and a fresh launch does not keep the rate or the split. After EVERY launch: set 1000 Hz, turn on "record ports in separate files" (`split_files_by_port`), and if the rate was changed call `scan_ports()` before streaming, then compare the measured stream rate with wall clock (about 1.0x). A fresh launch came up at 30000 Hz with the split off, and a rate change without a rescan left a dead stream ([[2026-10-28-allegoserver-death-and-fresh-launch-defaults]]). The console enforces 1000 Hz and the split once it runs the new code ([[2026-10-28-per-port-console-port]]).
+
 > [!warning] Updated 2026-10-22: section 4 was corrected: it used to say to launch Allego with `--disable-gpu`. That flag was dropped on 2026-09-16 because it blanks the Monitor (the 262-signal canvas exceeds the software renderer's texture limit), so Allego now runs on hardware GL under kernel 7.0.0-28. The trade-off with the Mesa crash risk is still open ([[allego-mesa-gpu-crash-and-log-storm]], `_meta/contradictions/eeg-rig.md` ER-5). [[allego-blank-monitor-canvas-texture-limit]]
 
 > [!abstract] TL;DR
@@ -90,7 +92,7 @@ mnt-skimnas.automount        active (enabled at boot)
 
 === the console ===
 web page                     http://127.0.0.1:8600  (HTTP 200)
-allego                       reachable | XDAQ_ONE_REC | 1000.0 Hz | rec R_OFF
+allego                       reachable | XDAQ_CORE_REC | 1000.0 Hz | rec R_OFF
 nas                          mounted, sentinel ok, 1389 GB free
 local disk                   758 GB free, 161 h at 3.77 GB/h
 active run                   none
@@ -125,7 +127,7 @@ Launch it from the desktop as usual, then:
 
 > [!danger] CHECK THE MODE AND THE SAMPLING RATE EVERY TIME
 > A freshly launched Allego can come up in **`SMARTBOX_PRO` at 30 kHz**. This rig records
-> **`XDAQ_ONE_REC` at 1000 Hz**. Recording in the wrong mode produces a file that looks fine, is
+> **`XDAQ_CORE_REC` at 1000 Hz** (`XDAQ_ONE_REC` on Allego 3.11.3). Recording in the wrong mode produces a file that looks fine, is
 > enormous, and that this project's analysis cannot read as a sleep recording — and nothing later
 > in the chain notices. `rig-check.sh` fails loudly on this; the console header shows it too.
 

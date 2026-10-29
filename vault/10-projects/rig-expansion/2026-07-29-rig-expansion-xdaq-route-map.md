@@ -8,6 +8,8 @@ tags: [moc, scale-up, 32-mice, xdaq, kontex, snapshot]
 ---
 # Rig expansion, XDAQ 32-mouse route: the map as of 2026-07-29
 
+> [!info] 2026-10-28: "Per-mouse independent start/stop is gone with Allego" below was true for `radiens` 4.0.0 on Allego 3.11.3. On Allego 4.1.2 with `radiens-core` per-port start and stop works ([[2026-10-28-per-port-recording-bench-test]]). The snapshot is otherwise unchanged.
+
 > [!warning] Frozen snapshot, moved here from the hub on 2026-10-22
 > This is the old `_rig-expansion-hub` as it stood on 2026-07-29, kept because the document map, the three findings and the vendor timeline are still valid. **Every "right now", "today" and "tomorrow" below means 2026-07-29.** Where things stand now: [[_rig-expansion-hub]]. The separate Pinnacle wireless 16-mouse plan (settled 2026-10-19) is not covered here: [[pinnacle-wireless-plan-status]]. One link was retargeted on the move: the old 60 Hz saga link (a Claude memory slug with no vault note) now points at [[60hz-mains-hum-discovery]].
 

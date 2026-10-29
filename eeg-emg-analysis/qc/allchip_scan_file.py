@@ -104,7 +104,8 @@ def main(base, out):
     fl = {c: [ix[f"{c[0]}/{q}"] for q in range(c[1] + 2, c[1] + 16)] for c in chips}
     an = {c: [ix[f"{c[0]}/{c[1]}"], ix[f"{c[0]}/{c[1] + 1}"]] for c in chips}
     cols = sorted({i for c in chips for i in fl[c] + an[c]}); pos = {c: i for i, c in enumerate(cols)}
-    start = (dt.datetime.fromisoformat(meta["status"]["start_time"].replace("Z", "+00:00")) + dt.timedelta(hours=9)).replace(tzinfo=None)
+    # astimezone, not "+9 h": Allego 4 writes start_time already in KST (+09:00), Allego 3 in UTC (Z). 2026-10-28
+    start = dt.datetime.fromisoformat(meta["status"]["start_time"].replace("Z", "+00:00")).astimezone(dt.timezone(dt.timedelta(hours=9))).replace(tzinfo=None)
     path = base + "_data.xdat"; nsamp = os.path.getsize(path) // (nch * 4)
     W, DC, CH, PAD = fs // 10, fs // 20, CH_S * fs, 2 * fs
     sos = sg.butter(4, [1, 450], btype="band", fs=fs, output="sos")

@@ -41,6 +41,14 @@ RENUMBER OR PRESERVE -- the distinction that matters most here
   wrong-channel bug is the worst failure this project can produce, so these two
   are renumbered to range(k).
 
+  ⚠️ PER-PORT FILES (Allego 4, measured 2026-10-28): "exactly range(N)" is no
+  longer true at the source. `porttest_portB_0__uid1028-18-36-51` (35 channels)
+  carries sys_chan_idx 32..63 for its amplifier rows and 128..130 for aux/din/
+  dout -- the RIG-WIDE numbers -- and ntv_chan_name `port_B_32`..`port_B_63`.
+  `port` + `site_num` are still B + 1..32, so labels are `B/1`..`B/32` exactly
+  as in a combined file. The renumbering below already ignores the source
+  values, and the originals still go into the provenance record.
+
   `ntv_chan_idx`, `ntv_chan_name`, `chan_name`, `port`, `site_num`, `is_selected`,
   `headstage_id`, `probe_id` and all the geometry are IDENTITY. `core.criteria
   .open_xdat` builds its labels from `port` + `site_num` alone and takes the
@@ -66,15 +74,27 @@ WHAT STRIPPING COSTS, AND WHY A QC BUNDLE MUST COME FIRST
   capitals when no bundle is present, and nothing here ever deletes an original.
 
 DEPENDENCIES: numpy and the standard library only. No scipy, so this runs under
-both `/opt/neurosurveillance/venv/bin/python3` (the only interpreter with
-radiens, needed for the optional parse probe) and `~/eeg-analysis-venv`.
+both `/opt/neurosurveillance/venv/bin/python3` and `~/eeg-analysis-venv`. The
+optional parse probe used the old `radiens` package; since 2026-10-28 that
+package is never imported (it cannot talk to Allego 4 and cannot share a
+process with `radiens_core`), so `--radiens-probe` reports gate E as skipped.
+
+PER-PORT RECORDINGS (Allego 4, `split_files_by_port=True`, since 2026-10-28).
+One run is one file PER PORT, `<base>_port<X>_<N>__uid<...>`, each holding that
+port's amplifier channels plus aux_1, din_1, dout_1 (35 channels on the bench).
+Nothing here changes per file: the keep set is still resolved from the file's
+own metadata, so the caller passes only the labels on that port. The output
+name is the per-port base name, so the stripped twin, its report and its QC
+bundle all carry the port in their names. `--also-source` names the run's
+other port files for the idle check (see `rig_is_busy`).
 
 Usage
     python -m convert.strip_channels SRC_BASE [--out DIR]
         (--keep-selected | --keep-labels A/1,A/2,... | --keep-index 0,1,32,...)
         [--with-gpio] [--dry-run] [--verify full|spot] [--n-spot N]
         [--no-resume] [--force] [--radiens-probe] [--min-free-gb GB]
-        [--allow-truncated] [--require-idle] [--report PATH]
+        [--allow-truncated] [--require-idle [--also-source BASE ...]]
+        [--report PATH]
 """
 from __future__ import annotations
 
@@ -110,6 +130,11 @@ TYPE_SIGNAL_KEY = {"ai0": "pri", "ai4": "aux", "din0": "din", "dout0": "dout"}
 BYTES_PER_SAMPLE = 4          # float32 data
 BYTES_PER_TIMESTAMP = 8       # int64 timestamps
 DEFAULT_CHUNK_SAMPLES = 65_536
+# With --require-idle the rig is re-checked every this many chunks DURING the
+# strip, not only before it (2026-10-28): since runs on disjoint ports may
+# record at once, a recording can start while a long strip is running. Same
+# cadence as export/per_mouse_csv.
+IDLE_RECHECK_CHUNKS = 200
 
 
 class StripRefused(RuntimeError):
@@ -613,8 +638,8 @@ def verify_bit_exact(src_base: str, dst_data: str, keep: Sequence[int], *,
 # --------------------------------------------------------------------------- #
 
 def rig_is_busy(raw_root: Path | None = None, *, within_s: float = 120.0,
-                source_base: str | Path | None = None,
-                settle_s: float = 5.0) -> str | None:
+                source_base: str | Path | Sequence[str | Path] | None = None,
+                settle_s: float = 5.0, own_only: bool = False) -> str | None:
     """Is Allego writing right now? Returns a reason string, or None if idle.
 
     Deliberately radiens-free, so this works from `~/eeg-analysis-venv` too, and
@@ -648,19 +673,41 @@ def rig_is_busy(raw_root: Path | None = None, *, within_s: float = 120.0,
     The honest test for the source is whether anything is still appending to it:
     measure, wait, measure again. Other recordings keep the mtime rule, because
     for them "recently written" is exactly the danger.
+
+    🔑 SINCE ALLEGO 4 (2026-10-28) ONE RUN IS SEVERAL FILES. With
+    `split_files_by_port=True` every port writes its own
+    `<base>_port<X>_<N>__uid..._data.xdat`, and a run on ports A and B stops
+    both at once. Stripping A's file while judging B's by MTIME would refuse
+    on the sibling that stopped four seconds ago -- the 2026-09-14 defect
+    again, one file over. So `source_base` may be a LIST: every file of the
+    run being processed is judged by growth, all in the same settle window,
+    and only files of OTHER runs keep the mtime rule. A file of another run
+    that is still being written (a run on a disjoint port) still makes the
+    rig busy, which is the point: that is a live recording on this disk.
+
+    🔵 `own_only=True` SKIPS THE OTHER RUNS (Andrea, 2026-10-29). Per-port files
+    are about 7.5x smaller than the old combined file, so QC and the strip of a
+    per-port run may share the disk with another port's live recording. Only
+    the run's own files are judged, by growth: a file still being written is
+    never read as finished.
     """
     root = Path(raw_root) if raw_root else PATHS.RAW_ROOT
     if not root.exists():
         return None
 
-    src_data = None
-    if source_base:
-        src_data = Path(str(source_base) + "_data.xdat").resolve()
+    if source_base is None:
+        bases: list = []
+    elif isinstance(source_base, (str, os.PathLike)):
+        bases = [source_base]
+    else:
+        bases = list(source_base)
+    src_data = [Path(str(b) + "_data.xdat").resolve() for b in bases if b]
+    src_set = set(src_data)
 
     now = time.time()
-    for p in root.glob("*_data.xdat"):
+    for p in ([] if own_only else root.glob("*_data.xdat")):
         try:
-            if src_data and p.resolve() == src_data:
+            if src_set and p.resolve() in src_set:
                 continue                      # judged separately, below
             age = now - p.stat().st_mtime
         except OSError:
@@ -668,17 +715,20 @@ def rig_is_busy(raw_root: Path | None = None, *, within_s: float = 120.0,
         if age < within_s:
             return f"{p.name} was written {age:.0f} s ago"
 
-    # The source: is anything still appending to it?
-    if src_data and src_data.exists():
+    # The sources: is anything still appending to any of them? One settle
+    # window for all of them, so a four-port run waits 5 s, not 20.
+    present = [d for d in src_data if d.exists()]
+    if present:
         try:
-            a = src_data.stat().st_size
+            a = {d: d.stat().st_size for d in present}
             time.sleep(settle_s)
-            b = src_data.stat().st_size
+            b = {d: d.stat().st_size for d in present}
         except OSError:
             return None
-        if b != a:
-            return (f"{src_data.name} is STILL GROWING ({a} -> {b} bytes over "
-                    f"{settle_s:.0f} s) -- the recording has not stopped")
+        for d in present:
+            if b[d] != a[d]:
+                return (f"{d.name} is STILL GROWING ({a[d]} -> {b[d]} bytes over "
+                        f"{settle_s:.0f} s) -- the recording has not stopped")
     return None
 
 
@@ -690,6 +740,10 @@ def stale_live_flags(raw_root: Path | None = None,
     rewrites the flag when a recording stops cleanly, so a stale true means that
     recording ended some other way (the app died, or the host went down). Worth
     surfacing because such a file is also the most likely to be truncated.
+
+    Allego 4 (measured 2026-10-28 on 4.1.2) writes the flag under
+    `session_metadata.is_live_recording`, not `status.is_live_recording`;
+    both places are read so files from either version are reported.
     """
     root = Path(raw_root) if raw_root else PATHS.RAW_ROOT
     if not root.exists():
@@ -698,7 +752,9 @@ def stale_live_flags(raw_root: Path | None = None,
     out = []
     for p in sorted(root.glob("*.xdat.json")):
         try:
-            if not json.loads(p.read_text()).get("status", {}).get("is_live_recording"):
+            doc = json.loads(p.read_text())
+            if not ((doc.get("status") or {}).get("is_live_recording")
+                    or (doc.get("session_metadata") or {}).get("is_live_recording")):
                 continue
         except Exception:
             continue
@@ -747,9 +803,16 @@ def strip(src_base: str, dst_base: str, keep: Sequence[int], *,
           allow_truncated: bool = False,
           require_idle: bool = False,
           gpio_never_connected: bool = False,
+          also_sources: Sequence[str] = (),
+          ignore_other_recordings: bool = False,
           meta: dict | None = None,
           progress: Callable[[str], None] | None = print) -> dict:
     """Write the stripped triple and RAISE unless every gate passes.
+
+    `also_sources` names the OTHER per-port files of the same run (Allego 4,
+    2026-10-28). They are judged by growth like the source, not by mtime; see
+    `rig_is_busy`. `ignore_other_recordings` makes the idle check look at this
+    run's own files only, so another port's live recording does not block it.
 
     Raises StripRefused if a precondition says no (nothing was written) or
     StripFailed if bytes were written but did not verify (the output is renamed
@@ -761,7 +824,8 @@ def strip(src_base: str, dst_base: str, keep: Sequence[int], *,
                       allow_truncated=allow_truncated, meta=meta)
 
     if require_idle:
-        busy = rig_is_busy(source_base=src_base)
+        busy = rig_is_busy(source_base=[src_base, *also_sources],
+                           own_only=ignore_other_recordings)
         if busy:
             raise StripRefused(f"the rig looks busy: {busy}. Refusing to compete "
                                "with a live recording for the same disk.")
@@ -846,7 +910,38 @@ def strip(src_base: str, dst_base: str, keep: Sequence[int], *,
     dfirst = np.full(len(drop_idx), np.nan)
     dlast = np.full(len(drop_idx), np.nan)
 
+    def drop_stats(block: np.ndarray) -> None:
+        nonlocal dmin, dmax, dfirst, dlast
+        d = block[:, drop_idx].astype(np.float64, copy=False)
+        nanmask = np.isnan(d)
+        if nanmask.any():
+            dnan[:] += nanmask.sum(axis=0)
+            d = np.where(nanmask, np.nan, d)
+            dmin = np.fmin(dmin, np.nanmin(d, axis=0))
+            dmax = np.fmax(dmax, np.nanmax(d, axis=0))
+        else:
+            dmin = np.minimum(dmin, d.min(axis=0))
+            dmax = np.maximum(dmax, d.max(axis=0))
+        if bool(np.isnan(dfirst).all()):
+            dfirst = d[0].copy()
+        if bool(np.isnan(dlast).all()):
+            stacked = d
+        else:
+            stacked = np.vstack([dlast.reshape(1, -1), d])
+        dtrans[:] += (np.diff(stacked, axis=0) != 0).sum(axis=0)
+        dneq[:] += (d != dfirst).sum(axis=0)
+        dlast = d[-1].copy()
+
     src_data_path = src_base + "_data.xdat"
+    # A RESUMED STRIP MUST STILL JUDGE GATE B ON THE WHOLE FILE. The dropped-GPIO
+    # evidence lives only in memory, so before 2026-10-28 a resume judged din on
+    # the remaining rows alone and a pulse train in the first part went unseen.
+    # Resuming is now routine (a strip stops when another port starts recording),
+    # so the already-written rows are re-read for their dropped columns first.
+    if start_row and drop_idx:
+        for lo in range(0, start_row, chunk_samples):
+            drop_stats(_read_block(src_data_path, lo,
+                                   min(lo + chunk_samples, start_row), n_in))
     t0 = time.time()
     try:
         os.nice(19)
@@ -864,28 +959,21 @@ def strip(src_base: str, dst_base: str, keep: Sequence[int], *,
             h_data.update(raw)
             h_all.update(raw)
             if drop_idx:
-                d = block[:, drop_idx].astype(np.float64, copy=False)
-                nanmask = np.isnan(d)
-                if nanmask.any():
-                    dnan += nanmask.sum(axis=0)
-                    d = np.where(nanmask, np.nan, d)
-                    dmin = np.fmin(dmin, np.nanmin(d, axis=0))
-                    dmax = np.fmax(dmax, np.nanmax(d, axis=0))
-                else:
-                    dmin = np.minimum(dmin, d.min(axis=0))
-                    dmax = np.maximum(dmax, d.max(axis=0))
-                if bool(np.isnan(dfirst).all()):
-                    dfirst = d[0].copy()
-                if bool(np.isnan(dlast).all()):
-                    stacked = d
-                else:
-                    stacked = np.vstack([dlast.reshape(1, -1), d])
-                dtrans += (np.diff(stacked, axis=0) != 0).sum(axis=0)
-                dneq += (d != dfirst).sum(axis=0)
-                dlast = d[-1].copy()
+                drop_stats(block)
             if (lo // chunk_samples) % 100 == 0 and lo > start_row:
                 pct = 100.0 * (lo - start_row) / max(1, n - start_row)
                 say(f"  strip {pct:5.1f}%  ({(lo - start_row) / 1e6:.1f} M samples)")
+            if (require_idle and not ignore_other_recordings and lo > start_row
+                    and ((lo - start_row) // chunk_samples) % IDLE_RECHECK_CHUNKS == 0):
+                # settle_s=0: the sources were judged idle at the start, so
+                # this only asks whether ANOTHER recording has begun since.
+                busy = rig_is_busy(source_base=[src_base, *also_sources], settle_s=0)
+                if busy:
+                    out_fh.flush()
+                    raise StripRefused(
+                        f"the rig looks busy: {busy}. A recording started while "
+                        f"stripping; stopped at sample {hi:,} of {n:,}. The .part "
+                        "file is kept and a retry resumes from it.")
         out_fh.flush()
         os.fsync(out_fh.fileno())
     say(f"data written in {time.time() - t0:.1f} s")
@@ -1158,26 +1246,19 @@ def _radiens_probe(dst_base: str, *, expect_channels: int, expect_fs: int) -> di
     answers and rejects the file fails the gate. When the gate is skipped the
     question stays OPEN and the report says so, rather than implying a pass.
     """
-    try:
-        from radiens import FileSystemClient
-    except ImportError as exc:
-        return {"ok": None, "skipped": True,
-                "error": f"radiens not importable: {exc}",
-                "question": "unproven: no radiens in this interpreter"}
-    try:
-        fsc = FileSystemClient()
-        md = fsc.get_data_file_metadata(dst_base + "_data.xdat")
-        got_ch = getattr(md, "num_sigs", None) or getattr(md, "num_channels", None)
-        return {"ok": True, "skipped": False, "reported": str(md)[:400],
-                "channels": got_ch, "expected_channels": expect_channels}
-    except Exception as exc:
-        text = f"{type(exc).__name__}: {exc}"
-        if any(m in text for m in _PROBE_UNAVAILABLE_MARKERS):
-            return {"ok": None, "skipped": True, "error": text,
-                    "question": "unproven: no Videre hub is running on this host, "
-                                "so whether the Radiens reader accepts a stripped "
-                                "file is UNTESTED"}
-        return {"ok": False, "skipped": False, "error": text}
+    # 🛑 THE OLD `radiens` PACKAGE IS NOT IMPORTED ANY MORE (2026-10-28). It
+    # cannot authenticate to Allego 4 (`RpcException ... Error code: 16`), and
+    # it cannot share a process with `radiens_core` (`duplicate file name
+    # common.proto`), which the recorder now loads. The gate was already
+    # unanswerable on this host (no Videre hub), so it is reported as skipped
+    # with that reason rather than half-working.
+    # Kept as a function, not deleted, so the report keeps its `radiens_probe`
+    # field and `--radiens-probe` keeps saying plainly that the question is open.
+    # `_PROBE_UNAVAILABLE_MARKERS` above documents what the old probe met.
+    return {"ok": None, "skipped": True,
+            "error": "the old radiens package is not imported since 2026-10-28",
+            "question": "unproven: the Allego 4 client (radiens_core) has not been "
+                        "wired into this probe, and no Videre hub runs on this host"}
 
 
 def default_dst(src_base: str, out_dir: str | os.PathLike | None = None) -> str:
@@ -1275,6 +1356,14 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--allow-truncated", action="store_true")
     ap.add_argument("--require-idle", action="store_true",
                     help="refuse if Allego looks like it is writing")
+    ap.add_argument("--also-source", action="append", default=[],
+                    metavar="BASE",
+                    help="another per-port file of the SAME run (repeatable). "
+                         "With --require-idle it is judged by growth, like the "
+                         "source, instead of by mtime")
+    ap.add_argument("--ignore-other-recordings", action="store_true",
+                    help="with --require-idle, judge only this run's own files: "
+                         "another port's live recording does not refuse the strip")
     ap.add_argument("--gpio-never-connected", action="store_true",
                     help="gate B: drop a 'live' din anyway, because nothing was "
                          "wired to the GPIO header when this was recorded. "
@@ -1323,6 +1412,8 @@ def main(argv: list[str] | None = None) -> int:
                        allow_truncated=a.allow_truncated,
                        require_idle=a.require_idle,
                        gpio_never_connected=a.gpio_never_connected,
+                       also_sources=[PATHS.recording(b) for b in a.also_source],
+                       ignore_other_recordings=a.ignore_other_recordings,
                        meta=meta)
     except StripRefused as exc:
         print(f"REFUSED: {exc}", file=sys.stderr)

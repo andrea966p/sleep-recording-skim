@@ -56,39 +56,63 @@ def expect(name, fn, exc=Exception, want=""):
 # a fake rig
 # --------------------------------------------------------------------------- #
 class FakeAllego:
+    """Per-port, like Allego 4.1.2 (2026-10-28): each port records on its own."""
     def __init__(self):
-        self.recording = False
+        self.on: set[str] = set()               # ports recording now
         self.starts = 0
         self.stops = 0
+        self.started_ports: list[list[str]] = []
+        self.stopped_ports: list[list[str]] = []
         self.fail_start = False
         self.grew = True
+        self.dead: set[str] = set()             # port files that do not grow
         self.n = 0
         self.ports = None                       # live enumeration, when set
+        self.skipped: list[str] = []            # ports start() reports as skipped
 
-    def start(self, dest, **kw):
+    @property
+    def recording(self):
+        return bool(self.on)
+
+    def start(self, dest, ports=None, **kw):
         if self.fail_start:
             raise allego.PreflightFailed("fake preflight failure")
+        ports = sorted(ports or "ABCD")
+        busy = self.on & set(ports)
+        if busy:                                # allego.preflight refuses this too
+            raise allego.PreflightFailed(f"port {sorted(busy)[0]} is ALREADY recording")
         self.starts += 1
-        self.n += 1
-        self.recording = True
-        name = f"allego_{self.n}__uidTEST"
-        out = {"base_name": name, "base_path": f"{dest}/{name}",
-               "data_path": f"{dest}/{name}_data.xdat", "mode": "R_ON",
+        self.started_ports.append(ports)
+        self.on |= set(ports)
+        pf = {}
+        for p in ports:
+            self.n += 1
+            name = f"allego_port{p}_{self.n}__uid1028-09-00-00"
+            pf[p] = {"base_name": name, "data_path": f"{dest}/{name}_data.xdat"}
+        first = pf[ports[0]]
+        out = {"port_files": pf, "base_name": first["base_name"],
+               "base_path": f"{dest}/{first['base_name']}",
+               "data_path": first["data_path"], "mode": "ON",
                "started_at": 0.0, "dest": str(dest)}
         if self.ports is not None:
             out["ports"] = dict(self.ports)
+        out["skipped_ports"] = list(self.skipped)
         return out
 
-    def stop(self, **kw):
+    def stop(self, ports=None, **kw):
+        assert ports, "the scheduler must never stop without naming its ports"
         self.stops += 1
-        was = "R_ON" if self.recording else "R_OFF"
-        self.recording = False
-        return {"before": was, "after": "R_OFF"}
+        self.stopped_ports.append(sorted(ports))
+        before = {p: "ON" if p in self.on else "OFF" for p in ports}
+        self.on -= set(ports)
+        return {"ports": sorted(ports), "before": before,
+                "after": {p: "OFF" for p in ports}}
 
     def confirm_growing(self, path, **kw):
-        return {"growing": self.grew, "bytes_start": 0,
-                "bytes_end": 1 if self.grew else 0, "window_s": 40.0,
-                "gb_per_h": 1.05 if self.grew else 0.0}
+        grew = self.grew and not any(f"_port{p}_" in str(path) for p in self.dead)
+        return {"growing": grew, "bytes_start": 0,
+                "bytes_end": 1 if grew else 0, "window_s": 40.0,
+                "gb_per_h": 1.05 if grew else 0.0}
 
 
 def mkstore(tmp) -> R.RunStore:
@@ -650,7 +674,7 @@ def t_second_run_blocked(tmp):
     started = [x for x in (a, b) if x.state == R.RECORDING]
     blocked = [x for x in (a, b) if x.state == "FAILED_START"]
     assert len(started) == 1 and len(blocked) == 1, (a.state, b.state)
-    assert "global" in (blocked[0].error or "").lower()
+    assert "one run per port" in (blocked[0].error or "").lower(), blocked[0].error
     assert fake.starts == 1
 
 
@@ -757,6 +781,354 @@ def t_missing_port_warns_but_still_records(tmp):
 
 
 # --------------------------------------------------------------------------- #
+# per-port runs (2026-10-28): one run per PORT, not per rig
+# --------------------------------------------------------------------------- #
+def _patch(fake):
+    allego.start, allego.stop, allego.confirm_growing = fake.start, fake.stop, fake.confirm_growing
+
+
+def _wait(pred, timeout=5.0):
+    import time
+    t = time.time() + timeout
+    while time.time() < t:
+        if pred():
+            return True
+        time.sleep(0.02)
+    return False
+
+
+def t_disjoint_ports_record_concurrently(tmp):
+    s = mkstore(tmp); fake = FakeAllego(); _patch(fake)
+    sch = S.Scheduler(s, dest_dir="/tmp/fake-dest", on_event=lambda m: None)
+    now = datetime.now().astimezone()
+    a = mkrun(s, owner="andrea", start=iso(now - timedelta(seconds=5)),
+              slots={"A1": {"mouse_id": "M1", "recording_type": "basal"}})
+    b = mkrun(s, owner="diane", start=iso(now - timedelta(seconds=4)),
+              slots={"B1": {"mouse_id": "M2", "recording_type": "basal"},
+                     "C1": {"mouse_id": "M3", "recording_type": "basal"}})
+    sch.tick(now)
+    a, b = s.get(a.run_id), s.get(b.run_id)
+    assert a.state == b.state == R.RECORDING, (a.state, b.state)
+    assert fake.started_ports == [["A"], ["B", "C"]], fake.started_ports
+    assert sorted(b.port_files) == ["B", "C"] and b.ports == ["B", "C"]
+    assert b.data_path == b.port_files["B"]["data_path"], "data_path = first port's file"
+    assert [r.run_id for r in s.active_runs()] and len(s.active_runs()) == 2
+    d = b.to_dict()
+    assert d["ports"] == ["B", "C"] and d["port_files"] == b.port_files
+
+
+def t_stop_stops_only_own_ports(tmp):
+    s = mkstore(tmp); fake = FakeAllego(); _patch(fake)
+    sch = S.Scheduler(s, dest_dir="/tmp/fake-dest", on_event=lambda m: None)
+    a = mkrun(s, slots={"A1": {"mouse_id": "M1", "recording_type": "basal"},
+                        "A2": {"mouse_id": "M4", "recording_type": "basal"}})
+    b = mkrun(s, owner="diane", slots={"B1": {"mouse_id": "M2", "recording_type": "basal"}})
+    sch.start_now(a.run_id); sch.start_now(b.run_id)
+    sch.stop_now(a.run_id)
+    assert fake.stopped_ports == [["A"]], fake.stopped_ports
+    assert fake.on == {"B"}, f"B must keep recording, on={fake.on}"
+    assert s.get(b.run_id).state == R.RECORDING
+    # and a SCHEDULED stop names its ports too
+    now = datetime.now().astimezone()
+    c = mkrun(s, slots={"D1": {"mouse_id": "M5", "recording_type": "basal"}},
+              start=iso(now - timedelta(seconds=5)), stop=iso(now - timedelta(seconds=1)))
+    sch.tick(now); sch.tick(now)
+    assert s.get(c.run_id).state == R.STOPPED
+    assert fake.stopped_ports[-1] == ["D"] and fake.on == {"B"}, (fake.stopped_ports, fake.on)
+
+
+def t_growth_is_confirmed_per_port_file(tmp):
+    s = mkstore(tmp); fake = FakeAllego(); _patch(fake); fake.dead = {"C"}
+    sch = S.Scheduler(s, dest_dir="/tmp/fake-dest", on_event=lambda m: None)
+    r = mkrun(s, slots={"B1": {"mouse_id": "M2", "recording_type": "basal"},
+                        "C1": {"mouse_id": "M3", "recording_type": "basal"}})
+    sch.start_now(r.run_id)
+    assert _wait(lambda: "growth" in s.get(r.run_id).results), "growth never recorded"
+    g = s.get(r.run_id).results["growth"]
+    assert g["growing"] is False, "one dead port file must make the run NOT growing"
+    assert g["ports"]["B"]["growing"] and not g["ports"]["C"]["growing"], g
+    assert s.get(r.run_id).state == R.RECORDING
+
+
+def t_growth_check_cannot_rewind_a_stop(tmp):
+    """The growth write must not turn STOPPING back into RECORDING."""
+    s = mkstore(tmp)
+    r = mkrun(s)
+    for st in (R.SCHEDULED, R.STARTING, R.RECORDING, R.STOPPING):
+        s.transition(r.run_id, st)
+    try:
+        s.transition(r.run_id, R.RECORDING, from_state=R.RECORDING, results={"growth": {}})
+    except R.IllegalTransition:
+        pass
+    else:
+        raise AssertionError("a stale RECORDING write was accepted")
+    assert s.get(r.run_id).state == R.STOPPING
+
+
+def t_port_files_column_is_migrated(tmp):
+    """A runs.db from before 2026-10-28 has no port_files_json column."""
+    import sqlite3
+    db = Path(tmp) / "old.db"
+    old_schema = R.SCHEMA.replace(
+        "    port_files_json  TEXT,      -- {port: {base_name, data_path}}; "
+        "empty for pre-2026-10-28 runs\n", "")
+    assert "port_files_json" not in old_schema, "test did not remove the column"
+    c = sqlite3.connect(db); c.executescript(old_schema)
+    c.execute("INSERT INTO runs (run_id,state,owner,preset,created_utc,updated_utc,"
+              "slots_json,keep_labels_json,data_path,base_name,results_json) VALUES "
+              "('old1','DONE','andrea','p','2026-09-01T00:00:00Z','2026-09-01T00:00:00Z',"
+              "'{\"A1\": {\"mouse_id\": \"M1\"}}','[\"A/1\"]','/x/allego_0__uid0901-09-00-00_data.xdat',"
+              "'allego_0__uid0901-09-00-00','{}')")
+    c.commit(); c.close()
+    s = R.RunStore(db)
+    old = s.get("old1")
+    assert old.port_files == {} and old.data_path.endswith("_data.xdat"), old
+    assert old.to_dict()["ports"] == ["A"]
+    r = mkrun(s)
+    pf = {"A": {"base_name": "allego_portA_0__uid1028-09-00-00", "data_path": "/x/a"}}
+    for st in (R.SCHEDULED, R.STARTING):
+        s.transition(r.run_id, st)
+    assert s.transition(r.run_id, R.RECORDING, port_files=pf).port_files == pf
+    assert R.RunStore(db).get(r.run_id).port_files == pf, "port_files not persisted"
+
+
+def t_rewind_several_concurrent_runs(tmp):
+    s = mkstore(tmp)
+    a = mkrun(s, slots={"A1": {"mouse_id": "M1", "recording_type": "basal"}})
+    b = mkrun(s, slots={"B1": {"mouse_id": "M2", "recording_type": "basal"}})
+    c = mkrun(s, slots={"C1": {"mouse_id": "M3", "recording_type": "basal"}})
+    for st in (R.SCHEDULED, R.STARTING):
+        s.transition(a.run_id, st)
+    for st in (R.SCHEDULED, R.STARTING, R.RECORDING, R.STOPPING):
+        s.transition(b.run_id, st)
+    for st in (R.SCHEDULED, R.STARTING, R.RECORDING):
+        s.transition(c.run_id, st)
+    moved = s.rewind_in_flight()
+    assert sorted(moved) == sorted([a.run_id, b.run_id]), moved
+    assert s.get(a.run_id).state == R.SCHEDULED
+    assert s.get(b.run_id).state == R.RECORDING
+    assert s.get(c.run_id).state == R.RECORDING, "a RECORDING run is not in flight"
+
+
+def t_rig_lock(tmp):
+    """Impedance/restart need the rig idle; a start never runs beside them."""
+    s = mkstore(tmp); fake = FakeAllego(); _patch(fake)
+    sch = S.Scheduler(s, dest_dir="/tmp/fake-dest", on_event=lambda m: None)
+    now = datetime.now().astimezone()
+
+    with sch.rig_exclusive("impedance measurement on port A"):        # idle: allowed
+        assert sch.rig_busy() == {"busy": True,
+                                  "reason": "impedance measurement on port A"}
+    assert sch.rig_busy() == {"busy": False, "reason": None}
+
+    # a start due at an instant while the lock is held FAILS, clearly, without starting
+    old_wait, S.RIG_LOCK_WAIT_S = S.RIG_LOCK_WAIT_S, 0.05
+    try:
+        r = mkrun(s, start=iso(now - timedelta(seconds=5)))
+        # (rig_exclusive itself would refuse here, a start is due; hold the lock
+        # the way a restart that began just before the booking would)
+        sch.rig_lock.acquire(); sch.rig_reason = "restarting Allego"
+        try:
+            sch.tick(now)
+        finally:
+            sch.rig_reason = None; sch.rig_lock.release()
+        r = s.get(r.run_id)
+        assert r.state == "FAILED_START" and "restarting allego" in r.error.lower(), \
+            (r.state, r.error)
+        assert fake.starts == 0
+    finally:
+        S.RIG_LOCK_WAIT_S = old_wait
+
+    # a run recording -> rig-wide operations refused
+    a = mkrun(s, slots={"A1": {"mouse_id": "M1", "recording_type": "basal"}})
+    sch.start_now(a.run_id)
+    try:
+        with sch.rig_exclusive("impedance measurement on port B"):
+            raise AssertionError("impedance allowed while a run records")
+    except S.RigBusy as exc:
+        assert a.run_id in str(exc), exc
+    assert not sch.rig_lock.locked(), "a refused rig op must release the lock"
+    sch.stop_now(a.run_id)
+
+    # a start due within 10 minutes -> refused too
+    mkrun(s, start=iso(datetime.now().astimezone() + timedelta(minutes=5)))
+    try:
+        with sch.rig_exclusive("restarting Allego"):
+            raise AssertionError("restart allowed 5 min before a scheduled start")
+    except S.RigBusy as exc:
+        assert "scheduled to start" in str(exc), exc
+
+
+# --------------------------------------------------------------------------- #
+# regressions from the 2026-10-28 review
+# --------------------------------------------------------------------------- #
+def t_a_second_start_never_fails_a_recording_run(tmp):
+    """Review fix 1: start_now and the tick both waited on the lock; the loser
+    used to mark the RECORDING run FAILED_START while its ports kept recording."""
+    s = mkstore(tmp); fake = FakeAllego(); _patch(fake)
+    sch = S.Scheduler(s, dest_dir="/tmp/fake-dest", on_event=lambda m: None)
+    r = mkrun(s, start=iso(datetime.now().astimezone() - timedelta(seconds=5)))
+    stale = s.get(r.run_id)                          # what the second waiter holds
+    sch._start_run(stale, 0.0)
+    assert s.get(r.run_id).state == R.RECORDING
+    sch._start_run(stale, 0.0)                       # the loser, after the lock frees
+    assert s.get(r.run_id).state == R.RECORDING, s.get(r.run_id).state
+    assert fake.starts == 1
+    old_wait, S.RIG_LOCK_WAIT_S = S.RIG_LOCK_WAIT_S, 0.01
+    sch.rig_lock.acquire()
+    try:
+        sch._start_run(stale, 0.0)                   # lock timeout must not fail it either
+    finally:
+        sch.rig_lock.release(); S.RIG_LOCK_WAIT_S = old_wait
+    assert s.get(r.run_id).state == R.RECORDING and not s.get(r.run_id).error
+
+
+def t_stop_now_retries_a_failed_stop(tmp):
+    """Review fix 3: Stop must work on FAILED_STOP / FAILED_RECORDING."""
+    s = mkstore(tmp); fake = FakeAllego(); _patch(fake)
+    sch = S.Scheduler(s, dest_dir="/tmp/fake-dest", on_event=lambda m: None)
+    for failed in ("FAILED_STOP", "FAILED_RECORDING"):
+        r = mkrun(s)
+        sch.start_now(r.run_id)
+        s.transition(r.run_id, failed, detail="simulated")
+        assert sch.stop_now(r.run_id).state == R.STOPPED, failed
+
+
+def t_boot_adopts_a_start_that_really_started(tmp):
+    """Review fix 4: a service death between start_recording and the RECORDING
+    write must not orphan the port by rewinding to SCHEDULED."""
+    import os
+    import time as _t
+    s = mkstore(tmp); fake = FakeAllego(); _patch(fake)
+    sent: list[tuple] = []
+    dest = Path(tmp) / "raw"; dest.mkdir()
+    sch = S.Scheduler(s, dest_dir=dest, on_event=lambda m: None,
+                      notify=lambda *a: sent.append(a))
+    mk = lambda slots: s.create(owner="andrea", preset="p", slots=slots,
+                                keep_labels=["A/1"], dest_dir=str(dest),
+                                scheduled_start=iso(datetime.now().astimezone()))
+    a = mk({"A1": {"mouse_id": "M1", "recording_type": "basal"}})
+    b = mk({"B1": {"mouse_id": "M2", "recording_type": "basal"}})
+    for r in (a, b):
+        s.transition(r.run_id, R.STARTING)
+    old = dest / "allego_portA_0__uid1027-09-00-00_data.xdat"
+    old.write_bytes(b""); os.utime(old, (_t.time() - 3600,) * 2)
+    new = dest / "allego_portA_1__uid1028-09-00-00_data.xdat"; new.write_bytes(b"")
+    orig = allego.status
+    allego.status = lambda: {"reachable": True, "ports": {
+        "A": {"channels": 32, "recording": True}, "B": {"channels": 32, "recording": False}}}
+    try:
+        sch._adopt_on_boot()
+        s.rewind_in_flight()
+    finally:
+        allego.status = orig
+    a, b = s.get(a.run_id), s.get(b.run_id)
+    assert a.state == R.RECORDING, a.state
+    assert a.port_files == {"A": {"base_name": new.name[:-len("_data.xdat")],
+                                  "data_path": str(new)}}, a.port_files
+    assert a.results.get("adopted_on_boot") is True
+    assert any("adopted" in (e["detail"] or "") and e["to_state"] == R.RECORDING
+               for e in s.events(a.run_id)), s.events(a.run_id)
+    assert b.state == R.SCHEDULED, "ports OFF: rewound as before"
+    assert any("adopted" in x[1] for x in sent), sent
+
+
+def t_skipped_ports_are_persisted_and_not_orphans(tmp):
+    """Review fix 6: a port that enumerated nothing is skipped, not an error."""
+    import postprocess as PP
+    s = mkstore(tmp); fake = FakeAllego(); _patch(fake); fake.skipped = ["B"]
+    sch = S.Scheduler(s, dest_dir="/tmp/fake-dest", on_event=lambda m: None)
+    r = mkrun(s, slots={"A1": {"mouse_id": "M1", "recording_type": "basal"}})
+    sch.start_now(r.run_id)
+    assert s.get(r.run_id).results["skipped_ports"] == ["B"]
+    run = s.get(r.run_id)
+    pf = {"A": {"base_name": "allego_portA_0__uid1028-09-00-00",
+                "data_path": "/x/allego_portA_0__uid1028-09-00-00_data.xdat"}}
+    run.port_files, run.slots = pf, {"A1": {"mouse_id": "M1"}, "B1": {"mouse_id": "M2"}}
+    run.keep_labels = ["A/1", "B/1"]
+    run.results = {"skipped_ports": ["B"]}
+    assert [x["port"] for x in PP.port_sources(run)] == ["A"]
+    run.results = {}
+    try:
+        PP.port_sources(run)
+    except PP.PostprocessError:
+        pass
+    else:
+        raise AssertionError("a port with a mouse and no file, NOT skipped, must still refuse")
+
+
+def t_start_now_respects_a_future_booking(tmp):
+    """Review fix 7: Start now books [now, stop) and must not eat a reservation."""
+    s = mkstore(tmp); fake = FakeAllego(); _patch(fake)
+    sch = S.Scheduler(s, dest_dir="/tmp/fake-dest", on_event=lambda m: None)
+    now = datetime.now().astimezone()
+    mkrun(s, owner="diane", start=iso(now + timedelta(hours=2)), stop=iso(now + timedelta(hours=3)),
+          slots={"A1": {"mouse_id": "M9", "recording_type": "basal"}})
+    r = mkrun(s, slots={"A2": {"mouse_id": "M1", "recording_type": "basal"}})
+    try:
+        sch.start_now(r.run_id)
+    except R.RunError as exc:
+        assert "booked by run" in str(exc), exc
+    else:
+        raise AssertionError("an open-ended Start now ran into a later booking")
+    assert fake.starts == 0 and s.get(r.run_id).state == R.DRAFT
+    ok = mkrun(s, stop=iso(now + timedelta(hours=1)),
+               slots={"A2": {"mouse_id": "M1", "recording_type": "basal"}})
+    assert sch.start_now(ok.run_id).state == R.RECORDING, "ends before the booking: fine"
+
+
+def t_a_double_stop_is_skipped_not_raised(tmp):
+    """Review fix 9: a stop pressed while the tick stops must not run twice."""
+    s = mkstore(tmp); fake = FakeAllego(); _patch(fake)
+    sch = S.Scheduler(s, dest_dir="/tmp/fake-dest", on_event=lambda m: None)
+    now = datetime.now().astimezone()
+    r = mkrun(s, start=iso(now - timedelta(seconds=5)), stop=iso(now - timedelta(seconds=1)))
+    sch.tick(now)
+    stale = s.get(r.run_id)
+    s.transition(r.run_id, R.STOPPING, detail="Stop pressed")      # the other path wins
+    orig = s.list
+    s.list = lambda **kw: [stale] if kw.get("states") == (R.RECORDING,) else orig(**kw)
+    try:
+        sch._tick_stops(now)                          # must skip, not raise
+    finally:
+        s.list = orig
+    assert fake.stops == 0 and s.get(r.run_id).state == R.STOPPING
+    expect_raise = False
+    try:
+        sch.stop_now(r.run_id)
+    except R.RunError:
+        expect_raise = True
+    assert expect_raise, "stop_now on a STOPPING run must refuse"
+
+
+def t_not_growing_alerts(tmp):
+    """Review fix 10: a port that does not grow goes to ntfy, not only the log."""
+    s = mkstore(tmp); fake = FakeAllego(); _patch(fake); fake.dead = {"A"}
+    sent: list[tuple] = []
+    sch = S.Scheduler(s, dest_dir="/tmp/fake-dest", on_event=lambda m: None,
+                      notify=lambda *a: sent.append(a))
+    r = mkrun(s, slots={"A1": {"mouse_id": "M1", "recording_type": "basal"}})
+    sch.start_now(r.run_id)
+    assert _wait(lambda: sent), "no alert for a port that does not grow"
+    assert sent[0][0] == "fail" and "not growing" in sent[0][1], sent
+
+
+def t_due_starts_sort_by_instant_not_string(tmp):
+    """Review fix 12: '...T10:13+09:00' is EARLIER than '...T02:13+00:00'."""
+    from datetime import timezone
+    s = mkstore(tmp); fake = FakeAllego(); _patch(fake)
+    sch = S.Scheduler(s, dest_dir="/tmp/fake-dest", on_event=lambda m: None)
+    now = datetime.now().astimezone()
+    kst = timezone(timedelta(hours=9))
+    first = mkrun(s, start=(now - timedelta(seconds=60)).astimezone(kst).replace(microsecond=0).isoformat())
+    second = mkrun(s, start=(now - timedelta(seconds=30)).astimezone(timezone.utc).replace(microsecond=0).isoformat())
+    assert second.scheduled_start < first.scheduled_start, "test needs string order reversed"
+    sch.tick(now)
+    assert s.get(first.run_id).state == R.RECORDING, s.get(first.run_id).state
+    assert s.get(second.run_id).state == "FAILED_START"
+
+
+# --------------------------------------------------------------------------- #
 # refusals
 # --------------------------------------------------------------------------- #
 def refusals(tmp):
@@ -795,8 +1167,8 @@ def refusals(tmp):
     fake = FakeAllego()
     allego.start, allego.stop, allego.confirm_growing = fake.start, fake.stop, fake.confirm_growing
     sch = S.Scheduler(s, dest_dir="/tmp/fake-dest", on_event=lambda m: None)
-    expect("refuse: start_now while another run owns the rig",
-           lambda: sch.start_now(mkrun(s).run_id), R.RunError, "owns the rig")
+    expect("refuse: start_now on a port another run is recording",
+           lambda: sch.start_now(mkrun(s).run_id), R.RunError, "booked by run")
     expect("refuse: stop_now on a run that is not recording",
            lambda: sch.stop_now(done.run_id), R.RunError, "not recording")
 
@@ -864,7 +1236,15 @@ def main() -> int:
                t_start_on_time, t_missed_start_fails_loudly, t_second_run_blocked,
                t_stop_fires_even_when_late, t_start_failure_is_recorded,
                t_scheduled_stop_hands_off_to_postprocessing,
-               t_missing_port_warns_but_still_records):
+               t_missing_port_warns_but_still_records,
+               t_disjoint_ports_record_concurrently, t_stop_stops_only_own_ports,
+               t_growth_is_confirmed_per_port_file, t_growth_check_cannot_rewind_a_stop,
+               t_port_files_column_is_migrated, t_rewind_several_concurrent_runs,
+               t_rig_lock, t_a_second_start_never_fails_a_recording_run,
+               t_stop_now_retries_a_failed_stop, t_boot_adopts_a_start_that_really_started,
+               t_skipped_ports_are_persisted_and_not_orphans,
+               t_start_now_respects_a_future_booking, t_a_double_stop_is_skipped_not_raised,
+               t_not_growing_alerts, t_due_starts_sort_by_instant_not_string):
         d = tempfile.mkdtemp(dir=tmp)
         check(fn.__name__, lambda fn=fn, d=d: fn(d))
     print("\nMUST REFUSE")

@@ -8,6 +8,8 @@ created: 2026-09-13
 
 # The recording pipeline: what runs, what fires it, and what stops it going wrong
 
+> [!warning] 2026-10-28: the console was ported to Allego 4 and `radiens-core`, with one run per port ([[2026-10-28-per-port-console-port]]). Where this page says recording is global, one run owns the rig, the mode is `XDAQ_ONE_REC`, or `set_recording_config()` is broken, that was true for `radiens` 4.0.0 on Allego 3.11.3 ([[2026-10-28-per-port-recording-bench-test]]). The two services still run the old code until they are restarted (pending); the guard table in 3.1 is updated to the new rules.
+
 > [!abstract] TL;DR — for non-technical readers
 > **What this is.** The machinery behind the recording console: every program involved,
 > what starts each one, what each refuses to do, and what happens when something breaks
@@ -103,16 +105,18 @@ specific way this rig can hurt you.
 | Guard | Refuses when | Why |
 |---|---|---|
 | preflight: server | `allegoserver` is not running | gRPC-reachable and process-alive are different failures |
-| preflight: mode | not `XDAQ_ONE_REC` | a freshly launched Allego comes up in `SMARTBOX_PRO` |
-| preflight: rate | not 1000 Hz | a fresh launch comes up at 30 kHz |
+| preflight: mode | not `XDAQ_CORE_REC` (`XDAQ_ONE_REC` on Allego 3.11.3) | a freshly launched Allego comes up in `SMARTBOX_PRO` |
+| preflight: rate | not 1000 Hz (since 2026-10-28 the console also reports the measured stream rate as a ratio to wall clock) | a fresh launch comes up at 30 kHz ([[2026-10-28-allegoserver-death-and-fresh-launch-defaults]]) |
 | preflight: already on | `R_ON` | never disturb a running recording |
 | preflight: space | < 150 GB free | a 24 h run is ~90 GB |
-| one run owns the rig | another run is STARTING/RECORDING/STOPPING | recording is **global**; two runs would put two people's animals in one file |
+| one run per port | another booked or active run uses one of the same ports at the same time (refused with HTTP 409 at booking, since 2026-10-28) | two runs on one port would put two people's animals in one file. Before 2026-10-28 the rule was "one run owns the rig", because recording was global |
 | mouse id | anything outside `[A-Za-z0-9_-]{1,32}` | it becomes part of a filesystem and NAS path |
 | owner | not in `users.yaml` | an unknown name would have no folder, or the wrong one |
 | no default owner | — | the API returns users alphabetically; a default silently files one person's run under another's name |
 
 ### 3.2 While recording
+
+> [!info] 2026-10-28: the next three paragraphs are radiens 4.0.0 facts. The console now uses `radiens-core`, and it finds a port's file by name pattern, never from `active_filename` (which shows only the first file's name). `radiens-core` 0.1.2 is now in `/opt/neurosurveillance/venv` (2026-10-28). The old `radiens` 4.0.0 is still installed there but must not be imported: the two cannot load in one process (`duplicate file name common.proto`), and no code imports it any more. Whether `radiens-core` fixes `set_recording_config()` and the `recording.path` report was not re-measured here. [[2026-10-28-per-port-console-port]]
 
 **Configuration is verified, not assumed.** `set_recording_config()` in radiens 4.0.0 is
 broken — `ConfigRecording` has a required `recordingType` enum the library never sets — and a
@@ -262,4 +266,4 @@ Fourteen defects, four provenances, and the mix is the point:
 - [[skim-nas-smb-and-upload]] — the NAS and how uploads are verified
 - [[2026-09-11-allego-control-bench-test]] — the 30 s size lag
 - [[recording-console-retry-was-a-dead-end]] — defects 1–3
-- [[multi-user-independent-recording-schedules]] — why recording is global
+- [[multi-user-independent-recording-schedules]] — why recording was global (retracted 2026-10-28, see [[2026-10-28-per-port-recording-bench-test]] and [[2026-10-28-per-port-console-port]])

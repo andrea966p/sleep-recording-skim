@@ -160,7 +160,7 @@ The **copper tinned coil** (cable shield, cut at the mouse end) is an **environm
 
 ## 5. First power-on & verify in Allego
 
-1. **Set the Allego mode = "XDAQ One (G1) with XR Headstage"** (`XDAQ_ONE_REC`).
+1. **Set the Allego mode = "XDAQ One (G1) with XR Headstage"** (`XDAQ_ONE_REC`; on Allego 4.1.2 the mode name is `XDAQ_CORE_REC`, 2026-10-28, [[2026-10-28-per-port-recording-bench-test]]).
 
 > [!warning] Wrong mode = false "0 channels"
 > `SMARTBOX_PRO` connects and scans but reports **`priSigs=0`** with our hardware — it looks like a dead headstage but is just the wrong instrument profile. **Re-check the mode on every Allego relaunch** — it has silently reverted to `SMARTBOX_PRO` before. (Root cause of the entire 2026-06-18 false teardown — [[first-headstage-connection]].)
@@ -172,6 +172,8 @@ The **copper tinned coil** (cable shield, cut at the mouse end) is an **environm
    /opt/neurosurveillance/venv/bin/python -c "from radiens import AllegoClient; print(AllegoClient().get_status().port_num_channels)"
    ```
    Expect e.g. `{<Port.D: 3>: 32}`, not `{}`.
+
+   > [!info] 2026-10-28: this probe uses `radiens` 4.0.0, which cannot authenticate to Allego 4 and must not be imported next to `radiens-core`. On Allego 4 use `radiens-core` in `/opt/neurosurveillance/venv` ([[radiens-api-reference]]).
 5. Map channels ([[signal-mapping-guide]]), then judge signal quality ([[signal-quality-and-grounding]]) — stream **raw** first to confirm the railing is gone, then apply bandpass + 60 Hz notch + Paired Reference.
 
 ---

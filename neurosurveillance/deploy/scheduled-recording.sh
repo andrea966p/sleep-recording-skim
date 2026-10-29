@@ -3,8 +3,10 @@
 # unattended, and tell Slack whether it actually worked.
 #
 # Wraps eeg-emg-analysis/qc/start_recording_at.py, which is the only start path
-# that (a) works around the broken set_recording_config() and (b) verifies by
-# watching bytes land on disk instead of trusting the client's status.
+# that (a) sets split_files_by_port=True and starts every port with channels (radiens-core
+# 0.1.2 on Allego 4.1.2, since 2026-10-28; the old raw-gRPC workaround for the broken
+# set_recording_config() is gone) and (b) verifies by watching bytes land on disk,
+# per port, instead of trusting the client's status.
 #
 # Usage: scheduled-recording.sh HH:MM[:SS]
 #
@@ -19,7 +21,7 @@ set -uo pipefail
 
 TARGET="${1:?usage: scheduled-recording.sh HH:MM[:SS]}"
 REPO="/home/skimlab/sleep-recording-skim/eeg-emg-analysis"
-PY="/opt/neurosurveillance/venv/bin/python3"   # the only interpreter with radiens
+PY="/opt/neurosurveillance/venv/bin/python3"   # the only interpreter with radiens-core
 DEST="/home/skimlab/radix/data"
 NOTIFY="/home/skimlab/sleep-recording-skim/neurosurveillance/deploy/nvr-notify.sh"
 LOG="/home/skimlab/sleep-recording-skim/neurosurveillance/deploy/logs/recording-$(date +%F).log"
@@ -40,12 +42,15 @@ FREE_GB=$(df --output=avail -BG "$DEST" | tail -1 | tr -dc '0-9')
 log "free space: ${FREE_GB} GB"
 (( FREE_GB > 150 )) || fail_pre "only ${FREE_GB} GB free on $DEST (need >150)"
 
-CUR_MODE=$(cd "$REPO" && PYTHONPATH="$REPO" "$PY" -c "
-from radiens.allego_client import AllegoClient
-print(AllegoClient().get_status().recording.mode)" 2>/dev/null | tail -1)
+# 2026-10-28: radiens-core, compare .name. record_mode is ON if ANY port records. Only an
+# explicit OFF lets the start go ahead; ON refuses; anything else (import error, gRPC failure)
+# also refuses. (This check was already fail-safe before the port; it still is.)
+CUR_MODE=$(cd "$REPO" && PYTHONPATH="$REPO" timeout 60 "$PY" -c "
+from radiens_core import AllegoClient
+print(AllegoClient().get_status().recording.record_mode.name)" 2>/dev/null | tail -1)
 log "current recording mode: ${CUR_MODE:-UNKNOWN}"
-[[ "$CUR_MODE" == "R_ON" ]] && fail_pre "a recording is ALREADY running (mode R_ON) — refusing to disturb it"
-[[ -z "$CUR_MODE" ]] && fail_pre "could not query allego status"
+[[ "$CUR_MODE" == "ON" ]] && fail_pre "a recording is ALREADY running (some port is ON) — refusing to disturb it"
+[[ "$CUR_MODE" == "OFF" ]] || fail_pre "could not query allego status (got '${CUR_MODE:-nothing}')"
 
 # ---- start (with one retry) -------------------------------------------------
 attempt_start() {
@@ -75,7 +80,13 @@ Hourly watchdog is now checking that it keeps growing."
 done
 
 log "BOTH ATTEMPTS FAILED"
+# the real Allego mode now, not an assumption (start_recording_at.py stops the ports it started)
+END_MODE=$(cd "$REPO" && PYTHONPATH="$REPO" timeout 60 "$PY" -c "
+from radiens_core import AllegoClient
+print(AllegoClient().get_status().recording.record_mode.name)" 2>/dev/null | tail -1)
+log "Allego mode after failure: ${END_MODE:-UNKNOWN}"
 "$NOTIFY" fail "Recording FAILED to start" "Two attempts made, neither confirmed bytes growing on disk.
+Allego recording mode now: \`${END_MODE:-UNKNOWN}\` (ON means a port may still be recording unverified).
 Log: \`$LOG\`
-The rig is NOT recording. Needs hands-on attention."
+Needs hands-on attention."
 exit 1

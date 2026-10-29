@@ -8,6 +8,8 @@ created: 2026-09-11
 
 # The EEG recording console — set up a run, leave the room, find your data on the NAS
 
+> [!warning] 2026-10-28: the console was ported to Allego 4 and per-port recording ([[2026-10-28-per-port-console-port]]). Once the two services are restarted (pending), a run owns ports, not the whole rig, overlapping bookings are refused at creation (409) and the expected mode is `XDAQ_CORE_REC`. Section 2.3, the scheduling table row on overlaps and the "Paper-ready" text describe the old global behaviour and are corrected below. Until the restart, production runs the old code.
+
 > [!warning] Updated 2026-10-22: Allego is started WITHOUT `--disable-gpu` since 2026-09-16 (the flag blanks the Monitor); Andrea confirmed this on 2026-10-23 and the troubleshooting table now says so. Section 6 "No unattended overnight run has completed yet" is outdated: a 28 h unattended console run finished on 2026-09-18. The "takes effect after the next `eeg-recorder` restart" remark in section 3 is also outdated: the service has been running since 2026-10-15 09:56, after the last edit of `scheduler.py`. [[allego-blank-monitor-canvas-texture-limit]] [[2026-09-17-W-SL-28h-run]]
 
 > [!abstract] TL;DR — for non-technical readers
@@ -129,16 +131,12 @@ recording under the same name, the strip report, `run.json` (who, which mice, wh
 > does the console complain. Full measurement:
 > [[2026-09-11-allego-control-bench-test]].
 
-### 2.3 One run owns the whole rig, and there is no default owner
+### 2.3 One run owns its ports, and there is no default owner
 
-> [!warning] RECORDING IS GLOBAL — ONE BOX, ONE RECORD BUTTON, ONE FILE
-> The XDAQ has a single `R_ON` state for all four ports. `radiens 4.0.0` has **no per-port recording
-> control** whatever the upstream documentation says — measured, see
-> [[multi-user-independent-recording-schedules]]. Two people cannot record
-> independently at the same time, and the console refuses to start a second run while one is active.
+> [!warning] 2026-10-28: ONE RUN PER PORT, NOT ONE RUN PER RIG
+> Allego 4.1.2 with `radiens-core` records per port ([[2026-10-28-per-port-recording-bench-test]]). Several runs can record at once on different ports, each with its own Stop, and booking a run whose ports overlap another run in time is refused with HTTP 409. Impedance and an Allego restart are rig-wide and need the whole rig idle. Details: [[2026-10-28-per-port-console-port]].
 >
-> To share the rig, record the **union** of both windows and separate afterwards by stripping — the
-> console's per-slot mouse IDs are what makes that separation possible at all.
+> The old text, true for `radiens 4.0.0` on Allego 3.11.3 and kept as the record: the XDAQ had a single `R_ON` state, the console refused to start a second run while one was active, and people shared the rig by recording the union of their windows and separating the file by stripping ([[multi-user-independent-recording-schedules]]).
 
 And there is **no default name in the owner dropdown**. It is the one field nobody should be able to
 get wrong by not looking: a pre-selected name is how one person's run ends up in another person's
@@ -204,7 +202,7 @@ the run.
 | NAS unreachable when the upload comes | run rests in `UPLOAD_PENDING` and drains later | **this is designed behaviour, not a fault** |
 | a reservation was made by mistake | press **cancel** on its row in the runs table (since 2026-10-14); it becomes `ABORTED` and stays listed | only a scheduled or draft run can be cancelled; a started run is stopped with Stop |
 | a headstage dropped off the bus before the start | **starts anyway**, records the ports that are present; the live enumeration and the mismatch go on the run (`results.start_enumeration`, `start_warning`), the runs table shows a red **port missing at start** tag, and ntfy gets a `fail` alert (since 2026-10-15, after run `dca84de0cc7a` silently recorded 2 of 3 mice) | refusing would lose every other animal to save one; takes effect after the next `eeg-recorder` restart |
-| two reservations overlap | **both are accepted**; the later one fails at its own start (`FAILED_START`, "already using the rig") and the active run is untouched | 🔴 not refused at creation yet (found 2026-10-14). **Check the DATE field**: the form pre-fills the next day |
+| two reservations overlap on a port | **refused when booked** with HTTP 409, and the conflicting run is shown (since the 2026-10-28 port, [[2026-10-28-per-port-console-port]]). Before that, both were accepted and the later one failed at its own start (`FAILED_START`, "already using the rig") | **Check the DATE field**: the form pre-fills the next day |
 
 > [!info] How it works underneath
 > Every program involved, what fires each one, every failsafe and why it exists:
@@ -215,7 +213,7 @@ the run.
 | File | Role |
 |---|---|
 | `eeg-recorder/backend/app.py` | Flask on `127.0.0.1:8600`, serves the API and the page |
-| `eeg-recorder/backend/allego.py` | status, the `ConfigRecording` workaround, start/stop, growth check |
+| `eeg-recorder/backend/allego.py` | status, start/stop per port, growth check (rewritten on `radiens-core` 2026-10-28; the old `ConfigRecording` workaround is gone) |
 | `eeg-recorder/backend/runs.py` | durable run store (SQLite, WAL) and the state machine |
 | `eeg-recorder/backend/scheduler.py` | absolute-instant start/stop, re-armed on boot |
 | `eeg-recorder/backend/postprocess.py` | QC → strip → upload, one worker at a time |
@@ -240,6 +238,8 @@ State: `~/.local/state/eeg-recorder/runs.db`.
 > provides a single global record state for all four ports, concurrent independent recordings are
 > not possible; runs are therefore serialised, and per-animal separation is performed after
 > acquisition using the recorded position assignments.
+
+> [!warning] 2026-10-28: the paper-ready text above describes the old behaviour (radiens 4.0.0 on Allego 3.11.3) and is true only for runs recorded before the port. On Allego 4.1.2 recording is per port, so concurrent independent recordings on different ports are possible ([[2026-10-28-per-port-recording-bench-test]]).
 
 ## 5. When something looks wrong
 

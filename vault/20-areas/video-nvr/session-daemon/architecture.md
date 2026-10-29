@@ -12,6 +12,8 @@ version: "3.0"
 
 > [!warning] Updated 2026-10-22: Netdata and Uptime Kuma alerts moved to ntfy 2026-09-14, deploy scripts (nvr-notify.sh) 2026-09-20; recording-stall and reconciler alerts still go to Slack via nvr-mqtt-slack.service. See [[monitoring-setup]] and [[watchdog-slack-bridge]].
 
+> [!warning] 2026-10-28: the poller code (`radiens_poller.py`) was ported to `radiens-core` for Allego 4. The `radiens` 4.0.0 library, `AllegoClient` and the session-token notes on this page describe the version that is still deployed until `neurosurveillance-session` is restarted (pending). The global `record_mode` (ON if any port records) still triggers sessions, and a new `port_modes` field carries per-port modes. The stale copy `neurosurveillance-system/session-daemon` still imports the old `radiens` and is not deployed. [[2026-10-28-per-port-console-port]]
+
 > [!abstract] TL;DR — for non-technical readers
 > **What this is.** The full architectural reference for the Python session daemon that runs on the NVR.
 >

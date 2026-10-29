@@ -17,6 +17,8 @@ supersedes: "[[daq-ecosystem-comparison-xdaq-vs-openephys]]"
 ---
 # DAQ Ecosystem Comparison, FINAL, 3-Way for 32 Mice — XDAQ vs Open Ephys vs Intan
 
+> [!info] 2026-10-28: the "per-mouse start and stop is global" rows describe the Open Ephys GUI and `radiens` 4.0.0 on Allego 3.11.3. On Allego 4.1.2 with `radiens-core` the XDAQ records per port, with separate files per port ([[2026-10-28-per-port-recording-bench-test]]). The comparison, the prices and the "Allego not being purchased" posture were not re-assessed.
+
 > [!warning] Updated 2026-10-22: open since 2026-07-28; no XDAQ purchase is recorded. A separate 16-mouse Pinnacle wireless plan was settled 2026-10-19 ([[2026-10-16-pinnacle-wireless-16-mice-evaluation]]); its relation to this route is not recorded.
 
 > [!warning] 🔴 CORRECTION 2026-09-30 — our Gen-1 XDAQ Core DOES have a chassis GND terminal

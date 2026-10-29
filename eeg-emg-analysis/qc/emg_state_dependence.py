@@ -110,9 +110,12 @@ def verdict_for(r: float, n: int) -> str:
 
 def local_start(base: str) -> dt.datetime:
     meta = json.loads(open(base + ".xdat.json").read())
-    utc = meta["status"]["start_time"].replace("Z", "+00:00")
-    return (dt.datetime.fromisoformat(utc)
-            + dt.timedelta(hours=T.TZ_OFFSET_HOURS)).replace(tzinfo=None)
+    # astimezone, not "+9 h": Allego 4 (2026-10-28) writes start_time in local
+    # time with +09:00, Allego 3 wrote UTC with Z. Converting handles both.
+    t = dt.datetime.fromisoformat(meta["status"]["start_time"].replace("Z", "+00:00"))
+    if t.tzinfo is None:
+        t = t.replace(tzinfo=dt.timezone.utc)
+    return t.astimezone(dt.timezone(dt.timedelta(hours=T.TZ_OFFSET_HOURS))).replace(tzinfo=None)
 
 
 def bin_to_minutes(a: np.ndarray, nmin: int) -> np.ndarray:

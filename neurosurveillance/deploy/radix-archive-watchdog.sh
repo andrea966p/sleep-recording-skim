@@ -45,11 +45,16 @@ fi
 # burning a "strike" each time and eventually Slacking that it is stuck.
 REPO="/home/skimlab/sleep-recording-skim/eeg-emg-analysis"
 PY="/opt/neurosurveillance/venv/bin/python3"
+# 2026-10-28: radiens-core, compare .name. FAILS SAFE: the old test only stood down on an
+# explicit "R_ON", so an import error or a gRPC failure (empty output) launched the heavy
+# archive. Now only an explicit "OFF" proceeds; ON or unknown stands down, no strike.
 MODE=$(cd "$REPO" && PYTHONPATH="$REPO" timeout 30 "$PY" -c "
-from radiens.allego_client import AllegoClient
-print(AllegoClient().get_status().recording.mode)" 2>/dev/null | tail -1)
-if [[ "$MODE" == "R_ON" ]]; then
-    log "recording is live; standing down silently (no strike)"
+from radiens_core import AllegoClient
+print(AllegoClient().get_status().recording.record_mode.name)" 2>/dev/null | tail -1)
+if [[ "$MODE" != "OFF" ]]; then
+    log "recording is live or Allego state unknown (mode='${MODE:-none}'); standing down silently (no strike)"
+    # ON is normal. Anything else means the check itself failed: say so (hourly noise at worst).
+    [[ "$MODE" == "ON" ]] || "$NOTIFY" warn "Archive watchdog cannot read Allego" "The recording check returned '${MODE:-nothing}' (import error or gRPC failure), so the archive was not started. Check radiens_core and allegoserver."
     exit 0
 fi
 

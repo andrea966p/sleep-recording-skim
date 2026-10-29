@@ -10,6 +10,8 @@ created: 2026-08-19
 
 > [!warning] Updated 2026-10-22: script alerts moved from Slack to ntfy on 2026-09-20 (`nvr-notify.sh`), and the repo is now `~/sleep-recording-skim` (the old `~/Monitoring_project` paths on this page were corrected; the 2026-08-19 cron line is shown as an example only). Console runs are the normal way to record since 2026-09-11 and the watchdog arms itself on them since 2026-10-14. [[eeg-recording-console]]
 
+> [!warning] 2026-10-28: the scripts on this page were ported to Allego 4 and `radiens-core`, and take `--ports` (`scheduled-recording.sh`, `qc/start_recording_at.py`). The recording watchdog now checks the growth of each recording port's newest file. The archive, S3 archive and archive-watchdog scripts used to treat an import or gRPC failure as "idle" (fail-open) and now defer. The "radiens client is broken" traps below are `radiens` 4.0.0 facts, and `radiens-core` is now in `/opt/neurosurveillance/venv` (2026-10-28). The old `radiens` 4.0.0 is still installed there but must not be imported: the two cannot load in one process (`duplicate file name common.proto`), and no code imports it any more. The services are not restarted yet, so the cron path still runs the old code until then. [[2026-10-28-per-port-console-port]]
+
 > [!abstract] TL;DR
 > How to make Allego start recording at an exact wall-clock time with nobody in the room, and get a
 > Slack message telling you whether it actually worked. Used for the first time on 2026-08-19 to

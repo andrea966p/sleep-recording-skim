@@ -101,7 +101,8 @@ for i, a_ in enumerate(clean):
         print(f"  {a_} events {len(ea)}, {b_} events {len(EV[f'fl_{b_}'])}; {a_} events overlapping a {b_} hit: "
               f"{overlap(ea, hb)} (chance ~{exp:.2f})")
         # when: clock time of each coincident event (window k starts at sample 2*fs + k*W), to check against known events
-        t0 = (dt.datetime.fromisoformat(meta["status"]["start_time"].replace("Z", "+00:00")) + dt.timedelta(hours=9)).replace(tzinfo=None)
+        # astimezone, not "+9 h": Allego 4 writes start_time in KST (+09:00), Allego 3 in UTC (Z). 2026-10-28
+        t0 = dt.datetime.fromisoformat(meta["status"]["start_time"].replace("Z", "+00:00")).astimezone(dt.timezone(dt.timedelta(hours=9))).replace(tzinfo=None)
         hits = [s + int(np.flatnonzero(hb[s:e + 1])[0]) for s, e in ea if hb[s:e + 1].any()]   # the coincident instant: B's first hit
         if hits:
             print("    at " + ", ".join(f"{t0 + dt.timedelta(seconds=2 + s * W / fs):%m-%d %H:%M:%S.%f}"[:-5] for s in hits))

@@ -24,24 +24,29 @@
     </div>
   </header>
 
-  <!-- live run -------------------------------------------------------- -->
+  <!-- rig + ports ---------------------------------------------------- -->
+  <div class="warnbox hide" id="busy-banner"></div>
+  <section class="panel" id="rig-panel">
+    <h2>Rig</h2>
+    <div class="row" style="gap:26px" id="rig-kv"></div>
+    <div id="rig-problems"></div>
+    <div style="margin-top:10px">
+      <button class="ghost" id="btn-restart">Restart Allego</button>
+      <span class="note" id="restart-why" style="margin-left:8px"></span>
+    </div>
+    <div id="restart-result" class="note"></div>
+  </section>
+
+  <section class="panel" id="ports-panel">
+    <h2>Ports</h2>
+    <div class="ports" id="pcards"></div>
+    <div id="imp-panel"></div>
+  </section>
+
+  <!-- live runs: several can record at once, one per set of ports ----- -->
   <section class="panel hide" id="live">
     <h2>Recording now</h2>
-    <div class="row" style="gap:26px">
-      <div><label>Run</label><div class="mono" id="live-id">–</div></div>
-      <div><label>Owner</label><div id="live-owner">–</div></div>
-      <div><label>File</label><div class="mono" id="live-file">–</div></div>
-      <div><label>Elapsed</label><div class="mono" id="live-elapsed">–</div></div>
-      <div><label>On disk</label><div class="mono" id="live-bytes">–</div></div>
-      <div><label>Stops at</label><div class="mono" id="live-stop">–</div></div>
-      <div style="margin-left:auto"><button class="danger" id="btn-stop">Stop recording</button></div>
-    </div>
-    <div id="live-mice" class="note"></div>
-    <div class="warnbox hide" id="live-lag">
-      The file size does not move for about 30 seconds after a healthy start —
-      Allego flushes it in blocks. <b>0 bytes here is normal at first</b> and is not
-      evidence that anything is wrong.
-    </div>
+    <div id="live-runs"></div>
   </section>
 
   <!-- setup ----------------------------------------------------------- -->
@@ -100,8 +105,10 @@
     <div class="note" id="preset-note"></div>
     <div class="slots" id="slots" style="margin-top:12px"></div>
 
+    <div class="note" id="run-ports"></div>
     <div class="note" id="keep-note"></div>
     <div class="note" id="name-note"></div>
+    <div class="badbox hide" id="form-error" style="white-space:pre-wrap"></div>
     <div class="warnbox" style="margin-top:12px">
       <b>Allego records every channel, always.</b> The selection below does not change
       what is recorded — it decides which channels go into each mouse's CSV on the NAS
@@ -180,9 +187,9 @@
   <section class="panel">
     <h2>Runs</h2>
     <table>
-      <thead><tr><th>Run</th><th>Owner</th><th>Mice</th><th>State</th>
+      <thead><tr><th>Run</th><th>Owner</th><th>Ports and files</th><th>Mice</th><th>State</th>
         <th>Started</th><th>Duration</th><th>Stripped</th><th></th></tr></thead>
-      <tbody id="runs"><tr><td colspan="8" class="note">No runs yet.</td></tr></tbody>
+      <tbody id="runs"><tr><td colspan="9" class="note">No runs yet.</td></tr></tbody>
     </table>
   </section>
 
