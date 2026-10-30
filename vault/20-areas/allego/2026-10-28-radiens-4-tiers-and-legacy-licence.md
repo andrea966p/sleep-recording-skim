@@ -109,7 +109,8 @@ Rules for this draft: no dashes in emails, Andrea's voice.
 
 ## Still open
 
-- [ ] Andrea: review and send the reply above; record Rosaria's answer here.
+- [x] Andrea sent the reply on 2026-10-28; Rosaria answered on 2026-10-29 (below).
+- [ ] Andrea: schedule the walkthrough call with Rosaria (week of 2026-11-02) and do the Pro upgrade on the professor's account. Questions for the call are below.
 - [ ] Decide whether to move the rig to Allego 4 at all. The alternative in [[openephys-gui-setup-xdaq-sleep-eeg]] still stands. 🛑 No install on e10 during a recording.
 
 > [!info] 2026-10-28, later the same day: the "untested" and "cannot talk to it until ported" statements below were overtaken. Per-port recording was bench-tested and works ([[2026-10-28-per-port-recording-bench-test]]), `radiens-core` was installed into `/opt/neurosurveillance/venv` next to `radiens` 4.0.0 (the two cannot be imported together; no code imports the old one), and the console was ported but is not restarted in production yet ([[2026-10-28-per-port-console-port]]). A fresh launch later came up at 30000 Hz with the split off ([[2026-10-28-allegoserver-death-and-fresh-launch-defaults]]).
@@ -127,3 +128,50 @@ Rules for this draft: no dashes in emails, Andrea's voice.
   - Recording config: `split_files_by_port=False`, base path `~/radix/data`.
 - Fresh-launch defaults are wrong for us. The base sample rate came up at **625 Hz**, not 1000 Hz. Set the rate and channel selection before any recording.
 - The EEG console now fails with `RpcException: Invalid authentication. Error code: 16`, because `radiens` 4.0.0 cannot authenticate to Allego 4. It has to be ported to `radiens-core`; this was deferred by Andrea.
+
+## NeuroNexus answer (2026-10-29) and what Pro adds for us (2026-10-30)
+
+> [!success] 2026-10-29: Rosaria (NeuroNexus) answered all six questions
+> - We are a **Radiens Legacy User**. Legacy users get the **Pro tier perpetually, at no cost**, no subscription: "Unlimited, lasts forever, you will not be charged".
+> - Our perpetual licence maps to **Pro**, their current highest tier (Pro+ is still in development). It covers Allego and Videre; Curate now lives inside Videre.
+> - Our Python-scripted unattended start/stop "will continue to work" on Pro, so the headless question no longer matters.
+> - **10 seats** for legacy users, more on request.
+> - Gen 1 XDAQ Core, Ubuntu 24.04, `radiens_core` and our old `.xdat` files: "fully compatible".
+> - Not answered: **offline use** of the rig PC. Ask on the call.
+> - The licence email is the professor's (`sleepigene@gmail.com`), not `andrea96p@kaist.ac.kr`.
+> - Source: `~/Downloads/radiens_general.eml` (thread 2026-10-27 to 2026-10-29).
+
+This supersedes the "Pro costs $2,000 per year … reverts to Standard" point in the TL;DR for our lab only; the price is still right for everyone else.
+
+### Pro-only features, mapped to our work
+
+Source: https://radiens.ai/pricing "Tiers in Detail" plus the Script and Curate pages and the 4.x release notes, read 2026-10-30. Pro is a strict superset of Standard. Nothing on any page mentions sleep scoring, EMG, video sync, ripple or theta.
+
+> [!info] Legend
+> 🟢 useful to us · 🟡 maybe, test before relying on it · 🟠 ask on the call · 🔴 not applicable
+
+| Status | Pro feature (page wording) | What it could do for us |
+|---|---|---|
+| 🟢 | Batch & headless pipelines; Headless, scriptable command set | Run the same Videre processing over every night of a batch unattended (e.g. export or band power for all 24 h windows) instead of one file at a time. Our console already records headless on Standard; this is the offline side. |
+| 🟢 | Cross-recording quality trends; Session- & study-level metrics | Track each animal's signal quality across nights in one view. Overlaps with our animal card and verdict ladder ([[animal-card-and-verdict-ladder]]); useful as an independent cross-check, never as a replacement for our QC engine. |
+| 🟡 | Custom DSP filter chains; Reusable transform protocols | Save one EEG and one EMG chain (band-pass + 60/120 Hz notch) as a protocol and apply it identically to every file. 🛑 The 60/120 Hz EMG notch is not adopted for analysis (re-scores published numbers); Andrea decides. Display and export only until then. |
+| 🟡 | Aperiodic/periodic spectral parameterization (specparam/FOOOF style) | 1/f exponent per state is a known sleep/wake marker, and it overlaps with our floor-slope work. Our pipeline stays canonical; compare only. |
+| 🟡 | Connectivity & advanced spectral (coherence) | EEG to LFP coherence on ahyeon's unipolar runs ([[_unipolar-lfp-hub]]), frontal vs parietal EEG. |
+| 🟡 | Live spectral analysis | Live spectrogram in the Monitor during a run: wake/NREM delta visible at a glance during bring-up and screening. |
+| 🟡 | Live recording monitor, any DAQ | Monitor files from a non-NeuroNexus system. Only relevant if the 16-mouse expansion goes Pinnacle ([[_rig-expansion-hub]]); unclear if it reads Sirenia files. 🟠 ask. |
+| 🟡 | Journal-ready figure export; HDSnapshot | Trace and spectrogram figures for papers and lab meetings. Our own figures from `eeg-emg-analysis` stay the source of numbers. |
+| 🟡 | FAIR metadata enrichment | Animal, cohort and treatment metadata attached to each recording; helps if we deposit data (NWB) for a paper. |
+| 🟡 | Agent-operable command set | An interface designed for AI agents to drive Radiens. Could let Claude Code run Videre jobs directly. Test only. |
+| 🟡 | "Cluster included" (pricing summary) | Included cloud compute. 🛑 Do not send rig data to any NeuroNexus cloud without Andrea's decision. |
+| 🔴 | Live PSTH, PSTH, probe-specific sorting, manual curation, signal-metric statistics, probe-specific field models, implant planning, Neuropixels, SiNAPS | Spike/probe work. We record no spikes. |
+
+### Questions for the call
+
+1. Offline use: does the Pro licence keep working on e10 with no internet for 72 h? Is there an offline licence tied to the machine (the installer has a hardware-UUID path)?
+2. Seats: how does a lab member get a seat on the professor's account, and does the rig PC need its own seat?
+3. NWB export: Standard or Pro? The pricing and Curate pages say Standard, the 4.0.10 notes say "matching license tier".
+4. Do the batch/headless pipelines run from `radiens-core`, from the `radiens` CLI, or only inside Videre? Any examples for EEG band power over many files?
+5. Does Allego 4 save sample rate and split-by-port across launches? (fresh launches come up at 625 Hz or 30 kHz, split off.)
+6. What will Pro+ add, and do legacy users get it too?
+7. Is there anything planned for sleep staging or EEG/EMG state classification?
+8. Can "Live recording monitor, any DAQ" open Pinnacle/Sirenia data?
