@@ -1,0 +1,58 @@
+{
+  "extraKnownMarketplaces": {
+    "caveman": {
+      "source": {
+        "source": "github",
+        "repo": "JuliusBrussee/caveman"
+      }
+    },
+    "humanizer": {
+      "source": {
+        "source": "github",
+        "repo": "blader/humanizer"
+      }
+    },
+    "ponytail": {
+      "source": {
+        "source": "github",
+        "repo": "dietrichgebert/ponytail"
+      }
+    },
+    "addy-agent-skills": {
+      "source": {
+        "source": "github",
+        "repo": "addyosmani/agent-skills"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "superpowers@claude-plugins-official": true,
+    "caveman@caveman": true,
+    "ponytail@ponytail": true,
+    "humanizer@humanizer": true,
+    "agent-skills@addy-agent-skills": true,
+    "rust-analyzer-lsp@claude-plugins-official": true
+  },
+  "skillOverrides": {
+    "academic-plotting": "off",
+    "biopython": "off",
+    "bioservices": "off",
+    "hugging-science": "off",
+    "arbor": "off",
+    "autoskill": "off",
+    "cobrapy": "off",
+    "consciousness-council": "off",
+    "full-output-enforcement": "off",
+    "get-available-resources": "off",
+    "labarchive-integration": "off",
+    "market-research-reports": "off",
+    "matchms": "off",
+    "open-notebook": "off",
+    "parallel-web": "off",
+    "pi-agent": "off",
+    "polars-bio": "off",
+    "protocolsio-integration": "off",
+    "task-observer": "off",
+    "what-if-oracle": "off"
+  }
+}

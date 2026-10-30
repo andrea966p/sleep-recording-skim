@@ -52,7 +52,14 @@ Tailscale SSH, and how the tag rule works: [[multi-machine-work-setup]], section
 4. 🔴 If `bootstrap.sh` prints `KEPT ... differs from the template`, that is not a clean result.
    Diff `~/.claude/settings.json` against `claude-config/settings.template.json`; a machine can end
    up with no hooks and so no `skim status` at SessionStart. Detail in the repo's `machine/README.md`.
-5. On a machine that ran the old `claude-portable` bootstrap, `bootstrap.sh` aborts on an existing
+5. Work plugins need no per-machine setup (2026-10-30): the checked-in `.claude/settings.json`
+   lists the marketplaces and enables superpowers, caveman, ponytail, humanizer, agent-skills and
+   rust-analyzer-lsp in this repo, and turns off 20 unused science skills (`skillOverrides`).
+   Claude Code offers to install them on the first trusted session. Personal plugins (Cloudflare,
+   the Home Assistant MCP) stay in the user's own `~/.claude` and are switched off for this repo
+   in the gitignored `.claude/settings.local.json`. Caveman's hooks come from its plugin; the
+   template no longer copies them (they ran twice).
+6. On a machine that ran the old `claude-portable` bootstrap, `bootstrap.sh` aborts on an existing
    `~/.claude/skills.pre-bootstrap`; the blockers are only symlinks (workspace memory, 2026-09-10).
 
 ## Lessons that cost something

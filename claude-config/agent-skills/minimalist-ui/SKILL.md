@@ -1,6 +1,20 @@
 ---
 name: minimalist-ui
 description: Clean editorial-style interfaces. Warm monochrome palette, typographic contrast, flat bento grids, muted pastels. No gradients, no heavy shadows.
+paths:
+  - "**/*.html"
+  - "**/*.htm"
+  - "**/*.css"
+  - "**/*.scss"
+  - "**/*.sass"
+  - "**/*.less"
+  - "**/*.js"
+  - "**/*.jsx"
+  - "**/*.ts"
+  - "**/*.tsx"
+  - "**/*.vue"
+  - "**/*.svelte"
+  - "**/*.astro"
 ---
 
 # Protocol: Premium Utilitarian Minimalism UI Architect

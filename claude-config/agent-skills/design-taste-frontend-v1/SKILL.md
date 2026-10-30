@@ -1,6 +1,20 @@
 ---
 name: design-taste-frontend-v1
 description: The original v1 taste-skill, preserved for projects depending on its exact behavior. The current default is `design-taste-frontend` (v2 experimental), which is a substantial rewrite. Use this v1 install name only if you need exact backward compatibility.
+paths:
+  - "**/*.html"
+  - "**/*.htm"
+  - "**/*.css"
+  - "**/*.scss"
+  - "**/*.sass"
+  - "**/*.less"
+  - "**/*.js"
+  - "**/*.jsx"
+  - "**/*.ts"
+  - "**/*.tsx"
+  - "**/*.vue"
+  - "**/*.svelte"
+  - "**/*.astro"
 ---
 
 # High-Agency Frontend Skill

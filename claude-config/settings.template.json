@@ -6,27 +6,9 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash -lc 'node \"$HOME/.claude/hooks/caveman-activate.js\"'",
-            "timeout": 5,
-            "statusMessage": "Loading caveman mode..."
-          },
-          {
-            "type": "command",
             "command": "bash -lc '\"$HOME/sleep-recording-skim/skim\" status || true'",
             "timeout": 25,
             "statusMessage": "Checking workspace sync state..."
-          }
-        ]
-      }
-    ],
-    "UserPromptSubmit": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash -lc 'node \"$HOME/.claude/hooks/caveman-mode-tracker.js\"'",
-            "timeout": 5,
-            "statusMessage": "Tracking caveman mode..."
           }
         ]
       }
