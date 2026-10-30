@@ -1,12 +1,17 @@
 # Claude Code plugins and skills — this workspace
 
-Snapshot taken 2026-09-14 on `e10ubuntu` (`skimlab`). Two separate systems, two
-separate install paths — don't conflate them.
+Snapshot taken 2026-09-14 on `e10ubuntu` (`skimlab`), plugin section updated 2026-10-30.
+Two separate systems, two separate install paths — don't conflate them.
 
-## 1. Marketplace plugins (machine-local, NOT synced by git)
+## 1. Marketplace plugins (declared in git since 2026-10-30)
 
-Live in `~/.claude/plugins/`, outside the repo. `machine/bootstrap.sh` does not
-touch these — each machine installs them itself.
+The checked-in `.claude/settings.json` lists the marketplaces (`extraKnownMarketplaces`)
+and enables the six work plugins below for this repo (`enabledPlugins`). Claude Code
+offers to install them on the first trusted session in the repo, so a new machine needs
+no per-machine install step. The plugin files themselves still live in
+`~/.claude/plugins/`, outside the repo; `machine/bootstrap.sh` does not touch them.
+
+The same file turns off 20 unused science skills for this repo (`skillOverrides`).
 
 | Plugin | Marketplace | Repo |
 |---|---|---|
@@ -17,7 +22,7 @@ touch these — each machine installs them itself.
 | `ponytail` | `ponytail` | [dietrichgebert/ponytail](https://github.com/dietrichgebert/ponytail) |
 | `agent-skills` | `addy-agent-skills` | [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) |
 
-### Install on another machine
+### Manual install (only if the first-session prompt was skipped)
 
 ```bash
 claude plugin marketplace add anthropics/claude-plugins-official
@@ -36,9 +41,19 @@ claude plugin install agent-skills@addy-agent-skills
 
 Verify: `claude` then `/plugin` or ask Claude to list plugins — should show all 6 enabled.
 
-Caveman mode is ON for this workspace (`CAVEMAN MODE ACTIVE — level: full`, hook-driven).
-That's a per-project/hook setting, not part of the plugin install — check
-`claude-config/hooks` and `claude-config/settings.json` if the new machine should keep it.
+Caveman mode is ON for this workspace. Its SessionStart and UserPromptSubmit hooks come
+from the caveman plugin itself. `claude-config/settings.template.json` no longer copies
+them into `~/.claude/settings.json` (they ran twice); a machine bootstrapped before
+2026-10-30 should drop the `caveman-activate.js` and `caveman-mode-tracker.js` entries
+from its own `~/.claude/settings.json`.
+
+### Personal plugins
+
+Plugins only one person uses stay in that user's own `~/.claude`, not in the checked-in
+file. To keep one out of this repo, set it to `false` under `enabledPlugins` in the
+gitignored `.claude/settings.local.json` on that machine. On `e10ubuntu`,
+`savvy-progress@claude-kit` and `filetree@claude-code-filetree` are personal and stay on
+by choice (2026-10-30).
 
 ## 2. Skills already synced via git (DO NOT reinstall separately)
 
