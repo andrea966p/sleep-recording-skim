@@ -3,7 +3,7 @@ type: experiment
 area: hlb-sod1
 status: active
 created: 2026-10-22
-summary: "Second nanotag batch: oral SOD1 vs water under 4 days of gentle-handling SD; tags from 2026-10-22, SOD1 12 days, sampling Thu 2026-11-05"
+summary: "Second nanotag batch: oral SOD1 vs water under gentle-handling SD; tags from 2026-10-22. Re-planned 2026-10-30: SD Tue 11-03 + Wed 11-04, Y-maze then sampling Wed 2026-11-04, NOR dropped, SOD1 11 days"
 cohort: NS-SD + NW-SD (HLBNSSD51-55, HLBNWSD56-60)
 tags: [experiment, nanotag, sod1, sleep-deprivation, ns-sd, nw-sd]
 ---
@@ -22,6 +22,22 @@ tags: [experiment, nanotag, sod1, sleep-deprivation, ns-sd, nw-sd]
 > - 🛑 **Report these results on their own.** Never pooled with the EEG batches, never "the nanotag agrees":
 >   [[2026-10-06-eeg-and-nanotag-findings-reported-separately]].
 
+> [!warning] 2026-10-30: re-planned, see [[2026-10-30-NS-SD-two-day-SD-y-maze-only]]
+> The schedule in the TL;DR above and in the table below is replaced (Andrea, 2026-10-30):
+> - **Tags:** Run 1 stopped at its programmed end **10-30 09:00**. Tags read **10-30 18:00-19:00** (all data extracted);
+>   **Run 2 from 10-30 19:00 to Wed 11-04 19:00**, 12 s activity only. Lost: 10-30 09:00-19:00, all light phase.
+> - **SD only Tue 11-03 and Wed 11-04**, 09:00-15:00. **Y-maze Wed 11-04 15:00**, interleaved order, then **sampling
+>   straight after each Y-maze**. **NOR dropped.**
+> - SOD1 / water **11 days** at sampling (10-24 → 11-04); age at sampling 17.3 weeks.
+> - Sheet updated as CHG-012 → CHG-016 on 2026-10-31.
+
+## Animal notes
+- **2026-10-30, HLBNWSD59 (tag 20647):** the tag never migrated to the right flank. It sits at the incision site, above
+  the right front paw and shoulder. Fur there grew back less than on the other mice, and a patch of skin is dry
+  (Andrea). A tag over the shoulder may count forelimb and grooming movement differently from one on the flank:
+  compare its activity levels with the other nine before using it.
+- **2026-10-30, HLBNSSD53 (tag 20641):** sprayed urine all over the cage (Andrea).
+
 ## Setup
 - **Mice:** 10 implanted on Mon 2026-10-12 (surgery). Single-housed and moved to the recording room on **Mon 10-19**
   (the 10-16 plan did not happen; [[2026-10-19]]). Age at sampling 17.4 weeks ([[2026-10-21]]).
@@ -37,6 +53,9 @@ tags: [experiment, nanotag, sod1, sleep-deprivation, ns-sd, nw-sd]
 - **Procedure:** [[nanotag-recording-and-analysis]].
 
 ## Schedule (as of 2026-10-21)
+
+> [!warning] 2026-10-30: superseded from 10-30 on. SD Tue 11-03 + Wed 11-04 only, Y-maze + sampling Wed 11-04, no NOR:
+> [[2026-10-30-NS-SD-two-day-SD-y-maze-only]]
 
 | Date | Event |
 |---|---|
@@ -56,6 +75,14 @@ Interleave NS and NW mice in every session (51, 56, 52, 57, …) so time of day 
 (10-12 plan, [[hlb-sod1-design]]). Read the tags at sampling, then stop them, and log the read time per mouse.
 
 ## Prediction (write before looking)
+
+> [!warning] 2026-10-30: deviation, the windows below were fixed for the old schedule
+> Written before any Run 1 or Run 2 data were analysed. With SD only on 11-03 and 11-04, the windows become:
+> undisturbed SOD1 effect **10-31 09:00 → 11-03 09:00** (3 days, against baseline); SD efficacy = sleep 09:00-15:00
+> on 11-03 and 11-04, plus the wait before each mouse's Y-maze; recovery = **11-03 15:00 → 11-04 09:00** (the only
+> window between the two SD days). Excluded: the tag gap 10-30 09:00-19:00. Y-maze endpoints and the display plan:
+> [[2026-10-30-NS-SD-two-day-SD-y-maze-only]]. The original text below is kept as written.
+
 Fixed before the data arrive (from [[hlb-sod1-design]], 2026-10-19):
 - **Analysis windows:** baseline 10-22 09:00 → 10-24 09:00; SOD1 effect on undisturbed sleep = 10-31 09:00 → 11-02 09:00
   against baseline; SD efficacy = sleep 09:00-15:00 on each SD day plus 24 h totals; recovery = 11-02 15:00 → 11-03
@@ -103,3 +130,6 @@ Fixed before the data arrive (from [[hlb-sod1-design]], 2026-10-19):
   ([[2026-10-19]]).
 - **2026-10-21:** sampling moved to **Thu 11-05** (SOD1 12 days, SD 11-02 → 11-05), sheet requests CHG-005 → CHG-009
   ([[2026-10-21]]).
+- **2026-10-30:** SD cut to Tue 11-03 + Wed 11-04, Y-maze then sampling Wed 11-04, NOR dropped (SOD1 11 days); tags
+  read 10-30 18:00-19:00, Run 2 from 19:00. Sheet CHG-012 → CHG-016 on 2026-10-31
+  ([[2026-10-30-NS-SD-two-day-SD-y-maze-only]], [[2026-10-30]]).

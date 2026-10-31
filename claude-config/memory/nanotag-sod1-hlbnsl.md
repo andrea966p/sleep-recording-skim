@@ -1,6 +1,6 @@
 ---
 name: nanotag-sod1-hlbnsl
-description: "Nanotag SOD1 studies (no EEG): HLBNSL merged 2026-10-05, NS-SD/NW-SD re-planned 2026-10-19/21. Facts in the vault; keeps the mouse-ID, .nta-mtime and weekend rules"
+description: "Nanotag SOD1 studies (no EEG): HLBNSL merged 2026-10-05, NS-SD/NW-SD re-planned 2026-10-30 (2-day SD, Y-maze only). Facts in the vault; keeps the mouse-ID, .nta-mtime and weekend rules"
 metadata:
   node_type: memory
   type: project
@@ -8,7 +8,7 @@ metadata:
   modified: 2026-10-22T00:00:00.000Z
 ---
 
-Nanotag (Kissei VSMN 210, 12 s activity, no EEG, workstation only) is now THE sleep readout of the HLB SOD1 project. HLBNSL (NS-SL vs NW-SL, sampled 2026-10-02) was merged Run 1 + Run 2 on 2026-10-05: no detectable SOD1 sleep effect. NS-SD / NW-SD (HLBNSSD51-55 vs HLBNWSD56-60) was re-planned 2026-10-19/21: baseline 10-22 to 10-24, SOD from 10-24 (12 d), one read 10-30, SD Mon 11-02 to Thu 11-05, sampling Thu 11-05.
+Nanotag (Kissei VSMN 210, 12 s activity, no EEG, workstation only) is now THE sleep readout of the HLB SOD1 project. HLBNSL (NS-SL vs NW-SL, sampled 2026-10-02) was merged Run 1 + Run 2 on 2026-10-05: no detectable SOD1 sleep effect. NS-SD / NW-SD (HLBNSSD51-55 vs HLBNWSD56-60) re-planned 2026-10-30 ([[2026-10-30-NS-SD-two-day-SD-y-maze-only]]): SOD from 10-24 (11 d), read 10-30 18:00-19:00, Run 2 to 11-04 19:00, SD Tue 11-03 + Wed 11-04 only, Y-maze Wed 15:00 then sampling, NOR dropped.
 
 Details: [[2026-10-19-NS-SD-NW-SD-nanotag-study]] (NS-SD) · [[2026-09-14-HLBNSL-nanotag-SOD1-sleep]] and [[2026-10-05-HLBNSL-nanotag-merged-analysis]] (HLBNSL) · [[_nanotag-hub]].
 

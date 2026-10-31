@@ -71,6 +71,10 @@ How: [[sleepstager-user-guide]]. What the calls rest on: [[sleep-scoring-handboo
 
 ## NS-SD / NW-SD: current schedule (re-planned 2026-10-19)
 
+> [!warning] 2026-10-30: re-planned again, see [[2026-10-30-NS-SD-two-day-SD-y-maze-only]]
+> SD only Tue 11-03 + Wed 11-04 09:00-15:00, Y-maze Wed 15:00 then sampling, NOR dropped, SOD1 11 days. Tags read
+> 10-30 18:00-19:00, Run 2 from 19:00 to 11-04 19:00. The table and analysis windows below are the 2026-10-19/21 plan.
+
 > [!important] Source of truth = the sheet's `NANOTAG registry` (rows 19–29), as checked on 2026-10-19
 > The 10-12 plan below is **superseded**. Andrea moved the tag recording to start 10-22 and re-planned the batch on
 > 2026-10-19 against the literature (summary below). Sheet changes go through [[sod1-sheet-change-log-workflow]].
