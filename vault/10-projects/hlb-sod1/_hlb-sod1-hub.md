@@ -47,7 +47,7 @@ tags: [hub, project, hlb, sod1, sleep, eeg, nanotag]
 - NS-SD: the SD hours are the treatment; analyse them, do not remove them as handling windows. [[2026-10-19-NS-SD-NW-SD-nanotag-study]]
 
 ## Open items
-- [ ] HLBNSL NOR: hand-score the blinded validation subset in BORIS (`NOR-blind`, 4 clips; rules and score sheet in [[2026-10-26-HLBNSL-nor-hand-scoring]]) and compare with the pose scoring; then decide the endpoint. [[2026-10-25-HLBNSL-nor-pose-results]]
+- [ ] HLBNSL NOR: hand-score the blinded validation subset in BORIS (`NOR-blind`, 4 clips; rules and score sheet in [[2026-10-26-HLBNSL-nor-hand-scoring]]) and compare with the pose scoring; then decide the endpoint. 2026-10-31: set up on the office PC Ubuntu side (`~/nor-scoring`, BORIS project ready, comparison script `nor_hand_vs_pose.py` dry-run tested). [[2026-10-25-HLBNSL-nor-pose-results]]
 - [x] 2026-10-30: HLBNSD (batch 2) NOR counterbalancing: no longer needed, NOR dropped for NS-SD / NW-SD. [[2026-10-30-NS-SD-two-day-SD-y-maze-only]]
 - [ ] NS-SD Y-maze 11-04: log each mouse's Y-maze start time (real SD length per mouse) and put a ruler in frame. [[2026-10-30-NS-SD-two-day-SD-y-maze-only]]
 - [x] 2026-10-31: HLBNWSD59 compared with the other nine: dark counts about 2x, dark sleep 15-16 %; change from baseline in range, absolute values not comparable. [[2026-10-31-NS-SD-run1-nanotag-baseline-vs-sod1]]

@@ -45,6 +45,26 @@ tags: [behaviour, nor, validation, hlbnsl]
 - A bout ends when the snout turns away or moves beyond 2 cm. Don't merge two sniffs separated by a
   clear turn away.
 
+### Where to score (office PC, Ubuntu side, set up 2026-10-31)
+- The 18 blinded clips were copied from the Windows side of the same PC
+  (`Desktop\Nanotag videos upright\NOR-blind\videos\`) to `~/nor-scoring/videos/` on Ubuntu,
+  sha256 checked (18/18 identical). `score_these_first.txt` is beside them. **The blind key was
+  not copied**, and the Windows partition was unmounted afterwards.
+- BORIS is installed as a uv tool (`uv tool install boris-behav-obs`, launch with `boris`). It
+  plays video through libmpv: `sudo apt install -y libmpv2 ffmpeg` was run 2026-10-31.
+- BORIS project: `~/nor-scoring/NOR_HLBNSL.boris` (BORIS 9.15.0), one observation per clip
+  (named by its code), media and ethogram already set; it passed BORIS's own integrity check.
+  Keys: `a` = explore_A, `b` = explore_B (T1), `f` = explore_familiar, `n` = explore_novel (T2).
+  The four are mutually exclusive, so pressing one stops another; press the same key again to stop it.
+  Save the project (Ctrl+S) after each clip. No export is needed: the comparison reads the project.
+- Back up the project file when done (it is the only copy of the scores): copy it into
+  `nanotag/analysis/behavior/` results or back to the Windows folder. `~/nor-scoring` is not in git.
+- After all scores are in, Claude runs `nanotag/analysis/behavior/nor_hand_vs_pose.py` (reads the
+  key from the Windows side at run time): per-object seconds (r, ICC(A,1), bias, limits of
+  agreement), frame-level Cohen's kappa and precision / recall at 30 Hz, and d2 per mouse, hand
+  vs model1 vs model2. Dry run 2026-10-31 with model2's bouts injected as fake hand scores gave
+  kappa 1.000 against model2, as it should.
+
 ### Procedure
 - Score the whole clip (600 s, it already starts at the release of the mouse). No cut-off at a
   fixed amount of exploration.
@@ -60,6 +80,10 @@ tags: [behaviour, nor, validation, hlbnsl]
 - T1 location bias: the share of T1 exploration on the more-visited object.
 - Exclusions (SOP section 4): total exploration < 20 s in T1 or T2, or T1 location bias > 80 %.
 - Agreement with the pose scoring: seconds per object, d2, and per-bout overlap.
+
+> [!warning] 2026-10-31: NOR_152 and NOR_173 were partly unblinded
+> One of Claude's tool outputs printed their key rows (mouse and group) during setup. Score them
+> last or by a second rater, and note it with their scores.
 
 ## Decisions
 - Sitting facing the object without sniffing:
