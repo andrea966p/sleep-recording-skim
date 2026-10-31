@@ -77,7 +77,7 @@ rules and short pointers into the vault: when a hook and the vault disagree, the
 - [Open Ephys scale-up](openephys-scale-up-option.md) — Extension board dead (07-23); OE GUI drives our XDAQ licence-free. Close Allego before OE; never reflash the Core without KC
 ## Nanotag and the SOD1 sheet (vault: 20-areas/nanotag, 10-projects/hlb-sod1)
 - [Nanotag SOD1 studies](nanotag-sod1-hlbnsl.md) — HLBNSL 10-05: no SOD1 effect. NS-SD: SD 11-03 + 11-04, Y-maze + sampling Wed 11-04, NOR dropped (10-30). 🛑 No SD/tests at weekends. Mouse = header tag ID
-- [SOD1 sheet: change log + direct edits](sod1-sheet-pending-changes-tab.md) — Since 10-26 Claude Code edits via the Google Sheets connector, every change logged (last CHG-016). 🛑 Andrea OKs exact cells first; no paste files, no Drive-export fallback
+- [SOD1 sheet: change log + direct edits](sod1-sheet-pending-changes-tab.md) — Since 10-26 Claude Code edits via the Google Sheets connector, every change logged (last CHG-017). 🛑 Andrea OKs exact cells first; no paste files, no Drive-export fallback
 - [HLBNSL behaviour videos](hlbnsl-behavior-videos-pointer.md) — Rules frozen in `nanotag/analysis/behavior/BEHAVIOR_SOP.md`. Videos on `kaist-bilab-win`; all cut to the trial (10-25). OFT/NOR tracked by YOLO pose: `max_det` > 1, floor per clip
 ## Computing: machines and workspace (vault: 20-areas/computing)
 - Host `e10ubuntu` @ 192.168.0.50, user `skimlab`, Core Ultra 5 125H (not Ultra 7, not `frigate-server`). We are ON it: no SSH for local commands. Facts: `production-values`

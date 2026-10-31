@@ -5,7 +5,7 @@ metadata:
   type: reference
 ---
 
-Sheet `HLB_SOD1_Intake_Monitoring_SDSLNANO` (id 1jgQpYiUGzEwFpjAhy8SvCamGoeMFZEycLFpzwgfgxhs), tab `Pending changes instructions` (data from row 10): ① PENDING A:G, ② APPLIED I:Q (N old value, P verdict, Q comment), ③ HISTORY S:AA append-only. Last ID CHG-016 (HISTORY row 25); rework = CHG-xxx-R1.
+Sheet `HLB_SOD1_Intake_Monitoring_SDSLNANO` (id 1jgQpYiUGzEwFpjAhy8SvCamGoeMFZEycLFpzwgfgxhs), tab `Pending changes instructions` (data from row 10): ① PENDING A:G, ② APPLIED I:Q (N old value, P verdict, Q comment), ③ HISTORY S:AA append-only. Last ID CHG-017 (HISTORY row 26); rework = CHG-xxx-R1.
 
 Procedure: [[sod1-sheet-change-log-workflow]] · [[_hlb-sod1-hub]]
 
