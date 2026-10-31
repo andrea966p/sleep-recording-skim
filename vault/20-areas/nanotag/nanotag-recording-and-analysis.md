@@ -26,6 +26,11 @@ created: 2026-10-05
 >        /usr/bin/python3 nanotag/analysis/export_nas.py "<data dir>" STAGE [nanotag/analysis/out/HLBNSL]
 >        /usr/bin/python3 eeg-emg-analysis/qc/nas_copy_verified.py STAGE/HLBNSSL /mnt/skimnas/02_Data_Sleep/andrea/HLBNSSL
 >
+> > [!note] 2026-10-31: Python on the office PC
+> > The figures need matplotlib ≥ 3.7; Ubuntu 24.04's `python3-matplotlib` is 3.6.3 and fails at the first summary
+> > figure. On the office PC run step 4 with `~/.venvs/nanotag/bin/python` (matplotlib 3.11.2, numpy 2.5.4); setup in
+> > `nanotag/README.md`. NS-SD uses `nanotag/analysis/cohort_sd.py`: [[2026-10-31-NS-SD-run1-nanotag-baseline-vs-sod1]].
+>
 > 🛑 The SKIM NAS is a **working copy, not a backup** ([[backup-architecture]]). As of 2026-10-05 nanotag raw data exists on the workstation Desktop and the SKIM NAS only; there is no off-site copy yet.
 
 > [!quote] Paper-ready

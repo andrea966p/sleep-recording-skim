@@ -96,6 +96,12 @@ MIN_PHASE_H = 6
 # 15.0 days after the start: treatment days 3-15.
 SOD1_START = (datetime(2026, 9, 17, 14), datetime(2026, 9, 17, 17))
 DAYS = "3–15"
+# figure wording that names this batch's events
+BASELINE_NOTE = "surgery day +3 to +6"
+SOD1_WHEN = "09-17 14:00-17:00"
+REMOVED_NOTE = ("handling 09-26, 09-27, 09-29; tag read 09-28; tests 09-30, 10-01; 10-02 from 14:00); "
+                "mouse 43 excluded")
+REMOVED_SHORT = "handling, tag-read and test windows removed"
 LIQ = "#7c3aed"      # marker colour, distinct from both group colours
 MERGE = 2            # bridge wake gaps <= 2 bins (24 s) for bout statistics only
 K = SLEEP_MIN_BINS   # 4 bins = 48 s immobility
@@ -367,9 +373,8 @@ def fig_actograms(recs):
                      fontsize=10, color="0.1")
     fig.supxlabel("hours from lights on (09:00 = ZT0; lights off at ZT12)", y=0.04)
     fig.suptitle("Actograms, 10-min cross counts, one day per row (grey = dark; violet ▼ = start of SOD1, "
-                 "or water bottle in the water group, 09-17 14:00-17:00;\nhatched = removed "
-                 "(handling 09-26, 09-27, 09-29; tag read 09-28; tests 09-30, 10-01; 10-02 from 14:00); "
-                 "mouse 43 excluded)", y=0.995)
+                 f"or water bottle in the water group, {SOD1_WHEN};\nhatched = removed "
+                 f"({REMOVED_NOTE})", y=0.995)
     save(fig, "fig1_actograms")
 
 def fig_daily(days):
@@ -402,12 +407,11 @@ def fig_daily(days):
         a, b = (t - timedelta(hours=LIGHTS_ON) for t in SOD1_START)
         ax.axvspan(a, b, color=LIQ, alpha=0.6, lw=0)
         ax.axvline(a, color=LIQ, ls="--", lw=1)
-        ax.text(b, 0.98, " SOD1 start\n 09-17", color=LIQ, fontsize=8, va="top",
+        ax.text(b, 0.98, f" SOD1 start\n {SOD1_START[0]:%m-%d}", color=LIQ, fontsize=8, va="top",
                 transform=ax.get_xaxis_transform())
         ax.set_ylabel(lab); ax.tick_params(axis="x", labelrotation=45, labelsize=8)
     axes[0].legend(frameon=False, title="group mean ± SEM", loc="lower right")
-    fig.suptitle("Daily sleep per mouse (thin) and group (thick); handling, tag-read and test windows "
-                 f"removed; phases with < {MIN_PHASE_H} h recorded not plotted", y=1.01)
+    fig.suptitle(f"Daily sleep per mouse (thin) and group (thick); {REMOVED_SHORT}; phases with < {MIN_PHASE_H} h recorded not plotted", y=1.01)
     fig.tight_layout()
     save(fig, "fig2_daily_sleep")
 
@@ -415,7 +419,7 @@ def fig_zt(recs):
     """Hourly % asleep across the 24 h day, group mean ± SEM, one panel per period.
     Lines, so the axis is the natural 0-100 % scale rather than bars from 0."""
     fig, axes = plt.subplots(1, 2, figsize=(12, 4.2), sharey=True, layout="constrained")
-    for ax, per, ttl in ((axes[0], "baseline", "Baseline, pre-treatment (surgery day +3 to +6)"),
+    for ax, per, ttl in ((axes[0], "baseline", f"Baseline, pre-treatment ({BASELINE_NOTE})"),
                          (axes[1], "treatment", f"Treatment days {DAYS}")):
         for g in ("SOD1", "water"):
             prof = []
@@ -656,8 +660,8 @@ def fig_daily_mean(days):
         ax.tick_params(axis="x", labelrotation=45)
         style(ax)
     axes[0].legend(frameon=False, loc="lower right", title="group mean ± SEM", fontsize=9)
-    fig.suptitle("Daily sleep by group. Violet = SOD1 start (09-17); gap = no recording; handling, "
-                 "tag-read and test windows removed", x=0.01, ha="left", fontsize=12, color="0.1")
+    fig.suptitle(f"Daily sleep by group. Violet = SOD1 start ({SOD1_START[0]:%m-%d}); gap = no recording; "
+                 f"{REMOVED_SHORT}", x=0.01, ha="left", fontsize=12, color="0.1")
     save(fig, "fig2b_daily_sleep_mean")
 
 def fig_temp(recs, tc):

@@ -99,6 +99,8 @@ Fixed before the data arrive (from [[hlb-sod1-design]], 2026-10-19):
 ## Result
 (fill in when done)
 
+> [!info] 2026-10-31: Run 1 (before vs after SOD1, no SD) analysed: no detectable SOD1 effect. [[2026-10-31-NS-SD-run1-nanotag-baseline-vs-sod1]]
+
 ## Deviations from the protocol, recorded
 - **SOD1 for 12 days**, not NS-SL's 15: Andrea does no SD or behaviour at weekends, so sampling moved from Sun 11-08 to
   Thu 11-05 on 2026-10-21 ([[2026-10-21]]).
@@ -107,7 +109,7 @@ Fixed before the data arrive (from [[hlb-sod1-design]], 2026-10-19):
 - The 2 h NOR retention interval is rest, not SD (Andrea, 2026-10-19).
 
 ## Open
-- [ ] `nanotag/analysis/cohort.py` has no NS-SD blocks yet (`FOLDERS`, `TAG`, `SOD1`, `WATER`, `SURGERY`, `EXCLUDE`,
+- [x] 2026-10-31: done as `nanotag/analysis/cohort_sd.py` (Run 1 only; SD windows still to add for Run 2): [[2026-10-31-NS-SD-run1-nanotag-baseline-vs-sod1]]. Was: `nanotag/analysis/cohort.py` has no NS-SD blocks yet (`FOLDERS`, `TAG`, `SOD1`, `WATER`, `SURGERY`, `EXCLUDE`,
   `SOD1_START`) and no `SD` window list. Checked in the repo 2026-10-22. Needed before analysis.
 - [ ] Sheet requests CHG-005 → CHG-009 (sent 2026-10-21): review after Claude for Sheets applies them
   ([[sod1-sheet-change-log-workflow]]).

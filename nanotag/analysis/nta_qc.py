@@ -26,7 +26,8 @@ def parse(path):
     """-> (header dict, [(ts, count)], [(ts, temp)])"""
     with open(path, newline="", encoding="utf-8-sig") as f:
         rows = list(csv.reader(f))
-    hdr = {"act_res": int(rows[0][2]), "temp_res": int(rows[0][5])}
+    # activity-only recordings (NS-SD) export "Temperature,None"
+    hdr = {"act_res": int(rows[0][2]), "temp_res": int(rows[0][5]) if rows[0][5].isdigit() else None}
     for kv in re.split(r"/(?=[A-Za-z][^:/]*:)", rows[1][1]):
         if ":" in kv:
             k, v = kv.split(":", 1)
