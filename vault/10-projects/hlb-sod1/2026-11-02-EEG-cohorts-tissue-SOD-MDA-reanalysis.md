@@ -3,7 +3,7 @@ type: experiment
 area: hlb-sod1
 status: active
 created: 2026-11-02
-summary: "Tissue assays of the four EEG cohorts (W-SD, S-SD, W-SL, S-SL) re-derived from the raw ODs: hippocampal total SOD unchanged by SOD1; hippocampal MDA higher in the SD cohorts, no SOD1 effect; heart SOD crossover (interaction p < 0.001) that is a cohort pattern and fragile to normalisation; group = cohort, so none of it is causal; data-entry questions for Andrea"
+summary: "Tissue assays of the four EEG cohorts (W-SD, S-SD, W-SL, S-SL) re-derived from the raw ODs: hippocampal total SOD unchanged by SOD1; hippocampal MDA higher in the SD cohorts, no SOD1 effect; heart SOD crossover (interaction p < 0.001) that is a cohort pattern (per mL = per mg, buffer fixed per mg); group = cohort, so none of it is causal; Andrea's answers in the 2026-11-02 callout"
 tags: [hlb, sod1, tissue, sod, mda, statistics]
 ---
 

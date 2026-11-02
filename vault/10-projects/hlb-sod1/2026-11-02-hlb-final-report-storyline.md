@@ -23,6 +23,9 @@ tags: [hlb, sod1, report, design]
 >   analysis from the sheet, tissue assays, EEG manual scoring.
 
 ## What the report has to say, section by section
+> [!note] 2026-11-02, later: the status column below is frozen at the time of writing. The live status of each
+> section is in the draft, [[2026-11-02-hlb-sod1-final-report-draft]], which is now the working document.
+
 Status: ✅ analysed · 🟡 partly · ⬜ not yet.
 
 | # | Section | What we show | Status, source |
