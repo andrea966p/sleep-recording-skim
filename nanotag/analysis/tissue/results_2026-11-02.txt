@@ -1,0 +1,377 @@
+hippoSOD plate SD: OD-linear slope -5.4679 int 0.4071 R2 0.9518 | LR(blank=0.0376) slope 46.12 int 0.909 R2 0.9822 | LR no blank R2 0.9932
+hippoSOD plate SL: OD-linear slope -5.6201 int 0.4146 R2 0.9497 | LR(blank=0.0376) slope 47.43 int 0.895 R2 0.9686 | LR no blank R2 0.9845
+heartSOD plate 1: OD-linear slope -4.4881 int 0.2912 R2 0.8868 | LR(blank=0.0366) slope 76.31 int 0.884 R2 0.9966 | LR no blank R2 0.9960
+MDA: linear slope 0.1467 int 0.0663 R2 0.9866; residuals [-0.032, 0.045, -0.018, 0.002, 0.031, -0.028]
+
+Duplicate CV% (net of background) by assay/group: median, max, mice >10%
+  MDA      S-SD: median 1.5 max 3.8  >10%: []  mean(od1-od2) +0.0086 paired p 0.022
+  MDA      S-SL: median 1.6 max 5.5  >10%: []  mean(od1-od2) +0.0078 paired p 0.030
+  MDA      W-SD: median 0.9 max 3.4  >10%: []  mean(od1-od2) -0.0017 paired p 0.605
+  MDA      W-SL: median 4.9 max 10.3  >10%: [27]  mean(od1-od2) +0.0140 paired p 0.239
+  heartSOD S-SD: median 5.1 max 6.7  >10%: []  mean(od1-od2) +0.0092 paired p 0.001
+  heartSOD S-SL: median 3.5 max 5.9  >10%: []  mean(od1-od2) -0.0042 paired p 0.136
+  heartSOD W-SD: median 2.1 max 3.4  >10%: []  mean(od1-od2) +0.0017 paired p 0.242
+  heartSOD W-SL: median 1.3 max 4.8  >10%: []  mean(od1-od2) +0.0007 paired p 0.748
+  hippoSOD S-SD: median 2.0 max 4.7  >10%: []  mean(od1-od2) -0.0026 paired p 0.302
+  hippoSOD S-SL: median 3.2 max 9.3  >10%: []  mean(od1-od2) -0.0089 paired p 0.065
+  hippoSOD W-SD: median 2.0 max 6.6  >10%: []  mean(od1-od2) -0.0059 paired p 0.014
+  hippoSOD W-SL: median 1.7 max 7.3  >10%: []  mean(od1-od2) +0.0049 paired p 0.197
+
+hippoSOD sheet-method per-mouse values:
+group  mouse      y
+ W-SD      1 1.8759
+ W-SD      2 2.1594
+ W-SD      3 1.6747
+ W-SD      4 2.0817
+ W-SD      6 1.9308
+ W-SD      7 1.8896
+ W-SD      8 1.8028
+ W-SD      9 1.8348
+ W-SD     10 2.1868
+ S-SD     11 1.8119
+ S-SD     12 1.8531
+ S-SD     13 2.0588
+ S-SD     14 2.0588
+ S-SD     15 2.1091
+ S-SD     16 1.9536
+ S-SD     17 1.9262
+ S-SD     18 2.0908
+ S-SD     19 1.9856
+ W-SL     21 1.8023
+ W-SL     22 1.8691
+ W-SL     23 1.8023
+ W-SL     24 1.9491
+ W-SL     25 1.7846
+ W-SL     26 1.8424
+ W-SL     27 2.2116
+ W-SL     28 1.8646
+ W-SL     29 1.8513
+ S-SL     31 1.7401
+ S-SL     32 1.7668
+ S-SL     33 1.7356
+ S-SL     34 1.8335
+ S-SL     35 1.9491
+ S-SL     38 1.8468
+ S-SL     39 1.8379
+ S-SL     40 1.7579
+
+######## hippoSOD [sheet] U/mL homogenate
+       n    mean      sd  median
+group                           
+W-SD   9  1.9374  0.1718  1.8896
+S-SD   9  1.9831  0.1056  1.9856
+W-SL   9  1.8864  0.1314  1.8513
+S-SL   8  1.8085  0.0727  1.8001
+TypeIII p: drink 0.7108 sleep 0.0134 int 0.1607 (F=2.07, dfe=31); np2 drink 0.004 sleep 0.182 int 0.062
+TypeII additive p: drink 0.7470 sleep 0.0162
+  S-W within SD: diff 0.0457 95%CI [-0.0764  0.1679] Sidak-CI [-0.095   0.1865] p unadj 0.4510 Sidak(k=2) 0.6986 (k=4) 0.9092  g 0.31 [-0.70, 1.31]
+  S-W within SL: diff -0.0779 95%CI [-0.2038  0.048 ] Sidak-CI [-0.223   0.0672] p unadj 0.2164 Sidak(k=2) 0.3860 (k=4) 0.6230  g -0.68 [-1.75, 0.38]
+  interaction contrast 0.1236 95%CI [-0.0518  0.2991]
+  exact perm S vs W within SD: p=0.5076; MWU p=0.5457
+  exact perm S vs W within SL: p=0.1484; MWU p=0.0927
+  Freedman-Lane perm p: drink 0.7176 sleep 0.0131 int 0.1618
+  Shapiro per group p: {'S-SD': np.float64(0.493), 'S-SL': np.float64(0.197), 'W-SD': np.float64(0.589), 'W-SL': np.float64(0.002)}; Brown-Forsythe p=0.373; max |ext. stud. resid| 3.06 at mouse 27
+
+######## hippoSOD [sheet_noBG] U/mL homogenate
+       n    mean      sd  median
+group                           
+W-SD   9  1.5940  0.1712  1.5513
+S-SD   9  1.6387  0.1063  1.6473
+W-SL   9  1.5513  0.1301  1.5221
+S-SL   8  1.4737  0.0718  1.4665
+TypeIII p: drink 0.7042 sleep 0.0214 int 0.1636 (F=2.04, dfe=31); np2 drink 0.005 sleep 0.159 int 0.062
+TypeII additive p: drink 0.7400 sleep 0.0254
+  S-W within SD: diff 0.0447 95%CI [-0.077   0.1664] Sidak-CI [-0.0955  0.1849] p unadj 0.4592 Sidak(k=2) 0.7076 (k=4) 0.9145  g 0.30 [-0.71, 1.30]
+  S-W within SL: diff -0.0775 95%CI [-0.2029  0.0479] Sidak-CI [-0.222  0.067] p unadj 0.2167 Sidak(k=2) 0.3865 (k=4) 0.6236  g -0.69 [-1.75, 0.38]
+  interaction contrast 0.1222 95%CI [-0.0525  0.297 ]
+
+######## hippoSOD [cayman] U/mL homogenate
+       n     mean      sd   median
+group                             
+W-SD   9  29.6105  5.1730  27.8198
+S-SD   9  30.7031  3.1821  30.6093
+W-SL   9  28.0486  4.1957  26.8321
+S-SL   8  25.7909  1.8954  25.5320
+TypeIII p: drink 0.6585 sleep 0.0188 int 0.2089 (F=1.65, dfe=31); np2 drink 0.006 sleep 0.166 int 0.050
+TypeII additive p: drink 0.6892 sleep 0.0215
+  S-W within SD: diff 1.0925 95%CI [-2.6153  4.8003] Sidak-CI [-3.1797  5.3647] p unadj 0.5522 Sidak(k=2) 0.7995 (k=4) 0.9598  g 0.24 [-0.76, 1.25]
+  S-W within SL: diff -2.2578 95%CI [-6.0797  1.5641] Sidak-CI [-6.6615  2.1459] p unadj 0.2374 Sidak(k=2) 0.4184 (k=4) 0.6618  g -0.64 [-1.71, 0.42]
+  interaction contrast 3.3503 95%CI [-1.9746  8.6753]
+  exact perm S vs W within SD: p=0.5929; MWU p=0.5457
+  exact perm S vs W within SL: p=0.1660; MWU p=0.0927
+  Freedman-Lane perm p: drink 0.6645 sleep 0.0185 int 0.2091
+  Shapiro per group p: {'S-SD': np.float64(0.554), 'S-SL': np.float64(0.148), 'W-SD': np.float64(0.395), 'W-SL': np.float64(0.001)}; Brown-Forsythe p=0.364; max |ext. stud. resid| 3.38 at mouse 27
+  LOO hippoSOD cayman: ranges p_int [0.0894, 0.3849]; p_drink [0.4228, 0.9462]; p_sleep [0.0019, 0.0347]; pSD [0.4256, 0.9916]; pSL [0.2942, 0.8249]
+  ratio cayman/sheet per mouse:  [13.45 14.94 17.49]
+
+######## hippoSOD [cayman_noblank] U/mL homogenate
+       n     mean      sd   median
+group                             
+W-SD   9  30.8549  5.1200  29.2744
+S-SD   9  31.9601  3.1745  32.0792
+W-SL   9  29.3286  4.0875  28.3083
+S-SL   8  27.0825  1.9037  26.8518
+TypeIII p: drink 0.6611 sleep 0.0186 int 0.2031 (F=1.69, dfe=31); np2 drink 0.006 sleep 0.166 int 0.052
+TypeII additive p: drink 0.6924 sleep 0.0214
+  S-W within SD: diff 1.1052 95%CI [-2.5553  4.7657] Sidak-CI [-3.1124  5.3229] p unadj 0.5425 Sidak(k=2) 0.7907 (k=4) 0.9562  g 0.25 [-0.76, 1.25]
+  S-W within SL: diff -2.2461 95%CI [-6.0193  1.527 ] Sidak-CI [-6.5936  2.1013] p unadj 0.2339 Sidak(k=2) 0.4131 (k=4) 0.6555  g -0.65 [-1.72, 0.41]
+  interaction contrast 3.3513 95%CI [-1.9056  8.6083]
+
+######## hippoSOD [4pl] U/mL homogenate
+       n     mean      sd   median
+group                             
+W-SD   9  32.6835  5.0915  31.0692
+S-SD   9  33.8902  3.1429  33.8746
+W-SL   9  31.1157  4.0617  29.9730
+S-SL   8  28.8436  1.9994  28.5871
+TypeIII p: drink 0.6812 sleep 0.0150 int 0.1855 (F=1.83, dfe=31); np2 drink 0.006 sleep 0.176 int 0.056
+TypeII additive p: drink 0.7145 sleep 0.0176
+  S-W within SD: diff 1.2068 95%CI [-2.4415  4.8551] Sidak-CI [-2.9968  5.4104] p unadj 0.5049 Sidak(k=2) 0.7549 (k=4) 0.9399  g 0.27 [-0.73, 1.28]
+  S-W within SL: diff -2.2721 95%CI [-6.0327  1.4885] Sidak-CI [-6.6051  2.0609] p unadj 0.2271 Sidak(k=2) 0.4027 (k=4) 0.6432  g -0.66 [-1.72, 0.40]
+  interaction contrast 3.4789 95%CI [-1.7606  8.7184]
+
+######## hippoSOD cayman, drop W-SL 27
+       n     mean      sd   median
+group                             
+W-SD   9  29.6105  5.1730  27.8198
+S-SD   9  30.7031  3.1821  30.6093
+W-SL   8  26.7205  1.4055  26.7151
+S-SL   8  25.7909  1.8954  25.5320
+TypeIII p: drink 0.9439 sleep 0.0019 int 0.3849 (F=0.78, dfe=30); np2 drink 0.000 sleep 0.278 int 0.025
+TypeII additive p: drink 0.9025 sleep 0.0018
+  S-W within SD: diff 1.0925 95%CI [-2.1201  4.3051] Sidak-CI [-2.6103  4.7954] p unadj 0.4927 Sidak(k=2) 0.7426 (k=4) 0.9338  g 0.24 [-0.76, 1.25]
+  S-W within SL: diff -0.9297 95%CI [-4.3372  2.4778] Sidak-CI [-4.8571  2.9978] p unadj 0.5815 Sidak(k=2) 0.8249 (k=4) 0.9693  g -0.53 [-1.62, 0.56]
+  interaction contrast 2.0222 95%CI [-2.661   6.7053]
+
+heartSOD sheet-method per-mouse values:
+group  mouse      y
+ W-SD      1 2.1806
+ W-SD      3 2.0079
+ W-SD      4 1.7851
+ W-SD      6 2.1138
+ W-SD      7 2.2252
+ W-SD      8 2.1026
+ S-SD     11 1.9578
+ S-SD     12 1.8798
+ S-SD     13 1.8798
+ S-SD     14 1.6849
+ S-SD     15 1.8074
+ S-SD     17 1.6069
+ W-SL     21 1.7740
+ W-SL     22 1.7127
+ W-SL     23 1.9300
+ W-SL     24 1.6403
+ W-SL     25 1.7294
+ W-SL     27 1.9912
+ S-SL     31 1.9133
+ S-SL     32 1.9188
+ S-SL     33 1.8743
+ S-SL     34 2.1082
+ S-SL     35 1.9522
+ S-SL     38 2.1973
+
+######## heartSOD [sheet] U/mL homogenate
+       n    mean      sd  median
+group                           
+W-SD   6  2.0692  0.1577  2.1082
+S-SD   6  1.8028  0.1328  1.8436
+W-SL   6  1.7963  0.1358  1.7517
+S-SL   6  1.9940  0.1286  1.9355
+TypeIII p: drink 0.5522 sleep 0.4804 int 0.0006 (F=16.69, dfe=20); np2 drink 0.018 sleep 0.025 int 0.455
+TypeII additive p: drink 0.6521 sleep 0.5922
+  S-W within SD: diff -0.2664 95%CI [-0.434  -0.0989] Sidak-CI [-0.4606 -0.0722] p unadj 0.0034 Sidak(k=2) 0.0069 (k=4) 0.0137  g -1.69 [-3.19, -0.19]
+  S-W within SL: diff 0.1977 95%CI [0.0302 0.3653] Sidak-CI [0.0035 0.3919] p unadj 0.0231 Sidak(k=2) 0.0456 (k=4) 0.0891  g 1.38 [-0.05, 2.81]
+  interaction contrast -0.4642 95%CI [-0.7012 -0.2272]
+  exact perm S vs W within SD: p=0.0152; MWU p=0.0260
+  exact perm S vs W within SL: p=0.0303; MWU p=0.0931
+  Freedman-Lane perm p: drink 0.5506 sleep 0.4724 int 0.0009
+  Shapiro per group p: {'S-SD': np.float64(0.597), 'S-SL': np.float64(0.164), 'W-SD': np.float64(0.312), 'W-SL': np.float64(0.478)}; Brown-Forsythe p=0.996; max |ext. stud. resid| 2.52 at mouse 4
+
+######## heartSOD [sheet_noBG] U/mL homogenate
+       n    mean      sd  median
+group                           
+W-SD   6  1.6552  0.1514  1.7016
+S-SD   6  1.3887  0.1354  1.4258
+W-SL   6  1.3952  0.1358  1.3506
+S-SL   6  1.5930  0.1294  1.5373
+TypeIII p: drink 0.5496 sleep 0.6270 int 0.0005 (F=16.91, dfe=20); np2 drink 0.018 sleep 0.012 int 0.458
+TypeII additive p: drink 0.6509 sleep 0.7134
+  S-W within SD: diff -0.2664 95%CI [-0.4329 -0.1   ] Sidak-CI [-0.4594 -0.0735] p unadj 0.0033 Sidak(k=2) 0.0065 (k=4) 0.0130  g -1.71 [-3.22, -0.21]
+  S-W within SL: diff 0.1977 95%CI [0.0313 0.3642] Sidak-CI [0.0048 0.3907] p unadj 0.0223 Sidak(k=2) 0.0440 (k=4) 0.0861  g 1.38 [-0.05, 2.81]
+  interaction contrast -0.4642 95%CI [-0.6996 -0.2287]
+
+######## heartSOD [cayman] U/mL homogenate
+       n     mean      sd   median
+group                             
+W-SD   6  29.9602  5.2644  30.8415
+S-SD   6  21.7248  3.1381  22.5233
+W-SL   6  21.5952  3.4228  20.3014
+S-SL   6  27.1924  4.4983  25.0208
+TypeIII p: drink 0.4474 sleep 0.4047 int 0.0006 (F=16.52, dfe=20); np2 drink 0.029 sleep 0.035 int 0.452
+TypeII additive p: drink 0.5630 sleep 0.5256
+  S-W within SD: diff -8.2353 95%CI [-13.2558  -3.2148] Sidak-CI [-14.0528  -2.4179] p unadj 0.0027 Sidak(k=2) 0.0054 (k=4) 0.0108  g -1.75 [-3.27, -0.24]
+  S-W within SL: diff 5.5972 95%CI [ 0.5767 10.6177] Sidak-CI [-0.2202 11.4147] p unadj 0.0307 Sidak(k=2) 0.0604 (k=4) 0.1172  g 1.29 [-0.12, 2.71]
+  interaction contrast -13.8325 95%CI [-20.9326  -6.7325]
+  exact perm S vs W within SD: p=0.0152; MWU p=0.0260
+  exact perm S vs W within SL: p=0.0325; MWU p=0.0931
+  Freedman-Lane perm p: drink 0.4467 sleep 0.4012 int 0.0009
+  Shapiro per group p: {'S-SD': np.float64(0.713), 'S-SL': np.float64(0.109), 'W-SD': np.float64(0.684), 'W-SL': np.float64(0.344)}; Brown-Forsythe p=0.893; max |ext. stud. resid| 2.67 at mouse 4
+  LOO heartSOD cayman: ranges p_int [0.0001, 0.0014]; p_drink [0.1639, 0.6706]; p_sleep [0.1417, 0.6164]; pSD [0.0005, 0.0181]; pSL [0.0293, 0.1784]
+    pSL crosses 0.05 when dropping mice [4, 23, 27, 33]
+  ratio cayman/sheet per mouse:  [10.78 12.98 16.14]
+
+######## heartSOD [cayman_noblank] U/mL homogenate
+       n     mean      sd   median
+group                             
+W-SD   6  31.9512  4.8615  33.2388
+S-SD   6  23.7926  3.4388  24.5699
+W-SL   6  23.9739  3.6457  22.6333
+S-SL   6  29.7625  4.4498  27.7300
+TypeIII p: drink 0.4913 sleep 0.5593 int 0.0005 (F=17.03, dfe=20); np2 drink 0.024 sleep 0.017 int 0.460
+TypeII additive p: drink 0.6030 sleep 0.6593
+  S-W within SD: diff -8.1586 95%CI [-13.1442  -3.1729] Sidak-CI [-13.9356  -2.3815] p unadj 0.0028 Sidak(k=2) 0.0055 (k=4) 0.0110  g -1.79 [-3.31, -0.27]
+  S-W within SL: diff 5.7886 95%CI [ 0.803  10.7743] Sidak-CI [1.15000e-02 1.15657e+01] p unadj 0.0251 Sidak(k=2) 0.0495 (k=4) 0.0965  g 1.31 [-0.10, 2.73]
+  interaction contrast -13.9472 95%CI [-20.998   -6.8964]
+
+######## heartSOD [4pl] U/mL homogenate
+       n     mean      sd   median
+group                             
+W-SD   6  31.0581  5.0628  31.9490
+S-SD   6  23.0718  3.1374  23.8903
+W-SL   6  22.9387  3.3965  21.6736
+S-SL   6  28.4182  4.3095  26.3489
+TypeIII p: drink 0.4572 sleep 0.4115 int 0.0006 (F=16.59, dfe=20); np2 drink 0.028 sleep 0.034 int 0.453
+TypeII additive p: drink 0.5718 sleep 0.5320
+  S-W within SD: diff -7.9863 95%CI [-12.8629  -3.1098] Sidak-CI [-13.637   -2.3357] p unadj 0.0027 Sidak(k=2) 0.0055 (k=4) 0.0109  g -1.75 [-3.26, -0.24]
+  S-W within SL: diff 5.4795 95%CI [ 0.603 10.356] Sidak-CI [-0.1711 11.1301] p unadj 0.0295 Sidak(k=2) 0.0582 (k=4) 0.1130  g 1.30 [-0.11, 2.72]
+  interaction contrast -13.4658 95%CI [-20.3623  -6.5693]
+
+heart buffer:tissue ratio (uL/mg), off-protocol (|r-20|>0.2):
+group  mouse  tissue_mg  buffer  ratio_uL_mg      y
+ W-SD      6      285.0    3.70       12.982 31.058
+ W-SL     24      247.0    4.04       16.356 17.959
+ S-SL     34      218.0    4.30       19.725 30.840
+ S-SL     35      243.0    4.80       19.753 25.510
+ S-SL     38      183.0    3.60       19.672 34.599
+
+######## heartSOD cayman, U/mg wet tissue (uses recorded buffer)
+       n    mean      sd  median
+group                           
+W-SD   6  0.5629  0.1307  0.5788
+S-SD   6  0.4345  0.0628  0.4505
+W-SL   6  0.4210  0.0855  0.4060
+S-SL   6  0.5395  0.0853  0.4973
+TypeIII p: drink 0.8992 sleep 0.6373 int 0.0045 (F=10.27, dfe=20); np2 drink 0.001 sleep 0.011 int 0.339
+TypeII additive p: drink 0.9159 sleep 0.6941
+  S-W within SD: diff -0.1284 95%CI [-0.242  -0.0147] Sidak-CI [-0.2601  0.0033] p unadj 0.0288 Sidak(k=2) 0.0567 (k=4) 0.1102  g -1.16 [-2.55, 0.23]
+  S-W within SL: diff 0.1185 95%CI [0.0049 0.2321] Sidak-CI [-0.0132  0.2502] p unadj 0.0418 Sidak(k=2) 0.0818 (k=4) 0.1570  g 1.28 [-0.13, 2.69]
+  interaction contrast -0.2469 95%CI [-0.4076 -0.0862]
+  exact perm S vs W within SD: p=0.0606; MWU p=0.1320
+  exact perm S vs W within SL: p=0.0325; MWU p=0.0931
+  Freedman-Lane perm p: drink 0.9002 sleep 0.6353 int 0.0047
+  Shapiro per group p: {'S-SD': np.float64(0.713), 'S-SL': np.float64(0.093), 'W-SD': np.float64(0.498), 'W-SL': np.float64(0.791)}; Brown-Forsythe p=0.352; max |ext. stud. resid| 1.99 at mouse 6
+  LOO heart U/mg: ranges p_int [0.0013, 0.0093]; p_drink [0.5771, 0.9996]; p_sleep [0.3622, 0.9382]; pSD [0.0145, 0.1637]; pSL [0.0413, 0.2157]
+    pSD crosses 0.05 when dropping mice [4, 6, 11, 24, 38]
+    pSL crosses 0.05 when dropping mice [27]
+
+######## heartSOD cayman U/mL, excluding off-ratio mice 6 and 24
+       n     mean      sd   median
+group                             
+W-SD   5  29.7406  5.8550  30.6250
+S-SD   6  21.7248  3.1381  22.5233
+W-SL   5  22.3223  3.2679  20.8033
+S-SL   6  27.1924  4.4983  25.0208
+TypeIII p: drink 0.4024 sleep 0.6014 int 0.0025 (F=12.34, dfe=18); np2 drink 0.039 sleep 0.015 int 0.407
+TypeII additive p: drink 0.5055 sleep 0.8677
+  S-W within SD: diff -8.0158 95%CI [-13.465   -2.5666] Sidak-CI [-14.3414  -1.6901] p unadj 0.0063 Sidak(k=2) 0.0126 (k=4) 0.0250  g -1.61 [-3.19, -0.04]
+  S-W within SL: diff 4.8701 95%CI [-0.5791 10.3193] Sidak-CI [-1.4556 11.1957] p unadj 0.0767 Sidak(k=2) 0.1476 (k=4) 0.2734  g 1.11 [-0.36, 2.58]
+  interaction contrast -12.8858 95%CI [-20.5922  -5.1795]
+
+######## heartSOD cayman U/mg, excluding mice 6 and 24
+       n    mean      sd  median
+group                           
+W-SD   5  0.5948  0.1171  0.6125
+S-SD   6  0.4345  0.0628  0.4505
+W-SL   5  0.4464  0.0654  0.4161
+S-SL   6  0.5395  0.0853  0.4973
+TypeIII p: drink 0.3640 sleep 0.5557 int 0.0025 (F=12.30, dfe=18); np2 drink 0.046 sleep 0.020 int 0.406
+TypeII additive p: drink 0.4699 sleep 0.8252
+  S-W within SD: diff -0.1603 95%CI [-0.2676 -0.053 ] Sidak-CI [-0.2849 -0.0358] p unadj 0.0057 Sidak(k=2) 0.0113 (k=4) 0.0225  g -1.61 [-3.19, -0.04]
+  S-W within SL: diff 0.0930 95%CI [-0.0143  0.2003] Sidak-CI [-0.0315  0.2176] p unadj 0.0851 Sidak(k=2) 0.1630 (k=4) 0.2995  g 1.10 [-0.37, 2.57]
+  interaction contrast -0.2534 95%CI [-0.4051 -0.1016]
+
+######## MDA [sheet] nmol/well (fixed 30 uL/mg lysis, so proportional to nmol/mg)
+       n    mean      sd  median
+group                           
+W-SD   6  1.6850  0.2601  1.7191
+S-SD   5  1.7995  0.3341  1.6714
+W-SL   6  1.4692  0.1970  1.5521
+S-SL   6  1.4050  0.1707  1.4362
+TypeIII p: drink 0.8074 sleep 0.0074 int 0.3910 (F=0.77, dfe=19); np2 drink 0.003 sleep 0.321 int 0.039
+TypeII additive p: drink 0.8382 sleep 0.0074
+  S-W within SD: diff 0.1145 95%CI [-0.1938  0.4228] Sidak-CI [-0.2431  0.4721] p unadj 0.4466 Sidak(k=2) 0.6937 (k=4) 0.9062  g 0.35 [-1.03, 1.73]
+  S-W within SL: diff -0.0642 95%CI [-0.3582  0.2298] Sidak-CI [-0.4051  0.2768] p unadj 0.6529 Sidak(k=2) 0.8795 (k=4) 0.9855  g -0.32 [-1.62, 0.97]
+  interaction contrast 0.1787 95%CI [-0.2473  0.6047]
+  exact perm S vs W within SD: p=0.5606; MWU p=0.9307
+  exact perm S vs W within SL: p=0.5584; MWU p=0.3939
+  Freedman-Lane perm p: drink 0.8087 sleep 0.0055 int 0.3952
+  Shapiro per group p: {'S-SD': np.float64(0.107), 'S-SL': np.float64(0.478), 'W-SD': np.float64(0.547), 'W-SL': np.float64(0.091)}; Brown-Forsythe p=0.744; max |ext. stud. resid| 3.11 at mouse 15
+  LOO MDA sheet: ranges p_int [0.2288, 0.8275]; p_drink [0.5918, 0.9865]; p_sleep [0.0033, 0.0149]; pSD [0.4502, 0.9765]; pSL [0.5832, 0.9982]
+
+######## MDA [drop5] nmol/well (fixed 30 uL/mg lysis, so proportional to nmol/mg)
+       n    mean      sd  median
+group                           
+W-SD   6  1.6635  0.2441  1.6955
+S-SD   5  1.7710  0.3137  1.6507
+W-SL   6  1.4609  0.1849  1.5387
+S-SL   6  1.4006  0.1602  1.4299
+TypeIII p: drink 0.8074 sleep 0.0074 int 0.3910 (F=0.77, dfe=19); np2 drink 0.003 sleep 0.321 int 0.039
+TypeII additive p: drink 0.8382 sleep 0.0074
+  S-W within SD: diff 0.1075 95%CI [-0.182   0.3969] Sidak-CI [-0.2282  0.4432] p unadj 0.4466 Sidak(k=2) 0.6937 (k=4) 0.9062  g 0.35 [-1.03, 1.73]
+  S-W within SL: diff -0.0602 95%CI [-0.3362  0.2157] Sidak-CI [-0.3803  0.2598] p unadj 0.6529 Sidak(k=2) 0.8795 (k=4) 0.9855  g -0.32 [-1.62, 0.97]
+  interaction contrast 0.1677 95%CI [-0.2322  0.5677]
+
+######## MDA [quad] nmol/well (fixed 30 uL/mg lysis, so proportional to nmol/mg)
+       n    mean      sd  median
+group                           
+W-SD   6  1.6070  0.2433  1.6373
+S-SD   5  1.7159  0.3191  1.5925
+W-SL   6  1.4055  0.1809  1.4814
+S-SL   6  1.3461  0.1565  1.3741
+TypeIII p: drink 0.7985 sleep 0.0075 int 0.3892 (F=0.78, dfe=19); np2 drink 0.004 sleep 0.320 int 0.039
+TypeII additive p: drink 0.8293 sleep 0.0076
+  S-W within SD: diff 0.1088 95%CI [-0.1804  0.3981] Sidak-CI [-0.2266  0.4443] p unadj 0.4407 Sidak(k=2) 0.6871 (k=4) 0.9021  g 0.36 [-1.02, 1.74]
+  S-W within SL: diff -0.0594 95%CI [-0.3352  0.2164] Sidak-CI [-0.3792  0.2604] p unadj 0.6572 Sidak(k=2) 0.8825 (k=4) 0.9862  g -0.32 [-1.62, 0.97]
+  interaction contrast 0.1682 95%CI [-0.2314  0.5679]
+
+######## MDA [interp] nmol/well (fixed 30 uL/mg lysis, so proportional to nmol/mg)
+       n  mean   sd  median
+group                      
+W-SD   6   0.0  0.0     0.0
+S-SD   5   0.0  0.0     0.0
+W-SL   6   0.0  0.0     0.0
+S-SL   6   0.0  0.0     0.0
+TypeIII p: drink nan sleep nan int nan (F=nan, dfe=19); np2 drink nan sleep nan int nan
+TypeII additive p: drink nan sleep nan
+  S-W within SD: diff 0.0000 95%CI [0. 0.] Sidak-CI [0. 0.] p unadj nan Sidak(k=2) nan (k=4) nan  g nan [nan, nan]
+  S-W within SL: diff 0.0000 95%CI [0. 0.] Sidak-CI [0. 0.] p unadj nan Sidak(k=2) nan (k=4) nan  g nan [nan, nan]
+  interaction contrast 0.0000 95%CI [0. 0.]
+
+######## MDA sheet, drop S-SD 15
+       n    mean      sd  median
+group                           
+W-SD   6  1.6850  0.2601  1.7191
+S-SD   4  1.6594  0.1345  1.6203
+W-SL   6  1.4692  0.1970  1.5521
+S-SL   6  1.4050  0.1707  1.4362
+TypeIII p: drink 0.6137 sleep 0.0149 int 0.8275 (F=0.05, dfe=18); np2 drink 0.014 sleep 0.287 int 0.003
+TypeII additive p: drink 0.5849 sleep 0.0126
+  S-W within SD: diff -0.0256 95%CI [-0.2991  0.248 ] Sidak-CI [-0.3431  0.292 ] p unadj 0.8466 Sidak(k=2) 0.9765 (k=4) 0.9994  g -0.10 [-1.59, 1.39]
+  S-W within SL: diff -0.0642 95%CI [-0.3088  0.1805] Sidak-CI [-0.3482  0.2198] p unadj 0.5883 Sidak(k=2) 0.8305 (k=4) 0.9713  g -0.32 [-1.62, 0.97]
+  interaction contrast 0.0386 95%CI [-0.3283  0.4056]
+MDE d (80% power, two-sided .05) n=9 vs 9: 1.41; at alpha .025 (Sidak k=2): 1.58
+MDE d (80% power, two-sided .05) n=9 vs 8: 1.46; at alpha .025 (Sidak k=2): 1.64
+MDE d (80% power, two-sided .05) n=6 vs 6: 1.80; at alpha .025 (Sidak k=2): 2.04
+MDE d (80% power, two-sided .05) n=6 vs 5: 1.91; at alpha .025 (Sidak k=2): 2.18
+MDE d (80% power, two-sided .05) n=4 vs 5: 2.19; at alpha .025 (Sidak k=2): 2.53
+MDE d (80% power, two-sided .05) n=5 vs 5: 2.02; at alpha .025 (Sidak k=2): 2.32

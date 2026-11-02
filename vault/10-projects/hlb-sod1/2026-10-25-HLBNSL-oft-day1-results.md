@@ -117,8 +117,8 @@ blue). Excursions just past the floor edge are rears against the wall:
   and speed scales by the same factor, and the group comparison and the zone percentages do not change.
 
 ## Still open
-- [ ] model1 cross-check on the same 9 clips (running 2026-10-25): agreement per mouse on distance and centre time.
-- [ ] Measure the box floor (is it 50 x 50 cm?). [[2026-10-25-nor-day1-oft-feature-set]]
+- [x] 2026-10-25: model1 cross-check on the same 9 clips (running 2026-10-25): agreement per mouse on distance and centre time.
+- [x] 2026-10-25: Measure the box floor (is it 50 x 50 cm?): Andrea confirmed a standard 50 x 50 cm box. [[2026-10-25-nor-day1-oft-feature-set]]
 - [ ] Optional: track one OFT clip in EthoVision and compare the distance.
 - [ ] Wall-rear proxy: validate on 3 hand-scored videos or drop it.
 

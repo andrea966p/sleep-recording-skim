@@ -37,6 +37,10 @@ and is the Y-maze enough to answer the cognition aim for HLB?
   sleep after T1, so with staggered testing each mouse would get a different SD length and a different chance to sleep
   after training: a confound possibly larger than any SOD1 effect. That post-training SD impairs object recognition in
   mice is reported by Palchykova et al. 2006 (cited from memory, to verify before it goes to HLB).
+
+> [!success] 2026-11-02: citation checked on PubMed (abstract): Palchykova S et al., Neurobiol Learn Mem 2006;85:263-71,
+> doi:10.1016/j.nlm.2005.11.005. OF1 mice, 6 h SD immediately after acquisition abolished novel-object discrimination
+> 24 h later; the same SD started 6 h after acquisition did not. Note the journal: Neurobiol Learn Mem, not Learn Mem.
 - **HLBNSL NOR as a supporting point only:** in rested mice it needed counterbalancing and validated scoring to read
   cleanly (novel object always on the preferred side; the recognition result depends on the tracking model; hand
   scoring pending: [[2026-10-25-HLBNSL-nor-pose-results]]). Those are fixable design and scoring issues, not evidence
