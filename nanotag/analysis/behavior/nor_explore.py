@@ -8,15 +8,17 @@ Each test dir holds pose/ (pose_infer.py), arena/corners.csv (oft_arena.py) and
 arena/objects.csv (nor_objects.py). Writes per-clip exploration bouts, a per-mouse
 table (T1/T2 exploration, d2, T1 location bias, exclusions) and the statistics.
 
-The SOP rule, verbatim: "Exploration = the snout is directed at and within 2 cm of
-the object. Excluded: sitting on the object; climbing or rearing with the forepaws
-on the object; chewing or gnawing the object; and passing the object with the snout
-oriented elsewhere." Per frame, from the keypoints:
+The SOP rule (section 3, revised 2026-11-02): exploration = the snout directed at and within
+2 cm of the object, including with the forepaws resting on it. Excluded: on top of the object,
+climbing over it, rearing on it with the head above or past it, chewing, and passing with the
+snout elsewhere. Per frame, from the keypoints:
   within 2 cm   nose at most NEAR_CM outside the object's footprint outline
   directed at   head vector (ear midpoint -> nose) within HEAD_DEG of the direction
                 from the ear midpoint to the object centre, or nose within TOUCH_CM
   sitting on    body centre within ON_BODY_CM of the footprint, or a hind paw PAW_IN_CM inside it
-  forepaws on   a confident fore paw PAW_IN_CM inside the footprint
+Forepaws on the object no longer exclude a frame (2026-11-02); before that a confident fore paw
+PAW_IN_CM inside the footprint did. Head raised past the object is caught by the nose distance and
+direction tests, as seen from above.
 TOUCH_CM and PAW_IN_CM were set 2026-10-25 from contact sheets of HLBNSSL41 / HLBNWSL47 T2 and
 HLBNWSL45 T1, before any hand scoring. An "ears over the footprint" rule was tried and dropped the
 same day: on the low blue prism it counted climbing over the object (review, 0/4 frames agreed).
@@ -69,7 +71,7 @@ def exploring(nose, ear_mid, body, fore, hind, hull, centre):
         cosang = np.sum(head * to_obj, 1) / (np.linalg.norm(head, axis=1) * np.linalg.norm(to_obj, axis=1))
     directed = (np.nan_to_num(cosang, nan=-1.0) >= np.cos(np.radians(HEAD_DEG))) | (d_nose <= TOUCH_CM)
     on_paw = lambda paws: np.any([outside_cm(p, hull) <= -PAW_IN_CM for p in paws], axis=0)
-    on_object = (outside_cm(body, hull) <= ON_BODY_CM) | on_paw(hind) | on_paw(fore)
+    on_object = (outside_cm(body, hull) <= ON_BODY_CM) | on_paw(hind)      # forepaws on it still count
     ok = ~np.isnan(d_nose) & ~np.isnan(ear_mid[:, 0])
     return ok & (d_nose <= NEAR_CM) & directed & ~on_object, on_object
 
@@ -267,6 +269,9 @@ def _selftest():
     assert not f((22.0, 21.5), (24, 21.5), (21.5, 21.5))    # body on the object: sitting on it
     assert f((23.3, 23.0), (24.5, 20.0), (28, 18))          # touching the corner, head angled off-centre
     assert not f((18.0, 21.5), (21.5, 22.5), (26, 23))      # head over the object, nose 2 cm past it, pointing away: climbing
+    paw_in = [np.array([[22.5, 21.5]]), nan2]                 # a fore paw 0.5 cm inside the footprint
+    assert exploring(np.array([[23.3, 21.5]]), np.array([[25.5, 21.5]]), np.array([[29.0, 21.5]]),
+                     paw_in, [nan2, nan2], sq, c)[0][0]       # sniffing with a forepaw on it: explore
     assert merged_runs(np.array([1, 1, 0, 1, 0, 0, 0, 1], bool), 1) == [(0, 4), (7, 8)]
     print("nor_explore selftest ok")
 

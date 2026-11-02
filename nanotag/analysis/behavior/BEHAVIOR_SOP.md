@@ -196,15 +196,23 @@ Ethogram — state events, one key each:
 | T1 | `explore_A`, `explore_B` (the two identical objects, by position) |
 | T2 | `explore_familiar`, `explore_novel` |
 
-**Scoring rule (verbatim):**
+**Scoring rule (revised 2026-11-02, see changelog):**
 
-> Exploration = the snout is directed at and within 2 cm of the object.
-> Excluded: sitting on the object; climbing or rearing with the forepaws on the
-> object; chewing or gnawing the object; and passing the object with the snout
-> oriented elsewhere.
+> Exploration = the snout is directed at and within 2 cm of the object (sniffing,
+> whisking or touching it), including with one or both forepaws resting on the
+> object, and including sitting within 2 cm facing the object.
+> Excluded: on top of the object (sitting or standing on it, hind paws on it);
+> climbing over it; rearing or leaning on it with the head raised above it or
+> looking past it; chewing or gnawing it; and passing it with the snout oriented
+> elsewhere.
+> A bout starts when the snout comes within 2 cm directed at the object, and stops
+> when the snout turns away, goes beyond 2 cm, lifts above the object, or the
+> mouse climbs on top.
 
 - Judge the 2 cm distance against a landmark of known size in frame, decided once
-  per arena setup and written here: _(fill in)_
+  per arena setup and written here: batch 1 NOR, the object's width (about 3.3 cm)
+  as reference, 2 cm being about two-thirds of it (proposed 2026-10-26, not yet
+  confirmed by Andrea)
 - Second rater independently scores a random 20% of videos. Report the intraclass
   correlation on exploration durations — this cannot be collected later.
 - The same session also hand-scores arm-entry sequences for 3 Y-maze videos, to
@@ -260,6 +268,7 @@ significance bracket.
 
 | Date | Change | Reason | Batches re-derived |
 |---|---|---|---|
+| 2026-11-02 | **Section 3: forepaws resting on the object no longer exclude exploration** while the snout stays directed at the object; on top, climbing over, and rearing with the head above or past the object stay excluded. Sitting within 2 cm facing the object counts. Bout start/stop defined. `nor_explore.py` drops the fore-paw exclusion (hind paws and body centre still exclude) | Andrea's reading of the literature; review `2026-11-02-nor-forepaw-rule-literature-review` found no consensus, the classic protocols exclude rearing over the object, and recent papers that state a rule mostly count paw contact. The old clause had no verified source | batch 1 NOR pose re-scored (`forepaws_count`): novel object +0.3 s (model1) / +1.0 s (model2) per mouse, d2 +0.01, no new exclusions; hand-scored NOR_247 and NOR_685 already counted forepaw contact (Andrea), nothing to redo |
 | 2026-10-20 | Initial version, before any video was scored | — | — |
 | 2026-10-24 | Batch 1 prepared on the Windows EthoVision PC, not the workstation: originals renamed to mouse IDs (`rename_videos.py`, log `rename_log.csv`), upright copies made with `prep.py convert --keep-names` (ffmpeg 9.0.2), so **EthoVision tracking is not blinded**. BORIS NOR scoring still uses blinded copies. EthoVision version: XT 11.5. Clicking guide: vault note `ethovision-11-5-y-maze-tracking` | Andrea's decision: tracking is automated; arenas are drawn per video by the experimenter anyway | none (nothing scored yet) |
 | 2026-10-24 | Encoder: batch 1 Y-maze with `libx264 -crf 18 -preset slow` (CPU); batch 1 OFT/NOR with `h264_nvenc -preset p7 -tune hq -rc vbr -cq 18` (GPU, RTX 3080 Ti, new `--encoder` flag). Trial window: Andrea crops each video by hand from door closed to door opened. Batch 2 must use the same encoder per test as batch 1 | CPU at 90 % for ~2 h; same window rule Andrea timed during testing | none |

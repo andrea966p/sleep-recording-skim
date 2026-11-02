@@ -98,5 +98,6 @@ between these papers and "OFT features as NOR covariates" is our reasoning.
 - Antunes & Biala 2012, Cogn Process 13:93-110, https://pmc.ncbi.nlm.nih.gov/articles/PMC3332351
 - Denninger, Smith & Kirby 2018, JoVE 141:e58593, https://www.jove.com/v/58593
 - Seibenhener & Wooten 2015, JoVE 96:52434, https://pmc.ncbi.nlm.nih.gov/articles/PMC4354627
+  > [!warning] 2026-11-02: this is an open field protocol, not an NOR one; do not cite it for NOR scoring. [[2026-11-02-nor-forepaw-rule-literature-review]]
 - Lueptow 2017, JoVE e55718, https://pmc.ncbi.nlm.nih.gov/articles/PMC5614391
 - Ennaceur 2010, Behav Brain Res 215:244-254, https://doi.org/10.1016/j.bbr.2009.12.036

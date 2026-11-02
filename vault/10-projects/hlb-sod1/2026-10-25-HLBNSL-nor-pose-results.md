@@ -9,6 +9,9 @@ tags: [behaviour, nor, pose, hlbnsl]
 
 # 2026-10-25: HLBNSL NOR from pose (provisional)
 
+> [!warning] 2026-11-02: re-scored under the revised forepaw rule and checked against blinded hand scoring
+> See [[2026-11-02-HLBNSL-nor-hand-validation-and-calibration]]. The numbers below used the old rule.
+
 > [!abstract] TL;DR
 > **Question.** Did the mice recognise the familiar object in T2 (d2 > 0), and did SOD1 change that?
 > **Answer (provisional, pose scoring not yet validated against hand scoring).**
