@@ -6,3 +6,5 @@ __pycache__/
 *.nta
 *.csv
 report/node_modules/
+# exception: the NS-SD Y-maze hand-scoring sheet (start times + arm letters, no raw data) syncs by git
+!analysis/behavior/NSSD_ymaze_hand_scoring.csv

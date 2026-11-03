@@ -7,6 +7,12 @@ summary: "HLBNSL (normal sleep) behaviour battery in one place: Y-maze, open fie
 tags: [behaviour, y-maze, oft, nor, hlbnsl]
 ---
 
+
+> [!info] 2026-11-04, Andrea: the HLBNSL NOR is taken as a valid recognition test
+> The 57 % T1 share at the later novel spot (7/9 mice above 50 %, not significant) is not a preference at n = 9, and the
+> spot share rose T1 → T2 in 9/9 mice (model 1, p = 0.004). Report wording updated in [[2026-11-03-hlb-sod1-report-draft-v02]];
+> object identity not counterbalanced stays as a limitation.
+
 # 2026-11-02: HLBNSL behaviour battery, methods and results
 
 > [!abstract] TL;DR

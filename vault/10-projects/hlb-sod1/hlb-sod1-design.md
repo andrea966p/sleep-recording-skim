@@ -48,6 +48,9 @@ Statistics in the proposal: two-way (repeated-measures) ANOVA with Tukey. The na
 
 ## Batches so far
 
+> [!warning] 2026-11-03: the W-SL and S-SL date ranges in this table are swapped
+> The sheet `Registry` and the sampling dates in [[2026-11-02-EEG-cohorts-tissue-SOD-MDA-reanalysis]] (W-SL sampled about 09-18, S-SL 09-22) put W-SL first. Found while building [[2026-11-05-hlb-progress-meeting-figures]].
+
 | Batch | When | Sleep method | Outcome | Page |
 |---|---|---|---|---|
 | Intake trials ("failed batches") | 2026-03 → 07 | none | Bottle and dose work: 20 mL glass tube, bent ball-bearing nozzle, 6.8 U/mL | Drive sheet `SOD1_Mouse_Intake_Monitoring_failed_batches`; mid-term report |

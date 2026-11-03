@@ -1,13 +1,16 @@
 ---
 type: meeting
 area: hlb-sod1
-status: active
+status: superseded
+superseded-by: "[[2026-11-03-hlb-sod1-report-draft-v02]]"
 created: 2026-11-02
 summary: "Draft v0.1 of the final HLB SOD1 report, for the professor to review and edit: design and rationale, sleep and activity (nanotag), behaviour, tissue SOD and MDA, interpretation, limits; sections still waiting on data are marked"
 tags: [hlb, sod1, report, professor]
 ---
 
 # Oral SOD1 in drinking water: sleep, activity, cognition and tissue oxidative stress in mice
+
+> [!warning] 2026-11-03: superseded by [[2026-11-03-hlb-sod1-report-draft-v02]] (restructured, EEG re-score, intake, verified citations).
 
 Draft v0.1, 2026-11-02, for review by Prof. Kim before any version goes to HLB.
 Storyline and the reasons behind each choice: [[2026-11-02-hlb-final-report-storyline]].

@@ -28,6 +28,10 @@ tags: [hlb, sod1, tissue, sod, mda, statistics]
 > - **The test that would answer the question:** the same assays on the nanotag cohorts (HLBNSL, NS-SD), where
 >   SOD1 and water mice share a cohort, on one plate with interleaved samples.
 
+> [!warning] 2026-11-03: the heart percentages in the TL;DR (+15 %, −10 %, +11 %) come from the sheet method
+> The Cayman means in the results table give water SD vs normal sleep +39 %, SOD1 SD vs normal sleep −20 %, SOD1 vs water
+> with normal sleep +26 % (Šidák p 0.060). The report quotes the table values: [[2026-11-03-hlb-sod1-report-draft-v02]].
+
 > [!note] 2026-11-02, later: answers from Andrea and the kit manuals
 > - **Kit manuals checked** (Cayman 706002, Abcam ab118970, copies in `nanotag/analysis/tissue/raw/`). The
 >   Cayman values in the results table follow the manual exactly: blank-corrected standards, LR = CSV(std A) /
