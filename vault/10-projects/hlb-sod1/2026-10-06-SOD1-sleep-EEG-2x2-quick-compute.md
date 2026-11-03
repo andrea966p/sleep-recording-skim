@@ -9,6 +9,8 @@ recordings: [allego_1__uid0819-17-25-20, allego_2__uid0827-12-58-32, allego_0__u
 
 # Did SOD1 change sleep? The four EEG/EMG batches as a 2x2 (quick compute, 2026-10-06)
 
+> [!warning] 2026-11-03: superseded by the re-score [[hlb-eeg-sleep-overview]] (10 vs 11 baseline mice instead of the stage-3 set; 15 paired). Same answer at baseline (no detectable SOD1 effect). The S-SD case here was HLBSSD15; in the re-score its recovery is tier D and the S-SD case is HLBSSD18, whose gain depends on its artefact mask. This record stays as it was.
+
 > [!abstract] TL;DR
 > Andrea asked: compare sleep deprivation with normal sleep, SOD1 against water, and say whether SOD1
 > did anything to sleep. Outcome: % of time asleep (NREM + REM) from the stage-3 hypnograms of the

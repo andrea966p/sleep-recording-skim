@@ -1,6 +1,6 @@
 ---
 name: feedback-background-waits-must-terminate
-description: "Andrea 2026-10-02: my background wait loops keep hanging (seen often). Every wait must have a deadline, must not match its own command line, must watch an explicit target, and must be stopped once its purpose is served."
+description: "Andrea 2026-10-02, again 2026-11-03 (6 h lost overnight): my background wait loops keep hanging (seen often). Every wait must have a deadline, must not match its own command line, must watch an explicit target, and must be stopped once its purpose is served."
 metadata:
   type: feedback
 ---
@@ -22,6 +22,11 @@ Andrea, 2026-10-02: two of my background tasks ("Block until recording script ex
 4. **Stop helpers when done** (TaskStop) and, before ending a turn that started background helpers, check none is left running
    (`ps -eo pid,etime,args | grep -E "until |sleep"`), leaving only intentional ones (e.g. a RAM watcher with its own end time).
 
+5. **Same for `pkill -f`**: a `pkill -f <pat>` inside a command whose own line contains `<pat>` kills that shell (exit 144). Kill by PID.
+6. **Prefer no wait loop at all**: chain steps with `&&` in ONE background command (`a && b && c`), so the harness notifies on exit.
+
+**2026-11-03 repeat, unattended overnight run:** `while pgrep -f 'score.py /home'` hung ~6 h after scoring had finished;
+no deadline. Andrea: "wasted 6h ... this should never happen." Before leaving any unattended chain, re-read this rule.
 
 ## From the memory index, trimmed there 2026-10-06 (kept here verbatim)
 

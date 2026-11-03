@@ -18,6 +18,8 @@ The rig's CSV, the analysis and the verdict ladder live in [[_eeg-analysis-hub]]
 
 ## Current state
 
+- 2026-11-03: HLB batches auto-scored with the SleepStager rule (gap EMG), contested epochs staged by agent scorers against the handbook; against Andrea's reviewed HLBSSL33 R epochs (1–8,441, light phase, from the workstation backup) κ 0.952, rule-free HMM 0.930; her 243 corrections are mostly REM onsets and wake the rule called NREM. Evening: dark blocks ZT12–15 and ZT18–21 reviewed in full, κ 0.941 and 0.932 (all 14,077 epochs 0.949); the rule-vs-HMM list [[hlbssl33-r-review-list-rule-vs-hmm]] caught only a third of her dark corrections, so contiguous review beats the list. Status: see [[_hlb-sod1-hub]]; method [[hlb-eeg-scoring-method-2026-11]].
+- 2026-11-03: scoring cases to show the professor (screenshots, one section each): [[questions-for-the-professor]].
 - 2026-10-23: Andrea: the SleepStager 60 Hz notch is our own modification and needs no professor approval; C12 (one-sided arousal in NREM) is still undecided. [[2026-10-23]]
 - 2026-10-22: PR #1 (CSV reader, display notch 50/60 Hz, unsaved marker) and PR #2 (resume fix) on `somnocode/SleepStager` are both still open and unmerged; read-only GitHub check on 2026-10-22, both last updated 2026-10-08. [[sleepstager-changes-and-backlog]]
 - 2026-10-08: HLBSSL33 Recovery scored to epoch 8441 of 21,600 (235 epochs re-staged); conventions C11 and C12 drafted, and 1317 (NR) vs 2971 (W) is an unsettled inconsistency. [[sleep-scoring-handbook]]

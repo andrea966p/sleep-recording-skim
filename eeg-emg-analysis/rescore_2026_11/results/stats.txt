@@ -1,0 +1,127 @@
+HLB EEG re-score 2026-11: SOD1 x deprivation on sleep. Shares are % of usable time. Rule = tiers A/B; EEG-only = tiers A/B/C, NREM vs not.
+
+1. SOD1 vs water at baseline (on treatment, before any deprivation)
+[rule sleep_pct] all batches, 24h            SOD1 n=10  52.0 vs water n=11  52.5  diff  -0.5  p=0.812 (min 2.8e-06)  CI [-4.7, +3.6]  g=-0.11  MDE 6 pts
+      HLBSSD11 51.5, HLBSSD12 52.2, HLBSSD15 56.0, HLBSSD18 48.8, HLBSSL32 50.7, HLBSSL33 51.7, HLBSSL34 54.7, HLBSSL35 55.5, HLBSSL39 53.0, HLBSSL40 45.7, HLBWSD01 48.9, HLBWSD02 49.2, HLBWSD08 44.9, HLBWSL21 53.1, HLBWSL22 56.3, HLBWSL23 50.4, HLBWSL24 53.9, HLBWSL25 56.8, HLBWSL26 65.7, HLBWSL27 49.2, HLBWSL29 49.2
+[rule sleep_pct] all batches, light          SOD1 n=10  71.7 vs water n=11  72.2  diff  -0.5  p=0.783 (min 2.8e-06)  CI [-4.5, +3.4]  g=-0.12  MDE 6 pts
+      HLBSSD11 71.6, HLBSSD12 72.1, HLBSSD15 72.3, HLBSSD18 65.9, HLBSSL32 73.5, HLBSSL33 73.2, HLBSSL34 75.0, HLBSSL35 72.5, HLBSSL39 76.0, HLBSSL40 64.7, HLBWSD01 69.3, HLBWSD02 72.9, HLBWSD08 63.7, HLBWSL21 76.6, HLBWSL22 74.3, HLBWSL23 69.7, HLBWSL24 73.0, HLBWSL25 75.8, HLBWSL26 80.9, HLBWSL27 72.3, HLBWSL29 66.0
+[rule sleep_pct] all batches, dark           SOD1 n=10  31.1 vs water n=11  32.6  diff  -1.5  p=0.605 (min 2.8e-06)  CI [-7.2, +4.3]  g=-0.22  MDE 8 pts
+      HLBSSD11 32.8, HLBSSD12 19.5, HLBSSD15 39.7, HLBSSD18 31.8, HLBSSL32 27.8, HLBSSL33 30.1, HLBSSL34 34.5, HLBSSL35 38.5, HLBSSL39 29.8, HLBSSL40 26.6, HLBWSD01 28.5, HLBWSD02 25.6, HLBWSD08 26.1, HLBWSL21 27.6, HLBWSL22 38.2, HLBWSL23 34.4, HLBWSL24 34.8, HLBWSL25 37.8, HLBWSL26 46.8, HLBWSL27 26.0, HLBWSL29 32.4
+[rule sleep_pct] SL batches only, 24h        SOD1 n=6  51.9 vs water n=8  54.3  diff  -2.4  p=0.387 (min 0.00033)  CI [-7.7, +2.8]  g=-0.48  MDE 8 pts
+      HLBSSL32 50.7, HLBSSL33 51.7, HLBSSL34 54.7, HLBSSL35 55.5, HLBSSL39 53.0, HLBSSL40 45.7, HLBWSL21 53.1, HLBWSL22 56.3, HLBWSL23 50.4, HLBWSL24 53.9, HLBWSL25 56.8, HLBWSL26 65.7, HLBWSL27 49.2, HLBWSL29 49.2
+[rule nrem_pct] all batches, 24h             SOD1 n=10  45.8 vs water n=11  46.5  diff  -0.6  p=0.747 (min 2.8e-06)  CI [-4.4, +3.2]  g=-0.14  MDE 5 pts
+      HLBSSD11 45.6, HLBSSD12 46.3, HLBSSD15 50.6, HLBSSD18 43.0, HLBSSL32 44.7, HLBSSL33 44.8, HLBSSL34 48.3, HLBSSL35 48.7, HLBSSL39 46.5, HLBSSL40 40.0, HLBWSD01 43.3, HLBWSD02 43.1, HLBWSD08 39.9, HLBWSL21 46.9, HLBWSL22 50.0, HLBWSL23 44.1, HLBWSL24 47.8, HLBWSL25 51.5, HLBWSL26 57.6, HLBWSL27 43.3, HLBWSL29 43.5
+[rule nrem_pct] all batches, light           SOD1 n=10  62.1 vs water n=11  62.7  diff  -0.6  p=0.761 (min 2.8e-06)  CI [-4.4, +3.3]  g=-0.13  MDE 5 pts
+      HLBSSD11 60.7, HLBSSD12 63.4, HLBSSD15 64.9, HLBSSD18 55.7, HLBSSL32 63.9, HLBSSL33 62.7, HLBSSL34 65.5, HLBSSL35 62.6, HLBSSL39 65.3, HLBSSL40 56.1, HLBWSD01 60.1, HLBWSD02 62.3, HLBWSD08 54.5, HLBWSL21 67.8, HLBWSL22 65.0, HLBWSL23 58.1, HLBWSL24 63.2, HLBWSL25 68.2, HLBWSL26 69.4, HLBWSL27 63.3, HLBWSL29 57.5
+[rule nrem_pct] all batches, dark            SOD1 n=10  28.6 vs water n=11  30.1  diff  -1.5  p=0.566 (min 2.8e-06)  CI [-6.8, +3.8]  g=-0.25  MDE 7 pts
+      HLBSSD11 31.5, HLBSSD12 18.0, HLBSSD15 36.2, HLBSSD18 30.2, HLBSSL32 25.5, HLBSSL33 26.9, HLBSSL34 31.2, HLBSSL35 34.7, HLBSSL39 27.7, HLBSSL40 23.9, HLBWSD01 26.5, HLBWSD02 24.0, HLBWSD08 25.4, HLBWSL21 24.1, HLBWSL22 34.9, HLBWSL23 32.4, HLBWSL24 32.5, HLBWSL25 34.8, HLBWSL26 43.0, HLBWSL27 23.4, HLBWSL29 29.6
+[rule nrem_pct] SL batches only, 24h         SOD1 n=6  45.5 vs water n=8  48.1  diff  -2.6  p=0.294 (min 0.00033)  CI [-7.3, +2.1]  g=-0.57  MDE 7 pts
+      HLBSSL32 44.7, HLBSSL33 44.8, HLBSSL34 48.3, HLBSSL35 48.7, HLBSSL39 46.5, HLBSSL40 40.0, HLBWSL21 46.9, HLBWSL22 50.0, HLBWSL23 44.1, HLBWSL24 47.8, HLBWSL25 51.5, HLBWSL26 57.6, HLBWSL27 43.3, HLBWSL29 43.5
+[eeg_only nrem_pct] all batches, 24h         SOD1 n=10  40.8 vs water n=12  40.9  diff  -0.1  p=0.928 (min 1.5e-06)  CI [-2.8, +2.5]  g=-0.04  MDE 4 pts
+      HLBSSD11 41.6, HLBSSD12 40.6, HLBSSD15 42.0, HLBSSD18 37.7, HLBSSL32 40.2, HLBSSL33 41.0, HLBSSL34 41.7, HLBSSL35 44.6, HLBSSL39 41.0, HLBSSL40 37.5, HLBWSD01 40.4, HLBWSD02 40.4, HLBWSD04 32.1, HLBWSD08 36.5, HLBWSL21 40.2, HLBWSL22 44.6, HLBWSL23 44.2, HLBWSL24 43.4, HLBWSL25 44.6, HLBWSL26 43.5, HLBWSL27 39.1, HLBWSL29 42.0
+[eeg_only nrem_pct] all batches, light       SOD1 n=10  54.8 vs water n=12  54.6  diff  +0.2  p=0.927 (min 1.5e-06)  CI [-3.2, +3.6]  g=+0.04  MDE 5 pts
+      HLBSSD11 52.5, HLBSSD12 55.8, HLBSSD15 55.0, HLBSSD18 49.9, HLBSSL32 56.7, HLBSSL33 56.8, HLBSSL34 56.0, HLBSSL35 57.3, HLBSSL39 56.0, HLBSSL40 52.1, HLBWSD01 55.5, HLBWSD02 58.7, HLBWSD04 41.5, HLBWSD08 49.4, HLBWSL21 59.9, HLBWSL22 58.3, HLBWSL23 53.9, HLBWSL24 56.3, HLBWSL25 57.1, HLBWSL26 54.9, HLBWSL27 54.3, HLBWSL29 55.5
+[eeg_only nrem_pct] all batches, dark        SOD1 n=10  25.8 vs water n=12  27.2  diff  -1.4  p=0.484 (min 1.5e-06)  CI [-5.6, +2.7]  g=-0.29  MDE 6 pts
+      HLBSSD11 30.6, HLBSSD12 15.9, HLBSSD15 28.9, HLBSSD18 25.5, HLBSSL32 23.6, HLBSSL33 25.3, HLBSSL34 27.4, HLBSSL35 32.0, HLBSSL39 26.0, HLBSSL40 22.8, HLBWSD01 25.2, HLBWSD02 22.1, HLBWSD04 22.7, HLBWSD08 23.6, HLBWSL21 20.4, HLBWSL22 31.0, HLBWSL23 34.4, HLBWSL24 30.6, HLBWSL25 32.0, HLBWSL26 32.1, HLBWSL27 24.0, HLBWSL29 28.4
+[eeg_only nrem_pct] SL batches only, 24h     SOD1 n=6  41.0 vs water n=8  42.7  diff  -1.7  p=0.178 (min 0.00033)  CI [-4.4, +1.0]  g=-0.73  MDE 4 pts
+      HLBSSL32 40.2, HLBSSL33 41.0, HLBSSL34 41.7, HLBSSL35 44.6, HLBSSL39 41.0, HLBSSL40 37.5, HLBWSL21 40.2, HLBWSL22 44.6, HLBWSL23 44.2, HLBWSL24 43.4, HLBWSL25 44.6, HLBWSL26 43.5, HLBWSL27 39.1, HLBWSL29 42.0
+
+2. Recovery - baseline, same mouse, ZT4-24 (and its light / dark parts)
+  [rule sleep_pct ZT4-24] paired n: HLBWSD 1, HLBSSD 1, HLBWSL 7, HLBSSL 6
+  SD: SOD1 vs water change                   S-SD n=1  18.1 vs W-SD n=1   9.3  diff  +8.8  (1 vs 1: a case, no test)
+      HLBSSD18 18.1, HLBWSD08 9.3
+  SL: SOD1 vs water change                   S-SL n=6   2.1 vs W-SL n=7   0.1  diff  +2.0  p=0.515 (min 0.00058)  CI [-4.1, +8.1]  g=+0.37  MDE 9 pts
+      HLBSSL32 4.1, HLBSSL33 5.5, HLBSSL34 0.6, HLBSSL35 -4.4, HLBSSL39 2.9, HLBSSL40 3.7, HLBWSL22 -1.1, HLBWSL23 9.1, HLBWSL24 0.8, HLBWSL25 -2.1, HLBWSL26 -10.9, HLBWSL27 1.5, HLBWSL29 3.1
+  water: SD vs SL change                     W-SD n=1   9.3 vs W-SL n=7   0.1  diff  +9.3  p=0.250 (min 0.12)
+      HLBWSD08 9.3, HLBWSL22 -1.1, HLBWSL23 9.1, HLBWSL24 0.8, HLBWSL25 -2.1, HLBWSL26 -10.9, HLBWSL27 1.5, HLBWSL29 3.1
+  SOD1: SD vs SL change                      S-SD n=1  18.1 vs S-SL n=6   2.1  diff +16.1  p=0.143 (min 0.14)
+      HLBSSD18 18.1, HLBSSL32 4.1, HLBSSL33 5.5, HLBSSL34 0.6, HLBSSL35 -4.4, HLBSSL39 2.9, HLBSSL40 3.7
+      interaction (S-SD - S-SL) - (W-SD - W-SL) = +6.8 pts
+  [rule sleep_pct L4-12] paired n: HLBWSD 1, HLBSSD 1, HLBWSL 7, HLBSSL 6
+  SD: SOD1 vs water change                   S-SD n=1  13.2 vs W-SD n=1   5.3  diff  +7.9  (1 vs 1: a case, no test)
+      HLBSSD18 13.2, HLBWSD08 5.3
+  SL: SOD1 vs water change                   S-SL n=6  -0.8 vs W-SL n=7   2.1  diff  -2.9  p=0.441 (min 0.00058)  CI [-10.7, +4.9]  g=-0.43  MDE 11 pts
+      HLBSSL32 5.2, HLBSSL33 4.1, HLBSSL34 1.1, HLBSSL35 0.6, HLBSSL39 -2.9, HLBSSL40 -13.1, HLBWSL22 0.5, HLBWSL23 12.9, HLBWSL24 5.7, HLBWSL25 -2.6, HLBWSL26 -5.1, HLBWSL27 0.5, HLBWSL29 2.5
+  water: SD vs SL change                     W-SD n=1   5.3 vs W-SL n=7   2.1  diff  +3.3  p=0.625 (min 0.12)
+      HLBWSD08 5.3, HLBWSL22 0.5, HLBWSL23 12.9, HLBWSL24 5.7, HLBWSL25 -2.6, HLBWSL26 -5.1, HLBWSL27 0.5, HLBWSL29 2.5
+  SOD1: SD vs SL change                      S-SD n=1  13.2 vs S-SL n=6  -0.8  diff +14.0  p=0.286 (min 0.14)
+      HLBSSD18 13.2, HLBSSL32 5.2, HLBSSL33 4.1, HLBSSL34 1.1, HLBSSL35 0.6, HLBSSL39 -2.9, HLBSSL40 -13.1
+      interaction (S-SD - S-SL) - (W-SD - W-SL) = +10.8 pts
+  [rule sleep_pct D12-24] paired n: HLBWSD 1, HLBSSD 1, HLBWSL 7, HLBSSL 6
+  SD: SOD1 vs water change                   S-SD n=1  15.1 vs W-SD n=1  12.0  diff  +3.1  (1 vs 1: a case, no test)
+      HLBSSD18 15.1, HLBWSD08 12.0
+  SL: SOD1 vs water change                   S-SL n=6   3.9 vs W-SL n=7  -1.4  diff  +5.3  p=0.186 (min 0.00058)  CI [-3.1, +13.7]  g=+0.74  MDE 11 pts
+      HLBSSL32 3.4, HLBSSL33 6.4, HLBSSL34 0.2, HLBSSL35 -7.7, HLBSSL39 6.7, HLBSSL40 14.4, HLBWSL22 -2.2, HLBWSL23 5.1, HLBWSL24 -2.5, HLBWSL25 -3.1, HLBWSL26 -12.7, HLBWSL27 2.2, HLBWSL29 3.5
+  water: SD vs SL change                     W-SD n=1  12.0 vs W-SL n=7  -1.4  diff +13.4  p=0.250 (min 0.12)
+      HLBWSD08 12.0, HLBWSL22 -2.2, HLBWSL23 5.1, HLBWSL24 -2.5, HLBWSL25 -3.1, HLBWSL26 -12.7, HLBWSL27 2.2, HLBWSL29 3.5
+  SOD1: SD vs SL change                      S-SD n=1  15.1 vs S-SL n=6   3.9  diff +11.2  p=0.286 (min 0.14)
+      HLBSSD18 15.1, HLBSSL32 3.4, HLBSSL33 6.4, HLBSSL34 0.2, HLBSSL35 -7.7, HLBSSL39 6.7, HLBSSL40 14.4
+      interaction (S-SD - S-SL) - (W-SD - W-SL) = -2.2 pts
+  [rule nrem_pct ZT4-24] paired n: HLBWSD 1, HLBSSD 1, HLBWSL 7, HLBSSL 6
+  SD: SOD1 vs water change                   S-SD n=1  15.8 vs W-SD n=1   7.6  diff  +8.2  (1 vs 1: a case, no test)
+      HLBSSD18 15.8, HLBWSD08 7.6
+  SL: SOD1 vs water change                   S-SL n=6   1.9 vs W-SL n=7  -0.4  diff  +2.3  p=0.400 (min 0.00058)  CI [-3.1, +7.7]  g=+0.47  MDE 8 pts
+      HLBSSL32 3.5, HLBSSL33 4.4, HLBSSL34 0.2, HLBSSL35 -3.5, HLBSSL39 2.6, HLBSSL40 4.4, HLBWSL22 -1.2, HLBWSL23 7.7, HLBWSL24 0.5, HLBWSL25 -3.0, HLBWSL26 -10.0, HLBWSL27 1.1, HLBWSL29 2.4
+  water: SD vs SL change                     W-SD n=1   7.6 vs W-SL n=7  -0.4  diff  +7.9  p=0.375 (min 0.12)
+      HLBWSD08 7.6, HLBWSL22 -1.2, HLBWSL23 7.7, HLBWSL24 0.5, HLBWSL25 -3.0, HLBWSL26 -10.0, HLBWSL27 1.1, HLBWSL29 2.4
+  SOD1: SD vs SL change                      S-SD n=1  15.8 vs S-SL n=6   1.9  diff +13.8  p=0.143 (min 0.14)
+      HLBSSD18 15.8, HLBSSL32 3.5, HLBSSL33 4.4, HLBSSL34 0.2, HLBSSL35 -3.5, HLBSSL39 2.6, HLBSSL40 4.4
+      interaction (S-SD - S-SL) - (W-SD - W-SL) = +5.9 pts
+  [rule nrem_pct L4-12] paired n: HLBWSD 1, HLBSSD 1, HLBWSL 7, HLBSSL 6
+  SD: SOD1 vs water change                   S-SD n=1  12.0 vs W-SD n=1   4.0  diff  +8.0  (1 vs 1: a case, no test)
+      HLBSSD18 12.0, HLBWSD08 4.0
+  SL: SOD1 vs water change                   S-SL n=6  -1.6 vs W-SL n=7   0.9  diff  -2.4  p=0.391 (min 0.00058)  CI [-8.2, +3.3]  g=-0.48  MDE 8 pts
+      HLBSSL32 2.6, HLBSSL33 1.9, HLBSSL34 -1.3, HLBSSL35 -0.5, HLBSSL39 -2.4, HLBSSL40 -9.8, HLBWSL22 -0.5, HLBWSL23 9.5, HLBWSL24 4.5, HLBWSL25 -5.2, HLBWSL26 -3.6, HLBWSL27 -0.5, HLBWSL29 1.8
+  water: SD vs SL change                     W-SD n=1   4.0 vs W-SL n=7   0.9  diff  +3.2  p=0.625 (min 0.12)
+      HLBWSD08 4.0, HLBWSL22 -0.5, HLBWSL23 9.5, HLBWSL24 4.5, HLBWSL25 -5.2, HLBWSL26 -3.6, HLBWSL27 -0.5, HLBWSL29 1.8
+  SOD1: SD vs SL change                      S-SD n=1  12.0 vs S-SL n=6  -1.6  diff +13.6  p=0.143 (min 0.14)
+      HLBSSD18 12.0, HLBSSL32 2.6, HLBSSL33 1.9, HLBSSL34 -1.3, HLBSSL35 -0.5, HLBSSL39 -2.4, HLBSSL40 -9.8
+      interaction (S-SD - S-SL) - (W-SD - W-SL) = +10.4 pts
+  [rule nrem_pct D12-24] paired n: HLBWSD 1, HLBSSD 1, HLBWSL 7, HLBSSL 6
+  SD: SOD1 vs water change                   S-SD n=1  13.6 vs W-SD n=1   9.9  diff  +3.6  (1 vs 1: a case, no test)
+      HLBSSD18 13.6, HLBWSD08 9.9
+  SL: SOD1 vs water change                   S-SL n=6   4.2 vs W-SL n=7  -1.3  diff  +5.5  p=0.136 (min 0.00058)  CI [-2.0, +13.0]  g=+0.85  MDE 10 pts
+      HLBSSL32 4.2, HLBSSL33 6.1, HLBSSL34 1.2, HLBSSL35 -5.5, HLBSSL39 5.9, HLBSSL40 13.5, HLBWSL22 -1.7, HLBWSL23 5.3, HLBWSL24 -2.1, HLBWSL25 -2.7, HLBWSL26 -12.8, HLBWSL27 2.1, HLBWSL29 2.8
+  water: SD vs SL change                     W-SD n=1   9.9 vs W-SL n=7  -1.3  diff +11.2  p=0.250 (min 0.12)
+      HLBWSD08 9.9, HLBWSL22 -1.7, HLBWSL23 5.3, HLBWSL24 -2.1, HLBWSL25 -2.7, HLBWSL26 -12.8, HLBWSL27 2.1, HLBWSL29 2.8
+  SOD1: SD vs SL change                      S-SD n=1  13.6 vs S-SL n=6   4.2  diff  +9.3  p=0.286 (min 0.14)
+      HLBSSD18 13.6, HLBSSL32 4.2, HLBSSL33 6.1, HLBSSL34 1.2, HLBSSL35 -5.5, HLBSSL39 5.9, HLBSSL40 13.5
+      interaction (S-SD - S-SL) - (W-SD - W-SL) = -1.9 pts
+  [eeg_only nrem_pct ZT4-24] paired n: HLBWSD 1, HLBSSD 1, HLBWSL 7, HLBSSL 6
+  SD: SOD1 vs water change                   S-SD n=1   6.7 vs W-SD n=1   6.9  diff  -0.2  (1 vs 1: a case, no test)
+      HLBSSD18 6.7, HLBWSD08 6.9
+  SL: SOD1 vs water change                   S-SL n=6   1.3 vs W-SL n=7  -0.1  diff  +1.4  p=0.295 (min 0.00058)  CI [-1.7, +4.5]  g=+0.56  MDE 4 pts
+      HLBSSL32 3.7, HLBSSL33 3.0, HLBSSL34 -0.2, HLBSSL35 -3.6, HLBSSL39 1.8, HLBSSL40 3.4, HLBWSL22 -1.3, HLBWSL23 2.2, HLBWSL24 0.4, HLBWSL25 -1.6, HLBWSL26 -2.5, HLBWSL27 0.5, HLBWSL29 1.9
+  water: SD vs SL change                     W-SD n=1   6.9 vs W-SL n=7  -0.1  diff  +7.0  p=0.125 (min 0.12)
+      HLBWSD08 6.9, HLBWSL22 -1.3, HLBWSL23 2.2, HLBWSL24 0.4, HLBWSL25 -1.6, HLBWSL26 -2.5, HLBWSL27 0.5, HLBWSL29 1.9
+  SOD1: SD vs SL change                      S-SD n=1   6.7 vs S-SL n=6   1.3  diff  +5.4  p=0.286 (min 0.14)
+      HLBSSD18 6.7, HLBSSL32 3.7, HLBSSL33 3.0, HLBSSL34 -0.2, HLBSSL35 -3.6, HLBSSL39 1.8, HLBSSL40 3.4
+      interaction (S-SD - S-SL) - (W-SD - W-SL) = -1.6 pts
+  [eeg_only nrem_pct L4-12] paired n: HLBWSD 1, HLBSSD 1, HLBWSL 7, HLBSSL 6
+  SD: SOD1 vs water change                   S-SD n=1  10.1 vs W-SD n=1   6.2  diff  +4.0  (1 vs 1: a case, no test)
+      HLBSSD18 10.1, HLBWSD08 6.2
+  SL: SOD1 vs water change                   S-SL n=6  -0.3 vs W-SL n=7   1.9  diff  -2.2  p=0.248 (min 0.00058)  CI [-6.4, +2.0]  g=-0.65  MDE 5 pts
+      HLBSSL32 3.9, HLBSSL33 2.9, HLBSSL34 -1.2, HLBSSL35 -0.7, HLBSSL39 0.6, HLBSSL40 -7.2, HLBWSL22 -0.2, HLBWSL23 5.2, HLBWSL24 4.1, HLBWSL25 -1.0, HLBWSL26 2.7, HLBWSL27 2.3, HLBWSL29 0.3
+  water: SD vs SL change                     W-SD n=1   6.2 vs W-SL n=7   1.9  diff  +4.3  p=0.125 (min 0.12)
+      HLBWSD08 6.2, HLBWSL22 -0.2, HLBWSL23 5.2, HLBWSL24 4.1, HLBWSL25 -1.0, HLBWSL26 2.7, HLBWSL27 2.3, HLBWSL29 0.3
+  SOD1: SD vs SL change                      S-SD n=1  10.1 vs S-SL n=6  -0.3  diff +10.4  p=0.143 (min 0.14)
+      HLBSSD18 10.1, HLBSSL32 3.9, HLBSSL33 2.9, HLBSSL34 -1.2, HLBSSL35 -0.7, HLBSSL39 0.6, HLBSSL40 -7.2
+      interaction (S-SD - S-SL) - (W-SD - W-SL) = +6.2 pts
+  [eeg_only nrem_pct D12-24] paired n: HLBWSD 1, HLBSSD 1, HLBWSL 7, HLBSSL 6
+  SD: SOD1 vs water change                   S-SD n=1   4.4 vs W-SD n=1   7.4  diff  -3.0  (1 vs 1: a case, no test)
+      HLBSSD18 4.4, HLBWSD08 7.4
+  SL: SOD1 vs water change                   S-SL n=6   2.4 vs W-SL n=7  -1.4  diff  +3.8  p=0.115 (min 0.00058)  CI [-1.7, +9.3]  g=+0.88  MDE 7 pts
+      HLBSSL32 3.6, HLBSSL33 3.0, HLBSSL34 0.4, HLBSSL35 -5.5, HLBSSL39 2.6, HLBSSL40 10.5, HLBWSL22 -2.1, HLBWSL23 0.3, HLBWSL24 -2.1, HLBWSL25 -2.0, HLBWSL26 -5.9, HLBWSL27 -0.7, HLBWSL29 2.9
+  water: SD vs SL change                     W-SD n=1   7.4 vs W-SL n=7  -1.4  diff  +8.8  p=0.125 (min 0.12)
+      HLBWSD08 7.4, HLBWSL22 -2.1, HLBWSL23 0.3, HLBWSL24 -2.1, HLBWSL25 -2.0, HLBWSL26 -5.9, HLBWSL27 -0.7, HLBWSL29 2.9
+  SOD1: SD vs SL change                      S-SD n=1   4.4 vs S-SL n=6   2.4  diff  +2.0  p=0.571 (min 0.14)
+      HLBSSD18 4.4, HLBSSL32 3.6, HLBSSL33 3.0, HLBSSL34 0.4, HLBSSL35 -5.5, HLBSSL39 2.6, HLBSSL40 10.5
+      interaction (S-SD - S-SL) - (W-SD - W-SL) = -6.8 pts
+
+3. NREM delta, first 4 h of recovery (ZT4-8), % of the same mouse's baseline ZT4-8
+NREM delta % baseline: SD vs SL, water       W-SD n=1 114.4 vs W-SL n=7 107.2  diff  +7.1  p=0.375 (min 0.12)
+      HLBWSD08 114.4, HLBWSL22 101.1, HLBWSL23 108.8, HLBWSL24 104.9, HLBWSL25 111.3, HLBWSL26 111.8, HLBWSL27 99.0, HLBWSL29 113.5
+NREM delta % baseline: SD vs SL, SOD1        S-SD n=1 117.3 vs S-SL n=6  92.7  diff +24.5  p=0.143 (min 0.14)
+      HLBSSD18 117.3, HLBSSL32 86.9, HLBSSL33 86.3, HLBSSL34 100.0, HLBSSL35 97.9, HLBSSL39 98.8, HLBSSL40 86.4
+NREM delta % baseline: SOD1 vs water, SD     S-SD n=1 117.3 vs W-SD n=1 114.4  diff  +2.9  (1 vs 1: a case, no test)
+      HLBSSD18 117.3, HLBWSD08 114.4

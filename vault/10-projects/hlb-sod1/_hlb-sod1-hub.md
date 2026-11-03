@@ -15,6 +15,7 @@ tags: [hub, project, hlb, sod1, sleep, eeg, nanotag]
 > Design, batch list, schedules, literature and the Drive map: [[hlb-sod1-design]]. The rig, Allego and the analysis code have their own areas.
 
 ## Current state
+- 2026-11-03: EEG of the four batches re-scored with the professor's SleepStager rule on a mains-free EMG, agent-reviewed: 15 paired W/NR/R mice (W-SD 1, S-SD 1, W-SL 7, S-SL 6) instead of 3; no detectable SOD1 effect on baseline sleep (52.0 vs 52.5 %, n = 10 vs 11, MDE 6 points) or on the SL recovery change; SD arms still n = 1 each, and HLBSSD18's recovery gain depends on its artefact mask. Against Andrea's reviewed HLBSSL33 R epochs (light, early dark ZT12–15, late dark ZT18–21; 14,077 epochs, rule-anchored): κ 0.952 / 0.941 / 0.932, all 0.949; dark sleep % about 2 points high. [[hlb-eeg-sleep-overview]]
 - 2026-11-02: Final report draft v0.1 for the professor, the working document of the report (design, nanotag, behaviour, tissue, statistics plan, interpretation, limits); pending: intake, NS-SD SD + Y-maze, EEG (Andrea scores). Storyline and design rationale, incl. why the SD arm runs the Y-maze only: [[2026-11-02-hlb-sod1-final-report-draft]] · [[2026-11-02-hlb-final-report-storyline]]
 - 2026-11-02: Tissue of the EEG cohorts re-derived from the raw ODs with the kit methods: hippocampal total SOD no SOD1 effect; hippocampal MDA higher in the SD cohorts (p = 0.007), no SOD1 effect; heart SOD crossover (interaction p = 0.0006, per mL = per mg since buffer was fixed per mg). Group = cohort, nothing causal. Next test: the same assays on the stored nanotag tissue. [[2026-11-02-EEG-cohorts-tissue-SOD-MDA-reanalysis]]
 - 2026-11-02: HLBNSL behaviour battery final (Y-maze, open field, NOR; why 2-day NOR with 2 h retention): no detectable SOD1 effect on cognition, SOD1 more active (trend), n = 4 vs 5. NOR pose scoring validated against blinded hand scoring (2 raters, kappa 0.76); 9/9 mice explore the novel object more, confounded with the blue prism and its side. [[2026-11-02-HLBNSL-behaviour-battery-summary]] · [[2026-11-02-HLBNSL-nor-hand-validation-and-calibration]]
@@ -34,7 +35,7 @@ tags: [hub, project, hlb, sod1, sleep, eeg, nanotag]
 - [[2026-11-02-hlb-sod1-final-report-draft]]: the final report, draft v0.1 (what it shows and why)
 - [[hlb-sod1-design]]: proposal vs what ran, every batch, the NS-SD schedules and literature, the Drive folder
 - [[2026-10-19-NS-SD-NW-SD-nanotag-study]]: the running batch
-- [[2026-10-06-SOD1-sleep-EEG-2x2-quick-compute]]: what the EEG says about SOD1
+- [[hlb-eeg-sleep-overview]]: what the EEG says about SOD1 (2026-11 re-score, every mouse)
 - [[2026-10-05-HLBNSL-nanotag-merged-analysis]]: what the first nanotag batch says
 
 ## Rules that must not be broken

@@ -9,6 +9,8 @@ recordings: [allego_1__uid0819-17-25-20, allego_2__uid0827-12-58-32, allego_0__u
 
 # Which mice are scoreable at BOTH timepoints, judged on the 24 h windows
 
+> [!warning] 2026-11-03: superseded for usability by the re-score [[hlb-eeg-sleep-overview]]. Its rung 2 (chip floor) and stage 3 (10–124 Hz EMG, r@1min) rejected mice whose EEG and muscle are fine: 15 mice now pair (W-SD 1, S-SD 1, W-SL 7, S-SL 6). This record stays as it was.
+
 > [!warning] Updated 2026-10-22: "S-SD has no scoreable mouse" holds for the pipeline; the 2026-10-06 EMG rescue (not adopted) makes HLBSSD15 scoreable at both timepoints. [[2026-10-06-S-SD-EMG-rescue-between-harmonics]]
 
 > [!abstract] TL;DR

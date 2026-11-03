@@ -1,0 +1,16 @@
+HLBSSL33_R_AN_261007-2034.json: reviewed epochs 1..8441 of 21600, 243 changed by the scorer
+  SleepStager first pass (her start)   kappa 0.947  agree 97.3 %  n=8429
+  re-score (final)                     kappa 0.952  agree 97.5 %  n=8429
+  re-score rule, 20-90 Hz EMG          kappa 0.949  agree 97.3 %  n=8429
+  HMM (no rule input)                  kappa 0.930  agree 96.2 %  n=8428
+  EEG alone, NREM vs not               kappa 0.883
+   W share: hers 25.9 %, re-score 26.0 %
+  NR share: hers 62.3 %, re-score 63.1 %
+   R share: hers 11.7 %, re-score 10.9 %
+  her corrections: re-score gives her new label in 33 %
+  her corrections: HMM gives her new label in 69 %
+her label    NR   R    W  X
+rule before                
+NR            0  94  122  2
+R             3   0    3  1
+W             9   0    0  9

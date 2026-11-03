@@ -31,6 +31,7 @@ created: 2026-10-07
 | Sync | **not** covered by `./skim` (`SleepStager/` is in the workspace `.gitignore` since 2026-10-08); it needs its own `git push` |
 | Our branch | `csv-reader` (created 2026-10-07) |
 | Installed here | `~/.venvs/sleepstager` (editable install: code edits take effect on the next start) |
+| Installed on the ThinkPad | 2026-11-03: branch `csv-reader` + local patch + PR #2 resume fix (cherry-picked `1a7a799`, uncommitted); `~/.venvs/sleepstager`, launcher `~/.local/bin/sleepstager`; checked with `check_recording.py` and a load of HLBSSL33 R. 🛑 **Pin `PySide6==6.8.3` and `pyqtgraph==0.13.7`**: the unpinned install (PySide6 6.12.0, pyqtgraph 0.14.0) crashed on the first arrow key (`none_dealloc` refcount error in `_draw_boundaries`); 60 ← / → and 10 Shift+→ ran clean on the pinned pair (offscreen) |
 | Tests | `python scripts/eval/check_recording.py` (synthetic `.mat` + CSV); `scripts/eval/compare_csv_mat.py <csv> <mat>`; the offscreen smoke tests in `HANDOFF.md` need legacy `.3eg` data |
 
 > [!warning] As of 2026-10-08 `csv-reader` is in PR #1, waiting for the professor; the tone row is local only

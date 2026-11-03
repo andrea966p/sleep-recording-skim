@@ -1,0 +1,258 @@
+{
+ "HLBSSD11_B": {
+  "tier": "A",
+  "why": "screen"
+ },
+ "HLBSSD12_B": {
+  "tier": "B",
+  "why": "review: A -> B: exactly 20 h; dark ZT18-24 EEG railed, ZT23 kept only by the all-wake exemption (skeptic + critic)"
+ },
+ "HLBSSD13_B": {
+  "tier": "X",
+  "why": "screen"
+ },
+ "HLBSSD14_B": {
+  "tier": "D",
+  "why": "screen"
+ },
+ "HLBSSD15_B": {
+  "tier": "A",
+  "why": "screen"
+ },
+ "HLBSSD16_B": {
+  "tier": "X",
+  "why": "screen"
+ },
+ "HLBSSD18_B": {
+  "tier": "A",
+  "why": "screen"
+ },
+ "HLBSSD19_B": {
+  "tier": "X",
+  "why": "screen"
+ },
+ "HLBSSD11_R": {
+  "tier": "X",
+  "why": "review: C -> X: EEG does not track state: 1-min log delta vs EMG r = -0.02 (baseline -0.74); EEG-only HMM calls 39 % of EMG wake NREM (skeptic)"
+ },
+ "HLBSSD12_R": {
+  "tier": "X",
+  "why": "review: C -> X: C rests on exactly 6 light hours incl. ZT6/8/9 with flat 400-500 uV EMG plateaus and a 16-20 Hz technical band (skeptic)"
+ },
+ "HLBSSD14_R": {
+  "tier": "D",
+  "why": "screen"
+ },
+ "HLBSSD15_R": {
+  "tier": "D",
+  "why": "screen"
+ },
+ "HLBSSD16_R": {
+  "tier": "X",
+  "why": "review: C -> X: intermittent EEG contact (lost ZT7-8, mostly lost ZT15-18, 16-20 Hz band ZT6.8-9); C exactly on its 6-light-hour bar (skeptic)"
+ },
+ "HLBSSD17_R": {
+  "tier": "X",
+  "why": "review: C -> X: EEG-only HMM split off the delta-railing cluster (NR state ln delta 11.3 vs 7.0), not NREM (reviewer + skeptic)"
+ },
+ "HLBSSD18_R": {
+  "tier": "A",
+  "why": "screen"
+ },
+ "HLBSSD19_R": {
+  "tier": "X",
+  "why": "screen"
+ },
+ "HLBSSL31_B": {
+  "tier": "D",
+  "why": "screen"
+ },
+ "HLBSSL32_B": {
+  "tier": "A",
+  "why": "screen"
+ },
+ "HLBSSL33_B": {
+  "tier": "A",
+  "why": "screen"
+ },
+ "HLBSSL34_B": {
+  "tier": "A",
+  "why": "screen"
+ },
+ "HLBSSL35_B": {
+  "tier": "A",
+  "why": "screen"
+ },
+ "HLBSSL38_B": {
+  "tier": "D",
+  "why": "screen"
+ },
+ "HLBSSL39_B": {
+  "tier": "A",
+  "why": "screen"
+ },
+ "HLBSSL40_B": {
+  "tier": "A",
+  "why": "screen"
+ },
+ "HLBSSL31_R": {
+  "tier": "A",
+  "why": "screen"
+ },
+ "HLBSSL32_R": {
+  "tier": "A",
+  "why": "screen"
+ },
+ "HLBSSL33_R": {
+  "tier": "A",
+  "why": "screen"
+ },
+ "HLBSSL34_R": {
+  "tier": "A",
+  "why": "screen"
+ },
+ "HLBSSL35_R": {
+  "tier": "A",
+  "why": "screen"
+ },
+ "HLBSSL38_R": {
+  "tier": "B",
+  "why": "review: A -> B: exactly 20 h; tier B with the ss60 EMG; weakest delta separation of the A set, AUC 0.79-0.80 (skeptic + critic)"
+ },
+ "HLBSSL39_R": {
+  "tier": "A",
+  "why": "screen"
+ },
+ "HLBSSL40_R": {
+  "tier": "A",
+  "why": "screen"
+ },
+ "HLBWSD01_B": {
+  "tier": "A",
+  "why": "screen"
+ },
+ "HLBWSD02_B": {
+  "tier": "A",
+  "why": "screen"
+ },
+ "HLBWSD03_B": {
+  "tier": "X",
+  "why": "screen"
+ },
+ "HLBWSD04_B": {
+  "tier": "C",
+  "why": "screen"
+ },
+ "HLBWSD06_B": {
+  "tier": "D",
+  "why": "screen"
+ },
+ "HLBWSD07_B": {
+  "tier": "X",
+  "why": "screen"
+ },
+ "HLBWSD08_B": {
+  "tier": "A",
+  "why": "screen"
+ },
+ "HLBWSD09_B": {
+  "tier": "X",
+  "why": "screen"
+ },
+ "HLBWSD01_R": {
+  "tier": "D",
+  "why": "screen"
+ },
+ "HLBWSD02_R": {
+  "tier": "D",
+  "why": "screen"
+ },
+ "HLBWSD03_R": {
+  "tier": "X",
+  "why": "screen"
+ },
+ "HLBWSD04_R": {
+  "tier": "D",
+  "why": "screen"
+ },
+ "HLBWSD06_R": {
+  "tier": "D",
+  "why": "screen"
+ },
+ "HLBWSD07_R": {
+  "tier": "X",
+  "why": "screen"
+ },
+ "HLBWSD08_R": {
+  "tier": "A",
+  "why": "screen"
+ },
+ "HLBWSD09_R": {
+  "tier": "X",
+  "why": "screen"
+ },
+ "HLBWSL21_B": {
+  "tier": "A",
+  "why": "screen"
+ },
+ "HLBWSL22_B": {
+  "tier": "A",
+  "why": "screen"
+ },
+ "HLBWSL23_B": {
+  "tier": "A",
+  "why": "screen"
+ },
+ "HLBWSL24_B": {
+  "tier": "A",
+  "why": "screen"
+ },
+ "HLBWSL25_B": {
+  "tier": "A",
+  "why": "screen"
+ },
+ "HLBWSL26_B": {
+  "tier": "B",
+  "why": "review: A -> B: A only through the ss60 switch at exactly 20 h; the primary gap EMG gives B; EEG carries 124 uV mains (reviewer + skeptic + critic)"
+ },
+ "HLBWSL27_B": {
+  "tier": "A",
+  "why": "screen"
+ },
+ "HLBWSL29_B": {
+  "tier": "A",
+  "why": "screen"
+ },
+ "HLBWSL21_R": {
+  "tier": "D",
+  "why": "screen"
+ },
+ "HLBWSL22_R": {
+  "tier": "A",
+  "why": "screen"
+ },
+ "HLBWSL23_R": {
+  "tier": "A",
+  "why": "screen"
+ },
+ "HLBWSL24_R": {
+  "tier": "A",
+  "why": "screen"
+ },
+ "HLBWSL25_R": {
+  "tier": "A",
+  "why": "screen"
+ },
+ "HLBWSL26_R": {
+  "tier": "A",
+  "why": "screen"
+ },
+ "HLBWSL27_R": {
+  "tier": "A",
+  "why": "screen"
+ },
+ "HLBWSL29_R": {
+  "tier": "A",
+  "why": "screen"
+ }
+}

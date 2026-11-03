@@ -51,6 +51,7 @@ rules and short pointers into the vault: when a hook and the vault disagree, the
 - [Two animals work; the tether is the fix](overnight-two-animals-tether-is-the-fix.md) — 08-07: impedance SCREENS; only a multi-hour recording is an OUTCOME
 - [A2 control 48 h](a2-control-48h-reference-profile.md) — 08-09/11: 47.09/48.19 h usable; a historical single animal, NOT a reference. The method transfers (prefer ZT0 starts), the animal does not
 ## HLB SOD1 EEG batches (vault: 10-projects/hlb-sod1)
+- [HLB EEG re-score 2026-11](hlb-eeg-rescore-2026-11.md) — 11-03: 15 paired (W-SD 1, S-SD 1, W-SL 7, S-SL 6), supersedes 09-30 counts + 10-06 2x2. Tiers only demoted by review; HLBSSD18 R hinges on artefact mask; vs Andrea (rule-anchored) κ 0.95 light, 0.94 + 0.93 dark
 - [Did SOD1 change sleep? 2x2](sod1-sleep-eeg-2x2-2026-10-06.md) — 10-06: EEG baselines are ON treatment; no detectable effect without SD; after SD n = 1 per arm (EMG rescue), a case
 - [S-SL paired n = 3](s-sl-has-sleep-data-n3.md) — 09-26: HLBSSL31/33/35. 🛑 No sleep conclusion (window composition). uid0920 = uid0921 split; 09-30 note counts it 1 (3)
 - [HLBW_SL 28 h](recording-2026-09-17-HLBW_SL-28h.md) — 09-17/18: unattended console workflow clean; 3 scoreable (B1 B2 D2), only B2 pairs ⇒ n = 1
@@ -122,7 +123,7 @@ rules and short pointers into the vault: when a hook and the vault disagree, the
 - Old memory, verbatim: `vault/90-archive/claude-memory-2026-10-22/`. Key pages: `production-values`, `CANONICAL-allego-channel-selection` (A/1, A/2, A/33, A/34 per port)
 - Artefacts: `eeg-artefact-and-railing-rejection-policy` (reject at EPOCH level, never repair). Is this signal usable: `animal-card-and-verdict-ladder`
 ## Working preferences (behaviour rules)
-- [Background waits must terminate](feedback-background-waits-must-terminate.md) — 🛑 Deadline on every loop, no self-matching `pgrep -f`, explicit target file, TaskStop when done
+- [Background waits must terminate](feedback-background-waits-must-terminate.md) — 🛑 Repeated 11-03 (6 h lost). Chain with `&&`, no wait loops; deadline on every loop; never `pgrep -f`/`pkill -f` matching own line; TaskStop when done
 - [neurosurveillance-expert skill retired](feedback-neurosurveillance-skill-retired.md) — 🛑 Retired 10-01: never use or cite it; vault + repo are the source
 - [Never strip during a live recording](feedback-never-strip-during-a-live-recording.md) — 🛑 No stripping or heavy disk jobs while recording; console runs strip themselves on stop. `RIG BUSY` = stop; exception 10-29: console QC/strip of a per-port run may run while another port records
 - [SOD1: EEG and nanotag separate](feedback-sod1-eeg-nanotag-separate.md) — 🛑 SOD1 effect: EEG and nanotag findings stay SEPARATE; never "nanotag agrees"; one section per method

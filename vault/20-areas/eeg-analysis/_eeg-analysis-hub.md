@@ -19,6 +19,7 @@ and the connection criterion, wire-free floor and filter chain are in `core/crit
 
 ## Current state
 
+- 2026-11-03: HLB EEG re-score status (method, tests, data backbone for figures): see [[_hlb-sod1-hub]] and [[hlb-eeg-scoring-method-2026-11]]. It uses the mains-free gap EMG and label-free usability tiers instead of the QC ladder, for the HLB batches only.
 - 2026-10-23: Andrea decided: replace the 800 µV gate by measuring the current grounds, and redesign the −1.90 slope cut. Both are still open in `core/qc_thresholds.py`. [[2026-10-23]]
 - 2026-10-22: The code runs from `~/sleep-recording-skim/eeg-emg-analysis/` with `PYTHONPATH=.`; `~/eeg-analysis-venv`'s editable install and the `core/paths.py` figure-style default still point at the deleted `~/Monitoring_project` (the vault default was fixed in 90f7847). [[eeg-analysis-quickstart]]
 - 2026-10-14: After the 2026-10-07 grounding fix the 800 µV ground gate cannot judge the rig, and the −1.90 floor-slope gate keeps A1, A2 and B2 of uid1007 UNJUDGEABLE; option (c) (keep 800 before 2026-10-07 14:34, no hum gate after) is recommended and is Andrea's decision, not taken. [[2026-10-14]]

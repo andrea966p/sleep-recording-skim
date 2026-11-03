@@ -27,3 +27,9 @@ Append-only. One entry per vault-wide change. Newest at the bottom.
 - Six stale memory files deleted (copies in `90-archive/claude-memory-2026-10-22/`); MEMORY.md
   says so in its last section.
 - `04-journal/_JOURNAL-INDEX.md` moved to `90-archive/`; [[journal.base]] is the journal index.
+
+## [2026-11-03] add | HLB EEG re-score section
+
+- New folder `10-projects/hlb-sod1/eeg-sleep/`: [[hlb-eeg-sleep-overview]] (results, every mouse), [[hlb-eeg-scoring-method-2026-11]], [[hlb-eeg-data-backbone]], [[hlb-eeg-compute-runbook]], and `mice/` with one note per mouse (33, `hlb-eeg-<mouse>`).
+- Dated callouts on [[2026-09-30-scoreable-mice-on-the-24h-windows]] and [[2026-10-06-SOD1-sleep-EEG-2x2-quick-compute]]; pointer bullets in [[_eeg-analysis-hub]] and [[_sleep-scoring-hub]].
+- Figures `_attachments/2026-11-03-hlb-eeg-*` (5 cohort figures, 64 per-window overviews).

@@ -1,0 +1,51 @@
+HLBSSL33_R_AN_261007-2034.json: 316 changed by the scorer, last_epoch 13624, ranges [(1, 8441), (10801, 13624)]
+
+== 1-8441: 8429 epochs reviewed, 231 changed by the scorer
+  SleepStager first pass (her start)   kappa 0.947  agree 97.3 %  n=8429
+  re-score (final)                     kappa 0.952  agree 97.5 %  n=8429
+  re-score rule, 20-90 Hz EMG          kappa 0.949  agree 97.3 %  n=8429
+  HMM (no rule input)                  kappa 0.930  agree 96.2 %  n=8428
+  EEG alone, NREM vs not               kappa 0.883
+   W share: hers 25.9 %, re-score 26.0 %
+  NR share: hers 62.3 %, re-score 63.1 %
+   R share: hers 11.7 %, re-score 10.9 %
+  her corrections: re-score gives her new label in 35 %
+  her corrections: HMM gives her new label in 71 %
+her label    NR   R    W
+rule before             
+NR            0  94  122
+R             3   0    3
+W             9   0    0
+
+== 10801-13624: 2820 epochs reviewed, 69 changed by the scorer
+  SleepStager first pass (her start)   kappa 0.947  agree 97.6 %  n=2820
+  re-score (final)                     kappa 0.941  agree 97.3 %  n=2820
+  re-score rule, 20-90 Hz EMG          kappa 0.947  agree 97.6 %  n=2820
+  HMM (no rule input)                  kappa 0.886  agree 94.7 %  n=2819
+  EEG alone, NREM vs not               kappa 0.812
+   W share: hers 66.6 %, re-score 65.2 %
+  NR share: hers 32.1 %, re-score 33.1 %
+   R share: hers 1.3 %, re-score 1.7 %
+  her corrections: re-score gives her new label in 32 %
+  her corrections: HMM gives her new label in 58 %
+her label    NR  R   W
+rule before           
+NR            0  7  43
+R             3  0  16
+
+== all reviewed: 11249 epochs reviewed, 300 changed by the scorer
+  SleepStager first pass (her start)   kappa 0.952  agree 97.3 %  n=11249
+  re-score (final)                     kappa 0.954  agree 97.4 %  n=11249
+  re-score rule, 20-90 Hz EMG          kappa 0.953  agree 97.4 %  n=11249
+  HMM (no rule input)                  kappa 0.927  agree 95.8 %  n=11247
+  EEG alone, NREM vs not               kappa 0.877
+   W share: hers 36.1 %, re-score 35.8 %
+  NR share: hers 54.8 %, re-score 55.6 %
+   R share: hers 9.1 %, re-score 8.6 %
+  her corrections: re-score gives her new label in 34 %
+  her corrections: HMM gives her new label in 68 %
+her label    NR    R    W
+rule before              
+NR            0  101  165
+R             6    0   19
+W             9    0    0

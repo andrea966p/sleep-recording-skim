@@ -86,7 +86,7 @@ frame (2026-10-25). The other 17 NOR videos are not measured yet.
 - [x] 2026-10-25: Andrea, the box is a standard 50 x 50 cm. **Is the floor 50 x 50 cm?** All distances assume the inner floor square is the 50 cm
   side. The walls are tall and the camera close (rim about 785 px, floor about 532 px in
   HLBNSSL41), so the rim and the floor cannot both be used for scale. Measure the box.
-- [ ] Immobility threshold 2 cm/s for ≥ 2 s is our default, not taken from a source.
+- [x] Immobility threshold 2 cm/s for ≥ 2 s is our default, not taken from a source. ✅ 2026-11-02
 - [ ] Wall-rear proxy: keep (and validate on 3 hand-scored videos) or drop.
 - [ ] Fecal boli: countable on the last frame (`OFT\arena\end\`), but boli near the walls and under
   the mouse are missed by the automatic count; hand-count if wanted.
