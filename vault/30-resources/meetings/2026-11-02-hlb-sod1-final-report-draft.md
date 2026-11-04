@@ -149,8 +149,8 @@ that a deficit only in overnight consolidation would be missed.
 
 ### 6.2 After sleep deprivation: Y-maze only (NS-SD) ⬜
 Y-maze straight after the second 6 h SD (11-04, 15:00), then sampling.
-SOD1 and water mice were tested alternately and HLBNSSD55, the most active mouse during SD, last (Andrea,
-2026-11-04); start times and sequences: [[2026-11-04-NS-SD-ymaze-hand-scoring]]. Analysis ready 2026-11-04:
+SOD1 and water mice were tested alternately, 51, 56, 52, 57, 53, 58, 54, 59, 55, 60 (Andrea,
+2026-11-05); start times and sequences: [[2026-11-04-NS-SD-ymaze-hand-scoring]]. Analysis ready 2026-11-04:
 `ymaze_nssd.py` on the scoring CSV `NSSD_ymaze_hand_scoring.csv` (SA %, entries, against SD length) and
 `ymaze_2x2.py` (normal sleep next to SD, SOD1 effect within each, SOD1 x sleep interaction, and each deprived
 mouse's tag sleep against its alternation).
