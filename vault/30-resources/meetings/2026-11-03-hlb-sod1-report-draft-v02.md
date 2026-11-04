@@ -41,7 +41,7 @@ questions, each with the result that would support the claim:
 |---|---|---|---|---|---|
 | W-SD, S-SD, W-SL, S-SL | Aug to Sep | one arm per cohort, 8-9 mice | EEG/EMG | SD cohorts: 4 h/day, 09:00-13:00, 7 days | heart and hippocampus SOD, hippocampus MDA |
 | HLBNSL | Sep to Oct | SOD1 4, water 5 | nanotag | none | Y-maze, open field, NOR; tissue stored |
-| NS-SD | Oct to Nov | SOD1 5, water 5 | nanotag | 6 h/day, 09:00-15:00, 11-03 and 11-04 | Y-maze after SD; tissue 11-04 ⬜ |
+| NS-SD | Oct to Nov | SOD1 5, water 5 | nanotag | 09:00-15:00 on 11-03; 09:00 to the Y-maze (about 7 h) on 11-04 | Y-maze after SD; tissue 11-04 ⬜ |
 
 All mice were male C57BL/6J, lights on 09:00 to 21:00 (ZT0 = 09:00). SOD1 was given at 6.8 U/mL, set for about
 20 U/day at 3 mL/day. In the EEG cohorts SOD1 or water started 11 days before the first SD day (sheet registry).
@@ -142,19 +142,32 @@ from 30 to about 40 %. Light/dark split and bout number and length: no detectabl
 **NS-SD before SD, first 6 days on treatment, 5 vs 5.** SOD1 − water in the change of total sleep +16 min/day
 (95 % CI about −18 to +58), the same for light, dark and bout length.
 
-**Activity and rhythm, both cohorts.** SOD1 mice were quieter in the light phase in both cohorts (NS-SD −113 vs
-+77 counts/h, p = 0.17), which raised rhythm amplitude in HLBNSL (p = 0.029, but already different at baseline) and
-not in NS-SD (p = 0.24). In the dark phase NS-SD SOD1 mice became more active (+616 vs +265 counts/h, p = 0.040).
-Each is one of about 20 to 35 tests per cohort.
-
-**NS-SD during SD and recovery** ⬜ (tags read 11-04): sleep during each 6 h SD (was SD effective, equally in both
-arms?) and recovery sleep after the first SD day.
-
 ![[2026-11-05-hlb-meeting-fig02-nanotag-sleep.png]]
 *Figure 3. Change in total sleep from each mouse's own baseline, nanotag; the two cohorts are shown apart, never pooled.*
 
 ![[2026-11-05-hlb-meeting-fig03-nanotag-24h-profile.png]]
 *Figure 4. Hourly sleep on treatment, HLBNSL (mean ± SEM).*
+
+**Activity and rhythm, both cohorts.** SOD1 mice were quieter in the light phase in both cohorts (NS-SD −113 vs
++77 counts/h, p = 0.17), which raised rhythm amplitude in HLBNSL (p = 0.029, but already different at baseline) and
+not in NS-SD (p = 0.24). In the dark phase NS-SD SOD1 mice became more active in the first 6 days (+616 vs +265
+counts/h, p = 0.040), but not on days 8 to 10, when dark activity fell in both arms (−423 vs −1,160 counts/h, p = 0.14).
+Each is one of about 20 to 35 tests per cohort.
+
+**NS-SD, SD and recovery, 5 vs 5** ([[2026-11-04-NS-SD-run2-sd-efficacy-and-recovery]]).
+- **SD was effective and equal in both arms.** All 10 mice slept less than at baseline in 09:00-15:00 on both SD days.
+  Day 1: 10 vs 8 % asleep, a drop of 58 vs 65 points (SOD1 − water +6.7, 95 % CI −3.5 to +16.6). Day 2 lasted until each
+  mouse's Y-maze, 7.0 vs 7.2 h.
+- **Recovery after SD day 1: no detectable SOD1 difference.** Both arms slept more than in the same hours at baseline,
+  mostly in the dark: total rebound +188 vs +163 min, SOD1 − water +25 min (95 % CI −68 to +130). There is no recovery
+  window after SD day 2 (Y-maze, then kept awake until sampling).
+- **Undisturbed days 8 to 10 on treatment:** change in total sleep +75 vs +71 min/day (p = 0.94).
+
+![[2026-11-04-NSSD-run2-sd-efficacy.png]]
+*Figure 5. Sleep in 09:00-15:00 at baseline and on the two SD days, per mouse, and the change from baseline (NS-SD).*
+
+![[2026-11-04-NSSD-run2-recovery.png]]
+*Figure 6. Recovery sleep after SD day 1 against the same clock hours at baseline, and the rebound per mouse (NS-SD).*
 
 ### 3.3 Sleep stages (EEG/EMG)
 
@@ -182,10 +195,10 @@ before the first recording, so "baseline" means on treatment, without SD.
   against 107 % (W-SL) and 93 % (S-SL) without SD.
 
 ![[2026-11-05-hlb-meeting-fig04-eeg-baseline.png]]
-*Figure 5. EEG/EMG sleep at baseline (on treatment, before SD), % of usable time, per mouse.*
+*Figure 7. EEG/EMG sleep at baseline (on treatment, before SD), % of usable time, per mouse.*
 
 ![[2026-11-05-hlb-meeting-fig05-eeg-recovery.png]]
-*Figure 6. Change in sleep from baseline to the second recording; the SD arms are single mice, the open circle counts movement-artefact epochs as wake.*
+*Figure 8. Change in sleep from baseline to the second recording; the SD arms are single mice, the open circle counts movement-artefact epochs as wake.*
 
 ### 3.4 Behaviour
 
@@ -217,10 +230,10 @@ water mice, so every group difference here is also a difference in test order an
 **After SD (NS-SD)** ⬜: Y-maze on 11-04 straight after the second 6 h SD, then sampling.
 
 ![[2026-11-05-hlb-meeting-fig06-behaviour.png]]
-*Figure 7. Behaviour with normal sleep, HLBNSL: Y-maze alternation and entries, open-field distance, NOR d2 (pose model 2).*
+*Figure 9. Behaviour with normal sleep, HLBNSL: Y-maze alternation and entries, open-field distance, NOR d2 (pose model 2).*
 
 ![[2026-11-05-hlb-meeting-fig07-activity-signal.png]]
-*Figure 8. Activity readouts as standardised SOD1 − water differences (Hedges g, approximate 95 % CI; p values are the exact tests). The first two come from the same HLBNSL mice.*
+*Figure 10. Activity readouts as standardised SOD1 − water differences (Hedges g, approximate 95 % CI; p values are the exact tests). The first two come from the same HLBNSL mice.*
 
 ### 3.5 Tissue (EEG cohorts)
 
@@ -245,7 +258,7 @@ Mean (n). Two-way ANOVA, SOD1 × sleep; Šidák comparisons within each sleep co
 ⬜ HLBNSL and NS-SD tissue: stored at −80 °C, not yet assayed.
 
 ![[2026-11-05-hlb-meeting-fig08-tissue.png]]
-*Figure 9. Tissue SOD activity and MDA in the four EEG cohorts, per mouse; each group is a separate cohort.*
+*Figure 11. Tissue SOD activity and MDA in the four EEG cohorts, per mouse; each group is a separate cohort.*
 
 ## 4. What the results mean
 
@@ -264,9 +277,9 @@ Mean (n). Two-way ANOVA, SOD1 × sleep; Šidák comparisons within each sleep co
   cardiac SOD expression in hypertensive rats (Carillon et al. 2014). A lower value after SD could mean less oxidative
   load or a blunted adaptive response, as antioxidants blunt adaptation to exercise (Gomez-Cabrera et al. 2008; Ristow
   et al. 2009). But four groups from four cohorts can produce this pattern without any SOD1 effect.
-- **Activity.** The light-phase quieting with SOD1 is the only activity change seen in both nanotag cohorts.  The
-  other signals go towards more activity: in the dark phase (NS-SD) and in the tests (HLBNSL, confounded with test
-  order). None passes the multiplicity the rhythm-amplitude lead was discounted for. It is a pattern to measure, not
+- **Activity.** The light-phase quieting with SOD1 is the only activity change seen in both nanotag cohorts.   The
+  other signals go towards more activity: in the dark phase (NS-SD, first 6 days only, gone by days 8 to 10) and in the
+  tests (HLBNSL, confounded with test order). None passes the multiplicity the rhythm-amplitude lead was discounted for. It is a pattern to measure, not
   a finding.
 
 ## 5. Limitations
@@ -311,7 +324,8 @@ Mean (n). Two-way ANOVA, SOD1 × sleep; Šidák comparisons within each sleep co
    - Nanotag: NS-SD excludes effects beyond about −20 to +60 min/day; HLBNSL is too variable to exclude even 2 h/day.
    - EEG/EMG: 21 mice exclude differences beyond about 5 points of sleep %.
 3. **Sleep structure: no detectable change** in NREM (EEG/EMG), or in bout length and light/dark distribution (nanotag).
-4. **Recovery after SD:** ⬜ NS-SD. The EEG cohorts have one mouse per arm, which cannot answer it.
+4. **Recovery after SD: no detectable change.** In NS-SD, SD removed the same amount of sleep in both arms, and the
+   rebound after it did not differ (95 % CI about −1 h to +2 h). The EEG cohorts have one mouse per arm and cannot answer it.
 5. **Cognition with normal sleep: no detectable change** in working memory or recognition memory; both were intact in
    both arms. ⬜ After SD (NS-SD Y-maze).
 6. **Activity:** SOD1 mice were quieter in the light phase in both nanotag cohorts; other activity differences are

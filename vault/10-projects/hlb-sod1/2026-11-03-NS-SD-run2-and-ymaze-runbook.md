@@ -61,6 +61,22 @@ tags: [procedure, nanotag, sod1, sleep-deprivation, y-maze, ns-sd, nw-sd]
    ```
    It stops with "fill in the sheet first" while fewer than 2 mice per group have a sequence.
 
+4. Y-maze distance, speed and time per arm from pose (on `kaist-bilab-win`, `behav-venv`, added 2026-11-04;
+   hand letters stay the SA % / entries endpoint):
+   ```bash
+   cd nanotag/analysis/behavior
+   ../../../../behav-venv/Scripts/python pose_infer.py model2 <NS-SD trial_8min dir> <pose_dir>
+   ../../../../behav-venv/Scripts/python pose_infer.py model1 <NS-SD trial_8min dir> <pose_dir>
+   ../../../../behav-venv/Scripts/python ymaze_pose.py pick <NS-SD trial_8min dir> <pose_dir>/arena.csv
+   ../../../../behav-venv/Scripts/python ymaze_pose.py features <pose_dir> <pose_dir>/arena.csv <pose_dir>/ymaze_pose_model2.csv --model model2
+   ```
+   First cut each video to the 480 s trial from door closed with `prep.py`, as for HLBNSL (the same clips serve
+   the hand scoring).
+   `pick`: click the maze centre, then the end of arm A, B, C (same A as the hand letters), Enter; check every
+   `*_arena.png`. Before reading the NS-SD numbers, run the same on the 9 HLBNSL clips and compare `distance_m` and
+   `mean_speed_cm_s` with EthoVision, and `model_sequence` with the hand letters ([[2026-10-25-HLBNSL-ymaze-hand-scoring]]).
+   Model 2 runs at about 56 frames/s, so a 480 s clip takes about 4 min; model 1 about 13 min.
+
 ## What the code does
 | Endpoint | Window (KST) | Compared with | Output |
 |---|---|---|---|

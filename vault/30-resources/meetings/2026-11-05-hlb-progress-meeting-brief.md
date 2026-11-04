@@ -26,7 +26,7 @@ hippocampus unchanged, one heart pattern that needs a within-cohort test. Tomorr
 5. Behaviour with normal sleep (fig 06): memory unchanged, activity up.
 6. The activity signal across cohorts (fig 07).
 7. Tissue (fig 08): hippocampus no protection, heart crossover, why it is a cohort pattern.
-8. NS-SD after SD (fig 10, 11): SD efficacy, recovery, Y-maze. ⬜ built on 11-04 evening.
+8. NS-SD after SD (`2026-11-04-NSSD-run2-sd-efficacy.png`, `...-recovery.png`): SD removed ~3.5-4 h of sleep equally in both arms; rebound +188 vs +163 min, no detectable difference. Y-maze ⬜ (sequences to score).
 9. Conclusions and next steps (text slide).
 
 ## Questions to expect, and the answer
@@ -44,7 +44,7 @@ hippocampus unchanged, one heart pattern that needs a within-cohort test. Tomorr
   tests it within cohort, no new mice.
 - **"Is the NOR valid with the prism always novel?"** No reliable side preference in training (7/9 above 50 %), and the spot share rose T1 → T2 in 9/9 mice; object identity not counterbalanced is listed as a limitation.
 - **"Why only the Y-maze after SD?"** NOR would measure SD timing relative to training (Palchykova 2006), not SOD1.
-- **"Did SD work?"** ⬜ answered by the NS-SD tags (sleep in 09:00-15:00 vs baseline).
+- **"Did SD work?"** Yes: all 10 mice below baseline on both days, 10 vs 8 % asleep on day 1 against ~70 % at baseline, equal in both arms.
 
 ## Decisions to ask the professor for
 1. Run heart SOD, heart MDA and hippocampal MDA on the stored HLBNSL and NS-SD tissue (one plate, interleaved, blind,
