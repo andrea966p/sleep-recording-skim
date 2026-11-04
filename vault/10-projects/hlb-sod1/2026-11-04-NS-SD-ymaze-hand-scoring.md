@@ -60,7 +60,7 @@ File:
 Sequence:
 
 ```
-
+cbcabccabcbcabacbacbcacbbcbacabcab
 ```
 
 Notes:
@@ -71,10 +71,10 @@ File:
 Sequence:
 
 ```
-
+cacabcabacabababcbacbababacabacabab
 ```
 
-Notes:
+Notes: typed `n` for `b` throughout, corrected by Claude 2026-11-05 at Andrea's request (`n` is next to `b` on the keyboard).
 
 ## HLBNSSD53 (SOD1, about 16:00)
 File:
@@ -82,7 +82,7 @@ File:
 Sequence:
 
 ```
-
+cbbcacbacbabcabcbababcbacbabcababb
 ```
 
 Notes:
@@ -93,7 +93,7 @@ File:
 Sequence:
 
 ```
-
+cbaccbcabcacbacbcabcbabcbacbacbcabcb
 ```
 
 Notes:
@@ -104,7 +104,7 @@ File:
 Sequence:
 
 ```
-
+cbcabcabacabacbcacbaacbbabcabcb
 ```
 
 Notes:
@@ -115,7 +115,7 @@ File:
 Sequence:
 
 ```
-
+cbcabacabacabbacbabcbabababa
 ```
 
 Notes:
@@ -126,7 +126,7 @@ File:
 Sequence:
 
 ```
-
+cabcabcbbcacabccabcacbbacbbbcacacbcacbcacbbcabba
 ```
 
 Notes:
@@ -137,11 +137,11 @@ File:
 Sequence:
 
 ```
-
+cbaccbacabacbaccbacbcbabcabacbcbaca
 ```
 
 Notes:
 
 ## Still open
-- [ ] All ten sequences written.
-- [ ] Copied into the CSV and `ymaze_nssd.py` run (NS-SD next to HLBNSL, SA % vs real SD length).
+- [x] All ten sequences written.
+- [x] Copied into the CSV and `ymaze_nssd.py` run (NS-SD next to HLBNSL, SA % vs real SD length), 2026-11-05: [[2026-11-05-NS-SD-ymaze-results]].
