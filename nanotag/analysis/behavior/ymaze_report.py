@@ -2,7 +2,7 @@
 """Y-maze results, statistics and figures from an EthoVision XT statistics export.
 
     ymaze_report.py <Statistics-*.xlsx> <out_dir> [--alt "Zone alternation 3"] [--tag HLBNSL]
-                    [--trials 10-18] [--hand <hand-scoring note.md>]
+                    [--trials 10-18] [--hand <hand-scoring note.md>] [--order <note.md>]
 
 --alt names the Zone alternation variable to score (EthoVision numbers the copies;
 for HLBNSL "Zone alternation 3" = zone exit threshold 3 cm). Every other Zone
@@ -11,6 +11,9 @@ alternation variable in the file is drawn as a threshold-sensitivity panel.
 --hand takes SA% and arm entries from the hand-scored sequences in a vault note
 (a "## HLBN..." heading followed by a ``` block of arm letters), scored by metrics.py;
 EthoVision then gives distance and velocity, and its SA% is shown against the hand SA%.
+--order takes each mouse's Y-maze start time from a table row in a vault note
+("| HLBNSSD51 | SOD1 | 15:02 |"); with --sd-start (default 09:00, same day) every
+mouse gets its SD length, and figure 3 plots SA% and arm entries against it.
 
 Statistics follow BEHAVIOR_SOP.md section 5: per group, exact Wilcoxon signed-rank
 of SA% against 50 %; between groups, exact Mann-Whitney U with the mean difference,
@@ -20,6 +23,7 @@ Figures follow cohort.py (style, colours, mean ± SEM, dots = mice).
 Needs openpyxl, numpy, scipy, matplotlib.
 """
 import argparse, csv, os, re, statistics as st, sys
+from datetime import datetime
 
 import numpy as np
 import openpyxl
@@ -62,9 +66,31 @@ def defined(v):
 
 def read_hand(path):
     """vault note -> {mouse: "ABCAB..."}: each "## HLBN..." heading, then its ``` block."""
-    txt = open(path, encoding="utf-8").read()
-    return {m: s.upper() for m, s in
-            re.findall(r"^#{2,3} (HLBN\w+)[^\n]*\n.*?```\s*\n\s*([abcABC]+)\s*\n```", txt, re.M | re.S)}
+    # split at the headings first, so an empty block never borrows the next mouse's sequence
+    parts = re.split(r"^#{2,3} (HLBN\w+)[^\n]*\n", open(path, encoding="utf-8").read(), flags=re.M)
+    out = {}
+    for m, body in zip(parts[1::2], parts[2::2]):
+        seq = re.search(r"```\s*\n\s*([abcABC]+)\s*\n```", body)
+        if seq:
+            out[m] = seq.group(1).upper()
+    return out
+
+
+def read_order(path):
+    """vault note -> {mouse: time}: the first HH:MM in each table row that names a mouse"""
+    out = {}
+    for line in open(path, encoding="utf-8"):
+        m = re.match(r"\s*\|.*?\b(HLBN\w+)\b.*?\|\s*(\d{1,2}:\d{2})\s*\|", line)
+        if m:
+            out[m.group(1)] = datetime.strptime(m.group(2), "%H:%M").time()
+    return out
+
+
+def group_of(mouse, ev_group):
+    """EthoVision's group label if it is one of GROUPS, else from the ID (HLBNS.. SOD1, HLBNW.. water)"""
+    if ev_group in GROUPS:
+        return ev_group
+    return {"S": "SOD1", "W": "water"}[mouse[4]]
 
 
 def hand_scores(seq):
@@ -122,6 +148,8 @@ def main():
     pa.add_argument("--tag", default="HLBNSL")
     pa.add_argument("--trials", help="first-last EthoVision trial to keep, e.g. 10-18")
     pa.add_argument("--hand", help="vault note with the hand-scored arm sequences")
+    pa.add_argument("--order", help="vault note with each mouse's Y-maze start time")
+    pa.add_argument("--sd-start", default="09:00", help="SD start on the test day (with --order)")
     a = pa.parse_args()
     os.makedirs(a.out_dir, exist_ok=True)
 
@@ -129,6 +157,8 @@ def main():
     if a.trials:
         lo_t, hi_t = map(int, a.trials.split("-"))
         data = [d for d in data if lo_t <= d["trial"] <= hi_t]
+    for d in data:
+        d["group"] = group_of(d["mouse"], d["group"])
     mice = [d["mouse"] for d in data]
     if len(set(mice)) != len(mice):
         sys.exit("a mouse appears in more than one trial: pick one set with --trials")
@@ -138,6 +168,10 @@ def main():
     if not any((a.alt, "center-point / Alternations", "Frequency") in d for d in data):
         sys.exit(f"{a.alt!r} not in {a.stats_xlsx}")
     alts = sorted({k[0] for k in data[0] if isinstance(k, tuple) and k[0].startswith("Zone alternation")})
+    order = read_order(a.order) if a.order else {}
+    if order and set(order) != set(mice):
+        sys.exit(f"start times {sorted(order)} do not match the mice {sorted(mice)}")
+    sd0 = datetime.strptime(a.sd_start, "%H:%M")
 
     res = []
     for d in data:
@@ -155,6 +189,10 @@ def main():
             s, n, alt_n, dr, ir = hand_scores(hand[d["mouse"]])
             r.update(sa_pct=None if s is None else round(s, 1), arm_entries=n if s is not None else None,
                      alternations=alt_n, direct_revisits=dr, indirect_revisits=ir)
+        if order:
+            t = order[d["mouse"]]
+            res[-1].update(ymaze_start=t.strftime("%H:%M"),
+                           sd_length_min=round((datetime.combine(sd0.date(), t) - sd0).total_seconds() / 60))
     with open(os.path.join(a.out_dir, f"{a.tag}_ymaze_results.csv"), "w", newline="") as fh:
         w = csv.DictWriter(fh, fieldnames=list(res[0]))
         w.writeheader()
@@ -196,6 +234,14 @@ def main():
                   f"SA {x['ev_sa_pct'] - x['sa_pct']:+.1f} points" for x in both]
         lines.append(f"  mean |SA difference| {st.mean(abs(x['ev_sa_pct'] - x['sa_pct']) for x in both):.1f} points, "
                      f"Pearson r (SA) {stats.pearsonr([x['sa_pct'] for x in both], [x['ev_sa_pct'] for x in both]).statistic:+.2f}")
+    if order:
+        lines += ["", f"against SD length ({a.sd_start} to each Y-maze start), all mice, Pearson:"]
+        for k in ("sa_pct", "arm_entries", "distance_m"):
+            pts = [(x["sd_length_min"], x[k]) for x in res if x[k] is not None]
+            rr = stats.pearsonr(*zip(*pts))
+            lines.append(f"  {k}: r={rr.statistic:+.2f} p={rr.pvalue:.3f}")
+        lines.append("  test order: " + ", ".join(f"{x['mouse']} {x['ymaze_start']}"
+                                                  for x in sorted(res, key=lambda x: x["ymaze_start"])))
     txt = "\n".join(lines)
     open(os.path.join(a.out_dir, f"{a.tag}_ymaze_stats.txt"), "w").write(txt + "\n")
     print(txt)
@@ -257,6 +303,33 @@ def main():
     for ext in ("png", "pdf"):
         fig.savefig(os.path.join(a.out_dir, f"{a.tag}_ymaze_fig2_checks.{ext}"), dpi=300)
     plt.close(fig)
+    if order:                                         # figure 3: endpoints against SD length
+        fig, ax = plt.subplots(1, 3, figsize=(13, 4.2), layout="constrained")
+        for axi, (k, lab) in zip(ax, (("sa_pct", "Spontaneous alternation (%)"), ("arm_entries", "Total arm entries"),
+                                      ("distance_m", "Distance moved (m)"))):
+            pts = [x for x in res if x[k] is not None]
+            for g in GROUPS:
+                axi.plot([x["sd_length_min"] / 60 for x in pts if x["group"] == g],
+                         [x[k] for x in pts if x["group"] == g], "o", color=GCOL[g], ms=7, mec="white", mew=1.3,
+                         label=g)
+            for x in pts:
+                axi.annotate(re.search(r"\d+$", x["mouse"]).group(), (x["sd_length_min"] / 60, x[k]),
+                             xytext=(4, 3), textcoords="offset points", fontsize=7.5, color="0.35")
+            if k == "sa_pct":
+                axi.axhline(CHANCE, color="0.45", ls="--", lw=1)
+                axi.set_ylim(0, 100)
+            else:
+                axi.set_ylim(0, max(x[k] for x in pts) * 1.2)
+            rr = stats.pearsonr([x["sd_length_min"] for x in pts], [x[k] for x in pts])
+            axi.set_title(f"{lab}  (r = {rr.statistic:+.2f})", loc="left", fontsize=10.5, color="0.1")
+            axi.set_xlabel(f"SD length at test (h from {a.sd_start})", fontsize=9.5, color="0.2")
+            style(axi)
+        ax[0].legend(frameon=False, fontsize=9)
+        fig.suptitle(f"Y-maze {a.tag} against each mouse's SD length (numbers = mouse)", x=0.01, ha="left",
+                     fontsize=12, color="0.1")
+        for ext in ("png", "pdf"):
+            fig.savefig(os.path.join(a.out_dir, f"{a.tag}_ymaze_fig3_sd_length.{ext}"), dpi=300)
+        plt.close(fig)
     print(f"-> {a.out_dir}")
 
 
@@ -270,4 +343,5 @@ if __name__ == "__main__":
     # ABCAB: 3 triplets, all alternations; ABA is an indirect revisit, AA a direct one
     assert hand_scores("ABCAB")[:3] == (100.0, 5, 3)
     assert hand_scores("AABAC")[3:] == (1, 1)
+    assert group_of("HLBNSSD51", "Group 1") == "SOD1" and group_of("HLBNWSD56", None) == "water"
     main()

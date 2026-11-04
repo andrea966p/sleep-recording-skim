@@ -27,6 +27,14 @@ tags: [behaviour, y-maze, sleep-deprivation, ns-sd, nw-sd]
 
 Test order 51, 56, 52, 57, 53, 58, 54, 59, 55, 60, from 15:00, about 15 min per mouse (start times approximate).
 
+> [!warning] Order to confirm (Andrea)
+> A note written on the office PC at 18:31 on 11-04 says SOD1 and water alternated with **HLBNSSD55 last** (the most
+> active mouse during SD), i.e. 60 ninth and 55 tenth. This order and the scoring CSV put 55 ninth. Scoring is
+> unaffected (each clip is named by mouse); only the approximate start time and SD length of 55 and 60 change.
+
+Clips to score: `HLBN*_ymaze_trial480s.mp4`, each 480 s from the moment the hand is out of view (SOP changelog
+2026-11-04), on the office PC in `~/ymaze_nssd/trial_8min/`.
+
 ## HLBNSSD51 (SOD1, about 15:00)
 File:
 

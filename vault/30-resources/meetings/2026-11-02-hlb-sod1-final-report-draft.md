@@ -107,6 +107,10 @@ notes. Source: the intake sheet `HLB_SOD1_Intake_Monitoring_SDSLNANO`. Not yet a
 
 **NS-SD, SD and recovery** ⬜ (tags read 11-04): sleep during the 6 h SD (was SD effective, equally in both
 arms?) and recovery sleep afterwards.
+Analysis ready 2026-11-04, windows as fixed on 10-30 before the data: `cohort_sd.py <Run 1> <Run 2>` gives
+undisturbed sleep 10-31 → 11-03 against baseline, sleep and activity 09-15 on both SD days against the same hours
+undisturbed, the 24 h of SD day 1, recovery 11-03 15:00 → 11-04 09:00 against the same hours undisturbed (light and
+dark parts), and each mouse's sleep from 15:00 to its Y-maze (`cohort_sd.py --run2`: `sd_and_recovery_per_mouse.csv`, figures `sd_efficacy` and `recovery`).
 
 ## 5. Sleep stages (EEG/EMG) ⬜
 Small sub-study, 1-3 scoreable mice per group, so cases, not group statistics: per-mouse values and
@@ -145,6 +149,11 @@ that a deficit only in overnight consolidation would be missed.
 
 ### 6.2 After sleep deprivation: Y-maze only (NS-SD) ⬜
 Y-maze straight after the second 6 h SD (11-04, 15:00), then sampling.
+SOD1 and water mice were tested alternately and HLBNSSD55, the most active mouse during SD, last (Andrea,
+2026-11-04); start times and sequences: [[2026-11-04-NS-SD-ymaze-hand-scoring]]. Analysis ready 2026-11-04:
+`ymaze_nssd.py` on the scoring CSV `NSSD_ymaze_hand_scoring.csv` (SA %, entries, against SD length) and
+`ymaze_2x2.py` (normal sleep next to SD, SOD1 effect within each, SOD1 x sleep interaction, and each deprived
+mouse's tag sleep against its alternation).
 
 **Why only the Y-maze after SD.**
 1. **It reads the state at the end of SD.** Spontaneous alternation is one 8 min session with no training
@@ -284,6 +293,22 @@ or measured activity in the bottle over 24 h, would be needed to rule this out. 
 5. **Counterbalance the NOR objects and sides,** and add a 24 h retention group if consolidation matters.
 6. **Ask HLB** whether the powder is coated and which SOD it is (Cu/Zn or Mn), whether a protected oral
    formulation exists, and for the enzyme's stability in water.
+
+## Figures for the document and the deck
+One slide per figure with its caption, as for the HLBNSL nanotag deck (`nanotag/report/build_pptx.js`).
+
+| # | Figure | Source |
+|---|---|---|
+| 1 | Design and timeline of the cohorts | to draw |
+| 2 | Intake and body weight | ⬜ intake sheet |
+| 3 | HLBNSL sleep, change from baseline | `out/HLBNSL` fig7 |
+| 4 | NS-SD sleep before SD, change from baseline | `out/HLBNSSD` fig7 |
+| 5 | NS-SD Run 2 hourly sleep with SD windows | `out/HLBNSSD` fig8 |
+| 6 | SD efficacy and recovery | `out/HLBNSSD` fig9 |
+| 7 | Y-maze, normal sleep next to SD | `ymaze_2x2_fig1` |
+| 8 | Y-maze against SD length, and against tag sleep | `HLBNSSD_ymaze_fig3`, `ymaze_2x2_fig2` |
+| 9 | Open field and NOR, normal sleep | HLBNSL behaviour figures |
+| 10 | Tissue: SOD activity and MDA | `nanotag/analysis/tissue` |
 
 ## Still open
 - Intake and body weight (section 3).
